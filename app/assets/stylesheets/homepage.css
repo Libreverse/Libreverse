@@ -1,0 +1,72 @@
+@font-face {
+  font-family: "Lazer84";
+  src: url("Lazer84.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Hack";
+    src: url("Hack.ttf") format("truetype");
+  }
+@font-face {
+  font-family: "Hack-Italic";
+  src: url("Hack-Italic.ttf") format("truetype");
+}
+
+h1 {
+  font-family: "Lazer84";
+  font-size: 200px;
+  color: #c79ffc;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  width: 75%;
+  margin: 0 auto;
+}
+
+h2 {
+  font-family: "Hack-Italic";
+  font-size: 24px;
+  color: #c79ffc;
+  text-align: center;
+  width: 75%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+h3 {
+    font-family: "Hack";
+    font-size: 20px;
+    color: #c79ffc;
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: #08183a;
+    padding: 20px;
+    width: 15%;
+    margin: 0 auto;
+  }
+
+  h4 {
+    font-family: "Hack";
+    font-size: 20px;
+    color: #c79ffc;
+    text-align: left;
+    width: 70%;
+    margin: 0 auto;
+  }
+  
+p {
+  font-family: "Hack";
+  font-size: 18px;
+  color: #c79ffc;
+  text-align: left;
+  padding: 20px;
+  width: 70%;
+  margin: 0 auto;
+}
+
+body {
+  background: url("background.avif") no-repeat center center fixed, #08183a;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
