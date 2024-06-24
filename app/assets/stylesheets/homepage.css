@@ -3,70 +3,103 @@
   src: url("Lazer84.ttf") format("truetype");
 }
 @font-face {
-    font-family: "Hack";
-    src: url("Hack.ttf") format("truetype");
-  }
+  font-family: "Hack";
+  src: url("Hack.ttf") format("truetype");
+}
 @font-face {
   font-family: "Hack-Italic";
   src: url("Hack-Italic.ttf") format("truetype");
 }
 
-h1 {
+.main {
   font-family: "Lazer84";
   font-size: 200px;
   color: #c79ffc;
-  text-align: center;
-  margin-top: 50px;
-  margin-bottom: 20px;
-  width: 75%;
-  margin: 0 auto;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
-h2 {
+.secondary {
   font-family: "Hack-Italic";
   font-size: 24px;
   color: #c79ffc;
-  text-align: center;
-  width: 75%;
-  margin: 0 auto;
   margin-bottom: 20px;
+  margin-left: 16.5%;
+  margin-right: 16.5%;
 }
 
-h3 {
-    font-family: "Hack";
-    font-size: 20px;
-    color: #c79ffc;
-    text-align: center;
-    margin-bottom: 30px;
-    background-color: #08183a;
-    padding: 20px;
-    width: 15%;
-    margin: 0 auto;
-  }
+.instance-label {
+  font-family: "Hack";
+  font-size: 20px;
+  color: #c79ffc;
+  margin-bottom: 30px;
+  background-color: #08183a;
+  margin: 0 auto;
+  padding: 20px;
+  width: 15%;
+}
 
-  h4 {
-    font-family: "Hack";
-    font-size: 20px;
-    color: #c79ffc;
-    text-align: left;
-    width: 70%;
-    margin: 0 auto;
-  }
-  
-p {
+.section-header {
+  font-family: "Hack";
+  font-size: 20px;
+  color: #c79ffc;
+  text-align: left;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+
+.link {
+  font-family: "Hack";
+  font-size: 18px;
+  color: #b09ffc;
+  margin-left: 15%;
+  margin-right: 15%;
+
+}
+
+.enter-button {
+  font-family: "Hack";
+  font-size: 20px;
+  color: #c79ffc;
+  margin-bottom: 30px;
+  background-color: #08183a;
+  padding: 20px;
+  width: 5%;
+  margin-left: 15%;
+  margin-right: 15%;
+  text-align: center;
+}
+
+.text {
   font-family: "Hack";
   font-size: 18px;
   color: #c79ffc;
   text-align: left;
-  padding: 20px;
-  width: 70%;
-  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  max-width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
-body {
+.centerify {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.bg {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
   background: url("background.avif") no-repeat center center fixed, #08183a;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
   background-size: cover;
 }
