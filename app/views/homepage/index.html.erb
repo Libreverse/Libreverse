@@ -1,16 +1,24 @@
-<%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+<div class=bg>
+<div class=centerify>
+    <h1 class=main>Libreverse</h1>
 
-<h1>Libreverse</h1>
+    <h2 class=secondary>#Installment number infinity of open-source vs evil trillion dollar company.</h2>
 
-<h2>#Installment number infinity of open-source vs evil trillion dollar company.</h2>
+    <p class=instance-label> This instance is: </p>
 
-<h3>This instance is: </h3>
+    <h3 class=section-header>The principle:</h3>
 
-<h4>The principle:</h4>
+    <p class=text>On October 28, 2021, Mark Zuckerberg had become the laughing stock of the internet
+    after rebranding Facebook to Meta Platforms as part of his efforts to create an online Metaverse.
+    Three years later, it’s looking increasingly like the internet is becoming the laughing
+    stock of Mark Zuckerberg, as the Metaverse grows ever closer to reality.</p>
 
-<p>On October 28, 2021, Mark Zuckerberg had become the laughing stock of the internet
-after rebranding Facebook to Meta Platforms as part of his efforts to create an online Metaverse.
-Three years later, it’s looking increasingly like the internet is becoming the laughing
-stock of Mark Zuckerberg, as the Metaverse grows ever closer to reality.<p>
+    <%= link_to 'Read more of the whitepaper at libreverse.dev', 'https://libreverse.dev/whitepaper', class: 'link', target: '_blank' %>
 
-<a <%= link_to 'Read more of the Whitepaper', '/whitepaper' %>
+    <h3 class=section-header>How to get started:</h3>
+
+    <p class=text>Just click this button. The Libreverse awaits you.</p>
+
+    <%= link_to 'Enter', '/libreverse', class: 'enter-button' %>
+</div>
+</div>
