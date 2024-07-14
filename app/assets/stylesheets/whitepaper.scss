@@ -8,11 +8,11 @@ $image-url: "sign.avif";
 }
 @font-face {
   font-family: "Hack";
-  src: url("Hack.ttf") format("truetype");
+  src: url("hack-regular-subset.woff2") format("woff2");
 }
 @font-face {
   font-family: "Hack-Italic";
-  src: url("Hack-Italic.ttf") format("truetype");
+  src: url("hack-italic-subset.woff2") format("woff2");
 }
 
 .main {
