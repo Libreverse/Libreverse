@@ -1,29 +1,38 @@
 $font-colour: #dbbcb3;
-$background-colour: #1d1c1a;
-$image-url: "sign.avif";
+$background-colour: #0e0e0e;
+$image-url: "sign.png";
 
 @font-face {
   font-family: "Lazer84";
-  src: url("Lazer84.ttf") format("truetype");
+  src: url("Lazer84.woff") format("woff");
 }
+
 @font-face {
   font-family: "Hack";
-  src: url("hack-regular-subset.woff2") format("woff2");
+  src: url("hack-regular-subset.woff") format("woff");
 }
+
 @font-face {
   font-family: "Hack-Italic";
-  src: url("hack-italic-subset.woff2") format("woff2");
+  src: url("hack-italic-subset.woff") format("woff");
 }
 
 .main {
   font-family: "Lazer84";
-  font-size: 130px;
   color: $font-colour;
-  margin-left: 15%;
-  margin-right: 15%;
-  margin-top: 20px;
-  margin-bottom: 0px;
+  margin: 0;
+  padding: 0 20px;
+  width: calc(100% - 40px);
+  white-space: nowrap;
+  text-align: center;
 }
+
+@media screen and (max-width: 1000px) {
+  .main {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+} 
 
 .secondary {
   font-family: "Hack-Italic";
@@ -35,6 +44,12 @@ $image-url: "sign.avif";
   text-align: center;
 }
 
+@media screen and (max-width: 600px) {
+  .secondary {
+    font-size: 18px;
+  }
+}
+
 .sectionheader {
   font-family: "Hack";
   font-size: 20px;
@@ -42,6 +57,12 @@ $image-url: "sign.avif";
   text-align: left;
   margin-left: 15%;
   margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+  .sectionheader {
+    font-size: 18px;
+  }
 }
 
 .text {
@@ -56,6 +77,12 @@ $image-url: "sign.avif";
   margin-right: 15%;
 }
 
+@media screen and (max-width: 600px) {
+  .text {
+    font-size: 16px;
+  }
+}
+
 .link {
   font-family: "Hack";
   font-size: 18px;
@@ -63,6 +90,12 @@ $image-url: "sign.avif";
   margin-left: 15%;
   margin-right: 15%;
   margin-bottom: 35px;
+}
+
+@media screen and (max-width: 600px) {
+  .link {
+    font-size: 16px;
+  }
 }
 
 .centerify {
