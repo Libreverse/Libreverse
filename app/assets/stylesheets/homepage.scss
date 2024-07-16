@@ -1,30 +1,39 @@
 $font-colour: #989ef1;
 $background-colour: #040206;
-$image-url: "garage.avif";
+$image-url: "garage.png";
 $label-colour: #050d1fc5;
 
 @font-face {
   font-family: "Lazer84";
-  src: url("Lazer84.ttf") format("truetype");
+  src: url("Lazer84.woff") format("woff");
 }
+
 @font-face {
   font-family: "Hack";
-  src: url("hack-regular-subset.woff2") format("woff2");
+  src: url("hack-regular-subset.woff") format("woff");
 }
+
 @font-face {
   font-family: "Hack-Italic";
-  src: url("hack-italic-subset.woff2") format("woff2");
+  src: url("hack-italic-subset.woff") format("woff");
 }
 
 .main {
   font-family: "Lazer84";
-  font-size: 200px;
   color: $font-colour;
-  margin-left: 15%;
-  margin-right: 15%;
-  margin-top: 0px;
-  margin-bottom: 0px;
+  margin: 0;
+  padding: 0 20px;
+  width: calc(100% - 40px);
+  white-space: nowrap;
+  text-align: center;
 }
+
+@media screen and (max-width: 600px) {
+  .main {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+} 
 
 .secondary {
   font-family: "Hack-Italic";
@@ -36,15 +45,28 @@ $label-colour: #050d1fc5;
   text-align: center;
 }
 
+@media screen and (max-width: 600px) {
+  .secondary {
+    font-size: 18px;
+  }
+}
+
 .instancelabel {
   font-family: "Hack";
   font-size: 20px;
   color: #b09ffc;
-  margin-bottom: 30px;
   background-color: $label-colour;
-  margin: 0 auto;
+  margin: 0 auto 30px;
   padding: 20px;
-  width: 15%;
+  display: inline-block;
+  max-width: 90%; // Adjust this value as needed
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 600px) {
+  .instancelabel {
+    font-size: 18px;
+  }
 }
 
 .sectionheader {
@@ -56,6 +78,11 @@ $label-colour: #050d1fc5;
   margin-right: 15%;
 }
 
+@media screen and (max-width: 600px) {
+  .sectionheader {
+    font-size: 18px;
+  }
+}
 
 .link {
   font-family: "Hack";
@@ -64,6 +91,12 @@ $label-colour: #050d1fc5;
   margin-left: 15%;
   margin-right: 15%;
 
+}
+
+@media screen and (max-width: 600px) {
+  .link {
+    font-size: 16px;
+  }
 }
 
 .enterbutton {
@@ -79,6 +112,12 @@ $label-colour: #050d1fc5;
   text-align: center;
 }
 
+@media screen and (max-width: 600px) {
+  .enterbutton {
+    font-size: 18px;
+  }
+}
+
 .text {
   font-family: "Hack";
   font-size: 18px;
@@ -89,6 +128,12 @@ $label-colour: #050d1fc5;
   max-width: 70%;
   margin-left: 15%;
   margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+  .text {
+    font-size: 16px;
+  }
 }
 
 .centerify {
