@@ -1,4 +1,4 @@
 class LibreverseController < ApplicationController
-  def picker
+  def index
   end
 end

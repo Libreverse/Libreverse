@@ -1,0 +1,259 @@
+/*globals*/
+@font-face {
+    font-family: "Lazer84";
+    src: url("Lazer84.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Hack";
+    src: url("hack-regular-subset.woff") format("woff");
+}  
+
+@font-face {
+    font-family: "Hack-Italic";
+    src: url("hack-italic-subset.woff") format("woff");
+}
+
+.squisher {
+    display:flex
+}
+/*homepage*/
+.hp-main {
+    font-family: "Lazer84";
+    color: #989ef1;
+    margin: 0;
+    padding: 0 20px;
+    width: calc(100% - 40px);
+    white-space: nowrap;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    .hp-main {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+}
+
+.hp-secondary {
+    font-family: "Hack-Italic";
+    font-size: 24px;
+    color: #989ef1;
+    margin-bottom: 20px;
+    margin-left: 16.5%;
+    margin-right: 16.5%;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    .hp-secondary {
+        font-size: 18px;
+    }
+}
+
+.hp-instancelabel {
+    font-family: "Hack";
+    font-size: 20px;
+    color: #b09ffc;
+    background-color: #050d1fc5;
+    margin: 0 auto 30px;
+    padding: 20px;
+    display: inline-block;
+    max-width: 90%;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 600px) {
+    .hp-instancelabel {
+        font-size: 18px;
+    }
+}
+
+.hp-sectionheader {
+    font-family: "Hack";
+    font-size: 20px;
+    color: #989ef1;
+    text-align: left;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+    .hp-sectionheader {
+        font-size: 18px;
+    }
+}
+
+.hp-link {
+    font-family: "Hack";
+    font-size: 18px;
+    color: #b09ffc;
+    margin-left: 15%;
+    margin-right: 15%;
+
+}
+
+@media screen and (max-width: 600px) {
+    .hp-link {
+        font-size: 16px;
+    }
+}
+
+.hp-enterbutton {
+    font-family: "Hack";
+    font-size: 20px;
+    color: #b09ffc;
+    background-color: #050d1fc5;
+    margin-left: 15%;
+    margin-right: 15%;
+    padding: 20px;
+    display: flex; /* Add this line to enable flexbox. */
+    justify-content: left; /* Add this line for better centering of content within the button. */
+    align-items: left; /* Also add this line for better vertical alignment. */
+}
+
+@media screen and (max-width: 600px) {
+    .hp-enterbutton {
+        font-size: 18px;
+    }
+}
+
+.hp-text {
+    font-family: "Hack";
+    font-size: 18px;
+    color: #989ef1;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    max-width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+    .hp-text {
+        font-size: 16px;
+    }
+}
+
+.hp-centerify {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.hp-bg {
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: url(garage.jpg) no-repeat center center fixed, #040206;
+    background-size: cover;
+    position: fixed;
+    overflow: hidden;
+}
+/*whitepaper*/
+.wp-main {
+    font-family: "Lazer84";
+    color: #dbbcb3;
+    margin: 0;
+    padding: 0 20px;
+    width: calc(100% - 40px);
+    white-space: nowrap;
+    text-align: center;
+}
+
+@media screen and (max-width: 1000px) {
+    .wp-main {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+}
+
+.wp-secondary {
+    font-family: "Hack-Italic";
+    font-size: 24px;
+    color: #dbbcb3;
+    margin-bottom: 20px;
+    margin-left: 16.5%;
+    margin-right: 16.5%;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    .wp-secondary {
+        font-size: 18px;
+    }
+}
+
+.wp-sectionheader {
+    font-family: "Hack";
+    font-size: 20px;
+    color: #dbbcb3;
+    text-align: left;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+    .wp-sectionheader {
+        font-size: 18px;
+    }
+}
+
+.wp-text {
+    font-family: "Hack";
+    font-size: 18px;
+    color: #dbbcb3;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    max-width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+    .wp-text {
+        font-size: 16px;
+    }
+}
+
+.wp-link {
+    font-family: "Hack";
+    font-size: 18px;
+    color: #64acb6;
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-bottom: 35px;
+}
+
+@media screen and (max-width: 600px) {
+    .wp-link {
+        font-size: 16px;
+    }
+}
+
+.wp-centerify {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.wp-bg {
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-color: #0e0e0e;
+    background: url(sign.jpg) no-repeat center center fixed, #0e0e0e;
+    background-size: cover;
+    position: fixed;
+    overflow: hidden;
+}

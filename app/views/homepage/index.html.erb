@@ -1,33 +1,35 @@
-<%= stylesheet_link_tag 'homepage', media: 'all', 'data-turbolinks-track': 'reload' %>
-
 <% content_for :head do %>
     <title>Libreverse</title>
     <meta name="description" content="The Metaverse, but Open-Source." />
 <% end %>
 
-<main>
-    <div class="bg">
+<main data-controller="scroll-locker">
+  <div data-scroll-locker-target="content">
+    <div class="hp-bg">
     </div>
-    <div class="centerify">
-        <h1 class="main" data-controller="home-heading" data-home-heading-target="text">Libreverse</h1>
+    <div class="hp-centerify">
+        <h1 class="hp-main" data-controller="home-heading" data-home-heading-target="text">Libreverse</h1>
 
-        <h2 class="secondary">#Installment number infinity of open-source vs evil trillion dollar company.</h2>
+        <h2 class="hp-secondary">#Installment number infinity of open-source vs evil trillion dollar company.</h2>
 
-        <p class="instancelabel">This instance is:</p>
+        <p class="hp-instancelabel">This instance is:</p>
 
-        <h3 class="sectionheader">The principle:</h3>
+        <h3 class="hp-sectionheader">The principle:</h3>
 
-        <p class="text">On October 28, 2021, Mark Zuckerberg had become the laughing stock of the internet
+        <p class="hp-text">On October 28, 2021, Mark Zuckerberg had become the laughing stock of the internet
             after rebranding Facebook to Meta Platforms as part of his efforts to create an online Metaverse.
             Three years later, it’s looking increasingly like the internet is becoming the laughing
             stock of Mark Zuckerberg, as the Metaverse grows ever closer to reality.</p>
 
-        <%= link_to "Read more", "/whitepaper", class:"link" %>
+        <%= link_to "Read more", "/whitepaper", class:"hp-link" %>
 
-        <h3 class="sectionheader">How to get started:</h3>
+        <h3 class="hp-sectionheader">How to get started:</h3>
 
-        <p class="text">Just click this button. The Libreverse awaits you.</p>
+        <p class="hp-text">Just click this button. The Libreverse awaits you.</p>
 
-        <%= link_to "Enter", "/libreverse/picker", class:"enterbutton" %>
+        <div class="squisher">
+          <%= link_to "Enter", "/libreverse", class:"hp-enterbutton" %>
+        </div>
     </div>
+  </div>
 </main>
