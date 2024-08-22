@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'libreverse/picker'
+  get 'libreverse' => 'libreverse#index'
   get 'whitepaper' => 'whitepaper#index'
   root "homepage#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
