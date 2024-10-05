@@ -1,0 +1,25 @@
+* {
+    scroll-behavior: smooth;
+}
+
+/*snippet first found on stackoverflow*/
+html {
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  body {
+    height: 100%;
+    overflow: auto;
+  }
+/*end snippet*/
+
+/*taken from the pre-rewrite libreverse codebase*/
+.squisher {
+    display:flex
+}
+/*end pre-rewrite libreverse codebase code*/
+
+
+
+  

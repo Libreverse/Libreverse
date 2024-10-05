@@ -1,21 +1,25 @@
+// mostly taken from my personal website codebase
 module.exports = {
   plugins: [
-    require('postcss-preset-env')({
-      browsers: ['IE 11', 'last 2 versions'],
+    require("postcss-import")({ 
+      extensions: [".scss", ".css"],
+    }),
+    require("@csstools/postcss-sass"),
+    require("tailwindcss"),
+    require("postcss-preset-env")({
       stage: 3,
       features: {
-        'custom-properties': false,
-        'nesting-rules': true
-      }
+        "custom-properties": false,
+      },
     }),
-    require('autoprefixer'),
-    require('cssnano')({
-      preset: ['default', {
-        discardComments: {
-          removeAll: true,
+    require("postcss-flexbugs-fixes"),
+    require("cssnano")({
+      preset: [
+        "default",
+        {
+          discardComments: { removeAll: true },
         },
-        normalizeWhitespace: true,
-      }]
-    })
-  ]
-}
+      ],
+    }),
+  ],
+};

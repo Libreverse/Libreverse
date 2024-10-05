@@ -1,0 +1,10 @@
+@mixin heading-text-reset() {
+    font-style: normal;
+    font-weight: normal;
+}
+
+@mixin body-text-reset() {
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1.2;
+}

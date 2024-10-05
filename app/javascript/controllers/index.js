@@ -4,11 +4,12 @@
 
 import { application } from "./application"
 
+
+import HomeBackgroundController from "./home_background_controller"
+application.register("home-background", HomeBackgroundController)
+
 import HomeHeadingController from "./home_heading_controller"
 application.register("home-heading", HomeHeadingController)
-
-import ScrollLockerController from "./scroll_locker_controller"
-application.register("scroll-locker", ScrollLockerController)
 
 import WhitepaperHeadingController from "./whitepaper_heading_controller"
 application.register("whitepaper-heading", WhitepaperHeadingController)
