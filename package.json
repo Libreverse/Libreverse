@@ -1,25 +1,40 @@
 {
-  "name": "app",
+  "name": "libreverse",
   "private": true,
   "scripts": {
-    "build": "bun bun.config.js",
-    "build:css": "NODE_ENV=production postcss ./app/assets/stylesheets/application.postcss.css -o ./app/assets/builds/application.css"
+    "build": "rollup -c --bundleConfigAsCjs rollup.config.js",
+    "build:css": "postcss ./app/assets/stylesheets/application.postcss.scss -o ./app/assets/builds/application.css"
   },
   "dependencies": {
+    "@babel/core": "^7.25.7",
+    "@babel/preset-env": "^7.25.7",
+    "@babel/preset-typescript": "^7.25.7",
+    "@csstools/postcss-sass": "^5.1.1",
     "@hotwired/stimulus": "^3.2.2",
-    "@hotwired/turbo-rails": "^8.0.5",
-    "autoprefixer": "^10.4.19",
-    "google-closure-compiler-java": "^20240317.0.0",
-    "postcss": "^8.4.39",
+    "@hotwired/turbo-rails": "^8.0.10",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "core-js": "^3.38.1",
+    "cssnano": "^7.0.6",
+    "foundation-sites": "^6.9.0",
+    "jquery": "^3.7.1",
+    "motion-ui": "^2.0.8",
+    "postcss": "^8.4.47",
     "postcss-cli": "^11.0.0",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-import": "^16.1.0",
-    "postcss-normalize": "^10.0.1",
-    "postcss-preset-env": "^9.6.0"
+    "postcss-preset-env": "^10.0.5",
+    "raindrop-fx": "^1.0.8",
+    "rollup": "^4.24.0",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2",
+    "what-input": "^5.2.12"
   },
-  "devDependencies": {
-    "@babel/core": "^7.24.9",
-    "@babel/preset-env": "^7.24.8",
-    "cssnano": "^7.0.4"
-  }
+  "trustedDependencies": [
+    "core-js"
+  ],
+  "packageManager": "bun@1.1.29"
 }

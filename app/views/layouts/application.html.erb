@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Libreverse</title>
+    <title>LibreverseInstance</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <script src="/hosted-script-tags/core-js-custom.min.js"></script>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
   <body>
-    <%= yield %>
+    <main>
+      <div class="work-in-progress-banner">
+        <div class="callout warning" data-closable>
+          <h5 style="margin-bottom: 0;">⚠️ Work in Progress ⚠️</h5>
+          <p>This app is under development. There are loads of known bugs and issues. Here be dragons!</p>
+          <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <%= yield %>
+    </main>
   </body>
 </html>

@@ -1,0 +1,115 @@
+/*taken from the pre-rewrite libreverse codebase*/
+
+.wp-main {
+  font-family: "Lazer84";
+  color: #dbbcb3;
+  margin: 0;
+  padding: 0 20px;
+  width: calc(100% - 40px);
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media screen and (max-width: 1000px) {
+  .wp-main {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 0.9;
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+  }
+}
+
+.wp-secondary {
+  font-family: "Hack-Italic";
+  font-size: 24px;
+  color: #dbbcb3;
+  margin-bottom: 20px;
+  margin-left: 16.5%;
+  margin-right: 16.5%;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  .wp-secondary {
+    font-size: 18px;
+  }
+}
+
+.wp-sectionheader {
+  font-family: "Hack";
+  font-size: 20px;
+  color: #dbbcb3;
+  text-align: left;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+  .wp-sectionheader {
+    font-size: 18px;
+  }
+}
+
+.wp-text {
+  font-family: "Hack";
+  font-size: 18px;
+  color: #dbbcb3;
+  text-align: left;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  max-width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+  .wp-text {
+    font-size: 16px;
+  }
+}
+
+.wp-link {
+  font-family: "Hack";
+  font-size: 18px;
+  color: #64acb6;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-bottom: 35px;
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 600px) {
+  .wp-link {
+    font-size: 16px;
+  }
+}
+
+.wp-centerify {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.wp-bg {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  background-color: #0e0e0e;
+}
+
+.wp-bg img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}

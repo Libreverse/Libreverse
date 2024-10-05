@@ -1,3 +1,5 @@
+//taken from the pre-rewrite libreverse codebase and modified by xAI Grok 2
+
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
@@ -15,18 +17,18 @@ export default class extends Controller {
   adjustFontSize() {
     const element = this.textTarget
     const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
   
-    let fontSize = Math.min(viewportWidth * 0.15, viewportHeight * 0.3)
-    fontSize = Math.min(fontSize, 200)
+    let fontSize = Math.min(viewportWidth * 0.15, 200)
     fontSize = Math.max(fontSize, 100)
-  
+
     element.style.fontSize = `${fontSize}px`
-  
+   
+    let newContent = element.textContent;
+
     if (viewportWidth <= 600) {
-      element.innerHTML = element.textContent.replace('verse', '<br>verse')
-    } else {
-      element.innerHTML = element.textContent
+      newContent = newContent.replace('verse', '<br>verse')
     }
+  
+    element.innerHTML = newContent
   }
 }

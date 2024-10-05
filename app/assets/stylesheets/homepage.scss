@@ -1,0 +1,153 @@
+/*mostly taken from the pre-rewrite libreverse codebase*/
+
+.hp-main {
+  @include heading-text-reset;
+  font-family: "Lazer84";
+  color: $default-text-colour;
+  margin: 0;
+  padding: 0 20px;
+  width: calc(100% - 40px);
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-main {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 0.9;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+}
+
+.hp-secondary {
+  @include body-text-reset;
+  font-family: "Hack-Italic";
+  font-size: 24px;
+  color: $default-text-colour;
+  margin-bottom: 20px;
+  margin-left: 16.5%;
+  margin-right: 16.5%;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-secondary {
+    font-size: 18px;
+  }
+}
+
+.hp-instancelabel {
+  @include body-text-reset;
+  font-family: "Hack";
+  font-size: 20px;
+  color: #b09ffc;
+  background-color: #050d1fc5;
+  margin: 0 auto 30px;
+  padding: 20px;
+  display: inline-block;
+  max-width: 90%;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-instancelabel {
+    font-size: 18px;
+  }
+}
+
+.hp-sectionheader {
+  @include body-text-reset;
+  font-family: "Hack";
+  font-size: 20px;
+  color: $default-text-colour;
+  text-align: left;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-sectionheader {
+    font-size: 18px;
+  }
+}
+
+.hp-link {
+  @include body-text-reset;
+  font-family: "Hack";
+  font-size: 18px;
+  color: #b09ffc;
+  margin-left: 15%;
+  margin-right: 15%;
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-link {
+    font-size: 16px;
+  }
+}
+
+.hp-enterbutton {
+  @include body-text-reset;
+  font-family: "Hack";
+  font-size: 20px;
+  color: #b09ffc;
+  background-color: #050d1fc5;
+  margin-left: 15%;
+  margin-right: 15%;
+  padding: 20px;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-enterbutton {
+    font-size: 18px;
+  }
+}
+
+.hp-text {
+  @include body-text-reset;
+  font-family: "Hack";
+  font-size: 18px;
+  color: $default-text-colour;
+  text-align: left;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  max-width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+@media screen and (max-width: 600px) {
+  .hp-text {
+    font-size: 16px;
+  }
+}
+
+.hp-centerify {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.hp-bg {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: -1;
+  background-color: #0e0e0e;
+}
+
+.hp-canvas {
+  width: 100%;
+  height: 100%;
+}
