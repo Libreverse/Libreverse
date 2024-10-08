@@ -4,10 +4,6 @@
 
 import { application } from "./application"
 
-
-import HomeBackgroundController from "./home_background_controller"
-application.register("home-background", HomeBackgroundController)
-
 import HomeHeadingController from "./home_heading_controller"
 application.register("home-heading", HomeHeadingController)
 

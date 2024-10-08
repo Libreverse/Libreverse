@@ -5,9 +5,9 @@ module.exports = {
       extensions: [".scss", ".css"],
     }),
     require("@csstools/postcss-sass"),
-    require("tailwindcss"),
+    require("postcss-inline-rtl"),
     require("postcss-preset-env")({
-      stage: 3,
+      stage: 0,
       features: {
         "custom-properties": false,
       },

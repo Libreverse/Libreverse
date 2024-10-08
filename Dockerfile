@@ -21,25 +21,28 @@ RUN gem update --system --no-document && \
 # Throw-away build stages to reduce size of final image
 FROM base as prebuild
 
-# Install packages needed to build gems
+# Install packages needed to build gems and node modules
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl libyaml-dev pkg-config unzip
+    apt-get install --no-install-recommends -y build-essential curl libyaml-dev node-gyp pkg-config python-is-python3
 
 
-FROM prebuild as bun
+FROM prebuild as node
 
-# Install Bun
-ARG BUN_VERSION=1.1.29
-ENV BUN_INSTALL=/usr/local/bun
-ENV PATH=/usr/local/bun/bin:$PATH
-RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v${BUN_VERSION}"
+# Install JavaScript dependencies
+ARG NODE_VERSION=20.16.0
+ARG YARN_VERSION=1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e
+ENV PATH=/usr/local/node/bin:$PATH
+RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    npm install -g yarn@$YARN_VERSION && \
+    rm -rf /tmp/node-build-master
 
 # Install node modules
-COPY --link package.json bun.lockb ./
-RUN --mount=type=cache,id=bld-bun-cache,target=/root/.bun \
-    bun install --frozen-lockfile
+COPY --link package.json yarn.lock ./
+RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
+    YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile
 
 
 FROM prebuild as build
@@ -57,10 +60,10 @@ RUN --mount=type=cache,id=bld-gem-cache,sharing=locked,target=/srv/vendor \
     bundle config set path vendor && \
     cp -ar /srv/vendor .
 
-# Copy bun modules
-COPY --from=bun /rails/node_modules /rails/node_modules
-COPY --from=bun /usr/local/bun /usr/local/bun
-ENV PATH=/usr/local/bun/bin:$PATH
+# Copy node modules
+COPY --from=node /rails/node_modules /rails/node_modules
+COPY --from=node /usr/local/node /usr/local/node
+ENV PATH=/usr/local/node/bin:$PATH
 
 # Copy application code
 COPY --link . .
