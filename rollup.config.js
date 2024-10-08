@@ -2,8 +2,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
-import analyzer from "rollup-plugin-analyzer";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 
 export default {
   input: "app/javascript/application.js",
@@ -19,11 +18,11 @@ export default {
     commonjs({
       include: 'node_modules/**', // Converts CommonJS modules to ES6
     }),
-    //babel({
-      //babelHelpers: 'bundled',
-      //configFile: './babel.config.js', // Assuming you've set up Babel configuration in this file
-      //exclude: 'node_modules/**', // Exclude node_modules from Babel transformation if not already handled by config
-    //}),
+    babel({
+      babelHelpers: 'bundled',
+      configFile: './babel.config.js', // Assuming you've set up Babel configuration in this file
+      exclude: 'node_modules/**', // Exclude node_modules from Babel transformation if not already handled by config
+    }),
     terser({
       ecma: 5, // Set the ECMAScript target version to 5 for compatibility
       mangle: {
@@ -32,10 +31,6 @@ export default {
       output: {
         comments: false, // Remove all comments in the output
       },
-    }),
-    analyzer({
-      summaryOnly: true,
-      limit: 5,
     }),
   ],
 }; 

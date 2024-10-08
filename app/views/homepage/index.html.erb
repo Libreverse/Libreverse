@@ -1,6 +1,6 @@
 <!-- most of this was taken from the libreverse codebase --> 
-<div class="hp-bg" data-controller="home-background">
-    <canvas id="canvas" class="hp-canvas" data-background-image="<%= image_path('garage.jpg') %>"></canvas>
+<div class="hp-bg">
+<%= image_tag("garage.jpg", alt: "Background image representing the Libreverse environment", loading: "eager", decoding: "async") %>
 </div>
 <div class="hp-centerify">
     <h1 class="hp-main" data-controller="home-heading" data-home-heading-target="text">Libreverse</h1>

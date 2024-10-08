@@ -1,25 +1,18 @@
 * {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
-/*snippet first found on stackoverflow*/
+/*snippet first found on stackoverflow modified by xAI grok 2 to work in firefox*/
 html {
-    overflow: hidden;
-    height: 100%;
-  }
-  
-  body {
-    height: 100%;
-    overflow: auto;
-  }
-/*end snippet*/
-
-/*taken from the pre-rewrite libreverse codebase*/
-.squisher {
-    display:flex
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: contain;
 }
-/*end pre-rewrite libreverse codebase code*/
 
-
-
-  
+body {
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+/*end snippet*/
