@@ -31,5 +31,11 @@ module LibreverseInstance
     
     # Add a fonts directory to the rails assets pipeline
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
+
+    # Add an emoji directory to the rails assets pipeline
+    config.assets.paths << Rails.root.join("app", "assets", "emoji")
+
+    # Add an emoji directory to the rails assets pipeline
+    config.assets.paths << Rails.root.join("app", "assets", "fontawesome")
   end
 end

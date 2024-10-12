@@ -13,23 +13,23 @@ export default {
   },
   plugins: [
     resolve({
-      extensions: ['.js', '.ts'], // Resolve both JavaScript and TypeScript files
+      extensions: ['.js', '.ts'],
     }),
     commonjs({
-      include: 'node_modules/**', // Converts CommonJS modules to ES6
+      include: 'node_modules/**',
     }),
     babel({
       babelHelpers: 'bundled',
-      configFile: './babel.config.js', // Assuming you've set up Babel configuration in this file
-      exclude: 'node_modules/**', // Exclude node_modules from Babel transformation if not already handled by config
+      configFile: './babel.config.js',
+      exclude: 'node_modules/**',
     }),
     terser({
-      ecma: 5, // Set the ECMAScript target version to 5 for compatibility
+      ecma: 5,
       mangle: {
-        safari10: true, // For fixing Safari 10/11 issues
+        safari10: true,
       },
       output: {
-        comments: false, // Remove all comments in the output
+        comments: false,
       },
     }),
   ],

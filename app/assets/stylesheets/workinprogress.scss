@@ -1,14 +1,14 @@
 .work-in-progress-banner {
-    position: fixed; /* Fix the position relative to the viewport */
-    bottom: 10px;    /* Distance from the bottom */
-    right: 10px;     /* Distance from the right */
-    z-index: 1000;   /* Ensure it appears above other elements */
-    max-width: 300px; /* Optional: to limit the width of the banner */
-  }
-  
-  /* Ensure the callout doesn't inherit unwanted styles or add specific styles if needed */
-  .callout.warning {
-    margin-bottom: 0; /* If you want to ensure there's no margin at the bottom */
-    /* You might want to add some box-shadow for depth */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
+  position: fixed; /* Fix the position relative to the viewport */
+  bottom: 10px; /* Distance from the bottom */
+  right: 10px; /* Distance from the right */
+  z-index: 1000; /* Ensure it appears above other elements */
+  max-width: 300px; /* Optional: to limit the width of the banner */
+}
+
+/* Ensure the callout doesn't inherit unwanted styles or add specific styles if needed */
+.callout.warning {
+  margin-bottom: 0; /* If you want to ensure there's no margin at the bottom */
+  /* You might want to add some box-shadow for depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

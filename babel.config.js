@@ -5,6 +5,6 @@ module.exports = {
       corejs: 0,
       modules: false,
     }],
-    '@babel/preset-typescript', // This will strip TypeScript types by default
+    '@babel/preset-typescript',
   ],
 };

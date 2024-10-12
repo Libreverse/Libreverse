@@ -11,16 +11,27 @@
 
   <body>
     <main>
+      <div class="sidebar-container">
+        <div class="sidebar">
+          <i class="fa fa-2x fa-chevron-right sidebar-icon"></i>
+        </div>
+      </div>
+    <div class="content">
       <div class="work-in-progress-banner">
-        <div class="callout warning" data-closable>
-          <h5 style="margin-bottom: 0;">⚠️ Work in Progress ⚠️</h5>
-          <p>This app is under development. There are loads of known bugs and issues. Here be dragons!</p>
+        <div class="callout primary" data-closable>
+          <h5 style="margin-bottom: 0;">We <i class="twa twa-red-heart"></i> open source</h5>
+          <p>Specifically, <a href="https://github.com/twitter/twemoji?tab=readme-ov-file">Twemoji </a>
+          by <a href="https://x.com">X Corp </a>licensed under <a href="https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS">CC-BY-4.0</a>
+          and <a href="https://fontawesome.com">Fontawesome </a>
+          by <a href="https://fontawesome.com">Fontawesome </a>licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>
+          </p>
           <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
       </div>
       <%= yield %>
+    </div>
     </main>
   </body>
 </html>
