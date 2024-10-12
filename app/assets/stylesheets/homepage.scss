@@ -9,6 +9,41 @@
   width: calc(100% - 40px);
   white-space: nowrap;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hp-main span {
+  /* Initially, both spans are shown, but we'll hide one based on screen size */
+  transition: font-size 0.3s ease;
+}
+
+/* Default font size for larger screens */
+.hp-main .large {
+  font-size: 15vw; /* Using vw for responsive sizing relative to viewport width */
+}
+
+/* Hide the small text version by default */
+.hp-main .small {
+  display: none;
+}
+
+/* Adjust font size for smaller screens */
+@media (max-width: 600px) {
+  .hp-main .large {
+    display: none;
+  }
+  
+  .hp-main .small {
+    display: inline;
+    font-size: 25vw; /* Larger for visibility, could be adjusted */
+  }
+}
+
+/* Ensure the font size doesn't get too small or too large */
+.hp-main span {
+  font-size: clamp(100px, 15vw, 200px);
 }
 
 @media screen and (max-width: 600px) {
