@@ -90,6 +90,7 @@ Rails.application.configure do
   # Enable DNS rebinding protection and other `Host` header attacks.
    config.hosts = [
      "libreverse.geor.me",
+     "libreverse.dev",
      "localhost:3000"
    ]
   # Skip DNS rebinding protection for the default health check endpoint.
