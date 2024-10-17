@@ -1,0 +1,30 @@
+.sidebar-button {
+    width: auto;
+    height: auto;
+    position: fixed;
+    background-color: rgba(128, 128, 128, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0 20px 20px 0;
+    display: flex;
+    align-items: center;
+    z-index: 3;
+  }
+  
+  .sidebar-button-container {
+    width: 100px;
+    height: 100vh;
+    position: fixed;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+  }
+  
+  .sidebar-button-icon{
+    padding: 5px;
+    filter: invert(50%)
+  }
+  

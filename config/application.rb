@@ -25,9 +25,6 @@ module LibreverseInstance
     # config.eager_load_paths << Rails.root.join("extras")
     
     # the following came from my personal website
-
-    # Use rack deflater for asset compression
-    config.middleware.use Rack::Deflater
     
     # Add a fonts directory to the rails assets pipeline
     config.assets.paths << Rails.root.join("app", "assets", "fonts")

@@ -88,11 +88,14 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-   config.hosts = [
-     "libreverse.geor.me",
-     "libreverse.dev",
-     "localhost:3000"
-   ]
+  config.hosts = [
+    "libreverse.geor.me",
+    "libreverse.dev",
+    "localhost:3000"
+  ]
   # Skip DNS rebinding protection for the default health check endpoint.
-   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  
+  # Use rack deflater for asset compression
+  config.middleware.use Rack::Deflater
 end

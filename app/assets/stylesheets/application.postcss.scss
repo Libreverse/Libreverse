@@ -1,12 +1,13 @@
 @charset "UTF-8";
 @import "../../../node_modules/foundation-sites/dist/css/foundation.css";
 @import "../../../node_modules/motion-ui/dist/motion-ui.css";
+@import "banner.scss";
 @import "fontawesome.scss";
 @import "twemoji-amazing.scss";
 @import 'vars.scss';
 @import "globals.scss";
 @import "fonts.scss";
 @import "resets.scss";
+@import "sidebar.scss";
 @import "homepage.scss";
 @import "whitepaper.scss";
-@import "workinprogress.scss"
