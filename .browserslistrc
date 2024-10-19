@@ -1,8 +1,7 @@
-ie 11
-last 2 Chrome versions
-last 2 Firefox versions
-last 2 Edge versions
-Safari >= 9
-last 2 iOS versions
-last 2 and_chr versions
-last 2 and_ff versions
+Chrome >= 32
+Edge >= 79
+Safari >= 8
+Firefox >= 24
+and_chr >= 129
+iOS >= 8
+and_ff >= 130
