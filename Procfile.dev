@@ -1,0 +1,3 @@
+webserver-proc: env RUBY_DEBUG_OPEN=true bin/rails server
+javascript-build-proc: yarn build --watch
+css-build-proc: yarn build:css --watch
