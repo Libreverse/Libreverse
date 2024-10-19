@@ -1,5 +1,10 @@
 * {
   scroll-behavior: smooth;
+  user-drag: none;
+}
+
+img {
+  user-select: none;
 }
 
 /*snippet first found on stackoverflow modified by xAI grok 2 to work in firefox*/
@@ -16,6 +21,6 @@ body {
 }
 /*end snippet*/
 
-.turbo-progress-bar{
+.turbo-progress-bar {
   background-color: #59829f;
 }
