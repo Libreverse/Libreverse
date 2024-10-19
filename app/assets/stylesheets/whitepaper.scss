@@ -1,6 +1,7 @@
 /*taken from the pre-rewrite libreverse codebase*/
 
 .wp-main {
+  @include heading-text-reset;
   font-family: "Lazer84";
   color: #dbbcb3;
   margin: 0;
@@ -8,16 +9,69 @@
   width: calc(100% - 40px);
   white-space: nowrap;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@media screen and (max-width: 1000px) {
-  .wp-main {
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 0.9;
-    margin-top: 2.5%;
-    margin-bottom: 2.5%;
+.wp-main span {
+  transition: font-size 0.3s ease;
+}
+
+/* Default styles for all screen sizes */
+.wp-main .large {
+  font-size: 15vw; /* Large size by default for bigger screens */
+}
+
+.wp-main .medium, .wp-main .small {
+  display: none; /* Hide medium and small by default */
+}
+
+/* Small screens - typically mobile devices */
+@media (max-width: 480px) {
+  .wp-main .large, .wp-main .medium {
+    display: none;
   }
+  
+  .wp-main .small {
+    display: inline;
+    font-size: 25vw; /* Adjust as necessary for visibility */
+    white-space: normal;
+    line-height: 1.2; /* Adjust for better readability */
+  }
+  
+  .wp-main {
+    flex-direction: column;
+    word-wrap: break-word;
+  }
+}
+
+/* Medium screens - tablets */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .wp-main .large, .wp-main .small {
+    display: none;
+  }
+  
+  .wp-main .medium {
+    display: inline;
+    font-size: 10vw; /* Adjust size for tablets */
+  }
+}
+
+/* Large screens - desktops */
+@media (min-width: 1025px) {
+  .wp-main .medium, .wp-main .small {
+    display: none;
+  }
+  
+  .wp-main .large {
+    font-size: 10vw; /* Could be adjusted based on design preference */
+  }
+}
+
+/* Ensure the font size has a minimum and maximum */
+.wp-main span {
+  font-size: clamp(50px, 15vw, 200px);
 }
 
 .wp-secondary {
