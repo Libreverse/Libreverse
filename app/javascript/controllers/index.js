@@ -3,9 +3,3 @@
 // ./bin/rails generate stimulus controllerName
 
 import { application } from "./application"
-
-import HomeHeadingController from "./home_heading_controller"
-application.register("home-heading", HomeHeadingController)
-
-import WhitepaperHeadingController from "./whitepaper_heading_controller"
-application.register("whitepaper-heading", WhitepaperHeadingController)
