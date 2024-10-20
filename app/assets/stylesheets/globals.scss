@@ -1,17 +1,9 @@
-* {
-  scroll-behavior: smooth;
-  user-drag: none;
-}
-
-img {
-  user-select: none;
-}
-
-/*snippet first found on stackoverflow modified by xAI grok 2 to work in firefox*/
+/*snippet first found on stackoverflow modified by xAI grok 2 to work in firefox. Also has some modification from me*/
 html {
   overflow: hidden;
   height: 100%;
   overscroll-behavior: contain;
+  scroll-behavior: smooth;
 }
 
 body {

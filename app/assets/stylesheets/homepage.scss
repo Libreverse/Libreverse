@@ -1,7 +1,6 @@
 /*mostly taken from the pre-rewrite libreverse codebase*/
 
 .hp-main {
-  @include heading-text-reset;
   font-family: "Lazer84";
   color: $default-text-colour;
   margin: 0;
@@ -34,7 +33,7 @@
   .hp-main .large {
     display: none;
   }
-  
+
   .hp-main .small {
     display: inline;
     font-size: 25vw; /* Larger for visibility, could be adjusted */
@@ -57,7 +56,6 @@
 }
 
 .hp-secondary {
-  @include body-text-reset;
   font-family: "Hack-Italic";
   font-size: 24px;
   color: $default-text-colour;
@@ -74,7 +72,6 @@
 }
 
 .hp-instancelabel {
-  @include body-text-reset;
   font-family: "Hack";
   font-size: 20px;
   color: #b09ffc;
@@ -87,7 +84,6 @@
   border-radius: 2px;
 }
 
-
 @media screen and (max-width: 600px) {
   .hp-instancelabel {
     font-size: 18px;
@@ -95,7 +91,6 @@
 }
 
 .hp-sectionheader {
-  @include body-text-reset;
   font-family: "Hack";
   font-size: 20px;
   color: $default-text-colour;
@@ -112,7 +107,6 @@
 }
 
 .hp-link {
-  @include body-text-reset;
   font-family: "Hack";
   font-size: 18px;
   color: #b09ffc;
@@ -128,7 +122,6 @@
 }
 
 .hp-enterbutton {
-  @include body-text-reset;
   font-family: "Hack";
   font-size: 20px;
   color: #b09ffc;
@@ -149,7 +142,6 @@
 }
 
 .hp-text {
-  @include body-text-reset;
   font-family: "Hack";
   font-size: 18px;
   color: $default-text-colour;
@@ -195,8 +187,8 @@
   object-fit: cover;
   z-index: -1;
   filter: blur(5px);
-} 
+}
 
 .squisher {
-  display:flex
+  display: flex;
 }
