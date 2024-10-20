@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   web:
     build:
@@ -7,33 +6,32 @@ services:
       args:
         UID: 1000
         GID: 1000
-    volumes:
-      - ./log:/rails/log
-      - ./storage:/rails/storage
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgres://root:password@postgres-db/
-    secrets:
-      - source: master_key
-        target: /rails/config/master.key
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      DATABASE_URL: postgres://root:${DATABASE_PASSWORD}@postgres-db/
     depends_on:
       postgres-db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   postgres-db:
     image: postgres
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - ./tmp/postgres-db:/var/lib/postgresql/data
+      - ./tmp/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: pg_isready
       interval: 2s
       timeout: 5s
       retries: 30
-
-secrets:
-  master_key:
-    file: ./config/master.key
