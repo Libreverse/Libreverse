@@ -1,5 +1,3 @@
-const { plugins } = require("./postcss.config");
-
 // mostly taken from my personal website codebase
 module.exports = {
   plugins: [
@@ -31,7 +29,7 @@ module.exports = {
           normalizeCharset: true,
           mergeRules: true,
           discardUnused: { fontFace: true, keyframes: true },
-                    svgo: {
+          svgo: {
             plugins: [{ removeViewBox: false }, { removeDimensions: true }],
           },
           convertValues: { length: true },
