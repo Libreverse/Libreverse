@@ -263,7 +263,7 @@ DEPENDENCIES
   htmlcompressor (~> 0.4.0)
   jbuilder
   jsbundling-rails
-  pg (~> 1.5)
+  pg (~> 1.1)
   puma (>= 5.0)
   rack-attack
   rails (~> 7.1.4)
