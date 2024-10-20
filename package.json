@@ -18,17 +18,14 @@
     "core-js": "^3.38.1",
     "cssnano": "^7.0.6",
     "cssnano-preset-advanced": "^7.0.6",
-    "foundation-sites": "^6.9.0",
-    "jquery": "^3.7.1",
-    "motion-ui": "^2.0.8",
+    "normalise.scss": "^1.0.1",
     "postcss": "^8.4.47",
     "postcss-cli": "^11.0.0",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-import": "^16.1.0",
     "postcss-inline-rtl": "^0.9.8",
     "postcss-preset-env": "^10.0.5",
-    "rollup": "^4.24.0",
-    "what-input": "^5.2.12"
+    "rollup": "^4.24.0"
   },
   "trustedDependencies": [
     "core-js"

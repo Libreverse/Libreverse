@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="ltr">
+<html dir="ltr" lang="en-GB">
   <head>
     <title>Libreverse</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,37 +11,11 @@
 
   <body>
     <main>
-      <div class="off-canvas-wrapper">
-        <div class="off-canvas position-left" id="offCanvas" data-off-canvas> 
-          <button class="close-button" aria-label="Close menu" type="button" data-close>
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="off-canvas-content" data-off-canvas-content>
-          <div class="sidebar-button-container">
-            <div class="sidebar-button">
-              <button type="button" data-toggle="offCanvas">
-              <i class="fa fa-2x sidebar-button-icon"><%=image_tag("chevron-right.svg")%></i>
-              <button>
-            </div>
-          </div>
-        </div>
-        <div class="content">
-          <div class="callout banner primary" data-closable>
-            <h5>We <i class="twa"><%=image_tag("2764.svg")%></i> open source</h5>
-            <p>Specifically, <a href="https://github.com/twitter/twemoji?tab=readme-ov-file">Twemoji </a>
-            by <a href="https://x.com">X Corp </a>licensed under <a href="https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS">CC-BY-4.0</a>
-            and <a href="https://fontawesome.com">Fontawesome </a>
-            by <a href="https://fontawesome.com">Fontawesome </a>licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>
-            </p>
-            <button class="close-button" aria-label="Dismiss Attribution Notification" type="button" data-close>
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+      <div class="sidebar-container">
+        <div class="sidebar">
         </div>
       </div>
       <%= yield %>
-    </div>
     </main>
   </body>
 </html>

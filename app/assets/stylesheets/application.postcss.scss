@@ -1,8 +1,6 @@
 @charset "UTF-8";
 /*dependencies*/
-@import "../../../node_modules/foundation-sites/dist/css/foundation.css";
-@import "../../../node_modules/motion-ui/dist/motion-ui.css";
-@import "resets.scss";
+@import "../../../node_modules/normalise.scss/normalise.scss";
 @import 'vars.scss';
 /*dependants*/
 @import "fonts.scss";
