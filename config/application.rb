@@ -30,12 +30,9 @@ module LibreverseInstance
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
 
     # Add an emoji directory to the rails assets pipeline
-    config.assets.paths << Rails.root.join("app", "assets", "emoji")
+    config.assets.paths << Rails.root.join("app", "assets", "twemoji")
 
     # Add an emoji directory to the rails assets pipeline
     config.assets.paths << Rails.root.join("app", "assets", "fontawesome")
-      
-    # Use rack deflater for asset compression
-    config.middleware.use Rack::Deflater
   end
 end

@@ -1,4 +1,4 @@
 # utility scripts are from my personal website codebaase
-./dockernuke.sh
-./dbcleanse.sh
-./build.sh
+./scripts/dockernuke.sh
+./scripts.dbcleanse.sh
+./script/build.sh
