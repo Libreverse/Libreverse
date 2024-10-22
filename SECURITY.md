@@ -1,4 +1,3 @@
-// taken from the main libreverse project
 # Libreverse General Security Policy
 
 ## Commitment
