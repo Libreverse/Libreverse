@@ -2,7 +2,7 @@
 
 .wp-main {
   font-family: "Lazer84";
-  color: #dbbcb3;
+  color: $wp-primary;
   margin: 0;
   padding: 0 20px;
   width: calc(100% - 40px);
@@ -80,7 +80,7 @@
 .wp-secondary {
   font-family: "Hack-Italic";
   font-size: 24px;
-  color: #dbbcb3;
+  color: $wp-primary;
   margin-bottom: 20px;
   margin-left: 16.5%;
   margin-right: 16.5%;
@@ -96,7 +96,7 @@
 .wp-sectionheader {
   font-family: "Hack";
   font-size: 20px;
-  color: #dbbcb3;
+  color: $wp-primary;
   text-align: left;
   margin-left: 15%;
   margin-right: 15%;
@@ -111,7 +111,7 @@
 .wp-text {
   font-family: "Hack";
   font-size: 18px;
-  color: #dbbcb3;
+  color: $wp-primary;
   text-align: left;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -129,7 +129,7 @@
 .wp-link {
   font-family: "Hack";
   font-size: 18px;
-  color: #64acb6;
+  color: $wp-secondary;
   margin-left: 15%;
   margin-right: 15%;
   margin-bottom: 35px;
@@ -158,7 +158,7 @@
   height: 100vh;
   z-index: -1;
   overflow: hidden;
-  background-color: #0e0e0e;
+  background-color: $background;
 }
 
 .wp-bg img {

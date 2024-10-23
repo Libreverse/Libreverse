@@ -1,4 +1,3 @@
-/*snippet first found on stackoverflow modified by xAI grok 2 to work in firefox. Also has some modification from me*/
 html {
   overflow: hidden;
   height: 100%;
@@ -11,8 +10,7 @@ body {
   overflow: auto;
   overscroll-behavior-y: none;
 }
-/*end snippet*/
 
 .turbo-progress-bar {
-  background-color: #59829f;
+  background-color: $progress-bar;
 }
