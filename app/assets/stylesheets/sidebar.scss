@@ -1,28 +1,77 @@
 .sidebar {
   width: 50px;
   height: 80vh;
-  background-color: rgba(128, 128, 128, 0.3);
+  background-color: $glass;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 30px $box-shadow;
+  border-top: 1px solid $glass-border;
+  border-right: 1px solid $glass-border;
+  border-bottom: 1px solid $glass-border;
   border-radius: 0 20px 20px 0;
   z-index: 3;
-  position: fixed;
   transition: width 0.3s ease;
-  overflow-x: hidden;
-}
-
-.sidebar:hover {
-  width: 100px;
+  position: fixed;
 }
 
 .sidebar-container {
-  width: 100px;
+    width: 100px;
   height: 100vh;
   position: fixed;
   z-index: 2;
   display: flex;
   align-items: center;
+}
+
+.sidebar-contents {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.sidebar-icons {
+    padding: 5px;
+}
+
+.icon-invert{
+    filter: invert(0.5);
+}
+
+.sidebar:hover {
+    width: 100px;
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    width: 25px;
+    border-radius: 0 10px 10px 0;
+  }
+  
+  .sidebar-icons {
+    padding: 0px;
+  }
+  
+  .sidebar:hover {
+    padding: 5px
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1300px) {
+  .sidebar {
+    width: 50px;
+  }
+}
+
+@media (min-width: 1301px) and (max-width: 1500px) {
+  .sidebar {
+    width: 75px;
+  }
+}
+
+@media (min-width: 1501px) {
+  .sidebar {
+    width: 100px; /* Full width for standard desktop screens and up */
+  }
 }

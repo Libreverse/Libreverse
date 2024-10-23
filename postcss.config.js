@@ -1,4 +1,3 @@
-// mostly taken from my personal website codebase
 module.exports = {
   plugins: [
     require("postcss-import")({

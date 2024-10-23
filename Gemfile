@@ -35,21 +35,24 @@ gem "cssbundling-rails"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
-# Following block is from my personal website code 
-
 # HTML compressor to minify HTML when sent to the client
-gem 'htmlcompressor', '~> 0.4.0'
+gem "htmlcompressor", "~> 0.4.0"
 
 # Rack-attack to rate-limit HTTP endpoints
-gem 'rack-attack'
+gem "rack-attack"
 
 # fly.io's dockerfile generator to generate a docker compose file for the site.
-gem "dockerfile-rails", ">= 1.6", :group => :development
+gem "dockerfile-rails", ">= 1.6", group: :development
 
-# end block
+# Dependencies for the code formatter
+gem "prettier_print"
+gem "syntax_tree"
+gem "syntax_tree-haml"
+gem "syntax_tree-rbs"
+# end dependencies for the code formatter
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: true
@@ -59,7 +62,7 @@ gem "bootsnap", require: true
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ]
+  gem "debug", platforms: %i[mri windows]
 end
 
 group :development do

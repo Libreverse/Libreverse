@@ -2,7 +2,7 @@
 
 .hp-main {
   font-family: "Lazer84";
-  color: $default-text-colour;
+  color: $hp-primary;
   margin: 0;
   padding: 0 20px;
   width: calc(100% - 40px);
@@ -58,7 +58,7 @@
 .hp-secondary {
   font-family: "Hack-Italic";
   font-size: 24px;
-  color: $default-text-colour;
+  color: $hp-primary;
   margin-bottom: 20px;
   margin-left: 16.5%;
   margin-right: 16.5%;
@@ -66,7 +66,7 @@
 }
 
 @media screen and (max-width: 600px) {
-  .hp-secondary {
+  .hp-hp-secondary {
     font-size: 18px;
   }
 }
@@ -74,8 +74,8 @@
 .hp-instancelabel {
   font-family: "Hack";
   font-size: 20px;
-  color: #b09ffc;
-  background-color: #050d1fc5;
+  color: $hp-secondary;
+  background-color: $pill-background;
   margin: 0 auto 30px;
   padding: 20px;
   display: inline-block;
@@ -93,7 +93,7 @@
 .hp-sectionheader {
   font-family: "Hack";
   font-size: 20px;
-  color: $default-text-colour;
+  color: $hp-primary;
   text-align: left;
   margin-left: 15%;
   margin-right: 15%;
@@ -109,7 +109,7 @@
 .hp-link {
   font-family: "Hack";
   font-size: 18px;
-  color: #b09ffc;
+  color: $hp-secondary;
   margin-left: 15%;
   margin-right: 15%;
   text-decoration: underline;
@@ -124,8 +124,8 @@
 .hp-enterbutton {
   font-family: "Hack";
   font-size: 20px;
-  color: #b09ffc;
-  background-color: #050d1fc5;
+  color: $hp-secondary;
+  background-color: $pill-background;
   margin-left: 15%;
   margin-right: 15%;
   padding: 20px;
@@ -144,7 +144,7 @@
 .hp-text {
   font-family: "Hack";
   font-size: 18px;
-  color: $default-text-colour;
+  color: $hp-primary;
   text-align: left;
   margin-top: 15px;
   margin-bottom: 10px;
@@ -175,7 +175,7 @@
   height: 100vh;
   z-index: -1;
   overflow: hidden;
-  background-color: #0e0e0e;
+  background-color: $background;
 }
 
 .hp-bg img {
