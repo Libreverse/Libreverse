@@ -14,7 +14,7 @@
 }
 
 .sidebar-container {
-    width: 100px;
+  width: 100px;
   height: 100vh;
   position: fixed;
   z-index: 2;
@@ -32,15 +32,15 @@
 }
 
 .sidebar-icons {
-    padding: 5px;
+  padding: 5px;
 }
 
-.icon-invert{
-    filter: invert(0.5);
+.icon-invert {
+  filter: invert(0.5);
 }
 
 .sidebar:hover {
-    width: 100px;
+  width: 100px;
 }
 
 @media (max-width: 600px) {
@@ -48,13 +48,13 @@
     width: 25px;
     border-radius: 0 10px 10px 0;
   }
-  
+
   .sidebar-icons {
     padding: 0px;
   }
-  
+
   .sidebar:hover {
-    padding: 5px
+    padding: 5px;
   }
 }
 
