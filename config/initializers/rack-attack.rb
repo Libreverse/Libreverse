@@ -1,15 +1,15 @@
 class Rack::Attack
   Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
-  throttle("req/ip", limit: 120, period: 5.minutes) { |req| req.ip }
+  throttle("req/ip", limit: 1200, period: 1.minutes) { |req| req.ip }
 
   self.throttled_responder =
     lambda do |request|
       [
         429, # status
-        { "Content-Type" => "text/plain", "Retry-After" => "300" }, # headers, with Retry-After
+        { "Content-Type" => "text/plain", "Retry-After" => "60" }, # headers, with Retry-After
         [
-          "Your traffic has been throttled because you sent too many requests. Please try again in 5 minutes (300 seconds)"
+          "Your traffic has been throttled because you sent too many requests. Please try again in one minute"
         ]
       ]
     end

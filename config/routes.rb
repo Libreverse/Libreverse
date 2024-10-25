@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :search_new, only: [:index]
+  get 'search_new/index'
+  get "search" => "search#index"
+  post "search" => "search#create"
   get "whitepaper" => "whitepaper#index"
   root "homepage#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
