@@ -9,7 +9,7 @@
   border-bottom: 1px solid $glass-border;
   border-radius: 0 20px 20px 0;
   z-index: 3;
-  transition: width 0.3s ease;
+  transition: width, 0.3s;
   position: fixed;
 }
 
@@ -29,6 +29,7 @@
   height: 100%;
   padding: 2px;
   box-sizing: border-box;
+  transition: padding, 0.3s;
 }
 
 .sidebar-icons {
@@ -58,20 +59,14 @@
   }
 }
 
-@media (min-width: 601px) and (max-width: 1300px) {
+@media (min-width: 601px) and (max-width: 1500px) {
   .sidebar {
     width: 50px;
   }
 }
 
-@media (min-width: 1301px) and (max-width: 1500px) {
-  .sidebar {
-    width: 75px;
-  }
-}
-
 @media (min-width: 1501px) {
   .sidebar {
-    width: 100px; /* Full width for standard desktop screens and up */
+    width: 100px;
   }
 }
