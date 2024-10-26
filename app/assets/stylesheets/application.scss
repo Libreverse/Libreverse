@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /*dependencies*/
-@import "../../../node_modules/normalise.scss/normalise.scss";
+@import "normalise.scss";
 @import "vars.scss";
 /*dependants*/
 @import "fonts.scss";
@@ -11,3 +11,4 @@
 /*splittable*/
 @import "homepage.scss";
 @import "whitepaper.scss";
+@import "search.scss"

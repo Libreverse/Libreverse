@@ -1,12 +1,15 @@
-<h1>Search Experiences</h1>
-
-<%= form_tag(search_path, method: :get, data: { controller: "search", action: "input->search#updateSearch" }) do %>
-  <%= text_field_tag :search, params[:search], 
-                     placeholder: "Search experiences...", 
-                     data: { search_target: "query" } %>
-<% end %>
-
-
-<%= turbo_frame_tag :experiences_list, data: { search_target: "results" } do %>
-  <%= render partial: 'experiences_list', locals: { experiences: @experiences } %>
-<% end %>
+<div class="sp-centerhack">
+  <div>
+    <h1>Search Experiences</h1>
+    
+    <%= form_tag(search_path, method: :get, data: { controller: "search", action: "input->search#updateSearch" }) do %>
+      <%= text_field_tag :search, params[:search], 
+                        placeholder: "Search experiences...", 
+                        data: { search_target: "query" } %>
+    <% end %>
+    
+    <%= turbo_frame_tag :experiences_list, data: { search_target: "results" } do %>
+      <%= render partial: 'experiences_list', locals: { experiences: @experiences } %>
+    <% end %>
+    </div>
+</div>
