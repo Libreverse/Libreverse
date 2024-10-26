@@ -1,4 +1,3 @@
-fix css build once and for all
 increase the scope of dockerignore
 fix csp
 install action cable and redis
