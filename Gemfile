@@ -26,6 +26,10 @@ gem "stimulus-rails"
 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 gem "cssbundling-rails"
 
+# Sentry-Ruby to track backend crashes
+gem "sentry-ruby"
+gem "sentry-rails"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
