@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.3.3
+ARG RUBY_VERSION=3.3.4
 FROM quay.io/evl.ms/fullstaq-ruby:${RUBY_VERSION}-jemalloc-slim AS base
 
 # Rails app lives here
@@ -46,7 +46,6 @@ FROM prebuild AS build
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN sed -i "/net-pop (0.1.2)/a\      net-protocol" Gemfile.lock
 RUN --mount=type=cache,id=bld-gem-cache,sharing=locked,target=/srv/vendor \
   bundle config set app_config .bundle \
   && bundle config set path /srv/vendor \

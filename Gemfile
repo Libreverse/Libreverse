@@ -30,8 +30,8 @@ gem "cssbundling-rails"
 gem "sentry-ruby"
 gem "sentry-rails"
 
-# Use Redis adapter to run Action Cable in production
-# gem "redis", ">= 4.0.1"
+# Use Redis adapter to run Action Cable in production and for caching
+gem "redis", ">= 4.0.1"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -47,13 +47,6 @@ gem "rack-attack"
 
 # fly.io's dockerfile generator to generate a docker compose file for the site.
 gem "dockerfile-rails", ">= 1.6", group: :development
-
-# Dependencies for the code formatter
-gem "prettier_print"
-gem "syntax_tree"
-gem "syntax_tree-haml"
-gem "syntax_tree-rbs"
-# end dependencies for the code formatter
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]
@@ -75,6 +68,13 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   gem "spring"
+
+  # Dependencies for the code formatter
+  gem "prettier_print"
+  gem "syntax_tree"
+  gem "syntax_tree-haml"
+  gem "syntax_tree-rbs"
+  # end dependencies for the code formatter
 end
 
 group :test do

@@ -2,10 +2,13 @@
   "name": "libreverse",
   "private": true,
   "scripts": {
-    "build": "rollup -c -w --bundleConfigAsCjs rollup.config.js",
+    "build": "rollup -c --bundleConfigAsCjs rollup.config.js",
     "build:css": "gulp build",
+    "devbuild": "rollup -c -w --bundleConfigAsCjs rollup.config.js",
+    "devbuild:css": "gulp devbuild",
     "prepare": "husky",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "analyse:security": "codeql database create db --language=ruby,javascript && codeql database analyze db --format=sarif-latest --output=results.sarif -- codeql-packs/ruby-queries,codeql-packs/js-queries"
   },
   "dependencies": {
     "@babel/core": "^7.25.7",
