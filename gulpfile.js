@@ -46,5 +46,8 @@ function watchTask() {
   watch("./app/assets/stylesheets/**/*.scss", cssTask);
 }
 
-const buildseuqence = gulp.series(cssTask, watchTask);
+// Export a single task that builds and then watches
+const buildseuqence = gulp.series(cssTask);
 exports.build = buildseuqence;
+const devbuildseuqence = gulp.series(cssTask, watchTask);
+exports.devbuild = buildseuqence;
