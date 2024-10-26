@@ -7,11 +7,11 @@ export default class extends Controller {
     const query = this.queryTarget.value.trim(); // Trim any whitespace
     let url;
 
-    if (query === '') {
-      url = '/search'; // No query, just use the base path
+    if (query === "") {
+      url = "/search"; // No query, just use the base path
       history.replaceState({ search: null }, "", url);
     } else {
-      const encodedQuery = encodeURIComponent(query).replace(/%20/g, '+');
+      const encodedQuery = encodeURIComponent(query).replace(/%20/g, "+");
       url = `/search?query=${encodedQuery}`;
       history.replaceState({ search: query }, "", url);
     }
@@ -23,10 +23,10 @@ export default class extends Controller {
   fetchSearchResults(query) {
     let fetchUrl;
 
-    if (query === '') {
-      fetchUrl = '/search'; // No query, just fetch the base URL
+    if (query === "") {
+      fetchUrl = "/search"; // No query, just fetch the base URL
     } else {
-      fetchUrl = `/search?query=${encodeURIComponent(query).replace(/%20/g, '+')}`;
+      fetchUrl = `/search?query=${encodeURIComponent(query).replace(/%20/g, "+")}`;
     }
 
     fetch(fetchUrl, {
@@ -34,9 +34,9 @@ export default class extends Controller {
         Accept: "text/vnd.turbo-stream.html",
       },
     })
-      .then(response => response.text())
-      .then(html => Turbo.renderStreamMessage(html))
-      .catch(error => console.error("Error:", error));
+      .then((response) => response.text())
+      .then((html) => Turbo.renderStreamMessage(html))
+      .catch((error) => console.error("Error:", error));
   }
 
   // Handle back button
