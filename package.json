@@ -2,15 +2,14 @@
   "name": "libreverse",
   "private": true,
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs rollup.config.js",
-    "build:css": "postcss ./app/assets/stylesheets/application.postcss.scss -o ./app/assets/builds/application.css",
+    "build": "rollup -c -w --bundleConfigAsCjs rollup.config.js",
+    "build:css": "gulp build",
     "prepare": "husky",
     "format": "prettier . --write"
   },
   "dependencies": {
     "@babel/core": "^7.25.7",
     "@babel/preset-env": "^7.25.7",
-    "@csstools/postcss-sass": "^5.1.1",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.10",
     "@prettier/plugin-ruby": "^4.0.4",
@@ -21,18 +20,22 @@
     "core-js": "^3.38.1",
     "cssnano": "^7.0.6",
     "cssnano-preset-advanced": "^7.0.6",
+    "gulp": "^5.0.0",
+    "gulp-postcss": "^10.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-watch": "^5.0.1",
     "husky": "^9.1.6",
     "normalise.scss": "^1.0.1",
     "postcss": "^8.4.47",
     "postcss-cli": "^11.0.0",
     "postcss-flexbugs-fixes": "^5.0.2",
-    "postcss-import": "^16.1.0",
     "postcss-inline-rtl": "^0.9.8",
     "postcss-preset-env": "^10.0.5",
     "prettier": "^3.3.3",
     "prettier-plugin-eruby": "^0.0.3",
     "prettier-plugin-sh": "^0.14.0",
-    "rollup": "^4.24.0"
+    "rollup": "^4.24.0",
+    "sass": "^1.80.4"
   },
   "trustedDependencies": [
     "core-js"

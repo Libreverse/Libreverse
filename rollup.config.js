@@ -8,7 +8,6 @@ export default {
   output: {
     file: "app/assets/builds/application.js",
     inlineDynamicImports: true,
-    sourcemap: false,
   },
   plugins: [
     resolve({
