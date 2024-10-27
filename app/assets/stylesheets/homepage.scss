@@ -82,6 +82,8 @@
   max-width: 90%;
   white-space: nowrap;
   border-radius: 2px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px $box-shadow;
 }
 
 @media screen and (max-width: 600px) {
@@ -134,6 +136,8 @@
   align-items: left;
   text-decoration: underline;
   border-radius: 2px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px $box-shadow;
 }
 
 @media screen and (max-width: 600px) {

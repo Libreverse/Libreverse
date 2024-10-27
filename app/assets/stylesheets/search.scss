@@ -1,6 +1,119 @@
-.sp-centerhack {
+.sp-main {
+  font-family: "Lazer84";
+  color: #c995a4;
+  margin: 0;
+  padding: 0 20px;
+  width: calc(100% - 40px);
+  white-space: nowrap;
+  text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.sp-main span {
+  /* Initially, both spans are shown, but we'll hide one based on screen size */
+  transition: font-size 0.3s ease;
+}
+
+/* Default font size for larger screens */
+.sp-main .large {
+  font-size: 7.5vw; /* Using vw for responsive sizing relative to viewport width */
+}
+
+/* Hide the small text version by default */
+.sp-main .small {
+  display: none;
+}
+
+/* Adjust font size for smaller screens */
+@media (max-width: 600px) {
+  .sp-main .large {
+    display: none;
+  }
+
+  .sp-main .small {
+    display: inline;
+    font-size: 12.5vw; /* Larger for visibility, could be adjusted */
+  }
+}
+
+/* Ensure the font size doesn't get too small or too large */
+.sp-main span {
+  font-size: clamp(100px, 15vw, 200px);
+}
+
+@media screen and (max-width: 600px) {
+  .sp-main {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 0.9;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+}
+
+@mixin sp-aligner {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    margin-left: 17.5%;
+    margin-right: 17.5%;
+}
+
+.sp-search-bar{
+    @include sp-aligner;
+    font-family: "Hack";
+    font-size: 18px;
+    color: #c995a4;
+    text-align: left;
+}
+
+.experiences-list {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    margin-left: 12.5%;
+    margin-right: 12.5%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+  font-family: "Hack";
+  font-size: 18px;
+  color: #c995a4;
+}
+
+.experience {
+    background-color: $glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px $box-shadow;
+    border: 1px solid $glass-border;
+    border-radius: 2px;
+  padding: 10px;
+  text-align: center;
+  min-height: 50px;
+}
+
+.sp-bg {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  background-color: $background;
+}
+
+.sp-bg img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(5px);
 }
