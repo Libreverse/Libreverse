@@ -50,4 +50,4 @@ function watchTask() {
 const buildseuqence = gulp.series(cssTask);
 exports.build = buildseuqence;
 const devbuildseuqence = gulp.series(cssTask, watchTask);
-exports.devbuild = buildseuqence;
+exports.devbuild = devbuildseuqence;
