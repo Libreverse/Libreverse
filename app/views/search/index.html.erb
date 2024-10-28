@@ -3,18 +3,26 @@
 </div>
 <div class="sp-centerify">
   <div class="sp-main">
-      <span class="large">Search Experiences</span>
-      <span class="small">Search<br />Experiences</span>
+    <span class="large">Search Experiences</span>
+    <span class="small">Search<br />Experiences</span>
   </div>
-  
-  <%= form_tag(search_path, class: 'sp-search-bar', method: :get, data: { controller: "search", action: "input->search#updateSearch" }) do %>
-    <%= text_field_tag :search, params[:search], 
-                      placeholder: "Search experiences...", 
-                      data: { search_target: "query" } %>
-  <% end %>
 
-  <%= turbo_frame_tag :experiences_list, data: { search_target: "results" } do %>
+  <div class="sp-search-bar-container">
+    <%= form_with(url: search_path, method: :get, class: 'sp-search-bar', data: { turbo_frame: "experiences_list" }) do |form| %>
+      <%= form.text_field :query, 
+                          id: 'search',  
+                          class: 'sp-search-bar-input',
+                          placeholder: 'Search experiences...', 
+                          value: params[:query], 
+                          oninput: "this.form.requestSubmit()" %>
+    <% end %>
+  </div>
+
+  <turbo-frame
+    id="experiences_list"
+    class="sp-experiences-list"
+    data-search-target="results"
+  >
     <%= render partial: 'experiences_list', locals: { experiences: @experiences } %>
-  <% end %>
-  
+  </turbo-frame>
 </div>

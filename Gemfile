@@ -82,3 +82,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "turbo_power", "~> 0.6.2"
