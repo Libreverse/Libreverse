@@ -36,7 +36,6 @@ export default {
       warnings: true,
       mangle: {
         properties: false,
-        safari10: true,
         toplevel: true,
       },
       compress: {

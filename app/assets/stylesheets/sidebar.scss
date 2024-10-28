@@ -29,11 +29,10 @@
   height: 100%;
   padding: 2px;
   box-sizing: border-box;
-  transition: padding, 0.3s;
 }
 
 .sidebar-icons {
-  padding: 5px;
+  width: 100%; 
 }
 
 .icon-invert {
@@ -48,14 +47,6 @@
   .sidebar {
     width: 25px;
     border-radius: 0 10px 10px 0;
-  }
-
-  .sidebar-icons {
-    padding: 0px;
-  }
-
-  .sidebar:hover {
-    padding: 5px;
   }
 }
 
