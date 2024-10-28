@@ -26,14 +26,4 @@ class SearchController < ApplicationController
       end
     end
   end
-
-  def create
-    @experience = Experience.new(experience_params)
-    if @experience.save
-      redirect_to search_path, notice: "Experience was successfully created."
-    else
-      @experiences = Experience.all.order(created_at: :desc) # Reload experiences if there's an error
-      render :index
-    end
-  end
 end

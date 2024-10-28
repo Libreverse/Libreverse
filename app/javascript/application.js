@@ -5,3 +5,5 @@ Sentry.init({
 });
 import "@hotwired/turbo-rails";
 import "./controllers";
+import TurboPower from "turbo_power";
+TurboPower.initialize(Turbo.StreamActions);

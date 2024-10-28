@@ -39,7 +39,8 @@
     "prettier-plugin-eruby": "^0.0.3",
     "prettier-plugin-sh": "^0.14.0",
     "rollup": "^4.24.0",
-    "sass": "^1.80.4"
+    "sass": "^1.80.4",
+    "turbo_power": "^0.7.0"
   },
   "trustedDependencies": [
     "core-js"
