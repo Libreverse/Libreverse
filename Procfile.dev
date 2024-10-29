@@ -1,3 +1,2 @@
-puma: bin/rails server
-rollup: yarn devbuild
-gulp: yarn devbuild:css
+web: bin/rails s
+vite: bin/vite dev

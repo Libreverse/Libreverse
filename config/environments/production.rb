@@ -23,9 +23,6 @@ Rails.application.configure do
   # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
   # config.public_file_server.enabled = false
 
-  # Do not fall back to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
@@ -97,4 +94,7 @@ Rails.application.configure do
   config.hosts = %w[libreverse.geor.me libreverse.dev localhost:3000]
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Use rack deflater for asset compression
+  config.middleware.use Rack::Deflater
 end
