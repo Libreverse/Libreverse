@@ -4,18 +4,19 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= vite_client_tag %>
+    <%= vite_javascript_tag 'application', "data-turbo-track": "reload", type: "module" %>
+    <%= vite_stylesheet_tag '~/stylesheets/application.scss', "data-turbo-track": "reload"  %>
   </head>
 
   <body>
-    <main>
+    <main>  
       <div class="sidebar-container">
         <div class="sidebar">
           <div class="sidebar-contents">
-            <a href="/" ><%= image_tag("libreverse-logo.svg", class: "sidebar-icons") %></a>
-            <a href="/whitepaper"><%= image_tag("file.svg", class: "sidebar-icons icon-invert") %></a>
-            <a href="/search"><%= image_tag("search.svg", class: "sidebar-icons icon-invert") %></a>
+            <a href="/" ><img src=<%= vite_asset_path '~/images/libreverse-logo.svg'%> class="sidebar-icons"></a>
+            <a href="/whitepaper" ><img src=<%= vite_asset_path '~/icons/file.svg'%> class="sidebar-icons icon-invert"></a>
+            <a href="/search" ><img src=<%= vite_asset_path '~/icons/search.svg'%> class="sidebar-icons icon-invert"></a>
           </div>
         </div>
       </div>
