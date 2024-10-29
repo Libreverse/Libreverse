@@ -2,7 +2,9 @@
   "all": {
     "sourceCodeDir": "app/frontend",
     "watchAdditionalPaths": [],
-    "additionalEntrypoints": ["~/{controllers,emoji,fonts,icons,images,stylesheets}/**/*"]
+    "additionalEntrypoints": [
+      "~/{controllers,emoji,fonts,icons,images,stylesheets}/**/*"
+    ]
   },
   "development": {
     "autoBuild": true,

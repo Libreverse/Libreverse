@@ -4,6 +4,9 @@ import FullReload from "vite-plugin-full-reload";
 import StimulusHMR from "vite-plugin-stimulus-hmr";
 import ViteCompression from "vite-plugin-compression";
 import Legacy from "vite-plugin-legacy-swc";
+import postcssPresetEnv from 'postcss-preset-env';
+import postcssFlexbugsFixes from 'postcss-flexbugs-fixes';
+import cssnano from 'cssnano';
 
 export default defineConfig({
   build: {
@@ -11,7 +14,20 @@ export default defineConfig({
     terserOptions: {
       ecma: 5,
       safari10: true,
-    }
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        postcssPresetEnv({
+          stage: 3,
+        }),
+        postcssFlexbugsFixes(),
+        cssnano({
+          preset: 'default'
+        })
+      ],
+    },
   },
   plugins: [
     RubyPlugin(),
@@ -26,7 +42,7 @@ export default defineConfig({
         "and_chr >= 129",
         "iOS >= 8",
         "and_ff >= 130",
-      ]
+      ],
     }),
     ViteCompression(),
   ],

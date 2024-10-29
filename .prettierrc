@@ -1,7 +1,3 @@
 {
-  "plugins": [
-    "@prettier/plugin-ruby",
-    "prettier-plugin-eruby",
-    "prettier-plugin-sh"
-  ]
+  "plugins": ["@prettier/plugin-ruby", "prettier-plugin-sh"]
 }
