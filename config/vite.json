@@ -1,9 +1,13 @@
 {
   "all": {
-    "sourceCodeDir": "app/frontend",
-    "watchAdditionalPaths": [],
+    "sourceCodeDir": "app",
     "additionalEntrypoints": [
-      "~/{controllers,emoji,fonts,icons,images,stylesheets}/**/*"
+      "~/javascript/**/*",
+      "~/stylesheets/**/*",
+      "~/emoji/**/*",
+      "~/fonts/**/*",
+      "~/icons/**/*",
+      "~/images/**/*"
     ]
   },
   "development": {

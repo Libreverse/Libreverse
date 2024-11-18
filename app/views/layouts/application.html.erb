@@ -5,22 +5,23 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= vite_client_tag %>
-    <%= vite_javascript_tag 'application', "data-turbo-track": "reload", type: "module" %>
+    <%= vite_javascript_tag '~/javascript/application.js', "data-turbo-track": "reload", type: "module" %>
     <%= vite_stylesheet_tag '~/stylesheets/application.scss', "data-turbo-track": "reload"  %>
   </head>
 
   <body>
     <main>  
       <div class="sidebar-container">
-        <div class="sidebar">
+        <nav class="sidebar" data-controller="sidebar" data-action="mouseenter->sidebar#hover mouseleave->sidebar#unhover">
           <div class="sidebar-contents">
             <a href="/" ><img src=<%= vite_asset_path '~/images/libreverse-logo.svg'%> class="sidebar-icons"></a>
             <a href="/whitepaper" ><img src=<%= vite_asset_path '~/icons/file.svg'%> class="sidebar-icons icon-invert"></a>
             <a href="/search" ><img src=<%= vite_asset_path '~/icons/search.svg'%> class="sidebar-icons icon-invert"></a>
           </div>
-        </div>
+        </nav>
       </div>
-      <%= yield %>
+
+        <%= yield %>
     </main>
   </body>
 </html>
