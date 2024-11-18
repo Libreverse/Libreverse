@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.3.4"
+ruby "3.3.6"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.4"
@@ -8,8 +8,8 @@ gem "rails", "~> 7.1.4"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 
-# Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+# Use the falcon web server for better concurrency
+gem "falcon", "~> 0.48.3"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
@@ -26,6 +26,9 @@ gem "sentry-rails"
 
 # Turbo Streams Power Pack server side helper
 gem "turbo_power", "~> 0.6.2"
+
+# Use rack brotli to get brotli compression for anything that is affected by rack middlewares.
+gem "rack-brotli", "~> 2.0"
 
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
@@ -49,7 +52,7 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 gem "bootsnap", require: true
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -63,12 +66,8 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   gem "spring"
 
-  # Dependencies for the code formatter
-  gem "prettier_print"
-  gem "syntax_tree"
-  gem "syntax_tree-haml"
-  gem "syntax_tree-rbs"
-  # end dependencies for the code formatter
+  # Make sure that foreman gets installed
+  gem "foreman"
 end
 
 group :test do

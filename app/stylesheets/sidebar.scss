@@ -13,8 +13,12 @@ $glass-border: rgba(255, 255, 255, 0.3);
   border-bottom: 1px solid $glass-border;
   border-radius: 0 20px 20px 0;
   z-index: 3;
-  transition: width, 0.3s;
+  transition: width 0.3s;
   position: fixed;
+
+  &.hovered {
+    width: 100px;
+  }
 }
 
 .sidebar-container {
@@ -43,14 +47,14 @@ $glass-border: rgba(255, 255, 255, 0.3);
   filter: invert(0.5);
 }
 
-.sidebar:hover {
-  width: 100px;
-}
-
 @media (max-width: 600px) {
   .sidebar {
     width: 25px;
     border-radius: 0 10px 10px 0;
+  }
+
+  .sidebar.hovered {
+    width: 75px; // Adjust for smaller screens
   }
 }
 

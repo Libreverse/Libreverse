@@ -60,7 +60,7 @@ Rails.application.configure do
   # want to log everything, set the level to "debug".
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
-  # config/environments/production.rb or config/application.rb
+  # Use redis for caching - site go more faster.
   config.cache_store =
     :redis_cache_store,
     {
@@ -73,12 +73,6 @@ Rails.application.configure do
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "libreverse_instance_production"
-
-  config.action_mailer.perform_caching = false
-
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
@@ -95,6 +89,7 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Use rack deflater for asset compression
+  # Compress responses that go through rack
   config.middleware.use Rack::Deflater
+  config.middleware.use Rack::Brotli, quality: 11
 end

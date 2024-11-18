@@ -150,6 +150,7 @@ $background: #0e0e0e;
   flex-direction: column;
 }
 
+
 .wp-bg {
   margin: 0;
   padding: 0;
@@ -171,5 +172,5 @@ $background: #0e0e0e;
   height: 100%;
   object-fit: cover;
   z-index: -1;
-  filter: blur(5px);
+  filter: blur(10px);
 }
