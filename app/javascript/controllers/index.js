@@ -2,7 +2,16 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import SidebarController from "./sidebar_controller"
-application.register("sidebar", SidebarController)
+import CurrentController from "./current_controller";
+application.register("current", CurrentController);
+
+import LenisController from "./lenis_controller";
+application.register("lenis", LenisController);
+
+import ShortcutsController from "./shortcuts_controller";
+application.register("shortcuts", ShortcutsController);
+
+import SidebarController from "./sidebar_controller";
+application.register("sidebar", SidebarController);

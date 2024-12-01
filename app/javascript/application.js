@@ -9,17 +9,4 @@ import "@hotwired/turbo-rails";
 import TurboPower from "turbo_power";
 TurboPower.initialize(Turbo.StreamActions);
 
-import LocomotiveScroll from 'locomotive-scroll';
-
-document.addEventListener('turbo:load', () => {
-  const scroll = new LocomotiveScroll({
-    el: document.querySelector('[data-scroll-container]'),
-    smooth: true
-  });
-
-  document.addEventListener('turbo:frame-load', () => {
-    scroll.update();
-  });
-});
-
-import "./controllers"
+import "./controllers";

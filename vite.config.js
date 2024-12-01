@@ -7,7 +7,7 @@ import Legacy from "vite-plugin-legacy-swc";
 import postcssPresetEnv from "postcss-preset-env";
 import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
 import cssnano from "cssnano";
-import { constants } from 'zlib';
+import { constants } from "zlib";
 
 export default defineConfig({
   build: {

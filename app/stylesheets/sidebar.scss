@@ -16,7 +16,7 @@ $glass-border: rgba(255, 255, 255, 0.3);
   transition: width 0.3s;
   position: fixed;
 
-  &.hovered {
+  &.sidebar-hovered {
     width: 100px;
   }
 }
@@ -41,10 +41,10 @@ $glass-border: rgba(255, 255, 255, 0.3);
 
 .sidebar-icons {
   width: 100%;
-}
 
-.icon-invert {
-  filter: invert(0.5);
+  &.sidebar-current {
+    filter: brightness(0.75);
+  }
 }
 
 @media (max-width: 600px) {
@@ -53,8 +53,8 @@ $glass-border: rgba(255, 255, 255, 0.3);
     border-radius: 0 10px 10px 0;
   }
 
-  .sidebar.hovered {
-    width: 75px; // Adjust for smaller screens
+  .sidebar.sidebar-hovered {
+    width: 75px;
   }
 }
 
@@ -68,4 +68,25 @@ $glass-border: rgba(255, 255, 255, 0.3);
   .sidebar {
     width: 100px;
   }
+}
+
+@keyframes sidebar-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+}
+
+.sidebar-not-allowed-shake {
+  animation: sidebar-shake 0.5s ease-in-out infinite;
+}
+
+.sidebar-default-cursor {
+  cursor: default;
 }

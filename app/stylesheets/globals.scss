@@ -3,3 +3,26 @@ $progress-bar: #59829f;
 .turbo-progress-bar {
   background-color: $progress-bar;
 }
+
+// scrollbars
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.3) rgba(0, 0, 0, 0);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.3);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.5);
+}
