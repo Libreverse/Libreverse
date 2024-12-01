@@ -1,4 +1,4 @@
-#this option set is from the default readme of htmlcompressor
+# this option set is from the default readme of htmlcompressor
 Rails.application.config.middleware.use HtmlCompressor::Rack,
   enabled: true,
   remove_spaces_inside_tags: true,

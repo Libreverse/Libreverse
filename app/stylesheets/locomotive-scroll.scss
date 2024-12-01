@@ -1,90 +1,100 @@
 /*! locomotive-scroll v4.1.3 | MIT License | https://github.com/locomotivemtl/locomotive-scroll */
 html.has-scroll-smooth {
-    overflow: hidden; }
-  
-  html.has-scroll-dragging {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; }
-  
-  .has-scroll-smooth body {
-    overflow: hidden; }
-  
-  .has-scroll-smooth [data-scroll-container] {
-    min-height: 100vh; }
-  
-  [data-scroll-direction="horizontal"] [data-scroll-container] {
-    height: 100vh;
-    display: inline-block;
-    white-space: nowrap; }
-  
-  [data-scroll-direction="horizontal"] [data-scroll-section] {
-    display: inline-block;
-    vertical-align: top;
-    white-space: nowrap;
-    height: 100%; }
-  
-    .c-scrollbar {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 11px; /* Keep this or adjust as needed */
-      height: 100%;
-      transform-origin: center right;
-      transition: transform 0.3s, opacity 0.3s;
-      opacity: 0; 
-    }
-    
-    .c-scrollbar:hover {
-      transform: scaleX(1.45);
-    }
-    
-    .c-scrollbar:hover, .has-scroll-scrolling .c-scrollbar, .has-scroll-dragging .c-scrollbar {
-      opacity: 1;
-    }
-    
-    [data-scroll-direction="horizontal"] .c-scrollbar {
-      width: 100%;
-      height: 10px;
-      top: auto;
-      bottom: 0;
-      transform: scaleY(1);
-    }
-    [data-scroll-direction="horizontal"] .c-scrollbar:hover {
-      transform: scaleY(1.3);
-    }
+  overflow: hidden;
+}
 
-    $box-shadow: rgba(0, 0, 0, 0.2);
-    $glass: rgba(128, 128, 128, 0.3);
-    $glass-border: rgba(255, 255, 255, 0.3);
-    
-    /* Modify this for the thumb color */
-    .c-scrollbar_thumb {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background-color: rgba(128, 128, 128, 0.3); /* Semi-transparent gray */
-      opacity: 1; /* Adjust opacity here if needed */
-      width: 7px;
-      background-color: $glass;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px $box-shadow;
-      border-top: 1px solid $glass-border;
-      border-left: 1px solid $glass-border;
-      border-bottom: 1px solid $glass-border;
-      border-radius: 20px 0 0 20px;
-      margin: 2px;
-      cursor: -webkit-grab;
-      cursor: grab;
-    }
-    
-    .has-scroll-dragging .c-scrollbar_thumb {
-      cursor: -webkit-grabbing;
-      cursor: grabbing;
-    }
-    
-    [data-scroll-direction="horizontal"] .c-scrollbar_thumb {
-      right: auto;
-      bottom: 0;
-    }
+html.has-scroll-dragging {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.has-scroll-smooth body {
+  overflow: hidden;
+}
+
+.has-scroll-smooth [data-scroll-container] {
+  min-height: 100vh;
+}
+
+[data-scroll-direction="horizontal"] [data-scroll-container] {
+  height: 100vh;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+[data-scroll-direction="horizontal"] [data-scroll-section] {
+  display: inline-block;
+  vertical-align: top;
+  white-space: nowrap;
+  height: 100%;
+}
+
+.c-scrollbar {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 11px; /* Keep this or adjust as needed */
+  height: 100%;
+  transform-origin: center right;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
+  opacity: 0;
+}
+
+.c-scrollbar:hover {
+  transform: scaleX(1.45);
+}
+
+.c-scrollbar:hover,
+.has-scroll-scrolling .c-scrollbar,
+.has-scroll-dragging .c-scrollbar {
+  opacity: 1;
+}
+
+[data-scroll-direction="horizontal"] .c-scrollbar {
+  width: 100%;
+  height: 10px;
+  top: auto;
+  bottom: 0;
+  transform: scaleY(1);
+}
+[data-scroll-direction="horizontal"] .c-scrollbar:hover {
+  transform: scaleY(1.3);
+}
+
+$box-shadow: rgba(0, 0, 0, 0.2);
+$glass: rgba(128, 128, 128, 0.3);
+$glass-border: rgba(255, 255, 255, 0.3);
+
+/* Modify this for the thumb color */
+.c-scrollbar_thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(128, 128, 128, 0.3); /* Semi-transparent gray */
+  opacity: 1; /* Adjust opacity here if needed */
+  width: 7px;
+  background-color: $glass;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px $box-shadow;
+  border-top: 1px solid $glass-border;
+  border-left: 1px solid $glass-border;
+  border-bottom: 1px solid $glass-border;
+  border-radius: 20px 0 0 20px;
+  margin: 2px;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.has-scroll-dragging .c-scrollbar_thumb {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+[data-scroll-direction="horizontal"] .c-scrollbar_thumb {
+  right: auto;
+  bottom: 0;
+}

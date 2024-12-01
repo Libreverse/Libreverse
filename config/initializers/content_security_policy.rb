@@ -27,7 +27,7 @@ Rails.application.configure do
     # Allow @vite/client to hot reload style changes in development
 #    policy.style_src *policy.style_src, :unsafe_inline if Rails.env.development?
 
-    
+
     # If you're using WebSockets or similar:
     # policy.connect_src :self, :https, 'ws://localhost:3000' if Rails.env.development?
     # Allow @vite/client to hot reload changes in development
