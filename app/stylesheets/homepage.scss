@@ -1,11 +1,5 @@
-$hp-primary: #989ef1;
-$hp-secondary: #b09ffc;
-$pill-background: rgba(5, 13, 31, 0.75);
-$box-shadow: rgba(0, 0, 0, 0.2);
-$background: #0e0e0e;
-
 .hp-main {
-  font-family: "Lazer84";
+  font-family: "Lazer84", cursive;
   color: $hp-primary;
   margin: 0;
   padding: 0 20px;
@@ -17,10 +11,6 @@ $background: #0e0e0e;
   align-items: center;
 }
 
-.hp-main span {
-  transition: font-size 0.3s ease;
-}
-
 .hp-main .large {
   font-size: 15vw;
 }
@@ -29,7 +19,7 @@ $background: #0e0e0e;
   display: none;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
   .hp-main .large {
     display: none;
   }
@@ -42,9 +32,10 @@ $background: #0e0e0e;
 
 .hp-main span {
   font-size: clamp(100px, 15vw, 200px);
+  transition: font-size 0.3s ease;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-main {
     white-space: normal;
     word-wrap: break-word;
@@ -55,7 +46,7 @@ $background: #0e0e0e;
 }
 
 .hp-secondary {
-  font-family: "Hack-Italic";
+  font-family: Hack-Italic, monospace;
   font-size: 24px;
   color: $hp-primary;
   margin-bottom: 20px;
@@ -64,14 +55,14 @@ $background: #0e0e0e;
   text-align: center;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-hp-secondary {
     font-size: 18px;
   }
 }
 
 .hp-instancelabel {
-  font-family: "Hack";
+  font-family: Hack, monospace;
   font-size: 20px;
   color: $hp-secondary;
   background-color: $pill-background;
@@ -85,14 +76,14 @@ $background: #0e0e0e;
   box-shadow: 0 4px 30px $box-shadow;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-instancelabel {
     font-size: 18px;
   }
 }
 
 .hp-sectionheader {
-  font-family: "Hack";
+  font-family: Hack, monospace;
   font-size: 20px;
   color: $hp-primary;
   text-align: left;
@@ -101,14 +92,14 @@ $background: #0e0e0e;
   margin-top: 20px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-sectionheader {
     font-size: 18px;
   }
 }
 
 .hp-link {
-  font-family: "Hack";
+  font-family: Hack, monospace;
   font-size: 18px;
   color: $hp-secondary;
   margin-left: 15%;
@@ -116,14 +107,14 @@ $background: #0e0e0e;
   text-decoration: underline;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-link {
     font-size: 16px;
   }
 }
 
 .hp-enterbutton {
-  font-family: "Hack";
+  font-family: Hack, monospace;
   font-size: 20px;
   color: $hp-secondary;
   margin-left: 15%;
@@ -131,25 +122,22 @@ $background: #0e0e0e;
   text-decoration: underline;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-enterbutton {
     font-size: 18px;
   }
 }
 
 .hp-text {
-  font-family: "Hack";
+  font-family: Hack, monospace;
   font-size: 18px;
   color: $hp-primary;
   text-align: left;
-  margin-top: 15px;
-  margin-bottom: 10px;
+  margin: 15px 15% 10px;
   max-width: 70%;
-  margin-left: 15%;
-  margin-right: 15%;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .hp-text {
     font-size: 16px;
   }

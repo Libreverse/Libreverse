@@ -5,7 +5,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-import "@hotwired/turbo-rails";
+import { Turbo } from "@hotwired/turbo-rails";
 import TurboPower from "turbo_power";
 TurboPower.initialize(Turbo.StreamActions);
 

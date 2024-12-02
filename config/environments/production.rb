@@ -88,8 +88,4 @@ Rails.application.configure do
   config.hosts = %w[libreverse.geor.me libreverse.dev localhost:3000]
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  # Compress responses that go through rack
-  config.middleware.use Rack::Deflater
-  config.middleware.use Rack::Brotli, quality: 11
 end

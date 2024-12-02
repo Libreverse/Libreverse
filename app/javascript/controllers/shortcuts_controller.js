@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { visit } from "@hotwired/turbo";
 
 // Connects to data-controller="shortcuts"
 export default class extends Controller {
@@ -18,19 +19,13 @@ export default class extends Controller {
       switch (event.key) {
         case "h":
           if (!event.ctrlKey && !event.altKey) {
-            Turbo.visit("/");
+            visit("/");
             event.preventDefault();
           }
           break;
         case "s":
           if (!event.ctrlKey && !event.altKey) {
-            Turbo.visit("/search");
-            event.preventDefault();
-          }
-          break;
-        case "w":
-          if (!event.ctrlKey && !event.altKey) {
-            Turbo.visit("/whitepaper");
+            visit("/search");
             event.preventDefault();
           }
           break;

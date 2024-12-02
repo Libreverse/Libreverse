@@ -1,10 +1,5 @@
-$box-shadow: rgba(0, 0, 0, 0.2);
-$glass: rgba(128, 128, 128, 0.3);
-$glass-border: rgba(255, 255, 255, 0.3);
-$background: #0e0e0e;
-
 .sp-main {
-  font-family: "Lazer84";
+  font-family: "Lazer84", cursive;
   color: #c995a4;
   margin: 0;
   padding: 0 20px;
@@ -16,21 +11,19 @@ $background: #0e0e0e;
   align-items: center;
 }
 
-.sp-main span {
-  transition: font-size 0.3s ease;
-}
-
 .sp-main .large {
   font-size: 7.5vw;
 }
+
 .sp-main .small {
   display: none;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
   .sp-main .large {
     display: none;
   }
+
   .sp-main .small {
     display: inline;
     font-size: 12.5vw;
@@ -38,10 +31,11 @@ $background: #0e0e0e;
 }
 
 .sp-main span {
+  transition: font-size 0.3s ease;
   font-size: clamp(100px, 15vw, 200px);
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .sp-main {
     white-space: normal;
     word-wrap: break-word;
@@ -52,21 +46,16 @@ $background: #0e0e0e;
 }
 
 @mixin sp-aligner {
-  margin-top: 15px;
-  margin-bottom: 10px;
-  margin-left: 17.5%;
-  margin-right: 17.5%;
+  margin: 15px 17.5% 10px;
 }
 
 @mixin lesser-sp-aligner {
-  margin-top: 15px;
-  margin-bottom: 10px;
-  margin-left: 12.5%;
-  margin-right: 12.5%;
+  margin: 15px 12.5% 10px;
 }
 
 .sp-search-bar-container {
   @include lesser-sp-aligner;
+
   display: flex;
 }
 
@@ -81,7 +70,7 @@ $background: #0e0e0e;
   box-shadow: 0 4px 30px $box-shadow;
   border: 1px solid $glass-border;
   color: #c995a4;
-  font-family: "Hack";
+  font-family: Hack, monospace;
   flex-grow: 1;
   padding: 10px;
   font-size: 18px;
@@ -92,20 +81,21 @@ $background: #0e0e0e;
 .sp-search-bar-input:focus {
   outline: none;
   border-color: #c995a4;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgb(0 0 0 / 30%);
 }
 
 .sp-experiences-list {
   @include lesser-sp-aligner;
+
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  font-family: "Hack";
+  font-family: Hack, monospace;
   font-size: 18px;
   color: #c995a4;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .sp-experiences-list {
     grid-template-columns: repeat(1, 1fr);
   }

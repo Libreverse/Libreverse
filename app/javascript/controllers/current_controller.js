@@ -3,9 +3,11 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["link", "image"];
 
-  initialize() {
+  connect() {
+    const links = this.linkTargets;
     const currentPath = window.location.pathname;
-    this.linkTargets.forEach((link) => {
+
+    links.forEach((link) => {
       const href = link.getAttribute("href");
       if (href === currentPath) {
         this.setImageCurrent(link);
