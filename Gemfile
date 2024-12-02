@@ -27,9 +27,6 @@ gem "sentry-rails"
 # Turbo Streams Power Pack server side helper
 gem "turbo_power", "~> 0.6.2"
 
-# Use rack brotli to get brotli compression for anything that is affected by rack middlewares.
-gem "rack-brotli", "~> 2.0"
-
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
 
@@ -54,9 +51,6 @@ gem "bootsnap", require: true
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
-# Use shopify's better_html to guarantee that the HTML is valid.
-gem "better_html"
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
@@ -71,7 +65,6 @@ group :development do
 
   # Make the code actually look good
   gem "rubocop-rails-omakase"
-  gem "erb_lint"
 end
 
 group :test do

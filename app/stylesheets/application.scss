@@ -1,14 +1,26 @@
 @charset "UTF-8";
-/*dependencies*/
-@import "normalise.scss";
-@import "locomotive-scroll.scss";
-/*dependants*/
-@import "fonts.scss";
-@import "globals.scss";
-@import "icons.scss";
-@import "sidebar.scss";
-@import "banner.scss";
-/*splittable*/
-@import "homepage.scss";
-@import "whitepaper.scss";
-@import "search.scss";
+
+// dependencies
+@import "normalise.scss/normalise";
+@import "lenis/dist/lenis.css";
+@import "scrollbar";
+@import "globals";
+
+// variables
+$box-shadow: rgb(0 0 0 / 20%);
+$hp-primary: #989ef1;
+$hp-secondary: #b09ffc;
+$pill-background: rgb(5 13 31 / 75%);
+$background: #0e0e0e;
+$glass: rgb(128 128 128 / 30%);
+$glass-border: rgb(255 255 255 / 30%);
+
+// dependants
+@import "fonts";
+@import "icons";
+@import "sidebar";
+@import "banner";
+
+// splittable
+@import "homepage";
+@import "search";

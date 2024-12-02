@@ -1,4 +1,6 @@
-*.rb
-*.erb
-**/*.rb
-**/*.erb
+# Ignore everything by default
+*.*
+
+# But don't ignore scss and js files (in any directory)
+!**/*.scss
+!**/*.js

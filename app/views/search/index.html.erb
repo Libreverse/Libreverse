@@ -1,6 +1,5 @@
 <div class="hp-bg">
-  <img src=<%= vite_asset_path "images/brasserie.jpg"
- %>>
+  <img src=<%= vite_asset_path "images/brasserie.jpg" %>>
 </div>
 <div data-scroll-container>
   <div class="sp-centerify">
@@ -10,26 +9,18 @@
     </div>
 
     <div class="sp-search-bar-container">
-      <%= form_with(url: search_path, method: :get, class: "sp-search-bar", data: { turbo_frame: "experiences_list" })
-
-
- do |form| %>
+      <%= form_with(url: search_path, method: :get, class: "sp-search-bar", data: { turbo_frame: "experiences_list" }) do |form| %>
         <%= form.text_field :query,
           id: "search",
           class: "sp-search-bar-input",
           placeholder: "Search experiences...",
           value: params[:query],
-          oninput: "this.form.requestSubmit()"
- %>
+          oninput: "this.form.requestSubmit()" %>
       <% end %>
     </div>
 
-    <turbo-frame
-      id="experiences_list"
-      class="sp-experiences-list"
-      data-search-target="results">
-      <%= render partial: "experiences_list", locals: { experiences: @experiences }
- %>
+    <turbo-frame id="experiences_list" class="sp-experiences-list" data-search-target="results">
+      <%= render partial: "experiences_list", locals: { experiences: @experiences } %>
     </turbo-frame>
   </div>
 </div>
