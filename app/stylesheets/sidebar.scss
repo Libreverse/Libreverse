@@ -1,12 +1,14 @@
+@use "variables";
+
 .sidebar {
   width: 50px;
   height: 80vh;
-  background-color: $glass;
+  background-color: variables.$glass;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px $box-shadow;
-  border-top: 1px solid $glass-border;
-  border-right: 1px solid $glass-border;
-  border-bottom: 1px solid $glass-border;
+  box-shadow: 0 4px 30px variables.$box-shadow;
+  border-top: 1px solid variables.$glass-border;
+  border-right: 1px solid variables.$glass-border;
+  border-bottom: 1px solid variables.$glass-border;
   border-radius: 0 20px 20px 0;
   z-index: 3;
   transition: width 0.3s;
@@ -37,6 +39,7 @@
 
 .sidebar-icons {
   width: 100%;
+  user-select: none;
 }
 
 @media (width <= 600px) {

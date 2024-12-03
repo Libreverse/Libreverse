@@ -1,3 +1,5 @@
+@use "variables";
+
 .sp-main {
   font-family: "Lazer84", cursive;
   color: #c995a4;
@@ -65,10 +67,10 @@
 }
 
 .sp-search-bar-input {
-  background-color: $glass;
+  background-color: variables.$glass;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px $box-shadow;
-  border: 1px solid $glass-border;
+  box-shadow: 0 4px 30px variables.$box-shadow;
+  border: 1px solid variables.$glass-border;
   color: #c995a4;
   font-family: Hack, monospace;
   flex-grow: 1;
@@ -102,10 +104,10 @@
 }
 
 .sp-experience {
-  background-color: $glass;
+  background-color: variables.$glass;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px $box-shadow;
-  border: 1px solid $glass-border;
+  box-shadow: 0 4px 30px variables.$box-shadow;
+  border: 1px solid variables.$glass-border;
   border-radius: 5px;
   padding: 10px;
   text-align: center;
@@ -122,7 +124,7 @@
   height: 100vh;
   z-index: -1;
   overflow: hidden;
-  background-color: $background;
+  background-color: variables.$background;
 }
 
 .sp-bg img {
@@ -134,4 +136,5 @@
   object-fit: cover;
   z-index: -1;
   filter: blur(10px);
+  user-select: none;
 }
