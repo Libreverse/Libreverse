@@ -1,6 +1,8 @@
+@use "variables";
+
 .hp-main {
   font-family: "Lazer84", cursive;
-  color: $hp-primary;
+  color: variables.$hp-primary;
   margin: 0;
   padding: 0 20px;
   width: calc(100% - 40px);
@@ -48,7 +50,7 @@
 .hp-secondary {
   font-family: Hack-Italic, monospace;
   font-size: 24px;
-  color: $hp-primary;
+  color: variables.$hp-primary;
   margin-bottom: 20px;
   margin-left: 16.5%;
   margin-right: 16.5%;
@@ -64,8 +66,8 @@
 .hp-instancelabel {
   font-family: Hack, monospace;
   font-size: 20px;
-  color: $hp-secondary;
-  background-color: $pill-background;
+  color: variables.$hp-secondary;
+  background-color: variables.$pill-background;
   margin: 0 auto 30px;
   padding: 20px;
   display: inline-block;
@@ -73,7 +75,7 @@
   white-space: nowrap;
   border-radius: 5px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px $box-shadow;
+  box-shadow: 0 4px 30px variables.$box-shadow;
 }
 
 @media screen and (width <= 600px) {
@@ -85,7 +87,7 @@
 .hp-sectionheader {
   font-family: Hack, monospace;
   font-size: 20px;
-  color: $hp-primary;
+  color: variables.$hp-primary;
   text-align: left;
   margin-left: 15%;
   margin-right: 15%;
@@ -101,7 +103,7 @@
 .hp-link {
   font-family: Hack, monospace;
   font-size: 18px;
-  color: $hp-secondary;
+  color: variables.$hp-secondary;
   margin-left: 15%;
   margin-right: 15%;
   text-decoration: underline;
@@ -116,7 +118,7 @@
 .hp-enterbutton {
   font-family: Hack, monospace;
   font-size: 20px;
-  color: $hp-secondary;
+  color: variables.$hp-secondary;
   margin-left: 15%;
   margin-right: 15%;
   text-decoration: underline;
@@ -131,7 +133,7 @@
 .hp-text {
   font-family: Hack, monospace;
   font-size: 18px;
-  color: $hp-primary;
+  color: variables.$hp-primary;
   text-align: left;
   margin: 15px 15% 10px;
   max-width: 70%;
@@ -159,7 +161,7 @@
   height: 100vh;
   z-index: -1;
   overflow: hidden;
-  background-color: $background;
+  background-color: variables.$background;
 }
 
 .hp-bg img {
@@ -171,6 +173,7 @@
   object-fit: cover;
   z-index: -1;
   filter: blur(10px);
+  user-select: none;
 }
 
 .squisher {

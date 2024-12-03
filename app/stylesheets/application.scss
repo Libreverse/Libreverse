@@ -1,26 +1,12 @@
 @charset "UTF-8";
-
-// dependencies
-@import "normalise.scss/normalise";
-@import "lenis/dist/lenis.css";
-@import "scrollbar";
-@import "globals";
-
-// variables
-$box-shadow: rgb(0 0 0 / 20%);
-$hp-primary: #989ef1;
-$hp-secondary: #b09ffc;
-$pill-background: rgb(5 13 31 / 75%);
-$background: #0e0e0e;
-$glass: rgb(128 128 128 / 30%);
-$glass-border: rgb(255 255 255 / 30%);
-
-// dependants
-@import "fonts";
-@import "icons";
-@import "sidebar";
-@import "banner";
-
-// splittable
-@import "homepage";
-@import "search";
+@use "variables";
+@use "normalise.scss/normalise";
+@use "lenis/dist/lenis.css";
+@use "scrollbar";
+@use "globals";
+@use "fonts";
+@use "icons";
+@use "sidebar";
+@use "banner";
+@use "homepage";
+@use "search";
