@@ -1,14 +1,20 @@
 @font-face {
   font-family: "Lazer84";
   src: url("~/fonts/Lazer84.ttf") format("truetype");
+  font-display: block;
+  font-style: normal;
 }
 
 @font-face {
   font-family: Hack;
   src: url("~/fonts/Hack-Regular.ttf") format("truetype");
+  font-display: block;
+  font-style: normal;
 }
 
 @font-face {
   font-family: Hack-Italic;
   src: url("~/fonts/Hack-Italic.ttf") format("truetype");
+  font-display: block;
+  font-style: italic;
 }

@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
-import RubyPlugin from "vite-plugin-ruby";
-import FullReload from "vite-plugin-full-reload";
-import StimulusHMR from "vite-plugin-stimulus-hmr";
-import Legacy from "vite-plugin-legacy-swc";
+import rubyPlugin from "vite-plugin-ruby";
+import fullReload from "vite-plugin-full-reload";
+import stimulusHMR from "vite-plugin-stimulus-hmr";
+import legacy from "vite-plugin-legacy-swc";
 import postcssPresetEnv from "postcss-preset-env";
 import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
+import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 
 export default defineConfig({
@@ -12,21 +13,16 @@ export default defineConfig({
     sourcemap: false,
   },
   css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+      },
+    },
     postcss: {
       plugins: [
-        postcssPresetEnv({
-          browsers: [
-            "Chrome >= 32",
-            "Edge >= 79",
-            "Safari >= 8",
-            "Firefox >= 24",
-            "and_chr >= 129",
-            "iOS >= 8",
-            "and_ff >= 130",
-          ],
-          stage: 3,
-        }),
+        postcssPresetEnv({ stage: 3 }),
         postcssFlexbugsFixes(),
+        postcssInlineRtl(),
         cssnano({
           preset: [
             "advanced",
@@ -45,19 +41,10 @@ export default defineConfig({
     },
   },
   plugins: [
-    RubyPlugin(),
-    FullReload(["config/routes.rb", "app/views/**/*"]),
-    StimulusHMR(),
-    Legacy({
-      targets: [
-        "Chrome >= 32",
-        "Edge >= 79",
-        "Safari >= 8",
-        "Firefox >= 24",
-        "and_chr >= 129",
-        "iOS >= 8",
-        "and_ff >= 130",
-      ],
+    rubyPlugin(),
+    fullReload(["config/routes.rb", "app/views/**/*"]),
+    stimulusHMR(),
+    legacy({
       terserOptions: {
         ecma: 5,
         output: {

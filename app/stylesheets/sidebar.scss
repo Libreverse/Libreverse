@@ -20,12 +20,29 @@
 }
 
 .sidebar-container {
-  width: 100px;
-  height: 100vh;
+  width: 50px; // Matches the initial width of .sidebar
+  height: 100vh; // Matches the height of .sidebar
   position: fixed;
   z-index: 2;
   display: flex;
   align-items: center;
+  transition: width 0.3s;
+
+  &.sidebar-hovered {
+    width: 100px; // Matches the width of .sidebar when hovered
+  }
+
+  @media (width <= 600px) {
+    width: 25px; // Matches the width of .sidebar for small screens
+
+    &.sidebar-hovered {
+      width: 75px; // Matches the width of .sidebar when hovered for small screens
+    }
+  }
+
+  @media (width >= 1501px) {
+    width: 100px; // Matches the width of .sidebar for large screens
+  }
 }
 
 .sidebar-contents {
@@ -81,7 +98,7 @@
 }
 
 .sidebar-not-allowed-shake {
-  animation: sidebar-shake 0.5s ease-in-out infinite;
+  animation: sidebar-shake 0.75s ease-in-out infinite;
 }
 
 .sidebar-default-cursor {

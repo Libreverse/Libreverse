@@ -39,9 +39,6 @@ gem "htmlcompressor", "~> 0.4.0"
 # Rack-attack to rate-limit HTTP endpoints
 gem "rack-attack"
 
-# fly.io's dockerfile generator to generate a docker compose file for the site.
-gem "dockerfile-rails", ">= 1.6", group: :development
-
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]
 
@@ -65,6 +62,12 @@ group :development do
 
   # Make the code actually look good
   gem "rubocop-rails-omakase"
+
+  # Lint ERB files
+  gem "erb_lint"
+
+  # fly.io's dockerfile generator to generate a docker compose file for the site.
+  gem "dockerfile-rails", ">= 1.6"
 end
 
 group :test do

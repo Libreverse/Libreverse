@@ -5,14 +5,14 @@ export default class extends Controller {
 
   connect() {
     const links = this.linkTargets;
-    const currentPath = window.location.pathname;
+    const currentPath = globalThis.location.pathname;
 
-    links.forEach((link) => {
+    for (const link of links) {
       const href = link.getAttribute("href");
       if (href === currentPath) {
         this.setImageCurrent(link);
       }
-    });
+    }
   }
 
   // Method to mark the current link's image
@@ -29,14 +29,14 @@ export default class extends Controller {
     // Ensure we have the correct event object
     const clickedElement = event.currentTarget || event.target;
 
-    const currentPath = window.location.pathname;
+    const currentPath = globalThis.location.pathname;
     const href = clickedElement.getAttribute("href");
     if (href === currentPath) {
       event.preventDefault();
       clickedElement.classList.add("sidebar-not-allowed-shake");
       setTimeout(() => {
         clickedElement.classList.remove("sidebar-not-allowed-shake");
-      }, 500);
+      }, 750);
     }
   }
 }

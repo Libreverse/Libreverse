@@ -1,47 +1,136 @@
 <!doctype html>
 <html dir="ltr" lang="en-GB" data-controller="lenis" class="custom-scrollbar">
   <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--Config Options. Will allow these to be configured from elsewhere at some point-->
+    <%
+    name = "Libreverse"
+    page_name = "Libreverse Homepage" 
+    description = "An instance of the Metaverse, but open-source"
+    keywords = "Libreverse, libreverse, metaverse, open-source, FOSS"
+    preview_image = "/wherever/filename.png"
+    preview_image_url = "https://your-url.com/wherever/filename.png"
+    preview_image_type = "image/type"
+    preview_image_width = "insert width"
+    preview_image_height = "insert height"
+    preview_image_alt = "Preview of this Libreverse instance's homepage"
+    theme_color = "#whatever"
+    url = "https://your-url.com/"
+    domain = "your-url.com"
+    homepage = "https://your-url.com/"
+    onion_url = "https://your-url.onion/"
+    shortcut_icon = "/wherever/filename.png"
+    apple_touch_icon = "/wherever/filename.png"
+    mask_icon = "/wherever/filname.svg"
+    mask_icon_color = "#whatever"
+    description = "Place the meta description text here."
+    determiner = "The"
+    locale = "en_GB"
+    facebook_admins = "facebook-admins"
+    facebook_app_id = "YOUR_APP_ID_HERE"
+    facebook_pages = "https://www.facebook.com/yourassociatedpages"
+    facebook_profile_id = "https://www.facebook.com/yourprofile"
+    twitter_site = "@username"
+    twitter_creator = "@username"
+    windows7_tooltip = "Launch Your Awesome Webapp"
+    windows7_starturl = "/"
+    windows7_action_menu = "name=First Task;action-uri=yoururl.com/firsttask;icon-uri=path/to/icon.ico"
+    apple_app_store_app = "app-id=YOUR_APP_ID, affiliate-data=YOUR_AFFILIATE_DATA, app-argument=YOUR_URL"
+    google_site_verification = "Code from Google Webmaster tools"
+    bing_site_verification = "Code from Bing Webmaster tools"
+    pinterest_site_verification = "Code from Pinterest"
+    yandex_site_verification = "Code from Yandex Webmaster tools"
+    norton_site_verification = "Norton Code"
+    mastodon_link = "https://mastodon.social/@yourusername"
+    %>
+    <!--Basic HTML metadata. Drew on wix.com guide on the matter, fireship.io, the new york time, x.com and cnn.com, moz.com and xai grok 2-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
+    <meta name="description" content="<%= description %>">
+    <meta name="keywords" content="<%= keywords %>">
+    <meta name="image" content="<%= preview_image %>">
+    <meta name="theme-color" content="<%= theme_color %>">
+    <meta name="robots" content="all">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><!--Supposedly improves compatibility in older browsers-->
+    <meta http-equiv="onion-location" content="<%= onion_url %>">
+    <title><%= name %></title>
+    <link rel="canonical" href="<%= url %>" />
+    <link rel="home" href="<%= homepage %>" />
+    <link rel="shortcut icon" href="<%= shortcut_icon %>" type="image/x-icon">
+    <link rel="apple-touch-icon" href="<%= apple_touch_icon %>" type="image/x-icon">
+    <link rel="mask-icon" sizes="any" href="<%= mask_icon %>" color="<%= mask_icon_color %>">
+    <!--Open Graph metadata-->
+    <meta property="og:site_name" content="<%= name %>" >
+    <meta property="og:title" content="<%= page_name %>" >
+    <meta property="og:type" content="website" >
+    <meta property="og:url" content="<%= url %>" >
+    <meta property="og:image" content="<%= preview_image %>" >
+    <meta property="og:image:url" content="<%= preview_image %>" >
+    <meta property="og:image:secure_url" content="<%= preview_image %>" >
+    <meta property="og:image:type" content="<%= preview_image_type %>" >
+    <meta property="og:image:width" content="<%= preview_image_width %>" >
+    <meta property="og:image:height" content="<%= preview_image_height %>" >
+    <meta property="og:image:alt" content="<%= preview_image_alt %>" >
+    <meta property="og:description" content="<%= description %>" >
+    <meta property="og:determiner" content="<%= determiner %>" >
+    <meta property="og:locale" content="<%= locale %>" >
+    <!--Facebook-specific metadata-->
+    <!--<meta property="article:publisher" content="https://www.facebook.com/yourpage">-->
+    <!--<meta property="article:tag" content="Libreverse, libreverse, metaverse, open-source, FOSS">-->
+    <meta property="fb:admins" content="<%= facebook_admins %>">
+    <meta property="fb:app_id" content="<%= facebook_app_id %>">
+    <meta property="fb:pages" content="<%= facebook_pages %>">
+    <meta property="fb:profile_id" content="<%= facebook_profile_id %>">
+    <!--X/Twitter metadata-->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:domain" content="<%= domain %>" >
+    <meta name="twitter:site" content="<%= twitter_site %>">
+    <meta name="twitter:creator" content="<%= twitter_creator %>">
+    <meta name="twitter:title" content="<%= name %>" >
+    <meta name="twitter:description" content="<%= description %>" >
+    <meta name="twitter:image" content="<%= preview_image %>" >
+    <meta name="twitter:image:alt" content="<%= preview_image_alt %>" >
+    <meta name="twitter:url" content="<%= url %>" >
+    <!--Old windows pin-to-taskbar metadata-->
+    <meta name="msapplication-tooltip" content="<%= windows7_tooltip %>">
+    <meta name="msapplication-starturl" content="<%= windows7_starturl %>">
+    <meta name="msapplication-task" content="<%= windows7_tooltip %>"><!--Add proper tasks here-->
+    <!--Mobile App Metadata-->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="<%= name %>">
+    <meta name="apple-mobile-web-app-status-bar-style" content="<%= theme_color %>">
+    <meta name="apple-itunes-app" content="<%= apple_app_store_app %>">
+    <!--Site verification tags-->
+    <meta name="google-site-verification" content="<%= google_site_verification %>">
+    <meta name="msvalidate.01" content="<%= bing_site_verification %>">
+    <meta name="p:domain_verify" content="<%= pinterest_site_verification %>">
+    <meta name= "yandex-verification" content="<%= yandex_site_verification %>">
+    <meta name="norton-safeweb-site-verification" content="<%= norton_site_verification %>">
+    <!--Mastodoon and similar fedi metadata-->
+    <link rel="me" href="<%= mastodon_link %>">
+    <!--Actual code-->
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= vite_client_tag %>
     <%= vite_javascript_tag "~/javascript/application.js", "data-turbo-track": "reload", type: "module" %>
     <%= vite_stylesheet_tag "~/stylesheets/application.scss", "data-turbo-track": "reload" %>
   </head>
-
-  <body data-controller="shortcuts">
+  <body data-controller="shortcuts" data-action="keydown->shortcuts#keydown">
+    <aside class="sidebar-container" role="complementary">
+      <nav class="sidebar" data-controller="sidebar" data-action="mouseenter->sidebar#hover mouseleave->sidebar#unhover" role="navigation" aria-label="Navigation Sidebar">
+        <div class="sidebar-contents">
+          <a href="/" data-controller="current" data-action="click->current#handleClick" data-current-target="link" class="sidebar-link" aria-label="Go to homepage">
+            <img src="<%= vite_asset_path '~/images/libreverse-logo.svg' %>" class="sidebar-icons" loading="eager" decoding="async" fetchpriority="high" data-current-target="image" draggable="false" aria-hidden="true" tabindex=”-1”>
+          </a>
+          <a href="/search" data-controller="current" data-action="click->current#handleClick" data-current-target="link" class="sidebar-link" aria-label="Go to search page">
+            <img src="<%= vite_asset_path '~/icons/search.svg' %>" class="sidebar-icons" loading="eager" decoding="async" fetchpriority="high" data-current-target="image" draggable="false" aria-hidden="true" tabindex=”-1”>
+          </a>
+        </div>
+      </nav>
+    </aside>
     <main>
-      <div class="sidebar-container">
-        <nav class="sidebar" data-controller="sidebar" data-action="mouseenter->sidebar#hover mouseleave->sidebar#unhover">
-          <div class="sidebar-contents">
-            <a href="/"
-              data-controller="current"
-              data-action="click->current#handleClick"
-              data-current-target="link"
-              class="sidebar-link">
-              <img src="<%= vite_asset_path '~/images/libreverse-logo.svg' %>"
-                class="sidebar-icons"
-                loading="eager"
-                decoding="sync"
-                data-current-target="image"
-                draggable="false">
-            </a>
-            <a href="/search"
-              data-controller="current"
-              data-action="click->current#handleClick"
-              data-current-target="link"
-              class="sidebar-link">
-              <img src="<%= vite_asset_path '~/icons/search.svg' %>"
-                  class="sidebar-icons"
-                  loading="eager"
-                  decoding="sync"
-                  data-current-target="image"
-                  draggable="false">
-            </a>
-          </div>
-        </nav>
-      </div>
-        <%= yield %>
+      <%= yield %>
     </main>
   </body>
 </html>
