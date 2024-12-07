@@ -15,20 +15,18 @@ export default class extends Controller {
 
   init() {
     try {
-      if (!this.lenis) {
-        this.lenis = new Lenis({
-          duration: 1.2,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          direction: "vertical",
-          gestureDirection: "vertical",
-          smooth: true,
-          mouseMultiplier: 1,
-          smoothTouch: true,
-          touchMultiplier: 2,
-          infinite: false,
-          autoRaf: true,
-        });
-      }
+      this.lenis ||= new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
+        direction: "vertical",
+        gestureDirection: "vertical",
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: true,
+        touchMultiplier: 2,
+        infinite: false,
+        autoRaf: true,
+      });
     } catch (error) {
       console.error("Failed to initialize Lenis:", error);
     }
@@ -57,13 +55,12 @@ export default class extends Controller {
   }
 
   handleTurboLoad = () => {
-    if (!this.lenis) {
-      this.init();
-    } else {
+    if (this.lenis) {
       this.resume();
+    } else {
+      this.init();
     }
   };
-
   handleTurboRender = () => {
     if (!this.lenis) {
       this.init();

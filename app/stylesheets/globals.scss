@@ -1,3 +1,13 @@
+@use "variables";
+
+.turbo-progress-bar {
+  background-color: variables.$progress-bar;
+}
+
 * {
   text-rendering: geometricprecision;
+}
+
+*::selection {
+  background: variables.$progress-bar;
 }

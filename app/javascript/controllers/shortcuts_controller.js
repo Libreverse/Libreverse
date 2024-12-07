@@ -1,34 +1,32 @@
 import { Controller } from "@hotwired/stimulus";
 import { visit } from "@hotwired/turbo";
 
-// Connects to data-controller="shortcuts"
 export default class extends Controller {
-  connect() {
-    document.addEventListener("keydown", this.handleKeydown.bind(this));
-  }
+  static targets = [];
 
-  disconnect() {
-    document.removeEventListener("keydown", this.handleKeydown.bind(this));
-  }
-
-  handleKeydown(event) {
+  keydown(event) {
     if (
-      event.target.tagName !== "INPUT" &&
-      event.target.tagName !== "TEXTAREA"
+      event.target.tagName === "INPUT" ||
+      event.target.tagName === "TEXTAREA"
     ) {
-      switch (event.key) {
-        case "h":
-          if (!event.ctrlKey && !event.altKey) {
-            visit("/");
-            event.preventDefault();
-          }
-          break;
-        case "s":
-          if (!event.ctrlKey && !event.altKey) {
-            visit("/search");
-            event.preventDefault();
-          }
-          break;
+      return;
+    }
+
+    if (event.ctrlKey || event.altKey) {
+      return;
+    }
+
+    switch (event.key) {
+      case "h": {
+        event.preventDefault();
+        visit("/");
+        break;
+      }
+
+      case "s": {
+        event.preventDefault();
+        visit("/search");
+        break;
       }
     }
   }

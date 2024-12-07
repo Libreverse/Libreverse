@@ -1,3 +1,6 @@
-not sure where images came from - will have to find out
-one is from
-https://pxhere.com/en/photo/521120
+# Image attribution
+
+This one is under creative commons
+<https://images.pexels.com/photos/4488642/pexels-photo-4488642.jpeg>
+This one is in the public domain
+<https://pxhere.com/en/photo/1392546>

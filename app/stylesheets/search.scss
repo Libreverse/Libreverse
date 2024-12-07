@@ -2,7 +2,7 @@
 
 .sp-main {
   font-family: "Lazer84", cursive;
-  color: #c995a4;
+  color: variables.$sp-primary;
   margin: 0;
   padding: 0 20px;
   width: calc(100% - 40px);
@@ -11,6 +11,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.sp-main h1.large,
+.sp-main span.small {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
 }
 
 .sp-main .large {
@@ -33,8 +40,8 @@
 }
 
 .sp-main span {
-  transition: font-size 0.3s ease;
   font-size: clamp(100px, 15vw, 200px);
+  transition: font-size 0.3s ease;
 }
 
 @media screen and (width <= 600px) {
@@ -71,19 +78,27 @@
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 30px variables.$box-shadow;
   border: 1px solid variables.$glass-border;
-  color: #c995a4;
+  color: variables.$sp-primary;
   font-family: Hack, monospace;
   flex-grow: 1;
   padding: 10px;
   font-size: 18px;
   border-radius: 5px;
   text-align: left;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 .sp-search-bar-input:focus {
   outline: none;
-  border-color: #c995a4;
+  border-color: variables.$sp-primary;
   box-shadow: 0 0 5px rgb(0 0 0 / 30%);
+}
+
+@media screen and (width <= 600px) {
+  .sp-search-bar-input {
+    font-size: 16px;
+  }
 }
 
 .sp-experiences-list {
@@ -94,12 +109,13 @@
   gap: 10px;
   font-family: Hack, monospace;
   font-size: 18px;
-  color: #c995a4;
+  color: variables.$sp-primary;
 }
 
 @media screen and (width <= 600px) {
   .sp-experiences-list {
     grid-template-columns: repeat(1, 1fr);
+    font-size: 16px;
   }
 }
 
@@ -137,4 +153,40 @@
   z-index: -1;
   filter: blur(10px);
   user-select: none;
+}
+
+.sp-centerify {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sp-sectionheader {
+  font-family: Hack, monospace;
+  font-size: 20px;
+  color: variables.$sp-primary;
+  text-align: left;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 20px;
+}
+
+@media screen and (width <= 600px) {
+  .sp-sectionheader {
+    font-size: 18px;
+  }
+}
+
+.sp-author {
+  font-family: Hack-Italic, monospace;
+  font-size: 18px;
+  color: variables.$sp-primary;
+  text-align: left;
+  margin: 5px 15%;
+}
+
+@media screen and (width <= 600px) {
+  .sp-author {
+    font-size: 16px;
+  }
 }

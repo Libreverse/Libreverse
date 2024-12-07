@@ -1,9 +1,9 @@
 import { Application } from "@hotwired/stimulus";
 
-const application = Application.start();
+const app = Application.start();
 
 // Configure Stimulus development experience
-application.debug = false;
-window.Stimulus = application;
+app.debug = false;
+globalThis.Stimulus = app;
 
-export { application };
+export { app as application };
