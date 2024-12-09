@@ -88,4 +88,8 @@ Rails.application.configure do
   config.hosts = %w[libreverse.geor.me libreverse.dev localhost:3000]
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Action mailer configuration
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.perform_caching = false
 end
