@@ -1,28 +1,31 @@
-<div class="hp-bg" role="presentation">
-  <img src="<%= vite_asset_path "images/brasserie.jpg" %>" loading="eager" decoding="sync" draggable="false" fetchpriority="high" aria-hidden="true" tabindex="-1" />
-</div>
+<%= render 'layouts/leniswrapper' do %>
+  <%= render 'layouts/shortcutswrapper' do %>
+    <div class="hp-bg" role="presentation">
+      <img src="<%= vite_asset_path "images/brasserie.jpg" %>" loading="eager" decoding="sync" draggable="false" fetchpriority="high" aria-hidden="true" tabindex="-1" />
+    </div>
 
-<div class="sp-centerify">
-  <header class="sp-main" role="banner">
-    <h1 class="large">Search Experiences</h1>
-    <span class="small" aria-hidden="true" tabindex="-1">Search<br>Experiences</span>
-  </header>
+    <div class="sp-centerify">
+      <header class="sp-main" role="banner">
+        <h1 class="large">Search Experiences</h1>
+        <span class="small" aria-hidden="true" tabindex="-1">Search<br>Experiences</span>
+      </header>
 
-  <section aria-labelledby="search-heading">
-    <h2 id="search-heading" class="sp-sectionheader">Find Your Next Experience in the Libreverse</h2>
+      <section aria-labelledby="search-heading">
+        <h2 id="search-heading" class="sp-sectionheader">Find Your Next Experience in the Libreverse</h2>
 
-    <%= form_with(url: search_path, method: :get, class: "sp-search-bar", data: { turbo_frame: "experiences_list" }, html: { role: "search" }) do |form| %> 
-      <%= form.text_field :query,
-        id: "search",
-        class: "sp-search-bar-input",
-        placeholder: "Search for an experience",
-        value: params[:query],
-        oninput: "this.form.requestSubmit()" %>
-    <% end %>
+        <%= form_with(url: search_path, method: :get, class: "sp-search-bar", data: { turbo_frame: "experiences_list" }, html: { role: "search" }) do |form| %> 
+          <%= form.text_field :query,
+            id: "search",
+            class: "sp-search-bar-input",
+            placeholder: "Search for an experience",
+            value: params[:query],
+            oninput: "this.form.requestSubmit()" %>
+        <% end %>
 
-    <turbo-frame id="experiences_list" class="sp-experiences-list" data-search-target="results">
-      <%= render partial: "experiences_list", locals: { experiences: @experiences } %>
-    </turbo-frame>
-  </section>
-</div>
-
+        <turbo-frame id="experiences_list" class="sp-experiences-list" data-search-target="results">
+          <%= render partial: "experiences_list", locals: { experiences: @experiences } %>
+        </turbo-frame>
+      </section>
+    </div>
+  <% end %>
+<% end %>
