@@ -1,44 +1,48 @@
-<div class="hp-bg" role="presentation">
-  <img src="<%= vite_asset_path "images/garage.jpg" %>" alt="Garage background" loading="eager" decoding="sync" fetchpriority="high" draggable="false" aria-hidden="true" tabindex="-1">
-</div>
+<%= render 'layouts/leniswrapper' do %>
+  <%= render 'layouts/shortcutswrapper' do %>
+    <div class="hp-bg" role="presentation">
+      <img src="<%= vite_asset_path "images/garage.jpg" %>" alt="Garage background" loading="eager" decoding="sync" fetchpriority="high" draggable="false" aria-hidden="true" tabindex="-1">
+    </div>
 
-<div class="hp-centerify">
-  <header class="hp-main" role="banner">
-    <h1 class="large">Libreverse</h1>
-    <span class="small" aria-hidden="true" tabindex="-1">Libre<br>verse</span>
-  </header>
+    <div class="hp-centerify">
+      <header class="hp-main" role="banner">
+        <h1 class="large">Libreverse</h1>
+        <span class="small" aria-hidden="true" tabindex="-1">Libre<br>verse</span>
+      </header>
 
-  <section aria-labelledby="intro-heading">
-    <h2 id="intro-heading" class="hp-secondary">
-      Installment number infinity of open source software vs evil trillion dollar company.
-    </h2>
+      <section aria-labelledby="intro-heading">
+        <h2 id="intro-heading" class="hp-secondary">
+          Installment number infinity of open source software vs evil trillion dollar company.
+        </h2>
 
-    <section aria-labelledby="principle-heading">
-      <h3 id="principle-heading" class="hp-sectionheader">The principle:</h3>
+        <section aria-labelledby="principle-heading">
+          <h3 id="principle-heading" class="hp-sectionheader">The principle:</h3>
 
-      <article itemscope itemtype="https://schema.org/Article" aria-labelledby="principle-heading">
-        <p class="hp-text" itemprop="description">
-          On October 28, 2021, Mark Zuckerberg had become the laughing stock of the
-          internet after rebranding Facebook to Meta Platforms as part of his efforts
-          to create an online Metaverse. Three years later, it's looking increasingly
-          like the internet is becoming the laughing stock of Mark Zuckerberg, as the
-          Metaverse grows ever closer to reality.
-        </p>
-        <p class="hp-italic-text">
-          <a href="https://libreverse.io" class="hp-inline-link" aria-label="Read full article about the Metaverse principle">Read more</a> (Article written by Libreverse creator <a href="https://geor.me/" itemprop="author" itemscope itemtype="https://schema.org/Person" class="hp-inline-link"><span itemprop="name">George Baskerville</span></a>)</p>
-        <meta itemprop="datePublished" content="2021-10-28">
-      </article>
-    </section>
+          <article itemscope itemtype="https://schema.org/Article" aria-labelledby="principle-heading">
+            <p class="hp-text" itemprop="description">
+              On October 28, 2021, Mark Zuckerberg had become the laughing stock of the
+              internet after rebranding Facebook to Meta Platforms as part of his efforts
+              to create an online Metaverse. Three years later, it's looking increasingly
+              like the internet is becoming the laughing stock of Mark Zuckerberg, as the
+              Metaverse grows ever closer to reality.
+            </p>
+            <p class="hp-italic-text">
+              <a href="https://libreverse.io" class="hp-inline-link" aria-label="Read full article about the Metaverse principle">Read more</a> (Article written by Libreverse creator <a href="https://geor.me/" itemprop="author" itemscope itemtype="https://schema.org/Person" class="hp-inline-link"><span itemprop="name">George Baskerville</span></a>)</p>
+            <meta itemprop="datePublished" content="2021-10-28">
+          </article>
+        </section>
 
-    <section aria-labelledby="getting-started-heading">
-      <h3 id="getting-started-heading" class="hp-sectionheader">How to get started:</h3>
+        <section aria-labelledby="getting-started-heading">
+          <h3 id="getting-started-heading" class="hp-sectionheader">How to get started:</h3>
 
-      <p class="hp-text">
-        Just click this link to search for an experience. The free digital world
-        awaits you.
-      </p>
+          <p class="hp-text">
+            Just click this link to search for an experience. The free digital world
+            awaits you.
+          </p>
 
-      <a href="/search" class="hp-link" aria-label="Search for Libreverse experiences">Enter the Libreverse</a>
-    </section>
-  </section>
-</div>
+          <a href="/search" class="hp-link" aria-label="Search for Libreverse experiences">Enter the Libreverse</a>
+        </section>
+      </section>
+    </div>
+  <% end %>
+<% end %>
