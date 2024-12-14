@@ -5,8 +5,8 @@ ruby "3.3.6"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.4"
 
-# Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+# Use mysql as the database for Active Record
+gem "mysql2", "~> 0.5"
 
 # Use the falcon web server for better concurrency
 gem "falcon", "~> 0.48.3"

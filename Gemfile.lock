@@ -214,6 +214,7 @@ GEM
     minitest (5.25.1)
     msgpack (1.7.5)
     mutex_m (0.2.0)
+    mysql2 (0.5.6)
     net-imap (0.5.1)
       date
       net-protocol
@@ -241,7 +242,6 @@ GEM
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
-    pg (1.5.9)
     process-metrics (0.3.0)
       console (~> 1.8)
       json (~> 2)
@@ -425,7 +425,7 @@ DEPENDENCIES
   falcon (~> 0.48.3)
   htmlcompressor (~> 0.4.0)
   image_processing (~> 1.2)
-  pg (~> 1.1)
+  mysql2 (~> 0.5)
   rack-attack
   rails (~> 7.1.4)
   redis (>= 4.0.1)
