@@ -1,5 +1,5 @@
 echo "Installing"
 bundle install &
-yarn install &
+bun install &
 wait
 echo "Finished installing"

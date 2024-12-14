@@ -15,6 +15,10 @@ echo "Stylelint results"
 echo "====================="
 bunx stylelint "**/*.scss" --fix
 echo "====================="
+echo "markdownlint results"
+echo "====================="
+bunx markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' --fix
+echo "====================="
 echo "Prettier results"
 echo "====================="
 bunx prettier . --write

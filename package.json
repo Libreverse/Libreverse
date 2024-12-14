@@ -17,6 +17,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-unicorn": "^56.0.1",
     "globals": "^15.13.0",
+    "markdownlint-cli2": "^0.16.0",
     "normalise.scss": "^1.0.1",
     "postcss": "^8.4.49",
     "postcss-cli": "^11.0.0",
@@ -24,6 +25,7 @@
     "postcss-inline-rtl": "^0.9.8",
     "postcss-preset-env": "^10.1.1",
     "prettier": "^3.4.2",
+    "prettier-plugin-sh": "^0.14.0",
     "sass-embedded": "^1.82.0",
     "stylelint": "^16.11.0",
     "stylelint-config-standard-scss": "^14.0.0",
@@ -36,8 +38,12 @@
   },
   "trustedDependencies": [
     "@parcel/watcher",
-    "esbuild",
-    "@swc/core"
+    "@swc/core",
+    "core-js",
+    "esbuild"
   ],
-  "packageManager": "bun@1.1.36"
+  "packageManager": "bun@1.1.36",
+  "scripts": {
+    "build": "vite build --outDir public"
+  }
 }
