@@ -3,9 +3,11 @@ class SearchController < ApplicationController
   include Turbo::Streams::ActionHelper
 
   def index
+    @experience = Experience.new  # Initialize a new Experience for the form
+
     if params[:query].present?
       @experiences =
-        Experience.where("content LIKE ?", "%#{params[:query]}%").order(
+        Experience.where("title LIKE ?", "%#{params[:query]}%").order(
           created_at: :desc
         )
     else

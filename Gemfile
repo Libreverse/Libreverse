@@ -31,7 +31,7 @@ gem "turbo_power", "~> 0.6.2"
 gem "redis", ">= 4.0.1"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.7"
 
 # HTML compressor to minify HTML when sent to the client
 gem "htmlcompressor", "~> 0.4.0"
@@ -65,6 +65,9 @@ group :development do
 
   # Lint ERB files
   gem "erb_lint"
+
+  # Use the erb formatter to format ERB files
+  gem "erb-formatter", "~> 0.7.3"
 
   # fly.io's dockerfile generator to generate a docker compose file for the site.
   gem "dockerfile-rails", ">= 1.6"

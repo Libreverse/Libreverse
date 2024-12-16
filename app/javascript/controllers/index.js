@@ -10,6 +10,9 @@ application.register("current", CurrentController);
 import LenisController from "./lenis_controller";
 application.register("lenis", LenisController);
 
+import SearchController from "./search_controller";
+application.register("search", SearchController);
+
 import ShortcutsController from "./shortcuts_controller";
 application.register("shortcuts", ShortcutsController);
 
