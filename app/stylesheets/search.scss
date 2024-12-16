@@ -62,6 +62,10 @@
   margin: 15px 12.5% 10px;
 }
 
+@mixin modified-lesser-sp-aligner {
+  margin: 15px 10% 10px;
+}
+
 .sp-search-bar-container {
   @include lesser-sp-aligner;
 
@@ -102,7 +106,7 @@
 }
 
 .sp-experiences-list {
-  @include lesser-sp-aligner;
+  @include modified-lesser-sp-aligner;
 
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -190,3 +194,63 @@
     font-size: 16px;
   }
 }
+
+/* Temporary: Styles for Create Experience Form */
+
+.experience-form-heading {
+  font-size: 24px;
+  color: variables.$sp-primary;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.experience-form {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: 20px auto;
+
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: variables.$sp-primary;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      height: 100px;
+    }
+  }
+
+  .form-submit {
+    background-color: variables.$sp-primary;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover {
+      background-color: darken(variables.$sp-primary, 10%);
+    }
+  }
+}
+
+/* End Temporary: Styles for Create Experience Form */

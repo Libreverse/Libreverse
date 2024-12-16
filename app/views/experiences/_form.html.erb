@@ -1,0 +1,29 @@
+<!-- filepath:
+/Users/george/code/Libreverse/app/views/experiences/_form.html.erb -->
+<%= form_with(model: experience, local: true, class: "experience-form") do |form| %>
+  <% if experience.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(experience.errors.count, "error") %>
+        prohibited this experience from being saved:</h2>
+      <ul>
+        <% experience.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: "form-input", placeholder: "Title" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :description %>
+    <%= form.text_area :description, class: "form-textarea", placeholder: "Description" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :author %>
+    <%= form.text_field :author, class: "form-input", placeholder: "Author" %>
+  </div>
+  <%= form.submit "Create Experience", class: "form-submit" %>
+<% end %>

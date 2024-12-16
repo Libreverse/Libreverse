@@ -14,6 +14,8 @@ set up premailer
 
 add mailgun action mailer integration
 
+use flatcar container linux and truffleruby to massively accelerate performance.
+
 increase the scope of dockerignore
 
 fix csp

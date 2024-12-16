@@ -17,12 +17,7 @@ export default class extends Controller {
     try {
       this.lenis ||= new Lenis({
         duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
-        direction: "vertical",
-        gestureDirection: "vertical",
-        smooth: true,
-        mouseMultiplier: 1,
-        smoothTouch: true,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         touchMultiplier: 2,
         infinite: false,
         autoRaf: true,
