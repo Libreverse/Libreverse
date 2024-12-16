@@ -6,8 +6,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.12",
     "@sentry/browser": "^8.42.0",
-    "lenis": "^1.1.18",
-    "turbo_power": "^0.7.0"
+    "lenis": "^1.1.18"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
