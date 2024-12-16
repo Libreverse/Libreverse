@@ -43,6 +43,7 @@
     yandex_site_verification = "Code from Yandex Webmaster tools"
     norton_site_verification = "Norton Code"
     mastodon_link = "https://mastodon.social/@yourusername" %>
+
     <!--Basic HTML metadata-->
     <meta charset="utf-8">
     <meta
@@ -68,6 +69,7 @@
       href="<%= mask_icon %>"
       color="<%= mask_icon_color %>"
     >
+
     <!--Open Graph metadata-->
     <meta property="og:site_name" content="<%= name %>">
     <meta property="og:title" content="<%= page_name %>">
@@ -83,6 +85,7 @@
     <meta property="og:description" content="<%= description %>">
     <meta property="og:determiner" content="<%= determiner %>">
     <meta property="og:locale" content="<%= locale %>">
+
     <!--Facebook-specific metadata--> <!--<meta property="article:publisher" content="https://www.facebook.com/yourpage">--> <!--<meta
       property="article:tag"
       content="Libreverse, libreverse, metaverse, open-source, FOSS"
@@ -91,6 +94,7 @@
     <meta property="fb:app_id" content="<%= facebook_app_id %>">
     <meta property="fb:pages" content="<%= facebook_pages %>">
     <meta property="fb:profile_id" content="<%= facebook_profile_id %>">
+
     <!--X/Twitter metadata-->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:domain" content="<%= domain %>">
@@ -101,6 +105,7 @@
     <meta name="twitter:image" content="<%= preview_image %>">
     <meta name="twitter:image:alt" content="<%= preview_image_alt %>">
     <meta name="twitter:url" content="<%= url %>">
+
     <!--Old windows pin-to-taskbar metadata-->
     <meta name="msapplication-tooltip" content="<%= windows7_tooltip %>">
     <meta name="msapplication-starturl" content="<%= windows7_starturl %>">
@@ -110,6 +115,7 @@
     <meta name="apple-mobile-web-app-title" content="<%= name %>">
     <meta name="apple-mobile-web-app-status-bar-style" content="<%= theme_color %>">
     <meta name="apple-itunes-app" content="<%= apple_app_store_app %>">
+    
     <!--Site verification tags-->
     <meta name="google-site-verification" content="<%= google_site_verification %>">
     <meta name="msvalidate.01" content="<%= bing_site_verification %>">
@@ -121,7 +127,29 @@
     >
     <!--Mastodoon and similar fedi metadata-->
     <link rel="me" href="<%= mastodon_link %>">
+    
     <!--Actual code-->
+    <link
+      rel="preload"
+      href="<%= vite_asset_path "~/fonts/Lazer84.ttf" %>"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    >
+    <link
+      rel="preload"
+      href="<%= vite_asset_path "~/fonts/Hack-Regular.ttf" %>"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    >
+    <link
+      rel="preload"
+      href="<%= vite_asset_path "~/fonts/Hack-Italic.ttf" %>"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    >
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= vite_client_tag %>
