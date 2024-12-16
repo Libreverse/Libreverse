@@ -360,7 +360,6 @@ GEM
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     smart_properties (1.17.0)
-    spring (4.2.1)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.2)
@@ -372,8 +371,6 @@ GEM
     turbo-rails (2.0.11)
       actionpack (>= 6.0.0)
       railties (>= 6.0.0)
-    turbo_power (0.7.0)
-      turbo-rails (>= 1.3.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.2)
@@ -437,10 +434,8 @@ DEPENDENCIES
   selenium-webdriver
   sentry-rails
   sentry-ruby
-  spring
   stimulus-rails
   turbo-rails
-  turbo_power (~> 0.7.0)
   tzinfo-data
   vite_rails
   web-console

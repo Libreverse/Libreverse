@@ -24,8 +24,7 @@ gem "vite_rails"
 gem "sentry-ruby"
 gem "sentry-rails"
 
-# Turbo Streams Power Pack server side helper
-gem "turbo_power", "~> 0.7.0"
+# StimulusReflex to add real-time updates to the site
 
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
@@ -56,9 +55,6 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  gem "spring"
 
   # Make the code actually look good
   gem "rubocop-rails-omakase"
