@@ -25,7 +25,7 @@ gem "sentry-ruby"
 gem "sentry-rails"
 
 # Turbo Streams Power Pack server side helper
-gem "turbo_power", "~> 0.6.2"
+gem "turbo_power", "~> 0.7.0"
 
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
