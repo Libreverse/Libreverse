@@ -6,7 +6,10 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.12",
     "@sentry/browser": "^8.42.0",
-    "lenis": "^1.1.18"
+    "lenis": "^1.1.18",
+    "cable_ready": "5.0.6",
+    "stimulus_reflex": "3.5.3",
+    "stimulus-vite-helpers": "^3"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

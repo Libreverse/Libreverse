@@ -24,7 +24,8 @@ gem "vite_rails"
 gem "sentry-ruby"
 gem "sentry-rails"
 
-# StimulusReflex to add real-time updates to the site
+# StimulusReflex framework
+gem "stimulus_reflex", "~> 3.5"
 
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
@@ -74,3 +75,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "action-cable-redis-backport", "~> 1"
+
+gem "redis-session-store", "~> 0.11.5"
