@@ -52,14 +52,11 @@ StimulusReflex.configure do |config|
   # config.middleware.use FirstRackMiddleware
   # config.middleware.use SecondRackMiddleware
 
-  # Strange as it may seem this is the order that gets the html compressor
-  # to run before the deflater and brotli because middlewares are,
-  # unintuitively, run as a stack from the bottom up.
+  # Strangely, we need to declare the middleware
+  # twice for stimulus reflex and rack to apply it in all cases.
 
-  # Even more strangely in this case, we need to declare the middleware
-  # twice for stimulus reflex to pick it up.
-
-  # Here, we only enable the html minifier, as the deflater and brotli have no effect.
+  # Here, we only enable the html minifier, as the deflater and brotli
+  # have no effect in websocket situations.
 
   # this option set is from the default readme of htmlcompressor
   config.middleware.use HtmlCompressor::Rack,
