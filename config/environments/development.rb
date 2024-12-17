@@ -82,4 +82,9 @@ config.cache_store = :redis_cache_store, {
   # Action mailer configuration
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
+
+  # Noisy Action Cable
+  config.action_cable.log_tags = [ :action_cable ]
+  config.action_cable.logger = ActiveSupport::Logger.new(STDOUT)
+  config.action_cable.logger.level = Logger::DEBUG
 end

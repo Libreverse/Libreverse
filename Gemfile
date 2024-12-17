@@ -32,6 +32,9 @@ gem "redis-session-store", "~> 0.11.5"
 # Rack-Brotli to compress responses with Brotli
 gem "rack-brotli"
 
+# Used to monkey patch ActionCable to use the permessage_deflate extension
+gem "permessage_deflate"
+
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
 

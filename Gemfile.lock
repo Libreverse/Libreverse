@@ -115,7 +115,6 @@ GEM
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
-    brotli (0.6.0)
     builder (3.3.0)
     cable_ready (5.0.6)
       actionpack (>= 5.2)
@@ -158,7 +157,6 @@ GEM
       rubocop (>= 1)
       smart_properties
     erubi (1.13.0)
-    eventmachine (1.2.7)
     falcon (0.48.3)
       async
       async-container (~> 0.18)
@@ -172,9 +170,6 @@ GEM
       protocol-http (~> 0.31)
       protocol-rack (~> 0.7)
       samovar (~> 2.3)
-    faye-websocket (0.11.3)
-      eventmachine (>= 0.12.0)
-      websocket-driver (>= 0.5.1)
     ffi (1.17.0-aarch64-linux-gnu)
     ffi (1.17.0-aarch64-linux-musl)
     ffi (1.17.0-arm-linux-gnu)
@@ -255,6 +250,7 @@ GEM
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
+    permessage_deflate (0.1.4)
     prettier_print (1.2.1)
     process-metrics (0.3.0)
       console (~> 1.8)
@@ -278,9 +274,6 @@ GEM
     rack (3.1.8)
     rack-attack (6.7.0)
       rack (>= 1.0, < 4)
-    rack-brotli (2.0.0)
-      brotli (>= 0.3)
-      rack (>= 3)
     rack-proxy (0.7.7)
       rack
     rack-session (2.0.0)
@@ -460,12 +453,11 @@ DEPENDENCIES
   erb-formatter (~> 0.7.3)
   erb_lint
   falcon (~> 0.48.3)
-  faye-websocket (~> 0.11.0)
   htmlcompressor (~> 0.4.0)
   image_processing (~> 1.2)
   mysql2 (~> 0.5)
+  permessage_deflate
   rack-attack
-  rack-brotli
   rails (~> 8.0.1)
   redis (>= 4.0.1)
   redis-session-store (~> 0.11.5)

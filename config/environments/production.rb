@@ -92,4 +92,7 @@ Rails.application.configure do
   # Action mailer configuration
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
+
+  # Quiet Action Cable (there is speculation that the amount of logging might have an impact on performance)
+  ActionCable.server.config.logger = Logger.new(nil)
 end
