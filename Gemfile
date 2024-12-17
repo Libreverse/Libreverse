@@ -26,6 +26,8 @@ gem "sentry-rails"
 
 # StimulusReflex framework
 gem "stimulus_reflex", "~> 3.5"
+gem "action-cable-redis-backport", "~> 1"
+gem "redis-session-store", "~> 0.11.5"
 
 # Rack-Brotli to compress responses with Brotli
 gem "rack-brotli"
@@ -38,6 +40,9 @@ gem "bcrypt", "~> 3.1.7"
 
 # HTML compressor to minify HTML when sent to the client
 gem "htmlcompressor", "~> 0.4.0"
+
+# Used to monkey-patch for Action Cable to support permessage-deflate
+gem "faye-websocket", "~> 0.11.0"
 
 # Rack-attack to rate-limit HTTP endpoints
 gem "rack-attack"
@@ -78,7 +83,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "action-cable-redis-backport", "~> 1"
-
-gem "redis-session-store", "~> 0.11.5"
