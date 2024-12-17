@@ -23,5 +23,5 @@ CableReady.configure do |config|
   # Specify a default debounce time for CableReady::Updatable callbacks
   # Doing so is a best practice to avoid heavy ActionCable traffic
   #
-  # config.updatable_debounce_time = 0.1.seconds
+  config.updatable_debounce_time = 0.1.seconds
 end

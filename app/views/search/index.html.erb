@@ -21,23 +21,23 @@
       <main>
         <section aria-labelledby="search-heading">
           <h2 id="search-heading" class="sp-sectionheader">Find Your Next Experience in the Libreverse</h2>
-
-          <%= form_with(url: search_path, method: :get, class: "sp-search-bar", data: { turbo_frame: "experiences_list" }, html: { role: "search", "data-controller": "search" }) do |form| %>
-            <%= form.text_field :query,
-                            id: "search",
-                            class: "sp-search-bar-input",
-                            placeholder: "Search for an experience",
-                            value: params[:query],
-                            oninput: "this.form.requestSubmit()" %>
-          <% end %>
-
-          <turbo-frame
-            id="experiences_list"
-            class="sp-experiences-list"
-            data-search-target="results"
-          >
-            <%= render partial: "experiences_list", locals: { experiences: @experiences } %>
-          </turbo-frame>
+          <div class="sp-search-bar">
+            <input
+              type="text"
+              id="search"
+              class="sp-search-bar-input"
+              placeholder="Search for an experience"
+              value="<%= params[:query] %>"
+              data-controller="search-url-updater"
+              data-reflex="keyup->SearchReflex#perform"
+              data-reflex-root="true"
+              autocomplete="off"
+              aria-label="Search Experiences"
+            >
+          </div>
+          <div id="experiences_list" class="sp-experiences-list">
+            <%= render partial: "search/experiences_list", locals: { experiences: @experiences } %>
+          </div>
         </section>
         <!-- Temporary: Create Experience Form -->
         <section>

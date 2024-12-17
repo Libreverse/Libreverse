@@ -115,6 +115,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
+    brotli (0.6.0)
     builder (3.3.0)
     cable_ready (5.0.6)
       actionpack (>= 5.2)
@@ -273,6 +274,9 @@ GEM
     rack (3.1.8)
     rack-attack (6.7.0)
       rack (>= 1.0, < 4)
+    rack-brotli (2.0.0)
+      brotli (>= 0.3)
+      rack (>= 3)
     rack-proxy (0.7.7)
       rack
     rack-session (2.0.0)
@@ -456,6 +460,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   mysql2 (~> 0.5)
   rack-attack
+  rack-brotli
   rails (~> 8.0.1)
   redis (>= 4.0.1)
   redis-session-store (~> 0.11.5)

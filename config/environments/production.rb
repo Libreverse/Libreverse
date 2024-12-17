@@ -92,4 +92,8 @@ Rails.application.configure do
   # Action mailer configuration
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
+
+  # Use rack deflater and brotli to compress responses
+  config.middleware.use Rack::Deflater
+  config.middleware.use Rack::Brotli, quality: 11
 end
