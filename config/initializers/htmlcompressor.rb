@@ -1,8 +1,3 @@
-# Strange as it may seem this is the order that gets the html compressor
-# to run before the deflater and brotli because middlewares are,
-# unintuitively, run as a stack from the bottom up.
-Rails.application.config.middleware.use Rack::Deflater
-Rails.application.config.middleware.use Rack::Brotli, quality: 11
 # this option set is from the default readme of htmlcompressor
 Rails.application.config.middleware.use HtmlCompressor::Rack,
   enabled: true,
