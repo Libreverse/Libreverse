@@ -16,7 +16,14 @@
 ⠀⢠⣿⣿⣿⣿⣟⠀⠀⢿⣿⣿⣿⡄⠀⠀⢀⣿⣿⡟⠃⣸⣿⣿⣿⣿⡇⠀⠀⠀
 ⠀⠘⠛⠛⠛⠛⠛⠛⠀⠘⠛⠛⠛⠛⠓⠀⠛⠛⠛⠃⠘⠛⠛⠛⠛⠛⠃⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-patch to action cable⠀to support compression⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+patch to action cable⠀to support compression.
+
+(if you're wondering why there's ASCII art of a gorilla here,
+it's a play on the term "monkey patch")
+
+P.S. I know this is an egregious hack, but it improves performance so
+much that I can't not use it.
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 =end
 
 require "permessage_deflate"

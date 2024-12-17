@@ -29,9 +29,6 @@ gem "stimulus_reflex", "~> 3.5"
 gem "action-cable-redis-backport", "~> 1"
 gem "redis-session-store", "~> 0.11.5"
 
-# Rack-Brotli to compress responses with Brotli
-gem "rack-brotli"
-
 # Used to monkey patch ActionCable to use the permessage_deflate extension
 gem "permessage_deflate"
 

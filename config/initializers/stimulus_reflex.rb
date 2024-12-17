@@ -55,9 +55,6 @@ StimulusReflex.configure do |config|
   # Strangely, we need to declare the middleware
   # twice for stimulus reflex and rack to apply it in all cases.
 
-  # Here, we only enable the html minifier, as the deflater and brotli
-  # have no effect in websocket situations.
-
   # this option set is from the default readme of htmlcompressor
   config.middleware.use HtmlCompressor::Rack,
     enabled: true,

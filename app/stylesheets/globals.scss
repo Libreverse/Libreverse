@@ -8,28 +8,3 @@
   text-rendering: geometricprecision;
 }
 
-*::selection {
-  background: variables.$progress-bar;
-}
-
-.lenis {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(128 128 128 / 30%) rgb(0 0 0 / 0%);
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgb(0 0 0 / 0%);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgb(128 128 128 / 30%);
-    border-radius: 4px;
-
-    &:hover {
-      background-color: rgb(128 128 128 / 50%);
-    }
-  }
-}
