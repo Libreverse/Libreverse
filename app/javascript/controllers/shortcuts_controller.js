@@ -6,14 +6,14 @@ export default class extends Controller {
 
   connect() {
     // Bind the keydown handler to this instance
-    this.boundKeydown = this.keydown.bind(this)
+    this.boundKeydown = this.keydown.bind(this);
     // Add global event listener
-    window.addEventListener("keydown", this.boundKeydown)
+    globalThis.addEventListener("keydown", this.boundKeydown);
   }
 
   disconnect() {
     // Clean up event listener
-    window.removeEventListener("keydown", this.boundKeydown)
+    globalThis.removeEventListener("keydown", this.boundKeydown);
   }
 
   keydown(event) {
@@ -39,8 +39,9 @@ export default class extends Controller {
         visit("/search");
         break;
       }
-      default:
+      default: {
         break;
+      }
     }
   }
 }
