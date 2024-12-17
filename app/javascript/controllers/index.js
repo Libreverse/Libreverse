@@ -4,6 +4,9 @@
 
 import { application } from "./application";
 
+import ApplicationController from "./application_controller";
+application.register("application", ApplicationController);
+
 import CurrentController from "./current_controller";
 application.register("current", CurrentController);
 
@@ -12,6 +15,9 @@ application.register("lenis", LenisController);
 
 import SearchController from "./search_controller";
 application.register("search", SearchController);
+
+import SearchUrlUpdaterController from "./search_url_updater_controller";
+application.register("search-url-updater", SearchUrlUpdaterController);
 
 import ShortcutsController from "./shortcuts_controller";
 application.register("shortcuts", ShortcutsController);

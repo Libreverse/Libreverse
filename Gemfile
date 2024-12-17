@@ -27,6 +27,9 @@ gem "sentry-rails"
 # StimulusReflex framework
 gem "stimulus_reflex", "~> 3.5"
 
+# Rack-Brotli to compress responses with Brotli
+gem "rack-brotli"
+
 # Use Redis adapter to run Action Cable in production and for caching
 gem "redis", ">= 4.0.1"
 
