@@ -1,0 +1,52 @@
+<aside class="sidebar-container" role="complementary">
+  <nav
+    class="sidebar"
+    data-controller="sidebar"
+    data-action="mouseenter->sidebar#hover mouseleave->sidebar#unhover"
+    role="navigation"
+    aria-label="Navigation Sidebar"
+  >
+    <div class="sidebar-contents">
+      <a
+        href="/"
+        data-controller="current"
+        data-action="click->current#handleClick"
+        data-current-target="link"
+        class="sidebar-link"
+        aria-label="Go to homepage"
+      >
+        <img
+          src="<%= vite_asset_path "~/images/libreverse-logo.svg" %>"
+          class="sidebar-icons"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          data-current-target="image"
+          draggable="false"
+          aria-hidden="true"
+          tabindex="”-1”"
+        >
+      </a>
+      <a
+        href="/search"
+        data-controller="current"
+        data-action="click->current#handleClick"
+        data-current-target="link"
+        class="sidebar-link"
+        aria-label="Go to search page"
+      >
+        <img
+          src="<%= vite_asset_path "~/icons/search.svg" %>"
+          class="sidebar-icons"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          data-current-target="image"
+          draggable="false"
+          aria-hidden="true"
+          tabindex="”-1”"
+        >
+      </a>
+    </div>
+  </nav>
+</aside>

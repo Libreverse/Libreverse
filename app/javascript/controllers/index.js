@@ -10,6 +10,9 @@ application.register("application", ApplicationController);
 import CurrentController from "./current_controller";
 application.register("current", CurrentController);
 
+import DrawerController from "./drawer_controller";
+application.register("drawer", DrawerController);
+
 import LenisController from "./lenis_controller";
 application.register("lenis", LenisController);
 

@@ -1,9 +1,11 @@
+<%= render "layouts/sidebar" %>
+<%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
   <%= render 'layouts/shortcutswrapper' do %>
     <div class="hp-bg" role="presentation">
       <img
         src="<%= vite_asset_path "images/garage.jpg" %>"
-        alt="Garage background"
+        srcset="<%= vite_asset_path "images/garage.avif" %>, <%= vite_asset_path "images/garage.webp" %>, <%= vite_asset_path "images/garage.jxl" %>"
         loading="eager"
         decoding="sync"
         fetchpriority="high"
