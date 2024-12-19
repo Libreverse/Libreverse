@@ -52,6 +52,9 @@ StimulusReflex.configure do |config|
   # config.middleware.use FirstRackMiddleware
   # config.middleware.use SecondRackMiddleware
 
+  # Here, we only enable the html minifier, as the deflater and brotli
+  # have no effect in websocket situations.
+
   # Strangely, we need to declare the middleware
   # twice for stimulus reflex and rack to apply it in all cases.
 

@@ -5,8 +5,8 @@ ruby "3.3.6"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.1"
 
-# Use mysql as the database for Active Record
-gem "mysql2", "~> 0.5"
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.1"
 
 # Use the falcon web server for better concurrency
 gem "falcon", "~> 0.48.3"
@@ -26,14 +26,14 @@ gem "sentry-rails"
 
 # StimulusReflex framework
 gem "stimulus_reflex", "~> 3.5"
-gem "action-cable-redis-backport", "~> 1"
-gem "redis-session-store", "~> 0.11.5"
+gem "activerecord-session_store", "~> 2.0"
+
+# Solid cache and queue for caching and background jobs
+gem "solid_cache"
+gem "solid_queue"
 
 # Used to monkey patch ActionCable to use the permessage_deflate extension
 gem "permessage_deflate"
-
-# Use Redis adapter to run Action Cable in production and for caching
-gem "redis", ">= 4.0.1"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
@@ -41,7 +41,10 @@ gem "bcrypt", "~> 3.1.7"
 # HTML compressor to minify HTML when sent to the client
 gem "htmlcompressor", "~> 0.4.0"
 
-# Rack-attack to rate-limit HTTP endpoints
+# Rack-Brotli to compress responses with Brotli
+gem "rack-brotli"
+
+# Rate limit everything on the app
 gem "rack-attack"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

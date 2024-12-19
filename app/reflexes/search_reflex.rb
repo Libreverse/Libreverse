@@ -3,8 +3,9 @@
 class SearchReflex < ApplicationReflex
   def perform
     query = element[:value].to_s.strip
+    query = query[0...50] # Cap the query length to 50 characters
     @experiences = if query.present?
-      Experience.where("title LIKE ?", "%#{query}%")
+      Experience.where("title ILIKE ?", "%#{query}%")
                 .order(created_at: :desc)
     else
       Experience.all.order(created_at: :desc)

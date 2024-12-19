@@ -1,11 +1,13 @@
 ---
 development:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: libreverse_instance_development
+  adapter: postgresql
+  url: "postgresql://localhost:5432/libreverse_development"
+  channel_prefix: libreverse_development
+
 test:
   adapter: test
+
 production:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: libreverse_instance_production
+  adapter: postgresql
+  url: "postgresql://localhost:5432/libreverse_production"
+  channel_prefix: libreverse_production

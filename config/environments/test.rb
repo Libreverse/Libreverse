@@ -58,4 +58,19 @@ Rails.application.configure do
   # Action mailer configuration
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_caching = false
+
+  # Action Cable Logging (optional)
+  # config.action_cable.logger = ActiveSupport::Logger.new(STDOUT)
+  # config.action_cable.logger.level = Logger::WARN
+
+  # Active Job Queue Adapter Configuration
+  # By default, Rails uses :test adapter in test environment.
+  # If needed, you can explicitly set it:
+  # config.active_job.queue_adapter = :test
+
+  # Use Solid Cache for caching (optional, uncomment if required)
+  # config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }
+
+  # Use Solid Queue for Active Job (optional, typically not needed)
+  # config.active_job.queue_adapter = :solid_queue
 end
