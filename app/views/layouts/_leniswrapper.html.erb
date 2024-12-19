@@ -1,3 +1,6 @@
+<% content_for :specifcstylesheets do %>
+  <%= vite_stylesheet_tag "~/stylesheets/lenis.scss" %>
+<% end %>
 <div data-controller="lenis">
   <%= yield %>
 </div>

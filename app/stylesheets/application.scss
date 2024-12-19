@@ -1,12 +1,8 @@
-@charset "UTF-8";
-@use "variables";
+@use "boilerplate";
 @use "normalise.scss/normalise";
-@use "lenis/dist/lenis.css";
 @use "globals";
-@use "fonts";
+
+// splittable
 @use "icons";
-@use "sidebar";
-@use "drawer";
-@use "banner";
-@use "homepage";
-@use "search";
+
+// @use "banner";

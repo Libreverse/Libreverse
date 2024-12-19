@@ -1,4 +1,9 @@
+@use "boilerplate";
 @use "variables";
+@use "sass:color";
+@use "Lazer84";
+@use "Hack";
+@use "Hack-Italic";
 
 .sp-main {
   font-family: "Lazer84", cursive;
@@ -242,7 +247,7 @@
     font-size: 16px;
 
     &:hover {
-      background-color: darken(variables.$sp-primary, 10%);
+      background-color: color.adjust(variables.$sp-primary, $lightness: -10%);
     }
   }
 }

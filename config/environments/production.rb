@@ -21,7 +21,7 @@ Rails.application.configure do
   # config.require_master_key = true
 
   # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  # config.public_file_server.enabled = false
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -30,22 +30,20 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
+  # Active Storage
   config.active_storage.service = :local
 
+  # Action Cable Configuration
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
-  # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
+  # config.action_cable.allowed_request_origins = [ "https://your-production-domain.com", /https:\/\/your-production-domain.*/ ]
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
+  # SSL Enforcement
   config.assume_ssl = true
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
-  # Log to STDOUT by default
+  # Logger Configuration
   config.logger =
     ActiveSupport::Logger
       .new(STDOUT)
@@ -55,44 +53,36 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
-  # "info" includes generic and useful information about system operation, but avoids logging too much
-  # information to avoid inadvertent exposure of personally identifiable information (PII). If you
-  # want to log everything, set the level to "debug".
+  # Log level
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
-  # Use redis for caching - site go more faster.
-  config.cache_store =
-    :redis_cache_store,
-    {
-      url: ENV["REDIS_URL"],
-      connect_timeout: 30,
-      read_timeout: 1,
-      write_timeout: 1
-    }
+  # Cache Store Configuration
+  config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }
 
-  # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
+  # Active Job Queue Adapter Configuration
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   # config.active_job.queue_name_prefix = "libreverse_instance_production"
 
-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation cannot be found).
+  # I18n Fallbacks
   config.i18n.fallbacks = true
 
-  # Don't log any deprecations.
+  # Deprecation Notices
+  config.active_support.deprecation = :notify
   config.active_support.report_deprecations = false
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
+  # Host Authorization
   config.hosts = %w[libreverse.geor.me libreverse.dev localhost:3000]
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Action mailer configuration
+  # Action Mailer Configuration
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
 
-  # Quiet Action Cable (there is speculation that the amount of logging might have an impact on performance)
+  # Action Cable Logging
   ActionCable.server.config.logger = Logger.new(nil)
 end

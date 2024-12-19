@@ -1,7 +1,12 @@
 <!doctype html>
 <html dir="ltr" lang="en-GB">
   <head>
-    <!--Config Options. Will allow these to be configured from elsewhere at
+    <!--Important code-->
+    <%= yield :fontpreloads %>
+    <%= vite_stylesheet_tag "~/stylesheets/application.scss" %>
+    <%= yield :specifcstylesheets %>
+    <%= vite_javascript_tag "~/javascript/application.js", type: "module" %>
+    <!--SEO config Options. Will allow these to be configured from elsewhere at
     some point-->
     <% name = "Libreverse"
     page_name = "Libreverse Homepage"
@@ -121,36 +126,12 @@
     >
     <!--Mastodoon and similar fedi metadata-->
     <link rel="me" href="<%= mastodon_link %>">
-    <!--Actual code-->
-    <link
-      rel="preload"
-      href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    >
-    <link
-      rel="preload"
-      href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    >
-    <link
-      rel="preload"
-      href="<%= vite_asset_path '~/fonts/Hack-Italic.woff2' %>"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    >
+    <!--Some decently important security stuff, just matters that it's present,
+    so we don't need to bother search engines by putting it at the top-->
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <!--Vite HMR in development. Does not result in anything in prod-->
     <%= vite_client_tag %>
-    <%= vite_javascript_tag "~/javascript/application.js",
-    "data-turbo-track": "reload",
-    type: "module" %>
-    <%= vite_stylesheet_tag "~/stylesheets/application.scss",
-    "data-turbo-track": "reload" %>
   </head>
   <body>
     <main>

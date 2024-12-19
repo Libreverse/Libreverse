@@ -1,32 +1,28 @@
+<% content_for :specifcstylesheets do %>
+  <%= vite_stylesheet_tag "~/stylesheets/drawer.scss" %>
+<% end %>
 <aside class="drawer-container" role="complementary" data-controller="drawer">
   <div class="drawer" aria-labelledby="drawer-title">
-    <div class="drawer-contents">
-      <button
-        type="button"
-        class="drawer-invisible-button"
-        aria-label="Expand drawer"
-        data-action="click->drawer#toggle"
+    <div class="drawer-contents" data-drawer-target="content">
+      <p>Drawer contents</p>
+    </div>
+    <button
+      class="drawer-toggle"
+      type="button"
+      data-action="drawer#toggle"
+      aria-label="Toggle drawer"
+    >
+      <img
+        src="<%= vite_asset_path "~/icons/chevron-up.svg" %>"
+        class="drawer-icons"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        draggable="false"
+        aria-hidden="true"
+        tabindex="-1"
+        data-drawer-target="icon"
       >
-        <img
-          src="<%= vite_asset_path "~/icons/chevron-left.svg" %>"
-          class="drawer-icons"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          draggable="false"
-          aria-hidden="true"
-          tabindex="-1"
-          data-drawer-target="icon"
-        >
-      </button>
-      <h2 id="drawer-title" class="drawer-title">
-        Quick actions
-      </h2>
-    </div>
-    <!-- Content div that will be revealed -->
-    <div class="drawer-content" data-drawer-target="content">
-      <!-- Place your content here -->
-      <p>This is the hidden content revealed when the drawer expands.</p>
-    </div>
+    </button>
   </div>
 </aside>

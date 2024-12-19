@@ -1,14 +1,7 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-config.session_store :redis_session_store,
-  serializer: :json,
-  on_redis_down: ->(*a) { Rails.logger.error("Redis down! #{a.inspect}") },
-  redis: {
-    expire_after: 120.minutes,
-    key_prefix: "session:",
-    url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" }
-  }
+  config.session_store :active_record_store, key: "_libreverse_session"
   config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
@@ -28,26 +21,11 @@ config.session_store :redis_session_store,
   # Enable server timing
   config.server_timing = true
 
-  # Enable/disable caching. By default caching is disabled.
-  # Run rails dev:cache to toggle caching.
-  if Rails.root.join("tmp/caching-dev.txt").exist?
-    config.action_controller.perform_caching = true
-    config.action_controller.enable_fragment_cache_logging = true
-
-config.cache_store = :redis_cache_store, {
-  url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" }
-}
-    config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=#{2.days.to_i}"
-    }
-  else
-    config.action_controller.perform_caching = false
-
-    config.cache_store = :null_store
-  end
-
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+
+  # Use Solid Cache for caching
+  config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -87,4 +65,7 @@ config.cache_store = :redis_cache_store, {
   config.action_cable.log_tags = [ :action_cable ]
   config.action_cable.logger = ActiveSupport::Logger.new(STDOUT)
   config.action_cable.logger.level = Logger::DEBUG
+
+  # Use Solid Queue for Active Job
+  config.active_job.queue_adapter = :solid_queue
 end
