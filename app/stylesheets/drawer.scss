@@ -1,0 +1,124 @@
+@use "variables";
+
+/* Drawer container styles */
+.drawer {
+  display: flex;
+  width: 60px; /* Collapsed width */
+  height: 80vh;
+  background-color: variables.$glass;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px variables.$box-shadow;
+  border-top: 1px solid variables.$glass-border;
+  border-left: 1px solid variables.$glass-border; // changed from border-right
+  border-bottom: 1px solid variables.$glass-border;
+  border-radius: 20px 0 0 20px; // reversed radius
+  z-index: 3;
+  transition: width 0.3s ease;
+  position: fixed;
+  right: 0; // added right positioning
+  overflow: hidden;
+}
+
+/* Expanded drawer width */
+.drawer.drawer-expanded {
+  width: 800px; /* Expanded width */
+}
+
+.drawer-container {
+  width: 50px; // Matches the initial width of .drawer
+  height: 100vh; // Matches the height of .drawer
+  position: fixed;
+  right: 0; // changed from implicit left positioning
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  transition: width 0.3s;
+
+  @media (width <= 600px) {
+    width: 25px; // Matches the width of .drawer for small screens
+  }
+
+  @media (width >= 1501px) {
+    width: 100px; // Matches the width of .drawer for large screens
+  }
+}
+
+/* Always visible part */
+.drawer-contents {
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+/* Rotate the chevron icon */
+.drawer-icons {
+  width: 100%;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+@media (width <= 600px) {
+  .drawer {
+    width: 25px;
+    border-radius: 10px 0 0 10px; // reversed radius
+  }
+}
+
+@media (width >= 601px) and (width <= 1500px) {
+  .drawer {
+    width: 50px;
+  }
+}
+
+@media (width >= 1501px) {
+  .drawer {
+    width: 100px;
+  }
+}
+
+.drawer-invisible-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+
+  > * {
+    pointer-events: none;
+    visibility: visible;
+  }
+}
+
+.drawer-title {
+  font-family: Hack;
+  color: variables.$sidebar-icon;
+  transform: rotate(-90deg);
+  white-space: nowrap;
+}
+
+.drawer-icons.rotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+/* Hidden content */
+.drawer-content {
+  opacity: 0;
+  width: 0;
+  transition:
+    opacity 0.3s ease,
+    width 0.3s ease;
+  overflow: hidden;
+}
+
+/* Show content when visible */
+.drawer-content.visible {
+  opacity: 1;
+  width: 180px; /* Expanded width minus the width of always visible part */
+}

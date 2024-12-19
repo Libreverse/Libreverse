@@ -4,6 +4,8 @@ use <https://gitlab.com/manyfold3d/federails> for handling discovery
 
 The idea is essentially users post experiences which are links to an experience they have created and is hosted on their instance. Instances can have multiple users.
 
+Use indieauth and a custom user blogging/site page. These will be shared through ActivityPub.
+
 add the alchemy cms framework
 
 add alchemy-devise

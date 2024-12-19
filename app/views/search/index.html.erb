@@ -1,12 +1,15 @@
+<%= render "layouts/sidebar" %>
+<%= render "layouts/drawer" %>
 <%= render "layouts/leniswrapper" do %>
   <%= render "layouts/shortcutswrapper" do %>
     <div class="hp-bg" role="presentation">
       <img
         src="<%= vite_asset_path "images/brasserie.jpg" %>"
+        srcset="<%= vite_asset_path "images/brasserie.avif" %>, <%= vite_asset_path "images/brasserie.webp" %>, <%= vite_asset_path "images/brasserie.jxl" %>"
         loading="eager"
         decoding="sync"
-        draggable="false"
         fetchpriority="high"
+        draggable="false"
         aria-hidden="true"
         tabindex="-1"
       >
