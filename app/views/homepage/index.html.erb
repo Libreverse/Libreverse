@@ -1,7 +1,7 @@
 <%= render "layouts/sidebar" %>
 <%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
-  <%= render 'layouts/shortcutswrapper' do %>
+  <%= render 'layouts/navigationshortcutswrapper' do %>
     <% content_for :specifcstylesheets do %>
       <%= vite_stylesheet_tag "~/stylesheets/homepage.scss" %>
     <% end %>

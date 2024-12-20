@@ -4,7 +4,38 @@
 <aside class="drawer-container" role="complementary" data-controller="drawer">
   <div class="drawer" aria-labelledby="drawer-title">
     <div class="drawer-contents" data-drawer-target="content">
-      <p>Drawer contents</p>
+      <div class="drawer-content">
+        <p>At Libreverse, we
+          <img
+            src="<%= vite_asset_path "~/emoji/2764.svg" %>"
+            class="emoji"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+            draggable="false"
+            tabindex="-1"
+          >
+          projects under open licenses and want to give credit to the projects
+          that made libreverse possible.</p>
+        <ul>
+          <li>
+            <a href="https://github.com/twitter/twemoji?tab=readme-ov-file">Twemoji</a>
+            by
+            <a href="https://x.com">X Corp</a>
+            licensed under
+            <a
+              href="https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS"
+            >CC-BY-4.0</a>
+          </li>
+          <li>
+            <a href="https://fontawesome.com">Fontawesome</a>
+            by
+            <a href="https://fontawesome.com">Fontawesome</a>
+            licensed under
+            <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>
+          </li>
+        </ul>
+      </div>
     </div>
     <button
       class="drawer-toggle"
