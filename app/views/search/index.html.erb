@@ -1,12 +1,10 @@
 <%= render "layouts/sidebar" %>
 <%= render "layouts/drawer" %>
 <%= render "layouts/leniswrapper" do %>
-  <%= render "layouts/shortcutswrapper" do %>
-
+  <%= render "layouts/navigationshortcutswrapper" do %>
     <% content_for :specifcstylesheets do %>
       <%= vite_stylesheet_tag "~/stylesheets/search.scss" %>
     <% end %>
-
     <% content_for :fontpreloads do %>
       <link
         rel="preload"
@@ -30,7 +28,6 @@
         crossorigin
       >
     <% end %>
-
     <div class="sp-bg" role="presentation">
       <img
         src="<%= vite_asset_path "images/brasserie.jpg" %>"

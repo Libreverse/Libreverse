@@ -16,14 +16,14 @@ application.register("drawer", DrawerController);
 import LenisController from "./lenis_controller";
 application.register("lenis", LenisController);
 
+import NavigationShortcutsController from "./navigation_shortcuts_controller";
+application.register("navigation-shortcuts", NavigationShortcutsController);
+
 import SearchController from "./search_controller";
 application.register("search", SearchController);
 
 import SearchUrlUpdaterController from "./search_url_updater_controller";
 application.register("search-url-updater", SearchUrlUpdaterController);
-
-import ShortcutsController from "./shortcuts_controller";
-application.register("shortcuts", ShortcutsController);
 
 import SidebarController from "./sidebar_controller";
 application.register("sidebar", SidebarController);

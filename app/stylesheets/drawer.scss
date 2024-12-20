@@ -1,4 +1,5 @@
 @use "boilerplate";
+@use "emoji";
 @use "variables";
 
 /* Drawer container styles */
@@ -40,7 +41,6 @@
 
 /* Always visible part */
 .drawer-contents {
-  width: 60px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -75,4 +75,17 @@
 
 .drawer.drawer-expanded .drawer-icons {
   transform: rotate(180deg); /* Rotate icon when expanded */
+}
+
+.drawer-content {
+  font-family: Hack, monospace;
+  font-size: 18px;
+  color: variables.$hp-primary;
+  text-align: left;
+  margin-left: 5%;
+  margin-right: 5%;
+
+  @media screen and (width <= 600px) {
+    font-size: 16px;
+  }
 }
