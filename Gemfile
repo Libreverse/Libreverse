@@ -59,9 +59,6 @@ gem "bootsnap", require: true
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
-# Use the authoiro gem for federated authentication
-gem "authorio-updated", git: "https://github.com/libreverse/authorio-updated.git"
-
 # Use the actioncable-enhanced-postgresql-adapter gem for better scaling of stimulus reflex without redis
 gem "actioncable-enhanced-postgresql-adapter"
 
