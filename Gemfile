@@ -50,9 +50,6 @@ gem "rack-attack"
 # Unicode to handle emoji
 gem "unicode"
 
-# Mime-types gem for content type sniffing in middlwares
-gem "mime-types", "~> 3.6"
-
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]
 
