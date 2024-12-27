@@ -75,27 +75,6 @@
   }
 }
 
-.hp-instancelabel {
-  font-family: Hack, monospace;
-  font-size: 20px;
-  color: variables.$hp-secondary;
-  background-color: variables.$pill-background;
-  margin: 0 auto 30px;
-  padding: 20px;
-  display: inline-block;
-  max-width: 90%;
-  white-space: nowrap;
-  border-radius: 5px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px variables.$box-shadow;
-}
-
-@media screen and (width <= 600px) {
-  .hp-instancelabel {
-    font-size: 18px;
-  }
-}
-
 .hp-sectionheader {
   font-family: Hack, monospace;
   font-size: 20px;

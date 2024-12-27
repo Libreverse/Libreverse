@@ -51,13 +51,6 @@ StimulusReflex.configure do |config|
   #
   # config.middleware.use FirstRackMiddleware
   # config.middleware.use SecondRackMiddleware
-
-  # Here, we only enable the html minifier, as the deflater and brotli
-  # have no effect in websocket situations.
-
-  # Strangely, we need to declare the middleware
-  # twice for stimulus reflex and rack to apply it in all cases.
-
   # this option set is from the default readme of htmlcompressor
   config.middleware.use HtmlCompressor::Rack,
     enabled: true,
@@ -80,4 +73,8 @@ StimulusReflex.configure do |config|
     preserve_line_breaks: false,
     simple_boolean_attributes: false,
     compress_js_templates: false
+
+  # We insert the emoji middleware here so that it precedes
+  # the html minifier but still avoids unnecessary work
+  config.middleware.use EmojiReplacer
 end
