@@ -21,7 +21,7 @@
   overflow: hidden;
   z-index: 3;
   transition: height 0.3s ease;
-  flex-direction: column-reverse;
+  flex-direction: column; // changed from column-reverse
 }
 
 .drawer.drawer-expanded {
@@ -57,14 +57,15 @@
 }
 
 .drawer-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 60px;
   height: 60px;
   background: none;
   border: none;
   cursor: pointer;
-  display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .drawer-icons {
@@ -81,11 +82,44 @@
   font-family: Hack, monospace;
   font-size: 18px;
   color: variables.$hp-primary;
+  background: variables.$vulcan;
   text-align: left;
   margin-left: 5%;
   margin-right: 5%;
+  border-radius: 10px;
+  box-shadow: variables.$box-shadow;
 
   @media screen and (width <= 600px) {
+    .drawer-content {
+      font-size: 16px;
+    }
+  }
+}
+
+.drawer-link {
+  font-family: Hack-Italic, monospace;
+  font-size: 18px;
+  color: variables.$hp-secondary;
+  text-decoration: underline;
+}
+
+@media screen and (width <= 600px) {
+  .drawer-link {
     font-size: 16px;
   }
+}
+
+.drawer-title {
+  font-family: Hack, monospace;
+  font-size: 20px;
+  color: variables.$sidebar-icon;
+  margin-left: 5%;
+}
+
+.drawer-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px;
 }

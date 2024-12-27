@@ -4,11 +4,15 @@ class SearchReflex < ApplicationReflex
   def perform
     query = element[:value].to_s.strip
     query = query[0...50] # Cap the query length to 50 characters
-    @experiences = if query.present?
-      Experience.where("title ILIKE ?", "%#{query}%")
-                .order(created_at: :desc)
-    else
-      Experience.all.order(created_at: :desc)
+    cache_key = "search/reflex/#{query}"
+
+    @experiences = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
+      if query.present?
+        Experience.where("title ILIKE ?", "%#{query}%")
+                  .order(created_at: :desc)
+      else
+        Experience.all.order(created_at: :desc)
+      end
     end
 
     # Morph the experiences_list div with the new content

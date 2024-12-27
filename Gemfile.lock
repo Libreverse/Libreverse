@@ -227,6 +227,10 @@ GEM
     marcel (1.0.4)
     matrix (0.4.2)
     metrics (0.12.1)
+    mime-types (3.6.0)
+      logger
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2024.1203)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
     minitest (5.25.4)
@@ -426,6 +430,7 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    unicode (0.4.4.5)
     unicode-display_width (3.1.2)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
@@ -480,6 +485,7 @@ DEPENDENCIES
   falcon (~> 0.48.3)
   htmlcompressor (~> 0.4.0)
   image_processing (~> 1.2)
+  mime-types (~> 3.6)
   permessage_deflate
   pg (~> 1.1)
   rack-attack
@@ -495,6 +501,7 @@ DEPENDENCIES
   stimulus_reflex (~> 3.5)
   turbo-rails
   tzinfo-data
+  unicode
   vite_rails
   web-console
 

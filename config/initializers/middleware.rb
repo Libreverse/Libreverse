@@ -1,8 +1,8 @@
 # Strange as it may seem this is the order that gets the html minifier
 # to run before the deflater and brotli because middlewares are,
 # unintuitively, run as a stack from the bottom up.
-Rails.application.config.middleware.use Rack::Deflater
-Rails.application.config.middleware.use Rack::Brotli, quality: 11
+Rails.application.config.middleware.use Rack::Deflater, include: %w[text/html], sync: false
+Rails.application.config.middleware.use Rack::Brotli, quality: 11, include: %w[text/html], deflater: { lgwin: 22, lgblock: 0, mode: :text }, sync: false
 
 # this option set is from the default readme of htmlcompressor
 Rails.application.config.middleware.use HtmlCompressor::Rack,
@@ -26,6 +26,10 @@ Rails.application.config.middleware.use HtmlCompressor::Rack,
   preserve_line_breaks: false,
   simple_boolean_attributes: false,
   compress_js_templates: false
+
+# We insert the emoji middleware here so that it precedes
+# the html minifier but still avoids unnecessary work
+Rails.application.config.middleware.use EmojiReplacer
 
 # We make sure that rack-attack runs first so that we don't
 # waste resources on compressing requests that will be throttled.

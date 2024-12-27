@@ -2,24 +2,12 @@
 
 use <https://gitlab.com/manyfold3d/federails> for handling discovery
 
-The idea is essentially users post experiences which are links to an experience they have created and is hosted on their instance. Instances can have multiple users.
+The idea is essentially users post experiences which is code that connects in any chosen way to the webserver.
 
-Use indieauth and a custom user blogging/site page. These will be shared through ActivityPub.
+Use indieauth through authorio
 
-add the alchemy cms framework
-
-add alchemy-devise
-
-add stimulus-reflex action cable framework
-
-set up premailer
-
-add mailgun action mailer integration
-
-use flatcar container linux and truffleruby to massively accelerate performance.
+add comfortablemediasurfer
 
 increase the scope of dockerignore
 
 fix csp
-
-install action cable

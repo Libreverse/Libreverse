@@ -1,47 +1,42 @@
 import { Controller } from "@hotwired/stimulus";
+import { useHotkeys } from "stimulus-use/hotkeys";
 import { visit } from "@hotwired/turbo";
 
 export default class extends Controller {
   static targets = [];
 
   connect() {
-    // Bind the keydown handler to this instance
-    this.boundKeydown = this.keydown.bind(this);
-    // Add global event listener
-    globalThis.addEventListener("keydown", this.boundKeydown);
+    useHotkeys(this, {
+      hotkeys: {
+        h: {
+          handler: this.goHome,
+        },
+        s: {
+          handler: this.goSearch,
+        },
+      },
+      filter: (event) => {
+        return (
+          event.target.tagName !== "INPUT" &&
+          event.target.tagName !== "TEXTAREA" &&
+          !event.ctrlKey &&
+          !event.altKey
+        );
+      },
+    });
   }
 
-  disconnect() {
-    // Clean up event listener
-    globalThis.removeEventListener("keydown", this.boundKeydown);
+  goHome(event) {
+    event.preventDefault();
+    if (globalThis.location.pathname !== "/") {
+      visit("/");
+    }
   }
 
-  keydown(event) {
-    if (
-      event.target.tagName === "INPUT" ||
-      event.target.tagName === "TEXTAREA"
-    ) {
-      return;
-    }
-
-    if (event.ctrlKey || event.altKey) {
-      return;
-    }
-
-    switch (event.key) {
-      case "h": {
-        event.preventDefault();
-        visit("/");
-        break;
-      }
-      case "s": {
-        event.preventDefault();
-        visit("/search");
-        break;
-      }
-      default: {
-        break;
-      }
+  goSearch(event) {
+    event.preventDefault();
+    if (globalThis.location.pathname !== "/search") {
+      visit("/search");
     }
   }
 }
