@@ -25,7 +25,7 @@
 }
 
 .drawer.drawer-expanded {
-  height: 400px; /* Expanded height */
+  height: 600px; /* Expanded height */
 }
 
 .drawer-container {
@@ -53,7 +53,7 @@
 }
 
 .drawer-expanded .drawer-contents {
-  height: calc(400px - 60px); // Total height minus the fixed 60px
+  height: calc(600px - 60px); // Total height minus the fixed 60px
 }
 
 .drawer-toggle {
@@ -66,6 +66,7 @@
   border: none;
   cursor: pointer;
   align-items: center;
+  margin-right: 1.15%;
 }
 
 .drawer-icons {
@@ -78,7 +79,7 @@
   transform: rotate(180deg); /* Rotate icon when expanded */
 }
 
-.drawer-content {
+.drawer-content-container {
   font-family: Hack, monospace;
   font-size: 18px;
   color: variables.$hp-primary;
@@ -88,6 +89,15 @@
   margin-right: 5%;
   border-radius: 10px;
   box-shadow: variables.$box-shadow;
+}
+
+.drawer-content {
+  font-family: Hack, monospace;
+  font-size: 18px;
+  color: variables.$hp-primary;
+  text-align: left;
+  margin-left: 5%;
+  margin-right: 5%;
 
   @media screen and (width <= 600px) {
     .drawer-content {
@@ -95,6 +105,7 @@
     }
   }
 }
+
 
 .drawer-link {
   font-family: Hack-Italic, monospace;
