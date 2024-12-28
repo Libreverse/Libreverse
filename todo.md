@@ -1,17 +1,15 @@
 # Todo List
 
 The plan:
-Use the docker-api gem and docker socket sharing to allow the app to create containers from a compose file
 
-use <https://gitlab.com/manyfold3d/federails> for handling discovery
+Use rodauth-rails to allow us to have secure auth
 
-make it so that docker containers can be orchestrated allowing for experiences to be built however desired
+Use rel="me" links to allow users to demonstrate interlinkage between accounts. When two rel="me" links point to each other, the accounts must be controlled by the same person
 
-The idea is essentially users post experiences which is code that connects in any chosen way to the webserver.
-
-Use indieauth through authorio-updated
-
+Use existing search engine theory to allow for cross-instance discovery
 set up vector search in postgres using pgvector
+
+from there, simply let instance admins add experiences by directly editing instance code before building and deploying
 
 increase the scope of dockerignore
 
