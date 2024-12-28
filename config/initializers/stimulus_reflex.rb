@@ -76,5 +76,6 @@ StimulusReflex.configure do |config|
 
   # We insert the emoji middleware here so that it precedes
   # the html minifier but still avoids unnecessary work
-  config.middleware.use EmojiReplacer
+  # It does not work in this situation for some currenrly unknown reason, so it is disabled
+  # config.middleware.use EmojiReplacer
 end
