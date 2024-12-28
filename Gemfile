@@ -62,6 +62,12 @@ gem "image_processing", "~> 1.2"
 # Use the actioncable-enhanced-postgresql-adapter gem for better scaling of stimulus reflex without redis
 gem "actioncable-enhanced-postgresql-adapter"
 
+# Use the authorio gem for the indieauth server implementation
+gem "authorio-updated", git: "https://github.com/libreverse/authorio-updated.git"
+
+# Use the omniauth-indieauth gem for the indieauth client implementation
+gem "omniauth-indieauth-updated", git: "https://github.com/Libreverse/omniauth-indieauth-updated.git"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]

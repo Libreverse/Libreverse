@@ -1,4 +1,12 @@
 GIT
+  remote: https://github.com/Libreverse/omniauth-indieauth-updated.git
+  revision: c71c1faf40eeb9bc575031580b18e6a1a640cc15
+  specs:
+    omniauth-indieauth-updated (0.1.0)
+      faraday (~> 2.12)
+      omniauth (~> 2.1)
+
+GIT
   remote: https://github.com/libreverse/authorio-updated.git
   revision: ccf4c7cf178c442b5dc523be7230329d66df97fa
   specs:
@@ -192,6 +200,12 @@ GEM
       protocol-http (~> 0.31)
       protocol-rack (~> 0.7)
       samovar (~> 2.3)
+    faraday (2.12.2)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.0)
+      net-http (>= 0.5.0)
     ffi (1.17.0-aarch64-linux-gnu)
     ffi (1.17.0-aarch64-linux-musl)
     ffi (1.17.0-arm-linux-gnu)
@@ -211,6 +225,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    hashie (5.0.0)
     htmlcompressor (0.4.0)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
@@ -249,6 +264,8 @@ GEM
     minitest (5.25.4)
     msgpack (1.7.5)
     multi_json (1.15.0)
+    net-http (0.6.0)
+      uri
     net-imap (0.5.1)
       date
       net-protocol
@@ -281,6 +298,10 @@ GEM
     nokogiri-html5-inference (0.3.0)
       nokogiri (~> 1.14)
     observer (0.1.2)
+    omniauth (2.1.2)
+      hashie (>= 3.4.6)
+      rack (>= 2.2.3)
+      rack-protection
     openssl (3.2.0)
     parallel (1.26.3)
     parser (3.3.6.0)
@@ -315,6 +336,10 @@ GEM
     rack-brotli (2.0.0)
       brotli (>= 0.3)
       rack (>= 3)
+    rack-protection (4.1.1)
+      base64 (>= 0.1.0)
+      logger (>= 1.6.0)
+      rack (>= 3.0.0, < 4)
     rack-proxy (0.7.7)
       rack
     rack-session (2.0.0)
@@ -507,6 +532,7 @@ DEPENDENCIES
   falcon (~> 0.48.3)
   htmlcompressor (~> 0.4.0)
   image_processing (~> 1.2)
+  omniauth-indieauth-updated!
   permessage_deflate
   pg (~> 1.1)
   rack-attack
