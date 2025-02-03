@@ -9,7 +9,7 @@ gem "rails", "~> 8.0.1"
 gem "pg", "~> 1.1"
 
 # Use the falcon web server for better concurrency
-gem "falcon", "~> 0.48.3"
+gem "falcon", "~> 0.48.6"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
