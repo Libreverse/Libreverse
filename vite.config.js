@@ -9,56 +9,21 @@ import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import { constants } from "node:zlib";
-import { sassFalse } from "sass-embedded";
 
 export default defineConfig({
   build: {
     sourcemap: false,
-    terserOptions: {
-      ecma: 5,
-      warnings: true,
-      mangle: {
-        properties: false,
-        safari10: true,
-        toplevel: false, // Disable toplevel mangling for legacy compatibility
-      },
-      compress: {
-        defaults: true,
-        arrows: false, // Disable arrow function compression for legacy compatibility
-        booleans_as_integers: false, // Disable boolean as integers for legacy compatibility
-        booleans: true,
-        collapse_vars: true,
-        comparisons: true,
-        conditionals: true,
-        dead_code: true,
-        drop_console: sassFalse,
-        directives: true,
-        evaluate: true,
-        hoist_funs: true,
-        if_return: true,
-        join_vars: true,
-        keep_fargs: false, // Drop unused function arguments
-        loops: true,
-        negate_iife: true,
-        passes: 3, // Additional passes can catch more opportunities for compression
-        properties: true,
-        reduce_vars: true,
-        sequences: true,
-        side_effects: true, // But be careful, this might remove functions with no apparent side effects
-        toplevel: false, // Disable toplevel compression for legacy compatibility
-        typeofs: false, // Disable typeof compression for legacy compatibility
-        unused: true, // Drop unused variables and functions
-      },
+    cache: true,
+    rollupOptions: {
       output: {
-        comments: /(?:copyright|©)/i,
-        beautify: false,
-        semicolons: true,
+        entryFileNames: "[name]-[hash].js",
+        chunkFileNames: "[name]-[hash].js",
+        assetFileNames: "[name]-[hash].[ext]",
       },
-      keep_classnames: false,
-      keep_fnames: false,
-      safari10: true,
-      module: true,
     },
+  },
+  server: {
+    hmr: { overlay: false },
   },
   css: {
     preprocessorOptions: {
@@ -92,7 +57,53 @@ export default defineConfig({
     rubyPlugin(),
     fullReload(["config/routes.rb", "app/views/**/*"]),
     stimulusHMR(),
-    legacy(),
+    legacy({
+      terserOptions: {
+        ecma: 5,
+        warnings: true,
+        mangle: {
+          properties: false,
+          safari10: true,
+          toplevel: false,
+        },
+        compress: {
+          defaults: true,
+          arrows: false,
+          booleans_as_integers: false,
+          booleans: true,
+          collapse_vars: true,
+          comparisons: true,
+          conditionals: true,
+          dead_code: true,
+          drop_console: true,
+          directives: true,
+          evaluate: true,
+          hoist_funs: true,
+          if_return: true,
+          join_vars: true,
+          keep_fargs: false,
+          loops: true,
+          negate_iife: true,
+          passes: 3,
+          properties: true,
+          reduce_vars: true,
+          sequences: true,
+          side_effects: true,
+          toplevel: false,
+          typeofs: false,
+          unused: true,
+        },
+        output: {
+          comments: /(?:copyright|licence|©)/i,
+          beautify: false,
+          semicolons: true,
+        },
+        keep_classnames: false,
+        keep_fnames: false,
+        safari10: true,
+        module: true,
+      },
+    }),
     vitePluginCompression({
       algorithm: "brotliCompress",
       compressionOptions: {

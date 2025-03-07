@@ -16,14 +16,20 @@ export default class extends Controller {
   }
 
   singleKeyHandler(e) {
-    this.element.querySelector(".drawer").classList.toggle("drawer-expanded");
-    this.iconTarget.classList.toggle("rotated");
-    this.contentTarget.classList.toggle("visible");
+    this.toggleDrawer();
   }
 
   toggle() {
-    this.element.querySelector(".drawer").classList.toggle("drawer-expanded");
+    this.toggleDrawer();
+  }
+
+  toggleDrawer() {
+    const drawerElement = this.element.querySelector(".drawer");
+    drawerElement.classList.toggle("drawer-expanded");
     this.iconTarget.classList.toggle("rotated");
     this.contentTarget.classList.toggle("visible");
+
+    // Toggle the body class for expanded drawer
+    document.body.classList.toggle("drawer-is-expanded");
   }
 }
