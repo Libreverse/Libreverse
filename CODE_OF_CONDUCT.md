@@ -1,3 +1,5 @@
+# Libreverse Contributor Code of Conduct
+
 The Libreverse code of conduct is copied from [The Ladybird code of conduct](https://github.com/LadybirdBrowser/ladybird/blob/master/CODE_OF_CONDUCT.md).
 
 - Participants will be tolerant of opposing views.

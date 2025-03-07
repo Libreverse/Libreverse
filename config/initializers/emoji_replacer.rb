@@ -51,7 +51,7 @@ class EmojiReplacer
 
     # Return the modified response
     [ status, headers, body ]
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error "EmojiReplacer: Error processing request: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
     [ 500, { "Content-Type" => "text/plain" }, [ "Internal Server Error" ] ]
@@ -73,15 +73,15 @@ class EmojiReplacer
     svg_path = ViteRuby.instance.manifest.path_for("emoji/#{codepoints}.svg")
     Rails.logger.debug "EmojiReplacer: Resolved SVG path for emoji '#{emoji}': #{svg_path}"
 
-    if svg_path.nil? || svg_path.empty?
+    if svg_path.blank?
       Rails.logger.warn "EmojiReplacer: SVG path not found for emoji '#{emoji}' with codepoints '#{codepoints}'."
       return emoji
     end
 
-    img_tag = %Q(<img src="#{svg_path}" alt="#{emoji}" class="emoji" loading="lazy" decoding="async" fetchpriority="low" draggable="false" tabindex="”-1”">)
+    img_tag = %(<img src="#{svg_path}" alt="#{emoji}" class="emoji" loading="lazy" decoding="async" fetchpriority="low" draggable="false" tabindex="”-1”">)
     Rails.logger.debug "EmojiReplacer: Built img tag for emoji '#{emoji}': #{img_tag}"
     img_tag
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error "EmojiReplacer: Failed to build img tag for emoji '#{emoji}': #{e.message}"
     emoji
   end
