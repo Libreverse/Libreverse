@@ -14,10 +14,8 @@ class RodauthApp < Rodauth::Rails::App
     # Call `rodauth.require_account` for requests that you want to
     # require authentication for. For example:
     #
-    # # authenticate /dashboard/* and /account/* requests
-    # if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
-    #   rodauth.require_account
-    # end
+    # Authenticate dashboard paths
+    rodauth.require_account if r.path.start_with?("/dashboard")
 
     # ==> Secondary configurations
     # r.rodauth(:admin) # route admin rodauth requests

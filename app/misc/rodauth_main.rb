@@ -3,10 +3,10 @@ require "sequel/core"
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     # List of authentication features that are loaded.
-    enable :create_account, :verify_account, :verify_account_grace_period,
-      :login, :logout, :remember,
-      :reset_password, :change_password, :change_login, :verify_login_change,
-      :close_account, :argon2
+    enable :create_account,
+           :login, :logout, :remember,
+           :change_password, :change_login,
+           :close_account, :argon2
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -49,14 +49,13 @@ class RodauthMain < Rodauth::Rails::Auth
     # Store password hash in a column instead of a separate table.
     account_password_hash_column :password_hash
 
-    # Set password when creating account instead of when verifying.
-    verify_account_set_password? false
-
     # Change some default param keys.
     login_param "username"
     login_confirm_param "username-confirm"
     login_column :username
-    # password_confirm_param "confirm_password"
+    login_label "Username"
+    login_confirm_label "Confirm Username"
+    require_login_confirmation? true
 
     # Redirect back to originally requested location after authentication.
     # login_return_to_requested_location? true
@@ -72,9 +71,10 @@ class RodauthMain < Rodauth::Rails::Auth
     # already_logged_in { redirect login_redirect }
 
     # ==> Emails
-    send_email do |email|
-      # queue email delivery on the mailer after the transaction commits
-      db.after_commit { email.deliver_later }
+    # Disable email sending completely
+    send_email do |_email|
+      # No-op implementation - don't send any emails
+      nil
     end
 
     # ==> Flash
@@ -83,16 +83,16 @@ class RodauthMain < Rodauth::Rails::Auth
     # flash_error_key :error # default is :alert
 
     # Override default flash messages.
-    # create_account_notice_flash "Your account has been created. Please verify your account by visiting the confirmation link sent to your email address."
+    # create_account_notice_flash "Your account has been created successfully."
     # require_login_error_flash "Login is required for accessing this page"
     # login_notice_flash nil
 
     # ==> Validation
     # Override default validation error messages.
-    # no_matching_login_message "user with this email address doesn't exist"
-    # already_an_account_with_this_login_message "user with this email address already exists"
+    # no_matching_login_message "user with this username doesn't exist"
+    # already_an_account_with_this_login_message "user with this username already exists"
     # password_too_short_message { "needs to have at least #{password_minimum_length} characters" }
-    # login_does_not_meet_requirements_message { "invalid email#{", #{login_requirement_message}" if login_requirement_message}" }
+    # login_does_not_meet_requirements_message { "invalid username#{", #{login_requirement_message}" if login_requirement_message}" }
 
     # Passwords shorter than 8 characters are considered weak according to OWASP.
     password_minimum_length 8
@@ -141,17 +141,40 @@ class RodauthMain < Rodauth::Rails::Auth
     # Redirect to home page after logout.
     logout_redirect "/"
 
-    # Redirect to wherever login redirects to after account verification.
-    verify_account_redirect { login_redirect }
-
-    # Redirect to login page after password reset.
-    reset_password_redirect { login_path }
+    # Redirect to login page after successful account creation
+    create_account_redirect "/"
 
     # ==> Deadlines
     # Change default deadlines for some actions.
-    # verify_account_grace_period 3.days.to_i
-    # reset_password_deadline_interval Hash[hours: 6]
-    # verify_login_change_deadline_interval Hash[days: 2]
     # remember_deadline_interval Hash[days: 30]
+
+    # Override email validation for username
+    auth_class_eval do
+      def login_meets_requirements?(_login)
+        true # Accept any username without email validation
+      end
+    end
+
+    # Custom error message for username requirements
+    login_does_not_meet_requirements_message "must be at least 3 characters"
+
+    # Set proper after-creation behavior
+    create_account_autologin? true
+    create_account_set_password? true
+
+    # Skip account verification step since we're using usernames
+    skip_status_checks? true
+
+    # Auto-verify accounts immediately after creation
+    after_create_account do
+      # Directly mark the account as verified with status 2
+      # From account.rb: enum :status, { unverified: 1, verified: 2, closed: 3 }
+      db.from(accounts_table).where(id: account_id).update(status: 2)
+
+      db.after_commit do
+        set_notice_flash create_account_notice_flash
+        redirect create_account_redirect
+      end
+    end
   end
 end

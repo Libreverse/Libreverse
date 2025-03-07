@@ -10,4 +10,12 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # Authentication routes (/login, /create-account, etc.) are automatically handled by Rodauth
+  # See app/misc/rodauth_app.rb and run `rails rodauth:routes` to view all available routes
+
+  # Routes available only if authenticated via Rodauth
+  constraints Rodauth::Rails.authenticate do
+    get "dashboard", to: "dashboard#index"
+  end
 end
