@@ -102,10 +102,12 @@
     <meta property="og:description" content="<%= description %>">
     <meta property="og:determiner" content="<%= determiner %>">
     <meta property="og:locale" content="<%= locale %>">
-    <!--Facebook-specific metadata--> <!--<meta property="article:publisher" content="https://www.facebook.com/yourpage">--> <!--<meta
+    <!--Facebook-specific metadata--> 
+    <meta property="article:publisher" content="https://www.facebook.com/yourpage">
+    <meta
       property="article:tag"
       content="Libreverse, libreverse, metaverse, open-source, FOSS"
-    >-->
+    >
     <meta property="fb:admins" content="<%= facebook_admins %>">
     <meta property="fb:app_id" content="<%= facebook_app_id %>">
     <meta property="fb:pages" content="<%= facebook_pages %>">
@@ -123,7 +125,8 @@
     <!--Old windows pin-to-taskbar metadata-->
     <meta name="msapplication-tooltip" content="<%= windows7_tooltip %>">
     <meta name="msapplication-starturl" content="<%= windows7_starturl %>">
-    <meta name="msapplication-task" content="<%= windows7_tooltip %>"><!--Add proper tasks here--> <!--Mobile App Metadata-->
+    <meta name="msapplication-task" content="<%= windows7_tooltip %>"><!--Add proper tasks here--> 
+    <!--Mobile App Metadata-->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="<%= name %>">
@@ -147,9 +150,10 @@
     <!--Vite HMR in development. Does not result in anything in prod-->
     <%= vite_client_tag %>
   </head>
-  <body>
-    <main>
+  <body class="<%= content_for?(:drawer) ? 'page-with-drawer' : '' %>">
+    <main class="content-wrapper">
       <%= yield %>
     </main>
+    <%= render partial: 'layouts/drawer' if content_for?(:drawer) %>
   </body>
 </html>

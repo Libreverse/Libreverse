@@ -22,6 +22,15 @@
   z-index: 3;
   transition: height 0.3s ease;
   flex-direction: column; // changed from column-reverse
+
+  @media screen and (max-width: 450px) {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    width: 90%;
+    max-width: 350px;
+  }
 }
 
 .drawer.drawer-expanded {
@@ -37,6 +46,11 @@
   display: flex;
   z-index: 2;
   transition: height 0.3s;
+
+  @media screen and (max-width: 450px) {
+    right: auto;
+    justify-content: center;
+  }
 }
 
 /* Always visible part */
@@ -67,6 +81,11 @@
   cursor: pointer;
   align-items: center;
   margin-right: 1.15%;
+
+  @media screen and (max-width: 450px) {
+    margin-right: 0;
+    position: relative;
+  }
 }
 
 .drawer-icons {
