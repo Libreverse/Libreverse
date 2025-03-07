@@ -1,6 +1,11 @@
 ---
 EnableDefaultLinters: true
 linters:
+  # Run better html at lint time as well
+  ErbSafety:
+    enabled: true
+    better_html_config: .better-html.yml
+
   # Style-related rules (disabled)
   ClosingErbTagIndentation:
     enabled: false
@@ -25,7 +30,7 @@ linters:
 
   # Non-style-related rules (enabled)
   AllowedScriptType:
-    enabled: true
+    enabled: false
   NoJavascriptTagHelper:
     enabled: true
   PartialInstanceVariable:
@@ -35,6 +40,6 @@ linters:
   DeprecatedClasses:
     enabled: true
   RequireScriptNonce:
-    enabled: true
+    enabled: false
   HardCodedString:
-    enabled: true
+    enabled: false

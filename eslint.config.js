@@ -4,7 +4,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
@@ -15,7 +14,15 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["public/vite-dev/", "**/node_modules/", "**/vendor/", "**/tmp/"],
+    ignores: [
+      "app//builds**",
+      "**/node_modules/",
+      "**/vendor/",
+      "**/tmp/",
+      "**.config.js",
+      "public/**",
+      "app//libs/**",
+    ],
   },
   ...compat.extends(
     "eslint:recommended",
@@ -26,7 +33,6 @@ export default [
     plugins: {
       unicorn,
     },
-
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -36,10 +42,10 @@ export default [
       sourceType: "module",
     },
 
-    // Add rules section
     rules: {
       "unicorn/filename-case": "off",
       "unicorn/no-anonymous-default-export": "off",
+      "unicorn/no-empty-file": "off",
     },
   },
 ];

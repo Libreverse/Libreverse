@@ -46,15 +46,15 @@ Rails.application.configure do
   # Logger Configuration
   config.logger =
     ActiveSupport::Logger
-      .new(STDOUT)
-      .tap { |logger| logger.formatter = ::Logger::Formatter.new }
-      .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+    .new($stdout)
+    .tap { |logger| logger.formatter = ::Logger::Formatter.new }
+    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
   # Log level
-  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+  config.log_level = ENV.fetch("RAILS_LOG_LEVEL") { "info" }
 
   # Cache Store Configuration
   config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }

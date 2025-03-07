@@ -63,7 +63,7 @@ Rails.application.configure do
 
   # Noisy Action Cable
   config.action_cable.log_tags = [ :action_cable ]
-  config.action_cable.logger = ActiveSupport::Logger.new(STDOUT)
+  config.action_cable.logger = ActiveSupport::Logger.new($stdout)
   config.action_cable.logger.level = Logger::DEBUG
 
   # Use Solid Queue for Active Job

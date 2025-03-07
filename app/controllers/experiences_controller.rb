@@ -1,5 +1,5 @@
 class ExperiencesController < ApplicationController
-  before_action :set_experience, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_experience, only: %i[show edit update destroy]
 
   # GET /experiences
   def index

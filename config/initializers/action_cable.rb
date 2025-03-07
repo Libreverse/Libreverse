@@ -31,7 +31,7 @@ require "permessage_deflate"
 module ActionCable
   module Connection
     class ClientSocket
-      alias_method :original_initialize, :initialize
+      alias original_initialize initialize
 
       def initialize(env, event_target, event_loop, protocols)
         Rails.logger.debug "Initializing ClientSocket with env: #{env.inspect}"
@@ -42,7 +42,7 @@ module ActionCable
         )
         @driver.add_extension(deflate)
         Rails.logger.debug "PerMessageDeflate extension added."
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "Error in ClientSocket initialization: #{e.message}"
         raise
       end

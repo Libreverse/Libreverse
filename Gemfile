@@ -1,15 +1,15 @@
 source "https://rubygems.org"
 
-ruby "3.3.6"
+ruby "3.4.1"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.1"
 
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+gem "pg"
 
 # Use the falcon web server for better concurrency
-gem "falcon", "~> 0.48.3"
+gem "falcon"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
@@ -21,12 +21,13 @@ gem "stimulus-rails"
 gem "vite_rails"
 
 # Sentry-Ruby to track backend crashes
-gem "sentry-ruby"
 gem "sentry-rails"
+gem "sentry-ruby"
 
 # StimulusReflex framework
-gem "stimulus_reflex", "~> 3.5"
-gem "activerecord-session_store", "~> 2.0"
+gem "activerecord-session_store"
+gem "stimulus_reflex"
+gem "ostruct"
 
 # Solid cache and queue for caching and background jobs
 gem "solid_cache"
@@ -35,11 +36,8 @@ gem "solid_queue"
 # Used to monkey patch ActionCable to use the permessage_deflate extension
 gem "permessage_deflate"
 
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem "bcrypt", "~> 3.1.7"
-
 # HTML compressor to minify HTML when sent to the client
-gem "htmlcompressor", "~> 0.4.0"
+gem "htmlcompressor"
 
 # Rack-Brotli to compress responses with Brotli
 gem "rack-brotli"
@@ -56,17 +54,8 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: true
 
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
-
 # Use the actioncable-enhanced-postgresql-adapter gem for better scaling of stimulus reflex without redis
 gem "actioncable-enhanced-postgresql-adapter"
-
-# Use the authorio gem for the indieauth server implementation
-gem "authorio-updated", git: "https://github.com/libreverse/authorio-updated.git"
-
-# Use the omniauth-indieauth gem for the indieauth client implementation
-gem "omniauth-indieauth-updated", git: "https://github.com/Libreverse/omniauth-indieauth-updated.git"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -78,16 +67,26 @@ group :development do
   gem "web-console"
 
   # Make the code actually look good
-  gem "rubocop-rails-omakase"
+  gem "rubocop"
+  gem "rubocop-rails"
 
   # Lint ERB files
   gem "erb_lint"
 
   # Use the erb formatter to format ERB files
-  gem "erb-formatter", "~> 0.7.3"
+  gem "erb-formatter"
 
   # fly.io's dockerfile generator to generate a docker compose file for the site.
-  gem "dockerfile-rails", ">= 1.6"
+  gem "dockerfile-rails"
+
+  # Use fasterer for speed improvement hints
+  gem "fasterer"
+
+  # Use the brakeman gem to check for security vulnerabilities
+  gem "brakeman"
+
+  # foreman does not seem to be installed by rails automatically
+  gem "foreman"
 end
 
 group :test do
