@@ -102,7 +102,7 @@
     <meta property="og:description" content="<%= description %>">
     <meta property="og:determiner" content="<%= determiner %>">
     <meta property="og:locale" content="<%= locale %>">
-    <!--Facebook-specific metadata--> 
+    <!--Facebook-specific metadata-->
     <meta property="article:publisher" content="https://www.facebook.com/yourpage">
     <meta
       property="article:tag"
@@ -125,8 +125,7 @@
     <!--Old windows pin-to-taskbar metadata-->
     <meta name="msapplication-tooltip" content="<%= windows7_tooltip %>">
     <meta name="msapplication-starturl" content="<%= windows7_starturl %>">
-    <meta name="msapplication-task" content="<%= windows7_tooltip %>"><!--Add proper tasks here--> 
-    <!--Mobile App Metadata-->
+    <meta name="msapplication-task" content="<%= windows7_tooltip %>"><!--Add proper tasks here--> <!--Mobile App Metadata-->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="<%= name %>">
@@ -151,9 +150,31 @@
     <%= vite_client_tag %>
   </head>
   <body class="<%= content_for?(:drawer) ? 'page-with-drawer' : '' %>">
+    <% if notice %>
+      <div class="alert alert-success"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-danger"><%= alert %></div>
+    <% end %>
+
+    <nav class="auth-nav">
+      <% if rodauth.logged_in? %>
+        <%= link_to "Dashboard", dashboard_path %>
+        <%= button_to "Sign out",
+        rodauth.logout_path,
+        method: :post,
+        class: "btn btn-sm btn-outline-secondary" %>
+      <% else %>
+        <%= link_to "Sign in", rodauth.login_path, class: "btn btn-sm btn-outline-primary" %>
+        <%= link_to "Sign up",
+        rodauth.create_account_path,
+        class: "btn btn-sm btn-outline-success" %>
+      <% end %>
+    </nav>
+
     <main class="content-wrapper">
       <%= yield %>
     </main>
-    <%= render partial: 'layouts/drawer' if content_for?(:drawer) %>
+    <%= render partial: "layouts/drawer" if content_for?(:drawer) %>
   </body>
 </html>

@@ -4,8 +4,8 @@ class CreateRodauth < ActiveRecord::Migration[8.0]
 
     create_table :accounts do |t|
       t.integer :status, null: false, default: 1
-      t.string :username, null: false
-      t.index :username, unique: true, where: "status IN (1, 2)"
+      t.citext :username, null: false
+      t.index :username, unique: true
       t.string :password_hash
     end
 
