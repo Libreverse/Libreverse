@@ -11,7 +11,7 @@
   border-right: 1px solid variables.$glass-border;
   border-bottom: 1px solid variables.$glass-border;
   border-radius: 0 20px 20px 0;
-  z-index: 3;
+  z-index: 5;
   transition: width 0.3s;
   position: fixed;
 
@@ -24,7 +24,7 @@
   width: 50px; // Matches the initial width of .sidebar
   height: 100vh; // Matches the height of .sidebar
   position: fixed;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
   transition: width 0.3s;

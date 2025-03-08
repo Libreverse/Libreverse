@@ -4,6 +4,7 @@
   <%= render 'layouts/navigationshortcutswrapper' do %>
     <% content_for :specifcstylesheets do %>
       <%= vite_stylesheet_tag "~/stylesheets/login.scss" %>
+      <%= vite_stylesheet_tag "~/stylesheets/lamp-effect.scss" %>
     <% end %>
     <% content_for :fontpreloads do %>
       <link
@@ -12,7 +13,7 @@
         as="font"
         type="font/woff2"
         crossorigin
-      >
+      > 
       <link
         rel="preload"
         href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
@@ -30,6 +31,14 @@
     <% end %>
     
     <div class="login-bg" role="presentation"></div>
+    
+    <!-- Lamp effect with conical gradients -->
+    <div class="lamp-effect">
+      <div class="lamp-left-beam"></div>
+      <div class="lamp-right-beam"></div>
+      <div class="lamp-center-glow"></div>
+      <div class="lamp-line"></div>
+    </div>
     
     <div class="login-container">
       <div class="login-card">
