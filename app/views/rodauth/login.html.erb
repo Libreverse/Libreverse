@@ -1,3 +1,50 @@
-<%== rodauth.login_form_header %>
-<%= render "login_form" %>
-<%== rodauth.login_form_footer %>
+<%= render "layouts/sidebar" %>
+<%= render "layouts/drawer" %>
+<%= render 'layouts/leniswrapper' do %>
+  <%= render 'layouts/navigationshortcutswrapper' do %>
+    <% content_for :specifcstylesheets do %>
+      <%= vite_stylesheet_tag "~/stylesheets/login.scss" %>
+    <% end %>
+    <% content_for :fontpreloads do %>
+      <link
+        rel="preload"
+        href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
+        as="font"
+        type="font/woff2"
+        crossorigin
+      >
+      <link
+        rel="preload"
+        href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
+        as="font"
+        type="font/woff2"
+        crossorigin
+      >
+      <link
+        rel="preload"
+        href="<%= vite_asset_path '~/fonts/Hack-Italic.woff2' %>"
+        as="font"
+        type="font/woff2"
+        crossorigin
+      >
+    <% end %>
+    
+    <div class="login-bg" role="presentation"></div>
+    
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h1>Welcome Back</h1>
+          <p>Sign in to your account</p>
+        </div>
+        
+        <%== rodauth.login_form_header %>
+        <%= render "login_form" %>
+        
+        <div class="login-footer">
+          Don't have an account? <a href="<%= rodauth.create_account_path %>">Sign up</a>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

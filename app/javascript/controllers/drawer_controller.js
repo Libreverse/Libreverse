@@ -15,7 +15,8 @@ export default class extends Controller {
     });
   }
 
-  singleKeyHandler(e) {
+  // eslint-disable-next-line no-unused-vars
+  singleKeyHandler(event) {
     this.toggleDrawer();
   }
 

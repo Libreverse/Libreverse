@@ -22,8 +22,6 @@ class CreateSolidQueueTables < ActiveRecord::Migration[8.0]
       t.index %i[process_id job_id], name: "index_solid_queue_claimed_executions_on_process_id_and_job_id"
     end
 
-    create_table :solid_queue_failed_executions do |t|
-      # Define the columns as per your schema
-    end
+    create_table :solid_queue_failed_executions, &:timestamps
   end
 end
