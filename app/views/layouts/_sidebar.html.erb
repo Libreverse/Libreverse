@@ -27,7 +27,7 @@
           data-current-target="image"
           draggable="false"
           aria-hidden="true"
-          tabindex="”-1”"
+          tabindex=""-1""
         >
       </a>
       <a
@@ -47,9 +47,90 @@
           data-current-target="image"
           draggable="false"
           aria-hidden="true"
-          tabindex="”-1”"
+          tabindex=""-1""
         >
       </a>
+      
+      <!-- Authentication links -->
+      <% if rodauth.logged_in? %>
+        <a
+          href="<%= dashboard_path %>"
+          data-controller="current"
+          data-action="click->current#handleClick"
+          data-current-target="link"
+          class="sidebar-link"
+          aria-label="Go to dashboard"
+        >
+          <img
+            src="<%= vite_asset_path "~/icons/dashboard.svg" %>"
+            class="sidebar-icons"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            data-current-target="image"
+            draggable="false"
+            aria-hidden="true"
+            tabindex=""-1""
+          >
+        </a>
+        <%= button_to rodauth.logout_path,
+            method: :post,
+            class: "sidebar-link sidebar-logout-button",
+            aria: { label: "Sign out" } do %>
+          <img
+            src="<%= vite_asset_path "~/icons/logout.svg" %>"
+            class="sidebar-icons"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            data-current-target="image"
+            draggable="false"
+            aria-hidden="true"
+            tabindex=""-1""
+          >
+        <% end %>
+      <% else %>
+        <a
+          href="<%= rodauth.login_path %>"
+          data-controller="current"
+          data-action="click->current#handleClick"
+          data-current-target="link"
+          class="sidebar-link"
+          aria-label="Sign in"
+        >
+          <img
+            src="<%= vite_asset_path "~/icons/login.svg" %>"
+            class="sidebar-icons"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            data-current-target="image"
+            draggable="false"
+            aria-hidden="true"
+            tabindex=""-1""
+          >
+        </a>
+        <a
+          href="<%= rodauth.create_account_path %>"
+          data-controller="current"
+          data-action="click->current#handleClick"
+          data-current-target="link"
+          class="sidebar-link"
+          aria-label="Sign up"
+        >
+          <img
+            src="<%= vite_asset_path "~/icons/signup.svg" %>"
+            class="sidebar-icons"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            data-current-target="image"
+            draggable="false"
+            aria-hidden="true"
+            tabindex=""-1""
+          >
+        </a>
+      <% end %>
     </div>
   </nav>
 </aside>
