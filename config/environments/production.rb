@@ -79,10 +79,6 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Action Mailer Configuration
-  # config.action_mailer.raise_delivery_errors = false
-  # config.action_mailer.perform_caching = false
-
   # Action Cable Logging
   ActionCable.server.config.logger = Logger.new(nil)
 end

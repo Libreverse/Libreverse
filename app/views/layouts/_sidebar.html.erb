@@ -18,17 +18,9 @@
         class="sidebar-link"
         aria-label="Go to homepage"
       >
-        <img
-          src="<%= vite_asset_path "~/images/libreverse-logo.svg" %>"
-          class="sidebar-icons"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          data-current-target="image"
-          draggable="false"
-          aria-hidden="true"
-          tabindex=""-1""
-        >
+        <img src="<%= vite_asset_path "~/images/libreverse-logo.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
+        fetchpriority="high" data-current-target="image" draggable="false"
+        aria-hidden="true" tabindex=""-1"" >
       </a>
       <a
         href="/search"
@@ -38,19 +30,10 @@
         class="sidebar-link"
         aria-label="Go to search page"
       >
-        <img
-          src="<%= vite_asset_path "~/icons/search.svg" %>"
-          class="sidebar-icons"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          data-current-target="image"
-          draggable="false"
-          aria-hidden="true"
-          tabindex=""-1""
-        >
+        <img src="<%= vite_asset_path "~/icons/search.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
+        fetchpriority="high" data-current-target="image" draggable="false"
+        aria-hidden="true" tabindex=""-1"" >
       </a>
-      
       <!-- Authentication links -->
       <% if rodauth.logged_in? %>
         <a
@@ -61,33 +44,17 @@
           class="sidebar-link"
           aria-label="Go to dashboard"
         >
-          <img
-            src="<%= vite_asset_path "~/icons/dashboard.svg" %>"
-            class="sidebar-icons"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            data-current-target="image"
-            draggable="false"
-            aria-hidden="true"
-            tabindex=""-1""
-          >
+          <img src="<%= vite_asset_path "~/icons/dashboard.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
+          fetchpriority="high" data-current-target="image" draggable="false"
+          aria-hidden="true" tabindex=""-1"" >
         </a>
         <%= button_to rodauth.logout_path,
             method: :post,
             class: "sidebar-link sidebar-logout-button",
             aria: { label: "Sign out" } do %>
-          <img
-            src="<%= vite_asset_path "~/icons/logout.svg" %>"
-            class="sidebar-icons"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            data-current-target="image"
-            draggable="false"
-            aria-hidden="true"
-            tabindex=""-1""
-          >
+          <img src="<%= vite_asset_path "~/icons/logout.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
+          fetchpriority="high" data-current-target="image" draggable="false"
+          aria-hidden="true" tabindex=""-1"" >
         <% end %>
       <% else %>
         <a
@@ -98,17 +65,9 @@
           class="sidebar-link"
           aria-label="Sign in"
         >
-          <img
-            src="<%= vite_asset_path "~/icons/login.svg" %>"
-            class="sidebar-icons"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            data-current-target="image"
-            draggable="false"
-            aria-hidden="true"
-            tabindex=""-1""
-          >
+          <img src="<%= vite_asset_path "~/icons/login.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
+          fetchpriority="high" data-current-target="image" draggable="false"
+          aria-hidden="true" tabindex=""-1"" >
         </a>
         <a
           href="<%= rodauth.create_account_path %>"
@@ -118,17 +77,9 @@
           class="sidebar-link"
           aria-label="Sign up"
         >
-          <img
-            src="<%= vite_asset_path "~/icons/signup.svg" %>"
-            class="sidebar-icons"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            data-current-target="image"
-            draggable="false"
-            aria-hidden="true"
-            tabindex=""-1""
-          >
+          <img src="<%= vite_asset_path "~/icons/signup.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
+          fetchpriority="high" data-current-target="image" draggable="false"
+          aria-hidden="true" tabindex=""-1"" >
         </a>
       <% end %>
     </div>

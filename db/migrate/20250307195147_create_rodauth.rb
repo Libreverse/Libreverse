@@ -7,6 +7,7 @@ class CreateRodauth < ActiveRecord::Migration[8.0]
       t.citext :username, null: false
       t.index :username, unique: true
       t.string :password_hash
+      t.timestamps
     end
 
     # Used by the password reset feature

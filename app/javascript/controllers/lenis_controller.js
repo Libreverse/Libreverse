@@ -3,7 +3,10 @@ import Lenis from "lenis";
 
 export default class extends Controller {
   connect() {
-    this.lenis = null;
+    this.lenis = undefined;
+    // Bind the event handlers once to preserve references
+    this.boundDestroyIfNeeded = this.destroyIfNeeded.bind(this);
+    this.boundDestroy = this.destroy.bind(this);
     this.setupEventListeners();
     this.init();
   }
@@ -30,7 +33,7 @@ export default class extends Controller {
   destroy() {
     if (this.lenis) {
       this.lenis.destroy();
-      this.lenis = null;
+      this.lenis = undefined;
     }
   }
 
@@ -64,29 +67,23 @@ export default class extends Controller {
 
   setupEventListeners() {
     document.addEventListener("turbo:load", this.handleTurboLoad);
-    document.addEventListener(
-      "turbo:before-cache",
-      this.destroyIfNeeded.bind(this),
-    );
-    document.addEventListener(
-      "turbo:before-render",
-      this.destroyIfNeeded.bind(this),
-    );
+    document.addEventListener("turbo:before-cache", this.boundDestroyIfNeeded);
+    document.addEventListener("turbo:before-render", this.boundDestroyIfNeeded);
     document.addEventListener("turbo:render", this.handleTurboRender);
-    window.addEventListener("beforeunload", this.destroy.bind(this));
+    window.addEventListener("beforeunload", this.boundDestroy);
   }
 
   removeEventListeners() {
     document.removeEventListener("turbo:load", this.handleTurboLoad);
     document.removeEventListener(
       "turbo:before-cache",
-      this.destroyIfNeeded.bind(this),
+      this.boundDestroyIfNeeded,
     );
     document.removeEventListener(
       "turbo:before-render",
-      this.destroyIfNeeded.bind(this),
+      this.boundDestroyIfNeeded,
     );
     document.removeEventListener("turbo:render", this.handleTurboRender);
-    window.removeEventListener("beforeunload", this.destroy.bind(this));
+    window.removeEventListener("beforeunload", this.boundDestroy);
   }
 }
