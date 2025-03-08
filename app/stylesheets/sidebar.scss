@@ -51,13 +51,31 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 2px;
+  padding: 0 2px;
   box-sizing: border-box;
 }
 
 .sidebar-icons {
   width: 100%;
   user-select: none;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 0;
+}
+
+.sidebar-logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 @media (width <= 600px) {
