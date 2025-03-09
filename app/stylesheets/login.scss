@@ -1,11 +1,6 @@
 @use "variables";
 @use "boilerplate";
-
-:root {
-  --hp-primary-color: #{variables.$hp-primary};
-  --hp-secondary-color: #{variables.$hp-secondary};
-  --bg-color: #{variables.$background};
-}
+@use "Hack";
 
 .login-bg {
   margin: 0;
@@ -37,14 +32,11 @@
 }
 
 .login-container {
-  position: relative;
+  font-family: Hack, monospace;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  margin-bottom: -80px; /* Offset the content-wrapper padding */
-  z-index: 2; /* Ensure it's above the lamp effect */
+  z-index: 2;
 }
 
 .login-card {
@@ -56,11 +48,21 @@
   backdrop-filter: blur(10px);
   box-shadow:
     0 4px 30px variables.$box-shadow,
-    0 0 30px rgba(variables.$hp-primary, 0.1); /* Add subtle glow matching lamp */
+    0 0 30px rgba(variables.$login-primary, 0.1); /* Add subtle glow matching lamp */
   border: 1px solid variables.$glass-border;
   border-radius: 5px;
-  z-index: 2; /* Same as container for consistency */
   overflow: hidden; /* Ensure content stays within bounds */
+  margin-top: 150px;
+  margin-left: 80px;
+  margin-right: 80px;
+  transition: margin 0.3s;
+}
+
+@media screen and (width <= 600px) {
+  .login-card {
+    margin-left: 60px;
+    margin-right: 60px;
+  }
 }
 
 .login-header {
@@ -71,8 +73,8 @@
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color: variables.$hp-primary;
-    text-shadow: 0 0 10px rgba(variables.$hp-primary, 0.5);
+    color: variables.$login-primary;
+    text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
     animation: text-glow 3s ease-in-out infinite alternate;
   }
 
@@ -84,25 +86,25 @@
 
 @keyframes text-glow {
   0% {
-    text-shadow: 0 0 10px rgba(variables.$hp-primary, 0.3);
+    text-shadow: 0 0 10px rgba(variables.$login-primary, 0.3);
   }
   100% {
-    text-shadow: 0 0 15px rgba(variables.$hp-primary, 0.6);
+    text-shadow: 0 0 15px rgba(variables.$login-primary, 0.6);
   }
 }
 
-.form-group {
+.login-form-group {
   margin-bottom: 1.5rem;
 }
 
-.form-label {
+.login-form-label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
 }
 
-.form-control {
+.login-form-control {
   width: 100%;
   box-sizing: border-box; /* Ensures padding and border are included in width */
   max-width: 100%; /* Ensure it never exceeds container width */
@@ -119,8 +121,8 @@
   text-overflow: ellipsis; /* Show ellipsis for overflowing text */
 
   &:focus {
-    border-color: variables.$hp-primary;
-    box-shadow: 0 0 0 2px rgba(152, 158, 241, 0.25); /* hp-primary with opacity */
+    border-color: variables.$login-primary;
+    box-shadow: 0 0 0 2px rgba(152, 158, 241, 0.25); /* login-primary with opacity */
     outline: none;
   }
 
@@ -129,7 +131,7 @@
   }
 }
 
-.form-control-plaintext {
+.login-form-control-plaintext {
   width: 100%;
   padding: 0.75rem 0;
   font-size: 1rem;
@@ -138,7 +140,7 @@
   color: #fff;
 }
 
-.invalid-feedback {
+.login-invalid-feedback {
   display: block;
   width: 100%;
   margin-top: 0.25rem;
@@ -146,7 +148,7 @@
   color: #dc3545;
 }
 
-.btn {
+.login-btn {
   display: inline-block;
   font-weight: 500;
   text-align: center;
@@ -162,10 +164,10 @@
   cursor: pointer;
 }
 
-.btn-primary {
+.login-btn-primary {
   background: linear-gradient(
     135deg,
-    variables.$hp-primary,
+    variables.$login-primary,
     variables.$hp-secondary
   );
   color: #fff;
@@ -175,15 +177,10 @@
   &:focus {
     background: linear-gradient(
       135deg,
-      darken(variables.$hp-primary, 5%),
+      darken(variables.$login-primary, 5%),
       darken(variables.$hp-secondary, 5%)
     );
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 }
 
@@ -194,7 +191,7 @@
   color: rgba(255, 255, 255, 0.6);
 
   a {
-    color: variables.$hp-primary;
+    color: variables.$login-primary;
     text-decoration: none;
     transition: color 0.2s;
 
@@ -202,5 +199,144 @@
       color: variables.$hp-secondary;
       text-decoration: underline;
     }
+  }
+}
+
+// Lamp effect container
+.login-lamp-effect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+// Conical gradient beams
+.login-lamp-left-beam {
+  position: absolute;
+  top: 80px; // Align with the lamp line
+  right: 50%;
+  width: 60rem;
+  height: 60rem;
+  opacity: 0;
+  background: conic-gradient(
+    from 120deg at right top,
+    rgba(variables.$login-primary, 0.5),
+    rgba(variables.$login-primary, 0.3) 20%,
+    transparent 40%
+  );
+  animation: login-fade-in 2s ease-in-out forwards;
+  z-index: 0;
+  transform-origin: right top;
+}
+
+.login-lamp-right-beam {
+  position: absolute;
+  top: 80px; // Align with the lamp line
+  left: 50%;
+  width: 60rem;
+  height: 60rem;
+  opacity: 0;
+  background: conic-gradient(
+    from 240deg at left top,
+    transparent 60%,
+    rgba(variables.$login-primary, 0.3) 80%,
+    rgba(variables.$login-primary, 0.5)
+  );
+  animation: login-fade-in 2s ease-in-out forwards;
+  z-index: 0;
+  transform-origin: left top;
+}
+
+// Horizontal line
+.login-lamp-line {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background-color: variables.$login-primary;
+  box-shadow:
+    0 0 10px 2px variables.$login-primary,
+    0 0 20px 5px rgba(variables.$login-primary, 0.5);
+  animation: login-line-expand 1.5s ease-in-out forwards;
+  z-index: 3;
+
+  // Add a pulsing glow to the line
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 10px;
+    background: variables.$login-primary;
+    filter: blur(6px);
+    opacity: 0.6;
+    animation: login-pulse-glow 4s ease-in-out infinite;
+  }
+}
+
+// Center glow
+.login-lamp-center-glow {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 15px;
+  background: variables.$login-primary;
+  filter: blur(15px);
+  opacity: 0;
+  z-index: 2;
+  animation: login-center-glow 1.5s ease-in-out forwards;
+}
+
+// Animations
+@keyframes login-line-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 500px;
+    opacity: 1;
+  }
+}
+
+@keyframes login-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes login-center-glow {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100px;
+    opacity: 0.9;
+  }
+}
+
+@keyframes login-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.6;
+    filter: blur(6px);
+  }
+  50% {
+    opacity: 0.8;
+    filter: blur(10px);
   }
 }
