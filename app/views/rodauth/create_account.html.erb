@@ -46,7 +46,11 @@
           <p>Sign up to get started</p>
         </div>
 
-        <%= form_with url: rodauth.create_account_path, method: :post, data: { turbo: false } do |form| %>
+        <%= form_with url: rodauth.create_account_path, method: :post, data: { 
+              controller: "form-auto-submit",
+              form_auto_submit_target: "form",
+              form_auto_submit_debounce_time_value: 800
+            } do |form| %>
           <div class="login-form-group mb-3">
             <%= form.label "login", rodauth.login_label, class: "login-form-label" %>
             <%= form.text_field rodauth.login_param,
@@ -54,6 +58,7 @@
                             id: "login",
                             autocomplete: "username",
                             required: true,
+                            data: { form_auto_submit_target: "input" },
                             class:
                               "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}",
                             aria:
@@ -80,6 +85,7 @@
                               id: "login-confirm",
                               autocomplete: "username",
                               required: true,
+                              data: { form_auto_submit_target: "input" },
                               class:
                                 "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_confirm_param)}",
                               aria:
@@ -110,6 +116,7 @@
                                   id: "password",
                                   autocomplete: rodauth.password_field_autocomplete_value,
                                   required: true,
+                                  data: { form_auto_submit_target: "input" },
                                   class:
                                     "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}",
                                   aria:
@@ -141,6 +148,7 @@
                                     id: "password-confirm",
                                     autocomplete: "new-password",
                                     required: true,
+                                    data: { form_auto_submit_target: "input" },
                                     class:
                                       "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_confirm_param)}",
                                     aria:
@@ -163,10 +171,6 @@
               </div>
             <% end %>
           <% end %>
-
-          <div class="login-form-group mb-3">
-            <%= form.submit rodauth.create_account_button, class: "login-btn login-btn-primary" %>
-          </div>
         <% end %>
         
         <div class="login-footer">
