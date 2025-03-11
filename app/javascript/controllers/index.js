@@ -27,3 +27,9 @@ application.register("search-url-updater", SearchUrlUpdaterController);
 
 import SidebarController from "./sidebar_controller";
 application.register("sidebar", SidebarController);
+
+import FormAutoSubmitController from "./form_auto_submit_controller";
+application.register("form-auto-submit", FormAutoSubmitController);
+
+import ToastController from "./toast_controller";
+application.register("toast", ToastController);

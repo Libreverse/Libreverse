@@ -1,12 +1,6 @@
 @use "boilerplate";
 @use "variables";
 
-.turbo-progress-bar {
-  background-color: variables.$progress-bar;
-  border-radius: 0 0 2px 0;
-  
-}
-
 * {
   text-rendering: geometricprecision;
 }

@@ -1,0 +1,25 @@
+@use "variables";
+
+.turbo-progress-bar {
+  height: 3px;
+  background-color: variables.$progress-bar;
+  border-radius: 0 0 2px 0;
+}
+
+.turbo-loading {
+  cursor: wait;
+}
+
+/* Add a subtle indicator to input elements during form submissions */
+.turbo-submitting input,
+.turbo-submitting select,
+.turbo-submitting textarea,
+.turbo-submitting button {
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+/* Prevent multiple submissions while form is submitting */
+.turbo-submitting {
+  pointer-events: none;
+} 
