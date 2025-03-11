@@ -51,11 +51,9 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Change some default param keys.
     login_param "username"
-    login_confirm_param "username-confirm"
     login_column :username
     login_label "Username"
-    login_confirm_label "Confirm Username"
-    require_login_confirmation? true
+    require_login_confirmation? false
 
     # Redirect back to originally requested location after authentication.
     # login_return_to_requested_location? true
