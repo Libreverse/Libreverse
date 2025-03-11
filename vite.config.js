@@ -42,11 +42,9 @@ export default defineConfig({
             {
               autoprefixer: false,
               discardComments: { removeAllButCopyright: true },
-              colormin: true,
               normalizeString: true,
               normalizeUrl: true,
               normalizeCharset: true,
-              convertValues: { length: true },
             },
           ],
         }),

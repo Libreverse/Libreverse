@@ -53,15 +53,15 @@
   border-radius: 5px;
   overflow: hidden; /* Ensure content stays within bounds */
   margin-top: 150px;
-  margin-left: 80px;
-  margin-right: 80px;
+  margin-left: 60px;
+  margin-right: 60px;
   transition: margin 0.3s;
 }
 
 @media screen and (width <= 600px) {
   .login-card {
-    margin-left: 60px;
-    margin-right: 60px;
+    margin-left: 40px;
+    margin-right: 40px;
   }
 }
 

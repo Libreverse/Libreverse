@@ -51,9 +51,18 @@
     0 0 30px rgba(variables.$login-primary, 0.1); /* Add subtle glow matching lamp */
   border: 1px solid variables.$glass-border;
   border-radius: 5px;
-  z-index: 2; /* Same as container for consistency */
   overflow: hidden; /* Ensure content stays within bounds */
   margin-top: 150px;
+  margin-left: 80px;
+  margin-right: 80px;
+  transition: margin 0.3s;
+}
+
+@media screen and (width <= 600px) {
+  .login-card {
+    margin-left: 60px;
+    margin-right: 60px;
+  }
 }
 
 .login-header {
@@ -66,7 +75,7 @@
     margin-bottom: 0.5rem;
     color: variables.$login-primary;
     text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
-    animation: login-text-glow 3s ease-in-out infinite alternate;
+    animation: text-glow 3s ease-in-out infinite alternate;
   }
 
   p {
@@ -75,7 +84,7 @@
   }
 }
 
-@keyframes login-text-glow {
+@keyframes text-glow {
   0% {
     text-shadow: 0 0 10px rgba(variables.$login-primary, 0.3);
   }
@@ -171,12 +180,7 @@
       darken(variables.$login-primary, 5%),
       darken(variables.$hp-secondary, 5%)
     );
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 }
 
@@ -206,7 +210,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
   overflow: hidden;
 }
 
@@ -227,7 +231,6 @@
   animation: login-fade-in 2s ease-in-out forwards;
   z-index: 0;
   transform-origin: right top;
-  //transform: rotate(-5deg);
 }
 
 .login-lamp-right-beam {
@@ -246,7 +249,6 @@
   animation: login-fade-in 2s ease-in-out forwards;
   z-index: 0;
   transform-origin: left top;
-  //transform: rotate(5deg);
 }
 
 // Horizontal line
