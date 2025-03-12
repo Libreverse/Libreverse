@@ -17,4 +17,10 @@ class RodauthController < ApplicationController
   #     "application"
   #   end
   # end
+
+  before_action :log_rodauth_action
+
+  def log_rodauth_action
+    Rails.logger.info "DEBUG: [RodauthController] Action #{action_name} triggered"
+  end
 end
