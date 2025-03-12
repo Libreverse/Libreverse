@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_195147) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_11_223708) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -42,6 +42,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_195147) do
     t.integer "status", default: 1, null: false
     t.citext "username", null: false
     t.string "password_hash"
+    t.datetime "password_changed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["username"], name: "index_accounts_on_username", unique: true
   end
 
