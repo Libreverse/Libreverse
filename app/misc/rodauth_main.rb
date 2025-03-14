@@ -136,10 +136,15 @@ class RodauthMain < Rodauth::Rails::Auth
         begin
           if password_pwned?(current_password)
             Rails.logger.warn "SECURITY: Pwned password detected for account #{account_id}"
+            # Set the flag to force password change
+            session[:password_pwned] = true
             flash[:alert] = "Your password has been found in a data breach. Please change your password immediately for your security."
             redirect "/change-password"
+            return # Skip further processing since we're redirecting
           else
             Rails.logger.info "DEBUG: Password cleared pwned check"
+            # Clear any existing pwned flag
+            session.delete(:password_pwned)
           end
         rescue => e
           Rails.logger.error "Pwned check failed: #{e.message}"
@@ -176,6 +181,28 @@ class RodauthMain < Rodauth::Rails::Auth
       end
       
       basic_requirements
+    end
+
+    # Clear the pwned flag after successful password change and redirect to original path if available
+    after_change_password do
+      # Update password_changed_at timestamp
+      db.from(accounts_table).where(id: account_id).update(password_changed_at: Time.now)
+      
+      # Update password length in session
+      set_session_value(:password_length, param(password_param).length)
+      
+      # Clear password_pwned flag
+      session.delete(:password_pwned)
+      
+      # Show success message
+      flash[:notice] = "Your password has been changed successfully."
+      
+      # Redirect to the saved return path if available, otherwise use default
+      if session[:return_to_after_password_change]
+        redirect_url = session.delete(:return_to_after_password_change)
+        Rails.logger.info "Redirecting to saved path after password change: #{redirect_url}"
+        redirect redirect_url
+      end
     end
 
     # ==> Remember Feature
@@ -241,18 +268,6 @@ class RodauthMain < Rodauth::Rails::Auth
         set_notice_flash create_account_notice_flash
         redirect create_account_redirect
       end
-    end
-
-    # Update password_changed_at timestamp when password is changed
-    after_change_password do
-      # Update password_changed_at timestamp
-      db.from(accounts_table).where(id: account_id).update(password_changed_at: Time.now)
-      
-      # Update password length in session
-      set_session_value(:password_length, param(password_param).length)
-      
-      # Show success message
-      flash[:notice] = "Your password has been changed successfully."
     end
 
     before_login do
