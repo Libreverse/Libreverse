@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
     include CableReady::Broadcaster
+    include PasswordSecurityEnforcer
     helper_method :current_account
 
   private
