@@ -90,7 +90,10 @@ class RodauthMain < Rodauth::Rails::Auth
     # Override default validation error messages.
     # no_matching_login_message "user with this username doesn't exist"
     # already_an_account_with_this_login_message "user with this username already exists"
-    # password_too_short_message { "needs to have at least #{password_minimum_length} characters" }
+    password_too_short_message { "must be at least #{password_minimum_length} characters" }
+    passwords_do_not_match_message "passwords don't match"
+    invalid_password_message "incorrect password"
+    password_pwned_message "has been found in a data breach - please choose another"
     # login_does_not_meet_requirements_message { "invalid username#{", #{login_requirement_message}" if login_requirement_message}" }
 
     # Require strong passwords - min 12 characters
@@ -99,8 +102,6 @@ class RodauthMain < Rodauth::Rails::Auth
     password_maximum_length 128
 
     # ==> Pwned Password Settings
-    password_pwned_message "has appeared in a data breach. For your security, please use a different password."
-    
     # Configure pwned password requests with timeout and error handling
     pwned_request_options open_timeout: 3, read_timeout: 5, headers: { "User-Agent" => "Libreverse App" }
     

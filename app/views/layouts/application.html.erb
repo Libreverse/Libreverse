@@ -167,7 +167,18 @@
           <div class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
               <strong class="me-auto">Success</strong>
-              <button type="button" class="toast-close" data-action="toast#close" aria-label="Close">&times;</button>
+              <button type="button" class="toast-close" data-action="toast#close" aria-label="Close">
+                <img
+                  src="<%= vite_asset_path "~/icons/x.svg" %>"
+                  class="toast-close-icon"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                  draggable="false"
+                  aria-hidden="true"
+                  tabindex="-1"
+                >
+              </button>
             </div>
             <div class="toast-body">
               <%= notice %>
@@ -179,7 +190,18 @@
           <div class="toast toast-error" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
               <strong class="me-auto">Alert</strong>
-              <button type="button" class="toast-close" data-action="toast#close" aria-label="Close">&times;</button>
+              <button type="button" class="toast-close" data-action="toast#close" aria-label="Close">
+                <img
+                  src="<%= vite_asset_path "~/icons/x.svg" %>"
+                  class="toast-close-icon"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                  draggable="false"
+                  aria-hidden="true"
+                  tabindex="-1"
+                >
+              </button>
             </div>
             <div class="toast-body">
               <%= alert %>
