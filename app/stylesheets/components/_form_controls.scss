@@ -1,4 +1,15 @@
 @use "../variables";
+@use "../auth";
+@use "sass:color";
+
+// Extend the auth placeholders for base form controls
+.form-group { @extend %auth-form-group; }
+.form-label { @extend %auth-form-label; }
+.form-control { @extend %auth-form-control; }
+.form-control-plaintext { @extend %auth-form-control-plaintext; }
+.invalid-feedback { @extend %auth-invalid-feedback; }
+.btn { @extend %auth-btn; }
+.btn-primary { @extend %auth-btn-primary; }
 
 .form-group {
   margin-bottom: 1.5rem;
@@ -8,7 +19,7 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgb(255 255 255 / 90%);
 }
 
 .form-control {
@@ -17,8 +28,8 @@
   max-width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  background-color: rgba(15, 20, 32, 0.5);
-  border: 1px solid rgba(128, 128, 128, 0.3);
+  background-color: rgb(15 20 32 / 50%);
+  border: 1px solid rgb(128 128 128 / 30%);
   border-radius: 6px;
   color: #fff;
   transition:
@@ -29,7 +40,7 @@
 
   &:focus {
     border-color: variables.$login-primary;
-    box-shadow: 0 0 0 2px rgba(152, 158, 241, 0.25);
+    box-shadow: 0 0 0 2px rgb(152 158 241 / 25%);
     outline: none;
   }
 
@@ -84,17 +95,18 @@
   &:focus {
     background: linear-gradient(
       135deg,
-      darken(variables.$login-primary, 5%),
-      darken(variables.$hp-secondary, 5%)
+      color.adjust(variables.$login-primary, $lightness: -5%),
+      color.adjust(variables.$hp-secondary, $lightness: -5%)
     );
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
   }
 }
 
+// Password requirements box
 .password-requirements {
   margin: 1rem 0;
   padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgb(0 0 0 / 5%);
   border-radius: 8px;
   border-left: 4px solid variables.$login-primary;
   
@@ -103,7 +115,7 @@
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255 255 255 / 90%);
   }
   
   ul {
@@ -113,7 +125,7 @@
     li {
       margin-bottom: 0.25rem;
       font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgb(255 255 255 / 70%);
       
       &:last-child {
         margin-bottom: 0;

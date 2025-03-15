@@ -68,6 +68,7 @@
   box-shadow:
     0 0 15px 3px variables.$login-primary, // Increased from 10px 2px
     0 0 30px 8px rgba(variables.$login-primary, 0.5); // Increased from 20px 5px
+
   animation: lamp-line-expand 1.5s ease-in-out forwards;
   z-index: 0;
 }
@@ -93,6 +94,7 @@
     width: 0;
     opacity: 0;
   }
+
   100% {
     width: 600px; // Increased from 500px
     opacity: 1;
@@ -103,6 +105,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 0.9; // Increased from 0.8
   }
@@ -113,6 +116,7 @@
     width: 0;
     opacity: 0;
   }
+
   100% {
     width: 150px; // Increased from 100px
     opacity: 1; // Increased from 0.9
@@ -125,6 +129,7 @@
     opacity: 0.7; // Increased from 0.6
     filter: blur(8px); // Increased from 6px
   }
+
   50% {
     opacity: 0.9; // Increased from 0.8
     filter: blur(12px); // Increased from 10px
