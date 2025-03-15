@@ -2,16 +2,16 @@
 
 // Common auth page background
 .auth-bg {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  overflow: hidden;
-  background-color: variables.$background;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background-color: variables.$background;
   background-image:
     radial-gradient(
       circle at 25% 25%,
@@ -34,10 +34,11 @@
 .auth-container {
   font-family: Hack, monospace;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   position: relative;
-  padding-top: 50px; // Add padding to account for lamp effect
+  min-height: calc(100vh - 150px); /* Use min-height instead of fixed height and account for lamp effect */
+  padding-top: 150px; /* Add fixed padding from the top */
 }
 
 // Auth card component
@@ -54,7 +55,7 @@
   border: 1px solid variables.$glass-border;
   border-radius: 5px;
   overflow: hidden; /* Ensure content stays within bounds */
-  margin-top: 50px; // Reduced from 150px to account for lamp-effect-wrapper
+  margin-top: 0; /* Remove margin-top */
   margin-left: 60px;
   margin-right: 60px;
   transition: margin 0.3s;
@@ -102,6 +103,20 @@
       text-decoration: underline;
     }
   }
+}
+
+// Fix for initial scrolling issues before JS loads
+html.auth-page,
+html.auth-page body {
+  overflow: hidden;
+  height: 100%;
+}
+
+// This class will be removed by JS after load to allow normal scrolling
+html.js-loaded.auth-page,
+html.js-loaded.auth-page body {
+  overflow: auto;
+  height: auto;
 }
 
 @keyframes text-glow {

@@ -1,11 +1,16 @@
 <!doctype html>
-<html dir="ltr" lang="en-GB">
+<html dir="ltr" lang="en-GB" class="<%= 'auth-page' if request.path.include?('/login') || request.path.include?('/create-account') || request.path.include?('/change-password') || request.path.include?('/multi-phase-login') %>">
   <head>
     <!--Important code-->
     <%= yield :fontpreloads %>
     <%= vite_stylesheet_tag "~/stylesheets/application.scss" %>
     <%= yield :specifcstylesheets %>
     <%= vite_javascript_tag "~/javascript/application.js", type: "module" %>
+    <% if Rails.env.development? %>
+      <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="Fri, 01 Jan 1990 00:00:00 GMT">
+    <% end %>
     <!--SEO config Options. Will allow these to be configured from elsewhere at
     some point-->
     <% name = "Libreverse"

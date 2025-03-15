@@ -1,4 +1,12 @@
+@use "variables";
 @use "boilerplate";
 @use "normalise.scss/normalise";
 @use "globals";
 @use "turbo";
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
