@@ -53,3 +53,12 @@ import "@hotwired/turbo-rails";
 import "./controllers";
 import "./config";
 import "./channels";
+
+// Add js-loaded class to html element after page load to enable scrolling for auth pages
+document.addEventListener('DOMContentLoaded', () => {
+  document.documentElement.classList.add('js-loaded');
+});
+
+document.addEventListener('turbo:load', () => {
+  document.documentElement.classList.add('js-loaded');
+});
