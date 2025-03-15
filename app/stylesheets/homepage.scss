@@ -5,196 +5,196 @@
 @use "Hack-Italic";
 
 .hp-main {
-  font-family: "Lazer84", cursive;
-  color: variables.$hp-primary;
-  margin: 0;
-  padding: 0;
-  width: calc(100%);
-  white-space: nowrap;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  h1.large,
-  h1.small {
+    font-family: "Lazer84", cursive;
+    color: variables.$hp-primary;
     margin: 0;
     padding: 0;
-    line-height: 1;
-  }
+    width: calc(100%);
+    white-space: nowrap;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    h1.large,
+    h1.small {
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+    }
 }
 
 .hp-main .large {
-  font-size: 15vw;
+    font-size: 15vw;
 }
 
 .hp-main .small {
-  display: none;
+    display: none;
 }
 
 @media (width <= 600px) {
-  .hp-main .large {
-    display: none;
-  }
+    .hp-main .large {
+        display: none;
+    }
 
-  .hp-main .small {
-    display: inline;
-    font-size: 25vw;
-  }
+    .hp-main .small {
+        display: inline;
+        font-size: 25vw;
+    }
 }
 
 .hp-main span {
-  font-size: clamp(100px, 15vw, 200px);
-  transition: font-size 0.3s ease;
+    font-size: clamp(100px, 15vw, 200px);
+    transition: font-size 0.3s ease;
 }
 
 @media screen and (width <= 600px) {
-  .hp-main {
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 0.9;
-    margin-top: 5%;
-    margin-bottom: 5%;
-  }
+    .hp-main {
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 0.9;
+        margin-top: 5%;
+        margin-bottom: 5%;
+    }
 }
 
 .hp-secondary {
-  font-family: Hack-Italic, monospace;
-  font-size: 24px;
-  color: variables.$hp-primary;
-  margin-bottom: 20px;
-  margin-left: 16.5%;
-  margin-right: 16.5%;
-  text-align: center;
+    font-family: Hack-Italic, monospace;
+    font-size: 24px;
+    color: variables.$hp-primary;
+    margin-bottom: 20px;
+    margin-left: 16.5%;
+    margin-right: 16.5%;
+    text-align: center;
 }
 
 @media screen and (width <= 600px) {
-  .hp-hp-secondary {
-    font-size: 18px;
-  }
+    .hp-hp-secondary {
+        font-size: 18px;
+    }
 }
 
 .hp-sectionheader {
-  font-family: Hack, monospace;
-  font-size: 20px;
-  color: variables.$hp-primary;
-  text-align: left;
-  margin-left: 15%;
-  margin-right: 15%;
-  margin-top: 20px;
+    font-family: Hack, monospace;
+    font-size: 20px;
+    color: variables.$hp-primary;
+    text-align: left;
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-top: 20px;
 }
 
 @media screen and (width <= 600px) {
-  .hp-sectionheader {
-    font-size: 18px;
-  }
+    .hp-sectionheader {
+        font-size: 18px;
+    }
 }
 
 .hp-link {
-  font-family: Hack-Italic, monospace;
-  font-size: 18px;
-  color: variables.$hp-secondary;
-  margin-left: 15%;
-  margin-right: 15%;
-  text-decoration: underline;
+    font-family: Hack-Italic, monospace;
+    font-size: 18px;
+    color: variables.$hp-secondary;
+    margin-left: 15%;
+    margin-right: 15%;
+    text-decoration: underline;
 }
 
 @media screen and (width <= 600px) {
-  .hp-link {
-    font-size: 16px;
-  }
+    .hp-link {
+        font-size: 16px;
+    }
 }
 
 .hp-inline-link {
-  font-family: Hack-Italic, monospace;
-  font-size: 18px;
-  color: variables.$hp-secondary;
-  text-decoration: underline;
+    font-family: Hack-Italic, monospace;
+    font-size: 18px;
+    color: variables.$hp-secondary;
+    text-decoration: underline;
 }
 
 @media screen and (width <= 600px) {
-  .hp-inline-link {
-    font-size: 16px;
-  }
+    .hp-inline-link {
+        font-size: 16px;
+    }
 }
 
 .hp-enterbutton {
-  font-family: Hack, monospace;
-  font-size: 20px;
-  color: variables.$hp-secondary;
-  margin-left: 15%;
-  margin-right: 15%;
-  text-decoration: underline;
+    font-family: Hack, monospace;
+    font-size: 20px;
+    color: variables.$hp-secondary;
+    margin-left: 15%;
+    margin-right: 15%;
+    text-decoration: underline;
 }
 
 @media screen and (width <= 600px) {
-  .hp-enterbutton {
-    font-size: 18px;
-  }
+    .hp-enterbutton {
+        font-size: 18px;
+    }
 }
 
 .hp-text {
-  font-family: Hack, monospace;
-  font-size: 18px;
-  color: variables.$hp-primary;
-  text-align: left;
-  margin: 15px 15% 10px;
-  max-width: 70%;
+    font-family: Hack, monospace;
+    font-size: 18px;
+    color: variables.$hp-primary;
+    text-align: left;
+    margin: 15px 15% 10px;
+    max-width: 70%;
 }
 
 @media screen and (width <= 600px) {
-  .hp-text {
-    font-size: 16px;
-  }
+    .hp-text {
+        font-size: 16px;
+    }
 }
 
 .hp-italic-text {
-  font-family: Hack-Italic, monospace;
-  font-size: 18px;
-  color: variables.$hp-primary;
-  text-align: left;
-  margin: 15px 15% 10px;
-  max-width: 70%;
+    font-family: Hack-Italic, monospace;
+    font-size: 18px;
+    color: variables.$hp-primary;
+    text-align: left;
+    margin: 15px 15% 10px;
+    max-width: 70%;
 }
 
 @media screen and (width <= 600px) {
-  .hp-italic-text {
-    font-size: 16px;
-  }
+    .hp-italic-text {
+        font-size: 16px;
+    }
 }
 
 .hp-centerify {
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .hp-bg {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  overflow: hidden;
-  background-color: variables.$background;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background-color: variables.$background;
 }
 
 .hp-bg img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  filter: blur(10px);
-  user-select: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: blur(10px);
+    user-select: none;
 }
 
 .squisher {
-  display: flex;
+    display: flex;
 }

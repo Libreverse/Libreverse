@@ -104,13 +104,13 @@ class RodauthMain < Rodauth::Rails::Auth
     # ==> Pwned Password Settings
     # Configure pwned password requests with timeout and error handling
     pwned_request_options open_timeout: 3, read_timeout: 5, headers: { "User-Agent" => "Libreverse App" }
-    
+
     # Handle errors from the Pwned Passwords API
     on_pwned_error do |error|
       Rails.logger.error "API Error during pwned password check: #{error.class} - #{error.message}"
       false # Don't consider as pwned if API fails
     end
-    
+
     # ==> DEBUGGING: Added debug logging to troubleshoot pwned password check issues
     auth_class_eval do
       # Override password_pwned? to add debug logging
@@ -122,18 +122,18 @@ class RodauthMain < Rodauth::Rails::Auth
       end
     end
 
-    # ==> Implementing streamlined pwned password check    
+    # ==> Implementing streamlined pwned password check
     # Perform pwned check in after_login hook which runs before response is sent
     after_login do
       Rails.logger.info "DEBUG: Entering after_login hook"
       # Remember the user
       remember_login
-      
+
       # Capture password and perform pwned check
       if param_or_nil(password_param)
         current_password = param(password_param)
         Rails.logger.info "DEBUG: Captured password for pwned check: #{current_password.length} chars"
-        
+
         begin
           if password_pwned?(current_password)
             Rails.logger.warn "SECURITY: Pwned password detected for account #{account_id}"
@@ -147,11 +147,11 @@ class RodauthMain < Rodauth::Rails::Auth
             # Clear any existing pwned flag
             session.delete(:password_pwned)
           end
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "Pwned check failed: #{e.message}"
           # Continue login flow if pwned check fails
         end
-        
+
         # Save password metadata in session
         set_session_value(:password_length, current_password.length)
         set_session_value(:last_login_at, Time.now.to_i)
@@ -165,7 +165,7 @@ class RodauthMain < Rodauth::Rails::Auth
       Rails.logger.info "DEBUG: Validating password requirements including pwned check"
       # Run the basic requirements check
       basic_requirements = super(password)
-      
+
       # Only perform pwned check if basic requirements pass
       if basic_requirements
         # Check if password is pwned
@@ -175,29 +175,29 @@ class RodauthMain < Rodauth::Rails::Auth
             @password_requirement_message = password_pwned_message
             return false
           end
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "Error during pwned validation: #{e.message}"
           # Don't fail validation if API check fails
         end
       end
-      
+
       basic_requirements
     end
 
     # Clear the pwned flag after successful password change and redirect to original path if available
     after_change_password do
       # Update password_changed_at timestamp
-      db.from(accounts_table).where(id: account_id).update(password_changed_at: Time.now)
-      
+      db.from(accounts_table).where(id: account_id).update(password_changed_at: Time.zone.now)
+
       # Update password length in session
       set_session_value(:password_length, param(password_param).length)
-      
+
       # Clear password_pwned flag
       session.delete(:password_pwned)
-      
+
       # Show success message
       flash[:notice] = "Your password has been changed successfully."
-      
+
       # Redirect to the saved return path if available, otherwise use default
       if session[:return_to_after_password_change]
         redirect_url = session.delete(:return_to_after_password_change)
@@ -259,12 +259,12 @@ class RodauthMain < Rodauth::Rails::Auth
       # Directly mark the account as verified
       db.from(accounts_table).where(id: account_id).update(
         status: 2, # verified
-        password_changed_at: Time.now
+        password_changed_at: Time.zone.now
       )
-      
+
       # Save password length in session
       set_session_value(:password_length, param(password_param).length)
-      
+
       db.after_commit do
         set_notice_flash create_account_notice_flash
         redirect create_account_redirect

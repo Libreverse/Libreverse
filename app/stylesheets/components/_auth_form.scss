@@ -3,32 +3,32 @@
 
 // Password requirements box styles only - other styles moved to placeholders
 .auth-password-requirements {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: rgb(0 0 0 / 5%);
-  border-radius: 8px;
-  border-left: 4px solid variables.$login-primary;
-  
-  h4 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: rgb(255 255 255 / 90%);
-  }
-  
-  ul {
-    margin: 0;
-    padding-left: 1.5rem;
-    
-    li {
-      margin-bottom: 0.25rem;
-      font-size: 0.85rem;
-      color: rgb(255 255 255 / 70%);
-      
-      &:last-child {
-        margin-bottom: 0;
-      }
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: rgb(0 0 0 / 5%);
+    border-radius: 8px;
+    border-left: 4px solid variables.$login-primary;
+
+    h4 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgb(255 255 255 / 90%);
     }
-  }
-} 
+
+    ul {
+        margin: 0;
+        padding-left: 1.5rem;
+
+        li {
+            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+            color: rgb(255 255 255 / 70%);
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

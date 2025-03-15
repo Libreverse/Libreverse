@@ -1,55 +1,55 @@
 {
-  "name": "libreverse",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "@hotwired/stimulus": "^3.2.2",
-    "@hotwired/turbo-rails": "^8.0.13",
-    "@sentry/browser": "^8.55.0",
-    "@sxwjs/sxwjs": "^4.0.0",
-    "cable_ready": "5.0.6",
-    "hotkeys-js": "^3.13.9",
-    "lenis": "^1.2.3",
-    "stimulus-use": "^0.52.3",
-    "stimulus-vite-helpers": "^3.1.0",
-    "stimulus_reflex": "3.5.3"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "cssnano": "^7.0.6",
-    "cssnano-preset-advanced": "^7.0.6",
-    "eslint": "^9.21.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-unicorn": "^56.0.1",
-    "globals": "^15.15.0",
-    "markdownlint-cli2": "^0.16.0",
-    "normalise.scss": "^1.0.1",
-    "postcss": "^8.5.3",
-    "postcss-cli": "^11.0.0",
-    "postcss-flexbugs-fixes": "^5.0.2",
-    "postcss-inline-rtl": "^0.9.8",
-    "postcss-preset-env": "^10.1.5",
-    "prettier": "^3.5.3",
-    "prettier-plugin-sh": "^0.14.0",
-    "sass-embedded": "^1.85.1",
-    "stylelint": "^16.15.0",
-    "stylelint-config-standard-scss": "^14.0.0",
-    "terser": "^5.39.0",
-    "vite": "^6.2.1",
-    "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-full-reload": "^1.2.0",
-    "vite-plugin-legacy-swc": "^1.2.3",
-    "vite-plugin-ruby": "^5.1.1",
-    "vite-plugin-stimulus-hmr": "^3.0.0"
-  },
-  "trustedDependencies": [
-    "@parcel/watcher",
-    "@swc/core",
-    "core-js",
-    "esbuild"
-  ],
-  "packageManager": "bun@1.1.36",
-  "scripts": {
-    "build": "vite build --outDir public"
-  }
+    "name": "libreverse",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@hotwired/stimulus": "^3.2.2",
+        "@hotwired/turbo-rails": "^8.0.13",
+        "@sentry/browser": "^8.55.0",
+        "@sxwjs/sxwjs": "^4.0.0",
+        "cable_ready": "5.0.6",
+        "hotkeys-js": "^3.13.9",
+        "lenis": "^1.2.3",
+        "stimulus-use": "^0.52.3",
+        "stimulus-vite-helpers": "^3.1.0",
+        "stimulus_reflex": "3.5.3"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.21.0",
+        "cssnano": "^7.0.6",
+        "cssnano-preset-advanced": "^7.0.6",
+        "eslint": "^9.21.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-unicorn": "^56.0.1",
+        "globals": "^15.15.0",
+        "markdownlint-cli2": "^0.16.0",
+        "normalise.scss": "^1.0.1",
+        "postcss": "^8.5.3",
+        "postcss-cli": "^11.0.0",
+        "postcss-flexbugs-fixes": "^5.0.2",
+        "postcss-inline-rtl": "^0.9.8",
+        "postcss-preset-env": "^10.1.5",
+        "prettier": "^3.5.3",
+        "prettier-plugin-sh": "^0.14.0",
+        "sass-embedded": "^1.85.1",
+        "stylelint": "^16.15.0",
+        "stylelint-config-standard-scss": "^14.0.0",
+        "terser": "^5.39.0",
+        "vite": "^6.2.1",
+        "vite-plugin-compression": "^0.5.1",
+        "vite-plugin-full-reload": "^1.2.0",
+        "vite-plugin-legacy-swc": "^1.2.3",
+        "vite-plugin-ruby": "^5.1.1",
+        "vite-plugin-stimulus-hmr": "^3.0.0"
+    },
+    "trustedDependencies": [
+        "@parcel/watcher",
+        "@swc/core",
+        "core-js",
+        "esbuild"
+    ],
+    "packageManager": "bun@1.1.36",
+    "scripts": {
+        "build": "vite build --outDir public"
+    }
 }

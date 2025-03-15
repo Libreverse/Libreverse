@@ -4,151 +4,151 @@
 
 /* Drawer container styles */
 .drawer {
-  display: flex;
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  margin: 0 2.5%;
-  height: 60px; /* Fixed height when collapsed */
-  width: 350px;
-  background-color: variables.$glass;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px variables.$box-shadow;
-  border-top: 1px solid variables.$glass-border;
-  border-left: 1px solid variables.$glass-border;
-  border-right: 1px solid variables.$glass-border;
-  border-radius: 20px 20px 0 0;
-  overflow: hidden;
-  z-index: 3;
-  transition: height 0.3s ease;
-  flex-direction: column; // changed from column-reverse
+    display: flex;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 0 2.5%;
+    height: 60px; /* Fixed height when collapsed */
+    width: 350px;
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border-top: 1px solid variables.$glass-border;
+    border-left: 1px solid variables.$glass-border;
+    border-right: 1px solid variables.$glass-border;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    z-index: 3;
+    transition: height 0.3s ease;
+    flex-direction: column; // changed from column-reverse
 
-  @media screen and (width <= 450px) {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    width: 90%;
-    max-width: 350px;
-  }
+    @media screen and (width <= 450px) {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        width: 90%;
+        max-width: 350px;
+    }
 }
 
 .drawer.drawer-expanded {
-  height: 600px; /* Expanded height */
+    height: 600px; /* Expanded height */
 }
 
 .drawer-container {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 100vw;
-  height: 60px;
-  display: flex;
-  z-index: 2;
-  transition: height 0.3s;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 60px;
+    display: flex;
+    z-index: 2;
+    transition: height 0.3s;
 
-  @media screen and (width <= 450px) {
-    right: auto;
-    justify-content: center;
-  }
+    @media screen and (width <= 450px) {
+        right: auto;
+        justify-content: center;
+    }
 }
 
 /* Always visible part */
 .drawer-contents {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 0;
-  padding: 2px;
-  box-sizing: border-box;
-  overflow: hidden;
-  transition: height 0.3s ease;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 0;
+    padding: 2px;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: height 0.3s ease;
 }
 
 .drawer-expanded .drawer-contents {
-  height: calc(600px - 60px); // Total height minus the fixed 60px
+    height: calc(600px - 60px); // Total height minus the fixed 60px
 }
 
 .drawer-toggle {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 60px;
-  height: 60px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  align-items: center;
-  margin-right: 1.15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 60px;
+    height: 60px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    margin-right: 1.15%;
 
-  @media screen and (width <= 450px) {
-    margin-right: 0;
-    position: relative;
-  }
+    @media screen and (width <= 450px) {
+        margin-right: 0;
+        position: relative;
+    }
 }
 
 .drawer-icons {
-  width: 100%;
-  user-select: none;
-  transition: transform 0.3s ease;
+    width: 100%;
+    user-select: none;
+    transition: transform 0.3s ease;
 }
 
 .drawer.drawer-expanded .drawer-icons {
-  transform: rotate(180deg); /* Rotate icon when expanded */
+    transform: rotate(180deg); /* Rotate icon when expanded */
 }
 
 .drawer-content-container {
-  font-family: Hack, monospace;
-  font-size: 18px;
-  color: variables.$hp-primary;
-  background: variables.$vulcan;
-  text-align: left;
-  margin-left: 5%;
-  margin-right: 5%;
-  border-radius: 10px;
-  box-shadow: variables.$box-shadow;
+    font-family: Hack, monospace;
+    font-size: 18px;
+    color: variables.$hp-primary;
+    background: variables.$vulcan;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+    border-radius: 10px;
+    box-shadow: variables.$box-shadow;
 }
 
 .drawer-content {
-  font-family: Hack, monospace;
-  font-size: 18px;
-  color: variables.$hp-primary;
-  text-align: left;
-  margin-left: 5%;
-  margin-right: 5%;
+    font-family: Hack, monospace;
+    font-size: 18px;
+    color: variables.$hp-primary;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
 
-  @media screen and (width <= 600px) {
-    .drawer-content {
-      font-size: 16px;
+    @media screen and (width <= 600px) {
+        .drawer-content {
+            font-size: 16px;
+        }
     }
-  }
 }
 
 .drawer-link {
-  font-family: Hack-Italic, monospace;
-  font-size: 18px;
-  color: variables.$hp-secondary;
-  text-decoration: underline;
+    font-family: Hack-Italic, monospace;
+    font-size: 18px;
+    color: variables.$hp-secondary;
+    text-decoration: underline;
 }
 
 @media screen and (width <= 600px) {
-  .drawer-link {
-    font-size: 16px;
-  }
+    .drawer-link {
+        font-size: 16px;
+    }
 }
 
 .drawer-title {
-  font-family: Hack, monospace;
-  font-size: 20px;
-  color: variables.$sidebar-icon;
-  margin-left: 5%;
+    font-family: Hack, monospace;
+    font-size: 20px;
+    color: variables.$sidebar-icon;
+    margin-left: 5%;
 }
 
 .drawer-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
 }

@@ -1,32 +1,32 @@
 .form-loading {
-  position: relative;
-  cursor: wait;
-  pointer-events: none;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+    position: relative;
+    cursor: wait;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
 }
 
 .form-loading::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 3px solid rgb(0 0 0 / 10%);
-  border-top-color: #3b82f6;
-  animation: spin 1s infinite linear;
-  z-index: 10;
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid rgb(0 0 0 / 10%);
+    border-top-color: #3b82f6;
+    animation: spin 1s infinite linear;
+    z-index: 10;
 }
 
 @keyframes spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
 
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-} 
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

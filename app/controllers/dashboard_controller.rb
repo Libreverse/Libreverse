@@ -2,21 +2,25 @@ class DashboardController < ApplicationController
   def index
     @account = current_account
     @account_created_at = @account.created_at.strftime("%B %d, %Y")
-    @last_login_at = session[:last_login_at] ? Time.at(session[:last_login_at]).strftime("%B %d, %Y at %H:%M") : "Unknown"
-    
+    @last_login_at = session[:last_login_at] ? Time.zone.at(session[:last_login_at]).strftime("%B %d, %Y at %H:%M") : "Unknown"
+
     # If password was created more than 90 days ago, show warning
-    @password_age = (Time.now - @account.password_changed_at).to_i / 86400 rescue nil
+    @password_age = begin
+                      (Time.zone.now - @account.password_changed_at).to_i / 86_400
+    rescue StandardError
+                      nil
+    end
     @password_warning = @password_age && @password_age > 90
-    
+
     # Get password strength based on length
     @password_strength = calculate_password_strength
   end
-  
+
   private
-  
+
   def calculate_password_strength
     password_length = session[:password_length] || 0
-    
+
     case password_length
     when 0..11
       { level: "weak", class: "text-danger", message: "Your password is too short. Consider changing it." }

@@ -14,9 +14,8 @@
         crossorigin
       >
     <% end %>
-    
+
     <div class="login-bg" role="presentation"></div>
-    
     <!-- Lamp effect with conical gradients -->
     <div class="lamp-effect-wrapper">
       <div class="lamp-effect">
@@ -32,13 +31,14 @@
             <h1>Multi-Factor Authentication</h1>
             <p>Please complete the verification</p>
           </div>
-          
+
           <%== rodauth.login_form_header %>
           <%== rodauth.render_multi_phase_login_forms %>
           <%== rodauth.login_form_footer %>
-          
+
           <div class="login-footer">
-            Need help? <a href="<%= rodauth.login_path %>">Return to login</a>
+            Need help?
+            <a href="<%= rodauth.login_path %>">Return to login</a>
           </div>
         </div>
       </div>

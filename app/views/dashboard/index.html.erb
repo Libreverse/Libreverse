@@ -5,7 +5,7 @@
     <% content_for :specifcstylesheets do %>
       <%= vite_stylesheet_tag "~/stylesheets/dashboard.scss" %>
     <% end %>
-  
+
     <div class="container py-5">
       <div class="row">
         <div class="col-md-8 offset-md-2">
@@ -14,59 +14,68 @@
               <h1 class="h3 mb-0">Dashboard</h1>
             </div>
             <div class="card-body">
-              <h2 class="h4 mb-3">Welcome, <%= @account.username %></h2>
+              <h2 class="h4 mb-3">Welcome,
+                <%= @account.username %></h2>
               <p>You are logged in to your secure account dashboard.</p>
-              
+
               <hr class="my-4">
-              
+
               <h3 class="h5 mb-3">Account Information</h3>
               <div class="row mb-4">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <strong>Username:</strong> <%= @account.username %>
+                    <strong>Username:</strong>
+                    <%= @account.username %>
                   </div>
                   <div class="mb-3">
-                    <strong>Account created:</strong> <%= @account_created_at %>
+                    <strong>Account created:</strong>
+                    <%= @account_created_at %>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <strong>Last login:</strong> <%= @last_login_at %>
+                    <strong>Last login:</strong>
+                    <%= @last_login_at %>
                   </div>
                   <div class="mb-3">
-                    <strong>Account status:</strong> 
+                    <strong>Account status:</strong>
                     <span class="badge bg-success">Active</span>
                   </div>
                 </div>
               </div>
-              
+
               <h3 class="h5 mb-3">Password Security</h3>
               <div class="row mb-4">
                 <div class="col-md-12">
                   <div class="mb-3">
-                    <strong>Password strength:</strong> 
+                    <strong>Password strength:</strong>
                     <span class="<%= @password_strength[:class] %>"><%= @password_strength[:level].capitalize %></span>
                     <div class="small text-muted"><%= @password_strength[:message] %></div>
                   </div>
-                  
+
                   <% if @password_age %>
                     <div class="mb-3">
-                      <strong>Password age:</strong> 
+                      <strong>Password age:</strong>
                       <% if @password_warning %>
-                        <span class="text-warning"><%= @password_age %> days old</span>
-                        <div class="small text-warning">Consider changing your password regularly for better security.</div>
+                        <span class="text-warning"><%= @password_age %>
+                          days old</span>
+                        <div class="small text-warning">Consider changing your password regularly for better
+                          security.</div>
                       <% else %>
-                        <span><%= @password_age %> days old</span>
+                        <span><%= @password_age %>
+                          days old</span>
                       <% end %>
                     </div>
                   <% end %>
-                  
+
                   <div class="mb-3">
-                    <%= link_to "Change Password", "/change-password", class: "btn btn-outline-primary btn-sm" %>
+                    <%= link_to "Change Password",
+                    "/change-password",
+                    class: "btn btn-outline-primary btn-sm" %>
                   </div>
                 </div>
               </div>
-              
+
               <h3 class="h5 mb-3">Security Recommendations</h3>
               <div class="row">
                 <div class="col-md-12">
@@ -92,7 +101,10 @@
               </div>
             </div>
             <div class="card-footer">
-              <%= button_to "Sign out", rodauth.logout_path, method: :post, class: "btn btn-danger" %>
+              <%= button_to "Sign out",
+              rodauth.logout_path,
+              method: :post,
+              class: "btn btn-danger" %>
             </div>
           </div>
         </div>
