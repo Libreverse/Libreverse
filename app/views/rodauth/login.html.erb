@@ -18,25 +18,27 @@
     <div class="login-bg" role="presentation"></div>
     
     <!-- Lamp effect with conical gradients -->
-    <div class="login-lamp-effect">
-      <div class="login-lamp-left-beam"></div>
-      <div class="login-lamp-right-beam"></div>
-      <div class="login-lamp-center-glow"></div>
-      <div class="login-lamp-line"></div>
-    </div>
-    
-    <div class="login-container">
-      <div class="login-card">
-        <div class="login-header">
-          <h1>Welcome Back</h1>
-          <p>Sign in to your account</p>
-        </div>
-        
-        <%== rodauth.login_form_header %>
-        <%= render "login_form" %>
-        
-        <div class="login-footer">
-          Don't have an account? <a href="<%= rodauth.create_account_path %>">Sign up</a>
+    <div class="lamp-effect-wrapper">
+      <div class="lamp-effect">
+        <div class="lamp-left-beam"></div>
+        <div class="lamp-right-beam"></div>
+        <div class="lamp-center-glow"></div>
+        <div class="lamp-line"></div>
+      </div>
+
+      <div class="login-container">
+        <div class="login-card">
+          <div class="login-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to your account</p>
+          </div>
+          
+          <%== rodauth.login_form_header %>
+          <%= render "login_form" %>
+          
+          <div class="login-footer">
+            Don't have an account? <a href="<%= rodauth.create_account_path %>">Sign up</a>
+          </div>
         </div>
       </div>
     </div>
