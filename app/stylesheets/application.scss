@@ -3,6 +3,7 @@
 @use "normalise.scss/normalise";
 @use "globals";
 @use "turbo";
+@use "components/_toast";
 
 html, body {
   height: 100%;
