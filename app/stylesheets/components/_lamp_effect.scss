@@ -5,7 +5,7 @@
   position: absolute;
   left: 0;
   width: 100%;
-  height: 100px; // Standardized height
+  height: 140px; // Increased from 100px
   pointer-events: none;
   z-index: 0; // Above background but below content
 }
@@ -20,18 +20,18 @@
   flex-direction: column;
 }
 
-// Conical gradient beams
+// Conical gradient beams   
 .lamp-left-beam {
   position: absolute;
-  top: 50px;
+  top: 70px; // Adjusted from 50px
   right: 50%;
-  width: 60rem;
-  height: 60rem;
+  width: 75rem; // Increased from 60rem
+  height: 75rem; // Increased from 60rem
   opacity: 0;
   background: conic-gradient(
     from 120deg at right top,
-    rgba(variables.$login-primary, 0.5),
-    rgba(variables.$login-primary, 0.3) 20%,
+    rgba(variables.$login-primary, 0.6),
+    rgba(variables.$login-primary, 0.4) 20%,
     transparent 40%
   );
   animation: lamp-fade-in 2s ease-in-out forwards;
@@ -41,16 +41,16 @@
 
 .lamp-right-beam {
   position: absolute;
-  top: 50px;
+  top: 70px; // Adjusted from 50px
   left: 50%;
-  width: 60rem;
-  height: 60rem;
+  width: 75rem; // Increased from 60rem
+  height: 75rem; // Increased from 60rem
   opacity: 0;
   background: conic-gradient(
     from 240deg at left top,
     transparent 60%,
-    rgba(variables.$login-primary, 0.3) 80%,
-    rgba(variables.$login-primary, 0.5)
+    rgba(variables.$login-primary, 0.4) 80%, // Increased opacity from 0.3
+    rgba(variables.$login-primary, 0.6) // Increased opacity from 0.5
   );
   animation: lamp-fade-in 2s ease-in-out forwards;
   z-index: 0;
@@ -61,13 +61,13 @@
 .lamp-line {
   position: absolute;
   left: 50%;
-  top: 50px; // Centered vertically in the 100px container
+  top: 70px; // Adjusted from 50px to match new container height
   transform: translateX(-50%); // Center horizontally
-  height: 3px;
+  height: 4px; // Increased from 3px
   background-color: variables.$login-primary;
   box-shadow:
-    0 0 10px 2px variables.$login-primary,
-    0 0 20px 5px rgba(variables.$login-primary, 0.5);
+    0 0 15px 3px variables.$login-primary, // Increased from 10px 2px
+    0 0 30px 8px rgba(variables.$login-primary, 0.5); // Increased from 20px 5px
   animation: lamp-line-expand 1.5s ease-in-out forwards;
   z-index: 0;
 }
@@ -76,12 +76,12 @@
 .lamp-center-glow {
   position: absolute;
   left: 50%;
-  top: 50px; // Centered vertically in the 100px container
+  top: 70px; // Adjusted from 50px to match new container height
   transform: translateX(-50%); // Center horizontally
   width: 0;
-  height: 15px;
+  height: 20px; // Increased from 15px
   background: variables.$login-primary;
-  filter: blur(15px);
+  filter: blur(20px); // Increased from 15px
   opacity: 0;
   z-index: 2;
   animation: lamp-center-glow 1.5s ease-in-out forwards;
@@ -94,7 +94,7 @@
     opacity: 0;
   }
   100% {
-    width: 500px;
+    width: 600px; // Increased from 500px
     opacity: 1;
   }
 }
@@ -104,7 +104,7 @@
     opacity: 0;
   }
   100% {
-    opacity: 0.8;
+    opacity: 0.9; // Increased from 0.8
   }
 }
 
@@ -114,19 +114,19 @@
     opacity: 0;
   }
   100% {
-    width: 100px;
-    opacity: 0.9;
+    width: 150px; // Increased from 100px
+    opacity: 1; // Increased from 0.9
   }
 }
 
 @keyframes lamp-pulse-glow {
   0%,
   100% {
-    opacity: 0.6;
-    filter: blur(6px);
+    opacity: 0.7; // Increased from 0.6
+    filter: blur(8px); // Increased from 6px
   }
   50% {
-    opacity: 0.8;
-    filter: blur(10px);
+    opacity: 0.9; // Increased from 0.8
+    filter: blur(12px); // Increased from 10px
   }
 } 

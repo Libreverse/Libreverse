@@ -37,42 +37,42 @@
   align-items: flex-start;
   justify-content: center;
   position: relative;
-  min-height: calc(100vh - 150px); /* Use min-height instead of fixed height and account for lamp effect */
-  padding-top: 150px; /* Add fixed padding from the top */
+  min-height: calc(100vh - 170px); /* Keep the min-height adjustment for taller lamp effect */
+  padding-top: 120px; /* Reduced from 170px to bring the card closer to the lamp effect */
 }
 
 // Auth card component
 .auth-card {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  padding: 2.5rem;
+  max-width: 520px;
+  padding: 3rem;
   background-color: variables.$glass;
   backdrop-filter: blur(10px);
   box-shadow:
     0 4px 30px variables.$box-shadow,
-    0 0 30px rgba(variables.$login-primary, 0.1); /* Add subtle glow matching lamp */
+    0 0 40px rgba(variables.$login-primary, 0.15);
   border: 1px solid variables.$glass-border;
   border-radius: 5px;
-  overflow: hidden; /* Ensure content stays within bounds */
-  margin-top: 0; /* Remove margin-top */
-  margin-left: 60px;
-  margin-right: 60px;
+  overflow: hidden;
+  margin-top: 0;
+  margin-left: 70px;
+  margin-right: 70px;
   transition: margin 0.3s;
   
   @media screen and (width <= 600px) {
-    margin-left: 40px;
-    margin-right: 40px;
+    margin-left: 50px;
+    margin-right: 50px;
   }
 }
 
 // Auth card header
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 
   h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: variables.$login-primary;
@@ -81,7 +81,7 @@
   }
 
   p {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: rgba(255, 255, 255, 0.7);
   }
 }
