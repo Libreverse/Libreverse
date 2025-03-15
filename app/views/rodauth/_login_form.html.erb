@@ -43,7 +43,7 @@
   <% unless rodauth.skip_password_field_on_login? %>
     <div class="login-form-group mb-3">
       <%= form.label "password", rodauth.password_label, class: "login-form-label" %>
-      <%= form.password_field rodauth.password_param,
+      <%= form.text_field rodauth.password_param,
                           value: "",
                           id: "password",
                           autocomplete: rodauth.password_field_autocomplete_value,
