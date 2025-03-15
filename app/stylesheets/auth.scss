@@ -8,258 +8,351 @@
 
 // Base placeholder selectors
 %auth-bg {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  overflow: hidden;
-  background-color: variables.$background;
-  background-image:
-    radial-gradient(
-      circle at 25% 25%,
-      rgba(variables.$hp-primary, 0.08) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      circle at 75% 75%,
-      rgba(variables.$hp-secondary, 0.08) 0%,
-      transparent 60%
-    ),
-    linear-gradient(
-      to bottom right,
-      rgba(variables.$vulcan, 0.9),
-      rgba(variables.$mirage, 0.9)
-    );
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background-color: variables.$background;
+    background-image:
+        radial-gradient(
+            circle at 25% 25%,
+            rgba(variables.$hp-primary, 0.08) 0%,
+            transparent 60%
+        ),
+        radial-gradient(
+            circle at 75% 75%,
+            rgba(variables.$hp-secondary, 0.08) 0%,
+            transparent 60%
+        ),
+        linear-gradient(
+            to bottom right,
+            rgba(variables.$vulcan, 0.9),
+            rgba(variables.$mirage, 0.9)
+        );
 }
 
 %auth-container {
-  font-family: Hack, monospace;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative;
-  min-height: calc(100vh - 170px);
-  padding-top: 120px;
+    font-family: Hack, monospace;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    min-height: calc(100vh - 170px);
+    padding-top: 120px;
 }
 
 %auth-card {
-  position: relative;
-  width: 100%;
-  max-width: 520px;
-  padding: 3rem;
-  background-color: variables.$glass;
-  backdrop-filter: blur(10px);
-  box-shadow:
-    0 4px 30px variables.$box-shadow,
-    0 0 40px rgba(variables.$login-primary, 0.15);
-  border: 1px solid variables.$glass-border;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: 0;
-  margin-left: 70px;
-  margin-right: 70px;
-  transition: margin 0.3s;
-  
-  @media screen and (width <= 600px) {
-    margin-left: 50px;
-    margin-right: 50px;
-  }
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    padding: 3rem;
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow:
+        0 4px 30px variables.$box-shadow,
+        0 0 40px rgba(variables.$login-primary, 0.15);
+    border: 1px solid variables.$glass-border;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 0;
+    margin-left: 70px;
+    margin-right: 70px;
+    transition: margin 0.3s;
+
+    @media screen and (width <= 600px) {
+        margin-left: 50px;
+        margin-right: 50px;
+    }
 }
 
 %auth-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
 
-  h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: variables.$login-primary;
-    text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
-    animation: text-glow 3s ease-in-out infinite alternate;
-  }
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: variables.$login-primary;
+        text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
+        animation: text-glow 3s ease-in-out infinite alternate;
+    }
 
-  p {
-    font-size: 1.1rem;
-    color: rgb(255 255 255 / 70%);
-  }
+    p {
+        font-size: 1.1rem;
+        color: rgb(255 255 255 / 70%);
+    }
 }
 
 %auth-footer {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 0.9rem;
-  color: rgb(255 255 255 / 60%);
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: rgb(255 255 255 / 60%);
 
-  a {
-    color: variables.$login-primary;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
+    a {
+        color: variables.$login-primary;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
 }
 
 %auth-form-group {
-  margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 %auth-form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: rgb(255 255 255 / 90%);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: rgb(255 255 255 / 90%);
 }
 
 %auth-form-control {
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  background-color: rgb(15 20 32 / 50%);
-  border: 1px solid rgb(128 128 128 / 30%);
-  border-radius: 6px;
-  color: #fff;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background-color: rgb(15 20 32 / 50%);
+    border: 1px solid rgb(128 128 128 / 30%);
+    border-radius: 6px;
+    color: #fff;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
-  &:focus {
-    border-color: variables.$login-primary;
-    box-shadow: 0 0 0 2px rgb(152 158 241 / 25%);
-    outline: none;
-  }
+    &:focus {
+        border-color: variables.$login-primary;
+        box-shadow: 0 0 0 2px rgb(152 158 241 / 25%);
+        outline: none;
+    }
 
-  &.is-invalid {
-    border-color: #dc3545;
-  }
+    &.is-invalid {
+        border-color: #dc3545;
+    }
 }
 
 %auth-form-control-plaintext {
-  width: 100%;
-  padding: 0.75rem 0;
-  font-size: 1rem;
-  background-color: transparent;
-  border: 0;
-  color: #fff;
+    width: 100%;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    background-color: transparent;
+    border: 0;
+    color: #fff;
 }
 
 %auth-invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc3545;
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
 }
 
 %auth-btn {
-  display: inline-block;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  user-select: none;
-  border: 1px solid transparent;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 6px;
-  transition: all 0.2s;
-  cursor: pointer;
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
 }
 
 %auth-btn-primary {
-  background: linear-gradient(
-    135deg,
-    variables.$login-primary,
-    variables.$hp-secondary
-  );
-  color: #fff;
-  border: none;
-
-  &:hover,
-  &:focus {
     background: linear-gradient(
-      135deg,
-      color.adjust(variables.$login-primary, $lightness: -5%),
-      color.adjust(variables.$hp-secondary, $lightness: -5%)
+        135deg,
+        variables.$login-primary,
+        variables.$hp-secondary
     );
-    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
-  }
+    color: #fff;
+    border: none;
+
+    &:hover,
+    &:focus {
+        background: linear-gradient(
+            135deg,
+            color.adjust(variables.$login-primary, $lightness: -5%),
+            color.adjust(variables.$hp-secondary, $lightness: -5%)
+        );
+        box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    }
 }
 
 %auth-password-requirements {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: rgb(0 0 0 / 5%);
-  border-radius: 8px;
-  border-left: 4px solid variables.$login-primary;
-  
-  h4 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: rgb(255 255 255 / 90%);
-  }
-  
-  ul {
-    margin: 0;
-    padding-left: 1.5rem;
-    
-    li {
-      margin-bottom: 0.25rem;
-      font-size: 0.85rem;
-      color: rgb(255 255 255 / 70%);
-      
-      &:last-child {
-        margin-bottom: 0;
-      }
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: rgb(0 0 0 / 5%);
+    border-radius: 8px;
+    border-left: 4px solid variables.$login-primary;
+
+    h4 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgb(255 255 255 / 90%);
     }
-  }
+
+    ul {
+        margin: 0;
+        padding-left: 1.5rem;
+
+        li {
+            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+            color: rgb(255 255 255 / 70%);
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
 }
 
 // Login page specific
-.auth-bg { @extend %auth-bg; }
-.auth-container { @extend %auth-container; }
-.auth-card { @extend %auth-card; }
-.auth-header { @extend %auth-header; }
-.auth-footer { @extend %auth-footer; }
-.auth-form-group { @extend %auth-form-group; }
-.auth-form-label { @extend %auth-form-label; }
-.auth-form-control { @extend %auth-form-control; }
-.auth-form-control-plaintext { @extend %auth-form-control-plaintext; }
-.auth-invalid-feedback { @extend %auth-invalid-feedback; }
-.auth-btn { @extend %auth-btn; }
-.auth-btn-primary { @extend %auth-btn-primary; }
+.auth-bg {
+    @extend %auth-bg;
+}
 
-.login-bg { @extend %auth-bg; }
-.login-container { @extend %auth-container; }
-.login-card { @extend %auth-card; }
-.login-header { @extend %auth-header; }
-.login-footer { @extend %auth-footer; }
-.login-form-group { @extend %auth-form-group; }
-.login-form-label { @extend %auth-form-label; }
-.login-form-control { @extend %auth-form-control; }
-.login-form-control-plaintext { @extend %auth-form-control-plaintext; }
-.login-invalid-feedback { @extend %auth-invalid-feedback; }
-.login-btn { @extend %auth-btn; }
-.login-btn-primary { @extend %auth-btn-primary; }
+.auth-container {
+    @extend %auth-container;
+}
+
+.auth-card {
+    @extend %auth-card;
+}
+
+.auth-header {
+    @extend %auth-header;
+}
+
+.auth-footer {
+    @extend %auth-footer;
+}
+
+.auth-form-group {
+    @extend %auth-form-group;
+}
+
+.auth-form-label {
+    @extend %auth-form-label;
+}
+
+.auth-form-control {
+    @extend %auth-form-control;
+}
+
+.auth-form-control-plaintext {
+    @extend %auth-form-control-plaintext;
+}
+
+.auth-invalid-feedback {
+    @extend %auth-invalid-feedback;
+}
+
+.auth-btn {
+    @extend %auth-btn;
+}
+
+.auth-btn-primary {
+    @extend %auth-btn-primary;
+}
+
+.login-bg {
+    @extend %auth-bg;
+}
+
+.login-container {
+    @extend %auth-container;
+}
+
+.login-card {
+    @extend %auth-card;
+}
+
+.login-header {
+    @extend %auth-header;
+}
+
+.login-footer {
+    @extend %auth-footer;
+}
+
+.login-form-group {
+    @extend %auth-form-group;
+}
+
+.login-form-label {
+    @extend %auth-form-label;
+}
+
+.login-form-control {
+    @extend %auth-form-control;
+}
+
+.login-form-control-plaintext {
+    @extend %auth-form-control-plaintext;
+}
+
+.login-invalid-feedback {
+    @extend %auth-invalid-feedback;
+}
+
+.login-btn {
+    @extend %auth-btn;
+}
+
+.login-btn-primary {
+    @extend %auth-btn-primary;
+}
 
 // Change password page specific
-.changepassword-bg { @extend %auth-bg; }
-.changepassword-container { @extend %auth-container; }
-.changepassword-card { @extend %auth-card; }
-.changepassword-header { @extend %auth-header; }
-.changepassword-form-group { @extend %auth-form-group; }
-.changepassword-form-label { @extend %auth-form-label; }
-.changepassword-form-control { @extend %auth-form-control; }
-.changepassword-password-requirements { @extend %auth-password-requirements; }
+.changepassword-bg {
+    @extend %auth-bg;
+}
 
-// Add any specific overrides here if needed 
-// Example: .login-card might need different margins than the base auth-card 
+.changepassword-container {
+    @extend %auth-container;
+}
+
+.changepassword-card {
+    @extend %auth-card;
+}
+
+.changepassword-header {
+    @extend %auth-header;
+}
+
+.changepassword-form-group {
+    @extend %auth-form-group;
+}
+
+.changepassword-form-label {
+    @extend %auth-form-label;
+}
+
+.changepassword-form-control {
+    @extend %auth-form-control;
+}
+
+.changepassword-password-requirements {
+    @extend %auth-password-requirements;
+}
+
+// Add any specific overrides here if needed
+// Example: .login-card might need different margins than the base auth-card

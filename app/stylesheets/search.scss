@@ -6,250 +6,253 @@
 @use "Hack-Italic";
 
 .sp-main {
-  font-family: "Lazer84", cursive;
-  color: variables.$sp-primary;
-  margin: 0;
-  padding: 0 20px;
-  width: calc(100% - 40px);
-  white-space: nowrap;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    font-family: "Lazer84", cursive;
+    color: variables.$sp-primary;
+    margin: 0;
+    padding: 0 20px;
+    width: calc(100% - 40px);
+    white-space: nowrap;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .sp-main h1.large,
 .sp-main span.small {
-  margin: 0;
-  padding: 0;
-  line-height: 1;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
 }
 
 .sp-main .large {
-  font-size: 7.5vw;
+    font-size: 7.5vw;
 }
 
 .sp-main .small {
-  display: none;
+    display: none;
 }
 
 @media (width <= 600px) {
-  .sp-main .large {
-    display: none;
-  }
+    .sp-main .large {
+        display: none;
+    }
 
-  .sp-main .small {
-    display: inline;
-    font-size: 12.5vw;
-  }
+    .sp-main .small {
+        display: inline;
+        font-size: 12.5vw;
+    }
 }
 
 .sp-main span {
-  font-size: clamp(100px, 15vw, 200px);
-  transition: font-size 0.3s ease;
+    font-size: clamp(100px, 15vw, 200px);
+    transition: font-size 0.3s ease;
 }
 
 @media screen and (width <= 600px) {
-  .sp-main {
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 0.9;
-    margin-top: 5%;
-    margin-bottom: 5%;
-  }
+    .sp-main {
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 0.9;
+        margin-top: 5%;
+        margin-bottom: 5%;
+    }
 }
 
 @mixin sp-aligner {
-  margin: 15px 17.5% 10px;
+    margin: 15px 17.5% 10px;
 }
 
 @mixin lesser-sp-aligner {
-  margin: 15px 12.5% 10px;
+    margin: 15px 12.5% 10px;
 }
 
 @mixin modified-lesser-sp-aligner {
-  margin: 15px 10% 10px;
+    margin: 15px 10% 10px;
 }
 
 .sp-search-bar {
-  display: flex;
-  flex-grow: 1;
+    display: flex;
+    flex-grow: 1;
 }
 
 .sp-search-bar-input {
-  background-color: variables.$glass;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px variables.$box-shadow;
-  border: 1px solid variables.$glass-border;
-  color: variables.$sp-primary;
-  font-family: Hack, monospace;
-  flex-grow: 1;
-  padding: 10px;
-  font-size: 18px;
-  border-radius: 5px;
-  text-align: left;
-  margin-left: 10%;
-  margin-right: 10%;
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border: 1px solid variables.$glass-border;
+    color: variables.$sp-primary;
+    font-family: Hack, monospace;
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 5px;
+    text-align: left;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 .sp-search-bar-input:focus {
-  outline: none;
-  border-color: variables.$sp-primary;
-  box-shadow: 0 0 5px rgb(0 0 0 / 30%);
+    outline: none;
+    border-color: variables.$sp-primary;
+    box-shadow: 0 0 5px rgb(0 0 0 / 30%);
 }
 
 @media screen and (width <= 600px) {
-  .sp-search-bar-input {
-    font-size: 16px;
-  }
+    .sp-search-bar-input {
+        font-size: 16px;
+    }
 }
 
 .sp-experiences-list {
-  @include modified-lesser-sp-aligner;
+    @include modified-lesser-sp-aligner;
 
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  font-family: Hack, monospace;
-  font-size: 18px;
-  color: variables.$sp-primary;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    font-family: Hack, monospace;
+    font-size: 18px;
+    color: variables.$sp-primary;
 }
 
 @media screen and (width <= 600px) {
-  .sp-experiences-list {
-    grid-template-columns: repeat(1, 1fr);
-    font-size: 16px;
-  }
+    .sp-experiences-list {
+        grid-template-columns: repeat(1, 1fr);
+        font-size: 16px;
+    }
 }
 
 .sp-experience {
-  background-color: variables.$glass;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px variables.$box-shadow;
-  border: 1px solid variables.$glass-border;
-  border-radius: 5px;
-  padding: 10px;
-  text-align: center;
-  min-height: 50px;
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border: 1px solid variables.$glass-border;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    min-height: 50px;
 }
 
 .sp-bg {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  overflow: hidden;
-  background-color: variables.$background;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background-color: variables.$background;
 }
 
 .sp-bg img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  filter: blur(10px);
-  user-select: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: blur(10px);
+    user-select: none;
 }
 
 .sp-centerify {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .sp-sectionheader {
-  font-family: Hack, monospace;
-  font-size: 20px;
-  color: variables.$sp-primary;
-  text-align: left;
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-top: 20px;
+    font-family: Hack, monospace;
+    font-size: 20px;
+    color: variables.$sp-primary;
+    text-align: left;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 20px;
 }
 
 @media screen and (width <= 600px) {
-  .sp-sectionheader {
-    font-size: 18px;
-  }
+    .sp-sectionheader {
+        font-size: 18px;
+    }
 }
 
 .sp-author {
-  font-family: Hack-Italic, monospace;
-  font-size: 18px;
-  color: variables.$sp-primary;
-  text-align: left;
-  margin: 5px 15%;
+    font-family: Hack-Italic, monospace;
+    font-size: 18px;
+    color: variables.$sp-primary;
+    text-align: left;
+    margin: 5px 15%;
 }
 
 @media screen and (width <= 600px) {
-  .sp-author {
-    font-size: 16px;
-  }
+    .sp-author {
+        font-size: 16px;
+    }
 }
 
 /* Temporary: Styles for Create Experience Form */
 
 .experience-form-heading {
-  font-size: 24px;
-  color: variables.$sp-primary;
-  margin-bottom: 15px;
-  text-align: center;
+    font-size: 24px;
+    color: variables.$sp-primary;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .experience-form {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 500px;
-  margin: 20px auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    margin: 20px auto;
 
-  .form-group {
-    margin-bottom: 15px;
+    .form-group {
+        margin-bottom: 15px;
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: variables.$sp-primary;
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: variables.$sp-primary;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            height: 100px;
+        }
     }
 
-    .form-input,
-    .form-textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
+    .form-submit {
+        background-color: variables.$sp-primary;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
 
-    .form-textarea {
-      resize: vertical;
-      height: 100px;
+        &:hover {
+            background-color: color.adjust(
+                variables.$sp-primary,
+                $lightness: -10%
+            );
+        }
     }
-  }
-
-  .form-submit {
-    background-color: variables.$sp-primary;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-
-    &:hover {
-      background-color: color.adjust(variables.$sp-primary, $lightness: -10%);
-    }
-  }
 }
 
 /* End Temporary: Styles for Create Experience Form */

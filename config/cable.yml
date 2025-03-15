@@ -1,15 +1,15 @@
 ---
 development:
-  adapter: enhanced_postgresql
-  connection_pool_size: 10
-  url: "postgresql://localhost:5432/libreverse_development"
-  channel_prefix: libreverse_development
+    adapter: enhanced_postgresql
+    connection_pool_size: 10
+    url: "postgresql://localhost:5432/libreverse_development"
+    channel_prefix: libreverse_development
 
 test:
-  adapter: test
+    adapter: test
 
 production:
-  adapter: enhanced_postgresql
-  connection_pool_size: 10
-  url: "postgresql://localhost:5432/libreverse_production"
-  channel_prefix: libreverse_production
+    adapter: enhanced_postgresql
+    connection_pool_size: 10
+    url: "postgresql://localhost:5432/libreverse_production"
+    channel_prefix: libreverse_production

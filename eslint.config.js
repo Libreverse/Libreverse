@@ -7,45 +7,45 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
+    baseDirectory: __dirname,
+    recommendedConfig: js.configs.recommended,
+    allConfig: js.configs.all,
 });
 
 export default [
-  {
-    ignores: [
-      "app//builds**",
-      "**/node_modules/",
-      "**/vendor/",
-      "**/tmp/",
-      "**.config.js",
-      "public/**",
-      "app//libs/**",
-    ],
-  },
-  ...compat.extends(
-    "eslint:recommended",
-    "plugin:unicorn/recommended",
-    "prettier",
-  ),
-  {
-    plugins: {
-      unicorn,
+    {
+        ignores: [
+            "app//builds**",
+            "**/node_modules/",
+            "**/vendor/",
+            "**/tmp/",
+            "**.config.js",
+            "public/**",
+            "app//libs/**",
+        ],
     },
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
+    ...compat.extends(
+        "eslint:recommended",
+        "plugin:unicorn/recommended",
+        "prettier",
+    ),
+    {
+        plugins: {
+            unicorn,
+        },
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+            },
 
-      ecmaVersion: "latest",
-      sourceType: "module",
-    },
+            ecmaVersion: "latest",
+            sourceType: "module",
+        },
 
-    rules: {
-      "unicorn/filename-case": "off",
-      "unicorn/no-anonymous-default-export": "off",
-      "unicorn/no-empty-file": "off",
+        rules: {
+            "unicorn/filename-case": "off",
+            "unicorn/no-anonymous-default-export": "off",
+            "unicorn/no-empty-file": "off",
+        },
     },
-  },
 ];

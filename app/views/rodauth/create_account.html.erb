@@ -28,9 +28,8 @@
         crossorigin
       >
     <% end %>
-    
+
     <div class="login-bg" role="presentation"></div>
-    
     <!-- Lamp effect with conical gradients -->
     <div class="lamp-effect-wrapper">
       <div class="lamp-effect">
@@ -39,7 +38,7 @@
         <div class="lamp-center-glow"></div>
         <div class="lamp-line"></div>
       </div>
-    
+
       <div class="login-container">
         <div class="login-card">
           <div class="login-header">
@@ -59,7 +58,9 @@
                               id: "login",
                               autocomplete: "username",
                               required: true,
-                              data: { form_auto_submit_target: "input" },
+                              data: {
+                                form_auto_submit_target: "input",
+                              },
                               class:
                                 "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}",
                               aria:
@@ -80,13 +81,17 @@
 
             <% if rodauth.require_login_confirmation? %>
               <div class="login-form-group mb-3">
-                <%= form.label "login-confirm", rodauth.login_confirm_label, class: "login-form-label" %>
+                <%= form.label "login-confirm",
+                           rodauth.login_confirm_label,
+                           class: "login-form-label" %>
                 <%= form.text_field rodauth.login_confirm_param,
                                 value: params[rodauth.login_confirm_param],
                                 id: "login-confirm",
                                 autocomplete: "username",
                                 required: true,
-                                data: { form_auto_submit_target: "input" },
+                                data: {
+                                  form_auto_submit_target: "input",
+                                },
                                 class:
                                   "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_confirm_param)}",
                                 aria:
@@ -113,22 +118,21 @@
               <div class="login-form-group mb-3">
                 <%= form.label "password", rodauth.password_label, class: "login-form-label" %>
                 <%= form.text_field rodauth.password_param,
-                                    value: "",
-                                    id: "password",
-                                    autocomplete: rodauth.password_field_autocomplete_value,
-                                    required: true,
-                                    data: { form_auto_submit_target: "input" },
-                                    class:
-                                      "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}",
-                                    aria:
-                                      (
-                                        if rodauth.field_error(rodauth.password_param)
-                                          {
-                                            invalid: true,
-                                            describedby: "password_error_message",
-                                          }
-                                        end
-                                      ) %>
+                                value: "",
+                                id: "password",
+                                autocomplete: rodauth.password_field_autocomplete_value,
+                                required: true,
+                                data: {
+                                  form_auto_submit_target: "input",
+                                },
+                                class:
+                                  "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}",
+                                aria:
+                                  (
+                                    if rodauth.field_error(rodauth.password_param)
+                                      { invalid: true, describedby: "password_error_message" }
+                                    end
+                                  ) %>
                 <%= if rodauth.field_error(rodauth.password_param)
                   content_tag(
                     :span,
@@ -142,25 +146,27 @@
               <% if rodauth.require_password_confirmation? %>
                 <div class="login-form-group mb-3">
                   <%= form.label "password-confirm",
-                            rodauth.password_confirm_label,
-                            class: "login-form-label" %>
+                             rodauth.password_confirm_label,
+                             class: "login-form-label" %>
                   <%= form.text_field rodauth.password_confirm_param,
-                                      value: "",
-                                      id: "password-confirm",
-                                      autocomplete: "new-password",
-                                      required: true,
-                                      data: { form_auto_submit_target: "input" },
-                                      class:
-                                        "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_confirm_param)}",
-                                      aria:
-                                        (
-                                          if rodauth.field_error(rodauth.password_confirm_param)
-                                            {
-                                              invalid: true,
-                                              describedby: "password-confirm_error_message",
-                                            }
-                                          end
-                                        ) %>
+                                  value: "",
+                                  id: "password-confirm",
+                                  autocomplete: "new-password",
+                                  required: true,
+                                  data: {
+                                    form_auto_submit_target: "input",
+                                  },
+                                  class:
+                                    "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_confirm_param)}",
+                                  aria:
+                                    (
+                                      if rodauth.field_error(rodauth.password_confirm_param)
+                                        {
+                                          invalid: true,
+                                          describedby: "password-confirm_error_message",
+                                        }
+                                      end
+                                    ) %>
                   <%= if rodauth.field_error(rodauth.password_confirm_param)
                     content_tag(
                       :span,
@@ -173,9 +179,10 @@
               <% end %>
             <% end %>
           <% end %>
-          
+
           <div class="login-footer">
-            Already have an account? <a href="<%= rodauth.login_path %>">Sign in</a>
+            Already have an account?
+            <a href="<%= rodauth.login_path %>">Sign in</a>
           </div>
         </div>
       </div>

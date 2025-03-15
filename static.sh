@@ -3,23 +3,23 @@ disable_warnings=true
 
 # Check if the user wants to disable warnings
 while getopts ":d" opt; do
-  case $opt in
-    d)
-      disable_warnings=true
-      ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      exit 1
-      ;;
-  esac
+    case $opt in
+        d)
+            disable_warnings=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+    esac
 done
 
 if [ "$disable_warnings" = true ]; then
-  # Save the current NODE_OPTIONS value
-  original_node_options="$NODE_OPTIONS"
+    # Save the current NODE_OPTIONS value
+    original_node_options="$NODE_OPTIONS"
 
-  # Set NODE_OPTIONS to disable warnings
-  export NODE_OPTIONS='--no-warnings'
+    # Set NODE_OPTIONS to disable warnings
+    export NODE_OPTIONS='--no-warnings'
 fi
 
 echo "====================="
@@ -78,5 +78,5 @@ echo "====================="
 
 # Reset NODE_OPTIONS to its original value on script exit if it was changed
 if [ "$disable_warnings" = true ]; then
-  trap 'export NODE_OPTIONS="$original_node_options"' EXIT
+    trap 'export NODE_OPTIONS="$original_node_options"' EXIT
 fi

@@ -1,5 +1,9 @@
 <!doctype html>
-<html dir="ltr" lang="en-GB" class="<%= 'auth-page' if request.path.include?('/login') || request.path.include?('/create-account') || request.path.include?('/change-password') || request.path.include?('/multi-phase-login') %>">
+<html
+  dir="ltr"
+  lang="en-GB"
+  class="<%= 'auth-page' if request.path.include?('/login') || request.path.include?('/create-account') || request.path.include?('/change-password') || request.path.include?('/multi-phase-login') %>"
+>
   <head>
     <!--Important code-->
     <%= yield :fontpreloads %>
@@ -7,7 +11,10 @@
     <%= yield :specifcstylesheets %>
     <%= vite_javascript_tag "~/javascript/application.js", type: "module" %>
     <% if Rails.env.development? %>
-      <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+      <meta
+        http-equiv="Cache-Control"
+        content="no-store, no-cache, must-revalidate, max-age=0"
+      >
       <meta http-equiv="Pragma" content="no-cache">
       <meta http-equiv="Expires" content="Fri, 01 Jan 1990 00:00:00 GMT">
     <% end %>
@@ -156,18 +163,28 @@
   </head>
   <body class="<%= content_for?(:drawer) ? 'page-with-drawer' : '' %>">
     <% if notice || alert %>
-      <div 
-        class="toast-container" 
-        data-controller="toast" 
+      <div
+        class="toast-container"
+        data-controller="toast"
         data-toast-target="container"
         data-toast-auto-hide-value="true"
         data-toast-auto-hide-delay-value="5000"
       >
         <% if notice %>
-          <div class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+          <div
+            class="toast toast-success"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+          >
             <div class="toast-header">
               <strong class="me-auto">Success</strong>
-              <button type="button" class="toast-close" data-action="toast#close" aria-label="Close">
+              <button
+                type="button"
+                class="toast-close"
+                data-action="toast#close"
+                aria-label="Close"
+              >
                 <img
                   src="<%= vite_asset_path "~/icons/x.svg" %>"
                   class="toast-close-icon"
@@ -185,12 +202,22 @@
             </div>
           </div>
         <% end %>
-        
+
         <% if alert %>
-          <div class="toast toast-error" role="alert" aria-live="assertive" aria-atomic="true">
+          <div
+            class="toast toast-error"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+          >
             <div class="toast-header">
               <strong class="me-auto">Alert</strong>
-              <button type="button" class="toast-close" data-action="toast#close" aria-label="Close">
+              <button
+                type="button"
+                class="toast-close"
+                data-action="toast#close"
+                aria-label="Close"
+              >
                 <img
                   src="<%= vite_asset_path "~/icons/x.svg" %>"
                   class="toast-close-icon"

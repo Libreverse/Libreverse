@@ -5,5 +5,5 @@ import StimulusReflex from "stimulus_reflex";
 StimulusReflex.initialize(application, { controller, isolate: true });
 
 if (import.meta.env.MODE === "development") {
-  StimulusReflex.debug = true;
+    StimulusReflex.debug = true;
 }
