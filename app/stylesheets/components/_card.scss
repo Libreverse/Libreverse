@@ -39,7 +39,7 @@
 
   p {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgb(255 255 255 / 70%);
   }
 }
 
@@ -47,7 +47,7 @@
   text-align: center;
   margin-top: 2rem;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgb(255 255 255 / 60%);
 
   a {
     color: variables.$login-primary;
@@ -65,6 +65,7 @@
   0% {
     text-shadow: 0 0 10px rgba(variables.$login-primary, 0.3);
   }
+
   100% {
     text-shadow: 0 0 15px rgba(variables.$login-primary, 0.6);
   }
