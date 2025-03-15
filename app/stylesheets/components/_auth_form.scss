@@ -1,0 +1,131 @@
+@use "../variables";
+
+// Form group container
+.auth-form-group {
+  margin-bottom: 1.5rem;
+}
+
+// Form label
+.auth-form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+// Form input control
+.auth-form-control {
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding and border are included in width */
+  max-width: 100%; /* Ensure it never exceeds container width */
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background-color: rgba(15, 20, 32, 0.5); /* Using $vulcan with opacity */
+  border: 1px solid rgba(128, 128, 128, 0.3); /* Using $glass */
+  border-radius: 6px;
+  color: #fff;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  overflow: hidden; /* Prevent content overflow */
+  text-overflow: ellipsis; /* Show ellipsis for overflowing text */
+
+  &:focus {
+    border-color: variables.$login-primary;
+    box-shadow: 0 0 0 2px rgba(152, 158, 241, 0.25); /* login-primary with opacity */
+    outline: none;
+  }
+
+  &.is-invalid {
+    border-color: #dc3545;
+  }
+}
+
+// Plaintext form control variant
+.auth-form-control-plaintext {
+  width: 100%;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  background-color: transparent;
+  border: 0;
+  color: #fff;
+}
+
+// Form validation feedback
+.auth-invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+// Button
+.auth-btn {
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 6px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+// Primary button variant
+.auth-btn-primary {
+  background: linear-gradient(
+    135deg,
+    variables.$login-primary,
+    variables.$hp-secondary
+  );
+  color: #fff;
+  border: none;
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(
+      135deg,
+      darken(variables.$login-primary, 5%),
+      darken(variables.$hp-secondary, 5%)
+    );
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Password requirements box
+.auth-password-requirements {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border-left: 4px solid variables.$login-primary;
+  
+  h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    
+    li {
+      margin-bottom: 0.25rem;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+} 

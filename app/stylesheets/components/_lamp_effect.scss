@@ -1,0 +1,129 @@
+@use "../variables";
+
+// Lamp effect container
+.lamp-effect {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100px; // Standardized height
+  pointer-events: none;
+  z-index: 0; // Above background but below content
+}
+
+// Wrapper for consistent positioning across all auth pages
+.lamp-effect-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100px; // Match the lamp-effect height
+}
+
+// Conical gradient beams
+.lamp-left-beam {
+  position: absolute;
+  top: 50px;
+  right: 50%;
+  width: 60rem;
+  height: 60rem;
+  opacity: 0;
+  background: conic-gradient(
+    from 120deg at right top,
+    rgba(variables.$login-primary, 0.5),
+    rgba(variables.$login-primary, 0.3) 20%,
+    transparent 40%
+  );
+  animation: lamp-fade-in 2s ease-in-out forwards;
+  z-index: 0;
+  transform-origin: right top;
+}
+
+.lamp-right-beam {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  width: 60rem;
+  height: 60rem;
+  opacity: 0;
+  background: conic-gradient(
+    from 240deg at left top,
+    transparent 60%,
+    rgba(variables.$login-primary, 0.3) 80%,
+    rgba(variables.$login-primary, 0.5)
+  );
+  animation: lamp-fade-in 2s ease-in-out forwards;
+  z-index: 0;
+  transform-origin: left top;
+}
+
+// Horizontal line
+.lamp-line {
+  position: absolute;
+  left: 50%;
+  top: 50px; // Centered vertically in the 100px container
+  transform: translateX(-50%); // Center horizontally
+  height: 3px;
+  background-color: variables.$login-primary;
+  box-shadow:
+    0 0 10px 2px variables.$login-primary,
+    0 0 20px 5px rgba(variables.$login-primary, 0.5);
+  animation: lamp-line-expand 1.5s ease-in-out forwards;
+  z-index: 0;
+}
+
+// Center glow
+.lamp-center-glow {
+  position: absolute;
+  left: 50%;
+  top: 50px; // Centered vertically in the 100px container
+  transform: translateX(-50%); // Center horizontally
+  width: 0;
+  height: 15px;
+  background: variables.$login-primary;
+  filter: blur(15px);
+  opacity: 0;
+  z-index: 2;
+  animation: lamp-center-glow 1.5s ease-in-out forwards;
+}
+
+// Animations
+@keyframes lamp-line-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 500px;
+    opacity: 1;
+  }
+}
+
+@keyframes lamp-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes lamp-center-glow {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100px;
+    opacity: 0.9;
+  }
+}
+
+@keyframes lamp-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.6;
+    filter: blur(6px);
+  }
+  50% {
+    opacity: 0.8;
+    filter: blur(10px);
+  }
+} 

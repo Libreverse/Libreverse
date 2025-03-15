@@ -1,0 +1,35 @@
+// Base auth styles
+@use "variables";
+@use "boilerplate";
+@use "Hack";
+@use "components/lamp_effect";
+@use "components/auth_layout";
+@use "components/auth_form";
+
+// Legacy class mappings - to maintain backward compatibility
+// Login page specific
+.login-bg { @extend .auth-bg; }
+.login-container { @extend .auth-container; }
+.login-card { @extend .auth-card; }
+.login-header { @extend .auth-header; }
+.login-footer { @extend .auth-footer; }
+.login-form-group { @extend .auth-form-group; }
+.login-form-label { @extend .auth-form-label; }
+.login-form-control { @extend .auth-form-control; }
+.login-form-control-plaintext { @extend .auth-form-control-plaintext; }
+.login-invalid-feedback { @extend .auth-invalid-feedback; }
+.login-btn { @extend .auth-btn; }
+.login-btn-primary { @extend .auth-btn-primary; }
+
+// Change password page specific
+.changepassword-bg { @extend .auth-bg; }
+.changepassword-container { @extend .auth-container; }
+.changepassword-card { @extend .auth-card; }
+.changepassword-header { @extend .auth-header; }
+.changepassword-form-group { @extend .auth-form-group; }
+.changepassword-form-label { @extend .auth-form-label; }
+.changepassword-form-control { @extend .auth-form-control; }
+.changepassword-password-requirements { @extend .auth-password-requirements; }
+
+// Add any specific overrides here if needed 
+// Example: .login-card might need different margins than the base auth-card 
