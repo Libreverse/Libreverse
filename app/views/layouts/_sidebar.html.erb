@@ -40,6 +40,16 @@
         >
           <%= sidebar_icon("~/icons/dashboard.svg") %>
         </a>
+        <a
+          href="<%= experiences_path %>"
+          data-controller="current"
+          data-action="click->current#handleClick"
+          data-current-target="link"
+          class="sidebar-link"
+          aria-label="Manage experiences"
+        >
+          <%= sidebar_icon("~/icons/experiences.svg") %>
+        </a>
         <%= button_to rodauth.logout_path,
             method: :post,
             class: "sidebar-link sidebar-logout-button",

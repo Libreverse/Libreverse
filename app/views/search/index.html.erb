@@ -66,27 +66,6 @@
             <%= render partial: "search/experiences_list", locals: { experiences: @experiences } %>
           </div>
         </section>
-        <!-- Temporary: Create Experience Form -->
-        <section>
-          <h2 class="experience-form-heading">Create a New Experience</h2>
-
-          <%= form_with(model: @experience, url: experiences_path, local: true, class: "experience-form") do |form| %>
-            <div class="form-group">
-              <%= form.label :title %>
-              <%= form.text_field :title, class: "form-input", placeholder: "Title" %>
-            </div>
-            <div class="form-group">
-              <%= form.label :description %>
-              <%= form.text_area :description, class: "form-textarea", placeholder: "Description" %>
-            </div>
-            <div class="form-group">
-              <%= form.label :author %>
-              <%= form.text_field :author, class: "form-input", placeholder: "Author" %>
-            </div>
-            <%= form.submit "Create Experience", class: "form-submit" %>
-          <% end %>
-        </section>
-        <!-- End Temporary: Create Experience Form -->
       </main>
     </div>
   <% end %>

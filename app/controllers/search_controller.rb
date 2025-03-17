@@ -8,6 +8,5 @@ class SearchController < ApplicationController
     else
                      Experience.all.order(created_at: :desc)
     end
-    @experience = Experience.new
   end
 end

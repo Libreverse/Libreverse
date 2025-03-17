@@ -4,6 +4,7 @@ class ExperiencesController < ApplicationController
   # GET /experiences
   def index
     @experiences = Experience.all.order(created_at: :desc)
+    @experience = Experience.new
   end
 
   # GET /experiences/1
@@ -19,9 +20,10 @@ class ExperiencesController < ApplicationController
   def create
     @experience = Experience.new(experience_params)
     if @experience.save
-      redirect_to search_path, notice: "Experience created successfully."
+      redirect_to experiences_path, notice: "Experience created successfully."
     else
-      render "search/index"
+      @experiences = Experience.all.order(created_at: :desc)
+      render :index, status: :unprocessable_entity
     end
   end
 
@@ -34,14 +36,14 @@ class ExperiencesController < ApplicationController
     if @experience.update(experience_params)
       redirect_to @experience, notice: "Experience was successfully updated."
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
   # DELETE /experiences/1
   def destroy
     @experience.destroy
-    redirect_to experiences_url, notice: "Experience was successfully destroyed."
+    redirect_to experiences_path, notice: "Experience was successfully deleted."
   end
 
   private

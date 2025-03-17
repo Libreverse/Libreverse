@@ -1,0 +1,84 @@
+<%= render "layouts/sidebar" %>
+<%= render "layouts/drawer" %>
+<%= render 'layouts/leniswrapper' do %>
+  <%= render 'layouts/navigationshortcutswrapper' do %>
+    <% include_stylesheet "dashboard" %>
+    <% include_stylesheet "search" %> <!-- Including search styles for experience styling -->
+
+    <div class="container py-5 dashboard-container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card shadow-sm mb-4 dashboard-card">
+            <div class="card-header text-white dashboard-header">
+              <h1 class="h3 mb-0">Experience Details</h1>
+            </div>
+            <div class="card-body p-4">
+              <article class="dashboard-experience" itemscope itemtype="https://schema.org/CreativeWork">
+                <div class="experience-header mb-4 pb-3 border-bottom">
+                  <h2 class="h3 mb-3" itemprop="name"><%= @experience.title %></h2>
+                  
+                  <div class="d-flex flex-wrap align-items-center text-muted">
+                    <% if @experience.author.present? %>
+                      <div class="me-4 mb-2">
+                        <i class="bi bi-person me-1"></i>
+                        <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                          <span itemprop="name"><%= @experience.author %></span>
+                        </span>
+                      </div>
+                    <% end %>
+                    
+                    <div class="me-4 mb-2">
+                      <i class="bi bi-calendar me-1"></i>
+                      <time datetime="<%= @experience.created_at.iso8601 %>">
+                        <%= @experience.created_at.strftime("%B %d, %Y at %H:%M") %>
+                      </time>
+                    </div>
+                    
+                    <div class="mb-2">
+                      <i class="bi bi-hash me-1"></i>
+                      ID: <%= @experience.id %>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="experience-content mb-4">
+                  <h3 class="h5 text-primary mb-3">
+                    <i class="bi bi-journal-text me-2"></i>
+                    Description
+                  </h3>
+                  <div class="p-4 bg-light rounded border" itemprop="description">
+                    <%= simple_format(@experience.description) %>
+                  </div>
+                </div>
+                
+                <div class="experience-actions d-flex flex-wrap gap-2 mt-5">
+                  <%= link_to edit_experience_path(@experience), class: "btn btn-primary" do %>
+                    <i class="bi bi-pencil me-2"></i> Edit Experience
+                  <% end %>
+                  
+                  <%= button_to experience_path(@experience), method: :delete, 
+                      class: "btn btn-danger", 
+                      form: { data: { turbo_confirm: "Are you sure you want to delete this experience? This action cannot be undone." } } do %>
+                    <i class="bi bi-trash me-2"></i> Delete Experience
+                  <% end %>
+                  
+                  <%= link_to experiences_path, class: "btn btn-outline-secondary" do %>
+                    <i class="bi bi-arrow-left me-2"></i> Back to Experiences
+                  <% end %>
+                </div>
+              </article>
+            </div>
+            <div class="card-footer p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Last updated: <%= @experience.updated_at.strftime("%B %d, %Y at %H:%M") %></small>
+                <%= link_to search_path(query: @experience.title), class: "btn btn-outline-info btn-sm" do %>
+                  <i class="bi bi-search me-1"></i> Find similar experiences
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %> 
