@@ -2,9 +2,7 @@
 <%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
   <%= render 'layouts/navigationshortcutswrapper' do %>
-    <% content_for :specifcstylesheets do %>
-      <%= vite_stylesheet_tag "~/stylesheets/login.scss" %>
-    <% end %>
+    <% include_stylesheet "login" %>
     <% content_for :fontpreloads do %>
       <link
         rel="preload"

@@ -1,0 +1,48 @@
+default: &default
+  name: "Libreverse"
+  page_name: "Libreverse Homepage"
+  description: "An instance of the Metaverse, but open-source"
+  keywords: "Libreverse, libreverse, metaverse, open-source, FOSS"
+  preview_image: "/wherever/filename.png"
+  preview_image_url: "https://your-url.com/wherever/filename.png"
+  preview_image_type: "image/type"
+  preview_image_width: "insert width"
+  preview_image_height: "insert height"
+  preview_image_alt: "Preview of this Libreverse instance's homepage"
+  theme_color: "#whatever"
+  url: "https://your-url.com/"
+  domain: "your-url.com"
+  homepage: "https://your-url.com/"
+  onion_url: "https://your-url.onion/"
+  shortcut_icon: "/wherever/filename.png"
+  apple_touch_icon: "/wherever/filename.png"
+  mask_icon: "/wherever/filname.svg"
+  mask_icon_color: "#whatever"
+  determiner: "The"
+  locale: "en_GB"
+  facebook_admins: "facebook-admins"
+  facebook_app_id: "YOUR_APP_ID_HERE"
+  facebook_pages: "https://www.facebook.com/yourassociatedpages"
+  facebook_profile_id: "https://www.facebook.com/yourprofile"
+  twitter_site: "@username"
+  twitter_creator: "@username"
+  windows7_tooltip: "Launch Your Awesome Webapp"
+  windows7_starturl: "/"
+  windows7_action_menu: "name=First Task;action-uri=yoururl.com/firsttask;icon-uri=path/to/icon.ico"
+  apple_app_store_app: "app-id=YOUR_APP_ID, affiliate-data=YOUR_AFFILIATE_DATA, app-argument=YOUR_URL"
+  google_site_verification: "Code from Google Webmaster tools"
+  bing_site_verification: "Code from Bing Webmaster tools"
+  pinterest_site_verification: "Code from Pinterest"
+  yandex_site_verification: "Code from Yandex Webmaster tools"
+  norton_site_verification: "Norton Code"
+  mastodon_link: "https://mastodon.social/@yourusername"
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+  # Override production-specific values here 

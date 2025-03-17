@@ -1,0 +1,103 @@
+<!--Basic HTML metadata-->
+<meta charset="utf-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"
+>
+<meta name="description" content="<%= seo_config('description') %>">
+<meta name="keywords" content="<%= seo_config('keywords') %>">
+<meta name="image" content="<%= seo_config('preview_image') %>">
+<meta name="theme-color" content="<%= seo_config('theme_color') %>">
+<meta name="robots" content="all">
+<meta name="referrer" content="no-referrer-when-downgrade">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta http-equiv="onion-location" content="<%= seo_config('onion_url') %>">
+<title><%= content_for?(:title) ? yield(:title) : seo_config('name') %></title>
+<link rel="canonical" href="<%= seo_config('url') %>">
+<link rel="home" href="<%= seo_config('homepage') %>">
+<link rel="shortcut icon" href="<%= seo_config('shortcut_icon') %>" type="image/x-icon">
+<link rel="apple-touch-icon" href="<%= seo_config('apple_touch_icon') %>" type="image/x-icon">
+<link
+  rel="mask-icon"
+  sizes="any"
+  href="<%= seo_config('mask_icon') %>"
+  color="<%= seo_config('mask_icon_color') %>"
+>
+
+<!--Schema.org metadata-->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "<%= seo_config('name') %>",
+  "url": "<%= seo_config('url') %>",
+  "description": "<%= seo_config('description') %>",
+  "applicationCategory": "Communication",
+  "operatingSystem": "All",
+  "image": "<%= seo_config('preview_image_url') %>",
+  "inLanguage": "<%= seo_config('locale') %>"
+}
+</script>
+
+<!--Open Graph metadata-->
+<meta property="og:site_name" content="<%= seo_config('name') %>">
+<meta property="og:title" content="<%= content_for?(:og_title) ? yield(:og_title) : seo_config('page_name') %>">
+<meta property="og:type" content="website">
+<meta property="og:url" content="<%= seo_config('url') %>">
+<meta property="og:image" content="<%= seo_config('preview_image') %>">
+<meta property="og:image:url" content="<%= seo_config('preview_image') %>">
+<meta property="og:image:secure_url" content="<%= seo_config('preview_image') %>">
+<meta property="og:image:type" content="<%= seo_config('preview_image_type') %>">
+<meta property="og:image:width" content="<%= seo_config('preview_image_width') %>">
+<meta property="og:image:height" content="<%= seo_config('preview_image_height') %>">
+<meta property="og:image:alt" content="<%= seo_config('preview_image_alt') %>">
+<meta property="og:description" content="<%= seo_config('description') %>">
+<meta property="og:determiner" content="<%= seo_config('determiner') %>">
+<meta property="og:locale" content="<%= seo_config('locale') %>">
+
+<!--Facebook-specific metadata-->
+<meta property="article:publisher" content="https://www.facebook.com/yourpage">
+<meta
+  property="article:tag"
+  content="Libreverse, libreverse, metaverse, open-source, FOSS"
+>
+<meta property="fb:admins" content="<%= seo_config('facebook_admins') %>">
+<meta property="fb:app_id" content="<%= seo_config('facebook_app_id') %>">
+<meta property="fb:pages" content="<%= seo_config('facebook_pages') %>">
+<meta property="fb:profile_id" content="<%= seo_config('facebook_profile_id') %>">
+
+<!--X/Twitter metadata-->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:domain" content="<%= seo_config('domain') %>">
+<meta name="twitter:site" content="<%= seo_config('twitter_site') %>">
+<meta name="twitter:creator" content="<%= seo_config('twitter_creator') %>">
+<meta name="twitter:title" content="<%= seo_config('name') %>">
+<meta name="twitter:description" content="<%= seo_config('description') %>">
+<meta name="twitter:image" content="<%= seo_config('preview_image') %>">
+<meta name="twitter:image:alt" content="<%= seo_config('preview_image_alt') %>">
+<meta name="twitter:url" content="<%= seo_config('url') %>">
+
+<!--Old windows pin-to-taskbar metadata-->
+<meta name="msapplication-tooltip" content="<%= seo_config('windows7_tooltip') %>">
+<meta name="msapplication-starturl" content="<%= seo_config('windows7_starturl') %>">
+<meta name="msapplication-task" content="<%= seo_config('windows7_tooltip') %>">
+
+<!--Mobile App Metadata-->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="<%= seo_config('name') %>">
+<meta name="apple-mobile-web-app-status-bar-style" content="<%= seo_config('theme_color') %>">
+<meta name="apple-itunes-app" content="<%= seo_config('apple_app_store_app') %>">
+
+<!--Site verification tags-->
+<meta name="google-site-verification" content="<%= seo_config('google_site_verification') %>">
+<meta name="msvalidate.01" content="<%= seo_config('bing_site_verification') %>">
+<meta name="p:domain_verify" content="<%= seo_config('pinterest_site_verification') %>">
+<meta name="yandex-verification" content="<%= seo_config('yandex_site_verification') %>">
+<meta
+  name="norton-safeweb-site-verification"
+  content="<%= seo_config('norton_site_verification') %>"
+>
+
+<!--Mastodoon and similar fedi metadata-->
+<link rel="me" href="<%= seo_config('mastodon_link') %>"> 
