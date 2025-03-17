@@ -1,0 +1,134 @@
+// Experience card shared placeholders
+@use "../variables";
+@use "sass:color";
+
+// Mixin for blurred glass effect consistent with search
+@mixin glass-effect {
+  background-color: variables.$glass;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px variables.$box-shadow;
+  border: 1px solid variables.$glass-border;
+}
+
+// Define experience style placeholders for reuse
+%experience-list-base {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+%experience-card-base {
+  @include glass-effect;
+  border-radius: 5px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: Hack, monospace;
+  color: variables.$sp-primary;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, variables.$sp-primary, color.adjust(variables.$sp-primary, $lightness: 15%));
+    opacity: 0.8;
+  }
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px variables.$box-shadow;
+    border-color: rgba(255, 255, 255, 0.4);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: variables.$sp-primary;
+    font-family: Hack, monospace;
+    
+    a {
+      color: variables.$sp-primary;
+      text-decoration: none;
+      
+      &:hover {
+        color: white;
+      }
+    }
+  }
+}
+
+%experience-author-base {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 1rem;
+  position: relative;
+  padding-left: 1.25rem;
+  font-family: Hack-Italic, monospace;
+  
+  &::before {
+    content: "✍️";
+    position: absolute;
+    left: 0;
+    top: 2px;
+  }
+}
+
+%experience-date-base {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.75rem;
+  font-family: Hack, monospace;
+}
+
+%experience-actions-base {
+  margin-top: 1.25rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.description-truncate {
+  max-height: 100px;
+  overflow: hidden;
+  position: relative;
+  color: rgba(255, 255, 255, 0.9);
+  
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+    pointer-events: none;
+  }
+  
+  p {
+    margin-bottom: 0.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.experience-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid variables.$glass-border;
+} 

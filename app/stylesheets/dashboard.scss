@@ -1,82 +1,442 @@
 @use "variables";
+@use "sass:color";
+@use "components/experience_cards";
+
+// Mixin for blurred glass effect consistent with search
+@mixin glass-effect {
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border: 1px solid variables.$glass-border;
+}
 
 .dashboard-container {
+    background-color: variables.$background;
     min-height: 100vh;
-    background-color: #f8f9fa;
+    padding-left: 50px;
+    padding-right: 50px;
+    color: variables.$sp-primary;
+    font-family: Hack, monospace;
+    
+    // Background image with blur similar to search page
+    position: relative;
+    
+    &::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/vite/assets/brasserie.jpg");
+        background-size: cover;
+        background-position: center;
+        filter: blur(10px);
+        opacity: 0.4;
+        z-index: -1;
+    }
 }
 
-.card {
-    border-radius: 0.5rem;
-    border: none;
+.dashboard-card {
+    @include glass-effect;
+    border-radius: 5px;
     overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px variables.$box-shadow;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
 }
 
-.card-header {
-    border-bottom: none;
-    padding: 1.25rem 1.5rem;
-}
-
-.card-body {
+.dashboard-header {
+    background: linear-gradient(90deg, 
+        color.adjust(variables.$sp-primary, $lightness: -10%), 
+        variables.$sp-primary
+    );
     padding: 1.5rem;
+    border-bottom: 1px solid variables.$glass-border;
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(30deg);
+        pointer-events: none;
+    }
+    
+    h1 {
+        margin: 0;
+        font-weight: 600;
+        position: relative;
+        z-index: 2;
+        font-family: Hack, monospace;
+        letter-spacing: 1px;
+    }
 }
 
-.card-footer {
-    background-color: #fff;
-    border-top: 1px solid rgb(0 0 0 / 5%);
-    padding: 1.25rem 1.5rem;
+.welcome-section {
+    @include glass-effect;
+    border-radius: 5px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid variables.$sp-primary;
+    
+    h2 {
+        font-family: Hack, monospace;
+        color: variables.$sp-primary;
+    }
+    
+    p {
+        color: rgba(255, 255, 255, 0.8);
+    }
 }
 
-.badge {
-    padding: 0.5em 0.75em;
-    font-weight: 500;
+.info-card {
+    @include glass-effect;
+    border-radius: 5px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        box-shadow: 0 8px 30px variables.$box-shadow;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    
+    .text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
 }
 
-.list-group-item {
-    padding: 0.75rem 1.25rem;
-    border: none;
-    border-bottom: 1px solid rgb(0 0 0 / 5%);
-}
-
-.list-group-item:last-child {
-    border-bottom: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.stat-value {
+    font-size: 1.1rem;
     font-weight: 600;
+    color: variables.$sp-primary;
 }
 
-.text-danger {
-    color: #dc3545;
+.security-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    @include glass-effect;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid variables.$sp-primary;
+    color: rgba(255, 255, 255, 0.8);
+    
+    i {
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+        color: variables.$sp-primary;
+    }
 }
 
-.text-warning {
-    color: #ffc107;
+.quick-links-section {
+    .list-group-item {
+        @include glass-effect;
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s ease;
+        color: variables.$sp-primary;
+        
+        &:hover {
+            transform: translateX(5px);
+            background-color: rgba(201, 149, 164, 0.1);
+            border-color: variables.$sp-primary;
+            
+            .badge {
+                transform: translateX(5px);
+            }
+        }
+        
+        .badge {
+            transition: transform 0.2s ease;
+            background-color: variables.$sp-primary !important;
+        }
+    }
 }
 
-.text-success {
-    color: #28a745;
+// Define placeholders for experience styling
+%experience-list-base {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+%experience-card-base {
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, variables.$primary, color.adjust(variables.$primary, $lightness: 15%));
+        opacity: 0.8;
+    }
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        
+        &::before {
+            opacity: 1;
+        }
+    }
+    
+    h3 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: variables.$primary;
+    }
+}
+
+%experience-author-base {
+    font-style: italic;
+    color: #6c757d;
+    margin-top: 1rem;
+    position: relative;
+    padding-left: 1.25rem;
+    
+    &::before {
+        content: "✍️";
+        position: absolute;
+        left: 0;
+        top: 2px;
+    }
+}
+
+%experience-date-base {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.75rem;
+}
+
+%experience-actions-base {
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+// Apply placeholders to dashboard-specific elements
+.dashboard-experiences-list {
+    @extend %experience-list-base;
+    font-family: Hack, monospace;
+}
+
+.dashboard-experience {
+    @extend %experience-card-base;
+    @include glass-effect;
+    
+    .sp-author {
+        @extend %experience-author-base;
+    }
+    
+    .creation-date {
+        @extend %experience-date-base;
+    }
+    
+    .experience-actions {
+        @extend %experience-actions-base;
+    }
+}
+
+.experience-form-container {
+    @include glass-effect;
+    border-radius: 5px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.experience-form-heading {
+    position: relative;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    color: variables.$sp-primary;
+    font-weight: 600;
+    font-family: Hack, monospace;
+    
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: variables.$sp-primary;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    
+    label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: variables.$sp-primary;
+        font-family: Hack, monospace;
+    }
+    
+    .form-input,
+    .form-textarea {
+        @include glass-effect;
+        border-radius: 5px;
+        padding: 0.75rem;
+        width: 100%;
+        transition: all 0.2s ease;
+        color: rgba(255, 255, 255, 0.9);
+        font-family: Hack, monospace;
+        
+        &:focus {
+            border-color: variables.$sp-primary;
+            box-shadow: 0 0 0 3px rgba(variables.$sp-primary, 0.25);
+            outline: none;
+        }
+        
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    }
+    
+    .form-textarea {
+        min-height: 120px;
+    }
+}
+
+.form-submit {
+    background: linear-gradient(90deg, 
+        color.adjust(variables.$sp-primary, $lightness: -10%), 
+        variables.$sp-primary
+    );
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    color: white;
+    font-family: Hack, monospace;
+    
+    &:hover {
+        background: linear-gradient(90deg, 
+            variables.$sp-primary, 
+            color.adjust(variables.$sp-primary, $lightness: 10%)
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(variables.$sp-primary, 0.4);
+    }
+}
+
+// Override some Bootstrap components to match the design system
+.btn-primary {
+    background: linear-gradient(90deg, 
+        color.adjust(variables.$sp-primary, $lightness: -10%), 
+        variables.$sp-primary
+    ) !important;
+    border-color: variables.$sp-primary !important;
+    
+    &:hover {
+        background: linear-gradient(90deg, 
+            variables.$sp-primary, 
+            color.adjust(variables.$sp-primary, $lightness: 10%)
+        ) !important;
+        box-shadow: 0 4px 15px rgba(variables.$sp-primary, 0.4);
+    }
 }
 
 .btn-outline-primary {
-    color: #007bff;
-    border-color: #007bff;
-}
-
-.btn-outline-primary:hover {
-    background-color: #007bff;
-    color: #fff;
+    color: variables.$sp-primary !important;
+    border-color: variables.$sp-primary !important;
+    
+    &:hover {
+        background-color: rgba(variables.$sp-primary, 0.1) !important;
+        color: white !important;
+    }
 }
 
 .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+    background: linear-gradient(90deg, #d63384, #dc3545) !important;
+    border: none !important;
+    
+    &:hover {
+        background: linear-gradient(90deg, #dc3545, #d63384) !important;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
 }
 
-.bg-primary {
-    background-color: #007bff !important;
+.btn-outline-secondary {
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+    }
+}
+
+.badge {
+    font-family: Hack, monospace;
+}
+
+.card-footer {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-top: 1px solid variables.$glass-border;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+// Empty placeholders for components already defined in experience_cards.scss
+.description-truncate {
+    // This has been moved to components/_experience_cards.scss
+}
+
+.experience-meta {
+    // This has been moved to components/_experience_cards.scss
+}
+
+.card-body {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.alert-info {
+    @include glass-effect;
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(13, 202, 240, 0.2);
+    border-color: rgba(13, 202, 240, 0.3);
+}
+
+.form-text {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.input-group-text {
+    @include glass-effect;
+    color: variables.$sp-primary;
+    border-right: none;
+}
+
+// Additional fixes for form placeholders
+::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    opacity: 1;
 }

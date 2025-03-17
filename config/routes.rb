@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   get "search_new/index"
   get "search" => "search#index"
   post "search" => "search#create"
-  resources :experiences
   root "homepage#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -17,5 +16,6 @@ Rails.application.routes.draw do
   # Routes available only if authenticated via Rodauth
   constraints Rodauth::Rails.authenticate do
     get "dashboard", to: "dashboard#index"
+    resources :experiences
   end
 end

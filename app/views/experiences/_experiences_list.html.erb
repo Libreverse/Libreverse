@@ -1,0 +1,40 @@
+<%# app/views/experiences/_experiences_list.html.erb %>
+<% experiences.each do |experience| %>
+  <article
+    class="dashboard-experience"
+    itemscope
+    itemtype="https://schema.org/CreativeWork"
+  >
+    <h3 itemprop="name"><%= link_to experience.title, experience_path(experience), class: "text-decoration-none" %></h3>
+    <div itemprop="description" class="description-truncate">
+      <%= simple_format(truncate(experience.description, length: 150)) %>
+    </div>
+    <div class="experience-meta">
+      <% if experience.author.present? %>
+        <p class="sp-author">
+          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+            By
+            <span itemprop="name"><%= experience.author %></span>
+          </span>
+        </p>
+      <% end %>
+      <% if experience.created_at.present? %>
+        <p class="creation-date">
+          <i class="bi bi-calendar-event me-1"></i>
+          <%= experience.created_at.strftime("%B %d, %Y") %>
+        </p>
+      <% end %>
+    </div>
+    <div class="experience-actions mt-3">
+      <%= link_to experience_path(experience), class: "btn btn-sm btn-primary me-2" do %>
+        <i class="bi bi-eye me-1"></i> View
+      <% end %>
+      <%= link_to edit_experience_path(experience), class: "btn btn-sm btn-outline-primary me-2" do %>
+        <i class="bi bi-pencil me-1"></i> Edit
+      <% end %>
+      <%= button_to experience_path(experience), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: "Are you sure you want to delete this experience?" } } do %>
+        <i class="bi bi-trash me-1"></i> Delete
+      <% end %>
+    </div>
+  </article>
+<% end %> 
