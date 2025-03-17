@@ -1,0 +1,17 @@
+<% if notice || alert %>
+  <div
+    class="toast-container"
+    data-controller="toast"
+    data-toast-target="container"
+    data-toast-auto-hide-value="true"
+    data-toast-auto-hide-delay-value="5000"
+  >
+    <% if notice %>
+      <%= render 'layouts/toast', type: 'success', title: 'Success', message: notice %>
+    <% end %>
+
+    <% if alert %>
+      <%= render 'layouts/toast', type: 'error', title: 'Alert', message: alert %>
+    <% end %>
+  </div>
+<% end %> 

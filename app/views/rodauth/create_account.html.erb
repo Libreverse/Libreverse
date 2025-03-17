@@ -2,17 +2,8 @@
 <%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
   <%= render 'layouts/navigationshortcutswrapper' do %>
-    <% content_for :specifcstylesheets do %>
-      <%= vite_stylesheet_tag "~/stylesheets/createaccount.scss" %>
-    <% end %>
+    <% include_stylesheet "createaccount" %>
     <% content_for :fontpreloads do %>
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
       <link
         rel="preload"
         href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
@@ -20,17 +11,9 @@
         type="font/woff2"
         crossorigin
       >
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Hack-Italic.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
     <% end %>
 
     <div class="login-bg" role="presentation"></div>
-    <!-- Lamp effect with conical gradients -->
     <div class="lamp-effect-wrapper">
       <div class="lamp-effect">
         <div class="lamp-left-beam"></div>
@@ -46,134 +29,51 @@
             <p>Sign up to get started</p>
           </div>
 
-          <%= form_with url: rodauth.create_account_path, method: :post, data: { 
-                controller: "form-auto-submit",
-                form_auto_submit_target: "form",
-                form_auto_submit_debounce_time_value: 800
-              } do |form| %>
-            <div class="login-form-group mb-3">
+          <%= form_with url: rodauth.create_account_path, method: :post, class: "login-form", 
+                        data: { 
+                          controller: "form-auto-submit", 
+                          form_auto_submit_target: "form",
+                          form_auto_submit_min_password_length_value: "12"
+                        } do |form| %>
+            <div class="login-form-group">
               <%= form.label "login", rodauth.login_label, class: "login-form-label" %>
-              <%= form.text_field rodauth.login_param,
-                              value: params[rodauth.login_param],
-                              id: "login",
-                              autocomplete: "username",
-                              required: true,
-                              data: {
-                                form_auto_submit_target: "input",
-                              },
-                              class:
-                                "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}",
-                              aria:
-                                (
-                                  if rodauth.field_error(rodauth.login_param)
-                                    { invalid: true, describedby: "login_error_message" }
-                                  end
-                                ) %>
+              <%= form.email_field rodauth.login_param, 
+                  value: params[rodauth.login_param], 
+                  id: "login", 
+                  autocomplete: "username", 
+                  required: true, 
+                  class: "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}",
+                  data: { form_auto_submit_target: "input" } %>
               <%= if rodauth.field_error(rodauth.login_param)
-                content_tag(
-                  :span,
-                  rodauth.field_error(rodauth.login_param),
-                  class: "login-invalid-feedback",
-                  id: "login_error_message",
-                )
+                content_tag(:span, rodauth.field_error(rodauth.login_param), class: "login-invalid-feedback")
               end %>
             </div>
 
-            <% if rodauth.require_login_confirmation? %>
-              <div class="login-form-group mb-3">
-                <%= form.label "login-confirm",
-                           rodauth.login_confirm_label,
-                           class: "login-form-label" %>
-                <%= form.text_field rodauth.login_confirm_param,
-                                value: params[rodauth.login_confirm_param],
-                                id: "login-confirm",
-                                autocomplete: "username",
-                                required: true,
-                                data: {
-                                  form_auto_submit_target: "input",
-                                },
-                                class:
-                                  "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_confirm_param)}",
-                                aria:
-                                  (
-                                    if rodauth.field_error(rodauth.login_confirm_param)
-                                      {
-                                        invalid: true,
-                                        describedby: "login-confirm_error_message",
-                                      }
-                                    end
-                                  ) %>
-                <%= if rodauth.field_error(rodauth.login_confirm_param)
-                  content_tag(
-                    :span,
-                    rodauth.field_error(rodauth.login_confirm_param),
-                    class: "login-invalid-feedback",
-                    id: "login-confirm_error_message",
-                  )
-                end %>
-              </div>
-            <% end %>
-
             <% if rodauth.create_account_set_password? %>
-              <div class="login-form-group mb-3">
+              <div class="login-form-group">
                 <%= form.label "password", rodauth.password_label, class: "login-form-label" %>
                 <%= form.text_field rodauth.password_param,
-                                value: "",
-                                id: "password",
-                                autocomplete: rodauth.password_field_autocomplete_value,
-                                required: true,
-                                data: {
-                                  form_auto_submit_target: "input",
-                                },
-                                class:
-                                  "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}",
-                                aria:
-                                  (
-                                    if rodauth.field_error(rodauth.password_param)
-                                      { invalid: true, describedby: "password_error_message" }
-                                    end
-                                  ) %>
+                    id: "password",
+                    autocomplete: rodauth.password_field_autocomplete_value,
+                    required: true,
+                    class: "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}",
+                    data: { form_auto_submit_target: "input" } %>
                 <%= if rodauth.field_error(rodauth.password_param)
-                  content_tag(
-                    :span,
-                    rodauth.field_error(rodauth.password_param),
-                    class: "login-invalid-feedback",
-                    id: "password_error_message",
-                  )
+                  content_tag(:span, rodauth.field_error(rodauth.password_param), class: "login-invalid-feedback")
                 end %>
               </div>
 
               <% if rodauth.require_password_confirmation? %>
-                <div class="login-form-group mb-3">
-                  <%= form.label "password-confirm",
-                             rodauth.password_confirm_label,
-                             class: "login-form-label" %>
+                <div class="login-form-group">
+                  <%= form.label "password-confirm", rodauth.password_confirm_label, class: "login-form-label" %>
                   <%= form.text_field rodauth.password_confirm_param,
-                                  value: "",
-                                  id: "password-confirm",
-                                  autocomplete: "new-password",
-                                  required: true,
-                                  data: {
-                                    form_auto_submit_target: "input",
-                                  },
-                                  class:
-                                    "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_confirm_param)}",
-                                  aria:
-                                    (
-                                      if rodauth.field_error(rodauth.password_confirm_param)
-                                        {
-                                          invalid: true,
-                                          describedby: "password-confirm_error_message",
-                                        }
-                                      end
-                                    ) %>
+                      id: "password-confirm",
+                      autocomplete: "new-password",
+                      required: true,
+                      class: "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.password_confirm_param)}",
+                      data: { form_auto_submit_target: "input" } %>
                   <%= if rodauth.field_error(rodauth.password_confirm_param)
-                    content_tag(
-                      :span,
-                      rodauth.field_error(rodauth.password_confirm_param),
-                      class: "login-invalid-feedback",
-                      id: "password-confirm_error_message",
-                    )
+                    content_tag(:span, rodauth.field_error(rodauth.password_confirm_param), class: "login-invalid-feedback")
                   end %>
                 </div>
               <% end %>

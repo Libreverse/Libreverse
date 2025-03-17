@@ -1,10 +1,8 @@
-<% content_for :specifcstylesheets do %>
-  <%= vite_stylesheet_tag "~/stylesheets/drawer.scss" %>
-<% end %>
+<% include_stylesheet "drawer" %>
 <aside class="drawer-container" role="complementary" data-controller="drawer">
   <div class="drawer" aria-labelledby="drawer-title">
     <div class="drawer-header">
-      <h2 id="drawer-title" class="drawer-title">Attribution</h2>
+      <h2 id="drawer-title" class="drawer-title"><%= content_for?(:drawer_title) ? yield(:drawer_title) : "Attribution" %></h2>
       <button
         class="drawer-toggle"
         type="button"
@@ -27,30 +25,7 @@
     <div class="drawer-contents" data-drawer-target="content">
       <div class="drawer-content-container">
         <div class="drawer-content">
-          <p>At Libreverse, we ❤️ projects under open licenses and want to give
-            credit to the projects that made libreverse possible. Currently,
-            this only includes projects where attribution is a license
-            requirement, but we have plans to expand it in the future.</p>
-          <ul>
-            <li>
-              <a
-                href="https://github.com/twitter/twemoji?tab=readme-ov-file"
-                class="drawer-link"
-              >Libreverse-Twemoji</a>
-              which is modified from
-              <a
-                href="https://github.com/twitter/twemoji?tab=readme-ov-file"
-                class="drawer-link"
-              >Twemoji</a>
-              by
-              <a href="https://x.com" class="drawer-link">X Corp</a>
-              licensed under
-              <a
-                href="https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS"
-                class="drawer-link"
-              >CC-BY-4.0</a>
-            </li>
-          </ul>
+          <%= content_for?(:drawer) ? yield(:drawer) : render("layouts/default_drawer_content") %>
         </div>
       </div>
     </div>

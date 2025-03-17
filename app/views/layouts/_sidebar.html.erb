@@ -1,6 +1,4 @@
-<% content_for :specifcstylesheets do %>
-  <%= vite_stylesheet_tag "~/stylesheets/sidebar.scss" %>
-<% end %>
+<% include_stylesheet "sidebar" %>
 <aside class="sidebar-container" role="complementary">
   <nav
     class="sidebar"
@@ -18,9 +16,7 @@
         class="sidebar-link"
         aria-label="Go to homepage"
       >
-        <img src="<%= vite_asset_path "~/images/libreverse-logo.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
-        fetchpriority="high" data-current-target="image" draggable="false"
-        aria-hidden="true" tabindex=""-1"" >
+        <%= sidebar_icon("~/images/libreverse-logo.svg") %>
       </a>
       <a
         href="/search"
@@ -30,9 +26,7 @@
         class="sidebar-link"
         aria-label="Go to search page"
       >
-        <img src="<%= vite_asset_path "~/icons/search.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
-        fetchpriority="high" data-current-target="image" draggable="false"
-        aria-hidden="true" tabindex=""-1"" >
+        <%= sidebar_icon("~/icons/search.svg") %>
       </a>
       <!-- Authentication links -->
       <% if rodauth.logged_in? %>
@@ -44,17 +38,13 @@
           class="sidebar-link"
           aria-label="Go to dashboard"
         >
-          <img src="<%= vite_asset_path "~/icons/dashboard.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
-          fetchpriority="high" data-current-target="image" draggable="false"
-          aria-hidden="true" tabindex=""-1"" >
+          <%= sidebar_icon("~/icons/dashboard.svg") %>
         </a>
         <%= button_to rodauth.logout_path,
             method: :post,
             class: "sidebar-link sidebar-logout-button",
             aria: { label: "Sign out" } do %>
-          <img src="<%= vite_asset_path "~/icons/logout.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
-          fetchpriority="high" data-current-target="image" draggable="false"
-          aria-hidden="true" tabindex=""-1"" >
+          <%= sidebar_icon("~/icons/logout.svg") %>
         <% end %>
       <% else %>
         <a
@@ -65,9 +55,7 @@
           class="sidebar-link"
           aria-label="Sign in"
         >
-          <img src="<%= vite_asset_path "~/icons/login.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
-          fetchpriority="high" data-current-target="image" draggable="false"
-          aria-hidden="true" tabindex=""-1"" >
+          <%= sidebar_icon("~/icons/login.svg") %>
         </a>
         <a
           href="<%= rodauth.create_account_path %>"
@@ -77,9 +65,7 @@
           class="sidebar-link"
           aria-label="Sign up"
         >
-          <img src="<%= vite_asset_path "~/icons/signup.svg" %>" class="sidebar-icons" loading="eager" decoding="async"
-          fetchpriority="high" data-current-target="image" draggable="false"
-          aria-hidden="true" tabindex=""-1"" >
+          <%= sidebar_icon("~/icons/signup.svg") %>
         </a>
       <% end %>
     </div>
