@@ -3,33 +3,49 @@ class DashboardController < ApplicationController
     @account = current_account
     @account_created_at = @account.created_at.strftime("%B %d, %Y")
     @last_login_at = session[:last_login_at] ? Time.zone.at(session[:last_login_at]).strftime("%B %d, %Y at %H:%M") : "Unknown"
+    @time_since_joining = time_since_joining(@account.created_at)
 
-    # If password was created more than 90 days ago, show warning
-    @password_age = begin
-                      (Time.zone.now - @account.password_changed_at).to_i / 86_400
-    rescue StandardError
-                      nil
-    end
-    @password_warning = @password_age && @password_age > 90
-
-    # Get password strength based on length
-    @password_strength = calculate_password_strength
+    # Calculate password strength level
+    @password_strength = { level: calculate_strength_level }
   end
 
   private
 
-  def calculate_password_strength
+  def time_since_joining(created_at)
+    days = (Time.zone.now - created_at).to_i / 1.day
+    years = days / 365
+    months = (days % 365) / 30
+    days %= 30
+
+    if years.positive?
+      "#{years} #{years == 1 ? 'year' : 'years'}, #{months} #{months == 1 ? 'month' : 'months'}"
+    elsif months.positive?
+      "#{months} #{months == 1 ? 'month' : 'months'}, #{days} #{days == 1 ? 'day' : 'days'}"
+    else
+      "#{days} #{days == 1 ? 'day' : 'days'}"
+    end
+  end
+
+  def calculate_strength_level
     password_length = session[:password_length] || 0
 
-    case password_length
-    when 0..11
-      { level: "weak", class: "text-danger", message: "Your password is too short. Consider changing it." }
-    when 12..15
-      { level: "medium", class: "text-warning", message: "Your password meets minimum requirements." }
-    when 16..19
-      { level: "strong", class: "text-success", message: "Your password is strong." }
+    # Basic strength calculation based on length
+    strength = if password_length < 12
+                 "weak"
+    elsif password_length < 16
+                 "medium"
+    elsif password_length < 20
+                 "strong"
     else
-      { level: "very strong", class: "text-success fw-bold", message: "Your password is very strong." }
+                 "very strong"
     end
+
+    # Additional strength indicators from rodauth
+    if session[:password_pwned]
+      # If password is found in breach database, it's always weak
+      strength = "weak"
+    end
+
+    strength
   end
 end

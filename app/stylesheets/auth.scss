@@ -2,6 +2,7 @@
 @use "variables";
 @use "boilerplate";
 @use "Hack";
+@use "Lazer84";
 @use "components/lamp_effect";
 @use "components/auth_form";
 @use "sass:color";
@@ -21,18 +22,18 @@
     background-image:
         radial-gradient(
             circle at 25% 25%,
-            rgba(variables.$hp-primary, 0.08) 0%,
+            rgba(variables.$auth-base, 0.08) 0%,
             transparent 60%
         ),
         radial-gradient(
             circle at 75% 75%,
-            rgba(variables.$hp-secondary, 0.08) 0%,
+            rgba(variables.$auth-base, 0.08) 0%,
             transparent 60%
         ),
         linear-gradient(
             to bottom right,
-            rgba(variables.$vulcan, 0.9),
-            rgba(variables.$mirage, 0.9)
+            rgba(variables.$auth-base, 0.9),
+            rgba(variables.$auth-base, 0.7)
         );
 }
 
@@ -81,6 +82,7 @@
         color: variables.$login-primary;
         text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
         animation: text-glow 3s ease-in-out infinite alternate;
+        font-family: "Lazer84", cursive;
     }
 
     p {
@@ -110,7 +112,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: rgb(255 255 255 / 90%);
+    color: variables.$white-90;
 }
 
 %auth-form-control {
@@ -120,9 +122,9 @@
     padding: 0.75rem 1rem;
     font-size: 1rem;
     background-color: rgb(15 20 32 / 50%);
-    border: 1px solid rgb(128 128 128 / 30%);
+    border: 1px solid variables.$glass;
     border-radius: 6px;
-    color: #fff;
+    color: variables.$white-90;
     transition:
         border-color 0.2s,
         box-shadow 0.2s;
@@ -136,7 +138,7 @@
     }
 
     &.is-invalid {
-        border-color: #dc3545;
+        border-color: variables.$danger;
     }
 }
 
@@ -146,7 +148,7 @@
     font-size: 1rem;
     background-color: transparent;
     border: 0;
-    color: #fff;
+    color: variables.$white-90;
 }
 
 %auth-invalid-feedback {
@@ -154,7 +156,7 @@
     width: 100%;
     margin-top: 0.25rem;
     font-size: 0.875rem;
-    color: #dc3545;
+    color: variables.$danger;
 }
 
 %auth-btn {

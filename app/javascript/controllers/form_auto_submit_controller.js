@@ -5,7 +5,7 @@ export default class extends Controller {
     static targets = ["form", "input"];
     static values = {
         debounceTime: { type: Number, default: 800 }, // Default to 800ms debounce time
-        minPasswordLength: { type: Number, default: 12 }
+        minPasswordLength: { type: Number, default: 12 },
     };
 
     initialize() {
@@ -15,9 +15,9 @@ export default class extends Controller {
 
     connect() {
         // Monitor input changes
-        this.inputTargets.forEach(input => {
+        for (const input of this.inputTargets) {
             input.addEventListener("input", this.handleInputChange.bind(this));
-        });
+        }
     }
 
     disconnect() {
@@ -31,58 +31,71 @@ export default class extends Controller {
         if (this.timer) {
             clearTimeout(this.timer);
         }
-        
+
         // Set a new timer
-        this.timer = setTimeout(() => this.checkFormReadiness(), this.debounceTimeValue);
+        this.timer = setTimeout(
+            () => this.checkFormReadiness(),
+            this.debounceTimeValue,
+        );
     }
 
     checkFormReadiness() {
         // Get all required inputs and check if they're filled
-        const requiredInputs = this.inputTargets.filter(input => input.required);
-        const allRequiredFilled = requiredInputs.every(input => input.value.trim() !== "");
-        
+        const requiredInputs = this.inputTargets.filter(
+            (input) => input.required,
+        );
+        const allRequiredFilled = requiredInputs.every(
+            (input) => input.value.trim() !== "",
+        );
+
         // If we have password fields, check password requirements
-        const passwordInputs = this.inputTargets.filter(input => 
-            (input.id === "password" || input.id === "new-password") && !input.id.includes("confirm")
+        const passwordInputs = this.inputTargets.filter(
+            (input) =>
+                (input.id === "password" || input.id === "new-password") &&
+                !input.id.includes("confirm"),
         );
-        
-        const passwordsValid = passwordInputs.every(input => 
-            !input.required || input.value.length >= this.minPasswordLengthValue
+
+        const passwordsValid = passwordInputs.every(
+            (input) =>
+                !input.required ||
+                input.value.length >= this.minPasswordLengthValue,
         );
-        
+
         // Check password confirmation matches if present
         let confirmationValid = true;
-        const passwordConfirmInputs = this.inputTargets.filter(input => 
-            input.id.includes("confirm")
+        const passwordConfirmInputs = this.inputTargets.filter((input) =>
+            input.id.includes("confirm"),
         );
-        
+
         if (passwordConfirmInputs.length > 0) {
-            passwordConfirmInputs.forEach(confirmInput => {
+            for (const confirmInput of passwordConfirmInputs) {
                 const mainPasswordId = confirmInput.id.replace("-confirm", "");
                 const mainPassword = document.getElementById(mainPasswordId);
                 if (mainPassword && confirmInput.required) {
-                    confirmationValid = confirmationValid && (confirmInput.value === mainPassword.value);
+                    confirmationValid =
+                        confirmationValid &&
+                        confirmInput.value === mainPassword.value;
                 }
-            });
+            }
         }
-        
+
         // If all conditions are met, submit the form
         if (allRequiredFilled && passwordsValid && confirmationValid) {
             this.submitForm();
         }
     }
-    
+
     submitForm() {
         this.formTarget.requestSubmit();
     }
-    
+
     // Utility function to debounce input
-    debounce(func, wait) {
+    debounce(function_, wait) {
         let timeout;
-        return function executedFunction(...args) {
+        return function executedFunction(...arguments_) {
             const later = () => {
                 clearTimeout(timeout);
-                func(...args);
+                function_(...arguments_);
             };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);

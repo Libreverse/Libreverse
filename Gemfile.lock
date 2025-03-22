@@ -293,6 +293,8 @@ GEM
     rack-brotli (2.0.0)
       brotli (>= 0.3)
       rack (>= 3)
+    rack-cors (2.0.2)
+      rack (>= 2.0.0)
     rack-proxy (0.7.7)
       rack
     rack-session (2.1.0)
@@ -348,6 +350,8 @@ GEM
     rodauth (2.38.0)
       roda (>= 2.6.0)
       sequel (>= 4)
+    rodauth-guest (0.0.1)
+      rodauth (~> 2.0)
     rodauth-model (0.4.0)
       rodauth (~> 2.28)
     rodauth-pwned (0.2.1)
@@ -494,7 +498,9 @@ DEPENDENCIES
   pg
   rack-attack
   rack-brotli
+  rack-cors
   rails (~> 8.0.1)
+  rodauth-guest
   rodauth-pwned (~> 0.2.0)
   rodauth-rails (~> 2.0)
   rubocop

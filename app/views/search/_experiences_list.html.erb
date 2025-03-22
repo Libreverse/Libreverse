@@ -5,15 +5,15 @@
     itemscope
     itemtype="https://schema.org/CreativeWork"
   >
-    <h3 itemprop="name"><%= experience.title %></h3>
+    <h3 itemprop="name"><%= sanitize experience.title %></h3>
     <div itemprop="description">
-      <%= simple_format(experience.description) %>
+      <%= sanitize simple_format(experience.description) %>
     </div>
     <% if experience.author.present? %>
       <p class="sp-author">
         <span itemprop="author" itemscope itemtype="https://schema.org/Person">
           By
-          <span itemprop="name"><%= experience.author %></span>
+          <span itemprop="name"><%= sanitize experience.author %></span>
         </span>
       </p>
     <% end %>

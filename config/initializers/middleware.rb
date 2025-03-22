@@ -29,7 +29,10 @@ Rails.application.config.middleware.use HtmlCompressor::Rack,
 
 # We insert the emoji middleware here so that it precedes
 # the html minifier but still avoids unnecessary work
-Rails.application.config.middleware.use EmojiReplacer
+Rails.application.config.middleware.use EmojiReplacer, exclude_selectors: [
+  "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
+  ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
+]
 
 # We make sure that rack-attack runs first so that we don't
 # waste resources on compressing requests that will be throttled.
@@ -39,22 +42,37 @@ module Rack
   Rack::Attack.cache.store = Rails.cache
 
   # Different limits for authenticated vs. unauthenticated users
-  # throttle("authenticated_req/ip", limit: 1200, period: 1.minute) do |req|
-  #   if req.env["warden"].user # Assuming you're using Devise or similar for authentication
-  #     req.ip
-  #   end
-  # end
+  throttle("authenticated_req/ip", limit: 600, period: 1.minute) do |req|
+    req.ip if req.env["rodauth"]&.logged_in?
+  end
 
   throttle("unauthenticated_req/ip", limit: 300, period: 1.minute, &:ip)
 
   # Burst protection: Allow for some bursts but maintain long-term rate
   throttle("burst/ip", limit: 100, period: 10.seconds, &:ip)
 
+  # Login throttling to prevent brute force attacks
+  # Count login attempts by username and IP
+  throttle("logins/ip", limit: 5, period: 20.seconds) do |req|
+    req.ip if req.path == "/login" && req.post?
+  end
+
+  throttle("logins/username", limit: 5, period: 5.minutes) do |req|
+    if req.path == "/login" && req.post?
+      # Extract username from the login form
+      req.params["username"].to_s.downcase.gsub(/\s+/, "")
+    end
+  end
+
+  # Allow up to 15 password resets per day per IP
+  throttle("password_reset/ip", limit: 15, period: 1.day) do |req|
+    req.ip if req.path == "/reset-password" && req.post?
+  end
+
   # Specific endpoint protection:
-  # Example: Limit more for write operations or sensitive endpoints
-  # throttle("write/ip", limit: 100, period: 1.minute) do |req|
-  #   req.path.start_with?('/api/v1/write') ? req.ip : nil
-  # end
+  throttle("api/ip", limit: 120, period: 1.minute) do |req|
+    req.path.start_with?("/api/") ? req.ip : nil
+  end
 
   # Custom responder with more nuanced messaging and retry information
   self.throttled_responder = lambda do |request|

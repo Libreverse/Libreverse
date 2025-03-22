@@ -31,6 +31,7 @@ gem "stimulus_reflex"
 
 # Rodauth Rails integration for authentication
 gem "argon2", "~> 2.3"
+gem "rodauth-guest"
 gem "rodauth-pwned", "~> 0.2.0"
 gem "rodauth-rails", "~> 2.0"
 gem "sequel-activerecord_connection", "~> 2.0"
@@ -52,6 +53,9 @@ gem "rack-brotli"
 # Rate limit everything on the app
 gem "rack-attack"
 
+# CORS support
+gem "rack-cors"
+
 # Unicode to handle emoji
 gem "unicode"
 
@@ -59,7 +63,7 @@ gem "unicode"
 gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", require: true
+gem "bootsnap"
 
 # Use the actioncable-enhanced-postgresql-adapter gem for better scaling of stimulus reflex without redis
 gem "actioncable-enhanced-postgresql-adapter"

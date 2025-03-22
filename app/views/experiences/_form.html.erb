@@ -5,7 +5,8 @@
     <div id="error_explanation" class="alert alert-danger">
       <div class="d-flex align-items-center mb-2">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <h3 class="h6 mb-0"><%= pluralize(experience.errors.count, "error") %> prohibited this experience from being saved:</h3>
+        <h3 class="h6 mb-0"><%= pluralize(experience.errors.count, "error") %>
+          prohibited this experience from being saved:</h3>
       </div>
       <ul class="mb-0 ps-4">
         <% experience.errors.full_messages.each do |message| %>
@@ -19,30 +20,37 @@
     <%= form.label :title, class: "form-label" %>
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-type-h1"></i></span>
-      <%= form.text_field :title, class: "form-input", placeholder: "Give your experience a compelling title" %>
+      <%= form.text_field :title,
+                      class: "form-input",
+                      placeholder: "Give your experience a compelling title" %>
     </div>
   </div>
-  
+
   <div class="form-group">
     <%= form.label :description, class: "form-label" %>
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-text-paragraph"></i></span>
-      <%= form.text_area :description, class: "form-textarea", placeholder: "Describe your experience in detail. What makes it special?" %>
+      <%= form.text_area :description,
+                     class: "form-textarea",
+                     placeholder:
+                       "Describe your experience in detail. What makes it special?" %>
     </div>
     <div class="form-text text-muted">
       <i class="bi bi-info-circle me-1"></i>
       Rich descriptions help others better understand your experience.
     </div>
   </div>
-  
+
   <div class="form-group">
     <%= form.label :author, class: "form-label" %>
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-person"></i></span>
-      <%= form.text_field :author, class: "form-input", placeholder: "Your name or pseudonym" %>
+      <%= form.text_field :author,
+                      class: "form-input",
+                      placeholder: "Your name or pseudonym" %>
     </div>
   </div>
-  
+
   <div class="mt-4">
     <%= form.submit class: "form-submit" %>
   </div>

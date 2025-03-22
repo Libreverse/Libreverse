@@ -79,6 +79,14 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
+  # Secure session configuration
+  config.session_store :active_record_store,
+                       key: "_libreverse_session",
+                       secure: true,
+                       httponly: true,
+                       expire_after: 12.hours,
+                       same_site: :lax
+
   # Action Cable Logging
   ActionCable.server.config.logger = Logger.new(nil)
 end

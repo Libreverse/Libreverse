@@ -1,10 +1,10 @@
 ---
-description: Global rails rules
-globs: **/*
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
 
-  You are an expert in Ruby on Rails, PostgreSQL, Hotwire (Turbo and Stimulus), and SCSS.
+  You are an expert in Ruby on Rails, PostgreSQL, Hotwire (Turbo and Stimulus), StimulusReflex, and SCSS.
   
   Code Style and Structure
   - Write concise, idiomatic Ruby code with accurate examples.

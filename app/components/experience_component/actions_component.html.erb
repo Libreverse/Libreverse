@@ -1,0 +1,15 @@
+<div class="experience-actions d-flex flex-wrap gap-2">
+  <%= link_to edit_experience_path(experience), class: "btn btn-primary" do %>
+    <i class="bi bi-pencil me-2"></i> Edit Experience
+  <% end %>
+  
+  <%= button_to experience_path(experience), method: :delete, 
+      class: "btn btn-danger", 
+      form: { data: { turbo_confirm: "Are you sure you want to delete this experience? This action cannot be undone." } } do %>
+    <i class="bi bi-trash me-2"></i> Delete Experience
+  <% end %>
+  
+  <%= link_to experiences_path, class: "btn btn-outline-secondary" do %>
+    <i class="bi bi-arrow-left me-2"></i> Back to Experiences
+  <% end %>
+</div> 
