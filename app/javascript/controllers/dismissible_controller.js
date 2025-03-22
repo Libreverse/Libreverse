@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import xmlrpc from "../utils/xmlrpc";
 
 /**
  * Dismissible Controller
@@ -23,67 +24,74 @@ export default class extends Controller {
     }
 
     /**
-     * Fetch from the server whether this item has been dismissed
+     * Fetch from the server whether this item has been dismissed using XML-RPC
      */
-    checkDismissalStatus() {
-        fetch(`/api/preferences/is_dismissed?key=${this.keyValue}`, {
-            headers: {
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-            },
-        })
-            .then((response) => {
-                // Check if the response is successful and is JSON
-                if (!response.ok) {
-                    throw new Error(`Server responded with ${response.status}`);
-                }
-                // Check Content-Type to ensure it's JSON
-                const contentType = response.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    // Handle non-JSON response gracefully
-                    console.warn("Non-JSON response received");
-                    return { dismissed: false };
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (data.dismissed) {
-                    this.element.classList.add("dismissed");
-                }
-            })
-            .catch((error) => {
-                console.error("Error checking dismissal status:", error);
-                // Continue without dismissing - fail gracefully
-            });
+    async checkDismissalStatus() {
+        try {
+            // Get CSRF token for secure requests
+            const csrfToken = document.querySelector(
+                'meta[name="csrf-token"]',
+            )?.content;
+
+            // Prepare request options
+            const options = {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-Token": csrfToken,
+                    Accept: "text/xml",
+                },
+            };
+
+            // Call the XML-RPC method
+            const dismissed = await xmlrpc(
+                "/api/xmlrpc",
+                "preferences.isDismissed",
+                [this.keyValue],
+                options,
+            );
+
+            if (dismissed === true) {
+                this.element.classList.add("dismissed");
+            }
+        } catch (error) {
+            console.error("Error checking dismissal status:", error);
+            // Continue without dismissing - fail gracefully
+        }
     }
 
     /**
-     * Dismiss the element by sending a request to store the preference on the server
+     * Dismiss the element by sending an XML-RPC request to store the preference on the server
      * and applying the "dismissed" class to hide it.
      */
-    dismiss() {
+    async dismiss() {
         // Always apply the dismissed class immediately for better UX
         this.element.classList.add("dismissed");
 
-        // Send the dismissal preference to the server
-        fetch("/api/preferences/dismiss", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": document.querySelector(
-                    'meta[name="csrf-token"]',
-                ).content,
-            },
-            body: JSON.stringify({ key: this.keyValue }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    console.error(`Failed to dismiss item: ${response.status}`);
-                }
-            })
-            .catch((error) => {
-                console.error("Error during dismiss action:", error);
-                // The UI is already updated, so no need to revert
-            });
+        try {
+            // Get CSRF token for secure requests
+            const csrfToken = document.querySelector(
+                'meta[name="csrf-token"]',
+            )?.content;
+
+            // Prepare request options
+            const options = {
+                headers: {
+                    "X-CSRF-Token": csrfToken,
+                    Accept: "text/xml",
+                },
+            };
+
+            // Call the XML-RPC method
+            await xmlrpc(
+                "/api/xmlrpc",
+                "preferences.dismiss",
+                [this.keyValue],
+                options,
+            );
+            // Success - UI already updated, nothing else to do
+        } catch (error) {
+            console.error("Error during dismiss action:", error);
+            // The UI is already updated, so no need to revert
+        }
     }
 }

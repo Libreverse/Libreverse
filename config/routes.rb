@@ -13,11 +13,16 @@ Rails.application.routes.draw do
   # Authentication routes (/login, /create-account, etc.) are automatically handled by Rodauth
   # See app/misc/rodauth_app.rb and run `rails rodauth:routes` to view all available routes
 
-  # API routes for user preferences
+  # XML-RPC API endpoint
   namespace :api do
-    get "preferences/is_dismissed", to: "preferences#is_dismissed"
-    post "preferences/dismiss", to: "preferences#dismiss"
+    post "xmlrpc", to: "xmlrpc#endpoint"
   end
+
+  # Legacy JSON API routes (commented out, replaced by XML-RPC)
+  # namespace :api do
+  #   get "preferences/is_dismissed", to: "preferences#is_dismissed"
+  #   post "preferences/dismiss", to: "preferences#dismiss"
+  # end
 
   # Routes available only if authenticated via Rodauth
   constraints Rodauth::Rails.authenticate do
