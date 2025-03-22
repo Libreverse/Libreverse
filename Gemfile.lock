@@ -344,6 +344,8 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
+    requestjs-rails (0.0.12)
+      railties (>= 6.1.0)
     rexml (3.4.1)
     roda (3.89.0)
       rack
@@ -466,11 +468,14 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
+    webrick (1.9.1)
     websocket (1.2.11)
     websocket-driver (0.7.7)
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    xmlrpc (0.3.3)
+      webrick
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.7.2)
@@ -500,6 +505,7 @@ DEPENDENCIES
   rack-brotli
   rack-cors
   rails (~> 8.0.1)
+  requestjs-rails (~> 0.0.12)
   rodauth-guest
   rodauth-pwned (~> 0.2.0)
   rodauth-rails (~> 2.0)
@@ -519,6 +525,7 @@ DEPENDENCIES
   unicode
   vite_rails
   web-console
+  xmlrpc
 
 RUBY VERSION
    ruby 3.4.1p0
