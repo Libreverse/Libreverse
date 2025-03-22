@@ -1,6 +1,6 @@
 @use "boilerplate";
 
-$box-shadow: rgb(0 0 0 / 20%);
+// Base colors
 $hp-primary: #989ef1;
 $hp-secondary: #b09ffc;
 $vulcan: #0f1420;
@@ -8,12 +8,51 @@ $mirage: #17202a;
 $ebony: #0e0c23;
 $background: #0e0e0e;
 $background-light: #f8f9fa;
-$glass: rgb(128 128 128 / 30%);
-$glass-border: rgb(255 255 255 / 30%);
-$progress-bar: #472a43;
-$sp-primary: #c995a4;
-$sidebar-icon: #808080;
-$login-primary: #9b84ff;
-$createaccount-primary: #9b84ff;
+
+// UI colors
 $primary: #007bff;
 $success: #28a745;
+$danger: #dc3545;
+$warning: #f59e0b;
+$info: #0dcaf0;
+$pink: #d63384;
+$secondary: #6c757d;
+
+// Transparency colors
+$box-shadow: rgb(0 0 0 / 20%);
+$glass: rgb(128 128 128 / 30%);
+$glass-border: rgb(255 255 255 / 30%);
+$white-0: rgb(255 255 255 / 0%);
+$white-10: rgb(255 255 255 / 10%);
+$white-20: rgb(255 255 255 / 20%);
+$white-30: rgb(255 255 255 / 30%);
+$white-40: rgb(255 255 255 / 40%);
+$white-50: rgb(255 255 255 / 50%);
+$white-60: rgb(255 255 255 / 60%);
+$white-70: rgb(255 255 255 / 70%);
+$white-80: rgb(255 255 255 / 80%);
+$white-90: rgb(255 255 255 / 90%);
+$black-05: rgb(0 0 0 / 5%);
+$black-10: rgb(0 0 0 / 10%);
+$black-15: rgb(0 0 0 / 15%);
+$black-20: rgb(0 0 0 / 20%);
+$black-30: rgb(0 0 0 / 30%);
+$danger-10: rgb(220 53 69 / 10%);
+$info-20: rgb(13 202 240 / 20%);
+$info-30: rgb(13 202 240 / 30%);
+
+// Component specific colors
+$progress-bar: #472a43;
+$sp-primary: #c995a4;
+$sp-primary-10: rgb(201 149 164 / 10%);
+$dashboard-primary: #ad619b;
+$dashboard-base: #020c28;
+$sidebar-icon: #808080;
+$login-primary: #ff9f84;
+$auth-base: #122132;
+$createaccount-primary: #9b84ff;
+$form-border: #3b82f6;
+$success-border: #10b981;
+$light-gray: #ccc;
+$gray-100: #f9f9f9;
+$gray-200: #ddd;

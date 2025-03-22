@@ -1,13 +1,13 @@
 @use "variables";
 
 .turbo-progress-bar {
-    height: 3px;
+    height: 10px;
     background-color: variables.$progress-bar;
     border-radius: 0 0 2px;
 }
 
 .turbo-loading {
-    cursor: wait;
+    cursor: wait !important;
 }
 
 /* Add a subtle indicator to input elements during form submissions */

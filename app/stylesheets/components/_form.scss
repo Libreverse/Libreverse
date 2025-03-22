@@ -1,3 +1,5 @@
+@use "../variables";
+
 .form-loading {
     position: relative;
     cursor: wait;
@@ -15,8 +17,8 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    border: 3px solid rgb(0 0 0 / 10%);
-    border-top-color: #3b82f6;
+    border: 3px solid variables.$black-10;
+    border-top-color: variables.$form-border;
     animation: spin 1s infinite linear;
     z-index: 10;
 }

@@ -13,15 +13,15 @@ module ApplicationHelper
   end
 
   def sidebar_icon(path)
-    image_tag(vite_asset_path(path), 
-      class: "sidebar-icons", 
-      loading: "eager", 
-      decoding: "async",
-      fetchpriority: "high", 
-      data: { current_target: "image" }, 
-      draggable: "false",
-      aria: { hidden: true }, 
-      tabindex: "-1")
+    image_tag(vite_asset_path(path),
+              class: "sidebar-icons",
+              loading: "eager",
+              decoding: "async",
+              fetchpriority: "high",
+              data: { current_target: "image" },
+              draggable: "false",
+              aria: { hidden: true },
+              tabindex: "-1")
   end
 
   def include_stylesheet(name)

@@ -164,16 +164,6 @@
     justify-content: center;
 }
 
-.sp-sectionheader {
-    font-family: Hack, monospace;
-    font-size: 20px;
-    color: variables.$sp-primary;
-    text-align: left;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-top: 20px;
-}
-
 @media screen and (width <= 600px) {
     .sp-sectionheader {
         font-size: 18px;
@@ -204,8 +194,8 @@
 }
 
 .experience-form {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    background-color: variables.$gray-100;
+    border: 1px solid variables.$gray-200;
     padding: 20px;
     border-radius: 5px;
     max-width: 500px;
@@ -225,7 +215,7 @@
         .form-textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid variables.$light-gray;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 16px;
@@ -239,7 +229,7 @@
 
     .form-submit {
         background-color: variables.$sp-primary;
-        color: #fff;
+        color: variables.$white-90;
         padding: 10px 20px;
         border: none;
         border-radius: 4px;
@@ -256,3 +246,75 @@
 }
 
 /* End Temporary: Styles for Create Experience Form */
+
+.search-tutorial {
+    @include modified-lesser-sp-aligner;
+
+    position: relative;
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border: 1px solid variables.$glass-border;
+    border-radius: 5px;
+    padding: 1.5rem;
+    border-left: 4px solid variables.$sp-primary;
+    transition:
+        opacity 0.3s ease,
+        max-height 0.5s ease,
+        margin-bottom 0.5s ease;
+    overflow: hidden;
+
+    &.dismissed {
+        opacity: 0;
+        max-height: 0;
+        padding: 0;
+        margin-bottom: 0;
+        border: none;
+        pointer-events: none;
+    }
+
+    .tutorial-dismiss {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+
+    .dismiss-button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        &:hover {
+            background-color: variables.$white-20;
+        }
+
+        svg {
+            color: variables.$white-60;
+            transition: color 0.2s;
+        }
+
+        &:hover svg {
+            color: variables.$white-90;
+        }
+    }
+
+    .tutorial-heading {
+        font-family: Hack, monospace;
+        color: variables.$sp-primary;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    .tutorial-description {
+        color: variables.$white-80;
+        margin-bottom: 0;
+        font-family: Hack, monospace;
+    }
+}

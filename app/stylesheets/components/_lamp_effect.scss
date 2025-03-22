@@ -8,6 +8,9 @@
     height: 140px; // Increased from 100px
     pointer-events: none;
     z-index: 0; // Above background but below content
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 // Wrapper for consistent positioning across all auth pages
@@ -61,9 +64,7 @@
 // Horizontal line
 .lamp-line {
     position: absolute;
-    left: 50%;
     top: 70px; // Adjusted from 50px to match new container height
-    transform: translateX(-50%); // Center horizontally
     height: 4px; // Increased from 3px
     background-color: variables.$login-primary;
     box-shadow:
@@ -76,6 +77,16 @@
 
     animation: lamp-line-expand 1.5s ease-in-out forwards;
     z-index: 0;
+    width: 100%;
+    margin-left: 70px;
+    margin-right: 70px;
+    max-width: 620px;
+    border-radius: 10px;
+
+    @media screen and (width <= 600px) {
+        margin-left: 50px;
+        margin-right: 50px;
+    }
 }
 
 // Center glow
@@ -101,7 +112,7 @@
     }
 
     100% {
-        width: 600px; // Increased from 500px
+        width: 620px; // Increased from 500px
         opacity: 1;
     }
 }

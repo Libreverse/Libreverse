@@ -46,8 +46,21 @@
       </header>
 
       <main>
+        <div
+          class="search-tutorial"
+          data-controller="dismissible"
+          data-dismissible-key-value="search-tutorial"
+        >
+          <div class="tutorial-dismiss">
+            <button class="dismiss-button" data-action="dismissible#dismiss">
+              <%= render partial: "icons/x" %>
+            </button>
+          </div>
+          <h2 class="tutorial-heading">Search Guide</h2>
+          <p class="tutorial-description">Type keywords to find experiences in the Libreverse. Results will appear as you type.</p>
+        </div>
+
         <section aria-labelledby="search-heading">
-          <h2 id="search-heading" class="sp-sectionheader">Find Your Next Experience in the Libreverse</h2>
           <div class="sp-search-bar">
             <input
               type="text"

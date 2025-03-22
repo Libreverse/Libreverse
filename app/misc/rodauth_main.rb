@@ -7,10 +7,35 @@ class RodauthMain < Rodauth::Rails::Auth
            :login, :logout, :remember,
            :change_password, :change_login,
            :close_account, :argon2,
-           :pwned_password
+           :pwned_password,
+           :guest # Enable guest feature for anonymous authentication
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
+
+    # ==> Guest Feature Configuration
+    # Set guest account flag on creation
+    before_create_guest do
+      account[:guest] = true
+      # Set timestamps for guest accounts to prevent database constraint violations
+      now = Time.current
+      account[:created_at] = now
+      account[:updated_at] = now
+    end
+
+    # Transfer user preferences from guest account to new account when registered
+    before_delete_guest do
+      # session_value has the guest account ID
+      # account_id has the new account ID
+      guest_account_id = session_value
+      new_account_id = account_id
+
+      # Transfer preferences from guest account to the new account
+      UserPreference.where(account_id: guest_account_id).find_each do |preference|
+        # Only transfer if the new account doesn't already have this preference
+        UserPreference.set(new_account_id, preference.key, preference.value) unless UserPreference.exists?(account_id: new_account_id, key: preference.key)
+      end
+    end
 
     # ==> General
     # Initialize Sequel and have it reuse Active Record's database connection.
@@ -111,28 +136,15 @@ class RodauthMain < Rodauth::Rails::Auth
       false # Don't consider as pwned if API fails
     end
 
-    # ==> DEBUGGING: Added debug logging to troubleshoot pwned password check issues
-    auth_class_eval do
-      # Override password_pwned? to add debug logging
-      def password_pwned?(password)
-        Rails.logger.info "DEBUG: Entering password_pwned? with password length: #{password ? password.length : 'nil'}"
-        result = super
-        Rails.logger.info "DEBUG: Exiting password_pwned? with result: #{result}"
-        result
-      end
-    end
-
     # ==> Implementing streamlined pwned password check
     # Perform pwned check in after_login hook which runs before response is sent
     after_login do
-      Rails.logger.info "DEBUG: Entering after_login hook"
       # Remember the user
       remember_login
 
       # Capture password and perform pwned check
       if param_or_nil(password_param)
         current_password = param(password_param)
-        Rails.logger.info "DEBUG: Captured password for pwned check: #{current_password.length} chars"
 
         begin
           if password_pwned?(current_password)
@@ -143,7 +155,6 @@ class RodauthMain < Rodauth::Rails::Auth
             redirect "/change-password"
             return # Skip further processing since we're redirecting
           else
-            Rails.logger.info "DEBUG: Password cleared pwned check"
             # Clear any existing pwned flag
             session.delete(:password_pwned)
           end
@@ -155,14 +166,11 @@ class RodauthMain < Rodauth::Rails::Auth
         # Save password metadata in session
         set_session_value(:password_length, current_password.length)
         set_session_value(:last_login_at, Time.now.to_i)
-      else
-        Rails.logger.error "DEBUG: No password parameter available in after_login"
       end
     end
 
     # Validate passwords are not pwned during password changes and registration
     password_meets_requirements? do |password|
-      Rails.logger.info "DEBUG: Validating password requirements including pwned check"
       # Run the basic requirements check
       basic_requirements = super(password)
 

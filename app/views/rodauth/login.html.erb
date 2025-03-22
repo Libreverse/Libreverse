@@ -6,6 +6,13 @@
     <% content_for :fontpreloads do %>
       <link
         rel="preload"
+        href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
+        as="font"
+        type="font/woff2"
+        crossorigin
+      >
+      <link
+        rel="preload"
         href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
         as="font"
         type="font/woff2"
