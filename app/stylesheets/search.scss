@@ -16,6 +16,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .sp-main h1.large,
@@ -69,6 +70,10 @@
 
 @mixin modified-lesser-sp-aligner {
     margin: 15px 10% 10px;
+}
+
+@mixin modified-lesser-sp-aligner-tutorial {
+    margin: 0px 10% 10px;
 }
 
 .sp-search-bar {
@@ -248,7 +253,7 @@
 /* End Temporary: Styles for Create Experience Form */
 
 .search-tutorial {
-    @include modified-lesser-sp-aligner;
+    @include modified-lesser-sp-aligner-tutorial;
 
     position: relative;
     background-color: variables.$glass;

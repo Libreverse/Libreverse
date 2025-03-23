@@ -59,7 +59,3 @@ import "./channels";
 document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.add("js-loaded");
 });
-
-document.addEventListener("turbo:load", () => {
-    document.documentElement.classList.add("js-loaded");
-});
