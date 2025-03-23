@@ -22,6 +22,16 @@
     <%= vite_client_tag %>
   </head>
   <body class="<%= page_with_drawer? ? 'page-with-drawer' : '' %>">
+    <noscript>
+      <div class="noscript-message">
+        <div class="noscript-message__content">
+          <h1 class="noscript-message__heading">JavaScript Required</h1>
+          <p class="noscript-message__text">
+            This application requires JavaScript to function properly. Please enable JavaScript in your browser settings and refresh the page.
+          </p>
+        </div>
+      </div>
+    </noscript>
     <%= render "layouts/flash_messages" %>
 
     <main class="content-wrapper">
