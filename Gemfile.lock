@@ -89,7 +89,7 @@ GEM
       ffi (~> 1.15)
       ffi-compiler (~> 1.0)
     ast (2.4.2)
-    async (2.23.0)
+    async (2.23.1)
       console (~> 1.29)
       fiber-annotation
       io-event (~> 1.9)
@@ -102,7 +102,7 @@ GEM
       async-service
       io-endpoint
       memory-leak (~> 0.5)
-    async-http (0.87.0)
+    async-http (0.88.0)
       async (>= 2.10.2)
       async-pool (~> 0.9)
       io-endpoint (~> 0.14)
@@ -116,7 +116,7 @@ GEM
       async-http (~> 0.56)
     async-pool (0.10.3)
       async (>= 1.25)
-    async-service (0.12.0)
+    async-service (0.13.0)
       async
       async-container (~> 0.16)
     base64 (0.2.0)
@@ -155,7 +155,7 @@ GEM
     cgi (0.4.2)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.0)
-    console (1.30.0)
+    console (1.30.2)
       fiber-annotation
       fiber-local (~> 1.1)
       json
@@ -180,7 +180,7 @@ GEM
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
-    falcon (0.51.0)
+    falcon (0.51.1)
       async
       async-container (~> 0.20)
       async-container-supervisor (~> 0.5.0)
@@ -196,6 +196,7 @@ GEM
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
     ffi (1.17.1-arm64-darwin)
+    ffi (1.17.1-x86_64-linux-gnu)
     ffi-compiler (1.3.2)
       ffi (>= 1.15.5)
       rake
@@ -214,13 +215,13 @@ GEM
       concurrent-ruby (~> 1.0)
     io-console (0.8.0)
     io-endpoint (0.15.2)
-    io-event (1.9.0)
+    io-event (1.10.0)
     io-stream (0.6.1)
     irb (1.15.1)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.10.1)
+    json (2.10.2)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
     localhost (1.3.1)
@@ -237,7 +238,7 @@ GEM
     marcel (1.0.4)
     matrix (0.4.2)
     memory-leak (0.5.2)
-    metrics (0.12.1)
+    metrics (0.12.2)
     mini_mime (1.1.5)
     minitest (5.25.4)
     msgpack (1.8.0)
@@ -254,6 +255,8 @@ GEM
       net-protocol
     nio4r (2.7.4)
     nokogiri (1.18.3-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.3-x86_64-linux-gnu)
       racc (~> 1.4)
     nokogiri-html5-inference (0.3.0)
       nokogiri (~> 1.14)
@@ -272,7 +275,7 @@ GEM
     prettyprint (0.2.0)
     protocol-hpack (1.5.1)
     protocol-http (0.49.0)
-    protocol-http1 (0.30.0)
+    protocol-http1 (0.34.0)
       protocol-http (~> 0.22)
     protocol-http2 (0.22.1)
       protocol-hpack (~> 1.4)
@@ -287,7 +290,7 @@ GEM
     pwned (2.4.1)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.1.11)
+    rack (3.1.12)
     rack-attack (6.7.0)
       rack (>= 1.0, < 4)
     rack-brotli (2.0.0)
@@ -482,6 +485,7 @@ GEM
 
 PLATFORMS
   arm64-darwin
+  x86_64-linux
 
 DEPENDENCIES
   actioncable-enhanced-postgresql-adapter
