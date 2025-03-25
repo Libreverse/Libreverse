@@ -44,4 +44,4 @@ bun test test/javascript/basic.test.js
 - Add more integration tests for interactions between controllers
 - Add tests for remaining controllers
 - Improve mocking to better reflect real-world scenarios
-- Add test coverage reporting 
+- Add test coverage reporting

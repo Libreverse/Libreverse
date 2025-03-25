@@ -1,4 +1,4 @@
-require "rexml/document"
+require "nokogiri"
 require "cgi"
 
 module Api
@@ -21,22 +21,19 @@ module Api
         return
       end
 
-      # Ensure the XML starts with the XML declaration
-      xml_content = "<?xml version=\"1.0\"?>#{xml_content}" unless xml_content.start_with?("<?xml")
-
       begin
-        # Parse the XML using REXML with timeout
+        # Parse the XML using Nokogiri with security options
+        doc = Nokogiri::XML(xml_content) do |config|
+          config.options = Nokogiri::XML::ParseOptions::NOBLANKS |
+                           Nokogiri::XML::ParseOptions::NONET |  # Prevent network access
+                           Nokogiri::XML::ParseOptions::NOENT    # Don't expand entities
+          config.strict.nonet                                    # Strict parsing, no network
+        end
+
+        # Apply a processing timeout
         Timeout.timeout(5) do
-          doc = REXML::Document.new(xml_content)
-
           # Validate the XML-RPC structure
-          method_call = doc.elements["methodCall"]
-          unless method_call
-            render xml: fault_response(400, "Invalid XML-RPC request: No methodCall element found")
-            return
-          end
-
-          method_name = method_call.elements["methodName"]&.text
+          method_name = doc.at_xpath("//methodName")&.text
           unless method_name
             render xml: fault_response(400, "Invalid XML-RPC request: No methodName element found")
             return
@@ -44,9 +41,9 @@ module Api
 
           # Extract parameters
           params = []
-          method_call.elements.each("params/param") do |param|
-            value = param.elements["value"]
-            params << parse_value(value) if value
+          doc.xpath("//methodCall/params/param").each do |param|
+            value_element = param.at_xpath("value")
+            params << parse_value(value_element) if value_element
           end
 
           # Process the method call
@@ -54,11 +51,12 @@ module Api
 
           # Generate the XML response
           response_xml = generate_response(result)
+
           render xml: response_xml
         end
       rescue Timeout::Error
         render xml: fault_response(408, "Request timeout")
-      rescue REXML::ParseException
+      rescue Nokogiri::XML::SyntaxError
         render xml: fault_response(400, "Invalid XML-RPC request")
       rescue StandardError => e
         Rails.logger.error("XML-RPC error: #{e.message}")
@@ -69,29 +67,35 @@ module Api
     private
 
     def parse_value(value_element)
-      return nil unless value_element&.elements&.first
+      # Check for direct text content (string value)
+      return CGI.escapeHTML(value_element.text.strip) if value_element.children.size == 1 && value_element.children.first.text?
 
-      case value_element.elements.first.name
+      # Get the type node - first element child of value
+      type_node = value_element.element_children.first
+
+      return nil unless type_node
+
+      case type_node.name
       when "string"
-        CGI.escapeHTML(value_element.elements.first.text)
+        CGI.escapeHTML(type_node.text)
       when "int", "i4"
-        value_element.elements.first.text.to_i
+        type_node.text.to_i
       when "boolean"
-        value_element.elements.first.text == "1"
+        type_node.text == "1"
       when "double"
-        value_element.elements.first.text.to_f
+        type_node.text.to_f
       when "array"
-        value_element.elements["data/array/data/value"].map { |v| parse_value(v) }
+        type_node.xpath(".//value").map { |v| parse_value(v) }
       when "struct"
         struct = {}
-        value_element.elements.each("member") do |member|
-          name = CGI.escapeHTML(member.elements["name"].text)
-          value = parse_value(member.elements["value"])
+        type_node.xpath("./member").each do |member|
+          name = CGI.escapeHTML(member.at_xpath("name").text)
+          value = parse_value(member.at_xpath("value"))
           struct[name] = value
         end
         struct
       else
-        CGI.escapeHTML(value_element.elements.first.text)
+        CGI.escapeHTML(type_node.text)
       end
     end
 
@@ -104,87 +108,78 @@ module Api
         preference_key = params.first
         UserPreference.dismiss(current_account&.id, preference_key)
         true
+      when "experiences.all"
+        # Get all experiences on the instance, sorted by most recent first
+        experiences = Experience.all.order(created_at: :desc)
+        serialize_experiences(experiences)
       else
         raise "Unknown method: #{method_name}"
       end
     end
 
-    def generate_response(result)
-      doc = REXML::Document.new
-      doc.add(REXML::XMLDecl.new("1.0", "UTF-8"))
-
-      method_response = REXML::Element.new("methodResponse")
-      doc.add(method_response)
-
-      params = REXML::Element.new("params")
-      method_response.add(params)
-
-      param = REXML::Element.new("param")
-      params.add(param)
-
-      value = REXML::Element.new("value")
-      param.add(value)
-
-      if result.is_a?(TrueClass) || result.is_a?(FalseClass)
-        bool = REXML::Element.new("boolean")
-        bool.text = result ? "1" : "0"
-        value.add(bool)
-      else
-        string = REXML::Element.new("string")
-        string.text = CGI.escapeHTML(result.to_s)
-        value.add(string)
+    # Helper method to serialize experiences into a format suitable for XML-RPC
+    def serialize_experiences(experiences)
+      experiences.map do |experience|
+        {
+          "id" => experience.id,
+          "title" => experience.title,
+          "description" => experience.description,
+          "author" => experience.author,
+          "content" => experience.content,
+          "created_at" => experience.created_at.iso8601,
+          "updated_at" => experience.updated_at.iso8601
+        }
       end
-
-      doc.to_s
     end
 
-    def fault_response(code, message)
-      doc = REXML::Document.new
-      doc.add(REXML::XMLDecl.new("1.0", "UTF-8"))
+    def generate_response(result)
+      builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
+        xml.methodResponse do
+          xml.params do
+            xml.param do
+              xml.value do
+                add_typed_value(xml, result)
+              end
+            end
+          end
+        end
+      end
+      builder.to_xml
+    end
 
-      method_response = REXML::Element.new("methodResponse")
-      doc.add(method_response)
-
-      fault = REXML::Element.new("fault")
-      method_response.add(fault)
-
-      value = REXML::Element.new("value")
-      fault.add(value)
-
-      struct = REXML::Element.new("struct")
-      value.add(struct)
-
-      # Add faultCode
-      member_code = REXML::Element.new("member")
-      struct.add(member_code)
-
-      name_code = REXML::Element.new("name")
-      name_code.text = "faultCode"
-      member_code.add(name_code)
-
-      value_code = REXML::Element.new("value")
-      member_code.add(value_code)
-
-      int_code = REXML::Element.new("int")
-      int_code.text = code.to_s
-      value_code.add(int_code)
-
-      # Add faultString
-      member_string = REXML::Element.new("member")
-      struct.add(member_string)
-
-      name_string = REXML::Element.new("name")
-      name_string.text = "faultString"
-      member_string.add(name_string)
-
-      value_string = REXML::Element.new("value")
-      member_string.add(value_string)
-
-      string = REXML::Element.new("string")
-      string.text = CGI.escapeHTML(message)
-      value_string.add(string)
-
-      doc.to_s
+    # Helper method to add a typed value to XML-RPC response
+    def add_typed_value(xml, value)
+      case value
+      when TrueClass, FalseClass
+        xml.boolean(value ? "1" : "0")
+      when Integer
+        xml.int(value.to_s)
+      when Float
+        xml.double(value.to_s)
+      when Array
+        xml.array do
+          xml.data do
+            value.each do |item|
+              xml.value do
+                add_typed_value(xml, item)
+              end
+            end
+          end
+        end
+      when Hash
+        xml.struct do
+          value.each do |key, val|
+            xml.member do
+              xml.name(key.to_s)
+              xml.value do
+                add_typed_value(xml, val)
+              end
+            end
+          end
+        end
+      else
+        xml.string(CGI.escapeHTML(value.to_s))
+      end
     end
 
     def apply_rate_limit
@@ -198,6 +193,32 @@ module Api
 
     def current_account
       @current_account ||= Account.find_by(id: session[:account_id])
+    end
+
+    def fault_response(code, message)
+      builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
+        xml.methodResponse do
+          xml.fault do
+            xml.value do
+              xml.struct do
+                xml.member do
+                  xml.name("faultCode")
+                  xml.value do
+                    xml.int(code.to_s)
+                  end
+                end
+                xml.member do
+                  xml.name("faultString")
+                  xml.value do
+                    xml.string(CGI.escapeHTML(message))
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+      builder.to_xml
     end
   end
 end

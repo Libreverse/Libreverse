@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import jestPlugin from "eslint-plugin-jest";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
@@ -44,17 +45,33 @@ export default [
             "unicorn/no-empty-file": "off",
         },
     },
-    // Add Jest environment for test files
+    // Updated Jest test configuration
     {
         files: ["test/javascript/**/*.js"],
+        plugins: {
+            jest: jestPlugin
+        },
         languageOptions: {
             globals: {
                 ...globals.jest,
-                ...globals.browser,
+                ...globals.browser
             },
+            parserOptions: {
+                ecmaVersion: "latest",
+                sourceType: "module"
+            }
+        },
+        env: {
+            "jest/globals": true
         },
         rules: {
-            "no-undef": "off", // Disable no-undef for test files to allow Jest globals
-        },
+            ...jestPlugin.configs.recommended.rules,
+            "no-undef": "off",
+            "jest/no-disabled-tests": "warn",
+            "jest/no-focused-tests": "error",
+            "jest/no-identical-title": "error",
+            "jest/prefer-to-have-length": "warn",
+            "jest/valid-expect": "error"
+        }
     },
 ];
