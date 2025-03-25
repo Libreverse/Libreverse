@@ -24,11 +24,7 @@ export default [
             "app//libs/**",
         ],
     },
-    ...compat.extends(
-        "eslint:recommended",
-        "plugin:unicorn/recommended",
-        "prettier",
-    ),
+    ...compat.extends("eslint:recommended", "plugin:unicorn/recommended"),
     {
         plugins: {
             unicorn,
@@ -46,6 +42,19 @@ export default [
             "unicorn/filename-case": "off",
             "unicorn/no-anonymous-default-export": "off",
             "unicorn/no-empty-file": "off",
+        },
+    },
+    // Add Jest environment for test files
+    {
+        files: ["test/javascript/**/*.js"],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+                ...globals.browser,
+            },
+        },
+        rules: {
+            "no-undef": "off", // Disable no-undef for test files to allow Jest globals
         },
     },
 ];
