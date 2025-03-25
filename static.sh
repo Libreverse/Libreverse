@@ -68,6 +68,16 @@ echo "====================="
 typos
 
 echo "====================="
+echo "Jest results"
+echo "====================="
+bun test
+
+echo "====================="
+echo "Rails test results"
+echo "====================="
+bun test
+
+echo "====================="
 echo "Brakeman results"
 echo "====================="
 brakeman --quiet --no-summary

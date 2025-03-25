@@ -71,6 +71,9 @@ gem "bootsnap"
 # Use the actioncable-enhanced-postgresql-adapter gem for better scaling of stimulus reflex without redis
 gem "actioncable-enhanced-postgresql-adapter"
 
+# Secure XML parsing
+gem "nokogiri", "~> 1.15"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
@@ -106,6 +109,7 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
+  gem "mocha", "~> 2.1"
   gem "selenium-webdriver"
 end
 

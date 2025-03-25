@@ -240,6 +240,8 @@ GEM
     metrics (0.12.1)
     mini_mime (1.1.5)
     minitest (5.25.4)
+    mocha (2.7.1)
+      ruby2_keywords (>= 0.0.5)
     msgpack (1.8.0)
     multi_json (1.15.0)
     mutex_m (0.3.0)
@@ -384,6 +386,7 @@ GEM
       rubocop (>= 1.72.1, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
     ruby_parser (3.21.1)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
@@ -498,6 +501,8 @@ DEPENDENCIES
   fasterer
   foreman
   htmlcompressor
+  mocha (~> 2.1)
+  nokogiri (~> 1.15)
   ostruct
   permessage_deflate
   pg

@@ -54,11 +54,5 @@
         "core-js",
         "esbuild"
     ],
-    "packageManager": "bun@1.1.36",
-    "scripts": {
-        "build": "vite build --outDir public",
-        "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-        "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
-        "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
-    }
+    "packageManager": "bun@1.1.36"
 }
