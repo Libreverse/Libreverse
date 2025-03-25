@@ -2,7 +2,13 @@
 <aside class="drawer-container" role="complementary" data-controller="drawer">
   <div class="drawer" aria-labelledby="drawer-title">
     <div class="drawer-header">
-      <h2 id="drawer-title" class="drawer-title"><%= content_for?(:drawer_title) ? yield(:drawer_title) : "Attribution" %></h2>
+      <h2 id="drawer-title" class="drawer-title">
+        <% if content_for?(:drawer_title) %>
+          <%= yield(:drawer_title) %>
+        <% else %>
+          Attribution
+        <% end %>
+      </h2>
       <button
         class="drawer-toggle"
         type="button"
@@ -25,7 +31,11 @@
     <div class="drawer-contents" data-drawer-target="content">
       <div class="drawer-content-container">
         <div class="drawer-content">
-          <%= content_for?(:drawer) ? yield(:drawer) : render("layouts/default_drawer_content") %>
+          <% if content_for?(:drawer) %>
+            <%= yield(:drawer) %>
+          <% else %>
+            <%= render("layouts/default_drawer_content") %>
+          <% end %>
         </div>
       </div>
     </div>

@@ -1,9 +1,5 @@
 <!doctype html>
-<html
-  dir="ltr"
-  lang="en-GB"
-  class="<%= auth_page? ? 'auth-page' : '' %>"
->
+<html dir="ltr" lang="en-GB" class="<%= auth_page? ? 'auth-page' : '' %>">
   <head>
     <!--Important code-->
     <%= yield :fontpreloads %>
@@ -11,9 +7,8 @@
     <%= yield :specific_stylesheets %>
     <%= vite_javascript_tag "~/javascript/application.js", type: "module" %>
     <%= render "layouts/development_headers" if Rails.env.development? %>
-    
+
     <%= render "layouts/meta_tags" %>
-    
     <!--Some decently important security stuff, just matters that it's present,
     so we don't need to bother search engines by putting it at the top-->
     <%= csrf_meta_tags %>
@@ -27,7 +22,8 @@
         <div class="noscript-message__content">
           <h1 class="noscript-message__heading">JavaScript Required</h1>
           <p class="noscript-message__text">
-            This application requires JavaScript to function properly. Please enable JavaScript in your browser settings and refresh the page.
+            This application requires JavaScript to function properly. Please
+            enable JavaScript in your browser settings and refresh the page.
           </p>
         </div>
       </div>

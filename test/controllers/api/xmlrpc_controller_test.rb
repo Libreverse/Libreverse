@@ -10,12 +10,6 @@ module Api
     # Start with a clean slate
     Experience.delete_all
 
-    # Mock any methods or objects that the controller needs
-    mock_rodauth = Object.new
-    def mock_rodauth.logged_in? = false
-
-    @controller.stubs(:rodauth).returns(mock_rodauth)
-
     # Skip certain before_action methods that could cause issues
     @controller.stubs(:validate_method_access).returns(true)
     @controller.stubs(:apply_rate_limit).returns(true)
@@ -66,7 +60,7 @@ module Api
     # Create a deeply nested XML document (more than 100 levels)
     xml_body = "<?xml version=\"1.0\"?>\n<methodCall><methodName>experiences.all</methodName><params>"
     150.times do |i|
-      xml_body += "<struct><member><name>level#{i}</name><value>"
+      xml_body += "<struct><member><n>level#{i}</n><value>"
     end
     150.times do |_i|
       xml_body += "</value></member></struct>"

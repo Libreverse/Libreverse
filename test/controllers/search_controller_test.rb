@@ -8,12 +8,6 @@ class SearchControllerTest < ActionController::TestCase
     # Skip view rendering entirely
     @controller.stubs(:render).returns(nil)
 
-    # Mock any methods or objects that the controller needs
-    mock_rodauth = Object.new
-    def logged_in? = false
-
-    @controller.stubs(:rodauth).returns(mock_rodauth)
-
     # Create some test experiences to search
     @test_experience = Experience.create!(
       title: "Test Experience 1",

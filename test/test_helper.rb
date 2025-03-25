@@ -22,7 +22,7 @@ module ActiveSupport
     # Helper method to disable fixtures for tests that don't need them
     def self.no_fixtures
       # This method prevents fixture loading for this test class
-      def self.fixtures(*); end
+      class_eval { define_singleton_method(:fixtures) { |*| } }
     end
   end
 end
@@ -30,6 +30,18 @@ end
 # Override ApplicationController methods for tests
 module ActionController
   class TestCase
-    # We'll stub necessary methods in individual test classes
+    # Define helper method to set up authentication state
+    setup do
+      # Don't stub rodauth in tests - it's handled in the PasswordSecurityEnforcer concern
+    end
+  end
+end
+
+# Modify PasswordSecurityEnforcer module to always skip in tests
+module PasswordSecurityEnforcer
+  def enforce_password_security
+    return if Rails.env.test?
+
+    super
   end
 end

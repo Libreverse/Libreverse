@@ -6,7 +6,7 @@ This document describes the XML-RPC API endpoints available in Libreverse.
 
 All XML-RPC requests should be sent to:
 
-```
+```http
 POST /api/xmlrpc
 ```
 
