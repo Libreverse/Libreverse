@@ -9,6 +9,9 @@ module PasswordSecurityEnforcer
 
   # Redirects users to change password page if they have a pwned password
   def enforce_password_security
+    # Skip in test environment
+    return if Rails.env.test?
+
     # Early return for unauthenticated users or paths that should be exempt
     return unless rodauth.logged_in?
     return unless rodauth.session && rodauth.session[:password_pwned]

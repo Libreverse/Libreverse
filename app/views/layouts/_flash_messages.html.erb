@@ -7,11 +7,11 @@
     data-toast-auto-hide-delay-value="5000"
   >
     <% if notice %>
-      <%= render 'layouts/toast', type: 'success', title: 'Success', message: notice %>
+      <%= render "layouts/toast", type: "success", title: "Success", message: notice %>
     <% end %>
 
     <% if alert %>
-      <%= render 'layouts/toast', type: 'error', title: 'Alert', message: alert %>
+      <%= render "layouts/toast", type: "error", title: "Alert", message: alert %>
     <% end %>
   </div>
-<% end %> 
+<% end %>

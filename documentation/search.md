@@ -89,9 +89,9 @@ The search functionality includes several optimizations:
 
 ## Examples
 
-### Basic Search
+### Search Examples
 
-```
+```http
 GET /search?query=virtual+reality
 ```
 
@@ -99,7 +99,7 @@ Returns experiences with "virtual reality" in their title, description, or conte
 
 ### Author Search
 
-```
+```http
 GET /search?query=author:johndoe
 ```
 

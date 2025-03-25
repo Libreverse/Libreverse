@@ -52,6 +52,7 @@ globalThis.XMLHttpRequest = class {
         this.responseXML = null;
         this.onreadystatechange = null;
         this.headers = {};
+        this.eventListeners = {};
     }
 
     open(method, url) {
@@ -61,6 +62,13 @@ globalThis.XMLHttpRequest = class {
 
     setRequestHeader(header, value) {
         this.headers[header] = value;
+    }
+
+    addEventListener(event, callback) {
+        if (!this.eventListeners[event]) {
+            this.eventListeners[event] = [];
+        }
+        this.eventListeners[event].push(callback);
     }
 
     send(data) {
@@ -102,6 +110,13 @@ globalThis.XMLHttpRequest = class {
 
             if (this.onreadystatechange) {
                 this.onreadystatechange();
+            }
+
+            // Trigger readystatechange event listeners
+            if (this.eventListeners.readystatechange) {
+                this.eventListeners.readystatechange.forEach((callback) =>
+                    callback(),
+                );
             }
         }, 0);
 
