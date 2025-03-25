@@ -1,9 +1,10 @@
 module ExperienceComponent
   class HeaderComponent < ViewComponent::Base
-  attr_reader :experience
+    attr_reader :experience
 
-  def initialize(experience:)
-    @experience = experience
-  end
+    def initialize(experience:)
+      super
+      @experience = experience
+    end
   end
 end

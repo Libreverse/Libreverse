@@ -3,85 +3,77 @@ require "cgi"
 
 module Api
   class XmlrpcController < ApplicationController
+    include XmlrpcSecurity
+
     skip_before_action :verify_authenticity_token
     before_action :apply_rate_limit
     before_action :current_account
+    before_action :validate_method_access
 
     # POST /api/xmlrpc
     def endpoint
-      Rails.logger.info "XML-RPC request headers: #{request.headers.to_h.select { |k, _| k.start_with?('HTTP_') }}"
-      Rails.logger.info "XML-RPC request content type: #{request.content_type}"
-
       # Read the XML from the FormData
       xml_content = params[:xml]
 
-      Rails.logger.info "XML-RPC request body: #{xml_content}"
-
       # Ensure we have content
       if xml_content.blank?
-        Rails.logger.error "XML-RPC error: Empty request body"
         render xml: fault_response(400, "Empty request body")
         return
       end
 
       # Ensure the XML starts with the XML declaration
-      unless xml_content.start_with?("<?xml")
-        xml_content = "<?xml version=\"1.0\"?>#{xml_content}"
-        Rails.logger.info "Added XML declaration to request: #{xml_content}"
-      end
+      xml_content = "<?xml version=\"1.0\"?>#{xml_content}" unless xml_content.start_with?("<?xml")
 
       begin
-        # Parse the XML using REXML
-        doc = REXML::Document.new(xml_content)
-        Rails.logger.info "Parsed XML successfully. Root element: #{doc.root&.name}, children: #{doc.root&.children&.map(&:name)}"
+        # Parse the XML using REXML with timeout
+        Timeout.timeout(5) do
+          doc = REXML::Document.new(xml_content)
 
-        # Validate the XML-RPC structure
-        method_call = doc.elements["methodCall"]
-        unless method_call
-          Rails.logger.error "XML-RPC error: No methodCall element found"
-          render xml: fault_response(400, "Invalid XML-RPC request: No methodCall element found")
-          return
+          # Validate the XML-RPC structure
+          method_call = doc.elements["methodCall"]
+          unless method_call
+            render xml: fault_response(400, "Invalid XML-RPC request: No methodCall element found")
+            return
+          end
+
+          method_name = method_call.elements["methodName"]&.text
+          unless method_name
+            render xml: fault_response(400, "Invalid XML-RPC request: No methodName element found")
+            return
+          end
+
+          # Extract parameters
+          params = []
+          method_call.elements.each("params/param") do |param|
+            value = param.elements["value"]
+            params << parse_value(value) if value
+          end
+
+          # Process the method call
+          result = process_method_call(method_name, params)
+
+          # Generate the XML response
+          response_xml = generate_response(result)
+          render xml: response_xml
         end
-
-        method_name = method_call.elements["methodName"]&.text
-        unless method_name
-          Rails.logger.error "XML-RPC error: No methodName element found"
-          render xml: fault_response(400, "Invalid XML-RPC request: No methodName element found")
-          return
-        end
-
-        # Extract parameters
-        params = []
-        method_call.elements.each("params/param") do |param|
-          value = param.elements["value"]
-          params << parse_value(value) if value
-        end
-
-        Rails.logger.info "Processing method call: #{method_name} with params: #{params.inspect}"
-
-        # Process the method call
-        result = process_method_call(method_name, params)
-
-        # Generate the XML response
-        response_xml = generate_response(result)
-        Rails.logger.info "Generated response: #{response_xml}"
-
-        render xml: response_xml
-      rescue REXML::ParseException => e
-        Rails.logger.error "XML-RPC error: #{e.message}"
-        render xml: fault_response(400, "Invalid XML-RPC request: #{e.message}")
+      rescue Timeout::Error
+        render xml: fault_response(408, "Request timeout")
+      rescue REXML::ParseException
+        render xml: fault_response(400, "Invalid XML-RPC request")
       rescue StandardError => e
-        Rails.logger.error "XML-RPC error: #{e.message}"
-        render xml: fault_response(500, "Internal server error: #{e.message}")
+        Rails.logger.error("XML-RPC error: #{e.message}")
+        render xml: fault_response(500, "Internal server error")
       end
     end
 
     private
 
     def parse_value(value_element)
-      case value_element.elements.first&.name
+      return nil unless value_element&.elements&.first
+
+      case value_element.elements.first.name
       when "string"
-        value_element.elements.first.text
+        CGI.escapeHTML(value_element.elements.first.text)
       when "int", "i4"
         value_element.elements.first.text.to_i
       when "boolean"
@@ -93,13 +85,13 @@ module Api
       when "struct"
         struct = {}
         value_element.elements.each("member") do |member|
-          name = member.elements["name"].text
+          name = CGI.escapeHTML(member.elements["name"].text)
           value = parse_value(member.elements["value"])
           struct[name] = value
         end
         struct
       else
-        value_element.elements.first&.text
+        CGI.escapeHTML(value_element.elements.first.text)
       end
     end
 
@@ -107,10 +99,10 @@ module Api
       case method_name
       when "preferences.isDismissed"
         preference_key = params.first
-        UserPreference.dismissed?(current_account.id, preference_key)
+        UserPreference.dismissed?(current_account&.id, preference_key)
       when "preferences.dismiss"
         preference_key = params.first
-        UserPreference.dismiss(current_account.id, preference_key)
+        UserPreference.dismiss(current_account&.id, preference_key)
         true
       else
         raise "Unknown method: #{method_name}"
@@ -139,7 +131,7 @@ module Api
         value.add(bool)
       else
         string = REXML::Element.new("string")
-        string.text = result.to_s
+        string.text = CGI.escapeHTML(result.to_s)
         value.add(string)
       end
 
@@ -189,19 +181,19 @@ module Api
       member_string.add(value_string)
 
       string = REXML::Element.new("string")
-      string.text = message
+      string.text = CGI.escapeHTML(message)
       value_string.add(string)
 
       doc.to_s
     end
 
     def apply_rate_limit
-      key = "xmlrpc_rate_limit:#{current_account.id}"
+      key = "xmlrpc_rate_limit:#{request.ip}"
       count = Rails.cache.increment(key, 1, expires_in: 1.minute)
 
       return unless count > 30
 
-        render xml: fault_response(429, "Rate limit exceeded")
+      render xml: fault_response(429, "Rate limit exceeded")
     end
 
     def current_account

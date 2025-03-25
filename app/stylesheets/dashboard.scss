@@ -117,15 +117,24 @@
     border-radius: 5px;
     margin-bottom: 1rem;
     transition: all 0.2s ease;
+    overflow: hidden;
 
-    &:hover {
-        box-shadow: 0 8px 30px variables.$box-shadow;
-        border-color: variables.$white-40;
+    &:last-child {
+        margin-bottom: 0;
     }
+}
 
-    .text-muted {
-        color: variables.$white-60 !important;
-    }
+.info-card:hover {
+    box-shadow: 0 8px 30px variables.$box-shadow;
+    border-color: variables.$white-40;
+}
+
+.text-muted {
+    color: variables.$white-60 !important;
+}
+
+.info-card .text-muted {
+    color: variables.$white-60 !important;
 }
 
 .stat-value {
@@ -302,12 +311,6 @@
         color: variables.$white-90;
         font-family: Hack, monospace;
 
-        &:focus {
-            border-color: variables.$dashboard-primary;
-            box-shadow: 0 0 0 3px rgba(variables.$dashboard-primary, 0.25);
-            outline: none;
-        }
-
         &::placeholder {
             color: variables.$white-50;
         }
@@ -315,6 +318,12 @@
 
     .form-textarea {
         min-height: 120px;
+    }
+
+    .form-textarea:focus {
+        border-color: variables.$dashboard-primary;
+        box-shadow: 0 0 0 3px rgba(variables.$dashboard-primary, 0.25);
+        outline: none;
     }
 }
 
@@ -407,10 +416,6 @@
 .card-footer {
     background-color: variables.$black-10;
     border-top: 1px solid variables.$glass-border;
-}
-
-.text-muted {
-    color: variables.$white-60 !important;
 }
 
 .card-body {
@@ -509,15 +514,6 @@
         &:hover {
             background-color: variables.$white-20;
         }
-
-        svg {
-            color: variables.$white-60;
-            transition: color 0.2s;
-        }
-
-        &:hover svg {
-            color: variables.$white-90;
-        }
     }
 
     h2 {
@@ -551,18 +547,6 @@
     font-size: 1.1rem;
     margin: 1.5rem 0 0.5rem;
     padding: 0 0 0.5rem;
-}
-
-.info-card {
-    @include glass-effect;
-
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    overflow: hidden;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
 }
 
 .info-grid {
@@ -738,27 +722,4 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.section-dismiss {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    z-index: 1;
-}
-
-.dismiss-button {
-    background: none;
-    border: none;
-    color: variables.$white-60;
-    font-size: 0.875rem;
-    font-family: inherit;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: variables.$white-90;
-        text-decoration: underline;
-    }
 }
