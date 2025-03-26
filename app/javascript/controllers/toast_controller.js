@@ -10,7 +10,7 @@ export default class extends Controller {
 
     connect() {
         StimulusReflex.register(this);
-        
+
         // Show toasts immediately when controller connects
         requestAnimationFrame(() => {
             this.showToasts();

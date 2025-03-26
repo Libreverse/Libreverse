@@ -1,13 +1,11 @@
 class ToastReflex < ApplicationReflex
   def show(message, type = "info", title = nil)
     # Set default title based on type if not provided
-    unless title
-      title = case type
-              when "success" then "Success"
-              when "error" then "Error"
-              when "warning" then "Warning"
-              else "Information"
-              end
+    title ||= case type
+    when "success" then "Success"
+    when "error" then "Error"
+    when "warning" then "Warning"
+    else "Information"
     end
 
     # Render the toast partial
@@ -26,4 +24,4 @@ class ToastReflex < ApplicationReflex
       html: html
     ).broadcast
   end
-end 
+end

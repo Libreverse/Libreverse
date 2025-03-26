@@ -18,7 +18,7 @@ export default class extends Controller {
 
     connect() {
         StimulusReflex.register(this);
-        
+
         // Get the key, checking both patterns we might encounter
         let key;
         if (this.hasKeyValue) {
@@ -31,11 +31,13 @@ export default class extends Controller {
             // Fallback to the controller element's own dataset
             key = this.element.dataset.dismissibleKeyValue;
         }
-        
+
         if (key) {
             console.log(`Dismissible controller connected with key: ${key}`);
         } else {
-            console.warn("Dismissible controller connected without a key value");
+            console.warn(
+                "Dismissible controller connected without a key value",
+            );
         }
     }
 
@@ -45,7 +47,7 @@ export default class extends Controller {
     dismiss(event) {
         // Prevent default behavior if this was called from a button or link
         if (event) event.preventDefault();
-        
+
         // Get the key, trying all possible sources
         let key;
         if (this.hasKeyValue) {
@@ -58,36 +60,36 @@ export default class extends Controller {
             // Fallback to the controller element's own dataset
             key = this.element.dataset.dismissibleKeyValue;
         }
-        
+
         if (!key) {
             console.error("Cannot dismiss: No key value provided");
             return;
         }
-        
+
         console.log(`Dismissing element with key: ${key}`);
-        
+
         try {
             // Hide the container immediately for better UX
             if (this.hasContainerTarget) {
                 this.containerTarget.style.display = "none";
             }
-            
+
             // Pass the key to the reflex explicitly
             this.stimulate("DismissibleReflex#dismiss", key);
         } catch (error) {
             console.error("Error during dismissal:", error);
         }
     }
-    
+
     // Lifecycle callbacks
     dismissReflex(element) {
         console.log("Dismissible reflex triggered", element);
     }
-    
+
     dismissSuccess(element) {
         console.log("Dismissible reflex succeeded", element);
     }
-    
+
     dismissError(element, error) {
         console.error("Dismissible reflex error", error);
         // If there was an error, restore visibility

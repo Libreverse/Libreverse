@@ -1,7 +1,17 @@
 <% include_stylesheet "drawer" %>
 <%# Set use-force-update to true if the regular toggling isn't working %>
-<aside class="drawer-container" role="complementary" data-controller="drawer" data-drawer-use-force-update-value="false">
-  <div class="drawer" data-drawer-id="main" data-expanded="false" aria-labelledby="drawer-title">
+<aside
+  class="drawer-container"
+  role="complementary"
+  data-controller="drawer"
+  data-drawer-use-force-update-value="false"
+>
+  <div
+    class="drawer"
+    data-drawer-id="main"
+    data-expanded="false"
+    aria-labelledby="drawer-title"
+  >
     <div class="drawer-header">
       <h2 id="drawer-title" class="drawer-title">
         <% if content_for?(:drawer_title) %>

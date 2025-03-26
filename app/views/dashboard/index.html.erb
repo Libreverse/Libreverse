@@ -11,7 +11,7 @@
           <%= @account.username %></p>
       </div>
 
-      <% if rodauth.logged_in? && !UserPreference.dismissed?(current_account.id, "dashboard-tutorial") %>
+      <% if rodauth.logged_in? && !tutorial_dismissed?("dashboard-tutorial") %>
         <div data-controller="dismissible">
           <div
             id="dashboard-tutorial"
@@ -21,7 +21,14 @@
           >
             <div class="section-dismiss">
               <button class="dismiss-button" data-action="dismissible#dismiss">
-                <%= render partial: "icons/x" %>
+                <img
+                  src="<%= svg_icon_data_url('x') %>"
+                  alt="Close"
+                  width="16"
+                  height="16"
+                  class="feather feather-x"
+                  aria-hidden="true"
+                >
               </button>
             </div>
             <h2 class="section-heading">Your Account</h2>

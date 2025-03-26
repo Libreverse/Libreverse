@@ -7,4 +7,4 @@ class SidebarReflex < ApplicationReflex
     # Just acknowledge the request with morph :nothing
     morph :nothing
   end
-end 
+end
