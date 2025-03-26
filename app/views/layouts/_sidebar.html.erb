@@ -11,7 +11,7 @@
   >
     <div class="sidebar-contents">
       <% current_path = request.path %>
-      
+
       <a
         href="/"
         class="sidebar-link <%= 'sidebar-default-cursor' if current_path == '/' %>"
@@ -20,7 +20,10 @@
         data-action="click->link#click"
         aria-label="Go to homepage"
       >
-        <%= sidebar_icon("~/images/libreverse-logo.svg", current_path == '/' ? 'sidebar-current' : '') %>
+        <%= sidebar_icon(
+          "~/images/libreverse-logo.svg",
+          current_path == "/" ? "sidebar-current" : "",
+        ) %>
       </a>
       <a
         href="/search"
@@ -30,7 +33,10 @@
         data-action="click->link#click"
         aria-label="Go to search page"
       >
-        <%= sidebar_icon("~/icons/search.svg", current_path == '/search' ? 'sidebar-current' : '') %>
+        <%= sidebar_icon(
+          "~/icons/search.svg",
+          current_path == "/search" ? "sidebar-current" : "",
+        ) %>
       </a>
       <!-- Authentication links -->
       <% if rodauth.logged_in? %>
@@ -42,7 +48,10 @@
           data-action="click->link#click"
           aria-label="Go to dashboard"
         >
-          <%= sidebar_icon("~/icons/dashboard.svg", current_path == dashboard_path ? 'sidebar-current' : '') %>
+          <%= sidebar_icon(
+            "~/icons/dashboard.svg",
+            current_path == dashboard_path ? "sidebar-current" : "",
+          ) %>
         </a>
         <a
           href="<%= experiences_path %>"
@@ -52,7 +61,10 @@
           data-action="click->link#click"
           aria-label="Manage experiences"
         >
-          <%= sidebar_icon("~/icons/experiences.svg", current_path == experiences_path ? 'sidebar-current' : '') %>
+          <%= sidebar_icon(
+            "~/icons/experiences.svg",
+            current_path == experiences_path ? "sidebar-current" : "",
+          ) %>
         </a>
         <%= button_to rodauth.logout_path,
             method: :post,
@@ -69,7 +81,10 @@
           data-action="click->link#click"
           aria-label="Sign in"
         >
-          <%= sidebar_icon("~/icons/login.svg", current_path == rodauth.login_path ? 'sidebar-current' : '') %>
+          <%= sidebar_icon(
+            "~/icons/login.svg",
+            current_path == rodauth.login_path ? "sidebar-current" : "",
+          ) %>
         </a>
         <a
           href="<%= rodauth.create_account_path %>"
@@ -79,7 +94,10 @@
           data-action="click->link#click"
           aria-label="Sign up"
         >
-          <%= sidebar_icon("~/icons/signup.svg", current_path == rodauth.create_account_path ? 'sidebar-current' : '') %>
+          <%= sidebar_icon(
+            "~/icons/signup.svg",
+            current_path == rodauth.create_account_path ? "sidebar-current" : "",
+          ) %>
         </a>
       <% end %>
     </div>

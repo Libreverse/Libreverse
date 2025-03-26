@@ -16,7 +16,11 @@
     <!--Vite HMR in development. Does not result in anything in prod-->
     <%= vite_client_tag %>
   </head>
-  <body class="<%= page_with_drawer? ? 'page-with-drawer' : '' %><%= session[:drawer_expanded] ? ' drawer-is-expanded' : '' %>">
+  <body
+    class="
+      <%= page_with_drawer? ? 'page-with-drawer' : '' %><%= session[:drawer_expanded] ? ' drawer-is-expanded' : '' %>
+    "
+  >
     <noscript>
       <div class="noscript-message">
         <div class="noscript-message__content">

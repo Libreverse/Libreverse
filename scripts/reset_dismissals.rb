@@ -8,7 +8,7 @@
 count = UserPreference.where(value: "dismissed").destroy_all.count
 
 puts "✅ Reset complete: #{count} dismissal preferences deleted from the database."
-puts 
+puts
 puts "Note: Session-based dismissals will be automatically cleared when:"
 puts "  - You restart your web server"
 puts "  - You clear your browser cookies"
@@ -16,4 +16,4 @@ puts "  - Sessions expire naturally"
 puts
 puts "To test the new dismissible implementation:"
 puts "  1. Restart your Rails server to clear sessions"
-puts "  2. Refresh your browser to see previously dismissed items again" 
+puts "  2. Refresh your browser to see previously dismissed items again"
