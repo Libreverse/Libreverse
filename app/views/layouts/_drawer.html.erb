@@ -1,7 +1,7 @@
 <% include_stylesheet "drawer" %>
 <%# Set use-force-update to true if the regular toggling isn't working %>
 <aside class="drawer-container" role="complementary" data-controller="drawer" data-drawer-use-force-update-value="false">
-  <div class="drawer<%= session[:drawer_expanded] ? ' drawer-expanded' : '' %>" aria-labelledby="drawer-title">
+  <div class="drawer" data-drawer-id="main" data-expanded="false" aria-labelledby="drawer-title">
     <div class="drawer-header">
       <h2 id="drawer-title" class="drawer-title">
         <% if content_for?(:drawer_title) %>
@@ -18,7 +18,7 @@
       >
         <img
           src="<%= vite_asset_path "~/icons/chevron-up.svg" %>"
-          class="drawer-icons<%= session[:drawer_expanded] ? ' rotated' : '' %>"
+          class="drawer-icons"
           loading="eager"
           decoding="async"
           fetchpriority="high"
@@ -29,7 +29,7 @@
         >
       </button>
     </div>
-    <div class="drawer-contents<%= session[:drawer_expanded] ? ' visible' : '' %>" data-drawer-target="content">
+    <div class="drawer-contents" data-drawer-target="content">
       <div class="drawer-content-container">
         <div class="drawer-content">
           <% if content_for?(:drawer) %>
