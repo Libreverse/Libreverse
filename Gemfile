@@ -11,9 +11,6 @@ gem "pg"
 # Use the falcon web server for better concurrency
 gem "falcon"
 
-# XML-RPC libraries for the API
-gem "xmlrpc"
-
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 
@@ -112,5 +109,3 @@ group :test do
   gem "mocha", "~> 2.1"
   gem "selenium-webdriver"
 end
-
-gem "requestjs-rails", "~> 0.0.12"

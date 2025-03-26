@@ -7,12 +7,12 @@
 Rails.application.config.to_prepare do
   ActionDispatch::Routing::RouteSet.class_eval do
     alias_method :original_recognize_path, :recognize_path
-    
+
     def recognize_path(path, environment = {})
-      # Try the original implementation
-      begin
+        # Try the original implementation
+
         original_recognize_path(path, environment)
-      rescue ActionController::RoutingError => e
+    rescue ActionController::RoutingError => e
         # For Rodauth URLs, return a dummy route to application#index
         if path.to_s.match?(%r{^/?(?:login|logout|create-account|password)})
           Rails.logger.debug "Rodauth route handled: #{path}"
@@ -20,7 +20,6 @@ Rails.application.config.to_prepare do
         end
         # Re-raise for all other URLs
         raise e
-      end
     end
   end
-end 
+end

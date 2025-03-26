@@ -1,0 +1,10 @@
+/* Display utility classes */
+.d-none {
+  display: none !important;
+}
+
+.dismissed {
+  display: none !important;
+}
+
+/* Other utility classes would go here */ 

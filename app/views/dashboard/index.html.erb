@@ -12,19 +12,22 @@
       </div>
 
       <% if rodauth.logged_in? && !UserPreference.dismissed?(current_account.id, "dashboard-tutorial") %>
-        <div
-          class="dashboard-section"
-          data-controller="dismissible"
-          data-dismissible-key-value="dashboard-tutorial"
-        >
-          <div class="section-dismiss">
-            <button class="dismiss-button" data-action="dismissible#dismiss">
-              <%= render partial: "icons/x" %>
-            </button>
+        <div data-controller="dismissible">
+          <div
+            id="dashboard-tutorial"
+            class="dashboard-section"
+            data-dismissible-key-value="dashboard-tutorial"
+            data-dismissible-target="container"
+          >
+            <div class="section-dismiss">
+              <button class="dismiss-button" data-action="dismissible#dismiss">
+                <%= render partial: "icons/x" %>
+              </button>
+            </div>
+            <h2 class="section-heading">Your Account</h2>
+            <p class="section-description">You are logged in to your account dashboard. Manage your account
+              settings from here.</p>
           </div>
-          <h2 class="section-heading">Your Account</h2>
-          <p class="section-description">You are logged in to your account dashboard. Manage your account
-            settings from here.</p>
         </div>
       <% end %>
 
