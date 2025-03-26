@@ -58,7 +58,6 @@ module XmlrpcSecurity
   # List of methods that don't require authentication
   PUBLIC_METHODS = %w[
     preferences.isDismissed
-    preferences.dismiss
     experiences.all
   ].freeze
 

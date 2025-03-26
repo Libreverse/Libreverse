@@ -104,10 +104,6 @@ module Api
       when "preferences.isDismissed"
         preference_key = params.first
         UserPreference.dismissed?(current_account&.id, preference_key)
-      when "preferences.dismiss"
-        preference_key = params.first
-        UserPreference.dismiss(current_account&.id, preference_key)
-        true
       when "experiences.all"
         # Get all experiences on the instance, sorted by most recent first
         experiences = Experience.all.order(created_at: :desc)

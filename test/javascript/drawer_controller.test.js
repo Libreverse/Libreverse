@@ -14,14 +14,17 @@ const DrawerControllerClass = class {
     }
 
     singleKeyHandler() {
-        this.toggleDrawer();
+        this.toggle();
     }
 
     toggle() {
-        this.toggleDrawer();
+        // Mock stimulate method for testing
+        this.stimulate("DrawerReflex#toggle");
     }
 
-    toggleDrawer() {
+    // Helper to mock StimulusReflex
+    stimulate(reflex) {
+        // In our test, we'll simulate what the reflex would do
         const drawerElement = this.element.querySelector(".drawer");
         drawerElement.classList.toggle("drawer-expanded");
         this.iconTarget.classList.toggle("rotated");
@@ -68,9 +71,24 @@ describe("DrawerController", () => {
         });
     });
 
-    test("toggleDrawer toggles the CSS classes correctly", () => {
-        // Call the method
-        controller.toggleDrawer();
+    test("toggle method uses StimulusReflex", () => {
+        // Create a spy for stimulate
+        const originalStimulate = controller.stimulate;
+        let stimulateCalled = false;
+        let reflexCalled = "";
+
+        controller.stimulate = function (reflex) {
+            stimulateCalled = true;
+            reflexCalled = reflex;
+            originalStimulate.call(this, reflex);
+        };
+
+        // Call toggle
+        controller.toggle();
+
+        // Verify stimulate was called with the correct reflex
+        expect(stimulateCalled).toBe(true);
+        expect(reflexCalled).toBe("DrawerReflex#toggle");
 
         // Check drawer expanded state
         const drawerElement = element.querySelector(".drawer");
@@ -82,7 +100,7 @@ describe("DrawerController", () => {
         );
 
         // Call it again to toggle back
-        controller.toggleDrawer();
+        controller.toggle();
 
         // Check drawer collapsed state
         expect(drawerElement.classList.contains("drawer-expanded")).toBe(false);
@@ -91,45 +109,28 @@ describe("DrawerController", () => {
         expect(document.body.classList.contains("drawer-is-expanded")).toBe(
             false,
         );
-    });
-
-    test("toggle method calls toggleDrawer", () => {
-        // Create a spy for toggleDrawer
-        const originalToggleDrawer = controller.toggleDrawer;
-        let toggleDrawerCalled = false;
-
-        controller.toggleDrawer = function () {
-            toggleDrawerCalled = true;
-            originalToggleDrawer.call(this);
-        };
-
-        // Call toggle
-        controller.toggle();
-
-        // Verify toggleDrawer was called
-        expect(toggleDrawerCalled).toBe(true);
 
         // Restore original method
-        controller.toggleDrawer = originalToggleDrawer;
+        controller.stimulate = originalStimulate;
     });
 
-    test("singleKeyHandler calls toggleDrawer", () => {
-        // Create a spy for toggleDrawer
-        const originalToggleDrawer = controller.toggleDrawer;
-        let toggleDrawerCalled = false;
+    test("singleKeyHandler calls toggle", () => {
+        // Create a spy for toggle
+        const originalToggle = controller.toggle;
+        let toggleCalled = false;
 
-        controller.toggleDrawer = function () {
-            toggleDrawerCalled = true;
-            originalToggleDrawer.call(this);
+        controller.toggle = function () {
+            toggleCalled = true;
+            originalToggle.call(this);
         };
 
         // Call the handler
         controller.singleKeyHandler();
 
-        // Verify toggleDrawer was called
-        expect(toggleDrawerCalled).toBe(true);
+        // Verify toggle was called
+        expect(toggleCalled).toBe(true);
 
         // Restore original method
-        controller.toggleDrawer = originalToggleDrawer;
+        controller.toggle = originalToggle;
     });
 });
