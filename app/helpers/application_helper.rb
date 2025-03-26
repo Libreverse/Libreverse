@@ -12,9 +12,9 @@ module ApplicationHelper
     SEO_CONFIG[key]
   end
 
-  def sidebar_icon(path)
+  def sidebar_icon(path, additional_class = "")
     image_tag(vite_asset_path(path),
-              class: "sidebar-icons",
+              class: "sidebar-icons #{additional_class}",
               loading: "eager",
               decoding: "async",
               fetchpriority: "high",
