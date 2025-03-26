@@ -17,20 +17,31 @@ export default class extends Controller {
             },
             filter: this.filter,
         });
-
-        // Apply initial state from server on connect
-        const isExpanded = document.body.classList.contains("drawer-is-expanded");
         
-        // Ensure DOM elements match the session state
+        // Default ID if not provided in the HTML
         const drawer = this.element.querySelector(".drawer");
+        if (!drawer.dataset.drawerId) {
+            drawer.dataset.drawerId = "main";
+        }
+        
+        const drawerId = drawer.dataset.drawerId;
+
+        // Apply initial state from localStorage
+        const isExpanded = localStorage.getItem(`drawer_expanded_${drawerId}`) === "true";
+        
+        // Ensure DOM elements match the state
         if (isExpanded) {
             drawer.classList.add("drawer-expanded");
             this.iconTarget.classList.add("rotated");
             this.contentTarget.classList.add("visible");
+            document.body.classList.add("drawer-is-expanded");
+            drawer.dataset.expanded = "true";
         } else {
             drawer.classList.remove("drawer-expanded");
             this.iconTarget.classList.remove("rotated");
             this.contentTarget.classList.remove("visible");
+            document.body.classList.remove("drawer-is-expanded");
+            drawer.dataset.expanded = "false";
         }
         
         // Initialize use-force-update value if not set
@@ -45,7 +56,32 @@ export default class extends Controller {
     }
 
     toggle() {
-        // Use the appropriate reflex based on configuration
+        // Manual toggle for immediate feedback to improve UX
+        const drawer = this.element.querySelector(".drawer");
+        const drawerId = drawer.dataset.drawerId || "main";
+        const currentState = drawer.dataset.expanded === "true";
+        const newState = !currentState;
+        
+        // Toggle classes immediately for responsive UI
+        if (newState) {
+            drawer.classList.add("drawer-expanded");
+            this.iconTarget.classList.add("rotated");
+            this.contentTarget.classList.add("visible");
+            document.body.classList.add("drawer-is-expanded");
+        } else {
+            drawer.classList.remove("drawer-expanded");
+            this.iconTarget.classList.remove("rotated");
+            this.contentTarget.classList.remove("visible");
+            document.body.classList.remove("drawer-is-expanded");
+        }
+        
+        // Update data attribute
+        drawer.dataset.expanded = newState ? "true" : "false";
+        
+        // Store state in localStorage for persistence
+        localStorage.setItem(`drawer_expanded_${drawerId}`, newState ? "true" : "false");
+        
+        // Then use reflex for any server-side effects if needed
         if (this.useForceUpdateValue) {
             this.stimulate("DrawerReflex#force_update");
         } else {
