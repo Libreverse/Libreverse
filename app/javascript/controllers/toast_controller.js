@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import StimulusReflex from "stimulus_reflex";
 
 export default class extends Controller {
     static targets = ["container"];
@@ -8,6 +9,8 @@ export default class extends Controller {
     };
 
     connect() {
+        StimulusReflex.register(this);
+        
         // Show toasts immediately when controller connects
         requestAnimationFrame(() => {
             this.showToasts();
@@ -40,7 +43,7 @@ export default class extends Controller {
         // Remove toast from DOM after animation completes
         setTimeout(() => {
             toast.remove();
-        }, 500); // Restored to original 500ms to match the CSS transition duration
+        }, 500); // Matches the CSS transition duration
     }
 
     close(event) {
@@ -48,78 +51,9 @@ export default class extends Controller {
         this.hideToast(toast);
     }
 
-    // Create a new toast programmatically
+    // Create a new toast using StimulusReflex instead of client-side DOM manipulation
     createToast(message, type = "info", title) {
-        // Default titles based on type
-        if (!title) {
-            switch (type) {
-                case "success": {
-                    title = "Success";
-                    break;
-                }
-                case "error": {
-                    title = "Error";
-                    break;
-                }
-                case "warning": {
-                    title = "Warning";
-                    break;
-                }
-                default: {
-                    title = "Information";
-                }
-            }
-        }
-
-        // Create toast elements
-        const toast = document.createElement("div");
-        toast.className = `toast toast-${type}`;
-        toast.setAttribute("role", "alert");
-        toast.setAttribute("aria-live", "assertive");
-        toast.setAttribute("aria-atomic", "true");
-
-        const header = document.createElement("div");
-        header.className = "toast-header";
-
-        const titleStrong = document.createElement("strong");
-        titleStrong.className = "me-auto";
-        titleStrong.textContent = title;
-
-        const closeButton = document.createElement("button");
-        closeButton.className = "toast-close";
-        closeButton.setAttribute("type", "button");
-        closeButton.setAttribute("aria-label", "Close");
-        closeButton.dataset.action = "toast#close";
-        closeButton.innerHTML = "&times;";
-
-        const body = document.createElement("div");
-        body.className = "toast-body";
-        body.textContent = message;
-
-        // Assemble toast
-        header.append(titleStrong);
-        header.append(closeButton);
-        toast.append(header);
-        toast.append(body);
-
-        // Add to container and show
-        this.containerTarget.append(toast);
-
-        // Trigger browser reflow to ensure animation works
-        void toast.offsetWidth;
-
-        // Show the toast
-        requestAnimationFrame(() => {
-            toast.classList.add("show");
-        });
-
-        // Auto hide if enabled
-        if (this.autoHideValue) {
-            setTimeout(() => {
-                this.hideToast(toast);
-            }, this.autoHideDelayValue);
-        }
-
-        return toast;
+        this.stimulate("Toast#show", message, type, title);
+        return true;
     }
 }
