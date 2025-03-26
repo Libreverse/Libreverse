@@ -7,9 +7,6 @@ import { application } from "./application";
 import ApplicationController from "./application_controller";
 application.register("application", ApplicationController);
 
-import CurrentController from "./current_controller";
-application.register("current", CurrentController);
-
 import DismissibleController from "./dismissible_controller";
 application.register("dismissible", DismissibleController);
 
@@ -21,6 +18,9 @@ application.register("form-auto-submit", FormAutoSubmitController);
 
 import LenisController from "./lenis_controller";
 application.register("lenis", LenisController);
+
+import LinkController from "./link_controller";
+application.register("link", LinkController);
 
 import NavigationShortcutsController from "./navigation_shortcuts_controller";
 application.register("navigation-shortcuts", NavigationShortcutsController);

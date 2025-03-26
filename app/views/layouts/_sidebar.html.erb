@@ -10,47 +10,49 @@
     aria-label="Navigation Sidebar"
   >
     <div class="sidebar-contents">
+      <% current_path = request.path %>
+      
       <a
         href="/"
-        data-controller="current"
-        data-action="click->current#handleClick"
-        data-current-target="link"
-        class="sidebar-link"
+        class="sidebar-link <%= 'sidebar-default-cursor' if current_path == '/' %>"
+        data-controller="link"
+        data-link-is-current-value="<%= current_path == '/' %>"
+        data-action="click->link#click"
         aria-label="Go to homepage"
       >
-        <%= sidebar_icon("~/images/libreverse-logo.svg") %>
+        <%= sidebar_icon("~/images/libreverse-logo.svg", current_path == '/' ? 'sidebar-current' : '') %>
       </a>
       <a
         href="/search"
-        data-controller="current"
-        data-action="click->current#handleClick"
-        data-current-target="link"
-        class="sidebar-link"
+        class="sidebar-link <%= 'sidebar-default-cursor' if current_path == '/search' %>"
+        data-controller="link"
+        data-link-is-current-value="<%= current_path == '/search' %>"
+        data-action="click->link#click"
         aria-label="Go to search page"
       >
-        <%= sidebar_icon("~/icons/search.svg") %>
+        <%= sidebar_icon("~/icons/search.svg", current_path == '/search' ? 'sidebar-current' : '') %>
       </a>
       <!-- Authentication links -->
       <% if rodauth.logged_in? %>
         <a
           href="<%= dashboard_path %>"
-          data-controller="current"
-          data-action="click->current#handleClick"
-          data-current-target="link"
-          class="sidebar-link"
+          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == dashboard_path %>"
+          data-controller="link"
+          data-link-is-current-value="<%= current_path == dashboard_path %>"
+          data-action="click->link#click"
           aria-label="Go to dashboard"
         >
-          <%= sidebar_icon("~/icons/dashboard.svg") %>
+          <%= sidebar_icon("~/icons/dashboard.svg", current_path == dashboard_path ? 'sidebar-current' : '') %>
         </a>
         <a
           href="<%= experiences_path %>"
-          data-controller="current"
-          data-action="click->current#handleClick"
-          data-current-target="link"
-          class="sidebar-link"
+          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == experiences_path %>"
+          data-controller="link"
+          data-link-is-current-value="<%= current_path == experiences_path %>"
+          data-action="click->link#click"
           aria-label="Manage experiences"
         >
-          <%= sidebar_icon("~/icons/experiences.svg") %>
+          <%= sidebar_icon("~/icons/experiences.svg", current_path == experiences_path ? 'sidebar-current' : '') %>
         </a>
         <%= button_to rodauth.logout_path,
             method: :post,
@@ -61,23 +63,23 @@
       <% else %>
         <a
           href="<%= rodauth.login_path %>"
-          data-controller="current"
-          data-action="click->current#handleClick"
-          data-current-target="link"
-          class="sidebar-link"
+          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == rodauth.login_path %>"
+          data-controller="link"
+          data-link-is-current-value="<%= current_path == rodauth.login_path %>"
+          data-action="click->link#click"
           aria-label="Sign in"
         >
-          <%= sidebar_icon("~/icons/login.svg") %>
+          <%= sidebar_icon("~/icons/login.svg", current_path == rodauth.login_path ? 'sidebar-current' : '') %>
         </a>
         <a
           href="<%= rodauth.create_account_path %>"
-          data-controller="current"
-          data-action="click->current#handleClick"
-          data-current-target="link"
-          class="sidebar-link"
+          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == rodauth.create_account_path %>"
+          data-controller="link"
+          data-link-is-current-value="<%= current_path == rodauth.create_account_path %>"
+          data-action="click->link#click"
           aria-label="Sign up"
         >
-          <%= sidebar_icon("~/icons/signup.svg") %>
+          <%= sidebar_icon("~/icons/signup.svg", current_path == rodauth.create_account_path ? 'sidebar-current' : '') %>
         </a>
       <% end %>
     </div>
