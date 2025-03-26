@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import StimulusReflex from "stimulus_reflex";
 
 // Connects to data-controller="form-auto-submit"
 export default class extends Controller {
@@ -9,96 +10,127 @@ export default class extends Controller {
     };
 
     initialize() {
-        this.debounce = this.debounce.bind(this);
         this.timer = null;
+        this.isSubmitting = false;
     }
 
     connect() {
-        // Monitor input changes
-        for (const input of this.inputTargets) {
-            input.addEventListener("input", this.handleInputChange.bind(this));
+        StimulusReflex.register(this);
+        
+        // Set up the form
+        if (this.hasFormTarget) {
+            // Add data attributes for StimulusReflex
+            this.formTarget.setAttribute("data-reflex-serialize-form", "true");
+            
+            // Ensure form has an ID
+            if (!this.formTarget.id) {
+                this.formTarget.id = `form-${Math.random().toString(36).substring(2, 10)}`;
+            }
+            
+            // Create error container if needed
+            this.ensureErrorContainer();
+            
+            // Listen for the validated event
+            this.formTarget.addEventListener("form:validated", this.onFormValidated);
         }
+        
+        // Monitor input changes
+        this.inputTargets.forEach(input => {
+            input.addEventListener("input", this.handleInputChange.bind(this));
+        });
     }
 
     disconnect() {
+        // Clean up event listeners
+        if (this.hasFormTarget) {
+            this.formTarget.removeEventListener("form:validated", this.onFormValidated);
+        }
+        
+        // Clear any pending timers
         if (this.timer) {
             clearTimeout(this.timer);
+            this.timer = null;
+        }
+    }
+    
+    // Create error container if needed
+    ensureErrorContainer() {
+        if (!document.getElementById("form-errors")) {
+            const errorDiv = document.createElement("div");
+            errorDiv.id = "form-errors";
+            errorDiv.className = "form-errors";
+            
+            if (this.hasFormTarget) {
+                this.formTarget.parentNode.insertBefore(errorDiv, this.formTarget);
+            }
         }
     }
 
-    handleInputChange(event) {
+    handleInputChange() {
         // Clear any existing timer
         if (this.timer) {
             clearTimeout(this.timer);
         }
 
-        // Set a new timer
+        // Set a new timer for debounced validation
         this.timer = setTimeout(
-            () => this.checkFormReadiness(),
-            this.debounceTimeValue,
+            () => this.validateForm(),
+            this.debounceTimeValue
         );
     }
-
-    checkFormReadiness() {
-        // Get all required inputs and check if they're filled
-        const requiredInputs = this.inputTargets.filter(
-            (input) => input.required,
-        );
-        const allRequiredFilled = requiredInputs.every(
-            (input) => input.value.trim() !== "",
-        );
-
-        // If we have password fields, check password requirements
-        const passwordInputs = this.inputTargets.filter(
-            (input) =>
-                (input.id === "password" || input.id === "new-password") &&
-                !input.id.includes("confirm"),
-        );
-
-        const passwordsValid = passwordInputs.every(
-            (input) =>
-                !input.required ||
-                input.value.length >= this.minPasswordLengthValue,
-        );
-
-        // Check password confirmation matches if present
-        let confirmationValid = true;
-        const passwordConfirmInputs = this.inputTargets.filter((input) =>
-            input.id.includes("confirm"),
-        );
-
-        if (passwordConfirmInputs.length > 0) {
-            for (const confirmInput of passwordConfirmInputs) {
-                const mainPasswordId = confirmInput.id.replace("-confirm", "");
-                const mainPassword = document.getElementById(mainPasswordId);
-                if (mainPassword && confirmInput.required) {
-                    confirmationValid =
-                        confirmationValid &&
-                        confirmInput.value === mainPassword.value;
-                }
+    
+    validateForm() {
+        if (this.isSubmitting) return;
+        
+        // Perform basic client-side validation
+        if (this.isFormValid()) {
+            try {
+                // Trigger the reflex - use the simplest form possible
+                this.stimulate("FormReflex#submit");
+            } catch (error) {
+                console.error("Error triggering form validation:", error);
             }
         }
-
-        // If all conditions are met, submit the form
-        if (allRequiredFilled && passwordsValid && confirmationValid) {
-            this.submitForm();
-        }
     }
-
-    submitForm() {
-        this.formTarget.requestSubmit();
+    
+    isFormValid() {
+        let valid = true;
+        
+        // Check required fields
+        this.inputTargets.forEach(input => {
+            if (input.required && input.value.trim() === "") {
+                valid = false;
+            }
+            
+            // Basic password validation 
+            if ((input.id === "password" || input.id === "new-password") && 
+                input.required && input.value.length < this.minPasswordLengthValue) {
+                valid = false;
+            }
+        });
+        
+        return valid;
     }
-
-    // Utility function to debounce input
-    debounce(function_, wait) {
-        let timeout;
-        return function executedFunction(...arguments_) {
-            const later = () => {
-                clearTimeout(timeout);
-                function_(...arguments_);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
+    
+    // Arrow function to maintain this context
+    onFormValidated = (event) => {
+        // Prevent double submission
+        if (this.isSubmitting) return;
+        this.isSubmitting = true;
+        
+        // Submit the form
+        setTimeout(() => {
+            try {
+                this.formTarget.requestSubmit();
+            } catch (error) {
+                // Fallback for older browsers
+                this.formTarget.submit();
+            }
+            
+            // Reset submission state after a delay
+            setTimeout(() => {
+                this.isSubmitting = false;
+            }, 1000);
+        }, 100);
     }
 }
