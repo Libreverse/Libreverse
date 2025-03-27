@@ -8,7 +8,7 @@ class AddPasswordChangedAtToAccounts < ActiveRecord::Migration[8.0]
         # Set password_changed_at to current time for existing accounts
         execute <<-SQL
           UPDATE accounts#{' '}
-          SET password_changed_at = NOW()
+          SET password_changed_at = datetime('now')
           WHERE password_changed_at IS NULL;
         SQL
       end

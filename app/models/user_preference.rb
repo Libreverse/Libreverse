@@ -62,6 +62,7 @@ class UserPreference < ApplicationRecord
   # Helper method to check if something is dismissed
   def self.dismissed?(account_id, key)
     return false if account_id.nil?
+
     get(account_id, key) == "dismissed"
   end
 end

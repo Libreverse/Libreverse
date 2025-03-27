@@ -1,10 +1,11 @@
 class CreateRodauth < ActiveRecord::Migration[8.0]
   def change
-    enable_extension "citext"
+    # SQLite doesn't support citext extension - using regular text instead
+    # Case insensitivity can be handled at the application level
 
     create_table :accounts do |t|
       t.integer :status, null: false, default: 1
-      t.citext :username, null: false
+      t.text :username, null: false
       t.index :username, unique: true
       t.string :password_hash
       t.timestamps

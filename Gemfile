@@ -3,10 +3,11 @@ source "https://rubygems.org"
 ruby "3.4.1"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.1"
+gem "rails"
 
-# Use postgresql as the database for Active Record
-gem "pg"
+# Use SQLite as the database for Active Record with enhanced adapter
+gem "activerecord-enhancedsqlite3-adapter"
+gem "sqlite3"
 
 # Use the falcon web server for better concurrency
 gem "falcon"
@@ -30,12 +31,12 @@ gem "ostruct"
 gem "stimulus_reflex"
 
 # Rodauth Rails integration for authentication
-gem "argon2", "~> 2.3"
+gem "argon2"
 gem "rodauth-guest"
-gem "rodauth-pwned", "~> 0.2.0"
-gem "rodauth-rails", "~> 2.0"
-gem "sequel-activerecord_connection", "~> 2.0"
-gem "tilt", "~> 2.4"
+gem "rodauth-pwned"
+gem "rodauth-rails"
+gem "sequel-activerecord_connection"
+gem "tilt"
 
 # Solid cache and queue for caching and background jobs
 gem "solid_cache"
@@ -69,7 +70,7 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 gem "bootsnap"
 
 # Secure XML parsing
-gem "nokogiri", "~> 1.15"
+gem "nokogiri"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -106,6 +107,6 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "mocha", "~> 2.1"
+  gem "mocha"
   gem "selenium-webdriver"
 end
