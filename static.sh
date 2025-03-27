@@ -56,7 +56,7 @@ bundle exec rails test
 echo "====================="
 echo "Brakeman results"
 echo "====================="
-brakeman --quiet --no-summary
+brakeman --quiet --no-summary --no-pager
 
 echo "====================="
 echo "All static analysis checks performed"

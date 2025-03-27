@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_22_095911) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "citext"
-  enable_extension "pg_catalog.plpgsql"
-
+ActiveRecord::Schema[8.0].define(version: 2025_03_28_010000) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -40,11 +36,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_22_095911) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "status", default: 1, null: false
-    t.citext "username", null: false
+    t.text "username", null: false
     t.string "password_hash"
-    t.datetime "password_changed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "password_changed_at"
     t.boolean "guest", default: false
     t.index ["username"], name: "index_accounts_on_username", unique: true
   end
@@ -67,9 +63,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_22_095911) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
+  create_table "solid_cable_messages", force: :cascade do |t|
+    t.binary "channel", limit: 1024, null: false
+    t.binary "payload", limit: 536870912, null: false
+    t.datetime "created_at", null: false
+    t.integer "channel_hash", limit: 8, null: false
+    t.index ["channel"], name: "index_solid_cable_messages_on_channel"
+    t.index ["channel_hash"], name: "index_solid_cable_messages_on_channel_hash"
+    t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
+  end
+
   create_table "solid_cache_entries", force: :cascade do |t|
-    t.binary "key", null: false
-    t.binary "value", null: false
+    t.binary "key", limit: 1024, null: false
+    t.binary "value", limit: 536870912, null: false
     t.datetime "created_at", null: false
     t.bigint "key_hash", null: false
     t.integer "byte_size", null: false
@@ -99,6 +105,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_22_095911) do
   end
 
   create_table "solid_queue_failed_executions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "solid_queue_jobs", force: :cascade do |t|
@@ -145,7 +153,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_22_095911) do
   end
 
   create_table "user_preferences", force: :cascade do |t|
-    t.bigint "account_id", null: false
+    t.integer "account_id", null: false
     t.string "key", null: false
     t.string "value"
     t.datetime "created_at", null: false
