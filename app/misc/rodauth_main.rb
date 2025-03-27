@@ -262,6 +262,14 @@ class RodauthMain < Rodauth::Rails::Auth
     # Skip account verification step since we're using usernames
     skip_status_checks? true
 
+    # Set timestamps before account creation to avoid constraint errors
+    before_create_account do
+      # Set timestamps to prevent database constraint violations
+      now = Time.current
+      account[:created_at] = now
+      account[:updated_at] = now
+    end
+
     # Auto-verify accounts immediately after creation
     after_create_account do
       # Directly mark the account as verified
