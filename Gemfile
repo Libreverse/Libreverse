@@ -41,6 +41,9 @@ gem "tilt", "~> 2.4"
 gem "solid_cache"
 gem "solid_queue"
 
+# Solid Cable for database-backed ActionCable without Redis
+gem "solid_cable"
+
 # Used to monkey patch ActionCable to use the permessage_deflate extension
 gem "permessage_deflate"
 
@@ -64,9 +67,6 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap"
-
-# Use the actioncable-enhanced-postgresql-adapter gem for better scaling of stimulus reflex without redis
-gem "actioncable-enhanced-postgresql-adapter"
 
 # Secure XML parsing
 gem "nokogiri", "~> 1.15"
