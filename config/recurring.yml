@@ -18,23 +18,23 @@
 #     schedule: at 5am every day
 
 development:
-  solid_cable_trim:
-    class: SolidCable::TrimJob
-    queue: default
-    schedule: every hour
+    solid_cable_trim:
+        class: SolidCable::TrimJob
+        queue: default
+        schedule: every hour
 
-  cleanup_abandoned_guests:
-    class: CleanupAbandonedGuestsJob
-    queue: default
-    schedule: every day at 3:00am
+    cleanup_abandoned_guests:
+        class: CleanupAbandonedGuestsJob
+        queue: default
+        schedule: every day at 3:00am
 
 production:
-  solid_cable_trim:
-    class: SolidCable::TrimJob
-    queue: default
-    schedule: every hour
+    solid_cable_trim:
+        class: SolidCable::TrimJob
+        queue: default
+        schedule: every hour
 
-  cleanup_abandoned_guests:
-    class: CleanupAbandonedGuestsJob
-    queue: default
-    schedule: every day at 3:00am
+    cleanup_abandoned_guests:
+        class: CleanupAbandonedGuestsJob
+        queue: default
+        schedule: every day at 3:00am
