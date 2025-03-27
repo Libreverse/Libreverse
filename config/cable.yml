@@ -7,7 +7,7 @@ development:
   connects_to:
     database:
       writing: primary
-  polling_interval: "1.seconds"
+  polling_interval: "0.01.seconds"
   message_retention: "1.day"
   autotrim: true
 
@@ -19,6 +19,6 @@ production:
   connects_to:
     database:
       writing: primary
-  polling_interval: "1.seconds"
+  polling_interval: "0.01.seconds"
   message_retention: "1.day"
   autotrim: true
