@@ -45,15 +45,15 @@
             <div class="login-form-group">
               <%= form.label "login", rodauth.login_label, class: "login-form-label" %>
               <%= form.text_field rodauth.login_param,
-                               value: params[rodauth.login_param],
-                               id: "login",
-                               autocomplete: "username",
-                               required: true,
-                               class:
-                                 "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}",
-                               data: {
-                                 form_auto_submit_target: "input",
-                               } %>
+                              value: params[rodauth.login_param],
+                              id: "login",
+                              autocomplete: "username",
+                              required: true,
+                              class:
+                                "login-form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}",
+                              data: {
+                                form_auto_submit_target: "input",
+                              } %>
               <%= if rodauth.field_error(rodauth.login_param)
                 content_tag(
                   :span,

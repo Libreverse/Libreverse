@@ -73,4 +73,4 @@ Rails.application.config.filter_parameters += %i[
   answer
   key
   secret_question
-] 
+]

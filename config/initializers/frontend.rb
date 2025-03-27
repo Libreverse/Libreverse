@@ -367,4 +367,4 @@ class EmojiReplacer
     end_index = [ match_end + window, text.length ].min
     text[start_index...end_index]
   end
-end 
+end

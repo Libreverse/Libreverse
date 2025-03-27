@@ -3,22 +3,22 @@
 # not a terminal started via bin/rails console! Add "console" to any action or any ERB template view
 # to make the web console appear.
 development:
-  adapter: solid_cable
-  connects_to:
-    database:
-      writing: primary
-  polling_interval: "0.01.seconds"
-  message_retention: "1.day"
-  autotrim: false
+    adapter: solid_cable
+    connects_to:
+        database:
+            writing: primary
+    polling_interval: "0.01.seconds"
+    message_retention: "1.day"
+    autotrim: false
 
 test:
-  adapter: test
+    adapter: test
 
 production:
-  adapter: solid_cable
-  connects_to:
-    database:
-      writing: primary
-  polling_interval: "0.01.seconds"
-  message_retention: "1.day"
-  autotrim: false
+    adapter: solid_cable
+    connects_to:
+        database:
+            writing: primary
+    polling_interval: "0.01.seconds"
+    message_retention: "1.day"
+    autotrim: false

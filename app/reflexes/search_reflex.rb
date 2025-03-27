@@ -2,7 +2,6 @@
 
 class SearchReflex < ApplicationReflex
   def perform
-    begin
       query = element[:value].to_s.strip
       query = query[0...50] # Cap the query length to 50 characters
       cache_key = "search/reflex/#{query}"
@@ -21,12 +20,11 @@ class SearchReflex < ApplicationReflex
         partial: "search/experiences_list",
         locals: { experiences: @experiences }
       )
-    rescue ActionController::RoutingError => e
+  rescue ActionController::RoutingError => e
       Rails.logger.warn "Search reflex routing error: #{e.message}"
       morph :nothing
-    rescue => e
+  rescue StandardError => e
       Rails.logger.error "Search reflex error: #{e.message}"
       morph :nothing
-    end
   end
 end

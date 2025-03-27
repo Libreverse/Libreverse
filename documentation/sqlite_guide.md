@@ -33,30 +33,30 @@ The SQLite configuration in `config/database.yml` is set up with optimized setti
 
 ```yaml
 default: &default
-  adapter: sqlite3
-  pool: 10
-  timeout: 5000
-  pragmas:
-    foreign_keys: 1
-    trusted_schema: 0
-    journal_mode: wal
-    synchronous: FULL
-    temp_store: MEMORY
-    cache_size: 5000
-    auto_vacuum: incremental
-    locking_mode: NORMAL
+    adapter: sqlite3
+    pool: 10
+    timeout: 5000
+    pragmas:
+        foreign_keys: 1
+        trusted_schema: 0
+        journal_mode: wal
+        synchronous: FULL
+        temp_store: MEMORY
+        cache_size: 5000
+        auto_vacuum: incremental
+        locking_mode: NORMAL
 
 development:
-  <<: *default
-  database: db/libreverse_development.sqlite3
+    <<: *default
+    database: db/libreverse_development.sqlite3
 
 test:
-  <<: *default
-  database: db/libreverse_test.sqlite3
+    <<: *default
+    database: db/libreverse_test.sqlite3
 
 production:
-  <<: *default
-  database: db/libreverse_production.sqlite3
+    <<: *default
+    database: db/libreverse_production.sqlite3
 ```
 
 ## SQLite Configuration and Performance
@@ -124,30 +124,33 @@ Document.where("json_extract(data, '$.status') IS NOT NULL")
 Here are some common SQL adjustments to make when using SQLite:
 
 1. **Date/Time functions**:
-   ```ruby
-   # Instead of NOW()
-   # Use: datetime('now')
-   ```
+
+    ```ruby
+    # Instead of NOW()
+    # Use: datetime('now')
+    ```
 
 2. **Regular expressions**:
-   ```ruby
-   # Instead of: WHERE name ~ '^A'
-   # Use: WHERE name REGEXP '^A'
-   ```
+
+    ```ruby
+    # Instead of: WHERE name ~ '^A'
+    # Use: WHERE name REGEXP '^A'
+    ```
 
 3. **Full-text search**:
    With the FTS5 extension enabled, you can use full-text search:
-   ```ruby
-   # Create a virtual FTS table in a migration
-   create_virtual_table :search_content, :fts5 do |t|
-     t.string :title
-     t.text :body
-     t.options tokenize: 'porter'
-   end
-   
-   # Search query
-   SearchContent.where("search_content MATCH ?", 'query')
-   ```
+
+    ```ruby
+    # Create a virtual FTS table in a migration
+    create_virtual_table :search_content, :fts5 do |t|
+      t.string :title
+      t.text :body
+      t.options tokenize: 'porter'
+    end
+
+    # Search query
+    SearchContent.where("search_content MATCH ?", 'query')
+    ```
 
 ## Backup and Restore
 
@@ -178,25 +181,25 @@ The configuration in `config/cable.yml` looks like this:
 
 ```yaml
 development:
-  adapter: solid_cable
-  connects_to:
-    database:
-      writing: primary
-  polling_interval: "1.seconds"
-  message_retention: "1.day"
-  autotrim: true
+    adapter: solid_cable
+    connects_to:
+        database:
+            writing: primary
+    polling_interval: "1.seconds"
+    message_retention: "1.day"
+    autotrim: true
 
 test:
-  adapter: test
+    adapter: test
 
 production:
-  adapter: solid_cable
-  connects_to:
-    database:
-      writing: primary
-  polling_interval: "1.seconds"
-  message_retention: "1.day"
-  autotrim: true
+    adapter: solid_cable
+    connects_to:
+        database:
+            writing: primary
+    polling_interval: "1.seconds"
+    message_retention: "1.day"
+    autotrim: true
 ```
 
 Note that SolidCable requires time durations to be specified as strings in the format "1.seconds" or "1.day". Using numeric values or other formats can cause parsing errors.
@@ -213,12 +216,12 @@ Rails.application.config.to_prepare do
     if SolidCable.instance_variable_get(:@polling_interval).is_a?(Float)
       SolidCable.instance_variable_set(:@polling_interval, "1.seconds")
     end
-    
+
     if SolidCable.instance_variable_get(:@message_retention).is_a?(Integer)
       SolidCable.instance_variable_set(:@message_retention, "1.day")
     end
-    
-    if !SolidCable.instance_variable_defined?(:@autotrim) || 
+
+    if !SolidCable.instance_variable_defined?(:@autotrim) ||
        SolidCable.instance_variable_get(:@autotrim).nil?
       SolidCable.instance_variable_set(:@autotrim, true)
     end
