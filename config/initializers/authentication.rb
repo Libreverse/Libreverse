@@ -1,9 +1,16 @@
-# frozen_string_literal: true
+# Authentication Configuration
+# This file contains all authentication-related configurations including:
+# - Rodauth base configuration
+# - Rodauth routing fixes for StimulusReflex
 
-# This initializer handles Rodauth routing conflicts with StimulusReflex
+# ===== Rodauth Base Configuration =====
+Rodauth::Rails.configure do |config|
+  config.app = "RodauthApp"
+end
+
+# ===== Rodauth Routing Fix for StimulusReflex =====
+# This patch handles Rodauth routing conflicts with StimulusReflex
 # using a simple patch to the route recognition mechanism
-
-# Patch ActionDispatch route recognition to handle Rodauth URLs
 Rails.application.config.to_prepare do
   ActionDispatch::Routing::RouteSet.class_eval do
     alias_method :original_recognize_path, :recognize_path
@@ -32,4 +39,4 @@ Rails.application.config.to_prepare do
         raise e
     end
   end
-end
+end 
