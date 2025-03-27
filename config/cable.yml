@@ -9,7 +9,7 @@ development:
       writing: primary
   polling_interval: "0.01.seconds"
   message_retention: "1.day"
-  autotrim: true
+  autotrim: false
 
 test:
   adapter: test
@@ -21,4 +21,4 @@ production:
       writing: primary
   polling_interval: "0.01.seconds"
   message_retention: "1.day"
-  autotrim: true
+  autotrim: false
