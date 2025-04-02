@@ -67,19 +67,42 @@ module Rack
 
     throttle("logins/username", limit: 5, period: 5.minutes) do |req|
       if req.path == "/login" && req.post?
-        # Extract username from the login form
-        req.params["username"].to_s.downcase.gsub(/\s+/, "")
+        # Extract username from the login form - better sanitized
+        username = req.params["username"].to_s.downcase.gsub(/[^a-z0-9_-]/i, '')
+        username.presence # Return nil if blank which won't be throttled
       end
     end
+    
+    # Throttle account creation
+    throttle("account_creation/ip", limit: 3, period: 1.hour) do |req|
+      req.ip if req.path == "/create-account" && req.post?
+    end
 
-    # Allow up to 15 password resets per day per IP
-    throttle("password_reset/ip", limit: 15, period: 1.day) do |req|
+    # Throttle password reset requests
+    throttle("password_reset/ip", limit: 5, period: 1.hour) do |req|
       req.ip if req.path == "/reset-password" && req.post?
     end
 
-    # Specific endpoint protection:
-    throttle("api/ip", limit: 120, period: 1.minute) do |req|
+    # Enhanced API protection:
+    throttle("api/ip", limit: 60, period: 1.minute) do |req|
       req.path.start_with?("/api/") ? req.ip : nil
+    end
+    
+    # Block repeated failed XML parsing attempts (potential DoS)
+    throttle("api/xml/failed", limit: 5, period: 5.minutes) do |req|
+      if req.path.start_with?("/api/") && req.env["xmlrpc.parse_failed"]
+        req.ip
+      end
+    end
+    
+    # Block suspicious scanning behavior
+    blocklist("suspicious_behavior") do |req|
+      Rack::Attack::Fail2Ban.filter("pentesters/#{req.ip}", maxretry: 3, findtime: 10.minutes, bantime: 1.hour) do
+        # Block if SQL injection or XSS is detected in parameters
+        req.params.values.any? do |value|
+          value.to_s =~ /['"].*((select|union).*from|drop table|concat\(|javascript:|<script>|on\w+=)/i
+        end
+      end
     end
 
     # Custom responder with more nuanced messaging and retry information

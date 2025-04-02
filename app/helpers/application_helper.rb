@@ -31,10 +31,30 @@ module ApplicationHelper
   end
 
   def svg_icon_data_url(icon_name)
+    # Validate icon name to prevent path traversal
+    unless icon_name.match?(/\A[a-zA-Z0-9_-]+\z/)
+      Rails.logger.warn "Invalid SVG icon name requested: #{icon_name}"
+      return ""
+    end
+    
     icon_path = Rails.root.join("app", "icons", "#{icon_name}.svg")
-    return "" unless File.exist?(icon_path)
+    
+    # Ensure the file exists and is within the icons directory
+    unless File.exist?(icon_path) && File.file?(icon_path) && 
+           icon_path.to_s.start_with?(Rails.root.join("app", "icons").to_s)
+      Rails.logger.warn "SVG icon not found or invalid path: #{icon_name}"
+      return ""
+    end
 
+    # Read and validate SVG content
     svg_content = File.read(icon_path)
+    
+    # Basic SVG validation
+    unless svg_content.include?("<svg") && svg_content.include?("</svg>")
+      Rails.logger.warn "Invalid SVG content detected for icon: #{icon_name}"
+      return ""
+    end
+    
     # Encode the SVG for a data URL
     "data:image/svg+xml;base64,#{Base64.strict_encode64(svg_content)}"
   end

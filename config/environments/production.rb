@@ -10,7 +10,7 @@ Rails.application.configure do
   # your application in memory, allowing both threaded web servers
   # and those relying on copy on write to perform better.
   # Rake tasks automatically ignore this option for performance.
-  config.eager_load = false
+  config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
@@ -84,8 +84,16 @@ Rails.application.configure do
                        key: "_libreverse_session",
                        secure: true,
                        httponly: true,
-                       expire_after: 12.hours,
-                       same_site: :lax
+                       expire_after: 2.hours,
+                       same_site: :strict
+
+  # Enforce SameSite=Strict for all cookies
+  config.action_dispatch.cookies_same_site_protection = :strict
+  
+  # Add secure defaults for new cookies
+  config.action_dispatch.cookies_serializer = :json
+  config.action_dispatch.use_authenticated_cookie_encryption = true
+  config.action_dispatch.signed_cookie_digest = "SHA256"
 
   # Action Cable Logging
   ActionCable.server.config.logger = Logger.new(nil)

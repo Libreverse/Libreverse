@@ -5,10 +5,13 @@ module Api
   class XmlrpcController < ApplicationController
     include XmlrpcSecurity
 
-    skip_before_action :verify_authenticity_token
+    # Keep CSRF protection enabled but handle it properly for XMLRPC
+    # Using a specific exception for XMLRPC requests instead of skipping verification
+    protect_from_forgery with: :exception, unless: -> { valid_xmlrpc_request? }
     before_action :apply_rate_limit
     before_action :current_account
     before_action :validate_method_access
+    before_action :validate_content_type
 
     # POST /api/xmlrpc
     def endpoint
@@ -31,7 +34,7 @@ module Api
         end
 
         # Apply a processing timeout
-        Timeout.timeout(5) do
+        Timeout.timeout(3) do
           # Validate the XML-RPC structure
           method_name = doc.at_xpath("//methodName")&.text
           unless method_name
@@ -46,6 +49,12 @@ module Api
             params << parse_value(value_element) if value_element
           end
 
+          # Validate permissions for the method
+          unless permitted_method?(method_name)
+            render xml: fault_response(403, "Method not allowed")
+            return
+          end
+
           # Process the method call
           result = process_method_call(method_name, params)
 
@@ -57,6 +66,8 @@ module Api
       rescue Timeout::Error
         render xml: fault_response(408, "Request timeout")
       rescue Nokogiri::XML::SyntaxError
+        # Mark this request as having failed XML parsing for rate limiting
+        request.env["xmlrpc.parse_failed"] = true
         render xml: fault_response(400, "Invalid XML-RPC request")
       rescue StandardError => e
         Rails.logger.error("XML-RPC error: #{e.message}")
@@ -65,6 +76,47 @@ module Api
     end
 
     private
+
+    def valid_xmlrpc_request?
+      request.path == "/api/xmlrpc" && request.post? && 
+      (request.content_type&.include?("text/xml") || 
+       request.content_type&.include?("application/xml"))
+    end
+    
+    def validate_content_type
+      valid_types = ["text/xml", "application/xml"]
+      
+      unless valid_types.any? { |type| request.content_type&.include?(type) }
+        render xml: fault_response(415, "Unsupported content type. Use text/xml or application/xml"), status: 415
+        return false
+      end
+      
+      true
+    end
+    
+    def permitted_method?(method_name)
+      return false unless method_name.match?(/\A[a-zA-Z0-9._]+\z/)
+      
+      # Methods requiring authentication
+      authenticated_methods = %w[
+        experiences.create
+        experiences.delete
+        experiences.update
+      ]
+      
+      # Public methods (no authentication required)
+      public_methods = %w[
+        experiences.all
+      ]
+      
+      if authenticated_methods.include?(method_name)
+        # Require authentication for these methods
+        return false unless current_account
+      end
+      
+      # Check if method is either public or authenticated
+      public_methods.include?(method_name) || authenticated_methods.include?(method_name)
+    end
 
     def parse_value(value_element)
       # Check for direct text content (string value)
@@ -101,9 +153,6 @@ module Api
 
     def process_method_call(method_name, params)
       case method_name
-      when "preferences.isDismissed"
-        preference_key = params.first
-        UserPreference.dismissed?(current_account&.id, preference_key)
       when "experiences.all"
         # Get all experiences on the instance, sorted by most recent first
         experiences = Experience.all.order(created_at: :desc)

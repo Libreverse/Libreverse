@@ -8,10 +8,11 @@ class SearchReflex < ApplicationReflex
 
       @experiences = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
         if query.present?
-          Experience.where("title LIKE ?", "%#{query}%")
+          Experience.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
                     .order(created_at: :desc)
+                    .limit(100)
         else
-          Experience.all.order(created_at: :desc)
+          Experience.order(created_at: :desc).limit(20)
         end
       end
 
@@ -26,5 +27,13 @@ class SearchReflex < ApplicationReflex
   rescue StandardError => e
       Rails.logger.error "Search reflex error: #{e.message}"
       morph :nothing
+  end
+
+  private
+
+  # Sanitize SQL LIKE wildcards to prevent injection
+  def sanitize_sql_like(str)
+    # Escape LIKE special characters: %, _, [, ], ^
+    str.gsub(/[%_\[\]\^\\]/) { |x| "\\#{x}" }
   end
 end

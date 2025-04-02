@@ -1,5 +1,7 @@
 class ExperiencesController < ApplicationController
+  before_action :require_authentication
   before_action :set_experience, only: %i[show edit update destroy]
+  before_action :check_ownership, only: %i[edit update destroy]
 
   # GET /experiences
   def index
@@ -19,6 +21,8 @@ class ExperiencesController < ApplicationController
   # POST /experiences
   def create
     @experience = Experience.new(experience_params)
+    @experience.account_id = current_account.id if current_account
+    
     if @experience.save
       redirect_to experiences_path, notice: "Experience created successfully."
     else
@@ -48,13 +52,38 @@ class ExperiencesController < ApplicationController
 
   private
 
+  # Require user to be logged in
+  def require_authentication
+    unless current_account
+      flash[:alert] = "You must be logged in to access this page."
+      redirect_to "/login"
+      return false
+    end
+    true
+  end
+  
+  # Check if current user owns the experience
+  def check_ownership
+    unless @experience.account_id == current_account.id
+      flash[:alert] = "You don't have permission to modify this experience."
+      redirect_to experiences_path
+      return false
+    end
+    true
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def set_experience
-    @experience = Experience.find(params[:id])
+    @experience = Experience.find_by(id: params[:id])
+    unless @experience
+      flash[:alert] = "Experience not found."
+      redirect_to experiences_path
+      return false
+    end
   end
 
   # Only allow a list of trusted parameters through.
   def experience_params
-    params.require(:experience).permit(:title, :description, :author)
+    params.require(:experience).permit(:title, :description, :author, :content)
   end
 end

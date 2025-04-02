@@ -220,37 +220,52 @@ class EmojiReplacer
   private
 
   def process_with_nokogiri(html)
-      doc = Nokogiri::HTML4.parse(html)
-
-      # Create a set of nodes to exclude
-      exclude_nodes = Set.new
-      @exclude_selectors.each do |selector|
-        doc.css(selector).each do |node|
-          exclude_nodes.add(node)
-        end
+      # Prevent processing of obviously invalid HTML
+      if html.blank? || html.bytesize > 5.megabytes
+        Rails.logger.warn "EmojiReplacer: Skipping processing of invalid HTML"
+        return html
       end
-
-      # Process text nodes that are not within excluded elements
-      doc.traverse do |node|
-        next unless node.text? && !within_excluded_node?(node, exclude_nodes)
-
-        # Replace emojis with HTML nodes instead of text
-        replaced_content = replace_emojis_with_nodes(node.content, doc)
-
-        # Only replace if we actually found and replaced an emoji
-        if replaced_content != node.content
-          # Create a fragment for the replaced content
-          fragment = Nokogiri::HTML4.fragment(replaced_content)
-          # Replace the original node with the fragment
-          node.replace(fragment)
+      
+      # Enforce processing timeout to prevent DoS
+      Timeout.timeout(1.0) do
+        doc = Nokogiri::HTML4.parse(html)
+  
+        # Create a set of nodes to exclude
+        exclude_nodes = Set.new
+        @exclude_selectors.each do |selector|
+          doc.css(selector).each do |node|
+            exclude_nodes.add(node)
+          end
         end
+  
+        # Process text nodes that are not within excluded elements
+        doc.traverse do |node|
+          next unless node.text? && !within_excluded_node?(node, exclude_nodes)
+  
+          # Replace emojis with HTML nodes instead of text
+          replaced_content = replace_emojis_with_nodes(node.content, doc)
+  
+          # Only replace if we actually found and replaced an emoji
+          if replaced_content != node.content
+            # Create a fragment for the replaced content
+            fragment = Nokogiri::HTML4.fragment(replaced_content)
+            # Replace the original node with the fragment
+            node.replace(fragment)
+          end
+        end
+  
+        doc.to_html
       end
-
-      doc.to_html
+  rescue Timeout::Error
+    Rails.logger.error "EmojiReplacer: Processing timeout"
+    html
+  rescue Nokogiri::XML::SyntaxError => e
+    Rails.logger.error "EmojiReplacer: HTML parsing error: #{e.message}"
+    html
   rescue StandardError => e
-      Rails.logger.error "EmojiReplacer: Error processing HTML with Nokogiri: #{e.message}"
-      # Fall back to simple regex replacement
-      replace_emojis(html)
+    Rails.logger.error "EmojiReplacer: Processing error: #{e.class} - #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    html
   end
 
   def replace_emojis_with_nodes(text, _doc)

@@ -17,9 +17,11 @@ Rails.application.configure do
     policy.script_src  :self, :https
     policy.style_src   :self, :https
 
-    # Allow inline scripts and styles with nonces
-    policy.script_src :self, :https, :unsafe_inline
-    policy.style_src :self, :https, :unsafe_inline
+    # Use nonces instead of unsafe-inline for scripts and styles
+    # Rails doesn't support :nonce as a source directly
+    policy.script_src :self, :https
+    policy.style_src :self, :https
+    # The nonce will be applied automatically via the nonce generator below
 
     # Specify URI for violation reports
     # policy.report_uri "/csp-violation-report-endpoint"
@@ -41,8 +43,9 @@ Rails.application.configure do
     policy.connect_src(*policy.connect_src, "ws://#{ViteRuby.config.host_with_port}") if Rails.env.development?
   end
 
-  # Generate session nonces for permitted scripts and styles
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+  # Generate secure random nonces for permitted scripts and styles
+  # Use a cryptographically strong random value instead of session ID
+  config.content_security_policy_nonce_generator = ->(_) { SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src style-src]
 
   # Enforce the policy, do not just report
