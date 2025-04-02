@@ -55,12 +55,8 @@ module XmlrpcSecurity
     render xml: fault_response(400, "Invalid method name")
   end
 
-  # List of methods that don't require authentication
-  PUBLIC_METHODS = %w[
-    preferences.isDismissed
-    experiences.all
-  ].freeze
-
+  # Remove duplicate method list since we've moved to a more robust authorization
+  # in the XmlrpcController
   def validate_method_access
     # Extract method name from the XML content
     xml_content = params[:xml]
@@ -78,22 +74,25 @@ module XmlrpcSecurity
       end
 
       # Check document depth for security
-      max_depth = 100
+      max_depth = 20 # Reduced from 100 to prevent DoS
       if xml_depth(doc) > max_depth
         render xml: fault_response(400, "XML document too deeply nested")
         return
       end
 
       method_name = doc.at_xpath("//methodName")&.text
-
       return unless method_name
 
       validate_method_name(method_name)
-      return if PUBLIC_METHODS.include?(method_name)
-
-      return if current_account
-
-      render xml: fault_response(401, "Authentication required")
+      
+      # Log method access for audit trails
+      Rails.logger.info(
+        event: "xmlrpc_method_access",
+        method: method_name,
+        ip: request.ip,
+        user_id: current_account&.id,
+        timestamp: Time.current.iso8601
+      )
     rescue Nokogiri::XML::SyntaxError
       render xml: fault_response(400, "Invalid XML-RPC request")
     end

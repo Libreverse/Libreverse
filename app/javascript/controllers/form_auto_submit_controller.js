@@ -104,24 +104,87 @@ export default class extends Controller {
 
     isFormValid() {
         let valid = true;
+        let errors = [];
 
         // Check required fields
         this.inputTargets.forEach((input) => {
             if (input.required && input.value.trim() === "") {
                 valid = false;
+                errors.push(`${input.name || 'Field'} is required`);
             }
 
             // Basic password validation
             if (
-                (input.id === "password" || input.id === "new-password") &&
+                (input.type === "password") &&
                 input.required &&
                 input.value.length < this.minPasswordLengthValue
             ) {
                 valid = false;
+                errors.push(`Password must be at least ${this.minPasswordLengthValue} characters`);
+            }
+            
+            // Validate email format if it's an email field
+            if (
+                input.type === "email" && 
+                input.value.trim() !== "" && 
+                !this.isValidEmail(input.value)
+            ) {
+                valid = false;
+                errors.push("Email format is invalid");
+            }
+            
+            // Prevent XSS in text inputs
+            if (input.type === "text" || input.type === "textarea") {
+                // Check for potential XSS content
+                if (/<script|javascript:|on\w+\s*=|data:/i.test(input.value)) {
+                    valid = false;
+                    errors.push("Invalid characters detected");
+                    // Clear the potentially malicious input
+                    input.value = "";
+                }
             }
         });
 
+        // Display errors if present
+        if (!valid && errors.length > 0) {
+            this.displayErrors(errors);
+        } else {
+            this.clearErrors();
+        }
+
         return valid;
+    }
+
+    // Helper for email validation
+    isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // Display form errors
+    displayErrors(errors) {
+        const errorContainer = document.getElementById("form-errors");
+        if (errorContainer) {
+            errorContainer.innerHTML = "";
+            const errorList = document.createElement("ul");
+            errorList.className = "error-list";
+            
+            errors.forEach(error => {
+                const errorItem = document.createElement("li");
+                errorItem.textContent = error;
+                errorList.appendChild(errorItem);
+            });
+            
+            errorContainer.appendChild(errorList);
+        }
+    }
+
+    // Clear form errors
+    clearErrors() {
+        const errorContainer = document.getElementById("form-errors");
+        if (errorContainer) {
+            errorContainer.innerHTML = "";
+        }
     }
 
     // Arrow function to maintain this context

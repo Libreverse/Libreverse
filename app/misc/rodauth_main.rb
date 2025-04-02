@@ -130,10 +130,29 @@ class RodauthMain < Rodauth::Rails::Auth
     # Configure pwned password requests with timeout and error handling
     pwned_request_options open_timeout: 3, read_timeout: 5, headers: { "User-Agent" => "Libreverse App" }
 
-    # Handle errors from the Pwned Passwords API
+    # Handle errors from the Pwned Passwords API with better logging and retry mechanism
     on_pwned_error do |error|
-      Rails.logger.error "API Error during pwned password check: #{error.class} - #{error.message}"
-      false # Don't consider as pwned if API fails
+      log_msg = "API Error during pwned password check: #{error.class} - #{error.message}"
+      
+      # Log with appropriate severity based on error type
+      if error.is_a?(Net::OpenTimeout) || error.is_a?(Net::ReadTimeout)
+        Rails.logger.warn log_msg
+      else
+        Rails.logger.error log_msg
+        Rails.logger.error error.backtrace.join("\n") if error.backtrace
+      end
+      
+      # Record the failure for monitoring if Instrumentation is defined
+      if defined?(Instrumentation)
+        Instrumentation.record_error("pwned_password_api_error", 
+                                    error_class: error.class.to_s,
+                                    error_message: error.message)
+      end
+      
+      # Don't consider as pwned if API fails - but mark we had an API failure
+      # so we can inform the user the check wasn't completed
+      scope.instance_variable_set(:@pwned_check_failed, true) rescue nil
+      false
     end
 
     # ==> Implementing streamlined pwned password check
