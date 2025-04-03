@@ -5,6 +5,11 @@
 # - Error tracking (Sentry)
 # - SEO configuration
 
+# ===== Rodauth Base Configuration =====
+Rodauth::Rails.configure do |config|
+  config.app = "RodauthApp"
+end
+
 # ===== Bootsnap Performance Optimization =====
 require "bootsnap"
 env = ENV["RAILS_ENV"] || "development"
