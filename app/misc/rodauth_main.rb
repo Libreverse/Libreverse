@@ -95,11 +95,8 @@ class RodauthMain < Rodauth::Rails::Auth
     # already_logged_in { redirect login_redirect }
 
     # ==> Emails
-    # Disable email sending completely
-    send_email do |_email|
-      # No-op implementation - don't send any emails
-      nil
-    end
+    # Email sending is disabled by not enabling email-dependent features
+    # and not configuring a mailer.
 
     # ==> Flash
     # Match flash keys with ones already used in the Rails app.
