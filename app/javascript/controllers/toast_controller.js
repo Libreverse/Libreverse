@@ -1,95 +1,57 @@
 import { Controller } from "@hotwired/stimulus";
-import StimulusReflex from "stimulus_reflex";
 
+// This controller is attached directly to individual toast elements.
+// It handles auto-hiding and manual dismissal for that specific toast.
 export default class extends Controller {
-    static targets = ["container"];
     static values = {
-        autoHide: { type: Boolean, default: true },
-        autoHideDelay: { type: Number, default: 5000 },
+        // Timeout in milliseconds before auto-hiding. 0 disables auto-hide.
         timeout: { type: Number, default: 5000 }
     };
 
     connect() {
-        StimulusReflex.register(this);
+        // Start hidden, then transition to visible
+        this.element.style.opacity = 0;
+        // Use requestAnimationFrame to ensure the transition applies after initial render
+        requestAnimationFrame(() => {
+            this.element.style.opacity = 1;
+            this.element.style.transform = 'translateY(0)'; // Assuming initial CSS might have it translated
+        });
 
-        // Listen for toast events from the server
-        document.addEventListener("toast:created", this.handleToastCreated.bind(this));
-        
-        // Make the create method available globally
-        globalThis.createToast = this.createToast.bind(this);
-
-        // Set up a timer to auto-dismiss the toast
+        // Set up a timer to auto-dismiss the toast if timeout is positive
         if (this.timeoutValue > 0) {
             this.dismissTimer = setTimeout(() => {
                 this.dismiss();
             }, this.timeoutValue);
         }
     }
-    
-    disconnect() {
-        document.removeEventListener("toast:created", this.handleToastCreated.bind(this));
 
-        // Clean up the timer when the controller is disconnected
+    disconnect() {
+        // Clean up the timer when the controller is disconnected (e.g., element removed)
         if (this.dismissTimer) {
             clearTimeout(this.dismissTimer);
         }
     }
 
-    handleToastCreated(event) {
-        // Show new toasts when they are created
-        requestAnimationFrame(() => {
-            this.showToasts();
-        });
-
-        // You could use this to do something when a toast is created
-        // Such as playing a sound or showing a notification badge
-        console.log("Toast created:", event.detail);
-    }
-
-    showToasts() {
-        const toasts =
-            this.containerTarget.querySelectorAll(".toast:not(.show)");
-
-        for (const toast of toasts) {
-            // Add show class immediately
-            toast.classList.add("show");
-
-            // Auto-hide toast after delay if autoHide is true
-            if (this.autoHideValue) {
-                setTimeout(() => {
-                    this.hideToast(toast);
-                }, this.autoHideDelayValue);
-            }
-        }
-    }
-
-    hideToast(toast) {
-        toast.classList.remove("show");
-
-        // Remove toast from DOM after animation completes
-        setTimeout(() => {
-            toast.remove();
-        }, 500); // Matches the CSS transition duration
-    }
-
-    close(event) {
-        const toast = event.target.closest(".toast");
-        this.hideToast(toast);
-    }
-
-    // Create a new toast using StimulusReflex instead of client-side DOM manipulation
-    createToast(message, type = "info", title) {
-        this.stimulate("ToastReflex#show", message, type, title);
-        return true;
-    }
-
+    // Action method called by the close button (data-action="toast#dismiss")
     dismiss() {
-        // Add animation classes
-        this.element.classList.add("opacity-0", "translate-y-2");
-        
-        // Wait for the animation to complete before removing the element
+        // Prevent multiple dismiss calls if already dismissing
+        if (this.isDismissing) return;
+        this.isDismissing = true;
+
+        // Clear the auto-hide timer if it exists
+        if (this.dismissTimer) {
+            clearTimeout(this.dismissTimer);
+        }
+
+        // Add animation classes/styles for fade-out/slide-up
+        this.element.style.opacity = 0;
+        this.element.style.transform = 'translateY(-10px)'; // Example: slide up slightly
+        // Use transitionend event for more robust removal, but setTimeout is simpler here
+
+        // Wait for the animation (defined in CSS transition) to complete before removing the element
+        // Ensure this timeout matches your CSS transition duration for opacity/transform
         setTimeout(() => {
             this.element.remove();
-        }, 300);
+        }, 300); // Assuming a 300ms transition in CSS
     }
 }
