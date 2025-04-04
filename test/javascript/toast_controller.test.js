@@ -124,7 +124,7 @@ describe("ToastController", () => {
         // Replace setTimeout with a mock
         const originalSetTimeout = globalThis.setTimeout;
         let timeoutCallback;
-        globalThis.setTimeout = jest.fn((function_, _) => {
+        globalThis.setTimeout = jest.fn((function_) => {
             timeoutCallback = function_;
             return 123; // Fake timer ID
         });

@@ -30,7 +30,7 @@ module ApplicationCable
       # Manually loading might be complex. Leverage Rodauth's session loading if possible.
       # Rodauth usually loads based on the session cookie during its middleware run.
       # Let's check if it has already loaded based on the cookie passed with the WS request.
-      
+
       # Check if rodauth recognizes the session as logged in
       # This relies on warden/rodauth middleware having processed the WS upgrade request
       if rodauth.logged_in?

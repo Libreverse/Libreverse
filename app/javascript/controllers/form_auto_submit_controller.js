@@ -95,17 +95,17 @@ export default class extends Controller {
     }
 
     // Arrow function to maintain this context
-    onFormValidated = (event) => {
+    onFormValidated = () => {
         // Prevent double submission
         if (this.isSubmitting) return;
         this.isSubmitting = true;
 
         // Submit the form
         setTimeout(() => {
-            try {
+            // Submit the form, with fallback for older browsers
+            if (typeof this.formTarget.requestSubmit === "function") {
                 this.formTarget.requestSubmit();
-            } catch (error) {
-                // Fallback for older browsers
+            } else {
                 this.formTarget.submit();
             }
 

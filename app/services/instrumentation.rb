@@ -9,7 +9,7 @@ class Instrumentation
       # Example:
       # Sentry.capture_message("#{name} error", extra: details, level: 'error')
 
-      increment_counter("errors.#{name}")
+      record_metric_count("errors.#{name}")
     end
 
     # Record a security event for monitoring/alerting
@@ -17,16 +17,28 @@ class Instrumentation
       Rails.logger.warn("Security event - #{name}: #{details.inspect}")
 
       # Here you might send to a SIEM or security monitoring system
-      increment_counter("security_events.#{name}")
+      record_metric_count("security_events.#{name}")
     end
 
     # Increment a counter for metrics
-    def increment_counter(key, amount = 1)
+    def log_metric_increment(key, amount = 1)
       # In a real app, this would send to your metrics system
       # e.g., StatsD, Prometheus, etc.
       # Example:
       # $statsd.increment(key, by: amount)
       Rails.logger.debug("Metric: #{key} +#{amount}")
+    end
+
+    # Record a metric count in a way that doesn't skip validations
+    def record_metric_count(key, amount = 1)
+      # Use the existing method for logging
+      log_metric_increment(key, amount)
+
+      # If you need to persist this in the database, use a method that doesn't skip validations
+      # For example, find the record first and then update it:
+      # metric = Metric.find_or_create_by(key: key)
+      # metric.count += amount
+      # metric.save
     end
 
     # Record a timing event

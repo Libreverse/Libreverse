@@ -4,12 +4,12 @@ require("../dom_setup");
 // Mock browser DOM elements
 globalThis.Element = globalThis.HTMLElement;
 globalThis.XMLSerializer = class {
-    serializeToString(document_) {
+    serializeToString() {
         return "<methodCall><methodName>test.method</methodName><params><param><value>test-param</value></param></params></methodCall>";
     }
 };
 globalThis.DOMParser = class {
-    parseFromString(text, type) {
+    parseFromString() {
         return {
             querySelector: (selector) => {
                 if (selector === "methodResponse fault") {
@@ -19,10 +19,10 @@ globalThis.DOMParser = class {
                     textContent: "success",
                 };
             },
-            getElementsByTagName: (name) => {
+            getElementsByTagName: () => {
                 return [
                     {
-                        getElementsByTagName: (subName) => {
+                        getElementsByTagName: () => {
                             return [
                                 {
                                     getElementsByTagName: () => {
@@ -87,10 +87,10 @@ globalThis.XMLHttpRequest = class {
                         textContent: "success",
                     };
                 },
-                getElementsByTagName: (name) => {
+                getElementsByTagName: () => {
                     return [
                         {
-                            getElementsByTagName: (subName) => {
+                            getElementsByTagName: () => {
                                 return [
                                     {
                                         getElementsByTagName: () => {

@@ -33,9 +33,13 @@
       </div>
     </noscript>
     <%= render "layouts/flash_messages" %>
-
     <!-- Toast container for dynamic notifications -->
-    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col items-end space-y-4 max-w-md"></div>
+    <div
+      id="toast-container"
+      class="
+        fixed top-4 right-4 z-50 flex flex-col items-end space-y-4 max-w-md
+      "
+    ></div>
 
     <main class="content-wrapper">
       <%= yield %>

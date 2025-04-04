@@ -28,6 +28,9 @@ module Api
       author: "Test Author 2",
       content: "Content for test 2"
     )
+
+    # Set the XML content type for all requests
+    @request.env["CONTENT_TYPE"] = "text/xml"
   end
 
   teardown do

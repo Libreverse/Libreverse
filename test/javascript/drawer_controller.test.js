@@ -24,6 +24,9 @@ const DrawerControllerClass = class {
 
     // Helper to mock StimulusReflex
     stimulate(reflex) {
+        // Store the reflex name for assertions
+        this.lastReflex = reflex;
+
         // In our test, we'll simulate what the reflex would do
         const drawerElement = this.element.querySelector(".drawer");
         drawerElement.classList.toggle("drawer-expanded");
@@ -40,7 +43,6 @@ describe("DrawerController", () => {
     let element;
     let iconElement;
     let contentElement;
-    let toggleButton;
 
     beforeEach(() => {
         // Set up the DOM
@@ -59,9 +61,6 @@ describe("DrawerController", () => {
         iconElement = document.querySelector('[data-drawer-target="icon"]');
         contentElement = document.querySelector(
             '[data-drawer-target="content"]',
-        );
-        toggleButton = document.querySelector(
-            '[data-action="click->drawer#toggle"]',
         );
 
         // Create controller instance

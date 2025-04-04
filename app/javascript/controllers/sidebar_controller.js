@@ -8,24 +8,24 @@ export default class extends Controller {
         StimulusReflex.register(this);
         // No client-side state needed
     }
-    
+
     disconnect() {
         // No listeners to remove
     }
 
-    hover(event) {
+    hover() {
         // Tell the server the desired state is true
         this.stimulate("SidebarReflex#set_hover_state", {
             sidebarId: this.element.dataset.sidebarId || "main",
-            desiredState: true 
+            desiredState: true,
         });
     }
 
-    unhover(event) {
+    unhover() {
         // Tell the server the desired state is false
         this.stimulate("SidebarReflex#set_hover_state", {
             sidebarId: this.element.dataset.sidebarId || "main",
-            desiredState: false
+            desiredState: false,
         });
     }
 }
