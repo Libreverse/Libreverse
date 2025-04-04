@@ -10,7 +10,7 @@ class ToastReflex < ApplicationReflex
 
     # Render the toast partial
     html = render_to_string(
-      partial: "shared/toast",
+      partial: "layouts/toast",
       locals: {
         message: message,
         type: type,

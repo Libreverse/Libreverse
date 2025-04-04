@@ -6,6 +6,7 @@ export default class extends Controller {
     static values = {
         autoHide: { type: Boolean, default: true },
         autoHideDelay: { type: Number, default: 5000 },
+        timeout: { type: Number, default: 5000 }
     };
 
     connect() {
@@ -16,10 +17,22 @@ export default class extends Controller {
         
         // Make the create method available globally
         globalThis.createToast = this.createToast.bind(this);
+
+        // Set up a timer to auto-dismiss the toast
+        if (this.timeoutValue > 0) {
+            this.dismissTimer = setTimeout(() => {
+                this.dismiss();
+            }, this.timeoutValue);
+        }
     }
     
     disconnect() {
         document.removeEventListener("toast:created", this.handleToastCreated.bind(this));
+
+        // Clean up the timer when the controller is disconnected
+        if (this.dismissTimer) {
+            clearTimeout(this.dismissTimer);
+        }
     }
 
     handleToastCreated(event) {
@@ -27,6 +40,10 @@ export default class extends Controller {
         requestAnimationFrame(() => {
             this.showToasts();
         });
+
+        // You could use this to do something when a toast is created
+        // Such as playing a sound or showing a notification badge
+        console.log("Toast created:", event.detail);
     }
 
     showToasts() {
@@ -64,5 +81,15 @@ export default class extends Controller {
     createToast(message, type = "info", title) {
         this.stimulate("ToastReflex#show", message, type, title);
         return true;
+    }
+
+    dismiss() {
+        // Add animation classes
+        this.element.classList.add("opacity-0", "translate-y-2");
+        
+        // Wait for the animation to complete before removing the element
+        setTimeout(() => {
+            this.element.remove();
+        }, 300);
     }
 }
