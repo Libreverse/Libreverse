@@ -21,10 +21,10 @@ class FormReflex < ApplicationReflex
       ).broadcast
       
       # Use a selector morph to clear error container
-      morph "#form-errors", render(partial: "shared/form_errors", locals: { errors: [] })
+      morph "#form-errors", render(partial: "layouts/form_errors", locals: { errors: [] })
     else
       # Use a selector morph to show error messages
-      morph "#form-errors", render(partial: "shared/form_errors", locals: { errors: @validation_errors })
+      morph "#form-errors", render(partial: "layouts/form_errors", locals: { errors: @validation_errors })
     end
   end
 
