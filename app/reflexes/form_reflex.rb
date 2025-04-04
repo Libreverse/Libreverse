@@ -11,34 +11,60 @@ class FormReflex < ApplicationReflex
     form_id = element[:id]
     form_data = element.form_data || {}
 
-    # Ensure we have an error container
-    ensure_error_container(form_id)
-
-    # Handle password validation if needed
-    validate_password_form(form_data) if form_id.to_s =~ /password/i
-
-    # After validation, signal the client that form can be submitted
-    cable_ready.dispatch_event(
-      name: "form:validated",
-      selector: "##{form_id}"
-    ).broadcast
-
-    # For form submission specifically, use morph :nothing
-    # This allows other morphs to work normally on Rodauth pages
-    # while preventing rendering conflicts just for form submission
-    morph :nothing
+    # Validate the form - will set error messages if invalid
+    @validation_errors = []
+    if validate_form(form_data)
+      # After validation, signal the client that form can be submitted
+      cable_ready.dispatch_event(
+        name: "form:validated",
+        selector: "##{form_id}"
+      ).broadcast
+      
+      # Use a selector morph to clear error container
+      morph "#form-errors", render(partial: "shared/form_errors", locals: { errors: [] })
+    else
+      # Use a selector morph to show error messages
+      morph "#form-errors", render(partial: "shared/form_errors", locals: { errors: @validation_errors })
+    end
   end
 
   private
-
-  def ensure_error_container(form_id)
-    return if form_id.blank?
-
-    # Clear any existing errors
-    cable_ready.inner_html(
-      selector: "#form-errors",
-      html: ""
-    ).broadcast
+  
+  def validate_form(form_data)
+    valid = true
+    
+    # Basic validation for required fields
+    form_data.each do |field_name, value|
+      # Skip hidden fields and submit buttons
+      next if field_name.to_s =~ /^(_method|authenticity_token|commit)$/
+      
+      # Check if the field is required (would need actual field metadata here)
+      # For now, we assume if a field has "required" in the name, it's required
+      if field_name.to_s =~ /required/ && value.to_s.strip.empty?
+        valid = false
+        @validation_errors << "#{field_name.to_s.humanize} is required"
+      end
+      
+      # Validate email fields
+      if field_name.to_s =~ /email/ && !value.to_s.strip.empty?
+        unless value.to_s =~ /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+          valid = false
+          @validation_errors << "Email format is invalid"
+        end
+      end
+      
+      # Validate password fields
+      if validate_password_field?(field_name)
+        # Delegate to the password validator
+        valid = validate_password_form(form_data) && valid
+      end
+    end
+    
+    valid
+  end
+  
+  def validate_password_field?(field_name)
+    field_name.to_s =~ /password/i
   end
 
   def validate_password_form(form_data)
@@ -49,26 +75,17 @@ class FormReflex < ApplicationReflex
 
     # Validate password
     if password.blank?
-      cable_ready.inner_html(
-        selector: "#form-errors",
-        html: "<div class='error'>Password is required</div>"
-      ).broadcast
+      @validation_errors << "Password is required"
       return false
     end
 
     if password.to_s.length < min_length
-      cable_ready.inner_html(
-        selector: "#form-errors",
-        html: "<div class='error'>Password must be at least #{min_length} characters</div>"
-      ).broadcast
+      @validation_errors << "Password must be at least #{min_length} characters"
       return false
     end
 
     if password_confirmation.present? && password.to_s != password_confirmation.to_s
-      cable_ready.inner_html(
-        selector: "#form-errors",
-        html: "<div class='error'>Password confirmation does not match</div>"
-      ).broadcast
+      @validation_errors << "Password confirmation does not match"
       return false
     end
 

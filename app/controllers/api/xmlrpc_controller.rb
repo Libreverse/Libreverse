@@ -78,42 +78,42 @@ module Api
     private
 
     def valid_xmlrpc_request?
-      request.path == "/api/xmlrpc" && request.post? && 
-      (request.content_type&.include?("text/xml") || 
-       request.content_type&.include?("application/xml"))
+      request.path == "/api/xmlrpc" && request.post? &&
+        (request.content_type&.include?("text/xml") ||
+         request.content_type&.include?("application/xml"))
     end
-    
+
     def validate_content_type
-      valid_types = ["text/xml", "application/xml"]
-      
+      valid_types = [ "text/xml", "application/xml" ]
+
       unless valid_types.any? { |type| request.content_type&.include?(type) }
-        render xml: fault_response(415, "Unsupported content type. Use text/xml or application/xml"), status: 415
+        render xml: fault_response(415, "Unsupported content type. Use text/xml or application/xml"), status: :unsupported_media_type
         return false
       end
-      
+
       true
     end
-    
+
     def permitted_method?(method_name)
       return false unless method_name.match?(/\A[a-zA-Z0-9._]+\z/)
-      
+
       # Methods requiring authentication
       authenticated_methods = %w[
         experiences.create
         experiences.delete
         experiences.update
       ]
-      
+
       # Public methods (no authentication required)
       public_methods = %w[
         experiences.all
       ]
-      
-      if authenticated_methods.include?(method_name)
+
+      if authenticated_methods.include?(method_name) && !current_account
         # Require authentication for these methods
-        return false unless current_account
+        return false
       end
-      
+
       # Check if method is either public or authenticated
       public_methods.include?(method_name) || authenticated_methods.include?(method_name)
     end
@@ -151,7 +151,7 @@ module Api
       end
     end
 
-    def process_method_call(method_name, params)
+    def process_method_call(method_name, _params)
       case method_name
       when "experiences.all"
         # Get all experiences on the instance, sorted by most recent first

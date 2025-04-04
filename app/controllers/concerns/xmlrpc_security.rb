@@ -84,7 +84,7 @@ module XmlrpcSecurity
       return unless method_name
 
       validate_method_name(method_name)
-      
+
       # Log method access for audit trails
       Rails.logger.info(
         event: "xmlrpc_method_access",

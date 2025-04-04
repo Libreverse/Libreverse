@@ -11,13 +11,22 @@ export default class extends Controller {
     connect() {
         StimulusReflex.register(this);
 
-        // Show toasts immediately when controller connects
+        // Listen for toast events from the server
+        document.addEventListener("toast:created", this.handleToastCreated.bind(this));
+        
+        // Make the create method available globally
+        globalThis.createToast = this.createToast.bind(this);
+    }
+    
+    disconnect() {
+        document.removeEventListener("toast:created", this.handleToastCreated.bind(this));
+    }
+
+    handleToastCreated(event) {
+        // Show new toasts when they are created
         requestAnimationFrame(() => {
             this.showToasts();
         });
-
-        // Make the create method available globally
-        globalThis.createToast = this.createToast.bind(this);
     }
 
     showToasts() {
@@ -53,7 +62,7 @@ export default class extends Controller {
 
     // Create a new toast using StimulusReflex instead of client-side DOM manipulation
     createToast(message, type = "info", title) {
-        this.stimulate("Toast#show", message, type, title);
+        this.stimulate("ToastReflex#show", message, type, title);
         return true;
     }
 }

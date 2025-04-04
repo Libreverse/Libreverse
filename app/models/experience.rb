@@ -1,19 +1,19 @@
 class Experience < ApplicationRecord
   belongs_to :account, optional: true
-  
+
   validates :title, presence: true, length: { maximum: 255 }
   validates :description, length: { maximum: 2000 }
   validates :author, length: { maximum: 255 }
-  validates :content, length: { maximum: 50000 }
-  
+  validates :content, length: { maximum: 50_000 }
+
   # Ensure content is sanitized before saving
   before_save :sanitize_content
-  
+
   private
-  
+
   def sanitize_content
     return unless content_changed?
-    
+
     # Rails' sanitize helper
     self.content = ActionController::Base.helpers.sanitize(
       content,

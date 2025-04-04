@@ -36,6 +36,7 @@ Rails.application.config.middleware.use HtmlCompressor::Rack,
 # ===== Emoji Processing =====
 # We insert the emoji middleware here so that it precedes
 # the html minifier but still avoids unnecessary work
+
 Rails.application.config.middleware.use EmojiReplacer, exclude_selectors: [
   "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
   ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
@@ -68,11 +69,11 @@ module Rack
     throttle("logins/username", limit: 5, period: 5.minutes) do |req|
       if req.path == "/login" && req.post?
         # Extract username from the login form - better sanitized
-        username = req.params["username"].to_s.downcase.gsub(/[^a-z0-9_-]/i, '')
+        username = req.params["username"].to_s.downcase.gsub(/[^a-z0-9_-]/i, "")
         username.presence # Return nil if blank which won't be throttled
       end
     end
-    
+
     # Throttle account creation
     throttle("account_creation/ip", limit: 3, period: 1.hour) do |req|
       req.ip if req.path == "/create-account" && req.post?
@@ -87,14 +88,12 @@ module Rack
     throttle("api/ip", limit: 60, period: 1.minute) do |req|
       req.path.start_with?("/api/") ? req.ip : nil
     end
-    
+
     # Block repeated failed XML parsing attempts (potential DoS)
     throttle("api/xml/failed", limit: 5, period: 5.minutes) do |req|
-      if req.path.start_with?("/api/") && req.env["xmlrpc.parse_failed"]
-        req.ip
-      end
+      req.ip if req.path.start_with?("/api/") && req.env["xmlrpc.parse_failed"]
     end
-    
+
     # Block suspicious scanning behavior
     blocklist("suspicious_behavior") do |req|
       Rack::Attack::Fail2Ban.filter("pentesters/#{req.ip}", maxretry: 3, findtime: 10.minutes, bantime: 1.hour) do
