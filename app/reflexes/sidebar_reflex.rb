@@ -3,6 +3,11 @@
 class SidebarReflex < ApplicationReflex
   # Sets the sidebar hover state based on the desired state passed from the client
   def set_hover_state(args = {})
+    if request.is_a?(ActionDispatch::Request::PASS_NOT_FOUND)
+      Rails.logger.warn "Invalid request object in reflex: #{request.class}"
+      return
+    end
+
     sidebar_id = args["sidebar_id"] || "main" 
     desired_state = !!args["desired_state"]
     session_key = "sidebar_hovered_#{sidebar_id}".to_sym
