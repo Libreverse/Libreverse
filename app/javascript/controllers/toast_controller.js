@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
     static values = {
         // Timeout in milliseconds before auto-hiding. 0 disables auto-hide.
-        timeout: { type: Number, default: 5000 }
+        timeout: { type: Number, default: 5000 },
     };
 
     connect() {
@@ -14,7 +14,7 @@ export default class extends Controller {
         // Use requestAnimationFrame to ensure the transition applies after initial render
         requestAnimationFrame(() => {
             this.element.style.opacity = 1;
-            this.element.style.transform = 'translateY(0)'; // Assuming initial CSS might have it translated
+            this.element.style.transform = "translateY(0)"; // Assuming initial CSS might have it translated
         });
 
         // Set up a timer to auto-dismiss the toast if timeout is positive
@@ -45,7 +45,7 @@ export default class extends Controller {
 
         // Add animation classes/styles for fade-out/slide-up
         this.element.style.opacity = 0;
-        this.element.style.transform = 'translateY(-10px)'; // Example: slide up slightly
+        this.element.style.transform = "translateY(-10px)"; // Example: slide up slightly
         // Use transitionend event for more robust removal, but setTimeout is simpler here
 
         // Wait for the animation (defined in CSS transition) to complete before removing the element

@@ -29,7 +29,7 @@ class ToastReflex < ApplicationReflex
         detail: { type: type, title: title }
       )
       .broadcast
-      
+
     # Use nothing morph to avoid conflicting with the CableReady operation
     morph :nothing
   end

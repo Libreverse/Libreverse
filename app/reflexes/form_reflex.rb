@@ -19,7 +19,7 @@ class FormReflex < ApplicationReflex
         name: "form:validated",
         selector: "##{form_id}"
       ).broadcast
-      
+
       # Use a selector morph to clear error container
       morph "#form-errors", render(partial: "layouts/form_errors", locals: { errors: [] })
     else
@@ -29,40 +29,38 @@ class FormReflex < ApplicationReflex
   end
 
   private
-  
+
   def validate_form(form_data)
     valid = true
-    
+
     # Basic validation for required fields
     form_data.each do |field_name, value|
       # Skip hidden fields and submit buttons
       next if field_name.to_s =~ /^(_method|authenticity_token|commit)$/
-      
+
       # Check if the field is required (would need actual field metadata here)
       # For now, we assume if a field has "required" in the name, it's required
       if field_name.to_s =~ /required/ && value.to_s.strip.empty?
         valid = false
         @validation_errors << "#{field_name.to_s.humanize} is required"
       end
-      
+
       # Validate email fields
-      if field_name.to_s =~ /email/ && !value.to_s.strip.empty?
-        unless value.to_s =~ /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+      if field_name.to_s =~ /email/ && !value.to_s.strip.empty? && value.to_s !~ /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
           valid = false
           @validation_errors << "Email format is invalid"
-        end
       end
-      
+
       # Validate password fields
       if validate_password_field?(field_name)
         # Delegate to the password validator
         valid = validate_password_form(form_data) && valid
       end
     end
-    
+
     valid
   end
-  
+
   def validate_password_field?(field_name)
     field_name.to_s =~ /password/i
   end

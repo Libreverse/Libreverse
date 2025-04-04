@@ -34,7 +34,7 @@ export default class extends Controller {
     }
 
     // Debounced input handler
-    handleInput(event) {
+    handleInput() {
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }

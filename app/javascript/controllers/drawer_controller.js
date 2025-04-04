@@ -30,16 +30,18 @@ export default class extends Controller {
 
     toggle() {
         // Find the .drawer element *within* the controller's element
-        const drawerElement = this.element.querySelector('.drawer'); 
+        const drawerElement = this.element.querySelector(".drawer");
         if (!drawerElement) {
-            console.error("Could not find .drawer element within the controller scope");
+            console.error(
+                "Could not find .drawer element within the controller scope",
+            );
             return;
         }
-        
+
         const drawerId = drawerElement.dataset.drawerId || "main";
         // We no longer read the state here, the server will handle it based on session
         // We still pass the ID so the server knows which drawer state to toggle
-        const args = { drawerId: drawerId }; 
+        const args = { drawerId: drawerId };
 
         if (this.useForceUpdateValue) {
             this.stimulate("DrawerReflex#force_update", args);

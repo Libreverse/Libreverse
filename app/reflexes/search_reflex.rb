@@ -21,11 +21,9 @@ class SearchReflex < ApplicationReflex
         partial: "search/experiences_list",
         locals: { experiences: @experiences }
       )
-      
+
       # Update the URL if requested
-      if options[:updateUrl]
-        update_url(query)
-      end
+      update_url(query) if options[:updateUrl]
   rescue ActionController::RoutingError => e
       Rails.logger.warn "Search reflex routing error: #{e.message}"
       morph :nothing
@@ -41,16 +39,16 @@ class SearchReflex < ApplicationReflex
     url = request.url
     uri = URI(url)
     params = URI.decode_www_form(uri.query || "").to_h
-    
+
     if query.blank?
       params.delete("query")
     else
       params["query"] = query
     end
-    
+
     uri.query = URI.encode_www_form(params) unless params.empty?
     new_url = uri.to_s
-    
+
     cable_ready
       .push_state(
         url: new_url,

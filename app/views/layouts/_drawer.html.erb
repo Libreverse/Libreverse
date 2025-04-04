@@ -1,11 +1,7 @@
 <% include_stylesheet "drawer" %>
 <% drawer_id = local_assigns.fetch(:drawer_id, "main") %>
 <% expanded = session["drawer_expanded_#{drawer_id}".to_sym] == true %>
-<aside
-  class="drawer-container"
-  role="complementary"
-  data-controller="drawer"
->
+<aside class="drawer-container" role="complementary" data-controller="drawer">
   <div
     class="drawer <%= 'drawer-expanded' if expanded %>"
     data-drawer-id="<%= drawer_id %>"
@@ -40,10 +36,12 @@
         >
       </button>
     </div>
-    <div class="drawer-contents" 
-         id="drawer-content-<%= drawer_id %>"
-         data-drawer-target="content"
-         data-reflex-permanent>
+    <div
+      class="drawer-contents"
+      id="drawer-content-<%= drawer_id %>"
+      data-drawer-target="content"
+      data-reflex-permanent
+    >
       <div class="drawer-content-container">
         <div class="drawer-content">
           <% if content_for?(:drawer) %>

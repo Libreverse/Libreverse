@@ -3,7 +3,7 @@
 class ApplicationReflex < StimulusReflex::Reflex
   # Delegate current_account found by ActionCable connection - Removed
   # delegate :current_account, to: :connection
-  
+
   # Ensure session is accessible from the request context within the reflex
   delegate :session, to: :request
 
@@ -36,11 +36,9 @@ class ApplicationReflex < StimulusReflex::Reflex
 
   private
 
-  def handle_rodauth_halt
+  def handle_rodauth_halt(&block)
     # Execute the original reflex action within a catch block for :halt
-    catch(:halt) do
-      yield
-    end
+    catch(:halt, &block)
 
     # After the reflex action (or if it was halted), check the controller's response
     # The 'controller' object is available within the reflex context

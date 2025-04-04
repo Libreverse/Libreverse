@@ -8,7 +8,6 @@ const mockXmlrpc = jest.fn(() => Promise.resolve());
 const originalConsoleError = console.error;
 // Create a simple mock for console.error
 let errorCalled = false;
-let errorArguments = [];
 
 describe("DismissibleController", () => {
     let controller;
@@ -51,10 +50,8 @@ describe("DismissibleController", () => {
 
         // Setup console.error mock
         errorCalled = false;
-        errorArguments = [];
-        console.error = function (...arguments_) {
+        console.error = function () {
             errorCalled = true;
-            errorArguments = arguments_;
         };
 
         // Set up the DOM

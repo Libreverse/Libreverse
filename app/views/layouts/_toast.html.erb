@@ -1,36 +1,49 @@
-<%
-  # Map flash types to CSS modifier classes used in _toast.scss
-  toast_class_modifier = case type
-    when "success" then "toast-success"
-    when "error" then "toast-error"
-    when "warning" then "toast-warning"
-    when "alert" then "toast-error" # Assuming alert maps to error styling
-    else "toast-info" # Default to info styling
+<%# Map flash types to CSS modifier classes used in _toast.scss
+toast_class_modifier =
+  case type
+  when "success"
+    "toast-success"
+  when "error"
+    "toast-error"
+  when "warning"
+    "toast-warning"
+  when "alert"
+    "toast-error" # Assuming alert maps to error styling
+  else
+    "toast-info" # Default to info styling
   end
 
-  # Generate a unique ID for this toast
-  toast_id = "toast-#{SecureRandom.hex(4)}"
-%>
+# Generate a unique ID for this toast
+toast_id = "toast-#{SecureRandom.hex(4)}" %>
 
-<div id="<%= toast_id %>"
-     class="toast <%= toast_class_modifier %> show"
-     role="alert"
-     aria-live="assertive" 
-     aria-atomic="true"
-     data-controller="toast"
-     data-toast-timeout-value="5000">
-  
+<div
+  id="<%= toast_id %>"
+  class="toast <%= toast_class_modifier %> show"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  data-controller="toast"
+  data-toast-timeout-value="5000"
+>
+
   <div class="toast-header">
     <strong class="me-auto"><%= title %></strong>
-    <button type="button" class="toast-close" data-action="toast#dismiss" aria-label="Close">
-      <img src="<%= vite_asset_path '~/icons/x.svg' %>" 
-           class="toast-close-icon"
-           loading="eager" 
-           decoding="async" 
-           fetchpriority="high" 
-           draggable="false" 
-           aria-hidden="true" 
-           tabindex="-1">
+    <button
+      type="button"
+      class="toast-close"
+      data-action="toast#dismiss"
+      aria-label="Close"
+    >
+      <img
+        src="<%= vite_asset_path '~/icons/x.svg' %>"
+        class="toast-close-icon"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        draggable="false"
+        aria-hidden="true"
+        tabindex="-1"
+      >
     </button>
   </div>
   <div class="toast-body">
