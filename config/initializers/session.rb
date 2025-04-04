@@ -23,22 +23,22 @@ Rails.application.config.action_dispatch.cookies_same_site_protection = :strict
 
 # Reduce session timeout from 12 hours to 2 hours for better security
 Rails.application.config.session_store :active_record_store,
-  key: "_libreverse_session",
-  secure: true,
-  httponly: true,
-  expire_after: 2.hours,
-  same_site: :strict
+                                       key: "_libreverse_session",
+                                       secure: Rails.env.production?,
+                                       httponly: true,
+                                       expire_after: 2.hours,
+                                       same_site: :strict
 
-# Force session rotation on privilege change events 
+# Force session rotation on privilege change events
 Rails.application.config.to_prepare do
   Rodauth::Rails.app.opts[:after_login] = proc do
     request.env["action_dispatch.cookies"].rotate
   end
-  
+
   Rodauth::Rails.app.opts[:after_password_change] = proc do
     request.env["action_dispatch.cookies"].rotate
   end
-  
+
   Rodauth::Rails.app.opts[:after_change_login] = proc do
     request.env["action_dispatch.cookies"].rotate
   end

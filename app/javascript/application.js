@@ -58,35 +58,35 @@ import "./channels";
 // Add js-loaded class to html element after page load to enable scrolling for auth pages
 document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.add("js-loaded");
-    
+
     // Add sanitization helper for potentially dangerous content
-    window.sanitizeContent = function(unsafeText) {
-        const div = document.createElement('div');
+    window.sanitizeContent = function (unsafeText) {
+        const div = document.createElement("div");
         div.textContent = unsafeText;
         return div.innerHTML;
     };
-    
+
     // Override innerHTML usage where possible
     const saferSetHTML = (element, htmlContent) => {
-        if (!element || typeof htmlContent !== 'string') return;
-        
+        if (!element || typeof htmlContent !== "string") return;
+
         try {
             // Create a template element to sanitize content
-            const template = document.createElement('template');
+            const template = document.createElement("template");
             template.innerHTML = htmlContent.trim();
-            
+
             // Clear the target element
             while (element.firstChild) {
                 element.removeChild(element.firstChild);
             }
-            
+
             // Append the sanitized content
             element.appendChild(template.content);
         } catch (e) {
-            console.error('Error setting HTML safely:', e);
+            console.error("Error setting HTML safely:", e);
         }
     };
-    
+
     // Make this available globally
     window.saferSetHTML = saferSetHTML;
 });

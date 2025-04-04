@@ -17,38 +17,10 @@ export default class extends Controller {
             },
             filter: this.filter,
         });
+    }
 
-        // Default ID if not provided in the HTML
-        const drawer = this.element.querySelector(".drawer");
-        if (!drawer.dataset.drawerId) {
-            drawer.dataset.drawerId = "main";
-        }
-
-        const drawerId = drawer.dataset.drawerId;
-
-        // Apply initial state from localStorage
-        const isExpanded =
-            localStorage.getItem(`drawer_expanded_${drawerId}`) === "true";
-
-        // Ensure DOM elements match the state
-        if (isExpanded) {
-            drawer.classList.add("drawer-expanded");
-            this.iconTarget.classList.add("rotated");
-            this.contentTarget.classList.add("visible");
-            document.body.classList.add("drawer-is-expanded");
-            drawer.dataset.expanded = "true";
-        } else {
-            drawer.classList.remove("drawer-expanded");
-            this.iconTarget.classList.remove("rotated");
-            this.contentTarget.classList.remove("visible");
-            document.body.classList.remove("drawer-is-expanded");
-            drawer.dataset.expanded = "false";
-        }
-
-        // Initialize use-force-update value if not set
-        if (this.hasUseForceUpdateValue === false) {
-            this.useForceUpdateValue = false;
-        }
+    disconnect() {
+        // No need to remove listeners, as we don't have any specific client-side ones for state anymore
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -57,39 +29,22 @@ export default class extends Controller {
     }
 
     toggle() {
-        // Manual toggle for immediate feedback to improve UX
-        const drawer = this.element.querySelector(".drawer");
-        const drawerId = drawer.dataset.drawerId || "main";
-        const currentState = drawer.dataset.expanded === "true";
-        const newState = !currentState;
-
-        // Toggle classes immediately for responsive UI
-        if (newState) {
-            drawer.classList.add("drawer-expanded");
-            this.iconTarget.classList.add("rotated");
-            this.contentTarget.classList.add("visible");
-            document.body.classList.add("drawer-is-expanded");
-        } else {
-            drawer.classList.remove("drawer-expanded");
-            this.iconTarget.classList.remove("rotated");
-            this.contentTarget.classList.remove("visible");
-            document.body.classList.remove("drawer-is-expanded");
+        // Find the .drawer element *within* the controller's element
+        const drawerElement = this.element.querySelector('.drawer'); 
+        if (!drawerElement) {
+            console.error("Could not find .drawer element within the controller scope");
+            return;
         }
+        
+        const drawerId = drawerElement.dataset.drawerId || "main";
+        // We no longer read the state here, the server will handle it based on session
+        // We still pass the ID so the server knows which drawer state to toggle
+        const args = { drawerId: drawerId }; 
 
-        // Update data attribute
-        drawer.dataset.expanded = newState ? "true" : "false";
-
-        // Store state in localStorage for persistence
-        localStorage.setItem(
-            `drawer_expanded_${drawerId}`,
-            newState ? "true" : "false",
-        );
-
-        // Then use reflex for any server-side effects if needed
         if (this.useForceUpdateValue) {
-            this.stimulate("DrawerReflex#force_update");
+            this.stimulate("DrawerReflex#force_update", args);
         } else {
-            this.stimulate("DrawerReflex#toggle");
+            this.stimulate("DrawerReflex#toggle", args);
         }
     }
 

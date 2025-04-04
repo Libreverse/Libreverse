@@ -133,7 +133,7 @@ class RodauthMain < Rodauth::Rails::Auth
     # Handle errors from the Pwned Passwords API with better logging and retry mechanism
     on_pwned_error do |error|
       log_msg = "API Error during pwned password check: #{error.class} - #{error.message}"
-      
+
       # Log with appropriate severity based on error type
       if error.is_a?(Net::OpenTimeout) || error.is_a?(Net::ReadTimeout)
         Rails.logger.warn log_msg
@@ -141,17 +141,21 @@ class RodauthMain < Rodauth::Rails::Auth
         Rails.logger.error log_msg
         Rails.logger.error error.backtrace.join("\n") if error.backtrace
       end
-      
+
       # Record the failure for monitoring if Instrumentation is defined
       if defined?(Instrumentation)
-        Instrumentation.record_error("pwned_password_api_error", 
-                                    error_class: error.class.to_s,
-                                    error_message: error.message)
+        Instrumentation.record_error("pwned_password_api_error",
+                                     error_class: error.class.to_s,
+                                     error_message: error.message)
       end
-      
+
       # Don't consider as pwned if API fails - but mark we had an API failure
       # so we can inform the user the check wasn't completed
-      scope.instance_variable_set(:@pwned_check_failed, true) rescue nil
+      begin
+        scope.instance_variable_set(:@pwned_check_failed, true)
+      rescue StandardError
+        nil
+      end
       false
     end
 

@@ -89,7 +89,7 @@ Rails.application.configure do
 
   # Enforce SameSite=Strict for all cookies
   config.action_dispatch.cookies_same_site_protection = :strict
-  
+
   # Add secure defaults for new cookies
   config.action_dispatch.cookies_serializer = :json
   config.action_dispatch.use_authenticated_cookie_encryption = true

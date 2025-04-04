@@ -41,8 +41,7 @@ export default class extends Controller {
 
         // Use debounce to prevent excessive reflexes
         this.searchTimer = setTimeout(() => {
-            // Trigger the reflex programmatically
-            this.stimulate("SearchReflex#perform");
+            this.stimulate("SearchReflex#perform", { updateUrl: true });
         }, this.debounceTimeValue);
     }
 
@@ -50,17 +49,7 @@ export default class extends Controller {
     updateURL(event) {
         const { reflex, error } = event.detail;
         if (!error && reflex === "SearchReflex#perform") {
-            const query = this.element.value.trim();
-            const url = new URL(window.location);
-
-            if (query === "") {
-                url.searchParams.delete("query");
-            } else {
-                url.searchParams.set("query", query);
-            }
-
-            // Use replaceState to avoid adding a new history entry
-            history.replaceState({}, "", url);
+            // URL updating is now handled by the reflex
         }
     }
 }

@@ -1,15 +1,17 @@
 <% include_stylesheet "sidebar" %>
+<% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
+<% hovered = session["sidebar_hovered_#{sidebar_id}".to_sym] == true %>
 <aside class="sidebar-container" role="complementary">
   <nav
-    class="sidebar"
+    class="sidebar <%= 'sidebar-hovered' if hovered %>"
     data-controller="sidebar"
     data-action="mouseenter->sidebar#hover mouseleave->sidebar#unhover"
-    data-sidebar-id="main"
-    data-hover="false"
+    data-sidebar-id="<%= sidebar_id %>"
+    data-hover="<%= hovered %>"
     role="navigation"
     aria-label="Navigation Sidebar"
   >
-    <div class="sidebar-contents">
+    <div class="sidebar-contents" data-reflex-permanent>
       <% current_path = request.path %>
 
       <a

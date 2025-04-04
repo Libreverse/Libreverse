@@ -19,9 +19,18 @@ class ToastReflex < ApplicationReflex
     )
 
     # Broadcast to the client using CableReady
-    cable_ready.append(
-      selector: "#toast-container",
-      html: html
-    ).broadcast
+    cable_ready
+      .append(
+        selector: "#toast-container",
+        html: html
+      )
+      .dispatch_event(
+        name: "toast:created",
+        detail: { type: type, title: title }
+      )
+      .broadcast
+      
+    # Use nothing morph to avoid conflicting with the CableReady operation
+    morph :nothing
   end
 end
