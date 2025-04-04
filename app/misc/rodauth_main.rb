@@ -165,6 +165,7 @@ class RodauthMain < Rodauth::Rails::Auth
       # Remember the user
       remember_login
 
+      pwned_redirect_needed = false
       # Capture password and perform pwned check
       if param_or_nil(password_param)
         current_password = param(password_param)
@@ -174,9 +175,11 @@ class RodauthMain < Rodauth::Rails::Auth
             Rails.logger.warn "SECURITY: Pwned password detected for account #{account_id}"
             # Set the flag to force password change
             session[:password_pwned] = true
-            flash[:alert] = "Your password has been found in a data breach. Please change your password immediately for your security."
-            redirect "/change-password"
-            return # Skip further processing since we're redirecting
+            flash_alert password_pwned_message # Use helper for consistency
+
+            # Mark that we need to redirect to change password
+            pwned_redirect_needed = true
+            # Don't redirect immediately, handle it after the main logic
           else
             # Clear any existing pwned flag
             session.delete(:password_pwned)
@@ -189,6 +192,24 @@ class RodauthMain < Rodauth::Rails::Auth
         # Save password metadata in session
         set_session_value(:password_length, current_password.length)
         set_session_value(:last_login_at, Time.now.to_i)
+      end
+
+      # --- Pwned Redirect Logic (Only) ---
+      # Prioritize pwned password redirect
+      if pwned_redirect_needed
+        target_path = change_password_path # Use path helper if available
+        Rails.logger.info "[Rodauth] Pwned password detected, redirecting to: #{target_path}"
+        # Use Rodauth's base redirect. If this causes issues with Turbo, we may need to revisit.
+        redirect target_path
+        # Halt further processing in this hook since we're redirecting
+        return
+      end
+
+      # For successful logins (not pwned), set flash and allow Rodauth default flow.
+      # The controller will handle the final redirect based on request format.
+      if login_notice_flash
+        set_notice_flash login_notice_flash
+        Rails.logger.info "[Rodauth] Successful login (after_login), set flash. Controller will handle redirect."
       end
     end
 
@@ -258,15 +279,40 @@ class RodauthMain < Rodauth::Rails::Auth
     # end
 
     # ==> Redirects
-    # Redirect to home page after logout.
-    logout_redirect "/"
+    # Redirect to dashboard after login.
+    def login_redirect
+      # Use path helper if available, otherwise use string path
+      defined?(dashboard_path) ? dashboard_path : "/dashboard"
+    end
 
-    # Redirect to login page after successful account creation
-    create_account_redirect "/"
+    # Redirect to login page after logout.
+    # logout_redirect "/login"
+
+    # Redirect to login page after closing account.
+    # close_account_redirect "/login"
+
+    # Redirect somewhere else after creating account.
+    # create_account_redirect { login_path }
+
+    # Redirect somewhere else after resetting password.
+    # reset_password_redirect { login_path }
+
+    # Redirect somewhere else after changing password.
+    # change_password_redirect { user_profile_path }
+
+    # Redirect somewhere else after changing login.
+    # change_login_redirect { user_profile_path }
+
+    # Return path for remember feature. Remembered user is redirected
+    # to this path when clicking link in email.
+    # remember_redirect { login_path }
 
     # ==> Deadlines
-    # Change default deadlines for some actions.
-    # remember_deadline_interval Hash[days: 30]
+    # Change default deadlines for some features.
+    # verify_account_grace_period 3.days.to_i
+    # reset_password_deadline_interval 1.hour.to_i
+    # verify_login_change_deadline_interval 1.hour.to_i
+    # remember_deadline_interval 1.week.to_i
 
     # Override email validation for username
     auth_class_eval do
@@ -315,4 +361,13 @@ class RodauthMain < Rodauth::Rails::Auth
     end
   end
   Rails.logger.info "RodauthMain configuration loaded"
+
+  # ==> Redirects (Define methods outside configure block)
+  # Redirect to dashboard after login.
+  def login_redirect
+    # Use path helper if available, otherwise use string path
+    defined?(dashboard_path) ? dashboard_path : "/dashboard"
+  end
+
+  # ... other potential redirect methods like logout_redirect etc. ...
 end
