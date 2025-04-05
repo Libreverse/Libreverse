@@ -15,15 +15,17 @@ class DismissibleReflex < ApplicationReflex
       session[:dismissed_items] << key unless session[:dismissed_items].include?(key)
       Rails.logger.info "Updated session[:dismissed_items]: #{session[:dismissed_items].inspect}"
 
-      # Get the current account ID from session
-      account_id = session[:account_id]
-
-      # Store in the database if possible
-      if UserPreference::ALLOWED_KEYS.include?(key) && account_id.present?
-        UserPreference.dismiss(account_id, key)
-        Rails.logger.info "Stored dismissal in database for account: #{account_id}, key: #{key}"
+      # If this is a preference that should be stored in database and the user is authenticated
+      if UserPreference::ALLOWED_KEYS.include?(key) && authenticated?
+        # Persist this preference to the database for the logged-in user
+        UserPreference.dismiss(current_account_id, key)
+        Rails.logger.info "Stored dismissal in database for account: #{current_account_id}, key: #{key}"
+      elsif UserPreference::ALLOWED_KEYS.include?(key) && guest_account?
+        # Store preference for guest account temporarily
+        UserPreference.dismiss(current_account_id, key)
+        Rails.logger.info "Stored dismissal for guest account: #{current_account_id}, key: #{key}"
       else
-        Rails.logger.info "Storing dismissal in session only (no account) for key: #{key}"
+        Rails.logger.info "Storing dismissal in session only (no account or not allowed key) for key: #{key}"
       end
 
       # Just signal success without changing DOM - the element is already hidden in the controller
@@ -35,11 +37,6 @@ class DismissibleReflex < ApplicationReflex
   end
 
   private
-
-  # Helper to access current_account
-  def current_account
-    @current_account ||= Account.find_by(id: session[:account_id])
-  end
 
   # Simple DOM ID helper
   def dom_id(element)

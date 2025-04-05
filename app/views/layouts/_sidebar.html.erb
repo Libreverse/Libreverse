@@ -1,13 +1,18 @@
 <% include_stylesheet "sidebar" %>
 <% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
 <% hovered = session["sidebar_hovered_#{sidebar_id}".to_sym] == true %>
-<aside class="sidebar-container" role="complementary">
+
+<% # Log the sidebar state for debugging %>
+<% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id} with hovered=#{hovered}" %>
+
+<aside class="sidebar-container" id="<%= sidebar_id %>-sidebar" role="complementary">
   <nav
     class="sidebar <%= 'sidebar-hovered' if hovered %>"
     data-controller="sidebar"
     data-action="mouseenter->sidebar#hover mouseleave->sidebar#unhover"
     data-sidebar-id="<%= sidebar_id %>"
     data-hover="<%= hovered %>"
+    data-status="<%= hovered ? 'expanded' : 'collapsed' %>"
     role="navigation"
     aria-label="Navigation Sidebar"
   >
