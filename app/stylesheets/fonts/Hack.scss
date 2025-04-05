@@ -1,0 +1,9 @@
+@font-face {
+    font-family: Hack;
+    src:
+        url("~/fonts/Hack-Regular.woff2") format("woff2"),
+        url("~/fonts/Hack-Regular.woff") format("woff"),
+        url("~/fonts/Hack-Regular.ttf") format("truetype");
+    font-display: swap;
+    font-style: normal;
+}
