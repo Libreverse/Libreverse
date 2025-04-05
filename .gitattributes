@@ -1,4 +1,7 @@
-
+db/schema.rb linguist-generated
+vendor/* linguist-vendored
+config/credentials/*.yml.enc diff=rails_credentials
+config/credentials.yml.enc diff=rails_credentials
 app/assets/emoji/** !text !filter !merge !diff
 app/assets/icons/** !text !filter !merge !diff
 app/emoji/** !text !filter !merge !diff
