@@ -1,8 +1,8 @@
 <%# Display form validation errors %>
 <% if errors.present? %>
-  <div class="form-errors mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-    <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
-    <ul class="mt-2 list-disc list-inside text-sm text-red-700">
+  <div class="form-errors">
+    <h3 class="">Please fix the following errors:</h3>
+    <ul class="">
       <% errors.each do |error| %>
         <li><%= error %></li>
       <% end %>
