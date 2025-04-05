@@ -1,725 +1,205 @@
-@use "variables";
-@use "sass:color";
-@use "components/experience_cards";
-@use "Hack";
-@use "Lazer84";
-
-// Mixin for blurred glass effect consistent with search
-@mixin glass-effect {
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
-}
+@use "templates/administrative";
 
 .dashboard-container {
-    min-height: 100vh;
-    padding: 3rem 50px 4rem 100px;
-    color: variables.$dashboard-primary;
-    font-family: Hack, monospace;
-    max-width: 1400px;
-    margin: 0 auto;
-    background-image:
-        radial-gradient(
-            circle at 25% 25%,
-            rgba(variables.$dashboard-base, 0.08) 0%,
-            transparent 60%
-        ),
-        radial-gradient(
-            circle at 75% 75%,
-            rgba(variables.$dashboard-base, 0.08) 0%,
-            transparent 60%
-        ),
-        linear-gradient(
-            to bottom right,
-            rgba(variables.$dashboard-base, 0.9),
-            rgba(variables.$dashboard-base, 0.7)
-        );
-    transition: padding 0.3s ease;
-}
-
-@media (width <= 600px) {
-    .dashboard-container {
-        padding-left: 50px;
-        padding-right: 50px;
-    }
+    @extend %administrative-container;
 }
 
 .dashboard-card {
-    @include glass-effect;
-
-    border-radius: 5px;
-    overflow: hidden;
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px variables.$box-shadow;
-        border-color: variables.$white-40;
-    }
+    @extend %administrative-card;
 }
 
 .dashboard-header {
-    background: linear-gradient(
-        90deg,
-        color.adjust(variables.$dashboard-primary, $lightness: -10%),
-        variables.$dashboard-primary
-    );
-    padding: 1.5rem;
-    border-bottom: 1px solid variables.$glass-border;
-    position: relative;
-    overflow: hidden;
-
-    &::after {
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: variables.$white-10;
-        transform: rotate(30deg);
-        pointer-events: none;
-    }
-
-    h1 {
-        margin: 0;
-        font-weight: 600;
-        position: relative;
-        z-index: 2;
-        font-family: Hack, monospace;
-        letter-spacing: 1px;
-    }
+    @extend %administrative-header;
 }
 
 .welcome-section {
-    @include glass-effect;
-
-    border-radius: 5px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid variables.$dashboard-primary;
-
-    h2 {
-        font-family: Hack, monospace;
-        color: variables.$dashboard-primary;
-    }
-
-    p {
-        color: variables.$white-80;
-    }
+    @extend %administrative-welcome-section;
 }
 
 .info-card {
-    @include glass-effect;
-
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    transition: all 0.2s ease;
-    overflow: hidden;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-}
-
-.info-card:hover {
-    box-shadow: 0 8px 30px variables.$box-shadow;
-    border-color: variables.$white-40;
+    @extend %administrative-info-card;
 }
 
 .text-muted {
-    color: variables.$white-60 !important;
-}
-
-.info-card .text-muted {
-    color: variables.$white-60 !important;
+    @extend %administrative-text-muted;
 }
 
 .stat-value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: variables.$dashboard-primary;
+    @extend %administrative-stat-value;
 }
 
 .security-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-radius: 5px;
-
-    @include glass-effect;
-
-    margin-bottom: 0.5rem;
-    border-left: 3px solid variables.$dashboard-primary;
-    color: variables.$white-80;
-
-    i {
-        margin-right: 0.75rem;
-        font-size: 1.1rem;
-        color: variables.$dashboard-primary;
-    }
+    @extend %administrative-security-item;
 }
 
-// Define placeholders for experience styling
-%experience-list-base {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.25rem;
-    margin-top: 1.5rem;
-}
-
-%experience-card-base {
-    background-color: white;
-    box-shadow: 0 4px 12px variables.$black-05;
-    border-radius: 10px;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-    border: 1px solid variables.$black-05;
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: linear-gradient(
-            90deg,
-            variables.$primary,
-            color.adjust(variables.$primary, $lightness: 15%)
-        );
-        opacity: 0.8;
-    }
-
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px variables.$black-10;
-
-        &::before {
-            opacity: 1;
-        }
-    }
-
-    h3 {
-        font-size: 1.35rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: variables.$primary;
-    }
-}
-
-%experience-author-base {
-    font-style: italic;
-    color: variables.$secondary;
-    margin-top: 1rem;
-    position: relative;
-    padding-left: 1.25rem;
-
-    &::before {
-        content: "✍️";
-        position: absolute;
-        left: 0;
-        top: 2px;
-    }
-}
-
-%experience-date-base {
-    font-size: 0.85rem;
-    color: variables.$secondary;
-    margin-top: 0.75rem;
-}
-
-%experience-actions-base {
-    margin-top: 1.25rem;
-    display: flex;
-    gap: 0.5rem;
-}
-
-// Apply placeholders to dashboard-specific elements
 .dashboard-experiences-list {
-    @extend %experience-list-base;
-
-    font-family: Hack, monospace;
+    @extend %administrative-experiences-list;
 }
 
 .dashboard-experience {
-    @extend %experience-card-base;
-    @include glass-effect;
-
-    .sp-author {
-        @extend %experience-author-base;
-    }
-
-    .creation-date {
-        @extend %experience-date-base;
-    }
-
-    .experience-actions {
-        @extend %experience-actions-base;
-    }
+    @extend %administrative-experience;
 }
 
 .experience-form-container {
-    @include glass-effect;
-
-    border-radius: 5px;
-    padding: 2rem;
-    margin-top: 2rem;
+    @extend %administrative-experience-form-container;
 }
 
 .experience-form-heading {
-    position: relative;
-    padding-bottom: 0.75rem;
-    margin-bottom: 1.5rem;
-    color: variables.$dashboard-primary;
-    font-weight: 600;
-    font-family: Hack, monospace;
-
-    &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 50px;
-        height: 3px;
-        background: variables.$dashboard-primary;
-    }
+    @extend %administrative-experience-form-heading;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    @extend %administrative-form-group;
 
-    label {
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        color: variables.$dashboard-primary;
-        font-family: Hack, monospace;
-    }
-
-    .form-input,
-    .form-textarea {
-        @include glass-effect;
-
-        border-radius: 5px;
-        padding: 0.75rem;
-        width: 100%;
-        transition: all 0.2s ease;
-        color: variables.$white-90;
-        font-family: Hack, monospace;
-
-        &::placeholder {
-            color: variables.$white-50;
-        }
+    .form-input {
+        @extend %administrative-form-input;
     }
 
     .form-textarea {
-        min-height: 120px;
-    }
-
-    .form-textarea:focus {
-        border-color: variables.$dashboard-primary;
-        box-shadow: 0 0 0 3px rgba(variables.$dashboard-primary, 0.25);
-        outline: none;
+        @extend %administrative-form-textarea;
     }
 }
 
 .form-submit {
-    background: linear-gradient(
-        90deg,
-        color.adjust(variables.$dashboard-primary, $lightness: -10%),
-        variables.$dashboard-primary
-    );
-    border: none;
-    border-radius: 5px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    color: variables.$white-90;
-    font-family: Hack, monospace;
-
-    &:hover {
-        background: linear-gradient(
-            90deg,
-            variables.$dashboard-primary,
-            color.adjust(variables.$dashboard-primary, $lightness: 10%)
-        );
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(variables.$dashboard-primary, 0.4);
-    }
+    @extend %administrative-form-submit;
 }
 
-// Override some Bootstrap components to match the design system
 .btn-primary {
-    background: linear-gradient(
-        90deg,
-        color.adjust(variables.$dashboard-primary, $lightness: -10%),
-        variables.$dashboard-primary
-    ) !important;
-    border-color: variables.$dashboard-primary !important;
-
-    &:hover {
-        background: linear-gradient(
-            90deg,
-            variables.$dashboard-primary,
-            color.adjust(variables.$dashboard-primary, $lightness: 10%)
-        ) !important;
-        box-shadow: 0 4px 15px rgba(variables.$dashboard-primary, 0.4);
-    }
+    @extend %administrative-btn-primary;
 }
 
 .btn-outline-primary {
-    color: variables.$dashboard-primary !important;
-    border-color: variables.$dashboard-primary !important;
-
-    &:hover {
-        background-color: rgba(variables.$dashboard-primary, 0.1) !important;
-        color: variables.$white-90 !important;
-    }
+    @extend %administrative-btn-outline-primary;
 }
 
 .btn-danger {
-    background: linear-gradient(
-        90deg,
-        variables.$pink,
-        variables.$danger
-    ) !important;
-    border: none !important;
-
-    &:hover {
-        background: linear-gradient(
-            90deg,
-            variables.$danger,
-            variables.$pink
-        ) !important;
-        box-shadow: 0 4px 15px rgba(variables.$danger, 0.4);
-    }
+    @extend %administrative-btn-danger;
 }
 
 .btn-outline-secondary {
-    color: variables.$white-80 !important;
-    border-color: variables.$white-20 !important;
-
-    &:hover {
-        background-color: variables.$white-10 !important;
-        color: variables.$white-90 !important;
-    }
+    @extend %administrative-btn-outline-secondary;
 }
 
 .badge {
-    font-family: Hack, monospace;
+    @extend %administrative-badge;
 }
 
 .card-footer {
-    background-color: variables.$black-10;
-    border-top: 1px solid variables.$glass-border;
+    @extend %administrative-card-footer;
 }
 
 .card-body {
-    color: variables.$white-90;
+    @extend %administrative-card-body;
 }
 
 .alert-info {
-    @include glass-effect;
-
-    color: variables.$white-90;
-    background-color: variables.$info-20;
-    border-color: variables.$info-30;
+    @extend %administrative-alert-info;
 }
 
 .form-text {
-    color: rgb(255 255 255 / 70%) !important;
+    @extend %administrative-form-text;
 }
 
 .input-group-text {
-    @include glass-effect;
-
-    color: variables.$dashboard-primary;
-    border-right: none;
+    @extend %administrative-input-group-text;
 }
 
-// Additional fixes for form placeholders
-::placeholder {
-    color: rgb(255 255 255 / 50%) !important;
-    opacity: 1;
-}
-
-// New header section styles
 .dashboard-header-section {
-    text-align: left;
-    margin-bottom: 2rem;
+    @extend %administrative-header-section;
 
     .display-heading {
-        font-size: 2.5rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: variables.$dashboard-primary;
-        font-family: "Lazer84", cursive;
-        position: relative;
-        display: inline-block;
-
-        &::after {
-            content: "";
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(
-                90deg,
-                variables.$dashboard-primary,
-                variables.$white-0
-            );
-        }
+        @extend %administrative-display-heading;
     }
 
     .header-description {
-        font-size: 1.2rem;
-        color: variables.$white-70;
-        margin-top: 0.5rem;
+        @extend %administrative-header-description;
     }
 }
 
-// Dashboard section containers
 .dashboard-section {
-    position: relative;
-
-    @include glass-effect;
-
-    border-radius: 5px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid variables.$dashboard-primary;
+    @extend %administrative-section;
 
     .section-dismiss {
-        position: absolute;
-        top: 12px;
-        right: 12px;
+        @extend %administrative-section-dismiss;
     }
 
     .dismiss-button {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-
-        &:hover {
-            background-color: variables.$white-20;
-        }
-    }
-
-    h2 {
-        font-family: Hack, monospace;
-        color: variables.$dashboard-primary;
-        margin-top: 0;
-    }
-
-    p {
-        color: variables.$white-80;
-        margin-bottom: 0;
+        @extend %administrative-dismiss-button;
     }
 }
 
 .section-heading {
-    font-family: Hack, monospace;
-    color: variables.$dashboard-primary;
-    font-size: 1.25rem;
-    margin: 0;
-    margin-bottom: 0.5rem;
+    @extend %administrative-section-heading;
 }
 
 .section-description {
-    color: variables.$white-80;
-    margin: 0;
+    @extend %administrative-section-description;
 }
 
 .section-title {
-    font-family: Hack, monospace;
-    color: variables.$dashboard-primary;
-    font-size: 1.1rem;
-    margin: 1.5rem 0 0.5rem;
-    padding: 0 0 0.5rem;
+    @extend %administrative-section-title;
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-    border-top: 1px solid variables.$white-10;
+    @extend %administrative-info-grid;
 }
 
 .info-item {
-    position: relative;
-    padding: 1rem;
-    border-bottom: 1px solid variables.$white-10;
-    border-right: 1px solid variables.$white-10;
-
-    &:nth-child(odd) {
-        border-right: 1px solid variables.$white-10;
-    }
-
-    &:nth-child(even) {
-        border-right: none;
-    }
-
-    &:nth-last-child(1),
-    &:nth-last-child(2) {
-        border-bottom: none;
-    }
-
-    &:last-child:nth-child(odd) {
-        grid-column: 1 / -1;
-        border-right: none;
-    }
+    @extend %administrative-info-item;
 }
 
 .info-label {
-    font-size: 0.875rem;
-    color: variables.$white-60;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
+    @extend %administrative-info-label;
 }
 
 .info-value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: variables.$dashboard-primary;
-
-    &.info-value-success {
-        color: variables.$success;
-    }
+    @extend %administrative-info-value;
 }
 
 .info-link {
-    color: variables.$dashboard-primary;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: color.adjust(variables.$dashboard-primary, $lightness: 10%);
-        text-decoration: underline;
-    }
+    @extend %administrative-info-link;
 }
 
 .info-button {
-    background: none;
-    border: none;
-    padding: 0;
-    color: variables.$dashboard-primary;
-    font-size: 1.1rem;
-    font-family: inherit;
-    cursor: pointer;
-    font-weight: 600;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: color.adjust(variables.$dashboard-primary, $lightness: 10%);
-        text-decoration: underline;
-    }
+    @extend %administrative-info-button;
 }
 
 .warning-container {
-    display: flex;
-    align-items: center;
+    @extend %administrative-warning-container;
 }
 
 .warning-text {
-    color: variables.$warning;
-    font-weight: 500;
+    @extend %administrative-warning-text;
 }
 
 .icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.5rem;
-
-    &.icon-badge::before {
-        content: "👤";
-    }
-
-    &.icon-warning::before {
-        content: "⚠️";
-    }
-
-    &.icon-key::before {
-        content: "🔑";
-    }
+    @extend %administrative-icon;
 }
 
 .action-container {
-    margin-top: 1rem;
+    @extend %administrative-action-container;
 }
 
 .button {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-
-    &.button-outline {
-        border: 1px solid variables.$dashboard-primary;
-        color: variables.$dashboard-primary;
-        background: transparent;
-
-        &:hover {
-            background-color: variables.$dashboard-primary;
-            color: variables.$white-90;
-        }
-    }
+    @extend %administrative-button;
 }
 
-// Special article styling
 .article-section {
-    padding: 2rem;
+    @extend %administrative-article-section;
 }
 
-// Background glass style
 .bg-glass {
-    background-color: variables.$glass;
-    backdrop-filter: blur(5px);
-    border: 1px solid variables.$glass-border;
+    @extend %administrative-bg-glass;
 }
 
 .security-section {
-    padding: 1rem;
+    @extend %administrative-security-section;
 }
 
 .security-link {
-    color: variables.$dashboard-primary;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: color.adjust(variables.$dashboard-primary, $lightness: 10%);
-        text-decoration: underline;
-    }
+    @extend %administrative-security-link;
 }
 
-// Dashboard footer
 .dashboard-footer {
-    @include glass-effect;
-
-    border-radius: 5px;
-    padding: 1.25rem;
-    margin-top: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @extend %administrative-footer;
 }

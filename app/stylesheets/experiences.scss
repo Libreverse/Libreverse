@@ -1,0 +1,205 @@
+@use "templates/administrative";
+
+.dashboard-container {
+    @extend %administrative-container;
+}
+
+.dashboard-card {
+    @extend %administrative-card;
+}
+
+.dashboard-header {
+    @extend %administrative-header;
+}
+
+.welcome-section {
+    @extend %administrative-welcome-section;
+}
+
+.info-card {
+    @extend %administrative-info-card;
+}
+
+.text-muted {
+    @extend %administrative-text-muted;
+}
+
+.stat-value {
+    @extend %administrative-stat-value;
+}
+
+.security-item {
+    @extend %administrative-security-item;
+}
+
+.dashboard-experiences-list {
+    @extend %administrative-experiences-list;
+}
+
+.dashboard-experience {
+    @extend %administrative-experience;
+}
+
+.experience-form-container {
+    @extend %administrative-experience-form-container;
+}
+
+.experience-form-heading {
+    @extend %administrative-experience-form-heading;
+}
+
+.form-group {
+    @extend %administrative-form-group;
+
+    .form-input {
+        @extend %administrative-form-input;
+    }
+
+    .form-textarea {
+        @extend %administrative-form-textarea;
+    }
+}
+
+.form-submit {
+    @extend %administrative-form-submit;
+}
+
+.btn-primary {
+    @extend %administrative-btn-primary;
+}
+
+.btn-outline-primary {
+    @extend %administrative-btn-outline-primary;
+}
+
+.btn-danger {
+    @extend %administrative-btn-danger;
+}
+
+.btn-outline-secondary {
+    @extend %administrative-btn-outline-secondary;
+}
+
+.badge {
+    @extend %administrative-badge;
+}
+
+.card-footer {
+    @extend %administrative-card-footer;
+}
+
+.card-body {
+    @extend %administrative-card-body;
+}
+
+.alert-info {
+    @extend %administrative-alert-info;
+}
+
+.form-text {
+    @extend %administrative-form-text;
+}
+
+.input-group-text {
+    @extend %administrative-input-group-text;
+}
+
+.dashboard-header-section {
+    @extend %administrative-header-section;
+
+    .display-heading {
+        @extend %administrative-display-heading;
+    }
+
+    .header-description {
+        @extend %administrative-header-description;
+    }
+}
+
+.dashboard-section {
+    @extend %administrative-section;
+
+    .section-dismiss {
+        @extend %administrative-section-dismiss;
+    }
+
+    .dismiss-button {
+        @extend %administrative-dismiss-button;
+    }
+}
+
+.section-heading {
+    @extend %administrative-section-heading;
+}
+
+.section-description {
+    @extend %administrative-section-description;
+}
+
+.section-title {
+    @extend %administrative-section-title;
+}
+
+.info-grid {
+    @extend %administrative-info-grid;
+}
+
+.info-item {
+    @extend %administrative-info-item;
+}
+
+.info-label {
+    @extend %administrative-info-label;
+}
+
+.info-value {
+    @extend %administrative-info-value;
+}
+
+.info-link {
+    @extend %administrative-info-link;
+}
+
+.info-button {
+    @extend %administrative-info-button;
+}
+
+.warning-container {
+    @extend %administrative-warning-container;
+}
+
+.warning-text {
+    @extend %administrative-warning-text;
+}
+
+.icon {
+    @extend %administrative-icon;
+}
+
+.action-container {
+    @extend %administrative-action-container;
+}
+
+.button {
+    @extend %administrative-button;
+}
+
+.article-section {
+    @extend %administrative-article-section;
+}
+
+.bg-glass {
+    @extend %administrative-bg-glass;
+}
+
+.security-section {
+    @extend %administrative-security-section;
+}
+
+.security-link {
+    @extend %administrative-security-link;
+}
+
+.dashboard-footer {
+    @extend %administrative-footer;
+}
