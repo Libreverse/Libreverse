@@ -14,11 +14,6 @@ module ApplicationCable
       Rails.logger.debug "[ActionCable] Found session_id: #{session_id}"
 
       # 2. Instantiate Rodauth for this request context
-      # We need the request environment to initialize Rodauth
-      # Note: This assumes RodauthApp is your configured Rack app instance
-      # You might need to adjust how you get the Rodauth instance if setup differs.
-      # rodauth = RodauthApp.rodauth(request.env)
-      # Simpler approach: Access rodauth instance associated with the request
       rodauth = request.env["rodauth"]
       unless rodauth
         Rails.logger.error "[ActionCable] Connection rejected: Rodauth instance not found in request env."
@@ -26,18 +21,18 @@ module ApplicationCable
         return
       end
 
-      # 3. Attempt to load session and verify authentication
-      # Manually loading might be complex. Leverage Rodauth's session loading if possible.
-      # Rodauth usually loads based on the session cookie during its middleware run.
-      # Let's check if it has already loaded based on the cookie passed with the WS request.
-
-      # Check if rodauth recognizes the session as logged in
-      # This relies on warden/rodauth middleware having processed the WS upgrade request
+      # 3. Check authentication state
       if rodauth.logged_in?
+        # Fully authenticated user
         self.current_account_id = rodauth.session_value
         Rails.logger.info "[ActionCable] Connection established and authenticated for account_id: #{current_account_id}"
+      elsif allow_guest_connections? && create_guest_session(rodauth)
+        # Guest user - get the account ID from the newly created guest session
+        self.current_account_id = rodauth.session_value
+        Rails.logger.info "[ActionCable] Connection established with guest account_id: #{current_account_id}"
       else
-        Rails.logger.warn "[ActionCable] Connection rejected: Rodauth session not authenticated for session_id: #{session_id}."
+        # Neither authenticated nor guest allowed - reject
+        Rails.logger.warn "[ActionCable] Connection rejected: Not authenticated and guest not allowed/created."
         reject_unauthorized_connection
       end
     end
@@ -53,6 +48,52 @@ module ApplicationCable
         session_id = cookies.signed[session_key]
       end
       session_id
+    end
+    
+    # Allow guest connections for non-sensitive operations
+    def allow_guest_connections?
+      # You can customize this logic based on your app's requirements
+      # For example, you might check the origin to only allow guests from certain pages
+      true
+    end
+    
+    # Create a guest session if one doesn't exist
+    def create_guest_session(rodauth)
+      return true if rodauth.session_value # Already has a session value, no need to create
+
+      # Direct database approach to create a guest account
+      begin
+        # Create a guest account directly
+        username = "guest_#{SecureRandom.uuid}@example.com"
+        account = Account.create!(
+          username: username, 
+          guest: true,
+          created_at: Time.current,
+          updated_at: Time.current
+        )
+        
+        # Now manually set the session value in rodauth
+        rodauth.instance_variable_set('@account_id', account.id)
+        rodauth.send(:set_session_value, :account_id, account.id)
+        
+        # Reset this value so session_value method returns the correct account id
+        rodauth.instance_variable_set('@session_value', account.id)
+        
+        # Ensure we have the session value now
+        success = rodauth.session_value.present?
+        
+        if success
+          Rails.logger.info "[ActionCable] Successfully created guest account #{account.id} for WebSocket connection"
+        else
+          Rails.logger.error "[ActionCable] Failed to set session value after creating guest account"
+        end
+        
+        return success
+      rescue => e
+        Rails.logger.error "[ActionCable] Failed to create guest account: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        return false
+      end
     end
   end
 end
