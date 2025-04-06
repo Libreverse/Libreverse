@@ -1,9 +1,4 @@
 module ApplicationHelper
-  def disable_scrolling
-    content_for(:no_scroll, true)
-    nil # Return nil to avoid output in the template
-  end
-
   def auth_page?
     auth_paths = %w[/login /create-account /change-password /multi-phase-login]
     auth_paths.any? { |path| request.path.include?(path) }
