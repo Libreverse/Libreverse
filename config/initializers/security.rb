@@ -16,6 +16,7 @@ Rails.application.configure do
     policy.object_src  :none
     policy.script_src  :self, :https
     policy.style_src   :self, :https
+    policy.frame_src :data
 
     # Use nonces instead of unsafe-inline for scripts and styles
     # Rails doesn't support :nonce as a source directly

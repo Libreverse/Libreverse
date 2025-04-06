@@ -20,8 +20,6 @@
     class="
       <%= page_with_drawer? ? 'page-with-drawer' : '' %><%= session[:drawer_expanded] ? ' drawer-is-expanded' : '' %>
     "
-    data-controller="scroll-lock"
-    data-scroll-lock-lock-value="<%= @no_scroll.to_s %>"
   >
     <noscript>
       <div class="noscript-message">

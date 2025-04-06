@@ -1,10 +1,8 @@
 <%# Raw HTML content is fetched in the controller as @html_content %>
-<%# Using srcdoc as discussed: https://mionskowski.pl/posts/iframe-code-preview/ %>
 <%# Using sandbox="allow-scripts" for security: https://mionskowski.pl/posts/iframe-code-preview/ %>
-<%= disable_scrolling %>
 <% include_stylesheet "experiencedisplay" %>
 <iframe
-  src="data:text/html;charset=utf-8,<%= URI.encode(@html_content) %>"
+  src="data:text/html;charset=utf-8,<%= u(@html_content) %>"
   sandbox="allow-scripts allow-same-origin"
   title="Experience: <%= @experience.title %>"
   class="experiencedisplay-iframe"
