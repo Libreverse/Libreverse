@@ -49,14 +49,14 @@ module ApplicationCable
       end
       session_id
     end
-    
+
     # Allow guest connections for non-sensitive operations
     def allow_guest_connections?
       # You can customize this logic based on your app's requirements
       # For example, you might check the origin to only allow guests from certain pages
       true
     end
-    
+
     # Create a guest session if one doesn't exist
     def create_guest_session(rodauth)
       return true if rodauth.session_value # Already has a session value, no need to create
@@ -66,33 +66,33 @@ module ApplicationCable
         # Create a guest account directly
         username = "guest_#{SecureRandom.uuid}@example.com"
         account = Account.create!(
-          username: username, 
+          username: username,
           guest: true,
           created_at: Time.current,
           updated_at: Time.current
         )
-        
+
         # Now manually set the session value in rodauth
-        rodauth.instance_variable_set('@account_id', account.id)
+        rodauth.instance_variable_set("@account_id", account.id)
         rodauth.send(:set_session_value, :account_id, account.id)
-        
+
         # Reset this value so session_value method returns the correct account id
-        rodauth.instance_variable_set('@session_value', account.id)
-        
+        rodauth.instance_variable_set("@session_value", account.id)
+
         # Ensure we have the session value now
         success = rodauth.session_value.present?
-        
+
         if success
           Rails.logger.info "[ActionCable] Successfully created guest account #{account.id} for WebSocket connection"
         else
           Rails.logger.error "[ActionCable] Failed to set session value after creating guest account"
         end
-        
-        return success
-      rescue => e
+
+        success
+      rescue StandardError => e
         Rails.logger.error "[ActionCable] Failed to create guest account: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
-        return false
+        false
       end
     end
   end

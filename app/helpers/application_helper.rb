@@ -1,4 +1,9 @@
 module ApplicationHelper
+  def disable_scrolling
+    content_for(:no_scroll, true)
+    nil # Return nil to avoid output in the template
+  end
+
   def auth_page?
     auth_paths = %w[/login /create-account /change-password /multi-phase-login]
     auth_paths.any? { |path| request.path.include?(path) }
@@ -55,7 +60,7 @@ module ApplicationHelper
       return ""
     end
 
-    # Encode the SVG for a data URL
-    "data:image/svg+xml;base64,#{Base64.strict_encode64(svg_content)}"
+    # Encode the SVG for a data URL using URL encoding instead of base64
+    "data:image/svg+xml,#{URI.encode_www_form_component(svg_content)}"
   end
 end

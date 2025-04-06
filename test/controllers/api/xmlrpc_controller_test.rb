@@ -15,19 +15,37 @@ module Api
     @controller.stubs(:apply_rate_limit).returns(true)
 
     # Create two test experiences
-    @experience1 = Experience.create!(
+    @experience1 = Experience.new(
       title: "Test Experience 1",
       description: "Description for test 1",
-      author: "Test Author 1",
-      content: "Content for test 1"
+      author: "Test Author 1"
     )
 
-    @experience2 = Experience.create!(
+    # Attach a basic HTML file for first experience
+    html_content1 = "<html><body><h1>Test Experience 1</h1></body></html>"
+    @experience1.html_file.attach(
+      io: StringIO.new(html_content1),
+      filename: "test_experience_1.html",
+      content_type: "text/html"
+    )
+
+    @experience1.save!
+
+    @experience2 = Experience.new(
       title: "Test Experience 2",
       description: "Description for test 2",
-      author: "Test Author 2",
-      content: "Content for test 2"
+      author: "Test Author 2"
     )
+
+    # Attach a basic HTML file for second experience
+    html_content2 = "<html><body><h1>Test Experience 2</h1></body></html>"
+    @experience2.html_file.attach(
+      io: StringIO.new(html_content2),
+      filename: "test_experience_2.html",
+      content_type: "text/html"
+    )
+
+    @experience2.save!
 
     # Set the XML content type for all requests
     @request.env["CONTENT_TYPE"] = "text/xml"

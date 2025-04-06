@@ -84,7 +84,6 @@ end
 class EmojiReplacer
     require "unicode"
     require "nokogiri"
-    require "base64"
 
     EMOJI_REGEX = /(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
 
@@ -246,7 +245,7 @@ class EmojiReplacer
     end
 
     def cache_key(emoji)
-      "emoji_replacer/v8/#{emoji}"
+      "emoji_replacer/v9/#{emoji}"
     end
 
     def build_inline_svg(emoji)
@@ -278,9 +277,8 @@ class EmojiReplacer
       if File.exist?(svg_file_path)
         svg_content = File.read(svg_file_path)
 
-        # Create a data URL from the SVG content
-        encoded_svg = Base64.strict_encode64(svg_content)
-        data_url = "data:image/svg+xml;base64,#{encoded_svg}"
+        # Create a data URL from the SVG content using URL encoding instead of base64
+        data_url = "data:image/svg+xml,#{URI.encode_www_form_component(svg_content)}"
 
         # Create an img tag with the data URL using the original emoji as alt text
         img_tag = %(<img src="#{data_url}" alt="#{emoji}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)

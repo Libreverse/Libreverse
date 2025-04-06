@@ -1,5 +1,5 @@
 <!doctype html>
-<html dir="ltr" lang="en-GB" class="<%= auth_page? ? 'auth-page' : '' %>">
+<html dir="ltr" lang="en-GB">
   <head>
     <!--Important code-->
     <%= yield :fontpreloads %>
@@ -20,6 +20,8 @@
     class="
       <%= page_with_drawer? ? 'page-with-drawer' : '' %><%= session[:drawer_expanded] ? ' drawer-is-expanded' : '' %>
     "
+    data-controller="scroll-lock"
+    data-scroll-lock-lock-value="<%= @no_scroll.to_s %>"
   >
     <noscript>
       <div class="noscript-message">
@@ -34,10 +36,7 @@
     </noscript>
     <%= render "layouts/flash_messages" %>
     <!-- Toast container for dynamic notifications -->
-    <div
-      id="toast-container"
-      class=""
-    ></div>
+    <div id="toast-container" class=""></div>
 
     <main class="content-wrapper">
       <%= yield %>

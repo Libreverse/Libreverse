@@ -17,27 +17,16 @@ export default class extends Controller {
     static targets = ["container"];
 
     connect() {
+        const key = this.element.dataset.dismissibleKey;
+        if (!key) return;
+
         StimulusReflex.register(this);
 
-        // Get the key, checking both patterns we might encounter
-        let key;
-        if (this.hasKeyValue) {
-            // Get key from the controller's value (original pattern)
-            key = this.keyValue;
-        } else if (this.hasContainerTarget) {
-            // Get key from container target (new pattern with parent controller)
-            key = this.containerTarget.dataset.dismissibleKeyValue;
-        } else {
-            // Fallback to the controller element's own dataset
-            key = this.element.dataset.dismissibleKeyValue;
-        }
+        // Set the data attributes to track the dismissible state
+        this.element.dataset.dismissible = "active";
 
-        if (key) {
-            console.log(`Dismissible controller connected with key: ${key}`);
-        } else {
-            console.warn(
-                "Dismissible controller connected without a key value",
-            );
+        if (this.element.dataset.autoHide === "true") {
+            this.autoHide();
         }
     }
 
@@ -45,49 +34,25 @@ export default class extends Controller {
      * Dismiss the element by triggering the DismissibleReflex
      */
     dismiss(event) {
-        // Prevent default behavior if this was called from a button or link
-        if (event) event.preventDefault();
-
-        // Get the key, trying all possible sources
-        let key;
-        if (this.hasKeyValue) {
-            // Get key from controller's value (original pattern)
-            key = this.keyValue;
-        } else if (this.hasContainerTarget) {
-            // Get key from container target (new pattern with parent controller)
-            key = this.containerTarget.dataset.dismissibleKeyValue;
-        } else {
-            // Fallback to the controller element's own dataset
-            key = this.element.dataset.dismissibleKeyValue;
+        if (event) {
+            event.preventDefault();
         }
 
-        if (!key) {
-            console.error("Cannot dismiss: No key value provided");
-            return;
-        }
+        const key = this.element.dataset.dismissibleKey;
+        if (!key) return;
 
-        console.log(`Dismissing element with key: ${key}`);
+        const element = this.element;
 
-        try {
-            // Hide the container immediately for better UX
-            if (this.hasContainerTarget) {
-                this.containerTarget.style.display = "none";
-            }
-
-            // Pass the key to the reflex explicitly
-            this.stimulate("DismissibleReflex#dismiss", key);
-        } catch (error) {
-            console.error("Error during dismissal:", error);
-        }
+        this.stimulate("DismissibleReflex#dismiss", element);
     }
 
     // Lifecycle callbacks
-    dismissReflex(element) {
-        console.log("Dismissible reflex triggered", element);
+    dismissReflex() {
+        // Reflex triggered
     }
 
-    dismissSuccess(element) {
-        console.log("Dismissible reflex succeeded", element);
+    dismissSuccess() {
+        // Reflex succeeded
     }
 
     dismissError(element, error) {

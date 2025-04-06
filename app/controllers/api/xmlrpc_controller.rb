@@ -170,7 +170,6 @@ module Api
           "title" => experience.title,
           "description" => experience.description,
           "author" => experience.author,
-          "content" => experience.content,
           "created_at" => experience.created_at.iso8601,
           "updated_at" => experience.updated_at.iso8601
         }

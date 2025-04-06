@@ -9,12 +9,21 @@ class SearchControllerTest < ActionController::TestCase
     @controller.stubs(:render).returns(nil)
 
     # Create some test experiences to search
-    @test_experience = Experience.create!(
+    @test_experience = Experience.new(
       title: "Test Experience 1",
       description: "Description for test experience 1",
-      author: "Test Author 1",
-      content: "Content for test experience 1"
+      author: "Test Author 1"
     )
+
+    # Attach a basic HTML file
+    html_content = "<html><body><h1>Test Experience 1</h1></body></html>"
+    @test_experience.html_file.attach(
+      io: StringIO.new(html_content),
+      filename: "test_experience_1.html",
+      content_type: "text/html"
+    )
+
+    @test_experience.save!
   end
 
   teardown do

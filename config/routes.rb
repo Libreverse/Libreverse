@@ -27,6 +27,10 @@ Rails.application.routes.draw do
   # Routes available only if authenticated via Rodauth
   constraints Rodauth::Rails.authenticate do
     get "dashboard", to: "dashboard#index"
-    resources :experiences
+    resources :experiences do
+      member do
+        get "display"
+      end
+    end
   end
 end
