@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
     before_action :disable_browser_cache, if: -> { Rails.env.development? }
     before_action :initialize_drawer_state
+    before_action :initialize_scroll_state
 
     helper_method :tutorial_dismissed?
 
@@ -32,5 +33,10 @@ class ApplicationController < ActionController::Base
 
     def initialize_drawer_state
       session[:drawer_expanded] = false if session[:drawer_expanded].nil?
+    end
+
+    def initialize_scroll_state
+      # Enable scrolling by default (no_scroll = false)
+      @no_scroll = false unless defined?(@no_scroll)
     end
 end

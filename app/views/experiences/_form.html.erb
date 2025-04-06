@@ -51,6 +51,26 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <%= form.label :html_file, "Experience HTML File", class: "form-label" %>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-filetype-html"></i></span>
+      <%= form.file_field :html_file, class: "form-control", accept: "text/html" %>
+    </div>
+    <div class="form-text text-muted">
+      <i class="bi bi-info-circle me-1"></i>
+      Upload the single HTML file for your experience (Max 5MB).
+    </div>
+    <% if experience.html_file.attached? %>
+      <div class="mt-2 text-muted">
+        <i class="bi bi-paperclip"></i>
+        Current file:
+        <%= experience.html_file.filename %>
+        (Replace by uploading a new file)
+      </div>
+    <% end %>
+  </div>
+
   <div class="mt-4">
     <%= form.submit class: "form-submit" %>
   </div>

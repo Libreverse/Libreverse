@@ -1,7 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-    content: MyText
+    title: First Experience
+    description: This is the first test experience
 
 two:
-    content: MyText
+    title: Second Experience
+    description: This is the second test experience

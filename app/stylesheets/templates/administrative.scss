@@ -126,7 +126,8 @@
         border-color: variables.$white-40;
     }
 
-    .text-muted { // Nested class kept within placeholder
+    .text-muted {
+        // Nested class kept within placeholder
         color: variables.$white-60 !important;
     }
 }
@@ -137,7 +138,6 @@
 %administrative-text-muted {
     color: variables.$white-60 !important;
 }
-
 
 %administrative-stat-value {
     font-size: 1.1rem;
@@ -245,22 +245,27 @@
 // These were originally .dashboard-experiences-list etc.
 %administrative-experiences-list {
     @extend %experience-list-base;
-    font-family: Hack, monospace; // Specific override from original .dashboard-experiences-list
+
+    font-family:
+        Hack, monospace; // Specific override from original .dashboard-experiences-list
 }
 
 %administrative-experience {
     @extend %experience-card-base; // Inherits base card look
     @include glass-effect; // Applies dashboard glass effect ON TOP of base card look
 
-    .sp-author { // Nested class requires specific placeholder or direct styling
+    .sp-author {
+        // Nested class requires specific placeholder or direct styling
         @extend %experience-author-base;
     }
 
-    .creation-date { // Nested class requires specific placeholder or direct styling
+    .creation-date {
+        // Nested class requires specific placeholder or direct styling
         @extend %experience-date-base;
     }
 
-    .experience-actions { // Nested class requires specific placeholder or direct styling
+    .experience-actions {
+        // Nested class requires specific placeholder or direct styling
         @extend %experience-actions-base;
     }
 }
@@ -303,7 +308,8 @@
     }
 
     .form-input, // Nested class requires specific placeholder or direct styling
-    .form-textarea { // Nested class requires specific placeholder or direct styling
+    .form-textarea {
+        // Nested class requires specific placeholder or direct styling
         @include glass-effect;
 
         border-radius: 5px;
@@ -318,34 +324,37 @@
         }
     }
 
-    .form-textarea { // Nested class requires specific placeholder or direct styling
+    .form-textarea {
+        // Nested class requires specific placeholder or direct styling
         min-height: 120px;
 
         &:focus {
-           border-color: variables.$dashboard-primary;
-           box-shadow: 0 0 0 3px rgba(variables.$dashboard-primary, 0.25);
-           outline: none;
+            border-color: variables.$dashboard-primary;
+            box-shadow: 0 0 0 3px rgba(variables.$dashboard-primary, 0.25);
+            outline: none;
         }
     }
 }
 
 // Placeholders for nested form elements within administrative-form-group
 %administrative-form-input {
-     @include glass-effect;
-     border-radius: 5px;
-     padding: 0.75rem;
-     width: 100%;
-     transition: all 0.2s ease;
-     color: variables.$white-90;
-     font-family: Hack, monospace;
+    @include glass-effect;
 
-     &::placeholder {
-         color: variables.$white-50;
-     }
+    border-radius: 5px;
+    padding: 0.75rem;
+    width: 100%;
+    transition: all 0.2s ease;
+    color: variables.$white-90;
+    font-family: Hack, monospace;
+
+    &::placeholder {
+        color: variables.$white-50;
+    }
 }
 
 %administrative-form-textarea {
     @extend %administrative-form-input; // Inherit base input styles
+
     min-height: 120px;
 
     &:focus {
@@ -354,7 +363,6 @@
         outline: none;
     }
 }
-
 
 %administrative-form-submit {
     background: linear-gradient(
@@ -483,7 +491,8 @@
     text-align: left;
     margin-bottom: 2rem;
 
-    .display-heading { // Nested class
+    .display-heading {
+        // Nested class
         font-size: 2.5rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
@@ -508,7 +517,8 @@
         }
     }
 
-    .header-description { // Nested class
+    .header-description {
+        // Nested class
         font-size: 1.2rem;
         color: variables.$white-70;
         margin-top: 0.5rem;
@@ -546,7 +556,6 @@
     margin-top: 0.5rem;
 }
 
-
 // Dashboard section containers
 %administrative-section {
     position: relative;
@@ -558,13 +567,15 @@
     margin-bottom: 1.5rem;
     border-left: 4px solid variables.$dashboard-primary;
 
-    .section-dismiss { // Nested class
+    .section-dismiss {
+        // Nested class
         position: absolute;
         top: 12px;
         right: 12px;
     }
 
-    .dismiss-button { // Nested class
+    .dismiss-button {
+        // Nested class
         background: transparent;
         border: none;
         cursor: pointer;
@@ -594,9 +605,9 @@
 
 // Placeholders for nested section elements
 %administrative-section-dismiss {
-     position: absolute;
-     top: 12px;
-     right: 12px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
 }
 
 %administrative-dismiss-button {
@@ -614,7 +625,6 @@
         background-color: variables.$white-20;
     }
 }
-
 
 %administrative-section-heading {
     font-family: Hack, monospace;
@@ -681,7 +691,8 @@
     font-weight: 600;
     color: variables.$dashboard-primary;
 
-    &.info-value-success { // Modifier class handled within placeholder
+    &.info-value-success {
+        // Modifier class handled within placeholder
         color: variables.$success;
     }
 }
@@ -812,4 +823,4 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-} 
+}

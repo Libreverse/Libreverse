@@ -1,6 +1,6 @@
 class ExperiencesController < ApplicationController
   before_action :require_authentication
-  before_action :set_experience, only: %i[show edit update destroy]
+  before_action :set_experience, only: %i[show edit update destroy display]
   before_action :check_ownership, only: %i[edit update destroy]
 
   # GET /experiences
@@ -11,6 +11,7 @@ class ExperiencesController < ApplicationController
 
   # GET /experiences/1
   def show
+    redirect_to display_experience_path(@experience)
   end
 
   # GET /experiences/new
@@ -23,10 +24,13 @@ class ExperiencesController < ApplicationController
     @experience = Experience.new(experience_params)
     @experience.account_id = current_account.id if current_account
 
+    @experience.html_file.attach(params[:experience][:html_file]) if params[:experience][:html_file].present?
+
     if @experience.save
-      redirect_to experiences_path, notice: "Experience created successfully."
+      redirect_to display_experience_path(@experience), notice: "Experience created successfully."
     else
       @experiences = Experience.all.order(created_at: :desc)
+      @experience.html_file.purge if @experience.html_file.attached?
       render :index, status: :unprocessable_entity
     end
   end
@@ -37,9 +41,12 @@ class ExperiencesController < ApplicationController
 
   # PATCH/PUT /experiences/1
   def update
-    if @experience.update(experience_params)
-      redirect_to @experience, notice: "Experience was successfully updated."
+    @experience.html_file.attach(params[:experience][:html_file]) if params[:experience][:html_file].present?
+
+    if @experience.update(experience_params.except(:html_file))
+      redirect_to display_experience_path(@experience), notice: "Experience was successfully updated."
     else
+      @experience.html_file.purge if params[:experience][:html_file].present? && @experience.errors.any?
       render :edit, status: :unprocessable_entity
     end
   end
@@ -48,6 +55,16 @@ class ExperiencesController < ApplicationController
   def destroy
     @experience.destroy
     redirect_to experiences_path, notice: "Experience was successfully deleted."
+  end
+
+  # GET /experiences/1/display
+  def display
+    unless @experience.html_file.attached?
+      redirect_to experiences_path, alert: "Experience content not found."
+      return
+    end
+
+    @html_content = @experience.html_file.download.force_encoding("UTF-8")
   end
 
   private
@@ -77,13 +94,13 @@ class ExperiencesController < ApplicationController
     @experience = Experience.find_by(id: params[:id])
     return if @experience
 
-      flash[:alert] = "Experience not found."
-      redirect_to experiences_path
-      false
+    flash[:alert] = "Experience not found."
+    redirect_to experiences_path
+    false
   end
 
   # Only allow a list of trusted parameters through.
   def experience_params
-    params.require(:experience).permit(:title, :description, :author, :content)
+    params.require(:experience).permit(:title, :description, :author, :html_file)
   end
 end

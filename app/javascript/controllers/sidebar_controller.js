@@ -3,10 +3,9 @@ import StimulusReflex from "stimulus_reflex";
 
 export default class extends Controller {
     static values = { id: String };
-    
+
     connect() {
         StimulusReflex.register(this);
-        console.log("Sidebar controller connected");
     }
 
     disconnect() {
@@ -15,15 +14,15 @@ export default class extends Controller {
 
     // Called by data-action directive in the view
     hover() {
-        console.log("Hover detected");
-        
         // Update DOM immediately for instant feedback
         this.element.classList.add("sidebar-hovered");
-        this.element.closest(".sidebar-container").classList.add("sidebar-hovered");
-        
+        this.element
+            .closest(".sidebar-container")
+            .classList.add("sidebar-hovered");
+
         // Get the sidebar ID
         const sidebarId = this.element.dataset.sidebarId || "main";
-        
+
         // Call the reflex to update the server state
         this.stimulate("SidebarReflex#set_hover_state", {
             sidebarId: sidebarId,
@@ -32,15 +31,15 @@ export default class extends Controller {
     }
 
     unhover() {
-        console.log("Unhover detected");
-        
         // Update DOM immediately for instant feedback
         this.element.classList.remove("sidebar-hovered");
-        this.element.closest(".sidebar-container").classList.remove("sidebar-hovered");
-        
+        this.element
+            .closest(".sidebar-container")
+            .classList.remove("sidebar-hovered");
+
         // Get the sidebar ID
         const sidebarId = this.element.dataset.sidebarId || "main";
-        
+
         // Call the reflex to update the server state
         this.stimulate("SidebarReflex#set_hover_state", {
             sidebarId: sidebarId,

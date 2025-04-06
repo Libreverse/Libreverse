@@ -16,3 +16,8 @@ html,
 body {
     overflow-x: hidden;
 }
+
+.no-scroll {
+    overflow: hidden !important;
+    height: 100vh !important; /* Optional */
+}

@@ -1,6 +1,5 @@
 <%# Map flash types to CSS modifier classes used in _toast.scss %>
-<%
-toast_class_modifier =
+<% toast_class_modifier =
   case type
   when "success"
     "toast-success"
@@ -15,8 +14,7 @@ toast_class_modifier =
   end
 
 # Generate a unique ID for this toast
-toast_id = "toast-#{SecureRandom.hex(4)}"
-%>
+toast_id = "toast-#{SecureRandom.hex(4)}" %>
 
 <div
   id="<%= toast_id %>"
