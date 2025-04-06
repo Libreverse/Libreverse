@@ -245,7 +245,7 @@ class EmojiReplacer
     end
 
     def cache_key(emoji)
-      "emoji_replacer/v9/#{emoji}"
+      "emoji_replacer/v10/#{emoji}"
     end
 
     def build_inline_svg(emoji)
@@ -278,7 +278,8 @@ class EmojiReplacer
         svg_content = File.read(svg_file_path)
 
         # Create a data URL from the SVG content using URL encoding instead of base64
-        data_url = "data:image/svg+xml,#{URI.encode_www_form_component(svg_content)}"
+        # Use ERB::Util.url_encode for proper SVG data URL encoding
+        data_url = "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
 
         # Create an img tag with the data URL using the original emoji as alt text
         img_tag = %(<img src="#{data_url}" alt="#{emoji}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)
