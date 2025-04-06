@@ -56,6 +56,7 @@ module ApplicationHelper
     end
 
     # Encode the SVG for a data URL using URL encoding instead of base64
-    "data:image/svg+xml,#{URI.encode_www_form_component(svg_content)}"
+    # Use ERB::Util.url_encode for proper SVG data URL encoding
+    "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
   end
 end
