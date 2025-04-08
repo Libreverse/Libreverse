@@ -6,12 +6,23 @@ class RodauthApp < Rodauth::Rails::App
   # configure RodauthAdmin, :admin
 
   route do |r|
-    # Safely attempt to load memory for remembered users, but handle guest sessions
-    if rodauth.respond_to?(:load_memory) && rodauth.session_value
-      rodauth.load_memory # autologin remembered users
-    else
-      # This is a guest session or load_memory is not available
-      Rails.logger.debug "Skipping remember feature for guest account: #{rodauth.session_value}"
+    # Handle "remember me" logic, considering guest sessions.
+    if rodauth.respond_to?(:load_memory)
+      # Only attempt load_memory if it's NOT a guest session according to rodauth-guest,
+      # OR if it IS a guest session but happens to have a remember cookie value.
+      # This prevents internal errors in load_memory/logged_in_via_remember_key?
+      # when called for guest sessions without a corresponding remember token.
+      if !rodauth.guest_logged_in? || rodauth.logged_in_remember_key_value
+        begin
+          rodauth.load_memory # autologin remembered users
+        rescue => e
+          # Log errors during the actual load_memory call
+          Rails.logger.error "[RodauthApp] Error during load_memory: #{e.message}"
+        end
+      else
+        # It's a guest session without a remember cookie value, skip load_memory.
+        Rails.logger.debug "[RodauthApp] Guest session without remember cookie. Skipping load_memory."
+      end
     end
 
     r.rodauth # route rodauth requests
