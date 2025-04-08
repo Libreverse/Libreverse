@@ -384,58 +384,73 @@ StimulusReflex.configure do |config|
   config.middleware.use EmojiReplacer
 end
 
-# config/initializers/frontend.rb
+# Grok 3 Beefed up version of my original routing patch
 module RoutingPatch
     def recognize_path_with_request(request, path, options = {})
       Rails.logger.debug "[RoutingPatch] Processing path: #{path}, Request class: #{request.class}"
-
-      # Extract the path from a full URL if necessary
+  
+      # Normalize path
       original_path = path
       if path.is_a?(String) && path.start_with?("http")
         require "uri"
         uri = URI.parse(path)
         path = uri.path
+        request.env["QUERY_STRING"] = uri.query if uri.query
         Rails.logger.debug "[RoutingPatch] Extracted path: #{path} from URL: #{original_path}"
       end
-
-      # Attempt standard route recognition first
+      path = path.sub(/\/+\z/, '') if path.is_a?(String) # Strip trailing slashes
+  
+      # Try standard recognition
       begin
         result = super(request, path, options)
         Rails.logger.debug "[RoutingPatch] Standard recognition succeeded: #{result}"
         return result
       rescue ActionController::RoutingError => e
         Rails.logger.debug "[RoutingPatch] Standard recognition failed: #{e.message}"
-        # Proceed to handle Rodauth routes
       end
-
-      # Define Rodauth paths
-      rodauth_paths = %r{^/?(?:login|create-account|logout|remember|change-password|change-login|close-account)}
-      if path.is_a?(String) && path.match?(rodauth_paths)
-        Rails.logger.debug "[RoutingPatch] Handling Rodauth route: #{path}"
-
-        # Configure the request environment for Rodauth
-        request.env["REQUEST_PATH"] = path
-        request.env["PATH_INFO"] = path
-        request.env["REQUEST_URI"] = path # Ensure compatibility with StimulusReflex
-        request.env["action_dispatch.request.path_parameters"] = {
-          controller: "rodauth",
-          action: "handle" # Adjust if Rodauth uses a different action
-        }
-
-        # Clear any routing exception
-        request.env.delete("action_dispatch.exception")
-
-        # Return the routing hash
-        routing_hash = { controller: "rodauth", action: "handle" }
-        Rails.logger.debug "[RoutingPatch] Returning routing hash: #{routing_hash}"
-        return routing_hash
+  
+      # Check for Rodauth route
+      begin
+        if defined?(RodauthApp) && (rodauth_instance = RodauthApp.rodauth)
+          prefix = rodauth_instance.prefix
+          if prefix
+            is_rodauth_route = path.start_with?(prefix)
+          else
+            feature_paths = rodauth_instance.features.select { |f| rodauth_instance.respond_to?("#{f}_path") }.map { |f| rodauth_instance.send("#{f}_path") }.uniq
+            is_rodauth_route = feature_paths.include?(path)
+          end
+  
+          if is_rodauth_route
+            Rails.logger.debug "[RoutingPatch] Handling Rodauth route: #{path}"
+  
+            # Set up request env
+            request.env["REQUEST_PATH"] = path
+            request.env["PATH_INFO"] = path
+            request.env["REQUEST_URI"] = path
+            request.env["HTTP_ACCEPT"] ||= "text/html"
+            request.env["rack.session"] ||= {}
+            request.env["action_dispatch.request.path_parameters"] = {
+              controller: "rodauth",
+              action: "handle"
+            }
+            request.env.delete("action_dispatch.exception")
+  
+            routing_hash = { controller: "rodauth", action: "handle" }
+            Rails.logger.debug "[RoutingPatch] Returning routing hash: #{routing_hash}"
+            return routing_hash
+          else
+            Rails.logger.debug "[RoutingPatch] Not a Rodauth route, re-raising error"
+            raise ActionController::RoutingError, "No route matches \"#{original_path}\""
+          end
+        else
+          Rails.logger.debug "[RoutingPatch] RodauthApp not defined or rodauth instance not accessible"
+          raise ActionController::RoutingError, "No route matches \"#{original_path}\""
+        end
+      rescue StandardError => e
+        Rails.logger.error "[RoutingPatch] Unexpected error: #{e.message}"
+        raise ActionController::RoutingError, "Routing patch failed for \"#{original_path}\""
       end
-
-      # If not a Rodauth path, re-raise the original error
-      Rails.logger.debug "[RoutingPatch] Not a Rodauth route, re-raising error"
-      raise ActionController::RoutingError, "No route matches \"#{original_path}\""
     end
-end
-
-  # Apply the patch to Rails' route set
+  end
+  
   Rails.application.routes.singleton_class.prepend(RoutingPatch)
