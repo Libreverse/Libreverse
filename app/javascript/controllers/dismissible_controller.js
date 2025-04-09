@@ -1,5 +1,4 @@
-import { Controller } from "@hotwired/stimulus";
-import StimulusReflex from "stimulus_reflex";
+import ApplicationController from "./application_controller";
 
 /**
  * Dismissible Controller
@@ -7,7 +6,7 @@ import StimulusReflex from "stimulus_reflex";
  * This controller handles permanently dismissable elements using server-side storage
  * to remember the user's preference.
  */
-export default class extends Controller {
+export default class extends ApplicationController {
     // This will look for data-dismissible-key-value attribute in HTML
     static values = {
         // Remove 'Value' from the end, Stimulus adds -value suffix automatically
@@ -17,10 +16,9 @@ export default class extends Controller {
     static targets = ["container"];
 
     connect() {
+        super.connect(); // Call parent connect() to register StimulusReflex
         const key = this.element.dataset.dismissibleKey;
         if (!key) return;
-
-        StimulusReflex.register(this);
 
         // Set the data attributes to track the dismissible state
         this.element.dataset.dismissible = "active";
