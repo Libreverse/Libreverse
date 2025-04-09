@@ -1,13 +1,13 @@
-import { Controller } from "@hotwired/stimulus";
+import ApplicationController from "./application_controller";
 import { useHotkeys } from "stimulus-use/hotkeys";
-import StimulusReflex from "stimulus_reflex";
 
-export default class extends Controller {
+export default class extends ApplicationController {
     static targets = ["icon", "content"];
     static values = { useForceUpdate: Boolean };
 
     connect() {
-        StimulusReflex.register(this);
+        super.connect(); // Call parent connect() to register StimulusReflex
+        // StimulusReflex.register(this); // Handled by ApplicationController
 
         useHotkeys(this, {
             hotkeys: {

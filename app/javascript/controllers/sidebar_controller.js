@@ -1,11 +1,11 @@
-import { Controller } from "@hotwired/stimulus";
-import StimulusReflex from "stimulus_reflex";
+import ApplicationController from "./application_controller";
 
-export default class extends Controller {
+export default class extends ApplicationController {
     static values = { id: String };
 
     connect() {
-        StimulusReflex.register(this);
+        super.connect(); // Call parent connect() to register StimulusReflex
+        // StimulusReflex.register(this); // Handled by ApplicationController
     }
 
     disconnect() {

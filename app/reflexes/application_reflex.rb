@@ -4,12 +4,15 @@ class ApplicationReflex < StimulusReflex::Reflex
   # Delegate session and authentication elements
   delegate :session, to: :request
   delegate :current_account_id, to: :connection
+  # Delegate view helpers
+  delegate :helpers, to: :ApplicationController
 
   # Add the around_reflex callback to handle :halt
   around_reflex :handle_rodauth_halt
 
   # Before reflex callback to ensure we have access to current_account
-  before_reflex :load_current_account
+  # and set up Current attributes and I18n locale
+  before_reflex :load_current_account, :set_current_attributes, :set_locale
 
   # Add authentication helpers for reflexes
   def authenticated?
@@ -58,16 +61,16 @@ class ApplicationReflex < StimulusReflex::Reflex
   #
   # current_user delegation allows you to use the Current pattern, too:
   #   before_reflex do
-  #     Current.user = current_user
+  #     Current.user = current_user # Example using Current.user
   #   end
   #
   # To access view helpers inside Reflexes:
-  #   delegate :helpers, to: :ApplicationController
+  #   delegate :helpers, to: :ApplicationController # Added delegation above
   #
   # If you need to localize your Reflexes, you can set the I18n locale here:
   #
   #   before_reflex do
-  #     I18n.locale = :fr
+  #     I18n.locale = :fr # Example setting locale
   #   end
   #
   # For code examples, considerations and caveats, see:
@@ -84,6 +87,17 @@ class ApplicationReflex < StimulusReflex::Reflex
   # Load the current account before processing reflexes
   def load_current_account
     @current_account = Account.find_by(id: current_account_id) if current_account_id
+  end
+
+  # Set Current attributes for easy access in reflexes
+  def set_current_attributes
+    # Assumes Current.account is defined in app/models/current.rb
+    Current.account = @current_account if defined?(Current) && Current.respond_to?(:account=)
+  end
+
+  # Set I18n locale based on session or default
+  def set_locale
+    I18n.locale = session[:locale] || I18n.default_locale
   end
 
   def handle_rodauth_halt

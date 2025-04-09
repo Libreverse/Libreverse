@@ -2,12 +2,14 @@
 
 class DismissibleReflex < ApplicationReflex
   # Handles dismissible elements by storing the dismissed state in the session
-  def dismiss(key = nil)
-    # Get the key from the parameter or from the element's data attribute as fallback
-    key ||= element.dataset[:dismissible_key_value]
+  # The element triggering the reflex is passed automatically by StimulusReflex
+  def dismiss
+    # Get the key from the element's data attribute
+    # Note: Stimulus controller passes the element via stimulate
+    key = element.dataset[:dismissible_key_value]
 
     # Debug information
-    Rails.logger.info "DismissibleReflex#dismiss called with key: '#{key}'"
+    Rails.logger.info "DismissibleReflex#dismiss called for element with key: '#{key}'"
 
     if key.present?
       # Store in session that this item has been dismissed

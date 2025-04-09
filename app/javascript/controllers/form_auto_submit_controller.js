@@ -1,8 +1,7 @@
-import { Controller } from "@hotwired/stimulus";
-import StimulusReflex from "stimulus_reflex";
+import ApplicationController from "./application_controller";
 
 // Connects to data-controller="form-auto-submit"
-export default class extends Controller {
+export default class extends ApplicationController {
     static targets = ["form", "input"];
     static values = {
         debounceTime: { type: Number, default: 800 }, // Default to 800ms debounce time
@@ -14,7 +13,8 @@ export default class extends Controller {
     }
 
     connect() {
-        StimulusReflex.register(this);
+        super.connect(); // Call parent connect() to register StimulusReflex
+        // StimulusReflex.register(this); // Handled by ApplicationController
 
         // Set up the form
         if (this.hasFormTarget) {
