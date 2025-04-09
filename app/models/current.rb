@@ -8,4 +8,4 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :account
   # Add other attributes here as needed, e.g.:
   # attribute :request_id, :user_agent, :ip_address
-end 
+end
