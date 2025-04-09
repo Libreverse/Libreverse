@@ -36,13 +36,13 @@ class ApplicationController < ActionController::Base
     def initialize_drawer_state
       session[:drawer_expanded] = false if session[:drawer_expanded].nil?
     end
-    
+
     def log_request_info
       log_info("Request started: #{request.method} #{request.fullpath}")
       log_debug("Request params: #{request.filtered_parameters.inspect}")
       log_debug("User agent: #{request.user_agent}")
     end
-    
+
     def log_response_info
       log_info("Response completed: #{response.status}")
     end

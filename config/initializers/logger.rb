@@ -32,21 +32,21 @@ module CustomTaggedFormatter
     end
   end
 
-  def call(severity, timestamp, progname, msg)
+  def call(severity, timestamp, _progname, msg)
     # Always use colors in development, regardless of TTY
     use_colors = Rails.env.development?
-    
+
     time_format = timestamp.strftime("%Y-%m-%d %H:%M:%S.%L")
     request_id = Thread.current[:request_id] || "no_request_id"
-    tags_text = current_tags.any? ? current_tags.join(",") + " " : ""
-    
+    tags_text = current_tags.any? ? "#{current_tags.join(',')} " : ""
+
     if use_colors
       # Colorized version
       timestamp_colored = "#{COLORS[:cyan]}[#{time_format}]#{COLORS[:reset]}"
       severity_colored = "#{color_for_severity(severity)}[#{severity}]#{COLORS[:reset]}"
       request_id_colored = "#{COLORS[:light_blue]}[#{request_id}]#{COLORS[:reset]}"
       tags_colored = current_tags.any? ? "#{COLORS[:magenta]}#{tags_text}#{COLORS[:reset]}" : ""
-      
+
       "#{timestamp_colored} #{severity_colored} #{request_id_colored} #{tags_colored}#{msg}\n"
     else
       # Plain version (for production or non-TTY output)
@@ -57,11 +57,11 @@ end
 
 # Configure the Rails logger to use our custom tagged formatter
 # We need to rebuild the logger to ensure it has all the required functionality
-require 'active_support/logger'
+require "active_support/logger"
 
 # Create an ActiveSupport::Logger (not the standard Ruby Logger)
 # which automatically includes the silence method needed by ActiveRecord session store
-logger = ActiveSupport::Logger.new(STDOUT)
+logger = ActiveSupport::Logger.new($stdout)
 
 # Ensure it has the LoggerSilencer module included (needed for the 'silence' method)
 logger.extend(ActiveSupport::LoggerSilencer) unless logger.respond_to?(:silence)
@@ -80,7 +80,7 @@ elsif Rails.env.test?
   Rails.logger.level = Logger::WARN
 else
   # In production, we use the RAILS_LOG_LEVEL env var or default to info
-  level_str = ENV.fetch("RAILS_LOG_LEVEL", "info")
+  level_str = ENV.fetch("RAILS_LOG_LEVEL") { "info" }
   Rails.logger.level = Logger.const_get(level_str.upcase)
 end
 
@@ -130,4 +130,4 @@ ActiveSupport::Notifications.subscribe "process_action.action_controller" do |*a
     Rails.logger.error("Unhandled exception: #{exception.class} - #{exception.message}")
     Rails.logger.error(exception.backtrace.join("\n")) if exception.backtrace
   end
-end 
+end

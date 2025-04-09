@@ -95,14 +95,14 @@ module RoutingPatch
             request.env["rack.session"] ||= {}
             request.env["action_dispatch.request.path_parameters"] ||= {}
             request.env["action_dispatch.request.path_parameters"].merge!({
-              controller: "rodauth",
-              action: "handle"
-            })
+                                                                            controller: "rodauth",
+                                                                            action: "handle"
+                                                                          })
             request.env.delete("action_dispatch.exception")
 
             routing_hash = { controller: "rodauth", action: "handle" }
             Rails.logger.debug "[RoutingPatch] Returning routing hash for explicit route: #{routing_hash}"
-            return routing_hash # Return directly
+            routing_hash # Return directly
           else
             # If it's not one of the known paths, assume it's not a Rodauth route for this context
             Rails.logger.debug "[RoutingPatch] Path #{path} not in known Rodauth paths, re-raising error"

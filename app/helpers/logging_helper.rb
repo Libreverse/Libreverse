@@ -19,10 +19,10 @@ module LoggingHelper
   # Log at ERROR level with component identification
   def log_error(component, message, exception = nil)
     Rails.logger.error("[#{component}] #{message}")
-    if exception
+    return unless exception
+
       Rails.logger.error("[#{component}] Exception: #{exception.class} - #{exception.message}")
       Rails.logger.error("[#{component}] Backtrace: #{exception.backtrace.join("\n")}") if exception.backtrace
-    end
   end
 
   # Log a security event at WARN level
@@ -55,4 +55,4 @@ module LoggingHelper
     log_performance(component, operation, duration_ms)
     result
   end
-end 
+end

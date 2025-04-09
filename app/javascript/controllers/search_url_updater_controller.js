@@ -65,7 +65,7 @@ export default class extends ApplicationController {
             const newUrl = currentUrl.pathname + "?" + params.toString();
             // Only replace state if the URL actually changed
             if (window.location.search !== params.toString()) {
-                 window.history.replaceState({ path: newUrl }, "", newUrl);
+                window.history.replaceState({ path: newUrl }, "", newUrl);
             }
         }
     }
