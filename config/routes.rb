@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Mount ActionCable for real-time features
+  mount ActionCable.server => '/cable'
+
   # Authentication routes (/login, /create-account, etc.) are automatically handled by Rodauth
   # See app/misc/rodauth_app.rb and run `rails rodauth:routes` to view all available routes
 

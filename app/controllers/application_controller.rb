@@ -1,10 +1,13 @@
 class ApplicationController < ActionController::Base
     include CableReady::Broadcaster
     include PasswordSecurityEnforcer
+    include Loggable
     helper_method :current_account
 
     before_action :disable_browser_cache, if: -> { Rails.env.development? }
     before_action :initialize_drawer_state
+    before_action :log_request_info
+    after_action :log_response_info
 
     helper_method :tutorial_dismissed?
 
@@ -32,5 +35,15 @@ class ApplicationController < ActionController::Base
 
     def initialize_drawer_state
       session[:drawer_expanded] = false if session[:drawer_expanded].nil?
+    end
+    
+    def log_request_info
+      log_info("Request started: #{request.method} #{request.fullpath}")
+      log_debug("Request params: #{request.filtered_parameters.inspect}")
+      log_debug("User agent: #{request.user_agent}")
+    end
+    
+    def log_response_info
+      log_info("Response completed: #{response.status}")
     end
 end
