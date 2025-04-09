@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationReflex < StimulusReflex::Reflex
+  include Loggable
+  
   # Delegate session and authentication elements
   delegate :session, to: :request
   delegate :current_account_id, to: :connection
@@ -9,6 +11,10 @@ class ApplicationReflex < StimulusReflex::Reflex
 
   # Add the around_reflex callback to handle :halt
   around_reflex :handle_rodauth_halt
+  
+  # Add logging callbacks
+  before_reflex :log_reflex_started
+  after_reflex :log_reflex_completed
 
   # Before reflex callback to ensure we have access to current_account
   # and set up Current attributes and I18n locale
@@ -33,7 +39,7 @@ class ApplicationReflex < StimulusReflex::Reflex
   # Method to ensure authentication for protected reflexes
   def require_authentication
     unless authenticated?
-      Rails.logger.warn "[ApplicationReflex] Authentication required for #{self.class.name}##{@method_name}"
+      log_warn "Authentication required for #{self.class.name}##{@method_name}"
 
       # Use CableReady to instruct the client to redirect to login page
       cable_ready.redirect_to(url: login_path).broadcast
@@ -77,16 +83,30 @@ class ApplicationReflex < StimulusReflex::Reflex
   # https://docs.stimulusreflex.com/guide/patterns#internationalization
 
   private
+  
+  # Logging callbacks
+  def log_reflex_started
+    log_info "Started #{self.class.name}##{@method_name} reflex"
+    log_debug "Reflex parameters: #{element.dataset.inspect}"
+  end
+  
+  def log_reflex_completed
+    log_info "Completed #{self.class.name}##{@method_name} reflex"
+  end
 
   # Helper method to halt reflex processing in a way that works with StimulusReflex 3.5.3
   def halt_reflex
     # Use throw :abort which is the correct way to halt a reflex in StimulusReflex 3.5.3
+    log_info "Halting reflex execution"
     throw :abort
   end
 
   # Load the current account before processing reflexes
   def load_current_account
-    @current_account = Account.find_by(id: current_account_id) if current_account_id
+    if current_account_id
+      @current_account = Account.find_by(id: current_account_id)
+      log_debug "Loaded account: #{current_account_id}" if @current_account
+    end
   end
 
   # Set Current attributes for easy access in reflexes
@@ -98,6 +118,7 @@ class ApplicationReflex < StimulusReflex::Reflex
   # Set I18n locale based on session or default
   def set_locale
     I18n.locale = session[:locale] || I18n.default_locale
+    log_debug "Set locale to: #{I18n.locale}"
   end
 
   def handle_rodauth_halt
@@ -109,16 +130,16 @@ class ApplicationReflex < StimulusReflex::Reflex
       end
 
       # If we get here, a :halt was thrown (likely by rodauth)
-      Rails.logger.info "[ApplicationReflex] Rodauth halted execution"
+      log_info "Rodauth halted execution"
 
       # Check if we have controller and response details to use for better UX
       if controller&.response
         if controller.response.redirect?
           location = controller.response.location
-          Rails.logger.info "[ApplicationReflex] Sending redirect to: #{location}"
+          log_info "Sending redirect to: #{location}"
           cable_ready.redirect_to(url: location).broadcast
         elsif controller.response.status >= 400
-          Rails.logger.warn "[ApplicationReflex] Response status: #{controller.response.status}"
+          log_warn "Response status: #{controller.response.status}"
           cable_ready.dispatch_event(
             name: "display:flash",
             detail: {
@@ -129,13 +150,12 @@ class ApplicationReflex < StimulusReflex::Reflex
         end
       else
         # Default behavior - redirect to login
-        Rails.logger.info "[ApplicationReflex] No controller response, sending default redirect to login"
+        log_info "No controller response, sending default redirect to login"
         cable_ready.redirect_to(url: login_path).broadcast
       end
     rescue StandardError => e
       # Catch any unexpected errors during the above processing
-      Rails.logger.error "[ApplicationReflex] Error in halt handler: #{e.message}"
-      Rails.logger.error e.backtrace.join("\n")
+      log_error "Error in halt handler: #{e.message}", e
 
       # Try to send a message to the client
       begin

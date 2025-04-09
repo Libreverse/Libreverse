@@ -1,65 +1,15 @@
 # Frontend Configuration
 # This file contains all frontend-related configurations including:
-# - ActionCable
 # - CableReady
 # - Emoji Replacement
 # - StimulusReflex
-
-# ===== ActionCable Configuration =====
-=begin
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣤⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢾⣿⣿⣿⣿⣄⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣴⣿⣿⣶⣄⠹⣿⣿⣿⡟⠁⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⡆⢹⣿⣿⣿⣷⡀⠀
-⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⠀⢿⣿⣿⣿⡇⠀
-⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⢸⣿⣿⠟⠁⠀
-⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠹⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⢻⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀
-⠀⠀⠀⣿⣿⣿⣿⣿⣿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⢿⣿⣿⣿⣿⡄⠀⠀⠀⠀
-⠀⠀⢀⣿⣿⣿⣿⣿⡟⢀⣿⣿⣿⣿⣿⣿⡿⠟⢁⡄⠸⣿⣿⣿⣿⣷⠀⠀⠀⠀
-⠀⠀⣼⣿⣿⣿⣿⠏⠀⣈⡙⠛⢛⠋⠉⠁⠀⣸⣿⣿⠀⢻⣿⣿⣿⣿⡆⠀⠀⠀
-⠀⢠⣿⣿⣿⣿⣟⠀⠀⢿⣿⣿⣿⡄⠀⠀⢀⣿⣿⡟⠃⣸⣿⣿⣿⣿⡇⠀⠀⠀
-⠀⠘⠛⠛⠛⠛⠛⠛⠀⠘⠛⠛⠛⠛⠓⠀⠛⠛⠛⠃⠘⠛⠛⠛⠛⠛⠃⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-patch to action cable⠀to support compression.
-
-(if you're wondering why there's ASCII art of a gorilla here,
-it's a play on the term "monkey patch")
-
-P.S. I know this is an egregious hack, but it improves performance so
-much that I can't not use it.
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-=end
-
-require "permessage_deflate"
-
-module ActionCable
-  module Connection
-    class ClientSocket
-      alias original_initialize initialize
-
-      def initialize(env, event_target, event_loop, protocols)
-        original_initialize(env, event_target, event_loop, protocols)
-        deflate = PermessageDeflate.configure(
-          level: Zlib::BEST_COMPRESSION,
-          max_window_bits: 15
-        )
-        @driver.add_extension(deflate)
-      rescue StandardError => e
-        Rails.logger.error "Error in ClientSocket initialization: #{e.message}"
-        raise
-      end
-    end
-  end
-end
 
 # ===== CableReady Configuration =====
 CableReady.configure do |config|
   # Enable/disable exiting / warning when the sanity checks fail options:
   # `:exit` or `:warn` or `:ignore`
   #
-  # config.on_failed_sanity_checks = :exit
+  config.on_failed_sanity_checks = :exit
 
   # Enable/disable assets compilation
   # `true` or `false`
@@ -303,16 +253,12 @@ class EmojiReplacer
 end
 
 # ===== StimulusReflex Configuration =====
-# The ActionCable logger is REALLY noisy, and might even impact performance.
-# Uncomment the line below to silence the ActionCable logger.
-
-# ActionCable.server.config.logger = Logger.new(nil)
 
 StimulusReflex.configure do |config|
   # Enable/disable exiting / warning when the sanity checks fail:
   # `:exit` or `:warn` or `:ignore`
   #
-  # config.on_failed_sanity_checks = :exit
+  config.on_failed_sanity_checks = :exit
 
   # Enable/disable exiting / warning when there is no default URLs specified in environment config
   # `:warn` or `:ignore`
@@ -351,106 +297,4 @@ StimulusReflex.configure do |config|
   # If you are using Page Morphs and your app uses Rack middleware to rewrite part of the request path, you must enable those middleware modules in StimulusReflex.
   #
   # Learn more about registering Rack middleware in Rails here: https://guides.rubyonrails.org/rails_on_rack.html#configuring-middleware-stack
-  #
-  # config.middleware.use FirstRackMiddleware
-  # config.middleware.use SecondRackMiddleware
-  config.middleware.use Rodauth::Rails::Middleware
-  # this option set is from the default readme of htmlcompressor
-  config.middleware.use HtmlCompressor::Rack,
-                        enabled: true,
-                        remove_spaces_inside_tags: true,
-                        remove_multi_spaces: true,
-                        remove_comments: true,
-                        remove_intertag_spaces: false,
-                        remove_quotes: false,
-                        compress_css: false,
-                        compress_javascript: false,
-                        simple_doctype: false,
-                        remove_script_attributes: false,
-                        remove_style_attributes: false,
-                        remove_link_attributes: false,
-                        remove_form_attributes: false,
-                        remove_input_attributes: false,
-                        remove_javascript_protocol: false,
-                        remove_http_protocol: false,
-                        remove_https_protocol: false,
-                        preserve_line_breaks: false,
-                        simple_boolean_attributes: false,
-                        compress_js_templates: false
-
-  # We insert the emoji middleware here so that it precedes
-  # the html minifier but still avoids unnecessary work
-  # It does not work in this situation for some currenrly unknown reason, so it is disabled
-  config.middleware.use EmojiReplacer
 end
-
-# Grok 3 Beefed up version of my original routing patch
-module RoutingPatch
-    def recognize_path_with_request(request, path, options = {})
-      Rails.logger.debug "[RoutingPatch] Processing path: #{path}, Request class: #{request.class}"
-
-      # Normalize path
-      original_path = path
-      if path.is_a?(String) && path.start_with?("http")
-        require "uri"
-        uri = URI.parse(path)
-        path = uri.path
-        request.env["QUERY_STRING"] = uri.query if uri.query
-        Rails.logger.debug "[RoutingPatch] Extracted path: #{path} from URL: #{original_path}"
-      end
-      path = path.sub(%r{/+\z}, "") if path.is_a?(String) # Strip trailing slashes
-
-      # Try standard recognition
-      begin
-        result = super(request, path, options)
-        Rails.logger.debug "[RoutingPatch] Standard recognition succeeded: #{result}"
-        return result
-      rescue ActionController::RoutingError => e
-        Rails.logger.debug "[RoutingPatch] Standard recognition failed: #{e.message}"
-      end
-
-      # Check for Rodauth route
-      begin
-        if defined?(RodauthApp) && (rodauth_instance = RodauthApp.rodauth)
-          prefix = rodauth_instance.prefix
-          if prefix
-            is_rodauth_route = path.start_with?(prefix)
-          else
-            feature_paths = rodauth_instance.features.select { |f| rodauth_instance.respond_to?("#{f}_path") }.map { |f| rodauth_instance.send("#{f}_path") }.uniq
-            is_rodauth_route = feature_paths.include?(path)
-          end
-
-          if is_rodauth_route
-            Rails.logger.debug "[RoutingPatch] Handling Rodauth route: #{path}"
-
-            # Set up request env
-            request.env["REQUEST_PATH"] = path
-            request.env["PATH_INFO"] = path
-            request.env["REQUEST_URI"] = path
-            request.env["HTTP_ACCEPT"] ||= "text/html"
-            request.env["rack.session"] ||= {}
-            request.env["action_dispatch.request.path_parameters"] = {
-              controller: "rodauth",
-              action: "handle"
-            }
-            request.env.delete("action_dispatch.exception")
-
-            routing_hash = { controller: "rodauth", action: "handle" }
-            Rails.logger.debug "[RoutingPatch] Returning routing hash: #{routing_hash}"
-            routing_hash
-          else
-            Rails.logger.debug "[RoutingPatch] Not a Rodauth route, re-raising error"
-            raise ActionController::RoutingError, "No route matches \"#{original_path}\""
-          end
-        else
-          Rails.logger.debug "[RoutingPatch] RodauthApp not defined or rodauth instance not accessible"
-          raise ActionController::RoutingError, "No route matches \"#{original_path}\""
-        end
-      rescue StandardError => e
-        Rails.logger.error "[RoutingPatch] Unexpected error: #{e.message}"
-        raise ActionController::RoutingError, "Routing patch failed for \"#{original_path}\""
-      end
-    end
-end
-
-  Rails.application.routes.singleton_class.prepend(RoutingPatch)

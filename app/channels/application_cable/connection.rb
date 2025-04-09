@@ -4,6 +4,9 @@ module ApplicationCable
     identified_by :current_account_id
 
     def connect
+      # Add logging for the request class
+      Rails.logger.debug "[ActionCable] Connection request class: #{request.class}"
+
       # 1. Find session_id (using existing logic)
       session_id = find_session_id
       unless session_id
