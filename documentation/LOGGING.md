@@ -56,15 +56,15 @@ The recommended way to add logging to your classes is with the `Loggable` concer
 ```ruby
 class MyService
   include Loggable
-  
+
   def perform_task
     log_info "Starting task"
-    
+
     # Automatically logs timing information
     with_timing "complex_calculation" do
       # Complex operation here
     end
-    
+
     log_info "Task completed"
   rescue StandardError => e
     log_error "Task failed", e
@@ -104,7 +104,7 @@ Logs are sent to:
 
 To filter logs in development:
 
-```
+```bash
 tail -f log/development.log | grep "[ERROR]"
 ```
 
@@ -123,4 +123,4 @@ end
 
 ## Monitoring and Alerting
 
-Production logs should be monitored for ERROR and FATAL level messages, which may indicate issues requiring immediate attention. The logging system is designed to work with log aggregation services like LogRage, Datadog, or ELK stack. 
+Production logs should be monitored for ERROR and FATAL level messages, which may indicate issues requiring immediate attention. The logging system is designed to work with log aggregation services like LogRage, Datadog, or ELK stack.

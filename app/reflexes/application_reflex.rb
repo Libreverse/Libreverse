@@ -2,7 +2,7 @@
 
 class ApplicationReflex < StimulusReflex::Reflex
   include Loggable
-  
+
   # Delegate session and authentication elements
   delegate :session, to: :request
   delegate :current_account_id, to: :connection
@@ -11,7 +11,7 @@ class ApplicationReflex < StimulusReflex::Reflex
 
   # Add the around_reflex callback to handle :halt
   around_reflex :handle_rodauth_halt
-  
+
   # Add logging callbacks
   before_reflex :log_reflex_started
   after_reflex :log_reflex_completed
@@ -83,13 +83,13 @@ class ApplicationReflex < StimulusReflex::Reflex
   # https://docs.stimulusreflex.com/guide/patterns#internationalization
 
   private
-  
+
   # Logging callbacks
   def log_reflex_started
     log_info "Started #{self.class.name}##{@method_name} reflex"
     log_debug "Reflex parameters: #{element.dataset.inspect}"
   end
-  
+
   def log_reflex_completed
     log_info "Completed #{self.class.name}##{@method_name} reflex"
   end
@@ -103,10 +103,10 @@ class ApplicationReflex < StimulusReflex::Reflex
 
   # Load the current account before processing reflexes
   def load_current_account
-    if current_account_id
+    return unless current_account_id
+
       @current_account = Account.find_by(id: current_account_id)
       log_debug "Loaded account: #{current_account_id}" if @current_account
-    end
   end
 
   # Set Current attributes for easy access in reflexes

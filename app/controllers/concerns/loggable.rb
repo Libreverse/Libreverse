@@ -43,8 +43,8 @@ module Loggable
       super(log_component, account_id, action, details)
     end
 
-    def with_timing(operation)
-      super(log_component, operation) { yield }
+    def with_timing(operation, &block)
+      super(log_component, operation, &block)
     end
   end
 
@@ -68,10 +68,10 @@ module Loggable
 
     def log_error(message, exception = nil)
       Rails.logger.error("[#{log_component}] #{message}")
-      if exception
+      return unless exception
+
         Rails.logger.error("[#{log_component}] Exception: #{exception.class} - #{exception.message}")
         Rails.logger.error("[#{log_component}] Backtrace: #{exception.backtrace.join("\n")}") if exception.backtrace
-      end
     end
   end
-end 
+end
