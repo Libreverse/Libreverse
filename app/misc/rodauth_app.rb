@@ -15,7 +15,7 @@ class RodauthApp < Rodauth::Rails::App
       if !rodauth.guest_logged_in? || rodauth.logged_in_remember_key_value
         begin
           rodauth.load_memory # autologin remembered users
-        rescue => e
+        rescue StandardError => e
           # Log errors during the actual load_memory call
           Rails.logger.error "[RodauthApp] Error during load_memory: #{e.message}"
         end

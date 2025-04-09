@@ -25,9 +25,6 @@ application.register("link", LinkController);
 import NavigationShortcutsController from "./navigation_shortcuts_controller";
 application.register("navigation-shortcuts", NavigationShortcutsController);
 
-import SearchController from "./search_controller";
-application.register("search", SearchController);
-
 import SearchUrlUpdaterController from "./search_url_updater_controller";
 application.register("search-url-updater", SearchUrlUpdaterController);
 

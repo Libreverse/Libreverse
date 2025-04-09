@@ -14,12 +14,6 @@ export default class extends ApplicationController {
 
     // Called by data-action directive in the view
     hover() {
-        // Update DOM immediately for instant feedback
-        this.element.classList.add("sidebar-hovered");
-        this.element
-            .closest(".sidebar-container")
-            .classList.add("sidebar-hovered");
-
         // Get the sidebar ID
         const sidebarId = this.element.dataset.sidebarId || "main";
 
@@ -31,12 +25,6 @@ export default class extends ApplicationController {
     }
 
     unhover() {
-        // Update DOM immediately for instant feedback
-        this.element.classList.remove("sidebar-hovered");
-        this.element
-            .closest(".sidebar-container")
-            .classList.remove("sidebar-hovered");
-
         // Get the sidebar ID
         const sidebarId = this.element.dataset.sidebarId || "main";
 
