@@ -2,37 +2,13 @@
 <%= render "layouts/drawer" %>
 <%= render "layouts/leniswrapper" do %>
   <%= render "layouts/navigationshortcutswrapper" do %>
-    <% include_stylesheet "search" %>
-    <% content_for :fontpreloads do %>
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Hack-Italic.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-    <% end %>
     <div class="sp-bg" role="presentation">
       <img
-        src="<%= vite_asset_path "images/brasserie.jpg" %>"
-        srcset="<%= vite_asset_path "images/brasserie.avif" %>, <%= vite_asset_path "images/brasserie.webp" %>, <%= vite_asset_path "images/brasserie.jxl" %>"
-        loading="eager"
-        decoding="sync"
-        fetchpriority="high"
+        src="<%= vite_asset_path 'images/brasserie.jpg' %>" <%# Fallback %>
+        srcset="<%= bitmap_image_data_url('images/brasserie') %>, <%= vite_asset_path 'images/brasserie.webp' %>, <%= vite_asset_path 'images/brasserie.jpg' %>" <%# Efficient inline, then external fallbacks %>
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
         draggable="false"
         aria-hidden="true"
         tabindex="-1"

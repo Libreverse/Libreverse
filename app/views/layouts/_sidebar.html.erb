@@ -1,4 +1,4 @@
-<% include_stylesheet "sidebar" %>
+<%# Removed include_stylesheet "sidebar" %>
 <% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
 <% hovered = session["sidebar_hovered_#{sidebar_id}".to_sym] == true %>
 
@@ -32,7 +32,7 @@
         aria-label="Go to homepage"
       >
         <%= sidebar_icon(
-          "~/images/libreverse-logo.svg",
+          svg_icon_data_url("libreverse-logo"),
           current_path == "/" ? "sidebar-current" : "",
         ) %>
       </a>
@@ -45,7 +45,7 @@
         aria-label="Go to search page"
       >
         <%= sidebar_icon(
-          "~/icons/search.svg",
+          svg_icon_data_url("search"),
           current_path == "/search" ? "sidebar-current" : "",
         ) %>
       </a>
@@ -60,7 +60,7 @@
           aria-label="Go to dashboard"
         >
           <%= sidebar_icon(
-            "~/icons/dashboard.svg",
+            svg_icon_data_url("dashboard"),
             current_path == dashboard_path ? "sidebar-current" : "",
           ) %>
         </a>
@@ -73,7 +73,7 @@
           aria-label="Manage experiences"
         >
           <%= sidebar_icon(
-            "~/icons/experiences.svg",
+            svg_icon_data_url("experiences"),
             current_path == experiences_path ? "sidebar-current" : "",
           ) %>
         </a>
@@ -81,7 +81,7 @@
             method: :post,
             class: "sidebar-link sidebar-logout-button",
             aria: { label: "Sign out" } do %>
-          <%= sidebar_icon("~/icons/logout.svg") %>
+          <%= sidebar_icon(svg_icon_data_url("logout")) %>
         <% end %>
       <% else %>
         <a
@@ -93,7 +93,7 @@
           aria-label="Sign in"
         >
           <%= sidebar_icon(
-            "~/icons/login.svg",
+            svg_icon_data_url("login"),
             current_path == rodauth.login_path ? "sidebar-current" : "",
           ) %>
         </a>
@@ -106,7 +106,7 @@
           aria-label="Sign up"
         >
           <%= sidebar_icon(
-            "~/icons/signup.svg",
+            svg_icon_data_url("signup"),
             current_path == rodauth.create_account_path ? "sidebar-current" : "",
           ) %>
         </a>
