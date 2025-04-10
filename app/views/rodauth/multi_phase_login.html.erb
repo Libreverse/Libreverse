@@ -2,17 +2,6 @@
 <%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
   <%= render 'layouts/navigationshortcutswrapper' do %>
-    <% include_stylesheet "login" %>
-    <% content_for :fontpreloads do %>
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-    <% end %>
-
     <div class="login-bg" role="presentation"></div>
     <!-- Lamp effect with conical gradients -->
     <div class="lamp-effect-wrapper">

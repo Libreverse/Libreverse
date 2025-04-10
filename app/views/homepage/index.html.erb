@@ -2,37 +2,13 @@
 <%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
   <%= render 'layouts/navigationshortcutswrapper' do %>
-    <% include_stylesheet "homepage" %>
-    <% content_for :fontpreloads do %>
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Hack-Regular.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-      <link
-        rel="preload"
-        href="<%= vite_asset_path '~/fonts/Hack-Italic.woff2' %>"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      >
-    <% end %>
     <div class="hp-bg" role="presentation">
       <img
-        src="<%= vite_asset_path "images/garage.jpg" %>"
-        srcset="<%= vite_asset_path "images/garage.avif" %>, <%= vite_asset_path "images/garage.webp" %>, <%= vite_asset_path "images/garage.jxl" %>"
-        loading="eager"
-        decoding="sync"
-        fetchpriority="high"
+        src="<%= vite_asset_path 'images/garage.jpg' %>" <%# Fallback %>
+        srcset="<%= bitmap_image_data_url('images/garage') %>, <%= vite_asset_path 'images/garage.webp' %>, <%= vite_asset_path 'images/garage.jpg' %>" <%# Efficient inline, then external fallbacks %>
+        loading="lazy"       # Changed from eager
+        decoding="async"    # Changed from sync
+        fetchpriority="low"  # Changed from high
         draggable="false"
         aria-hidden="true"
         tabindex="-1"

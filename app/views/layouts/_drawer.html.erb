@@ -1,4 +1,3 @@
-<% include_stylesheet "drawer" %>
 <% drawer_id = local_assigns.fetch(:drawer_id, "main") %>
 <% expanded = session["drawer_expanded_#{drawer_id}".to_sym] == true %>
 <aside class="drawer-container" role="complementary" data-controller="drawer">
@@ -25,11 +24,11 @@
         aria-controls="drawer-content-<%= drawer_id %>"
       >
         <img
-          src="<%= vite_asset_path "~/icons/chevron-up.svg" %>"
+          src="<%= svg_icon_data_url('chevron-up') %>"
           class="drawer-icons <%= 'rotated' if expanded %>"
-          loading="eager"
+          loading="lazy"
           decoding="async"
-          fetchpriority="high"
+          fetchpriority="low"
           draggable="false"
           alt="Toggle drawer"
           data-drawer-target="icon"
