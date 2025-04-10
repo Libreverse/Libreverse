@@ -12,26 +12,15 @@ export default class extends ApplicationController {
         // No listeners to remove
     }
 
-    // Called by data-action directive in the view
-    hover() {
-        // Get the sidebar ID
+    // Called by data-action directive on mouseenter/mouseleave
+    toggleHover(event) {
+        // Prevent default only if needed, hover usually doesn't have one
+        // event.preventDefault();
+
+        // Get the sidebar ID from the element's dataset
         const sidebarId = this.element.dataset.sidebarId || "main";
 
-        // Call the reflex to update the server state
-        this.stimulate("SidebarReflex#set_hover_state", {
-            sidebarId: sidebarId,
-            desiredState: true,
-        });
-    }
-
-    unhover() {
-        // Get the sidebar ID
-        const sidebarId = this.element.dataset.sidebarId || "main";
-
-        // Call the reflex to update the server state
-        this.stimulate("SidebarReflex#set_hover_state", {
-            sidebarId: sidebarId,
-            desiredState: false,
-        });
+        // Call the reflex to toggle the server state and update DOM via CableReady
+        this.stimulate("SidebarReflex#toggle_hover", { sidebar_id: sidebarId });
     }
 }
