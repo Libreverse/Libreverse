@@ -12,6 +12,9 @@ class UserPreference < ApplicationRecord
     welcome-message
     feature-announcement
     theme-selection
+    sidebar_expanded
+    sidebar_hover_enabled
+    drawer_expanded_main
   ].freeze
 
   validate :key_must_be_allowed
@@ -30,13 +33,14 @@ class UserPreference < ApplicationRecord
 
   # Set a preference value for a specific account and key
   def self.set(account_id, key, value)
+    key_string = key.to_s # Ensure key is a string for comparison
     # Truncate value if it's too long
     value = value.to_s.truncate(1000) if value.to_s.length > 1000
 
     # Only proceed if key is allowed
-    return nil unless ALLOWED_KEYS.include?(key)
+    return nil unless ALLOWED_KEYS.include?(key_string)
 
-    preference = find_or_initialize_by(account_id: account_id, key: key)
+    preference = find_or_initialize_by(account_id: account_id, key: key_string)
     preference.value = value
 
     # Log the preference change
@@ -46,8 +50,11 @@ class UserPreference < ApplicationRecord
       Rails.logger.info "Updating preference: account_id=#{account_id}, key=#{key}"
     end
 
-    preference.save
+    preference.save! # Use save! to raise an error on validation failure
     value
+  rescue ActiveRecord::RecordInvalid => e # Catch potential validation errors
+    Rails.logger.error "[UserPreference] Validation failed for account #{account_id}, key '#{key}': #{e.message}"
+    nil # Return nil or handle error appropriately
   end
 
   # Helper method to specifically set a dismissal preference

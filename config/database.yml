@@ -20,6 +20,7 @@ default: &default
         # Performance settings
         temp_store: MEMORY
         cache_size: 5000
+        busy_timeout: 5000
         auto_vacuum: incremental
         locking_mode: NORMAL
 

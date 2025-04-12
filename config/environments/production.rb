@@ -77,15 +77,23 @@ Rails.application.configure do
   # Host Authorization
   config.hosts = %w[libreverse.geor.me libreverse.dev localhost:3000]
   # Skip DNS rebinding protection for the default health check endpoint.
-  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
+  # --- Use CookieStore (Permanent Change) ---
   # Secure session configuration
-  config.session_store :active_record_store,
+  # config.session_store :active_record_store,
+  #                      key: "_libreverse_session",
+  #                      secure: true,
+  #                      httponly: true,
+  #                      expire_after: 2.hours,
+  #                      same_site: :strict
+  config.session_store :cookie_store,
                        key: "_libreverse_session",
-                       secure: true,
+                       secure: true, # Keep security settings
                        httponly: true,
                        expire_after: 2.hours,
-                       same_site: :strict
+                       same_site: :strict # Keep security settings
+  # ----------------------------------------
 
   # Enforce SameSite=Strict for all cookies
   config.action_dispatch.cookies_same_site_protection = :strict

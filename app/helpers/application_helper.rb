@@ -1,6 +1,6 @@
 module ApplicationHelper
-  require 'base64'
-  require 'nokogiri'
+  require "base64"
+  require "nokogiri"
 
   def auth_page?
     auth_paths = %w[/login /create-account /change-password /multi-phase-login]
@@ -28,13 +28,13 @@ module ApplicationHelper
 
   def svg_icon_data_url(icon_name)
     # Validate icon name to prevent path traversal
-    unless icon_name.match?(%r{\A[a-zA-Z0-9_-]+\z})
+    unless icon_name.match?(/\A[a-zA-Z0-9_-]+\z/)
       Rails.logger.warn "Invalid SVG icon name requested: #{icon_name}"
       return ""
     end
 
     # Define potential directories and find the icon
-    potential_dirs = [Rails.root.join("app", "icons"), Rails.root.join("app", "images")]
+    potential_dirs = [ Rails.root.join("app/icons"), Rails.root.join("app/images") ]
     icon_path = nil
     potential_dirs.each do |dir|
       path = dir.join("#{icon_name}.svg")
@@ -90,18 +90,18 @@ module ApplicationHelper
     preferred_extensions.each do |ext|
       potential_path = source_root.join("#{source_relative_path}#{ext}").cleanpath
       # Security check: Ensure the path is still within the intended source area
-      if potential_path.to_s.start_with?(source_root.to_s) && File.exist?(potential_path) && File.file?(potential_path)
-        found_path = potential_path
-        mime_type = case ext
-                    when ".png" then "image/png"
-                    when ".jpg", ".jpeg" then "image/jpeg"
-                    when ".gif" then "image/gif"
-                    when ".webp" then "image/webp"
-                    when ".avif" then "image/avif"
-                    else "application/octet-stream"
-                    end
-        break # Found the best available format
+      next unless potential_path.to_s.start_with?(source_root.to_s) && File.exist?(potential_path) && File.file?(potential_path)
+
+      found_path = potential_path
+      mime_type = case ext
+      when ".png" then "image/png"
+      when ".jpg", ".jpeg" then "image/jpeg"
+      when ".gif" then "image/gif"
+      when ".webp" then "image/webp"
+      when ".avif" then "image/avif"
+      else "application/octet-stream"
       end
+      break # Found the best available format
     end
 
     # If no suitable image was found
@@ -120,4 +120,35 @@ module ApplicationHelper
       "" # Return empty string on error
     end
   end
+
+  # --- User Preference Helpers ---
+
+  # Gets a user preference value, returning a default if not set or user is nil.
+  def get_user_preference(key, default_value = nil)
+    # Uses the current_account helper defined in ApplicationController
+    current_account ? UserPreference.get(current_account.id, key) || default_value : default_value
+  end
+
+  # Specifically checks if the sidebar is expanded.
+  def sidebar_expanded?
+    # Ensure the key matches what's used in SidebarReflex
+    # UserPreference stores boolean true/false
+    get_user_preference(:sidebar_expanded, false) == true
+  end
+
+  # Specifically checks if sidebar hover effect is enabled.
+  def sidebar_hover_enabled?
+    # Ensure the key matches what's used in SidebarReflex
+    # UserPreference stores boolean true/false
+    get_user_preference(:sidebar_hover_enabled, false) == true
+  end
+
+  # Checks if a specific tutorial/item is dismissed.
+  # Delegates to the existing helper in ApplicationController for consistency.
+  # (Assumes tutorial_dismissed? helper is available via helper_method)
+  # def item_dismissed?(key)
+  #   tutorial_dismissed?(key)
+  # end
+
+  # --- End User Preference Helpers ---
 end

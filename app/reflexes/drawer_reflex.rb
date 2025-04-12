@@ -1,14 +1,25 @@
 # frozen_string_literal: true
 
 class DrawerReflex < ApplicationReflex
-  def toggle(args = {})
-    drawer_id = args["drawer_id"] || "main"
-    session_key = "drawer_expanded_#{drawer_id}".to_sym
+  include Loggable # Assuming Loggable is available
 
-    # Read current state from session and toggle
-    current_state = session[session_key] == true
+  def toggle(args = {})
+    # Use element data if available, fallback to args
+    drawer_id = element&.dataset&.drawer_id || args["drawer_id"] || "main"
+    # Define the UserPreference key
+    key = "drawer_expanded_#{drawer_id}".to_sym
+
+    # Ensure we have a current account (handles guests too)
+    return unless current_account
+
+    # Read current state from UserPreference and toggle
+    stored_value = UserPreference.get(current_account.id, key)
+    current_state = stored_value&.casecmp("true")&.zero?
     new_state = !current_state
-    session[session_key] = new_state
+    UserPreference.set(current_account.id, key, new_state)
+
+    # Log the change
+    log_info "Drawer '#{drawer_id}' toggled to: #{new_state} for account #{current_account.id}"
 
     # Define selectors
     drawer_selector = ".drawer[data-drawer-id='#{drawer_id}']"
@@ -36,20 +47,11 @@ class DrawerReflex < ApplicationReflex
 
     # Use nothing morph to avoid replacing DOM elements
     morph :nothing
+  rescue StandardError => e # Add basic error handling consistent with SidebarReflex
+    log_error "[DrawerReflex] Error in toggle: #{e.message}", e
+    log_error e.backtrace.join("\n")
+    morph :nothing # Ensure morph :nothing on error
   end
 
-  def force_update(args = {})
-    drawer_id = args["drawer_id"] || "main"
-    session_key = "drawer_expanded_#{drawer_id}".to_sym
-
-    # Read current state and toggle
-    current_state = session[session_key] == true
-    new_state = !current_state
-
-    # Update the session state
-    session[session_key] = new_state
-
-    # Let the default page morph handle the visual update and read from session
-    # No morph :nothing here, allow default page morph
-  end
+  # Removed force_update method as it relied on session and page morph
 end

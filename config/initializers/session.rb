@@ -13,7 +13,10 @@
 #
 # Using :json is the most secure option as it limits the risk of deserialization attacks
 # that could occur with :marshal.
+# --- Reverting to JSON serializer ---
 Rails.application.config.action_dispatch.cookies_serializer = :json
+# Rails.application.config.action_dispatch.cookies_serializer = :marshal
+# ----------------------------------
 
 # Use SHA256 for signed cookies for improved security over the default SHA1
 Rails.application.config.action_dispatch.signed_cookie_digest = "SHA256"
@@ -22,17 +25,20 @@ Rails.application.config.action_dispatch.signed_cookie_digest = "SHA256"
 Rails.application.config.action_dispatch.cookies_same_site_protection = :strict
 
 # Reduce session timeout from 12 hours to 2 hours for better security
-Rails.application.config.session_store :active_record_store,
-                                       key: "_libreverse_session",
-                                       secure: Rails.env.production?,
-                                       httponly: true,
-                                       expire_after: 2.hours,
-                                       same_site: :strict
+# MOVED: Session store configuration should be in environment files (config/environments/*.rb)
+# Rails.application.config.session_store :active_record_store,
+#                                        key: "_libreverse_session",
+#                                        secure: Rails.env.production?,
+#                                        httponly: true,
+#                                        expire_after: 2.hours,
+#                                        same_site: :strict
 
 # Force session rotation on privilege change events
 Rails.application.config.to_prepare do
   Rodauth::Rails.app.opts[:after_login] = proc do
+    # Re-enable session rotation
     request.env["action_dispatch.cookies"].rotate
+    Rails.logger.info "[SessionInit] after_login hook: Session rotated."
   end
 
   Rodauth::Rails.app.opts[:after_password_change] = proc do

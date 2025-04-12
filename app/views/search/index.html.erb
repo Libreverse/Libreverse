@@ -4,8 +4,10 @@
   <%= render "layouts/navigationshortcutswrapper" do %>
     <div class="sp-bg" role="presentation">
       <img
-        src="<%= vite_asset_path 'images/brasserie.jpg' %>" <%# Fallback %>
-        srcset="<%= bitmap_image_data_url('images/brasserie') %>, <%= vite_asset_path 'images/brasserie.webp' %>, <%= vite_asset_path 'images/brasserie.jpg' %>" <%# Efficient inline, then external fallbacks %>
+        src="<%= vite_asset_path 'images/brasserie.jpg' %>"
+        <%# Fallback %>
+        srcset="<%= bitmap_image_data_url('images/brasserie') %>, <%= vite_asset_path 'images/brasserie.webp' %>, <%= vite_asset_path 'images/brasserie.jpg' %>"
+        <%# Efficient inline, then external fallbacks %>
         loading="lazy"
         decoding="async"
         fetchpriority="low"
