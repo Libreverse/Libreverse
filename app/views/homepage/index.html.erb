@@ -4,11 +4,25 @@
   <%= render 'layouts/navigationshortcutswrapper' do %>
     <div class="hp-bg" role="presentation">
       <img
-        src="<%= vite_asset_path 'images/garage.jpg' %>" <%# Fallback %>
-        srcset="<%= bitmap_image_data_url('images/garage') %>, <%= vite_asset_path 'images/garage.webp' %>, <%= vite_asset_path 'images/garage.jpg' %>" <%# Efficient inline, then external fallbacks %>
-        loading="lazy"       # Changed from eager
-        decoding="async"    # Changed from sync
-        fetchpriority="low"  # Changed from high
+        src="<%= vite_asset_path 'images/garage.jpg' %>"
+        <%# Fallback %>
+        srcset="<%= bitmap_image_data_url('images/garage') %>, <%= vite_asset_path 'images/garage.webp' %>, <%= vite_asset_path 'images/garage.jpg' %>"
+        <%# Efficient inline, then external fallbacks %>
+        loading="lazy"
+        #
+        Changed
+        from
+        eager
+        decoding="async"
+        #
+        Changed
+        from
+        sync
+        fetchpriority="low"
+        #
+        Changed
+        from
+        high
         draggable="false"
         aria-hidden="true"
         tabindex="-1"

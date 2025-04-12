@@ -1,24 +1,39 @@
 <%# Removed include_stylesheet "sidebar" %>
+<%# Get sidebar_id, default to 'main' %>
 <% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
-<% hovered = session["sidebar_hovered_#{sidebar_id}".to_sym] == true %>
+<%# Use locals passed from reflex render, falling back to helpers for initial load %>
+<% expanded = local_assigns.fetch(:expanded, sidebar_expanded?) %>
+<% hover_enabled = local_assigns.fetch(:hover_enabled, sidebar_hover_enabled?) %>
 
 <%# Log the sidebar state for debugging %>
-<% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id} with hovered=#{hovered}" %>
+<% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id} with expanded=#{expanded}, hover_enabled=#{hover_enabled}" %>
 
 <aside
-  class="sidebar-container"
+  class="
+    sidebar-container <%= 'sidebar-expanded' if expanded %>
+    <%= 'sidebar-hovered' if hover_enabled %>
+  "
   id="<%= sidebar_id %>-sidebar"
+  <%# Ensure this matches the morph selector %>
   role="complementary"
 >
   <nav
-    class="sidebar <%= 'sidebar-hovered' if hovered %>"
+    class="sidebar"
+    <%# Classes now primarily controlled by the container via helpers %>
+    id="sidebar-nav-<%= sidebar_id %>"
+    <%# Added unique ID for morph target %>
     data-controller="sidebar"
-    data-action="mouseenter->sidebar#toggleHover mouseleave->sidebar#toggleHover"
+    <%# Reverted to original action calling toggleHover %>
+    data-action="
+      mouseenter->sidebar#toggleHover
+      mouseleave->sidebar#toggleHover
+    "
     data-sidebar-id="<%= sidebar_id %>"
-    data-hover="<%= hovered %>"
-    data-status="<%= hovered ? 'expanded' : 'collapsed' %>"
+    data-expanded="<%= expanded %>"
+    data-hover-enabled="<%= hover_enabled %>"
     role="navigation"
     aria-label="Navigation Sidebar"
+    aria-expanded="<%= expanded %>"
   >
     <div class="sidebar-contents" data-reflex-permanent>
       <% current_path = request.path %>

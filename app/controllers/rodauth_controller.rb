@@ -27,6 +27,12 @@ class RodauthController < ApplicationController
 
   def log_rodauth_action
     Rails.logger.info "DEBUG: [RodauthController] Action #{action_name} triggered for route: #{rodauth.current_route}, method: #{request.request_method}"
+    # Log hash of secret key base for comparison
+    return unless request.post? && action_name == "login" # Only log during POST login
+
+      require "digest"
+      secret_hash = Digest::SHA256.hexdigest(Rails.application.secret_key_base || "")
+      Rails.logger.debug "[RodauthController][POST /login] Secret Key Base SHA256: #{secret_hash}"
   end
 
   private

@@ -1,6 +1,17 @@
 <% drawer_id = local_assigns.fetch(:drawer_id, "main") %>
-<% expanded = session["drawer_expanded_#{drawer_id}".to_sym] == true %>
-<aside class="drawer-container" role="complementary" data-controller="drawer">
+<%# Use local passed from reflex render, falling back to helper for initial load %>
+<% expanded =
+  local_assigns.fetch(
+    :expanded,
+    get_user_preference("drawer_expanded_#{drawer_id}".to_sym, false) == true,
+  ) %>
+<aside
+  class="drawer-container"
+  id="<%= drawer_id %>-drawer"
+  <%# Ensure this matches morph selector %>
+  role="complementary"
+  data-controller="drawer"
+>
   <div
     class="drawer <%= 'drawer-expanded' if expanded %>"
     data-drawer-id="<%= drawer_id %>"

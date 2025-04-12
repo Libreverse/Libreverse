@@ -1,8 +1,29 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  config.session_store :active_record_store, key: "_libreverse_session"
-  config.action_controller.default_url_options = { host: "localhost", port: 3000 }
+  # === REMOVED TEMPORARY DEBUGGING ===
+  # config.secret_key_base = "..."
+  # ===================================
+
+  # --- Use CookieStore (Permanent Change) ---
+  # config.session_store :active_record_store,
+  #                      key: "_libreverse_session",
+  #                      expire_after: 2.hours,
+  #                      domain: 'localhost'
+  config.session_store :cookie_store,
+                       key: "_libreverse_session",
+                       expire_after: 2.hours, # Match previous setting
+                       domain: "localhost" # Keep domain for dev consistency
+  # ------------------------------------------
+
+  # === Configure ActionCable URL for consistency ===
+  # Ensure this matches the port your server ACTUALLY runs on (e.g., via Foreman)
+  config.action_cable.url = "ws://localhost:5000/cable"
+  config.action_cable.allowed_request_origins = [ "http://localhost:5000" ]
+  # ===============================================
+
+  # Default URL options should also match
+  config.action_controller.default_url_options = { host: "localhost", port: 5000 }
 
   # Settings specified here will take precedence over those in config/application.rb.
 

@@ -1,102 +1,108 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    # Identify the connection by the authenticated account ID
+    # Identify the connection by the authenticated account ID found in the session
     identified_by :current_account_id
 
     def connect
-      # Add logging for the request class
-      Rails.logger.debug "[ActionCable] Connection request class: #{request.class}"
+      Rails.logger.debug "[ActionCable] Attempting to establish connection..."
 
-      # 1. Find session_id (using existing logic)
-      session_id = find_session_id
-      unless session_id
-        Rails.logger.warn "[ActionCable] Connection rejected: No session_id found."
-        reject_unauthorized_connection
-        return
-      end
-      Rails.logger.debug "[ActionCable] Found session_id: #{session_id}"
+      # Trust rodauth / rodauth-guest to manage session state (real user or guest)
+      # RodauthApp middleware should have already ensured a session exists.
+      self.current_account_id = find_account_id_from_session
 
-      # 2. Instantiate Rodauth for this request context
-      rodauth = request.env["rodauth"]
-      unless rodauth
-        Rails.logger.error "[ActionCable] Connection rejected: Rodauth instance not found in request env."
+      # Reject if no identification was possible via session
+      unless current_account_id
+        Rails.logger.warn "[ActionCable] Rejecting connection: No authenticated user or guest found in session."
         reject_unauthorized_connection
-        return
+        return # Ensure connect method exits after rejection
       end
 
-      # 3. Check authentication state
-      if rodauth.logged_in?
-        # Fully authenticated user
-        self.current_account_id = rodauth.session_value
-        Rails.logger.info "[ActionCable] Connection established and authenticated for account_id: #{current_account_id}"
-      elsif allow_guest_connections? && create_guest_session(rodauth)
-        # Guest user - get the account ID from the newly created guest session
-        self.current_account_id = rodauth.session_value
-        Rails.logger.info "[ActionCable] Connection established with guest account_id: #{current_account_id}"
-      else
-        # Neither authenticated nor guest allowed - reject
-        Rails.logger.warn "[ActionCable] Connection rejected: Not authenticated and guest not allowed/created."
-        reject_unauthorized_connection
+      # Log successful connection identified via session
+      begin
+        account = Account.find(current_account_id)
+        account_type = account.guest? ? "guest" : "user"
+        Rails.logger.info "[ActionCable] Connection established for #{account_type} account_id: #{current_account_id}"
+      rescue ActiveRecord::RecordNotFound
+         Rails.logger.error "[ActionCable] Connection established but Account record not found for ID: #{current_account_id}"
+         reject_unauthorized_connection # Reject if account doesn't exist
       end
     end
 
     private
 
-    # Helper method to consolidate session ID finding logic
-    def find_session_id
-      session_id = request.session.id
-      unless session_id
-        Rails.logger.debug "[ActionCable] request.session.id was nil, trying signed cookie..."
-        session_key = Rails.application.config.session_options[:key]
-        session_id = cookies.signed[session_key]
-      end
-      session_id
-    end
+    # Finds a valid account ID (real or guest) from the session store (expecting CookieStore)
+    def find_account_id_from_session
+      session_key = Rails.application.config.session_options[:key]
+      Rails.logger.debug "[ActionCable][CookieStore] Attempting to find session using key: #{session_key}"
 
-    # Allow guest connections for non-sensitive operations
-    def allow_guest_connections?
-      # You can customize this logic based on your app's requirements
-      # For example, you might check the origin to only allow guests from certain pages
-      true
-    end
-
-    # Create a guest session if one doesn't exist
-    def create_guest_session(rodauth)
-      return true if rodauth.session_value # Already has a session value, no need to create
-
-      # Direct database approach to create a guest account
+      session_data = nil
       begin
-        # Create a guest account directly
-        username = "guest_#{SecureRandom.uuid}@example.com"
-        account = Account.create!(
-          username: username,
-          guest: true,
-          created_at: Time.current,
-          updated_at: Time.current
-        )
+        # For CookieStore, the entire session hash is in the cookie.
+        # Try encrypted first, then signed as fallback.
+        Rails.logger.debug "[ActionCable][CookieStore] Trying cookies.encrypted..."
+        session_data = cookies.encrypted[session_key]
+        Rails.logger.debug "[ActionCable][CookieStore] Result from cookies.encrypted: #{session_data.inspect}"
 
-        # Now manually set the session value in rodauth
-        rodauth.instance_variable_set("@account_id", account.id)
-        rodauth.send(:set_session_value, :account_id, account.id)
+        unless session_data.is_a?(Hash)
+          Rails.logger.debug "[ActionCable][CookieStore] Trying cookies.signed as fallback..."
+          session_data = cookies.signed[session_key]
+          Rails.logger.debug "[ActionCable][CookieStore] Result from cookies.signed (fallback): #{session_data.inspect}"
+        end
+      rescue StandardError => e
+        Rails.logger.error "[ActionCable][CookieStore] Error accessing/verifying session cookie: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        return nil
+      end
 
-        # Reset this value so session_value method returns the correct account id
-        rodauth.instance_variable_set("@session_value", account.id)
+      unless session_data.is_a?(Hash)
+        Rails.logger.warn "[ActionCable][CookieStore] Could not retrieve session hash from cookie ('#{session_key}'). Data: #{session_data.inspect}"
+        return nil
+      end
 
-        # Ensure we have the session value now
-        success = rodauth.session_value.present?
-
-        if success
-          Rails.logger.info "[ActionCable] Successfully created guest account #{account.id} for WebSocket connection"
-        else
-          Rails.logger.error "[ActionCable] Failed to set session value after creating guest account"
+      # --- Extract account_id directly from the session hash ---
+      account_id = nil
+      rodauth_session_key_name = :account_id # Default Rodauth key name (symbol)
+      rodauth_session_key_string = rodauth_session_key_name.to_s # String version
+      begin
+        # Try to get the configured key name safely if Rodauth instance available
+        # Note: request.env['rodauth'] is likely nil here, so fallback usually runs
+        rodauth_instance = request.env["rodauth"]
+        if rodauth_instance.respond_to?(:session_key)
+           config_key = rodauth_instance.session_key
+           rodauth_session_key_name = config_key if config_key.is_a?(Symbol)
+           rodauth_session_key_string = config_key.to_s
         end
 
-        success
+        # Check for string key first (seems to be what CookieStore provides)
+        account_id = session_data[rodauth_session_key_string]
+        # Fallback to symbol key if string key wasn't found
+        account_id ||= session_data[rodauth_session_key_name]
       rescue StandardError => e
-        Rails.logger.error "[ActionCable] Failed to create guest account: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        false
+        Rails.logger.warn "[ActionCable][CookieStore] Error getting rodauth session key, falling back to default :account_id. Error: #{e.message}"
+        # Fallback access trying both string and symbol
+        account_id = session_data["account_id"] || session_data[:account_id]
       end
+      # -------------------------------------------------------
+
+      if account_id
+         Rails.logger.debug "[ActionCable][CookieStore] Found account_id '#{account_id}' in session data using key '#{rodauth_session_key_string}'"
+         verified_account = Account.find_by(id: account_id)
+         unless verified_account
+            Rails.logger.warn "[ActionCable][CookieStore] Account ID '#{account_id}' found in session does not exist in DB. Ignoring."
+            return nil
+         end
+         account_id # Return the verified ID
+      else
+         Rails.logger.debug "[ActionCable][CookieStore] No account_id found in session data using key '#{rodauth_session_key_string}'"
+         nil
+      end
+    rescue StandardError => e
+      Rails.logger.error "[ActionCable][CookieStore] Error during session processing: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      nil
     end
+
+    # --- REMOVED create_guest_account ---
+    # --- REMOVED allow_guest_connections? ---
   end
 end

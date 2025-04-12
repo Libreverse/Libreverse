@@ -26,7 +26,7 @@ gem "sentry-rails"
 gem "sentry-ruby"
 
 # StimulusReflex framework
-gem "activerecord-session_store"
+# gem "activerecord-session_store" # REMOVED: Using CookieStore instead
 gem "ostruct"
 gem "stimulus_reflex"
 
