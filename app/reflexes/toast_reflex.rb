@@ -36,7 +36,7 @@ class ToastReflex < ApplicationReflex
         detail: { type: type, title: title }
       )
       .broadcast
-    
+
     log_info "[ToastReflex#show] Toast broadcast completed"
 
     # Use nothing morph to avoid conflicting with the CableReady operation

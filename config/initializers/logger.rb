@@ -34,18 +34,16 @@ module CustomTaggedFormatter
 
   def call(severity, timestamp, _progname, msg)
     # Silence specific SolidCable DEBUG messages
-    if severity == "DEBUG" && msg.to_s.include?("SolidCable::Message Insert")
-      return nil
-    end
+    return nil if severity == "DEBUG" && msg.to_s.include?("SolidCable::Message Insert")
 
-    # --- DEVELOPMENT ONLY: ABORT ON ERROR/FATAL --- 
-    if Rails.env.development? && (severity == "ERROR" || severity == "FATAL")
-      log_message = "[#{timestamp.strftime("%Y-%m-%d %H:%M:%S.%L")}] [#{severity}] #{msg}\n"
-      $stderr.puts "#{COLORS[:bold]}#{COLORS[:red]}Aborting application due to #{severity} log:#{COLORS[:reset]}"
-      $stderr.puts log_message
-      exit!(1) # Force immediate exit
+    # --- DEVELOPMENT ONLY: ABORT ON ERROR/FATAL ---
+    if Rails.env.development? && %w[ERROR FATAL].include?(severity)
+      log_message = "[#{timestamp.strftime('%Y-%m-%d %H:%M:%S.%L')}] [#{severity}] #{msg}\n"
+      warn "#{COLORS[:bold]}#{COLORS[:red]}Aborting application due to #{severity} log:#{COLORS[:reset]}"
+      warn log_message
+      abort("Application terminated due to #{severity} log") # Rails-preferred way to exit
     end
-    # --- END DEVELOPMENT ONLY ABORT --- 
+    # --- END DEVELOPMENT ONLY ABORT ---
 
     # Always use colors in development, regardless of TTY
     use_colors = Rails.env.development?
@@ -143,5 +141,18 @@ ActiveSupport::Notifications.subscribe "process_action.action_controller" do |*a
     exception = payload[:exception_object]
     Rails.logger.error("Unhandled exception: #{exception.class} - #{exception.message}")
     Rails.logger.error(exception.backtrace.join("\n")) if exception.backtrace
+  end
+end
+
+# Handle Rails startup errors
+if defined?(Rails::Server)
+  Rails.application.config.after_initialize do
+      # Run startup checks
+      Rails.logger.debug "✓ Logger configured successfully."
+  rescue StandardError => e
+      Rails.logger.debug "\n[FATAL] Error during application initialization: #{e.message}"
+      Rails.logger.debug e.backtrace.join("\n")
+      # Don't use exit directly, use Rails.application.exit! or abort
+      abort("Application initialization failed") # This is the Rails-preferred way to exit
   end
 end

@@ -1,19 +1,17 @@
 <%# Extracted nav content %>
 <%# Local variables needed: sidebar_id, expanded, hover_enabled, rodauth %>
+<%# Ensure all values use the 't'/'f' pattern for consistency %>
 <nav
-  class="sidebar <%= 'sidebar-hovered' if hover_enabled == 'true' || hover_enabled == 't' %>"
+  class="sidebar <%= 'sidebar-hovered' if hover_enabled == 't' %>"
   id="sidebar-nav-<%= sidebar_id %>"
   data-controller="sidebar"
-  data-action="
-    mouseenter->sidebar#toggleHover
-    mouseleave->sidebar#toggleHover
-  "
+  data-action="mouseenter->sidebar#toggleHover mouseleave->sidebar#toggleHover"
   data-sidebar-id="<%= sidebar_id %>"
-  data-expanded="<%= expanded %>"
-  data-hover-enabled="<%= hover_enabled %>"
+  data-expanded="<%= hover_enabled == 't' ? "true" : "false" %>"
+  data-hover-enabled="<%= hover_enabled == 't' ? "true" : "false" %>"
   role="navigation"
   aria-label="Navigation Sidebar"
-  aria-expanded="<%= expanded %>"
+  aria-expanded="<%= hover_enabled == 't' ? "true" : "false" %>"
 >
   <div class="sidebar-contents" data-reflex-permanent>
     <% current_path = request.path %>
@@ -107,4 +105,4 @@
       </a>
     <% end %>
   </div>
-</nav> 
+</nav>

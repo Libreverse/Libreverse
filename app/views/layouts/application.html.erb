@@ -37,14 +37,7 @@
     <!--Vite HMR in development. Does not result in anything in prod-->
     <%= vite_client_tag %>
   </head>
-  <body
-    class="
-      <%= page_with_drawer? ? 'page-with-drawer' : '' %>
-      <%= 'drawer-is-expanded' if drawer_expanded? %>
-      <%= 'sidebar-is-expanded' if sidebar_expanded? %>
-      <%# Add other body classes as needed %>
-    "
-  >
+  <body>
     <noscript>
       <div class="noscript-message">
         <div class="noscript-message__content">

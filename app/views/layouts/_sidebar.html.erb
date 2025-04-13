@@ -1,30 +1,24 @@
-<%# Removed include_stylesheet "sidebar" %>
 <%# Get sidebar_id, default to 'main' %>
 <% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
 <%# Use locals passed from reflex render, falling back to helpers for initial load %>
-<%# NOTE: Using helpers directly now as reflex doesn't pass locals with data-reflex-root %>
-<% expanded = local_assigns.fetch(:expanded, sidebar_expanded?) %>
 <% hover_enabled = local_assigns.fetch(:hover_enabled, sidebar_hover_enabled?) %>
 <%# Pass rodauth explicitly to the partial %>
 <% rodauth_obj = local_assigns.fetch(:rodauth, rodauth) %>
 
 <%# Log the sidebar state for debugging %>
-<% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id} with expanded=#{expanded}, hover_enabled=#{hover_enabled}" %>
+<% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, hover_enabled=#{hover_enabled}" %>
 
 <aside
-  class="
-    sidebar-container <%= 'sidebar-expanded' if expanded %>
-    <%= 'sidebar-hovered' if hover_enabled == 'true' || hover_enabled == 't' %>
-  "
+  class="sidebar-container <%= 'sidebar-hovered' if hover_enabled == 't' %>"
   id="<%= sidebar_id %>-sidebar"
-  <%# Ensure this matches the morph selector %>
   role="complementary"
+  data-expanded="<%= hover_enabled == 't' ? "true" : "false" %>"
 >
   <%# Render the extracted nav partial %>
-  <%= render partial: "layouts/sidebar_nav", locals: {
+  <%= render partial: "layouts/sidebar_nav",
+  locals: {
     sidebar_id: sidebar_id,
-    expanded: expanded,
     hover_enabled: hover_enabled,
-    rodauth: rodauth_obj
+    rodauth: rodauth_obj,
   } %>
 </aside>

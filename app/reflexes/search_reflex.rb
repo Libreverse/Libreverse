@@ -5,7 +5,7 @@ class SearchReflex < ApplicationReflex
       query = element[:value].to_s.strip
       query = query[0...50] # Cap the query length to 50 characters
       cache_key = "search/reflex/#{query}"
-      
+
       log_info "[SearchReflex#perform] Processing search query: '#{query}'"
 
       @experiences = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
@@ -18,7 +18,7 @@ class SearchReflex < ApplicationReflex
           Experience.order(created_at: :desc).limit(20)
         end
       end
-      
+
       log_info "[SearchReflex#perform] Found #{@experiences.size} experiences for query: '#{query}'"
 
       # Always broadcast any CableReady operations before morphing

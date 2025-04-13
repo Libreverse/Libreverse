@@ -25,29 +25,29 @@ class FormReflex < ApplicationReflex
 
       # Use render_and_morph_with_emojis to update the error container
       render_and_morph_with_emojis(
-        selector: "#form-errors", 
-        partial: "layouts/form_errors", 
+        selector: "#form-errors",
+        partial: "layouts/form_errors",
         locals: { errors: [] }
       )
     else
       log_info "[FormReflex#submit] Form validation failed with #{@validation_errors.length} errors"
       # Use render_and_morph_with_emojis to show error messages
       render_and_morph_with_emojis(
-        selector: "#form-errors", 
-        partial: "layouts/form_errors", 
+        selector: "#form-errors",
+        partial: "layouts/form_errors",
         locals: { errors: @validation_errors }
       )
     end
   rescue StandardError => e
     log_error "[FormReflex#submit] Error processing form: #{e.message}", e
     log_error e.backtrace.join("\n")
-    
+
     # Show error in form
     @validation_errors ||= []
     @validation_errors << "An error occurred processing the form"
     render_and_morph_with_emojis(
-      selector: "#form-errors", 
-      partial: "layouts/form_errors", 
+      selector: "#form-errors",
+      partial: "layouts/form_errors",
       locals: { errors: @validation_errors }
     )
   end
