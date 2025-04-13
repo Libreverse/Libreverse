@@ -18,6 +18,41 @@ module ApplicationHelper
   def render_emojis(text)
     return "".html_safe if text.blank? # Return empty safe string if input is blank
 
+    # Detect if this looks like HTML content rather than plain text
+    contains_html = text.include?('<') && text.include?('>')
+    
+    if contains_html
+      # Use Nokogiri to parse HTML and only replace emojis in text nodes
+      begin
+        # Parse the HTML with Nokogiri
+        doc = Nokogiri::HTML.fragment(text)
+        
+        # Process text nodes only
+        doc.traverse do |node|
+          # Only process text nodes (type 3)
+          if node.text? && node.content.match?(EMOJI_REGEX)
+            # Replace emojis in this text node
+            replaced_content = node.content.gsub(EMOJI_REGEX) do |emoji|
+              img_tag = Rails.cache.fetch(emoji_cache_key(emoji), expires_in: 12.hours) do
+                build_emoji_img_tag(emoji)
+              end
+              # If img_tag is nil, fallback to original emoji
+              img_tag || CGI.escapeHTML(emoji)
+            end
+            # Replace the node's content with the processed text
+            node.content = replaced_content
+          end
+        end
+        
+        # Convert back to HTML string and mark as safe
+        return doc.to_html.html_safe
+      rescue StandardError => e
+        Rails.logger.error "EmojiHelper: Error processing HTML with Nokogiri: #{e.message}"
+        # Fallback to normal processing if Nokogiri fails
+      end
+    end
+    
+    # Regular processing for plain text or fallback
     # Check if the text actually contains potential emojis before doing expensive gsub
     return text.html_safe unless text.match?(EMOJI_REGEX)
 

@@ -17,7 +17,20 @@ export default class extends ApplicationController {
    */
   toggle (event) {
     event.preventDefault()
+    // Log HTML before reflex with specific focus on emojis
     console.log('Drawer toggle clicked - Before Reflex HTML:', this.element.outerHTML);
+    
+    // Check for emojis in the content before reflex
+    const drawerContent = this.element.querySelector('.drawer-content');
+    if (drawerContent) {
+      console.log('Drawer content before reflex:', drawerContent.innerHTML);
+      // Check if emoji image tags exist
+      const emojiImgs = drawerContent.querySelectorAll('img.emoji');
+      console.log(`Found ${emojiImgs.length} emoji images before reflex`);
+      if (emojiImgs.length > 0) {
+        console.log('Sample emoji image:', emojiImgs[0].outerHTML);
+      }
+    }
 
     // Find the inner drawer element that holds the data-expanded attribute
     const drawerElement = this.element.querySelector('.drawer');
@@ -29,7 +42,20 @@ export default class extends ApplicationController {
 
     // Pass the current state as a string argument to the reflex
     this.stimulate('DrawerReflex#toggle', currentState).then(() => {
+      // Log HTML after reflex with specific focus on emojis
       console.log('Drawer toggle clicked - After Reflex HTML:', this.element.outerHTML);
+      
+      // Check for emojis in the content after reflex
+      const updatedDrawerContent = this.element.querySelector('.drawer-content');
+      if (updatedDrawerContent) {
+        console.log('Drawer content after reflex:', updatedDrawerContent.innerHTML);
+        // Check if emoji image tags exist
+        const updatedEmojiImgs = updatedDrawerContent.querySelectorAll('img.emoji');
+        console.log(`Found ${updatedEmojiImgs.length} emoji images after reflex`);
+        if (updatedEmojiImgs.length > 0) {
+          console.log('Sample emoji image after reflex:', updatedEmojiImgs[0].outerHTML);
+        }
+      }
     }).catch(error => {
       console.error('Drawer toggle error:', error);
     });
