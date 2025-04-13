@@ -62,12 +62,9 @@ class DrawerReflex < ApplicationReflex
     
     Rails.logger.info "[DrawerReflex#toggle] render_and_morph_with_emojis completed for drawer #{drawer_id}"
     
-    # If we haven't broadcast the CableReady operations yet, do it now
-    unless cable_ready.operations[:morphs].nil? || cable_ready.operations[:morphs].empty?
-      Rails.logger.info "[DrawerReflex#toggle] Broadcasting CableReady operations"
-      cable_ready.broadcast
-      Rails.logger.info "[DrawerReflex#toggle] CableReady broadcast completed"
-    end
+    # Broadcast the queued CableReady operations without accessing internal arrays
+    cable_ready.broadcast
+    Rails.logger.info "[DrawerReflex#toggle] CableReady broadcast completed for drawer #{drawer_id}"
 
     # Ensure we don't do a full page refresh (keep the original morph mode)
     morph :nothing
