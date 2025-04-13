@@ -1,32 +1,28 @@
-import ApplicationController from "./application_controller";
+import ApplicationController from "./application_controller"
 
 /**
- * Controls the sidebar interactions, specifically toggling hover state.
+ * Controls the sidebar hover interactions.
  */
 export default class extends ApplicationController {
-    /**
-     * Initializes the controller and registers it with StimulusReflex.
-     */
-    connect() {
-        super.connect();
-        // console.log("Sidebar controller connected", this.element);
-    }
+  connect () {
+    super.connect()
+    // console.log('Sidebar controller connected', this.element);
+  }
 
-    /**
-     * Called on mouseenter and mouseleave to toggle the hover state via a Reflex.
-     * The Reflex action reads the current state and toggles it.
-     * @param {Event} event - The mouse event.
-     */
-    toggleHover(/* event */) {
-        const sidebarId = this.element.dataset.sidebarId || "main";
-        // console.log(`Sidebar toggleHover triggered for ${sidebarId}`);
+  /**
+   * Called on mouseenter/mouseleave to trigger the reflex that toggles hover state.
+   * Passes the element so the reflex can read data-sidebar-id.
+   */
+  toggleHover (/* event */) {
+    console.log('Sidebar toggleHover triggered - Before Reflex HTML:', this.element.outerHTML);
+    this.stimulate('SidebarReflex#toggle_hover', this.element).then(() => {
+      console.log('Sidebar toggleHover triggered - After Reflex HTML:', this.element.outerHTML);
+    }).catch(error => {
+      console.error('Sidebar toggleHover error:', error);
+    });
+  }
 
-        // Call the reflex action. The reflex will handle toggling the state.
-        // Pass the sidebar ID for context if needed by the reflex.
-        this.stimulate("SidebarReflex#toggle_hover", { sidebar_id: sidebarId });
-    }
-
-    // Note: Assuming an explicit expand/collapse click might be handled by a different
-    // action or directly by data-reflex if the state change only needs a morph.
-    // If an explicit toggle *method* is needed, it would call SidebarReflex#set_expanded_state.
+  // Note: Explicit expand/collapse toggle is not handled by this controller currently.
+  // It would likely be a separate action calling a different reflex method (e.g., set_expanded_state)
+  // or potentially handled via data-reflex attribute directly on a toggle button.
 }

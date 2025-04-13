@@ -1,10 +1,10 @@
 <% drawer_id = local_assigns.fetch(:drawer_id, "main") %>
 <%# Use local passed from reflex render, falling back to helper for initial load %>
-<% expanded =
-  local_assigns.fetch(
-    :expanded,
-    get_user_preference("drawer_expanded_#{drawer_id}".to_sym, false) == true,
-  ) %>
+<%# NOTE: Using helper directly now %>
+<%
+  # Determine the expanded state: prioritize the passed local variable if available, otherwise fall back to the helper method
+  expanded = local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id)
+%>
 <aside
   class="drawer-container"
   id="<%= drawer_id %>-drawer"
@@ -33,6 +33,7 @@
         aria-label="Toggle drawer"
         aria-expanded="<%= expanded %>"
         aria-controls="drawer-content-<%= drawer_id %>"
+        data-reflex-root="#<%= drawer_id %>-drawer, body"
       >
         <img
           src="<%= svg_icon_data_url('chevron-up') %>"

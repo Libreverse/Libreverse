@@ -3,4 +3,25 @@
 
 import { createConsumer } from "@rails/actioncable";
 
-export default createConsumer();
+// Create the consumer
+const consumer = createConsumer();
+
+// Log all ActionCable messages in development
+if (import.meta.env.MODE === 'development') {
+  consumer.subscriptions.create = function(channelName, config) {
+    const originalReceived = config.received;
+    config.received = function(data) {
+      console.log('ActionCable Received:', channelName, data);
+      if (originalReceived) originalReceived.call(this, data);
+    };
+    const subscription = createConsumer().subscriptions.create(channelName, config);
+    console.log('ActionCable Subscription Created:', channelName);
+    return subscription;
+  };
+  consumer.send = function(data) {
+    console.log('ActionCable Sent:', data);
+    createConsumer().send(data);
+  };
+}
+
+export default consumer;

@@ -2,8 +2,9 @@
 <%# Get sidebar_id, default to 'main' %>
 <% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
 <%# Use locals passed from reflex render, falling back to helpers for initial load %>
-<% expanded = local_assigns.fetch(:expanded, sidebar_expanded?) %>
-<% hover_enabled = local_assigns.fetch(:hover_enabled, sidebar_hover_enabled?) %>
+<%# NOTE: Using helpers directly now as reflex doesn't pass locals with data-reflex-root %>
+<% expanded = sidebar_expanded? %>
+<% hover_enabled = sidebar_hover_enabled? %>
 
 <%# Log the sidebar state for debugging %>
 <% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id} with expanded=#{expanded}, hover_enabled=#{hover_enabled}" %>
@@ -29,6 +30,7 @@
       mouseleave->sidebar#toggleHover
     "
     data-sidebar-id="<%= sidebar_id %>"
+    data-reflex-root="#<%= sidebar_id %>-sidebar, body"
     data-expanded="<%= expanded %>"
     data-hover-enabled="<%= hover_enabled %>"
     role="navigation"

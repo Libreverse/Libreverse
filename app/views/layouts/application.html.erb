@@ -39,7 +39,10 @@
   </head>
   <body
     class="
-      <%= page_with_drawer? ? 'page-with-drawer' : '' %><%= session[:drawer_expanded] ? ' drawer-is-expanded' : '' %>
+      <%= page_with_drawer? ? 'page-with-drawer' : '' %>
+      <%= 'drawer-is-expanded' if drawer_expanded? %>
+      <%= 'sidebar-is-expanded' if sidebar_expanded? %>
+      <%# Add other body classes as needed %>
     "
   >
     <noscript>
