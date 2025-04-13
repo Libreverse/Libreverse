@@ -189,21 +189,37 @@ class ApplicationReflex < StimulusReflex::Reflex
   #   locals: A hash of local variables for the partial.
   #
   def render_and_morph_with_emojis(selector:, partial:, locals: {})
+    # Log the start of rendering to help debug
+    log_debug "Beginning render_and_morph_with_emojis for selector '#{selector}', partial '#{partial}'"
+    
     # Render the partial using ApplicationController to ensure helpers are available
     rendered_html = ApplicationController.render(partial: partial, locals: locals)
-
+    
     # Apply the emoji helper to the rendered HTML
     # Assumes render_emojis helper is available via ApplicationHelper
+    log_debug "Applying render_emojis to rendered HTML"
     processed_html = helpers.render_emojis(rendered_html)
-
+    
+    # Debug log to see emoji processed content
+    log_debug "Emoji processed HTML size: #{processed_html.bytesize} bytes"
+    log_debug "First 100 chars after emoji processing: #{processed_html[0..100]}"
+    
+    # Ensure the HTML is marked as html_safe to prevent double escaping
+    processed_html = processed_html.html_safe if processed_html.respond_to?(:html_safe)
+    
     # Use CableReady to morph the processed content into the target selector
+    log_debug "Sending morph operation via CableReady for selector '#{selector}'"
     cable_ready.morph(
       selector: selector,
-      html: processed_html
+      html: processed_html,
+      # Ensure we don't lose HTML entity encoding during transmission
+      children_only: false,
+      permanent_attribute_name: 'data-reflex-permanent'
     )
+    log_debug "CableReady morph operation added to queue"
   rescue StandardError => e
     # Log errors during this process
     log_error "Error in render_and_morph_with_emojis for selector '#{selector}', partial '#{partial}': #{e.message}", e
-    # Consider how to handle errors - perhaps re-raise or log and continue?
+    log_error e.backtrace.join("\n")
   end
 end
