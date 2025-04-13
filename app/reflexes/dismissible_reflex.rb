@@ -22,8 +22,21 @@ class DismissibleReflex < ApplicationReflex
 
     # Use UserPreference to mark as dismissed (storing true)
     # Note: UserPreference.set handles validation and logging
-    UserPreference.set(current_account.id, key, true)
-    log_info "Marked '#{key}' as dismissed for account #{current_account.id}"
+    log_info "[DismissibleReflex#dismiss] Setting dismissible preference for key: #{key}"
+    begin
+      result = UserPreference.set(current_account.id, key, true)
+      log_info "[DismissibleReflex#dismiss] UserPreference set result: #{result}"
+    rescue StandardError => e
+      log_error "[DismissibleReflex#dismiss] Error setting UserPreference: #{e.message}", e
+      # Continue to prevent crashing the UI
+    end
+    
+    log_info "[DismissibleReflex#dismiss] Marked '#{key}' as dismissed for account #{current_account.id}"
+
+    # Always broadcast CableReady operations
+    log_debug "[DismissibleReflex#dismiss] Broadcasting CableReady operations"
+    cable_ready.broadcast
+    log_info "[DismissibleReflex#dismiss] CableReady broadcast completed"
 
     # No DOM change needed from the server, client handles immediate hiding.
     morph :nothing 

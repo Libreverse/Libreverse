@@ -6,7 +6,7 @@
 >
 <meta name="description" content="<%= seo_config('description') %>">
 <meta name="keywords" content="<%= seo_config('keywords') %>">
-<meta name="image" content="<%= seo_config('preview_image') %>">
+<meta name="image" content="<%= seo_config_with_assets('preview_image') %>">
 <meta name="theme-color" content="<%= seo_config('theme_color') %>">
 <meta name="robots" content="all">
 <meta name="referrer" content="no-referrer-when-downgrade">
@@ -17,18 +17,18 @@
 <link rel="home" href="<%= seo_config('homepage') %>">
 <link
   rel="shortcut icon"
-  href="<%= seo_config('shortcut_icon') %>"
+  href="<%= seo_config_with_assets('shortcut_icon') %>"
   type="image/x-icon"
 >
 <link
   rel="apple-touch-icon"
-  href="<%= seo_config('apple_touch_icon') %>"
+  href="<%= seo_config_with_assets('apple_touch_icon') %>"
   type="image/x-icon"
 >
 <link
   rel="mask-icon"
   sizes="any"
-  href="<%= seo_config('mask_icon') %>"
+  href="<%= seo_config_with_assets('mask_icon') %>"
   color="<%= seo_config('mask_icon_color') %>"
 >
 <!--Schema.org metadata-->
@@ -53,11 +53,11 @@
 >
 <meta property="og:type" content="website">
 <meta property="og:url" content="<%= seo_config('url') %>">
-<meta property="og:image" content="<%= seo_config('preview_image') %>">
-<meta property="og:image:url" content="<%= seo_config('preview_image') %>">
+<meta property="og:image" content="<%= seo_config_with_assets('preview_image') %>">
+<meta property="og:image:url" content="<%= seo_config_with_assets('preview_image') %>">
 <meta
   property="og:image:secure_url"
-  content="<%= seo_config('preview_image') %>"
+  content="<%= seo_config_with_assets('preview_image') %>"
 >
 <meta
   property="og:image:type"
@@ -95,7 +95,7 @@
 <meta name="twitter:creator" content="<%= seo_config('twitter_creator') %>">
 <meta name="twitter:title" content="<%= seo_config('name') %>">
 <meta name="twitter:description" content="<%= seo_config('description') %>">
-<meta name="twitter:image" content="<%= seo_config('preview_image') %>">
+<meta name="twitter:image" content="<%= seo_config_with_assets('preview_image') %>">
 <meta name="twitter:image:alt" content="<%= seo_config('preview_image_alt') %>">
 <meta name="twitter:url" content="<%= seo_config('url') %>">
 <!--Old windows pin-to-taskbar metadata-->

@@ -15,17 +15,41 @@ class FormReflex < ApplicationReflex
     @validation_errors = []
     if validate_form(form_data)
       # After validation, signal the client that form can be submitted
+      log_info "[FormReflex#submit] Form validated successfully, dispatching form:validated event"
       cable_ready.dispatch_event(
         name: "form:validated",
         selector: "##{form_id}"
-      ).broadcast
+      )
+      cable_ready.broadcast
+      log_info "[FormReflex#submit] CableReady broadcast completed"
 
-      # Use a selector morph to clear error container
-      morph "#form-errors", render(partial: "layouts/form_errors", locals: { errors: [] })
+      # Use render_and_morph_with_emojis to update the error container
+      render_and_morph_with_emojis(
+        selector: "#form-errors", 
+        partial: "layouts/form_errors", 
+        locals: { errors: [] }
+      )
     else
-      # Use a selector morph to show error messages
-      morph "#form-errors", render(partial: "layouts/form_errors", locals: { errors: @validation_errors })
+      log_info "[FormReflex#submit] Form validation failed with #{@validation_errors.length} errors"
+      # Use render_and_morph_with_emojis to show error messages
+      render_and_morph_with_emojis(
+        selector: "#form-errors", 
+        partial: "layouts/form_errors", 
+        locals: { errors: @validation_errors }
+      )
     end
+  rescue StandardError => e
+    log_error "[FormReflex#submit] Error processing form: #{e.message}", e
+    log_error e.backtrace.join("\n")
+    
+    # Show error in form
+    @validation_errors ||= []
+    @validation_errors << "An error occurred processing the form"
+    render_and_morph_with_emojis(
+      selector: "#form-errors", 
+      partial: "layouts/form_errors", 
+      locals: { errors: @validation_errors }
+    )
   end
 
   private

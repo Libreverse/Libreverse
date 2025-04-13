@@ -33,6 +33,20 @@ module CustomTaggedFormatter
   end
 
   def call(severity, timestamp, _progname, msg)
+    # Silence specific SolidCable DEBUG messages
+    if severity == "DEBUG" && msg.to_s.include?("SolidCable::Message Insert")
+      return nil
+    end
+
+    # --- DEVELOPMENT ONLY: ABORT ON ERROR/FATAL --- 
+    if Rails.env.development? && (severity == "ERROR" || severity == "FATAL")
+      log_message = "[#{timestamp.strftime("%Y-%m-%d %H:%M:%S.%L")}] [#{severity}] #{msg}\n"
+      $stderr.puts "#{COLORS[:bold]}#{COLORS[:red]}Aborting application due to #{severity} log:#{COLORS[:reset]}"
+      $stderr.puts log_message
+      exit!(1) # Force immediate exit
+    end
+    # --- END DEVELOPMENT ONLY ABORT --- 
+
     # Always use colors in development, regardless of TTY
     use_colors = Rails.env.development?
 
