@@ -15,18 +15,3 @@ document.addEventListener("turbo:before-fetch-request", () => {
 document.addEventListener("turbo:before-fetch-response", () => {
     document.body.classList.remove("turbo-loading");
 });
-
-// Handle form submission errors
-document.addEventListener("turbo:submit-end", (event) => {
-    const form = event.target;
-
-    // Check if form submission had errors (look for flash error messages in the response)
-    const flashMessages = document.querySelectorAll(".toast-error");
-    if (flashMessages.length > 0) {
-        // Focus the first input with an error for better accessibility
-        const firstInvalidInput = form.querySelector(".is-invalid");
-        if (firstInvalidInput) {
-            firstInvalidInput.focus();
-        }
-    }
-});

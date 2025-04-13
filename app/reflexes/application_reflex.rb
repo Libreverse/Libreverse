@@ -179,4 +179,31 @@ class ApplicationReflex < StimulusReflex::Reflex
   def login_path
     defined?(login_path) ? login_path : "/login"
   end
+
+  # Helper to render a partial, apply emoji replacement, and morph the result.
+  # The calling reflex is still responsible for the final `morph :mode` call.
+  #
+  # Args:
+  #   selector: The CSS selector for the cable_ready.morph operation.
+  #   partial: The path to the partial to render.
+  #   locals: A hash of local variables for the partial.
+  #
+  def render_and_morph_with_emojis(selector:, partial:, locals: {})
+    # Render the partial using ApplicationController to ensure helpers are available
+    rendered_html = ApplicationController.render(partial: partial, locals: locals)
+
+    # Apply the emoji helper to the rendered HTML
+    # Assumes render_emojis helper is available via ApplicationHelper
+    processed_html = helpers.render_emojis(rendered_html)
+
+    # Use CableReady to morph the processed content into the target selector
+    cable_ready.morph(
+      selector: selector,
+      html: processed_html
+    )
+  rescue StandardError => e
+    # Log errors during this process
+    log_error "Error in render_and_morph_with_emojis for selector '#{selector}', partial '#{partial}': #{e.message}", e
+    # Consider how to handle errors - perhaps re-raise or log and continue?
+  end
 end

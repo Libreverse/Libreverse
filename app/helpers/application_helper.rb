@@ -1,6 +1,114 @@
 module ApplicationHelper
   require "base64"
   require "nokogiri"
+  require "unicode"
+  require "cgi"
+  require 'uri'
+  require 'digest/sha1' # Added for emoji_cache_key
+  require 'erb' # Needed for url_encode
+
+  # ===== Emoji Replacement Helper =====
+  # Moved from EmojiReplacer middleware
+  # Matches standard emojis, including sequences with ZWJ and skin tone modifiers
+  EMOJI_REGEX = /(?:\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?(?:\u{200D}\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
+
+  # Replaces emojis in a given text string with inline SVG <img> tags.
+  # Uses caching to avoid redundant SVG processing.
+  # Returns HTML-safe string.
+  def render_emojis(text)
+    return "".html_safe if text.blank? # Return empty safe string if input is blank
+
+    # Check if the text actually contains potential emojis before doing expensive gsub
+    return text.html_safe unless text.match?(EMOJI_REGEX)
+
+    processed_text = text.gsub(EMOJI_REGEX) do |emoji|
+      img_tag = Rails.cache.fetch(emoji_cache_key(emoji), expires_in: 12.hours) do
+        # Rails.logger.debug { "EmojiHelper: Cache miss for emoji '#{emoji}'. Building inline SVG." }
+        build_emoji_img_tag(emoji)
+      end
+
+      # If img_tag is nil (e.g., SVG not found), fallback to original emoji
+      img_tag || CGI.escapeHTML(emoji)
+    end
+
+    processed_text.html_safe
+  rescue StandardError => e
+    Rails.logger.error "EmojiHelper: Error rendering emojis: #{e.message}\nText: #{text[0..100]}"
+    # Fallback safely in case of error
+    CGI.escapeHTML(text || "").html_safe
+  end
+
+private
+
+  # Generates a cache key for a given emoji.
+  def emoji_cache_key(emoji)
+    "emoji_helper/v13/#{Digest::SHA1.hexdigest(emoji)}" # Incremented version for encoding change
+  end
+
+  # Builds the inline SVG <img> tag for a given emoji using URL encoding.
+  def build_emoji_img_tag(emoji)
+    codepoints = emoji.codepoints.reject { |cp| cp == 0xFE0F }.map { |cp| cp.to_s(16) }.join("-")
+    # Rails.logger.debug { "EmojiHelper: Emoji codepoints for '#{emoji}': #{codepoints}" }
+
+    # Find the asset path using Vite manifest
+    begin
+      svg_path_from_vite = ViteRuby.instance.manifest.path_for("emoji/#{codepoints}.svg", { type: :image })
+    rescue ViteRuby::MissingEntrypointError
+      Rails.logger.warn "EmojiHelper: SVG manifest entry not found for emoji '#{emoji}' with codepoints '#{codepoints}'."
+      return nil # Return nil if SVG is not in the manifest
+    end
+
+    return nil if svg_path_from_vite.blank?
+
+    # Rails.logger.debug { "EmojiHelper: Resolved SVG path for emoji '#{emoji}': #{svg_path_from_vite}" }
+
+    # Fetch the SVG content using the corrected Net::HTTP approach
+    svg_content = read_vite_asset_content(svg_path_from_vite)
+
+    # Build the <img> tag with inline Base64 SVG
+    if svg_content
+      # URL-encode the SVG content instead of Base64
+      encoded_svg = ERB::Util.url_encode(svg_content)
+      %(<img src="data:image/svg+xml,#{encoded_svg}" alt="#{CGI.escapeHTML(emoji)}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)
+    else
+      nil # Return nil if content couldn't be loaded
+    end
+  rescue StandardError => e
+    Rails.logger.error "EmojiHelper: Error building SVG tag for emoji '#{emoji}': #{e.message}"
+    nil # Ensure fallback if any error occurs during build
+  end
+
+  # Helper to read asset content based on environment
+  # Moved into private section of the helper module
+  def read_vite_asset_content(path_from_manifest)
+    return nil if path_from_manifest.blank?
+
+    if Rails.env.development? || Rails.env.test?
+      begin
+        # Correctly construct the URI and fetch from Vite dev server
+        vite_uri = URI.join(ViteRuby.instance.config.public_base_url, path_from_manifest)
+        response_body = Net::HTTP.get(vite_uri)
+        # Assuming success if we get a non-empty body, Net::HTTP.get raises errors on failure
+        response_body.present? ? response_body : nil
+      rescue StandardError => e
+        Rails.logger.error "Error fetching asset from Vite dev server: #{e.message} for URI: #{vite_uri}"
+        nil # Fallback
+      end
+    else
+      # Read from public directory in production
+      relative_path = path_from_manifest.sub(/^\/?#{ViteRuby.instance.config.public_output_dir}\//, '')
+      public_path = Rails.root.join("public", ViteRuby.instance.config.public_output_dir, relative_path)
+      File.exist?(public_path) ? File.read(public_path) : nil
+    end
+  rescue StandardError => e # Catch errors during path resolution/reading
+    Rails.logger.error "Error reading Vite asset content for path '#{path_from_manifest}': #{e.message}"
+    nil
+  end
+
+  # ===== End Emoji Replacement Helper =====
+
+# Ensure subsequent original methods are public
+public
 
   def auth_page?
     auth_paths = %w[/login /create-account /change-password /multi-phase-login]
@@ -141,6 +249,14 @@ module ApplicationHelper
     # Ensure the key matches what's used in SidebarReflex
     # UserPreference stores boolean true/false
     get_user_preference(:sidebar_hover_enabled, false) == true
+  end
+
+  # Checks if a specific drawer is expanded.
+  def drawer_expanded?(drawer_id = "main")
+    # Construct the key matching the UserPreference ALLOWED_KEYS format
+    key = "drawer_expanded_#{drawer_id}" # Keep as string
+    # Retrieve the preference (stored as 't'/'f' or nil) and check if it's 't'
+    get_user_preference(key, 'f') == 't' # Default to 'f' if not set
   end
 
   # Checks if a specific tutorial/item is dismissed.

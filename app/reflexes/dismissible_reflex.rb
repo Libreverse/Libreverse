@@ -1,48 +1,35 @@
 # frozen_string_literal: true
 
 class DismissibleReflex < ApplicationReflex
-  # Handles dismissible elements by storing the dismissed state in the session
-  # The element triggering the reflex is passed automatically by StimulusReflex
+  include Loggable
+
+  # Action triggered by the dismissible Stimulus controller
   def dismiss
-    # Get the key from the element's data attribute
-    # Note: Stimulus controller passes the element via stimulate
-    key = element.dataset[:dismissible_key_value]
+    # Retrieve the key from the element that triggered the reflex
+    # Ensure the key name matches the data attribute in the view
+    key = element.dataset[:dismissible_key_value] 
 
-    # Debug information
-    Rails.logger.info "DismissibleReflex#dismiss called for element with key: '#{key}'"
-
-    if key.present?
-      # Store in session that this item has been dismissed
-      session[:dismissed_items] ||= []
-      session[:dismissed_items] << key unless session[:dismissed_items].include?(key)
-      Rails.logger.info "Updated session[:dismissed_items]: #{session[:dismissed_items].inspect}"
-
-      # If this is a preference that should be stored in database and the user is authenticated
-      if UserPreference::ALLOWED_KEYS.include?(key) && authenticated?
-        # Persist this preference to the database for the logged-in user
-        UserPreference.dismiss(current_account_id, key)
-        Rails.logger.info "Stored dismissal in database for account: #{current_account_id}, key: #{key}"
-      elsif UserPreference::ALLOWED_KEYS.include?(key) && guest_account?
-        # Store preference for guest account temporarily
-        UserPreference.dismiss(current_account_id, key)
-        Rails.logger.info "Stored dismissal for guest account: #{current_account_id}, key: #{key}"
-      else
-        Rails.logger.info "Storing dismissal in session only (no account or not allowed key) for key: #{key}"
-      end
-
-      # Just signal success without changing DOM - the element is already hidden in the controller
-      morph :nothing
-    else
-      Rails.logger.error "Dismissible Reflex: No key found for element"
-      Rails.logger.error "Available data: #{element.dataset.inspect}"
+    unless key.present?
+      log_error "Dismissible key not found in element dataset: #{element.dataset.inspect}"
+      return
     end
-  end
 
-  private
+    # Ensure we have a current account (guest or logged in)
+    unless current_account
+      log_warn "Cannot dismiss '#{key}', current_account not found."
+      return
+    end
 
-  # Simple DOM ID helper
-  def dom_id(element)
-    # Try to get id, or generate one
-    element.id.presence || "dismissible-#{SecureRandom.hex(4)}"
+    # Use UserPreference to mark as dismissed (storing true)
+    # Note: UserPreference.set handles validation and logging
+    UserPreference.set(current_account.id, key, true)
+    log_info "Marked '#{key}' as dismissed for account #{current_account.id}"
+
+    # No DOM change needed from the server, client handles immediate hiding.
+    morph :nothing 
+  rescue StandardError => e
+    log_error "[DismissibleReflex] Error in dismiss for key '#{key}': #{e.message}", e
+    log_error e.backtrace.join("\n")
+    morph :nothing # Ensure morph :nothing on error
   end
 end

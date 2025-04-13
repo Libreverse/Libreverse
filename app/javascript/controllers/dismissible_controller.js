@@ -1,63 +1,42 @@
-import ApplicationController from "./application_controller";
+import ApplicationController from "./application_controller"
 
 /**
- * Dismissible Controller
- *
- * This controller handles permanently dismissable elements using server-side storage
- * to remember the user's preference.
+ * Controls dismissible elements (like banners, tutorials).
+ * Hides the element immediately on click and triggers a reflex to persist the state.
  */
 export default class extends ApplicationController {
-    // This will look for data-dismissible-key-value attribute in HTML
-    static values = {
-        // Remove 'Value' from the end, Stimulus adds -value suffix automatically
-        key: String,
-    };
+  // Define the data value expected from the HTML (data-dismissible-key-value)
+  static values = { key: String }
 
-    static targets = ["container"];
+  connect () {
+    super.connect()
+    // console.log(`Dismissible controller connected for key: ${this.keyValue}`);
+  }
 
-    connect() {
-        super.connect(); // Call parent connect() to register StimulusReflex
-        const key = this.element.dataset.dismissibleKey;
-        if (!key) return;
+  /**
+   * Hides the element controlled by this controller and triggers the reflex.
+   * @param {Event} event - The click event.
+   */
+  dismiss (event) {
+    event.preventDefault()
+    event.stopPropagation() // Prevent event bubbling if needed
 
-        // Set the data attributes to track the dismissible state
-        this.element.dataset.dismissible = "active";
+    // 1. Hide the element immediately for good UX
+    this.element.classList.add('dismissed') // Add a class for CSS hiding/transition
+    // Optionally: Use display: none; if preferred over class-based hiding
+    // this.element.style.display = 'none'; 
 
-        if (this.element.dataset.autoHide === "true") {
-            this.autoHide();
-        }
-    }
+    // 2. Trigger the reflex to persist the state
+    // Pass the element itself so the reflex can access its dataset (key)
+    this.stimulate('DismissibleReflex#dismiss', this.element)
 
-    /**
-     * Dismiss the element by triggering the DismissibleReflex
-     */
-    dismiss(event) {
-        if (event) {
-            event.preventDefault();
-        }
-
-        const key = this.element.dataset.dismissibleKey;
-        if (!key) return;
-
-        const element = this.element;
-
-        this.stimulate("DismissibleReflex#dismiss", element);
-    }
-
-    // Lifecycle callbacks
-    dismissReflex() {
-        // Reflex triggered
-    }
-
-    dismissSuccess() {
-        // Reflex succeeded
-    }
-
-    dismissError(element, error) {
-        console.error("Dismissible reflex error", error);
-        // If there was an error, restore visibility
-        if (this.hasContainerTarget) {
-            this.containerTarget.style.display = "";
-        }
-    }
+    // Optional: Add client-side callbacks for feedback
+    // this.stimulate('DismissibleReflex#dismiss', this.element).then(() => {
+    //   console.log(`Dismiss persisted for key: ${this.keyValue}`)
+    // }).catch(error => {
+    //   console.error(`Error persisting dismiss for key: ${this.keyValue}`, error)
+    //   // Optionally: Re-show the element if persistence failed?
+    //   this.element.classList.remove('dismissed');
+    // });
+  }
 }

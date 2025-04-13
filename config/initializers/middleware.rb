@@ -33,7 +33,7 @@ Rails.application.config.middleware.use HtmlCompressor::Rack,
                                         simple_boolean_attributes: false,
                                         compress_js_templates: false
 
-# ===== Emoji Processing =====
+# ===== Emoji Processing (Middleware for HTTP Requests) =====
 # We insert the emoji middleware here so that it precedes
 # the html minifier but still avoids unnecessary work
 
