@@ -53,8 +53,14 @@
 >
 <meta property="og:type" content="website">
 <meta property="og:url" content="<%= seo_config('url') %>">
-<meta property="og:image" content="<%= seo_config_with_assets('preview_image') %>">
-<meta property="og:image:url" content="<%= seo_config_with_assets('preview_image') %>">
+<meta
+  property="og:image"
+  content="<%= seo_config_with_assets('preview_image') %>"
+>
+<meta
+  property="og:image:url"
+  content="<%= seo_config_with_assets('preview_image') %>"
+>
 <meta
   property="og:image:secure_url"
   content="<%= seo_config_with_assets('preview_image') %>"
@@ -95,7 +101,10 @@
 <meta name="twitter:creator" content="<%= seo_config('twitter_creator') %>">
 <meta name="twitter:title" content="<%= seo_config('name') %>">
 <meta name="twitter:description" content="<%= seo_config('description') %>">
-<meta name="twitter:image" content="<%= seo_config_with_assets('preview_image') %>">
+<meta
+  name="twitter:image"
+  content="<%= seo_config_with_assets('preview_image') %>"
+>
 <meta name="twitter:image:alt" content="<%= seo_config('preview_image_alt') %>">
 <meta name="twitter:url" content="<%= seo_config('url') %>">
 <!--Old windows pin-to-taskbar metadata-->

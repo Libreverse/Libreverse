@@ -84,7 +84,7 @@ Rails.application.config.to_prepare do
         path
       end
     end
-    
+
     # Convenience method to get SEO config with asset path resolution
     def seo_config_with_assets(key)
       value = SEO_CONFIG[key.to_s]

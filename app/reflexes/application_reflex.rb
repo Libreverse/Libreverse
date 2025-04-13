@@ -180,46 +180,38 @@ class ApplicationReflex < StimulusReflex::Reflex
     defined?(login_path) ? login_path : "/login"
   end
 
-  # Helper to render a partial, apply emoji replacement, and morph the result.
-  # The calling reflex is still responsible for the final `morph :mode` call.
-  #
-  # Args:
-  #   selector: The CSS selector for the cable_ready.morph operation.
-  #   partial: The path to the partial to render.
-  #   locals: A hash of local variables for the partial.
-  #
-  def render_and_morph_with_emojis(selector:, partial:, locals: {})
-    # Log the start of rendering to help debug
-    log_debug "Beginning render_and_morph_with_emojis for selector '#{selector}', partial '#{partial}'"
-    
-    # Render the partial using ApplicationController to ensure helpers are available
-    rendered_html = ApplicationController.render(partial: partial, locals: locals)
-    
-    # Apply the emoji helper to the rendered HTML
-    # Assumes render_emojis helper is available via ApplicationHelper
-    log_debug "Applying render_emojis to rendered HTML"
-    processed_html = helpers.render_emojis(rendered_html)
-    
-    # Debug log to see emoji processed content
-    log_debug "Emoji processed HTML size: #{processed_html.bytesize} bytes"
-    log_debug "First 100 chars after emoji processing: #{processed_html[0..100]}"
-    
-    # Ensure the HTML is marked as html_safe to prevent double escaping
-    processed_html = processed_html.html_safe if processed_html.respond_to?(:html_safe)
-    
-    # Use CableReady to morph the processed content into the target selector
-    log_debug "Sending morph operation via CableReady for selector '#{selector}'"
+  # Renders a partial and morphs it to the DOM
+  def render_and_morph_with_emojis(selector:, partial:, locals: {}, **_options)
+    log_debug "[ApplicationReflex#render_and_morph_with_emojis] Rendering partial: #{partial}"
+
+    # Capture the current time for performance tracking
+    start_time = Time.zone.now
+
+    # Include the controller instance (via delegate_all) for rendering
+    rendered_html = controller.render_to_string(
+      partial: partial,
+      locals: locals
+    )
+
+    # Process emojis in the rendered HTML safely
+    processed_html = helpers.process_html_with_emojis(rendered_html)
+
+    # No need to mark as html_safe as CableReady handles this
+    # processed_html = processed_html.html_safe if processed_html.respond_to?(:html_safe)
+
+    # Log performance and details of the render/morph
+    duration = ((Time.zone.now - start_time) * 1000).round(1)
+    log_debug "[ApplicationReflex#render_and_morph_with_emojis] Rendered in #{duration}ms"
+    log_debug "[ApplicationReflex#render_and_morph_with_emojis] Morphing to selector: #{selector}"
+
+    # Use CableReady's morph operation with our processed HTML
     cable_ready.morph(
       selector: selector,
       html: processed_html,
-      # Ensure we don't lose HTML entity encoding during transmission
       children_only: false,
-      permanent_attribute_name: 'data-reflex-permanent'
+      permanent_attribute_name: "data-reflex-permanent"
     )
-    log_debug "CableReady morph operation added to queue"
-  rescue StandardError => e
-    # Log errors during this process
-    log_error "Error in render_and_morph_with_emojis for selector '#{selector}', partial '#{partial}': #{e.message}", e
-    log_error e.backtrace.join("\n")
+
+    true # Return success value
   end
 end
