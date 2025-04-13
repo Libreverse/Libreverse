@@ -45,7 +45,13 @@ module ApplicationHelper
         end
         
         # Convert back to HTML string and mark as safe
-        return doc.to_html.html_safe
+        content = doc.to_html.html_safe
+        # Ensure data URLs in img tags are properly encoded to prevent morph errors
+        # Replace % with %25 in data URLs to avoid morphdom issues
+        content.gsub!(/(<img[^>]*src=["']data:image\/svg\+xml;[^"']*["'][^>]*>)/) do |img_tag|
+          img_tag.gsub(/%/, '%25')
+        end
+        return content
       rescue StandardError => e
         Rails.logger.error "EmojiHelper: Error processing HTML with Nokogiri: #{e.message}"
         # Fallback to normal processing if Nokogiri fails
@@ -281,9 +287,8 @@ public
 
   # Specifically checks if sidebar hover effect is enabled.
   def sidebar_hover_enabled?
-    # Ensure the key matches what's used in SidebarReflex
-    # UserPreference stores boolean true/false
-    get_user_preference(:sidebar_hover_enabled, false) == true
+    # Check for 't' as the value, consistent with other UserPreference values
+    get_user_preference("sidebar_hover_enabled", 'f') == 't'
   end
 
   # Checks if a specific drawer is expanded.

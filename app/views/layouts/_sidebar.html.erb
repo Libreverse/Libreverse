@@ -3,8 +3,10 @@
 <% sidebar_id = local_assigns.fetch(:sidebar_id, "main") %>
 <%# Use locals passed from reflex render, falling back to helpers for initial load %>
 <%# NOTE: Using helpers directly now as reflex doesn't pass locals with data-reflex-root %>
-<% expanded = sidebar_expanded? %>
-<% hover_enabled = sidebar_hover_enabled? %>
+<% expanded = local_assigns.fetch(:expanded, sidebar_expanded?) %>
+<% hover_enabled = local_assigns.fetch(:hover_enabled, sidebar_hover_enabled?) %>
+<%# Pass rodauth explicitly to the partial %>
+<% rodauth_obj = local_assigns.fetch(:rodauth, rodauth) %>
 
 <%# Log the sidebar state for debugging %>
 <% Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id} with expanded=#{expanded}, hover_enabled=#{hover_enabled}" %>
@@ -12,122 +14,17 @@
 <aside
   class="
     sidebar-container <%= 'sidebar-expanded' if expanded %>
-    <%= 'sidebar-hovered' if hover_enabled %>
+    <%= 'sidebar-hovered' if hover_enabled == 'true' || hover_enabled == 't' %>
   "
   id="<%= sidebar_id %>-sidebar"
   <%# Ensure this matches the morph selector %>
   role="complementary"
 >
-  <nav
-    class="sidebar"
-    <%# Classes now primarily controlled by the container via helpers %>
-    id="sidebar-nav-<%= sidebar_id %>"
-    <%# Added unique ID for morph target %>
-    data-controller="sidebar"
-    <%# Reverted to original action calling toggleHover %>
-    data-action="
-      mouseenter->sidebar#toggleHover
-      mouseleave->sidebar#toggleHover
-    "
-    data-sidebar-id="<%= sidebar_id %>"
-    data-reflex-root="#<%= sidebar_id %>-sidebar, body"
-    data-expanded="<%= expanded %>"
-    data-hover-enabled="<%= hover_enabled %>"
-    role="navigation"
-    aria-label="Navigation Sidebar"
-    aria-expanded="<%= expanded %>"
-  >
-    <div class="sidebar-contents" data-reflex-permanent>
-      <% current_path = request.path %>
-
-      <a
-        href="/"
-        class="sidebar-link <%= 'sidebar-default-cursor' if current_path == '/' %>"
-        data-controller="link"
-        data-link-is-current-value="<%= current_path == '/' %>"
-        data-action="click->link#click"
-        aria-label="Go to homepage"
-      >
-        <%= sidebar_icon(
-          svg_icon_data_url("libreverse-logo"),
-          current_path == "/" ? "sidebar-current" : "",
-        ) %>
-      </a>
-      <a
-        href="/search"
-        class="sidebar-link <%= 'sidebar-default-cursor' if current_path == '/search' %>"
-        data-controller="link"
-        data-link-is-current-value="<%= current_path == '/search' %>"
-        data-action="click->link#click"
-        aria-label="Go to search page"
-      >
-        <%= sidebar_icon(
-          svg_icon_data_url("search"),
-          current_path == "/search" ? "sidebar-current" : "",
-        ) %>
-      </a>
-      <!-- Authentication links -->
-      <% if rodauth.logged_in? %>
-        <a
-          href="<%= dashboard_path %>"
-          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == dashboard_path %>"
-          data-controller="link"
-          data-link-is-current-value="<%= current_path == dashboard_path %>"
-          data-action="click->link#click"
-          aria-label="Go to dashboard"
-        >
-          <%= sidebar_icon(
-            svg_icon_data_url("dashboard"),
-            current_path == dashboard_path ? "sidebar-current" : "",
-          ) %>
-        </a>
-        <a
-          href="<%= experiences_path %>"
-          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == experiences_path %>"
-          data-controller="link"
-          data-link-is-current-value="<%= current_path == experiences_path %>"
-          data-action="click->link#click"
-          aria-label="Manage experiences"
-        >
-          <%= sidebar_icon(
-            svg_icon_data_url("experiences"),
-            current_path == experiences_path ? "sidebar-current" : "",
-          ) %>
-        </a>
-        <%= button_to rodauth.logout_path,
-            method: :post,
-            class: "sidebar-link sidebar-logout-button",
-            aria: { label: "Sign out" } do %>
-          <%= sidebar_icon(svg_icon_data_url("logout")) %>
-        <% end %>
-      <% else %>
-        <a
-          href="<%= rodauth.login_path %>"
-          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == rodauth.login_path %>"
-          data-controller="link"
-          data-link-is-current-value="<%= current_path == rodauth.login_path %>"
-          data-action="click->link#click"
-          aria-label="Sign in"
-        >
-          <%= sidebar_icon(
-            svg_icon_data_url("login"),
-            current_path == rodauth.login_path ? "sidebar-current" : "",
-          ) %>
-        </a>
-        <a
-          href="<%= rodauth.create_account_path %>"
-          class="sidebar-link <%= 'sidebar-default-cursor' if current_path == rodauth.create_account_path %>"
-          data-controller="link"
-          data-link-is-current-value="<%= current_path == rodauth.create_account_path %>"
-          data-action="click->link#click"
-          aria-label="Sign up"
-        >
-          <%= sidebar_icon(
-            svg_icon_data_url("signup"),
-            current_path == rodauth.create_account_path ? "sidebar-current" : "",
-          ) %>
-        </a>
-      <% end %>
-    </div>
-  </nav>
+  <%# Render the extracted nav partial %>
+  <%= render partial: "layouts/sidebar_nav", locals: {
+    sidebar_id: sidebar_id,
+    expanded: expanded,
+    hover_enabled: hover_enabled,
+    rodauth: rodauth_obj
+  } %>
 </aside>

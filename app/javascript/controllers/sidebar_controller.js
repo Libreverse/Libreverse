@@ -1,4 +1,5 @@
 import ApplicationController from "./application_controller"
+import { diffHtml } from "../utils/html_diff"
 
 /**
  * Controls the sidebar hover interactions.
@@ -14,9 +15,26 @@ export default class extends ApplicationController {
    * Passes the element so the reflex can read data-sidebar-id.
    */
   toggleHover (/* event */) {
-    console.log('Sidebar toggleHover triggered - Before Reflex HTML:', this.element.outerHTML);
+    const beforeHtml = this.element.outerHTML;
+    console.log('Sidebar toggleHover triggered - Before Reflex HTML:', beforeHtml);
+    
     this.stimulate('SidebarReflex#toggle_hover', this.element).then(() => {
-      console.log('Sidebar toggleHover triggered - After Reflex HTML:', this.element.outerHTML);
+      const afterHtml = this.element.outerHTML;
+      console.log('Sidebar toggleHover triggered - After Reflex HTML:', afterHtml);
+      
+      // Log the diff
+      const diff = diffHtml(beforeHtml, afterHtml);
+      if (diff.hasDiff) {
+        console.log('HTML Differences:', diff.message);
+        console.table(diff.attributeDiffs);
+        if (diff.contentDiff.hasChanges) {
+          console.log('Content differences at position', diff.contentDiff.position);
+          console.log('Before:', diff.contentDiff.beforeContext);
+          console.log('After:', diff.contentDiff.afterContext);
+        }
+      } else {
+        console.log('No HTML differences detected');
+      }
     }).catch(error => {
       console.error('Sidebar toggleHover error:', error);
     });

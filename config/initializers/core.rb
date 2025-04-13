@@ -49,4 +49,51 @@ end
 
 # ===== SEO Configuration =====
 # Load SEO configuration
-SEO_CONFIG = YAML.load_file(Rails.root.join("config/seo_config.yml"), aliases: true)[Rails.env]
+seo_config_raw = YAML.load_file(Rails.root.join("config/seo_config.yml"), aliases: true)[Rails.env]
+
+# We need to resolve Vite asset paths, but we can't directly use the helpers in the initializer
+# Instead, we'll modify the config to store the asset references with special prefixes
+# and then add helper methods to ApplicationHelper to resolve them at runtime
+seo_config_resolved = seo_config_raw.dup
+
+# For asset keys, we just ensure they maintain their special prefixes
+# These will be resolved at runtime by the appropriate view helpers
+# @ prefix is used for assets in the images/ directory
+# ~/ prefix is used for assets with explicit paths
+
+# Set the final config - the actual path resolution will happen at runtime
+SEO_CONFIG = seo_config_resolved
+
+# Add method to ApplicationHelper for resolving asset paths
+Rails.application.config.to_prepare do
+  ApplicationHelper.module_eval do
+    def seo_asset_path(path)
+      if path.is_a?(String)
+        if path.start_with?("@")
+          # For @ prefixed assets (e.g., @libreverse-logo.svg), look in images directory
+          vite_asset_path("images/#{path.sub('@', '')}")
+        elsif path.start_with?("~/")
+          # For ~/ prefixed assets, use as-is with vite_asset_path
+          vite_asset_path(path)
+        else
+          # Return unchanged for other paths
+          path
+        end
+      else
+        # Return unchanged for non-string values
+        path
+      end
+    end
+    
+    # Convenience method to get SEO config with asset path resolution
+    def seo_config_with_assets(key)
+      value = SEO_CONFIG[key.to_s]
+      # Special handling for asset keys
+      if %w[preview_image shortcut_icon apple_touch_icon mask_icon].include?(key.to_s)
+        seo_asset_path(value)
+      else
+        value
+      end
+    end
+  end
+end
