@@ -16,9 +16,19 @@ module ApplicationHelper
   # Uses caching to avoid redundant SVG processing.
   # Returns HTML-safe string.
   def render_emojis(text)
-    return sanitize(text) unless text.match?(EMOJI_REGEX)
+    # Ensure input is a string
+    text_str = text.to_s
+    return sanitize(text_str) unless text_str.match?(EMOJI_REGEX)
 
-    processed_text = replace_emoji_codes_with_images(text.to_s)
+    # Use gsub to find and replace emojis with their img tags
+    processed_text = text_str.gsub(EMOJI_REGEX) do |emoji|
+      # Use caching to build/retrieve the img tag
+      Rails.cache.fetch(emoji_cache_key(emoji), expires_in: 1.week) do
+        build_emoji_img_tag(emoji)
+      end || emoji # Fallback to original emoji if SVG/tag generation fails
+    end
+
+    # Sanitize the final result
     sanitize(processed_text, tags: allowed_html_tags, attributes: allowed_html_attributes)
   end
 
@@ -33,12 +43,14 @@ module ApplicationHelper
       next if node.ancestors.any? { |a| %w[code pre].include?(a.name) }
 
       # Replace emoji codes with image tags
-      node.content = replace_emoji_codes_with_images(node.content) if node.content.match?(EMOJI_REGEX)
+      node.content = render_emojis(node.content) if node.content.match?(EMOJI_REGEX)
     end
 
     # Return processed HTML as a safe string
     content = doc.to_html
-    sanitize(content, tags: allowed_html_tags, attributes: allowed_html_attributes)
+    # Remove the final sanitize call as it strips necessary tags from the partial
+    # sanitize(content, tags: allowed_html_tags, attributes: allowed_html_attributes)
+    content # Return the content directly
   end
 
   # Escapes HTML and marks it as safe
@@ -46,7 +58,7 @@ module ApplicationHelper
     return "" if text.blank?
 
     # Escape HTML first
-    processed_text = replace_emoji_codes_with_images(text)
+    processed_text = render_emojis(text)
     sanitize(processed_text, tags: allowed_html_tags, attributes: allowed_html_attributes)
   end
 
@@ -56,6 +68,18 @@ module ApplicationHelper
   end
 
   private
+
+  # Defines the allowed HTML tags for sanitization.
+  def allowed_html_tags
+    # Allow basic formatting (p, br, strong, em) + the emoji img tag
+    %w[img p br strong em]
+  end
+
+  # Defines the allowed HTML attributes for sanitization.
+  def allowed_html_attributes
+    # Allow attributes for the emoji img tag + common attributes like class
+    %w[src alt class loading decoding fetchpriority draggable tabindex]
+  end
 
   # Generates a cache key for a given emoji.
   def emoji_cache_key(emoji)
