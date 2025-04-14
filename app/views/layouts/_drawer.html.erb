@@ -1,8 +1,8 @@
 <% drawer_id = local_assigns.fetch(:drawer_id, "main") %>
 <%# Use local passed from reflex render, falling back to helper for initial load %>
 <%# NOTE: Using helper directly now %>
-<%# Determine the expanded state: prioritize the passed local variable if available, otherwise fall back to the helper method
-expanded =
+<%# Determine the expanded state: prioritize the passed local variable if available, otherwise fall back to the helper method %>
+<% expanded =
   local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id) %>
 <aside
   class="drawer-container"
