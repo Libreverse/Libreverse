@@ -9,6 +9,7 @@
   data-sidebar-id="<%= sidebar_id %>"
   data-expanded="<%= hover_enabled == 't' ? "true" : "false" %>"
   data-hover-enabled="<%= hover_enabled == 't' ? "true" : "false" %>"
+  data-reflex-root="#sidebar-nav-<%= sidebar_id %>"
   role="navigation"
   aria-label="Navigation Sidebar"
   aria-expanded="<%= hover_enabled == 't' ? "true" : "false" %>"
@@ -43,7 +44,7 @@
       ) %>
     </a>
     <!-- Authentication links -->
-    <% if rodauth.logged_in? %>
+    <% if rodauth.logged_in? && !rodauth.guest_logged_in? %>
       <a
         href="<%= dashboard_path %>"
         class="sidebar-link <%= 'sidebar-default-cursor' if current_path == dashboard_path %>"
