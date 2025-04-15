@@ -14,6 +14,9 @@ class RodauthMain < Rodauth::Rails::Auth
     # http://rodauth.jeremyevans.net/documentation.html
 
     # ==> Guest Feature Configuration
+    # Generate guest logins as UUIDs instead of email-like strings
+    new_guest_login { SecureRandom.uuid }
+
     # Set guest account flag on creation
     before_create_guest do
       account[:guest] = true
