@@ -1,0 +1,26 @@
+# .fasterer.yml
+# Disable checks that overlap with RuboCop to leverage RuboCop's autocorrection
+
+map_flatten_vs_flat_map:
+    enabled: false
+
+select_first_vs_detect:
+    enabled: false
+
+reverse_each_vs_reverse_each:
+    enabled: false
+
+shuffle_first_vs_sample:
+    enabled: false
+
+for_loop_vs_each:
+    enabled: false
+
+block_vs_symbol_to_proc:
+    enabled: false
+
+getter_vs_attr_reader:
+    enabled: false
+
+setter_vs_attr_writer:
+    enabled: false

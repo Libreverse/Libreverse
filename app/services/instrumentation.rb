@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Instrumentation
   class << self
     # Record an error occurrence for monitoring/alerting

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :test do
   desc "Test the pwned password API functionality"
   task pwned_password: :environment do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExperiencesController < ApplicationController
   before_action :require_authentication
   before_action :set_experience, only: %i[show edit update destroy display]

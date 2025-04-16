@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Core Application Configuration
 # This file contains essential application initializations:
 # - Bootsnap performance optimization

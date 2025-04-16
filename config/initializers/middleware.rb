@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Middleware Configuration
 # This file sets up the middleware stack for the application
 # Including compression, HTML optimization, rate limiting, and emoji processing
@@ -7,7 +9,8 @@
 # to run before the deflater and brotli because middlewares are,
 # unintuitively, run as a stack from the bottom up.
 Rails.application.config.middleware.use Rack::Deflater, include: %w[text/html], sync: false
-Rails.application.config.middleware.use Rack::Brotli, quality: 11, include: %w[text/html], deflater: { lgwin: 22, lgblock: 0, mode: :text }, sync: false
+Rails.application.config.middleware.use Rack::Brotli, quality: 11, include: %w[text/html],
+                                                      deflater: { lgwin: 22, lgblock: 0, mode: :text }, sync: false
 
 # ===== HTML Optimization =====
 # This option set is from the default readme of htmlcompressor

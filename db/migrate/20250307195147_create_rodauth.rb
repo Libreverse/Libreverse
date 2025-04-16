@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateRodauth < ActiveRecord::Migration[8.0]
   def change
     # SQLite doesn't support citext extension - using regular text instead

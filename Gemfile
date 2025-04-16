@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 ruby "3.4.1"
@@ -83,8 +85,9 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
-  # Make the code actually look good
+  # Make the code actually look good among other things
   gem "rubocop"
+  gem "rubocop-performance"
   gem "rubocop-rails"
 
   # Lint ERB files

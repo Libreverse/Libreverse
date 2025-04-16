@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Security Configuration
 # This file contains all security-related configurations including:
 # - Content Security Policy
@@ -128,7 +130,10 @@ Rails.application.config.after_initialize do
         secure_parsers["libxml"] = XMLRPC::XMLParser::LibXMLParser if XMLRPC::XMLParser.const_defined?(:LibXMLParser)
 
         # If no secure parsers are available, use default but with caution
-        secure_parsers["rex_stream"] = XMLRPC::XMLParser::REXMLStreamParser if secure_parsers.empty? && XMLRPC::XMLParser.const_defined?(:REXMLStreamParser)
+        if secure_parsers.empty? && XMLRPC::XMLParser.const_defined?(:REXMLStreamParser)
+          secure_parsers["rex_stream"] =
+            XMLRPC::XMLParser::REXMLStreamParser
+        end
 
         # Set available parsers to only our secure list
         unless secure_parsers.empty?

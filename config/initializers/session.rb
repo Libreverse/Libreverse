@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Session and Cookies Configuration
 # This file contains all session and cookie-related configurations including:
 # - Cookie serialization

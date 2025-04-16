@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :cleanup do
   desc "Clean up abandoned guest accounts older than 30 days"
   task abandoned_guests: :environment do

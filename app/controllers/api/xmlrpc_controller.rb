@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "nokogiri"
 require "cgi"
 
@@ -87,7 +89,8 @@ module Api
       valid_types = [ "text/xml", "application/xml" ]
 
       unless valid_types.any? { |type| request.content_type&.include?(type) }
-        render xml: fault_response(415, "Unsupported content type. Use text/xml or application/xml"), status: :unsupported_media_type
+        render xml: fault_response(415, "Unsupported content type. Use text/xml or application/xml"),
+               status: :unsupported_media_type
         return false
       end
 
@@ -120,7 +123,9 @@ module Api
 
     def parse_value(value_element)
       # Check for direct text content (string value)
-      return CGI.escapeHTML(value_element.text.strip) if value_element.children.size == 1 && value_element.children.first.text?
+      if value_element.children.size == 1 && value_element.children.first.text?
+        return CGI.escapeHTML(value_element.text.strip)
+      end
 
       # Get the type node - first element child of value
       type_node = value_element.element_children.first

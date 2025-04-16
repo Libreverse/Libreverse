@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CleanupAbandonedGuestsJob < ApplicationJob
   queue_as :default
 
