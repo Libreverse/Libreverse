@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
     return {
         build: {
             sourcemap: false,
+            inlineDynamicImports: true,
             cache: !isDevelopment,
             rollupOptions: {
                 output: {
