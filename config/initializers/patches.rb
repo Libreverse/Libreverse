@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 # config/initializers/stimulus_reflex_patch.rb
 

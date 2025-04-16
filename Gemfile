@@ -21,8 +21,8 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Use vite build system
-gem "vite_rails"
 gem "vite_plugin_legacy"
+gem "vite_rails"
 
 # Sentry-Ruby to track backend crashes
 gem "sentry-rails"
