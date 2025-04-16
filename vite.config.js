@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import rubyPlugin from "vite-plugin-ruby";
 import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
-import legacy from "vite-plugin-legacy-swc";
+import legacy from "@vitejs/plugin-legacy";
 import vitePluginCompression from "vite-plugin-compression";
 import postcssPresetEnv from "postcss-preset-env";
 import postcssFlexbugsFixes from "postcss-flexbugs-fixes";

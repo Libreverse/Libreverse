@@ -57,5 +57,6 @@
       <%= yield %>
     </main>
     <%= render partial: "layouts/drawer" if page_with_drawer? %>
+    <%= vite_legacy_javascript_tag "~/javascript/application.js" %>
   </body>
 </html>
