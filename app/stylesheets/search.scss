@@ -149,6 +149,19 @@
     z-index: -1;
     overflow: hidden;
     background-color: variables.$background;
+
+    // Style for the raindrop effect iframe
+    .raindrop-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        pointer-events: none;
+        z-index: 0;
+        background: transparent;
+    }
 }
 
 .sp-bg img {

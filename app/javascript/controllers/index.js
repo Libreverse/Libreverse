@@ -33,3 +33,6 @@ application.register("sidebar", SidebarController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);
+
+import RaindropController from "./raindrop_controller";
+application.register("raindrop", RaindropController);

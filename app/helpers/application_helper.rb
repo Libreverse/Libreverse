@@ -25,7 +25,7 @@ module ApplicationHelper
       # Use caching to build/retrieve the img tag
       Rails.cache.fetch(emoji_cache_key(emoji), expires_in: 1.week) do
         build_emoji_img_tag(emoji)
-      end || emoji # Fallback to original emoji if SVG/tag generation fails
+      end || emoji
     end
 
     # Sanitize the final result
@@ -47,10 +47,10 @@ module ApplicationHelper
     end
 
     # Return processed HTML as a safe string
-    content = doc.to_html
+    doc.to_html
     # Remove the final sanitize call as it strips necessary tags from the partial
     # sanitize(content, tags: allowed_html_tags, attributes: allowed_html_attributes)
-    content # Return the content directly
+    # Return the content directly
   end
 
   # Escapes HTML and marks it as safe

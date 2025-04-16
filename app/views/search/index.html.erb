@@ -2,19 +2,23 @@
 <%= render "layouts/drawer" %>
 <%= render "layouts/leniswrapper" do %>
   <%= render "layouts/navigationshortcutswrapper" do %>
-    <div class="sp-bg" role="presentation">
-      <img
-        src="<%= vite_asset_path 'images/brasserie.jpg' %>"
-        <%# Fallback %>
-        srcset="<%= bitmap_image_data_url('images/brasserie') %>, <%= vite_asset_path 'images/brasserie.webp' %>, <%= vite_asset_path 'images/brasserie.jpg' %>"
-        <%# Efficient inline, then external fallbacks %>
-        loading="lazy"
-        decoding="async"
-        fetchpriority="low"
-        draggable="false"
-        aria-hidden="true"
-        tabindex="-1"
-      >
+    <div
+      class="sp-bg"
+      <%# Container for the effect %>
+      role="presentation"
+      data-controller="raindrop"
+      data-raindrop-background-url-value="<%= bitmap_image_data_url('images/brasserie') %>"
+      <%# Use inline helper %>
+      <%# data-raindrop-particle-url-value="..." # Removed %>
+      <%# data-raindrop-options-value='#{ { rainChance: 0.2 }.to_json }' # Example options %>
+    >
+      <iframe
+        data-raindrop-target="iframe"
+        class="raindrop-iframe"
+        title="Background Effect Container"
+        scrolling="no"
+        allowtransparency="true"
+      ></iframe>
     </div>
 
     <div class="sp-centerify">
