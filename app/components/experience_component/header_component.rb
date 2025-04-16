@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ExperienceComponent
   class HeaderComponent < ViewComponent::Base
     attr_reader :experience

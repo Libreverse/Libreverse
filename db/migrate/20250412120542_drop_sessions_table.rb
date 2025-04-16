@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DropSessionsTable < ActiveRecord::Migration[8.0]
   def change
     reversible do |dir|

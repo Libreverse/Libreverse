@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -80,13 +82,6 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   # --- Use CookieStore (Permanent Change) ---
-  # Secure session configuration
-  # config.session_store :active_record_store,
-  #                      key: "_libreverse_session",
-  #                      secure: true,
-  #                      httponly: true,
-  #                      expire_after: 2.hours,
-  #                      same_site: :strict
   config.session_store :cookie_store,
                        key: "_libreverse_session",
                        secure: true, # Keep security settings

@@ -60,7 +60,7 @@ class FormReflex < ApplicationReflex
     # Basic validation for required fields
     form_data.each do |field_name, value|
       # Skip hidden fields and submit buttons
-      next if field_name.to_s =~ /^(_method|authenticity_token|commit)$/
+      next if /^(_method|authenticity_token|commit)$/.match?(field_name.to_s)
 
       # Check if the field is required (would need actual field metadata here)
       # For now, we assume if a field has "required" in the name, it's required

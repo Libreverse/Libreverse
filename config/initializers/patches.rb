@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # config/initializers/stimulus_reflex_patch.rb
 
 =begin

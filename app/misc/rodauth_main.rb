@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "sequel/core"
 
 class RodauthMain < Rodauth::Rails::Auth
@@ -36,7 +38,9 @@ class RodauthMain < Rodauth::Rails::Auth
       # Transfer preferences from guest account to the new account
       UserPreference.where(account_id: guest_account_id).find_each do |preference|
         # Only transfer if the new account doesn't already have this preference
-        UserPreference.set(new_account_id, preference.key, preference.value) unless UserPreference.exists?(account_id: new_account_id, key: preference.key)
+        UserPreference.set(new_account_id, preference.key, preference.value) unless UserPreference.exists?(
+          account_id: new_account_id, key: preference.key
+        )
       end
     end
 

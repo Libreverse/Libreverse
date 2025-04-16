@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Frontend Configuration
 # This file contains all frontend-related configurations including:
 # - CableReady
@@ -63,7 +65,7 @@ class EmojiReplacer
             replace_emojis(part)
           end
 
-          new_body << new_part
+          new_body += new_part
         end
 
         # Update the body and Content-Length

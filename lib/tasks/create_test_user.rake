@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :users do
   desc "Create a test user with a known pwned password"
   task create_test_user: :environment do

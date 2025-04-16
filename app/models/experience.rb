@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Experience < ApplicationRecord
   belongs_to :account, optional: true
   has_one_attached :html_file

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EnsureSolidCableTables < ActiveRecord::Migration[8.0]
   def change
     # Only create the table if it doesn't exist
@@ -15,9 +17,16 @@ class EnsureSolidCableTables < ActiveRecord::Migration[8.0]
     end
 
     # Recreate indexes if they're missing
-    add_index :solid_cable_messages, :channel, name: :index_solid_cable_messages_on_channel unless index_exists?(:solid_cable_messages, :channel)
+    add_index :solid_cable_messages, :channel, name: :index_solid_cable_messages_on_channel unless index_exists?(
+      :solid_cable_messages, :channel
+    )
 
-    add_index :solid_cable_messages, :channel_hash, name: :index_solid_cable_messages_on_channel_hash unless index_exists?(:solid_cable_messages, :channel_hash)
+    unless index_exists?(
+      :solid_cable_messages, :channel_hash
+    )
+      add_index :solid_cable_messages, :channel_hash,
+                name: :index_solid_cable_messages_on_channel_hash
+    end
 
     return if index_exists?(:solid_cable_messages, :created_at)
 

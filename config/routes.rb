@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   resources :search_new, only: [ :index ]
   get "search_new/index"

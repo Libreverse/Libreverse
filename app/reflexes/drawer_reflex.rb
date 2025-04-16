@@ -40,7 +40,9 @@ class DrawerReflex < ApplicationReflex
       # Correctly compare the boolean state with the stored string ('t'/'f')
       is_saved_correctly = (new_expanded && saved_value == "t") || (!new_expanded && saved_value == "f")
 
-      Rails.logger.error "[DrawerReflex#toggle] Verification FAILED: Mismatch between intended state (#{new_expanded}) and saved value (#{saved_value.inspect}) for key '#{key}'" unless is_saved_correctly
+      unless is_saved_correctly
+        Rails.logger.error "[DrawerReflex#toggle] Verification FAILED: Mismatch between intended state (#{new_expanded}) and saved value (#{saved_value.inspect}) for key '#{key}'"
+      end
     else
       Rails.logger.info "[DrawerReflex#toggle] No current account, skipping UserPreference save for drawer #{drawer_id}"
     end

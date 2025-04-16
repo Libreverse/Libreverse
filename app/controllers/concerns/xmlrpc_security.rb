@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module XmlrpcSecurity
   extend ActiveSupport::Concern
 
@@ -45,7 +47,10 @@ module XmlrpcSecurity
   end
 
   def validate_session
-    render xml: fault_response(401, "Session expired") if session[:last_activity] && session[:last_activity] < 30.minutes.ago
+    if session[:last_activity] && session[:last_activity] < 30.minutes.ago
+      render xml: fault_response(401,
+                                 "Session expired")
+    end
     session[:last_activity] = Time.current
   end
 
