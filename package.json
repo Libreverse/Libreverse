@@ -10,9 +10,10 @@
         "cable_ready": "5.0.6",
         "hotkeys-js": "^3.13.9",
         "lenis": "^1.2.3",
-        "stimulus_reflex": "3.5.3",
+        "raindrop-fx": "^1.0.8",
         "stimulus-use": "^0.52.3",
-        "stimulus-vite-helpers": "^3.1.0"
+        "stimulus-vite-helpers": "^3.1.0",
+        "stimulus_reflex": "3.5.3"
     },
     "devDependencies": {
         "@eslint/js": "^9.24.0",

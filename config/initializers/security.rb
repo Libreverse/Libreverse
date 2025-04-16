@@ -12,44 +12,36 @@ Rails.application.configure do
   config.content_security_policy do |policy|
     policy.default_src :self
     policy.font_src    :self, :https, :data
-    policy.img_src     :self, :https, :data
+    policy.img_src     :self, :https, :data, :blob # Includes data: URIs for background images
     policy.object_src  :none
-    policy.script_src  :self, :https
-    policy.style_src   :self, :https
-    policy.frame_src :data
 
-    # Use nonces instead of unsafe-inline for scripts and styles
-    # Rails doesn't support :nonce as a source directly
-    policy.script_src :self, :https
-    policy.style_src :self, :https
-    # The nonce will be applied automatically via the nonce generator below
+    # Base policies
+    policy.script_src  :self, :https, :unsafe_inline, :data
+    policy.style_src   :self, :https, :unsafe_inline
+    policy.frame_src   :self, :data
+    policy.connect_src :self, :https, "wss://*.libreverse.dev", "wss://*.geor.me", :data
 
-    # Specify URI for violation reports
-    # policy.report_uri "/csp-violation-report-endpoint"
+    # Keep development-specific additions separately for clarity
+    if Rails.env.development?
+      policy.script_src(*policy.script_src, :unsafe_eval, "http://#{ViteRuby.config.host_with_port}")
+      policy.connect_src(*policy.connect_src, "ws://#{ViteRuby.config.host_with_port}")
+    end
 
-    # Allow @vite/client to hot reload javascript changes in development
-    policy.script_src(*policy.script_src, :unsafe_eval, "http://#{ViteRuby.config.host_with_port}") if Rails.env.development?
-
-    # You may need to enable this in production as well depending on your setup.
+    # Keep test-specific additions
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
 
-    # Hash for Turbo's progress bar style to allow it
-    policy.style_src :self, :https, "'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='"
-    # Allow @vite/client to hot reload style changes in development
-    policy.style_src(*policy.style_src, :unsafe_inline) if Rails.env.development?
-
-    # If you're using WebSockets or similar:
-    policy.connect_src :self, :https, "wss://*.libreverse.dev", "wss://*.geor.me"
-    # Allow @vite/client to hot reload changes in development
-    policy.connect_src(*policy.connect_src, "ws://#{ViteRuby.config.host_with_port}") if Rails.env.development?
+    # Nonces are incompatible with dynamically generated srcdoc content.
+    # 'unsafe-inline' is now relied upon for script-src and style-src.
+    # policy.report_uri "/csp-violation-report-endpoint"
   end
 
-  # Generate secure random nonces for permitted scripts and styles
-  # Use a cryptographically strong random value instead of session ID
-  config.content_security_policy_nonce_generator = ->(_) { SecureRandom.base64(16) }
-  config.content_security_policy_nonce_directives = %w[script-src style-src]
+  # --- Nonce Configuration DISABLED to allow srcdoc inline content ---
+  # Nonces are incompatible with dynamically generated srcdoc content.
+  # 'unsafe-inline' is now relied upon for script-src and style-src.
+  # config.content_security_policy_nonce_generator = ->(_) { SecureRandom.base64(16) }
+  # config.content_security_policy_nonce_directives = %w[script-src style-src]
+  # --- End Nonce Configuration ---
 
-  # Enforce the policy, do not just report
   config.content_security_policy_report_only = false
 end
 
