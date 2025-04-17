@@ -25,6 +25,9 @@ application.register("link", LinkController);
 import NavigationShortcutsController from "./navigation_shortcuts_controller";
 application.register("navigation-shortcuts", NavigationShortcutsController);
 
+import RaindropController from "./raindrop_controller";
+application.register("raindrop", RaindropController);
+
 import SearchUrlUpdaterController from "./search_url_updater_controller";
 application.register("search-url-updater", SearchUrlUpdaterController);
 
@@ -33,6 +36,3 @@ application.register("sidebar", SidebarController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);
-
-import RaindropController from "./raindrop_controller";
-application.register("raindrop", RaindropController);

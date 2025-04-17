@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "manuelpuyol.erb-linter",
+    "dbaeumer.vscode-eslint",
+    "davidanson.vscode-markdownlint",
+    "rubocop.vscode-rubocop",
+    "shopify.ruby-lsp",
+    "stylelint.vscode-stylelint",
+    "tekumara.typos-vscode"
+  ]
+} 

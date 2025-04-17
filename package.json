@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "dependencies": {
+        "@coffeelint/cli": "^5.2.11",
         "@hotwired/stimulus": "^3.2.2",
         "@hotwired/turbo-rails": "^8.0.13",
         "@sentry/browser": "^8.55.0",
@@ -13,7 +14,8 @@
         "raindrop-fx": "^1.0.8",
         "stimulus-use": "^0.52.3",
         "stimulus-vite-helpers": "^3.1.0",
-        "stimulus_reflex": "3.5.3"
+        "stimulus_reflex": "3.5.3",
+        "vite-plugin-coffee": "^2.2.1"
     },
     "devDependencies": {
         "@eslint/js": "^9.24.0",
