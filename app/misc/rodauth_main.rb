@@ -42,6 +42,10 @@ class RodauthMain < Rodauth::Rails::Auth
           account_id: new_account_id, key: preference.key
         )
       end
+      
+      # After transferring preferences, delete all preferences for the guest account
+      # to avoid foreign key constraint violation when deleting the guest account
+      UserPreference.where(account_id: guest_account_id).destroy_all
     end
 
     # ==> General
@@ -168,6 +172,13 @@ class RodauthMain < Rodauth::Rails::Auth
     after_login do
       # Remember the user
       remember_login
+
+      # ---> ADDED: Explicitly clear any guest session identifier upon successful user login <---
+      if respond_to?(:guest_session_key) && session[guest_session_key]
+        Rails.logger.debug "[Rodauth] Clearing guest session key (#{guest_session_key}) after successful user login."
+        session.delete(guest_session_key)
+      end
+      # --------------------------------------------------------------------------------------
 
       pwned_redirect_needed = false
       # Capture password and perform pwned check
@@ -367,11 +378,5 @@ class RodauthMain < Rodauth::Rails::Auth
   Rails.logger.info "RodauthMain configuration loaded"
 
   # ==> Redirects (Define methods outside configure block)
-  # Redirect to dashboard after login.
-  def login_redirect
-    # Use path helper if available, otherwise use string path
-    defined?(dashboard_path) ? dashboard_path : "/dashboard"
-  end
-
   # ... other potential redirect methods like logout_redirect etc. ...
 end
