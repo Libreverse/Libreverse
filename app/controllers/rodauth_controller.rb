@@ -25,7 +25,7 @@ class RodauthController < ApplicationController
 
   # Add after_action to handle redirects for Turbo Stream logins
   # Target the :login action, as this is how Rails identifies the action for the /login route
-  after_action :handle_login_redirect, only: :login, if: -> { request.post? }
+  # after_action :handle_login_redirect, only: :login, if: -> { request.post? }
 
   def log_rodauth_action
     Rails.logger.info "DEBUG: [RodauthController] Action #{action_name} triggered for route: #{rodauth.current_route}, method: #{request.request_method}"
@@ -43,6 +43,7 @@ class RodauthController < ApplicationController
     @request = request
   end
 
+=begin
   def handle_login_redirect
     # Only proceed if login was successful and it was a Turbo Stream request
     return unless rodauth.logged_in?
@@ -54,4 +55,5 @@ class RodauthController < ApplicationController
     Rails.logger.info "[RodauthController] Successful login (Turbo Stream), redirecting via 303 to: #{target_path}"
     redirect_to target_path, status: :see_other
   end
+=end
 end

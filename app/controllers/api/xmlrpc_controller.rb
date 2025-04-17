@@ -77,6 +77,33 @@ module Api
       end
     end
 
+    # Generate a standard XMLRPC fault response
+    def fault_response(code, message)
+      builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
+        xml.methodResponse do
+          xml.fault do
+            xml.value do
+              xml.struct do
+                xml.member do
+                  xml.name("faultCode")
+                  xml.value do
+                    xml.int(code.to_s)
+                  end
+                end
+                xml.member do
+                  xml.name("faultString")
+                  xml.value do
+                    xml.string(CGI.escapeHTML(message))
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+      builder.to_xml
+    end
+
     private
 
     def valid_xmlrpc_request?
@@ -242,32 +269,6 @@ module Api
 
     def current_account
       @current_account ||= Account.find_by(id: session[:account_id])
-    end
-
-    def fault_response(code, message)
-      builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
-        xml.methodResponse do
-          xml.fault do
-            xml.value do
-              xml.struct do
-                xml.member do
-                  xml.name("faultCode")
-                  xml.value do
-                    xml.int(code.to_s)
-                  end
-                end
-                xml.member do
-                  xml.name("faultString")
-                  xml.value do
-                    xml.string(CGI.escapeHTML(message))
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-      builder.to_xml
     end
   end
 end

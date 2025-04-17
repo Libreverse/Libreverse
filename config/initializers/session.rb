@@ -35,23 +35,6 @@ Rails.application.config.action_dispatch.cookies_same_site_protection = :strict
 #                                        expire_after: 2.hours,
 #                                        same_site: :strict
 
-# Force session rotation on privilege change events
-Rails.application.config.to_prepare do
-  Rodauth::Rails.app.opts[:after_login] = proc do
-    # Re-enable session rotation
-    request.env["action_dispatch.cookies"].rotate
-    Rails.logger.info "[SessionInit] after_login hook: Session rotated."
-  end
-
-  Rodauth::Rails.app.opts[:after_password_change] = proc do
-    request.env["action_dispatch.cookies"].rotate
-  end
-
-  Rodauth::Rails.app.opts[:after_change_login] = proc do
-    request.env["action_dispatch.cookies"].rotate
-  end
-end
-
 # ===== Parameter Filtering =====
 # Configure parameters to be partially matched (e.g. passw matches password) and filtered from the log file.
 # Use this to limit dissemination of sensitive information.
