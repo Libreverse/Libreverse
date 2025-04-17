@@ -9,11 +9,15 @@ import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import { constants } from "node:zlib";
+import coffee from "vite-plugin-coffee";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
 
     return {
+        resolve: {
+            extensions: [".js", ".coffee", ".scss"],
+        },
         build: {
             sourcemap: false,
             inlineDynamicImports: true,
@@ -77,8 +81,13 @@ export default defineConfig(({ mode }) => {
         plugins: [
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),
+            coffee({
+                jsx: false,
+            }),
             stimulusHMR(),
             legacy({
+                renderLegacyChunks: true,
+                modernPolyfills: true,
                 terserOptions: {
                     ecma: 5,
                     warnings: true,
