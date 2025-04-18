@@ -90,7 +90,6 @@ Rails.application.configure do
                        same_site: :strict # Keep security settings
   # ----------------------------------------
 
-
   # Action Cable Logging
   ActionCable.server.config.logger = Logger.new(nil)
 end

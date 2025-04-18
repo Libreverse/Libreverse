@@ -40,11 +40,6 @@ Rails.application.config.middleware.use HtmlCompressor::Rack,
 # We insert the emoji middleware here so that it precedes
 # the html minifier but still avoids unnecessary work
 
-Rails.application.config.middleware.use EmojiReplacer, exclude_selectors: [
-  "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
-  ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
-]
-
 # ===== Rate Limiting =====
 # We make sure that rack-attack runs first so that we don't
 # waste resources on compressing requests that will be throttled.
