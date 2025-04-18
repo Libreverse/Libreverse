@@ -27,7 +27,7 @@
     position: relative;
     overflow: hidden;
     font-family: Hack, monospace;
-    color: variables.$sp-primary;
+    color: variables.$white-90;
 
     &::before {
         content: "";
@@ -74,7 +74,7 @@
 
 %experience-author-base {
     font-style: italic;
-    color: rgb(255 255 255 / 80%);
+    color: variables.$white-90;
     margin-top: 1rem;
     position: relative;
     padding-left: 1.25rem;
@@ -90,7 +90,7 @@
 
 %experience-date-base {
     font-size: 0.85rem;
-    color: rgb(255 255 255 / 70%);
+    color: variables.$white-90;
     margin-top: 0.75rem;
     font-family: Hack, monospace;
 }
@@ -99,6 +99,123 @@
     margin-top: 1.25rem;
     display: flex;
     gap: 0.5rem;
+}
+
+// New action sector styling for experience cards
+.experience-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    margin-top: 1.5rem;
+    border-top: 1px solid variables.$glass-border;
+
+    .experience-action-left {
+        appearance: none;
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+        margin: 0; // reset default form margin
+        color: variables.$dashboard-primary;
+        font-family: Hack, monospace;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s ease, background-color 0.2s ease;
+        box-sizing: border-box;
+        width: 100%;
+        border-right: 0.5px solid variables.$glass-border;
+
+        &:hover {
+            color: variables.$white-90;
+            background-color: variables.$white-10;
+        }
+
+        // Remove default button styling inside forms
+        button,
+        input[type="submit"] {
+            appearance: none;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: inherit;
+            font: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            width: 100%;
+        }
+    }
+
+    .experience-action-right {
+        appearance: none;
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+        margin: 0; // reset default form margin
+        color: variables.$dashboard-primary;
+        font-family: Hack, monospace;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s ease, background-color 0.2s ease;
+        box-sizing: border-box;
+        width: 100%;
+        border-left: 0.5px solid variables.$glass-border;
+
+        &:hover {
+            color: variables.$white-90;
+            background-color: variables.$white-10;
+        }
+
+        // Remove default button styling inside forms
+        button,
+        input[type="submit"] {
+            appearance: none;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: inherit;
+            font: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            width: 100%;
+        }
+    }
+}
+
+// Ensure the outer link encompassing card doesn't show default link appearance
+.experience-link {
+    display: block;
+    color: variables.$white-90;
+    text-decoration: none;
+
+    // Title in dashboard-primary
+    h3 {
+        color: variables.$dashboard-primary;
+    }
+
+    // Suppress underlines and inherit colour for inner text elements
+    h3,
+    [itemprop="description"],
+    .sp-author,
+    .creation-date {
+        text-decoration: none;
+    }
+
+    &:hover {
+        text-decoration: none;
+    }
 }
 
 .description-truncate {

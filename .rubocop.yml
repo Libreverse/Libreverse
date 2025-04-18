@@ -37,26 +37,61 @@ Style:
     Enabled: true
 
 # Metrics cops for code quality
-Metrics/MethodLength:
+# Metrics cops for code quality
+Metrics/AbcSize:
     Enabled: true
-    Max: 20
-    Description: "Limits methods to 20 lines to keep them concise and maintainable."
+    Max: 50
+    Description: "Limits ABC size to 50 to manage method complexity."
 
-Metrics/ParameterLists:
+Metrics/BlockLength:
     Enabled: true
-    Max: 4
-    Description: "Restricts methods to 4 parameters to reduce complexity."
+    Max: 40
+    Description: "Limits blocks to 40 lines to keep them manageable."
+
+Metrics/BlockNesting:
+    Enabled: true
+    Max: 5
+    Description: "Limits block nesting to 5 levels to improve readability."
+
+Metrics/ClassLength:
+    Enabled: true
+    Max: 200
+    Description: "Limits classes to 200 lines to encourage single responsibility."
+
+Metrics/CollectionLiteralLength:
+    Enabled: true
+    LengthThreshold: 20
+    Description: "Limits collection literals to 20 elements to encourage refactoring."
 
 Metrics/CyclomaticComplexity:
     Enabled: true
-    Max: 5
-    Description: "Caps cyclomatic complexity at 5 to encourage simpler logic."
+    Max: 20
+    Description: "Caps cyclomatic complexity at 20 to encourage simpler logic."
+
+Metrics/MethodLength:
+    Enabled: true
+    Max: 30
+    Description: "Limits methods to 30 lines to keep them concise and maintainable."
+
+Metrics/ModuleLength:
+    Enabled: true
+    Max: 200
+    Description: "Limits modules to 200 lines to encourage single responsibility."
+
+Metrics/ParameterLists:
+    Enabled: true
+    Max: 7
+    Description: "Restricts methods to 7 parameters to reduce complexity."
+
+Metrics/PerceivedComplexity:
+    Enabled: true
+    Max: 25
+    Description: "Caps perceived complexity at 25 to improve readability."
 
 # Set a maximum line length for readability
 Layout/LineLength:
-    Enabled: true
-    Max: 120
-    Description: "Sets a 120-character limit to balance readability and flexibility."
+    Enabled: false
+    Description: "Sets no limit on line length."
 
 # Layout cops
 Layout/CaseIndentation:

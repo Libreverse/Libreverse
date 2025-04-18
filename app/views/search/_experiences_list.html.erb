@@ -1,7 +1,8 @@
 <%# app/views/search/_experiences_list.html.erb %>
 <% experiences.each do |experience| %>
+  <div class="sp-experience">
+<%= link_to display_experience_path(experience), class: "experience-link" do %>
   <article
-    class="sp-experience"
     itemscope
     itemtype="https://schema.org/CreativeWork"
   >
@@ -22,4 +23,7 @@
         <%= experience.created_at.strftime("%B %d, %Y") %></p>
     <% end %>
   </article>
+<% end %>
+
+</div>
 <% end %>

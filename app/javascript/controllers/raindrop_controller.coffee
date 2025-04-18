@@ -15,34 +15,35 @@ export default class extends ApplicationController
 
   connect: ->
     super.connect()
-    console.log "IFrame Raindrop controller: connect"
     @setupIframe()
     return
 
   disconnect: ->
     super.disconnect()
-    console.log "IFrame Raindrop controller: disconnect"
     @teardownIframe()
     return
 
   setupIframe: ->
     unless @hasIframeTarget
-      console.error "IFrame target not found."
       return
 
     unless @hasBackgroundUrlValue and @backgroundUrlValue.length > 0
-      console.error "Background URL value is missing or empty."
       return
 
     # Prepare options
-    raindropOptions = if typeof @optionsValue == "object" and @optionsValue != null then @optionsValue else {}
+    raindropOptions = if typeof @optionsValue is "object" and @optionsValue isnt null then @optionsValue else {}
     optionsJsonString = JSON.stringify(raindropOptions)
+    # Escape the JSON string FOR embedding within a JavaScript template literal
+    optionsJsonForTemplateLiteral = optionsJsonString
+      .replace(/\\\\/g, "\\\\\\\\") # Escape backslashes first (escape the escape)
+      .replace(/`/g, "\\\\`")   # Escape backticks
+      .replace(/\\$\{/g, "\\\\${") # Escape ${ sequence
 
-    # Escape the background URL for JS string literal
+    # Escape the background URL for JS template literal
     backgroundUrlJs = @backgroundUrlValue
-      .replace(/\\/g, "\\\\") # Escape backslashes
-      .replace(/`/g, "\\`")   # Escape backticks
-      .replace(/\${/g, "\\${") # Escape ${ sequence
+      .replace(/\\\\/g, "\\\\\\\\") # Escape backslashes
+      .replace(/`/g, "\\\\`")   # Escape backticks
+      .replace(/\\$\{/g, "\\\\${") # Escape ${ sequence
 
     # Encode the library code to Base64
     libraryDataUri = ""
@@ -50,7 +51,6 @@ export default class extends ApplicationController
       # Ensure UTF-8 compatibility before Base64 encoding if needed, though btoa usually handles typical JS code
       libraryDataUri = "data:text/javascript;base64,#{btoa(raindropFxLibraryCode)}"
     catch e
-      console.error "Error Base64 encoding library code:", e
       return # Can't proceed without the library code
 
     # Build iframe HTML content (Note: Inline JS is still JS, not CoffeeScript)
@@ -112,12 +112,11 @@ export default class extends ApplicationController
     // --- End Debounce ---
 
     const RaindropFXLibrary = module.exports.default || module.exports;
-    console.log("Module exports after load:", module.exports);
 
     if (typeof RaindropFXLibrary === 'function') {
       const canvas = document.getElementById('raindrop-canvas-iframe');
-      const options = JSON.parse(`#{optionsJsonString}`);
-      const backgroundUrl = `#{backgroundUrlJs}`;
+      const options = JSON.parse(`#{optionsJsonForTemplateLiteral}`); // Use properly escaped JSON string
+      const backgroundUrl = `#{backgroundUrlJs}`; // Use properly escaped URL string
 
       if (canvas) {
         try {
@@ -125,24 +124,17 @@ export default class extends ApplicationController
           const initialRect = canvas.getBoundingClientRect();
           canvas.width = initialRect.width;
           canvas.height = initialRect.height;
-          console.log('Set initial canvas dimensions: ' + canvas.width + 'x' + canvas.height);
 
-          console.log('Initializing RaindropFX inside iframe...');
           const fx = new RaindropFXLibrary({
             canvas: canvas,
             background: backgroundUrl,
             ...options
           });
           window.fxInstance = fx; // Store instance for resize access
-          console.log('RaindropFX initialized.');
 
           // Start the effect
           if (typeof fx.start === 'function') {
-            console.log('Calling fx.start()...');
             fx.start();
-            console.log('fx.start() called.');
-          } else {
-            console.warn('fx.start() method not found.');
           }
 
           // Debounced Resize handler
@@ -153,7 +145,6 @@ export default class extends ApplicationController
               canvas.width = currentRect.width;
               canvas.height = currentRect.height;
               window.fxInstance.resize(currentRect.width, currentRect.height);
-              console.log('Resized iframe canvas (debounced) to: ' + currentRect.width + 'x' + currentRect.height);
             }
           };
           const debouncedResize = debounce(handleResize, 250);
@@ -162,11 +153,11 @@ export default class extends ApplicationController
         } catch (error) {
           console.error('Error initializing or starting RaindropFX in iframe:', error);
         }
-      } else {
+      } else { // Add else block for canvas check
         console.error('Canvas element not found in iframe.');
       }
     } else {
-      console.error('RaindropFX class/function not found in module.exports after loading library script.', RaindropFXLibrary);
+      console.error('RaindropFX library not loaded correctly in iframe.');
     }
   </script>
 </body>
@@ -175,9 +166,8 @@ export default class extends ApplicationController
     # Set the srcdoc
     try
       @iframeTarget.srcdoc = iframeContent
-      console.log "Iframe srcdoc set."
     catch e
-      console.error "Error setting iframe srcdoc:", e
+      # console.error "Error setting iframe srcdoc:", e # Keeping error log for now
     return
 
   teardownIframe: ->
@@ -186,5 +176,4 @@ export default class extends ApplicationController
       @iframeTarget.src = "about:blank"
       # Optionally remove the iframe completely if preferred
       # @iframeTarget.remove()
-      console.log "Iframe torn down."
     return

@@ -150,9 +150,7 @@ module Api
 
     def parse_value(value_element)
       # Check for direct text content (string value)
-      if value_element.children.size == 1 && value_element.children.first.text?
-        return CGI.escapeHTML(value_element.text.strip)
-      end
+      return CGI.escapeHTML(value_element.text.strip) if value_element.children.size == 1 && value_element.children.first.text?
 
       # Get the type node - first element child of value
       type_node = value_element.element_children.first

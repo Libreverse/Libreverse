@@ -4,19 +4,17 @@ import ApplicationController from "./application_controller"
 export default class extends ApplicationController
   @targets = ["form", "input"]
   @values = {
-    debounceTime: { type: Number, default: 800 } # Default to 800ms debounce time
+    debounceTime: { type: Number, default: 800 }
   }
 
   initialize: ->
     @timer = null
     @isSubmitting = false
-    # Arrow function to maintain `this` context in the event listener
     @onFormValidated = @onFormValidated.bind(@)
     return
 
   connect: ->
-    super.connect() # Call parent connect() to register StimulusReflex
-    # StimulusReflex.register(@) # Handled by ApplicationController
+    super.connect()
 
     # Set up the form
     if @hasFormTarget
@@ -76,7 +74,7 @@ export default class extends ApplicationController
 
     # Set a new timer for debounced validation
     @timer = setTimeout(
-      (=> @validateForm()), # Use fat arrow for context
+      (=> @validateForm()),
       @debounceTimeValue
     )
     return
@@ -88,21 +86,20 @@ export default class extends ApplicationController
     @stimulate "FormReflex#submit"
     return
 
-  # Arrow function defined in initialize ensures `this` context
   onFormValidated: ->
     # Prevent double submission
     return if @isSubmitting
     @isSubmitting = true
 
     # Submit the form
-    setTimeout (=> # Use fat arrow for context
+    setTimeout (=>
       # Submit the form, with fallback for older browsers
-      if typeof @formTarget.requestSubmit == "function"
+      if typeof @formTarget.requestSubmit is "function"
         @formTarget.requestSubmit()
       else
         @formTarget.submit()
 
       # Reset submission state after a delay
-      setTimeout (=> @isSubmitting = false), 1000 # Use fat arrow for context
+      setTimeout (=> @isSubmitting = false), 1000
     ), 100
     return

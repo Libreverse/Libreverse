@@ -2,7 +2,6 @@
 <%= render "layouts/drawer" %>
 <%= render 'layouts/leniswrapper' do %>
   <%= render 'layouts/navigationshortcutswrapper' do %>
-    <%# Removed include_stylesheet "experiences" %>
 
     <div class="dashboard-container">
       <div class="dashboard-header-section">
@@ -10,65 +9,46 @@
         <p class="header-description">Create and manage your experiences</p>
       </div>
 
-      <div class="dashboard-section welcome-section">
-        <div class="d-flex justify-content-between align-items-center">
-          <h2 class="h4 mb-0">Your Creative Collection</h2>
-          <a
-            href="#create-experience"
-            class="btn btn-primary btn-sm d-inline-flex align-items-center"
+      <% if rodauth.logged_in? && !tutorial_dismissed?("experiences-tutorial") %>
+        <div data-controller="dismissible">
+          <div
+            id="experiences-tutorial"
+            class="dashboard-section"
+            data-dismissible-key-value="experiences-tutorial"
+            data-dismissible-target="container"
           >
-            <i class="bi bi-plus-circle me-2"></i>
-            Create New Experience
-          </a>
+            <div class="section-dismiss">
+              <button class="dismiss-button" data-action="dismissible#dismiss">
+                <img
+                  src="<%= svg_icon_data_url('x') %>"
+                  alt="Close"
+                  width="16"
+                  height="16"
+                  class="feather feather-x"
+                  aria-hidden="true"
+                >
+              </button>
+            </div>
+            <h2 class="section-heading">Your Creative Collection</h2>
+            <p class="section-description">Manage your experiences and create new ones to share with the
+              Libreverse community.</p>
+          </div>
         </div>
-        <p class="text-muted mb-0 mt-2">Manage your experiences and create new ones to share with the
-          Libreverse community.</p>
-      </div>
+      <% end %>
 
       <% if @experiences.any? %>
         <div class="dashboard-experiences-list">
           <%= render "experiences_list", experiences: @experiences %>
         </div>
-      <% else %>
-        <div class="alert alert-info mt-4 d-flex align-items-center">
-          <i class="bi bi-info-circle-fill me-3 fs-4"></i>
-          <div>
-            <strong>No experiences yet!</strong>
-            <p class="mb-0">You haven't created any experiences yet. Use the form below to
-              get started on your creative journey.</p>
-          </div>
-        </div>
       <% end %>
 
       <section id="create-experience" class="experience-form-container mt-5">
         <h2 class="experience-form-heading">
-          <i class="bi bi-stars me-2"></i>
           Create a New Experience
         </h2>
         <p class="text-muted mb-4">Share your insights, stories, or creative ideas with the community.</p>
         <%= render "form", experience: @experience %>
       </section>
-
-      <div class="dashboard-footer mt-4">
-        <div class="small text-muted">
-          <% if @experiences.any? %>
-            You have
-            <%= pluralize(@experiences.size, "experience") %>
-            in your collection
-          <% else %>
-            Start creating your first experience
-          <% end %>
-        </div>
-        <a
-          href="<%= dashboard_path %>"
-          class="
-            btn btn-outline-secondary btn-sm d-inline-flex align-items-center
-          "
-        >
-          <i class="bi bi-arrow-left me-2"></i>
-          Back to Dashboard
-        </a>
-      </div>
     </div>
   <% end %>
 <% end %>

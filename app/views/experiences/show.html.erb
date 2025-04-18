@@ -16,7 +16,6 @@
           <small class="text-muted">Last updated:
             <%= @experience.updated_at.strftime("%B %d, %Y at %H:%M") %></small>
           <%= link_to search_path(query: @experience.title), class: "btn btn-outline-info btn-sm" do %>
-            <i class="bi bi-search me-1"></i>
             Find similar experiences
           <% end %>
         </div>

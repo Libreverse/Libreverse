@@ -42,7 +42,7 @@ class RodauthMain < Rodauth::Rails::Auth
           account_id: new_account_id, key: preference.key
         )
       end
-      
+
       # After transferring preferences, delete all preferences for the guest account
       # to avoid foreign key constraint violation when deleting the guest account
       UserPreference.where(account_id: guest_account_id).destroy_all

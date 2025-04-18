@@ -3,23 +3,28 @@
 class DrawerReflex < ApplicationReflex
   include Loggable
 
-  # Toggles the drawer expanded state (persists only)
-  # Expects the current expanded state ('true' or 'false' string) as an argument.
-  def toggle(current_expanded_str = "false")
+  # Toggles the drawer expanded state (persists only). Fetches the current state from UserPreference.
+  def toggle
     # Get the drawer_id from the element dataset, default to 'main'
     drawer_id = element.dataset[:drawer_id] || "main"
     # Construct the key matching the UserPreference ALLOWED_KEYS format
     key = "drawer_expanded_#{drawer_id}"
 
-    # Convert the passed string argument to a boolean
-    # Default to false if the argument is missing or not 'true'
-    expanded = current_expanded_str == "true"
+    # Fetch the current state from UserPreference if the user is logged in
+    current_expanded = false # Default state if not logged in or preference not set
+    if current_account
+      # UserPreference stores 't' or 'f'
+      saved_state = UserPreference.get(current_account.id, key)
+      current_expanded = (saved_state == "t")
+      Rails.logger.info "[DrawerReflex#toggle] Fetched current state for drawer #{drawer_id} (key '#{key}'): #{current_expanded} (from UserPreference: '#{saved_state}')"
+    else
+      Rails.logger.info "[DrawerReflex#toggle] No current account, assuming drawer #{drawer_id} is collapsed."
+    end
 
-    Rails.logger.info "[DrawerReflex#toggle] Received current state for drawer #{drawer_id}: #{expanded} (from client argument: '#{current_expanded_str}')"
     Rails.logger.info "[DrawerReflex#toggle] Using preference key: #{key}"
 
     # Toggle the state
-    new_expanded = !expanded
+    new_expanded = !current_expanded
     Rails.logger.info "[DrawerReflex#toggle] Toggling state for drawer #{drawer_id} to: #{new_expanded}"
 
     # Save the new state to UserPreference if the user is logged in
@@ -40,9 +45,7 @@ class DrawerReflex < ApplicationReflex
       # Correctly compare the boolean state with the stored string ('t'/'f')
       is_saved_correctly = (new_expanded && saved_value == "t") || (!new_expanded && saved_value == "f")
 
-      unless is_saved_correctly
-        Rails.logger.error "[DrawerReflex#toggle] Verification FAILED: Mismatch between intended state (#{new_expanded}) and saved value (#{saved_value.inspect}) for key '#{key}'"
-      end
+      Rails.logger.error "[DrawerReflex#toggle] Verification FAILED: Mismatch between intended state (#{new_expanded}) and saved value (#{saved_value.inspect}) for key '#{key}'" unless is_saved_correctly
     else
       Rails.logger.info "[DrawerReflex#toggle] No current account, skipping UserPreference save for drawer #{drawer_id}"
     end

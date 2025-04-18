@@ -1,4 +1,5 @@
 @use "templates/administrative";
+@use "variables";
 
 .dashboard-container {
     @extend %administrative-container;
@@ -33,7 +34,12 @@
 }
 
 .dashboard-experiences-list {
-    @extend %administrative-experiences-list;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    font-family: Hack, monospace;
+    font-size: 18px;
+    color: variables.$sp-primary;
 }
 
 .dashboard-experience {

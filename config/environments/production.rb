@@ -90,13 +90,6 @@ Rails.application.configure do
                        same_site: :strict # Keep security settings
   # ----------------------------------------
 
-  # Enforce SameSite=Strict for all cookies
-  config.action_dispatch.cookies_same_site_protection = :strict
-
-  # Add secure defaults for new cookies
-  config.action_dispatch.cookies_serializer = :json
-  config.action_dispatch.use_authenticated_cookie_encryption = true
-  config.action_dispatch.signed_cookie_digest = "SHA256"
 
   # Action Cable Logging
   ActionCable.server.config.logger = Logger.new(nil)
