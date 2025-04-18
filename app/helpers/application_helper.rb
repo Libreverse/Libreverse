@@ -239,9 +239,7 @@ module ApplicationHelper
     preferred_extensions.each do |ext|
       potential_path = source_root.join("#{source_relative_path}#{ext}").cleanpath
       # Security check: Ensure the path is still within the intended source area
-      unless potential_path.to_s.start_with?(source_root.to_s) && File.exist?(potential_path) && File.file?(potential_path)
-        next
-      end
+      next unless potential_path.to_s.start_with?(source_root.to_s) && File.exist?(potential_path) && File.file?(potential_path)
 
       found_path = potential_path
       mime_type = case ext

@@ -107,9 +107,9 @@ module Rack
 
     # Helper to generate XML fault responses without instantiating a controller
     def self.generate_xml_fault_response(code, message)
-      require 'nokogiri'
-      require 'cgi'
-      
+      require "nokogiri"
+      require "cgi"
+
       builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
         xml.methodResponse do
           xml.fault do
@@ -132,7 +132,7 @@ module Rack
           end
         end
       end
-      
+
       builder.to_xml
     end
 

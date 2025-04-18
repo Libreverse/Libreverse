@@ -182,7 +182,7 @@ sub run_in_background {
 # --- Define and run parallel commands ---
 my @coffee_files;
 # Use backticks with find to mimic bash script
-my $find_output = qx(find . -name '*.coffee' -print0);
+my $find_output = qx(find . -path ./node_modules -prune -o -name '*.coffee' -print0);
 @coffee_files = split /\0/, $find_output;
 
 @parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman");

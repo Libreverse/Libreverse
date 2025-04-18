@@ -1,6 +1,5 @@
 import ApplicationController from "./application_controller"
 
-# Connects to data-controller="search-url-updater"
 export default class extends ApplicationController
   @values = {
     debounceTime: { type: Number, default: 300 }
@@ -11,10 +10,8 @@ export default class extends ApplicationController
     @inputHandler = @handleInput.bind(@)
     @searchTimer = null
 
-    # Set up input event listener with debounce
     @element.addEventListener "input", @inputHandler
 
-    # Listen for successful SearchReflex completion
     @updateURLHandler = @updateURLAfterSearch.bind(@)
     document.addEventListener "stimulus-reflex:after", @updateURLHandler
     return
@@ -43,8 +40,8 @@ export default class extends ApplicationController
     { reflex, error } = event.detail
 
     # Only proceed if SearchReflex succeeded
-    if not error and reflex == "SearchReflex#perform"
-      query = @element.value.trim() # Get current input value
+    if not error and reflex is "SearchReflex#perform"
+      query = @element.value.trim()
       currentUrl = new URL(window.location.href)
       params = currentUrl.searchParams
 
@@ -53,9 +50,8 @@ export default class extends ApplicationController
       else
         params.delete "query"
 
-      # Update the URL without reloading the page and without adding a new history entry
       newUrl = currentUrl.pathname + "?" + params.toString()
       # Only replace state if the URL actually changed
-      if window.location.search != params.toString()
+      if window.location.search isnt params.toString()
         window.history.replaceState { path: newUrl }, "", newUrl
     return

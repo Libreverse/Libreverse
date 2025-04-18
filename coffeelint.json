@@ -1,17 +1,17 @@
 {
     "arrow_spacing": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "braces_spacing": {
         "type": "style",
-        "level": "ignore",
-        "spaces": 0,
+        "level": "error",
+        "spaces": 1,
         "empty_object_spaces": 0
     },
     "bracket_spacing": {
         "type": "style",
-        "level": "ignore",
+        "level": "error",
         "spaces": 0,
         "empty_array_spaces": 0,
         "exceptions": []
@@ -25,16 +25,16 @@
     },
     "colon_assignment_spacing": {
         "type": "style",
-        "level": "ignore",
+        "level": "error",
         "spacing": {
             "left": 0,
-            "right": 0
+            "right": 1
         }
     },
     "cyclomatic_complexity": {
         "type": "problem",
-        "level": "ignore",
-        "value": 10
+        "level": "error",
+        "value": 20
     },
     "duplicate_key": {
         "type": "problem",
@@ -42,15 +42,15 @@
     },
     "empty_constructor_needs_parens": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "ensure_comprehensions": {
         "type": "style",
-        "level": "warn"
+        "level": "error"
     },
     "eol_last": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "indentation": {
         "type": "problem",
@@ -59,45 +59,43 @@
     },
     "line_endings": {
         "type": "problem",
-        "level": "ignore",
+        "level": "error",
         "value": "unix"
     },
     "max_line_length": {
         "type": "style",
-        "value": 80,
-        "level": "ignore",
-        "limitComments": true
+        "level": "ignore"
     },
     "missing_fat_arrows": {
         "type": "problem",
-        "level": "ignore",
+        "level": "error",
         "is_strict": false
     },
     "missing_parseint_radix": {
         "type": "problem",
-        "level": "warn"
+        "level": "error"
     },
     "newlines_after_classes": {
         "type": "style",
         "value": 3,
-        "level": "ignore"
+        "level": "error"
     },
     "no_backticks": {
         "type": "problem",
-        "level": "error"
+        "level": "ignore"
     },
     "no_debugger": {
         "type": "problem",
-        "level": "warn",
+        "level": "error",
         "console": false
     },
     "no_empty_functions": {
         "type": "problem",
-        "level": "ignore"
+        "level": "error"
     },
     "no_empty_param_list": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "no_implicit_braces": {
         "type": "style",
@@ -111,19 +109,19 @@
     },
     "no_interpolation_in_single_quotes": {
         "type": "problem",
-        "level": "ignore"
+        "level": "error"
     },
     "no_nested_string_interpolation": {
         "type": "problem",
-        "level": "warn"
+        "level": "error"
     },
     "no_plusplus": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "no_private_function_fat_arrows": {
         "type": "style",
-        "level": "warn"
+        "level": "error"
     },
     "no_spaces": {
         "type": "style",
@@ -139,7 +137,7 @@
     },
     "no_this": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "no_throwing_strings": {
         "type": "problem",
@@ -153,7 +151,7 @@
         "type": "style",
         "level": "error",
         "allowed_in_comments": false,
-        "allowed_in_empty_lines": true
+        "allowed_in_empty_lines": false
     },
     "no_unnecessary_double_quotes": {
         "type": "style",
@@ -161,25 +159,25 @@
     },
     "no_unnecessary_fat_arrows": {
         "type": "style",
-        "level": "warn"
+        "level": "error"
     },
     "non_empty_constructor_needs_parens": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "object_shorthand": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "prefer_english_operator": {
         "type": "style",
-        "level": "ignore",
-        "doubleNotLevel": "ignore",
+        "level": "error",
+        "doubleNotLevel": "error",
         "ops": ["and", "or", "not", "is", "isnt"]
     },
     "prefer_fat_arrows_in_methods": {
         "type": "style",
-        "level": "ignore"
+        "level": "error"
     },
     "prefer_logical_operator": {
         "type": "style",
@@ -188,16 +186,16 @@
     },
     "space_operators": {
         "type": "style",
-        "level": "ignore",
+        "level": "error",
         "default_parameters": true
     },
     "spacing_after_comma": {
         "type": "style",
-        "level": "ignore",
+        "level": "error",
         "ignore_elision": false
     },
     "transform_messes_up_line_numbers": {
         "type": "style",
-        "level": "warn"
+        "level": "error"
     }
 }

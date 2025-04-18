@@ -29,7 +29,6 @@ class FormReflex < ApplicationReflex
         partial: "layouts/form_errors",
         locals: { errors: [] }
       )
-      morph :nothing
     else
       log_info "[FormReflex#submit] Form validation failed with #{@validation_errors.length} errors"
       # Use render_and_morph_with_emojis to show error messages
@@ -38,8 +37,8 @@ class FormReflex < ApplicationReflex
         partial: "layouts/form_errors",
         locals: { errors: @validation_errors }
       )
-      morph :nothing
     end
+morph :nothing
   rescue StandardError => e
     log_error "[FormReflex#submit] Error processing form: #{e.message}", e
     log_error e.backtrace.join("\n")

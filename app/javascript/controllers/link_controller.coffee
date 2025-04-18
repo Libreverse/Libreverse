@@ -1,11 +1,7 @@
-import { Controller } from "@hotwired/stimulus"
+import ApplicationController from "./application_controller"
 
-export default class extends Controller
+export default class extends ApplicationController
   @values = { isCurrent: Boolean }
-
-  connect: ->
-    # Nothing needed on connect
-    return
 
   click: (event) ->
     if @isCurrentValue
@@ -16,3 +12,5 @@ export default class extends Controller
         return
       ), 750
     return
+
+  # Exit if target element is not found

@@ -26,14 +26,8 @@ Rails.application.config.action_dispatch.signed_cookie_digest = "SHA256"
 # Do not allow JavaScript to access cookies for added security
 Rails.application.config.action_dispatch.cookies_same_site_protection = :strict
 
-# Reduce session timeout from 12 hours to 2 hours for better security
-# MOVED: Session store configuration should be in environment files (config/environments/*.rb)
-# Rails.application.config.session_store :active_record_store,
-#                                        key: "_libreverse_session",
-#                                        secure: Rails.env.production?,
-#                                        httponly: true,
-#                                        expire_after: 2.hours,
-#                                        same_site: :strict
+# Use authenticated cookie encryption for improved security
+Rails.application.config.action_dispatch.use_authenticated_cookie_encryption = true
 
 # ===== Parameter Filtering =====
 # Configure parameters to be partially matched (e.g. passw matches password) and filtered from the log file.

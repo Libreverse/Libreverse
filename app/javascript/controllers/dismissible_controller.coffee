@@ -5,12 +5,10 @@ import ApplicationController from "./application_controller"
  * Hides the element immediately on click and triggers a reflex to persist the state.
 ###
 export default class extends ApplicationController
-  # Define the data value expected from the HTML (data-dismissible-key-value)
   @values = { key: String }
 
   connect: ->
     super.connect()
-    # console.log("Dismissible controller connected for key: #{@keyValue}")
     return
 
   ###*
@@ -19,23 +17,21 @@ export default class extends ApplicationController
   ###
   dismiss: (event) ->
     event.preventDefault()
-    event.stopPropagation() # Prevent event bubbling if needed
 
-    # 1. Hide the element immediately for good UX
-    @element.classList.add "dismissed" # Add a class for CSS hiding/transition
-    # Optionally: Use display: none; if preferred over class-based hiding
-    # @element.style.display = 'none'
-
-    # 2. Trigger the reflex to persist the state
-    # Pass the element itself so the reflex can access its dataset (key)
+    # Call the server-side Reflex method to handle dismissal logic
     @stimulate "DismissibleReflex#dismiss", @element
 
-    # Optional: Add client-side callbacks for feedback
-    # @stimulate('DismissibleReflex#dismiss', @element).then(() =>
-    #   console.log("Dismiss persisted for key: #{@keyValue}")
-    # ).catch(error =>
-    #   console.error("Error persisting dismiss for key: #{@keyValue}", error)
-    #   # Optionally: Re-show the element if persistence failed?
-    #   @element.classList.remove('dismissed')
-    # )
+    # Animate and remove the element from the DOM
+    element = @element
+    element.style.height = "#{element.offsetHeight}px"
+    element.style.transition = "height 0.35s ease-in, padding 0.35s ease-in, opacity 0.2s ease-in"
+    element.style.paddingTop = "0"
+    element.style.paddingBottom = "0"
+    element.style.height = "0"
+    element.style.opacity = "0"
+
+    setTimeout (=>
+      element.parentNode.removeChild element
+      return
+    ), 350
     return

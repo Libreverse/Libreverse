@@ -4,7 +4,6 @@ import Lenis from "lenis"
 export default class extends Controller
   connect: ->
     @lenis = undefined
-    # Bind the event handlers once to preserve references
     @boundDestroyIfNeeded = @destroyIfNeeded.bind(@)
     @boundDestroy = @destroy.bind(@)
     @handleTurboLoad = @handleTurboLoad.bind(@)
@@ -22,7 +21,7 @@ export default class extends Controller
     try
       @lenis ||= new Lenis({
         duration: 1.2,
-        easing: (t) -> Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         touchMultiplier: 2,
         infinite: false,
         autoRaf: true,
@@ -42,19 +41,19 @@ export default class extends Controller
       @lenis.start()
     return
 
-  destroyIfNeeded: (event) ->
-    if @lenis and (!event or event.target.controller != "Turbo.FrameController")
+  destroyIfNeeded: (event) =>
+    if @lenis and (not event or event.target.controller isnt "Turbo.FrameController")
       @destroy()
     return
 
-  handleTurboLoad: => # Use fat arrow for proper `this` context
+  handleTurboLoad: =>
     if @lenis
       @resume()
     else
       @init()
     return
 
-  handleTurboRender: => # Use fat arrow for proper `this` context
+  handleTurboRender: =>
     unless @lenis
       @init()
     return
