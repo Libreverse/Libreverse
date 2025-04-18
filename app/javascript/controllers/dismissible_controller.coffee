@@ -30,8 +30,8 @@ export default class extends ApplicationController
     element.style.height = "0"
     element.style.opacity = "0"
 
-    setTimeout (=>
+    setTimeout =>
       element.parentNode.removeChild element
       return
-    ), 350
+    , 350
     return

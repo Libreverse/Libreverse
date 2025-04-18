@@ -16,13 +16,13 @@ export default class extends ApplicationController
     document.removeEventListener "drawer:toggle", @handleDrawerEvent
     return
 
-  handleDrawerEvent: (event) =>
+  handleDrawerEvent: (event) ->
     @open() if event.detail.open
     @close() if event.detail.close
     return
 
   handleKeydown: (event) ->
-    if event.key == "Escape"
+    if event.key is "Escape"
       @close()
     return
 

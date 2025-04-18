@@ -3,7 +3,8 @@
 # Bootsnap Performance Optimization
 require "bootsnap"
 
-env = ENV.fetch("RAILS_ENV", "development")
+# Fasterer: using block form of fetch for efficiency
+env = ENV.fetch("RAILS_ENV") { "development" }
 Bootsnap.setup(
   cache_dir: "tmp/cache",
   ignore_directories: [ "node_modules" ],

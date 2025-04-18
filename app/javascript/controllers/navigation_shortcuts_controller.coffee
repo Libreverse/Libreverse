@@ -27,19 +27,19 @@ export default class extends ApplicationController
     }
     return
 
-  goHome: (event) =>
+  goHome: (event) ->
     event.preventDefault()
     if globalThis.location.pathname isnt "/"
       visit "/"
     return
 
-  goSearch: (event) =>
+  goSearch: (event) ->
     event.preventDefault()
     if globalThis.location.pathname isnt "/search"
       visit "/search"
     return
 
-  openDrawer: (event) =>
+  openDrawer: (event) ->
     event.preventDefault()
     @stimulate("DrawerReflex#toggle")
     return
