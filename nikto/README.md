@@ -1,16 +1,14 @@
+# nikto
 
-nikto
-=====
 [![alt text](https://cirt.net/images/patreon.png "Become a patron of Nikto!")](https://www.patreon.com/sullo)
 
+Nikto web server scanner - <https://cirt.net/Nikto2>
 
-Nikto web server scanner  - https://cirt.net/Nikto2
-
-Full documentation - https://github.com/sullo/nikto/wiki
+Full documentation - <https://github.com/sullo/nikto/wiki>
 
 Run normally:
 
-~~~
+```
 git clone https://github.com/sullo/nikto
 # Main script is in program/
 cd nikto/program
@@ -18,11 +16,11 @@ cd nikto/program
 ./nikto.pl -h http://www.example.com
 # Run using perl (if you forget to chmod)
 perl nikto.pl -h http://www.example.com
-~~~
+```
 
 Run as a Docker container:
 
-~~~bash
+```bash
 git clone https://github.com/sullo/nikto.git
 cd nikto
 docker build -t sullo/nikto .
@@ -32,7 +30,7 @@ docker run --rm sullo/nikto
 docker run --rm sullo/nikto -h http://www.example.com
 # To save the report in a specific format, mount /tmp as a volume:
 docker run --rm -v $(pwd):/tmp sullo/nikto -h http://www.example.com -o /tmp/out.json
-~~~
+```
 
 Basic usage:
 
@@ -128,8 +126,8 @@ Basic usage:
               + requires a value
 ```
 
-License
-=======
+# License
+
 Copyright (C) 2001 Chris Sullo
 
 This program is free software; you can redistribute it and/or
@@ -139,7 +137,7 @@ of the License only.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License

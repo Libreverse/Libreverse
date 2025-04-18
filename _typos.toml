@@ -1,7 +1,5 @@
 [default.extend-words]
-# Keep Lazer as-is (e.g., for a product name)
 Lazer = "Lazer"
 
 [files]
-# Ignore all files in the /app/emoji directory
 extend-exclude = ["app/emoji/**"]
