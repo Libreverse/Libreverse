@@ -1,6 +1,7 @@
 import ApplicationController from "./application_controller"
 
 export default class extends ApplicationController
+
   @values = { isCurrent: Boolean }
 
   click: (event) ->
@@ -12,5 +13,3 @@ export default class extends ApplicationController
         return
       ), 750
     return
-
-  # Exit if target element is not found

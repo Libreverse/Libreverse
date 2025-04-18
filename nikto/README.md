@@ -8,7 +8,7 @@ Full documentation - <https://github.com/sullo/nikto/wiki>
 
 Run normally:
 
-```
+```bash
 git clone https://github.com/sullo/nikto
 # Main script is in program/
 cd nikto/program
@@ -34,7 +34,7 @@ docker run --rm -v $(pwd):/tmp sullo/nikto -h http://www.example.com -o /tmp/out
 
 Basic usage:
 
-```
+```text
    Options:
        -ask+               Whether to ask about submitting updates
                                yes   Ask about each (default)
@@ -126,7 +126,7 @@ Basic usage:
               + requires a value
 ```
 
-# License
+## License
 
 Copyright (C) 2001 Chris Sullo
 

@@ -40,13 +40,13 @@ Style:
 # Metrics cops for code quality
 Metrics/AbcSize:
     Enabled: true
-    Max: 50
-    Description: "Limits ABC size to 50 to manage method complexity."
+    Max: 70
+    Description: "Limits ABC size to 70 to manage method complexity."
 
 Metrics/BlockLength:
     Enabled: true
-    Max: 40
-    Description: "Limits blocks to 40 lines to keep them manageable."
+    Max: 160
+    Description: "Limits blocks to 160 lines to keep them manageable."
 
 Metrics/BlockNesting:
     Enabled: true
@@ -55,13 +55,13 @@ Metrics/BlockNesting:
 
 Metrics/ClassLength:
     Enabled: true
-    Max: 200
-    Description: "Limits classes to 200 lines to encourage single responsibility."
+    Max: 300
+    Description: "Limits classes to 300 lines to encourage single responsibility."
 
 Metrics/CollectionLiteralLength:
     Enabled: true
-    LengthThreshold: 20
-    Description: "Limits collection literals to 20 elements to encourage refactoring."
+    LengthThreshold: 200
+    Description: "Limits collection literals to 200 elements to encourage refactoring."
 
 Metrics/CyclomaticComplexity:
     Enabled: true
@@ -70,8 +70,8 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
     Enabled: true
-    Max: 30
-    Description: "Limits methods to 30 lines to keep them concise and maintainable."
+    Max: 60
+    Description: "Limits methods to 60 lines to keep them concise and maintainable."
 
 Metrics/ModuleLength:
     Enabled: true

@@ -2,4 +2,4 @@
 Lazer = "Lazer"
 
 [files]
-extend-exclude = ["app/emoji/**"]
+extend-exclude = ["app/emoji/**", "nikto/**"]

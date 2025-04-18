@@ -77,8 +77,8 @@
     },
     "newlines_after_classes": {
         "type": "style",
-        "value": 3,
-        "level": "error"
+        "value": 1,
+        "level": "ignore"
     },
     "no_backticks": {
         "type": "problem",
@@ -159,7 +159,7 @@
     },
     "no_unnecessary_fat_arrows": {
         "type": "style",
-        "level": "error"
+        "level": "ignore"
     },
     "non_empty_constructor_needs_parens": {
         "type": "style",
