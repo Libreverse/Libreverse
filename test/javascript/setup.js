@@ -22,7 +22,7 @@ class LocalStorageMock {
     }
 
     getItem(key) {
-        return this.store[key] || null;
+        return this.store[key] ?? undefined;
     }
 
     setItem(key, value) {
@@ -45,8 +45,8 @@ class XMLHttpRequestMock {
         this.status = 0;
         this.responseType = "";
         this.responseText = "";
-        this.responseXML = null;
-        this.responseJSON = null;
+        this.responseXML = undefined;
+        this.responseJSON = undefined;
         this.headers = {};
         this._events = {};
     }

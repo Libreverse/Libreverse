@@ -1,11 +1,11 @@
 // Import our DOM setup
-require("./dom_setup");
+import "./dom_setup";
 
 // Create a simplified version of the controller for testing
 const FormAutoSubmitControllerClass = class {
     constructor(element) {
         this.element = element;
-        this.debounceTimeout = null;
+        this.debounceTimeout = undefined;
         this.debounceTimer = 300; // ms
     }
 

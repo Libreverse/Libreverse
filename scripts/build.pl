@@ -21,8 +21,8 @@ sub run_or_die {
     print "\n";
 }
 
-# The first line in the bash script was commented out:
-# #bin/rails generate dockerfile --force --fullstaq --jemalloc --yjit --cache --parallel --compose
+# Synthesize the Dockerfile
+run_or_die("bin/rails", "generate", "dockerfile", "--force");
 
 # Run docker build
 run_or_die("docker", "build", "--no-cache", "--progress=plain", ".");

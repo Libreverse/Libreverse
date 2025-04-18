@@ -1,12 +1,12 @@
 // Import our DOM setup
-require("./dom_setup");
+import "./dom_setup";
 
 // Create a minimal version of the search url updater controller for testing
 const SearchUrlUpdaterControllerClass = class {
     constructor(element) {
         this.element = element;
         this.debounceTimeValue = 300; // Default value
-        this.searchTimer = null;
+        this.searchTimer = undefined;
     }
 
     connect() {
@@ -86,11 +86,11 @@ describe("SearchUrlUpdaterController", () => {
 
     test("handleInput debounces search requests", () => {
         // Replace setTimeout with a mock
-        const originalSetTimeout = global.setTimeout;
+        const originalSetTimeout = globalThis.setTimeout;
         let timeoutCallback;
         let timeoutTime;
 
-        global.setTimeout = jest.fn((callback, time) => {
+        globalThis.setTimeout = jest.fn((callback, time) => {
             timeoutCallback = callback;
             timeoutTime = time;
             return 123; // Mock timer ID
@@ -108,22 +108,22 @@ describe("SearchUrlUpdaterController", () => {
         expect(controller.lastReflexOptions).toEqual({ updateUrl: true });
 
         // Restore setTimeout
-        global.setTimeout = originalSetTimeout;
+        globalThis.setTimeout = originalSetTimeout;
     });
 
     test("multiple handleInput calls only trigger one search", () => {
         // Mock clearTimeout and setTimeout
-        const originalClearTimeout = global.clearTimeout;
-        const originalSetTimeout = global.setTimeout;
+        const originalClearTimeout = globalThis.clearTimeout;
+        const originalSetTimeout = globalThis.setTimeout;
 
         let clearTimeoutCalled = 0;
         let setTimeoutCalled = 0;
 
-        global.clearTimeout = jest.fn(() => {
+        globalThis.clearTimeout = jest.fn(() => {
             clearTimeoutCalled++;
         });
 
-        global.setTimeout = jest.fn(() => {
+        globalThis.setTimeout = jest.fn(() => {
             setTimeoutCalled++;
             return 123; // Mock timer ID
         });
@@ -140,8 +140,8 @@ describe("SearchUrlUpdaterController", () => {
         expect(setTimeoutCalled).toBe(3);
 
         // Restore original functions
-        global.clearTimeout = originalClearTimeout;
-        global.setTimeout = originalSetTimeout;
+        globalThis.clearTimeout = originalClearTimeout;
+        globalThis.setTimeout = originalSetTimeout;
     });
 
     test("updateURL updates URL when SearchReflex#perform completes successfully", () => {
@@ -152,7 +152,7 @@ describe("SearchUrlUpdaterController", () => {
         const mockEvent = {
             detail: {
                 reflex: "SearchReflex#perform",
-                error: null,
+                error: undefined,
             },
         };
 
@@ -168,7 +168,7 @@ describe("SearchUrlUpdaterController", () => {
         const mockEvent = {
             detail: {
                 reflex: "OtherReflex#action",
-                error: null,
+                error: undefined,
             },
         };
 
