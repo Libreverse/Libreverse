@@ -1,111 +1,69 @@
+import unicorn from "eslint-plugin-unicorn";
+import globals from "globals";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
+import jestPlugin from "eslint-plugin-jest";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+    baseDirectory: __dirname,
+    recommendedConfig: js.configs.recommended,
+    allConfig: js.configs.all,
+});
+
 export default [
     {
         ignores: [
-            "**/.git/**",
-            "**/.vscode/**",
-            "**/node_modules/**",
-            "**/dist/**",
-            "**/build/**",
-            "**/vendor/**",
-            "**/vite-dev/**",
-            "**/public/vite-dev/**",
-            "**/public/vite/**",
-            "**/public/assets/**",
-            "**/*.generated.js",
-            "**/*.min.js",
-            "**/*-legacy-*.js",
-            "**/*.bundle.js",
-            "**/coverage/**",
-            "**/tmp/**",
-            "**/app/builds/**",
-            "**/app/libs/**",
+            "app//builds**",
+            "**/node_modules/",
+            "**/vendor/",
+            "**/tmp/",
+            "**.config.js",
+            "public/**",
+            "app//libs/**",
         ],
     },
+    ...compat.extends("eslint:recommended", "plugin:unicorn/recommended"),
     {
+        plugins: {
+            unicorn,
+        },
         languageOptions: {
+            globals: {
+                ...globals.browser,
+            },
+
             ecmaVersion: "latest",
             sourceType: "module",
-            globals: {
-                document: "readonly",
-                window: "readonly",
-                console: "readonly",
-                navigator: "readonly",
-                fetch: "readonly",
-                Headers: "readonly",
-                Request: "readonly",
-                Response: "readonly",
-                URL: "readonly",
-                URLSearchParams: "readonly",
-                setTimeout: "readonly",
-                clearTimeout: "readonly",
-                setInterval: "readonly",
-                clearInterval: "readonly",
-                requestAnimationFrame: "readonly",
-                cancelAnimationFrame: "readonly",
-                FormData: "readonly",
-                HTMLElement: "readonly",
-                CustomEvent: "readonly",
-                Event: "readonly",
-                Element: "readonly",
-                Node: "readonly",
-                NodeList: "readonly",
-                XMLHttpRequest: "readonly",
-                WebSocket: "readonly",
-                location: "readonly",
-                localStorage: "readonly",
-                sessionStorage: "readonly",
-                history: "readonly",
-                IntersectionObserver: "readonly",
-                MutationObserver: "readonly",
-                ResizeObserver: "readonly",
-                DOMParser: "readonly",
-                XMLSerializer: "readonly",
-                File: "readonly",
-                Blob: "readonly",
-                FileReader: "readonly",
-                MouseEvent: "readonly",
-                KeyboardEvent: "readonly",
-                btoa: "readonly",
-                atob: "readonly",
-                alert: "readonly",
-                confirm: "readonly",
-                prompt: "readonly",
-            },
         },
+
         rules: {
-            "no-console": "off",
-            "no-unused-vars": "warn",
+            "unicorn/filename-case": "off",
+            "unicorn/no-anonymous-default-export": "off",
+            "unicorn/no-empty-file": "off",
         },
     },
-    // Test files specific rules
+    // Updated Jest test configuration
     {
-        files: [
-            "**/*.test.js",
-            "**/__tests__/**/*.js",
-            "**/__mocks__/**/*.js",
-            "**/jest/*.js",
-            "**/test/javascript/**/*.js",
-        ],
+        files: ["test/javascript/**/*.js"],
+        plugins: {
+            jest: jestPlugin,
+        },
         languageOptions: {
-            // Add Jest globals
             globals: {
-                jest: "readonly",
-                describe: "readonly",
-                it: "readonly",
-                expect: "readonly",
-                beforeEach: "readonly",
-                afterEach: "readonly",
-                beforeAll: "readonly",
-                afterAll: "readonly",
-                test: "readonly",
-                mockImplementation: "readonly",
-                mockReturnValue: "readonly",
-                mockResolvedValue: "readonly",
-                mockRejectedValue: "readonly",
+                ...globals.jest,
+                ...globals.browser,
+                ...globals.node,
+            },
+            parserOptions: {
+                ecmaVersion: "latest",
+                sourceType: "module",
             },
         },
         rules: {
-            "no-undef": "off",
+            ...jestPlugin.configs.recommended.rules,
         },
     },
 ];

@@ -1,5 +1,5 @@
 // Import our DOM setup
-require("../dom_setup");
+import "../dom_setup";
 
 // Mock browser DOM elements
 globalThis.Element = globalThis.HTMLElement;
@@ -13,7 +13,7 @@ globalThis.DOMParser = class {
         return {
             querySelector: (selector) => {
                 if (selector === "methodResponse fault") {
-                    return null;
+                    return;
                 }
                 return {
                     textContent: "success",
@@ -49,8 +49,7 @@ globalThis.XMLHttpRequest = class {
         this.status = 200;
         this.responseText =
             "<methodResponse><params><param><value><string>success</string></value></param></params></methodResponse>";
-        this.responseXML = null;
-        this.onreadystatechange = null;
+        this.responseXML = undefined;
         this.headers = {};
         this.eventListeners = {};
     }
@@ -81,7 +80,7 @@ globalThis.XMLHttpRequest = class {
             this.responseXML = {
                 querySelector: (selector) => {
                     if (selector === "methodResponse fault") {
-                        return null;
+                        return;
                     }
                     return {
                         textContent: "success",
@@ -108,15 +107,10 @@ globalThis.XMLHttpRequest = class {
                 },
             };
 
-            if (this.onreadystatechange) {
-                this.onreadystatechange();
-            }
-
             // Trigger readystatechange event listeners
             if (this.eventListeners.readystatechange) {
-                this.eventListeners.readystatechange.forEach((callback) =>
-                    callback(),
-                );
+                for (const callback of this.eventListeners.readystatechange)
+                    callback();
             }
         }, 0);
 
@@ -193,13 +187,17 @@ describe("xmlrpc utility", () => {
 
     test("accepts custom headers in options", async () => {
         // Call xmlrpc with custom headers and capture the XMLHttpRequest
-        let capturedRequest;
+        let headers = {};
         const originalXHR = globalThis.XMLHttpRequest;
 
         globalThis.XMLHttpRequest = class extends originalXHR {
             constructor() {
                 super();
-                capturedRequest = this;
+            }
+
+            setRequestHeader(header, value) {
+                super.setRequestHeader(header, value);
+                headers[header] = value;
             }
         };
 
@@ -212,9 +210,7 @@ describe("xmlrpc utility", () => {
             });
 
             // Verify the custom header was set
-            expect(capturedRequest.headers["X-Custom-Header"]).toBe(
-                "custom-value",
-            );
+            expect(headers["X-Custom-Header"]).toBe("custom-value");
         } finally {
             // Restore original
             globalThis.XMLHttpRequest = originalXHR;
