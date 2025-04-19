@@ -7,7 +7,7 @@ _(check ✓ as you complete each item)_
 
 ## Critical — current sprint (pre-alpha)
 
-1. □ **Publish Privacy Policy & Cookie Policy** under `/privacy` and `/cookies`.
+- [x] **Publish Privacy Policy & Cookie Policy** under `/privacy` and `/cookies`.
 
     - Include: identity, DPO contact, categories, lawful basis, retention, rights, transfers, complaints.
 
@@ -39,7 +39,7 @@ _(check ✓ as you complete each item)_
 
 1. □ **Add Terms of Service & Imprint** (if EU).
 
-2. □ **Add Opt-in checkbox for "Remember me" cookie**; set short expiry (<30 days).
+- [x] **Add Opt-in checkbox for "Remember me" cookie**; set short expiry (<30 days).
 
 3. □ **Document technical & organisational measures (TOMs)** – encryption, access controls, backups.
 

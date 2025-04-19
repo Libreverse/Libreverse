@@ -168,15 +168,12 @@ class RodauthMain < Rodauth::Rails::Auth
     # ==> Implementing streamlined pwned password check
     # Perform pwned check in after_login hook which runs before response is sent
     after_login do
-      # Remember the user
-      remember_login
-
-      # ---> ADDED: Explicitly clear any guest session identifier upon successful user login <---
-      if respond_to?(:guest_session_key) && session[guest_session_key]
-        Rails.logger.debug "[Rodauth] Clearing guest session key (#{guest_session_key}) after successful user login."
-        session.delete(guest_session_key)
+      # Remember the user only if EEA mode is disabled or the user opted in via consent screen
+      if !EEAMode.enabled? || request.cookies["remember_opt_in"] == "1"
+        remember_login
+      else
+        Rails.logger.debug "[Rodauth] Skipping remember_login – no opt‑in cookie while EEA mode active"
       end
-      # --------------------------------------------------------------------------------------
 
       pwned_redirect_needed = false
       # Capture password and perform pwned check

@@ -1,0 +1,54 @@
+.consent-overlay {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  .consent-card {
+    color: #fefefe;
+x
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.75rem;
+    }
+
+    .checkbox-row {
+      margin: 1rem 0;
+      label {
+        margin-left: 0.5rem;
+      }
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn-primary {
+      background: #1e8bff;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    a {
+      color: #1e8bff;
+    }
+  }
+} 

@@ -1,11 +1,5 @@
 @use "variables";
 
-.turbo-progress-bar {
-    height: 5px;
-    background-color: variables.$progress-bar;
-    border-radius: 0 0 10px;
-}
-
 .turbo-loading {
     cursor: wait !important;
 }
