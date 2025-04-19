@@ -63,16 +63,14 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
-    # hmac_secret "9fc60b90b3c586aedf891213d74197d702d2e74f4a614de9dab8fe6dd930826815316088e05a73bb8d30df65df6fbacb0d0d8ad31d01fa82c7abdd371ffdf4fe"
+    hmac_secret Rails.application.secret_key_base
 
     # Use a rotatable password pepper when hashing passwords with Argon2.
-    # argon2_secret { hmac_secret }
+    argon2_secret Rails.application.secret_key_base
+    # Argon2 costs left at gem defaults; see config/initializers/argon2.rb if custom costs are needed.
 
     # Since we're using argon2, prevent loading the bcrypt gem to save memory.
     require_bcrypt? false
-
-    # Use path prefix for all routes.
-    # prefix "/auth"
 
     # Specify the controller used for view rendering, CSRF, and callbacks.
     rails_controller { RodauthController }
@@ -374,6 +372,8 @@ class RodauthMain < Rodauth::Rails::Auth
     before_login do
       Rails.logger.info "DEBUG: Entered before_login hook"
     end
+
+    # Argon2 cost already configured globally
   end
   Rails.logger.info "RodauthMain configuration loaded"
 

@@ -20,7 +20,8 @@ module Api
     @experience1 = Experience.new(
       title: "Test Experience 1",
       description: "Description for test 1",
-      author: "Test Author 1"
+      author: "Test Author 1",
+      account: accounts(:one)
     )
 
     # Attach a basic HTML file for first experience
@@ -36,7 +37,8 @@ module Api
     @experience2 = Experience.new(
       title: "Test Experience 2",
       description: "Description for test 2",
-      author: "Test Author 2"
+      author: "Test Author 2",
+      account: accounts(:two)
     )
 
     # Attach a basic HTML file for second experience

@@ -107,7 +107,20 @@ class EmojiReplacer
     html
   end
 
+  def ensure_utf8(str)
+    return str if str.encoding == Encoding::UTF_8
+
+    # Attempt to force UTF‑8; if invalid bytes exist, replace them.
+    str.force_encoding(Encoding::UTF_8)
+    return str if str.valid_encoding?
+
+    str.encode(Encoding::UTF_8, invalid: :replace, undef: :replace)
+  rescue StandardError
+    str
+  end
+
   def replace_emojis_with_nodes(text, _doc)
+    text = ensure_utf8(text)
     return text unless text.match?(EMOJI_REGEX)
 
     text.gsub(EMOJI_REGEX) do |emoji|
@@ -144,6 +157,7 @@ class EmojiReplacer
   end
 
   def replace_emojis(text)
+    text = ensure_utf8(text)
     text.gsub(EMOJI_REGEX) do |emoji|
       match_data = Regexp.last_match
       context = extract_context(text, match_data.begin(0), match_data.end(0))

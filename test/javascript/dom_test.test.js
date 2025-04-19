@@ -1,6 +1,3 @@
-// Import our DOM setup
-require("./dom_setup");
-
 describe("DOM manipulation", () => {
     test("can manipulate the DOM", () => {
         // Create an element

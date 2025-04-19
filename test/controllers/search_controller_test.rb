@@ -14,7 +14,8 @@ class SearchControllerTest < ActionController::TestCase
     @test_experience = Experience.new(
       title: "Test Experience 1",
       description: "Description for test experience 1",
-      author: "Test Author 1"
+      author: "Test Author 1",
+      account: accounts(:one)
     )
 
     # Attach a basic HTML file
