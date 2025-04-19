@@ -40,10 +40,10 @@ module EEAMode
 
     @enabled = if raw =~ /^\s*eea_mode\s*=\s*(\w+)/i
                  value = Regexp.last_match(1).downcase
-                 !(%w[false 0 no off].include?(value))
-               else
+                 !%w[false 0 no off].include?(value)
+    else
                  true
-               end
+    end
   end
 
   # Cookie key used to remember that the user has accepted privacy/cookie terms.
@@ -167,7 +167,7 @@ Rails.application.config.to_prepare do
 
       layout "application"
 
-      DISCLAIMER = <<~HTML.freeze
+      DISCLAIMER = <<~HTML
         <p class="policy-disclaimer">
           This Privacy Policy and Cookie Policy are provided in English due to resource constraints.
         </p>
@@ -204,7 +204,7 @@ end
 
 Rails.application.routes.append do
   scope "/" do
-    get  "consent",          to: "consents#show",   as: :consent
+    get  "consent",          to: "consents#show", as: :consent
     post "consent/accept",   to: "consents#accept",  as: :consent_accept
     post "consent/decline",  to: "consents#decline", as: :consent_decline
 
@@ -214,4 +214,4 @@ Rails.application.routes.append do
     get "privacy", to: "policies#privacy",  as: :privacy_policy
     get "cookies", to: "policies#cookies",  as: :cookie_policy
   end
-end 
+end
