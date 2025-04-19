@@ -1,0 +1,33 @@
+<%# frozen_string_literal: true %>
+<%# Full‑screen Consent Overlay %>
+<div class="consent-overlay" data-controller="consent">
+  <div class="consent-card">
+    <h1>Welcome to Libreverse</h1>
+    <p>
+      To access the app, you must agree to our
+      <a href="<%= privacy_policy_path %>" target="_blank">Privacy Policy</a>
+      and
+      <a href="<%= cookie_policy_path %>" target="_blank">Cookie Policy</a>.
+    </p>
+    <p>
+      We also use an optional "Remember Me" cookie to store your login for 30 days.
+    </p>
+    <p class="small">
+      These policies are in English due to resource constraints. Contact
+      <a href="mailto:support@libreverse.dev">support@libreverse.dev</a> for assistance in other languages.
+    </p>
+
+    <%= form_with url: consent_accept_path, method: :post, local: true, data: { consent_target: "form", turbo: "false" } do |f| %>
+      <div class="checkbox-row">
+        <%= f.check_box :remember_opt_in, { data: { consent_target: "checkbox" } }, "1", "0" %>
+        <%= f.label :remember_opt_in, 'Enable non-essential cookies required to stay logged in across sessions (technically optional but strongly recommended)' %>
+      </div>
+      <div class="btn-row">
+        <%= f.submit "Agree and Continue", class: "btn-primary" %>
+      </div>
+    <% end %>
+    <div class="btn-row">
+      <%= button_to "Decline", consent_decline_path, method: :post, class: "btn-secondary", data: { turbo: "false" } %>
+    </div>
+  </div>
+</div> 

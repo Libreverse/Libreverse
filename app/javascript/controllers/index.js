@@ -36,3 +36,6 @@ application.register("sidebar", SidebarController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);
+
+import ConsentController from "./consent_controller"
+application.register("consent", ConsentController)
