@@ -67,6 +67,10 @@ class ExperiencesController < ApplicationController
     end
 
     @html_content = @experience.html_file.download.force_encoding("UTF-8")
+
+    # Force browsers to treat the data as a download and prevent MIME sniffing
+    response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
+    response.headers["X-Content-Type-Options"] = "nosniff"
   end
 
   private

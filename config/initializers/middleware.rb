@@ -5,12 +5,16 @@
 # Including compression, HTML optimization, rate limiting, and emoji processing
 
 # ===== Compression Middleware =====
-# Strange as it may seem this is the order that gets the html minifier
-# to run before the deflater and brotli because middlewares are,
-# unintuitively, run as a stack from the bottom up.
-Rails.application.config.middleware.use Rack::Deflater, include: %w[text/html], sync: false
-Rails.application.config.middleware.use Rack::Brotli, quality: 11, include: %w[text/html],
-                                                      deflater: { lgwin: 22, lgblock: 0, mode: :text }, sync: false
+# Compression is now simplified to avoid Safari 'cannot decode raw data' errors caused by
+# double-compression. We only use Rack::Brotli in production – it will fall back to gzip
+# automatically when the client doesn't advertise `br`.
+if Rails.env.production?
+  Rails.application.config.middleware.use Rack::Brotli,
+                                          quality: 11,
+                                          include: %w[text/html],
+                                          deflater: { lgwin: 22, lgblock: 0, mode: :text },
+                                          sync: false
+end
 
 # ===== HTML Optimization =====
 # This option set is from the default readme of htmlcompressor
@@ -41,8 +45,31 @@ Rails.application.config.middleware.use HtmlCompressor::Rack,
 # the html minifier but still avoids unnecessary work
 
 # ===== Rate Limiting =====
-# We make sure that rack-attack runs first so that we don't
-# waste resources on compressing requests that will be throttled.
+# Ensure Rack::Attack runs *before* compression so we don't waste CPU.
+# Note: we insert it before Rack::Deflater programmatically below.
+
+# ===== Maximum Body Size =====
+# Block requests larger than 8 MiB to mitigate abuse when no reverse proxy
+# is present. Responds with 413.
+module Rack
+  class MaximumBodySize
+  def initialize(app, limit_bytes)
+    @app = app
+    @limit = limit_bytes
+  end
+
+  def call(env)
+    length = env["CONTENT_LENGTH"].to_i
+    return [ 413, { "Content-Type" => "text/plain" }, [ "Payload Too Large" ] ] if length > @limit && @limit.positive?
+
+    @app.call(env)
+  end
+  end
+end
+
+# Insert body-size guard at the very top of stack
+Rails.application.config.middleware.insert_before 0, Rack::MaximumBodySize, 8.megabytes
+
 module Rack
   class Attack
     # Use Rails.cache for production
@@ -124,4 +151,12 @@ module Rack
   end
 end
 
-Rails.application.config.middleware.use Rack::Attack
+# Insert Rack::Attack cleanly:
+middleware = Rails.application.config.middleware
+
+begin
+  middleware.insert_after Rack::MaximumBodySize, Rack::Attack
+rescue ArgumentError
+  # Rack::MaximumBodySize not present; prepend Rack::Attack
+  middleware.insert_before 0, Rack::Attack
+end

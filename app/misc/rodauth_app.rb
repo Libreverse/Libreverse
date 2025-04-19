@@ -1,19 +1,9 @@
 # frozen_string_literal: true
 
 class RodauthApp < Rodauth::Rails::App
-  # primary configuration
   configure RodauthMain
 
-  # secondary configuration
-  # configure RodauthAdmin, :admin
-
   route do |r|
-    # --- REMOVED Skip processing for ActionCable path ---
-    # RodauthApp should now handle all requests, including /cable, to ensure
-    # consistent session state (including guest sessions).
-    # return if r.path.start_with?("/cable")
-    # --------------------------------------------------
-
     # Handle "remember me" logic first.
     if rodauth.respond_to?(:load_memory)
       # Case 1: Not a guest session - attempt standard user remember.
@@ -38,7 +28,6 @@ class RodauthApp < Rodauth::Rails::App
       end
     end
 
-    # --- ADDED: Centralized Guest Session Check ---
     # After attempting to load a remembered session, ensure a session exists.
     # This handles both regular requests and ActionCable connections.
     if rodauth.logged_in?
@@ -54,8 +43,7 @@ class RodauthApp < Rodauth::Rails::App
         # Log secret key base hash *before* potentially creating a guest session
         # Important for debugging potential session key rotation issues.
         require "digest"
-        secret_hash = Digest::SHA256.hexdigest(Rails.application.secret_key_base || "")
-        Rails.logger.debug "[RodauthApp][Pre-Guest] No session found for #{r.path}. Secret Key Base SHA256: #{secret_hash}"
+        # Secret key hash logging removed for security
 
         Rails.logger.debug "[RodauthApp] No session (user/guest) found for path '#{r.path}'. Calling allow_guest."
         rodauth.allow_guest # Create guest session if none exists
@@ -77,14 +65,9 @@ class RodauthApp < Rodauth::Rails::App
         # Depending on the error, maybe return a specific error response.
       end
     end
-    # -----------------------------------------------
 
     # Route rodauth internal requests first (e.g., POST /login, GET /create-account).
     r.rodauth
-
-    # --- REMOVED Global Guest Session Check (moved earlier) ---
-    # Guest sessions will now be handled by ApplicationController before_action
-    # -----------------------------------------
 
     # ==> Path-Specific Authentication/Authorization
     # Example for dashboard paths:

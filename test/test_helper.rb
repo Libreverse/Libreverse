@@ -14,7 +14,10 @@ end
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers
-    parallelize(workers: :number_of_processors)
+    # Mocha does not play nicely with Minitest's parallel testing, leading to
+    # `NoMethodError: undefined method 'pop' for nil` during teardown. Running
+    # tests sequentially avoids this interference.
+    parallelize(workers: 1)
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all

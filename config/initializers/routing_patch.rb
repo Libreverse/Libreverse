@@ -1,4 +1,5 @@
-# frozen_string_literal: true
+# STRING LITERALS CANNOT BE FROZEN HERE. IT WILL LEAD TO AN AMBIGUOUS ERROR.
+# frozen_string_literal: false
 
 # RoutingPatch for handling custom Rodauth routes
 module RoutingPatch

@@ -1,5 +1,5 @@
 // Import JSDOM
-const { JSDOM } = require("jsdom");
+import { JSDOM } from "jsdom";
 
 // Create a new JSDOM instance
 const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
@@ -20,5 +20,5 @@ globalThis.CustomEvent = dom.window.CustomEvent;
 globalThis.Event = dom.window.Event;
 globalThis.MouseEvent = dom.window.MouseEvent;
 
-// Make available for import
-module.exports = dom;
+// Export dom for tests that might need direct access
+export default dom;

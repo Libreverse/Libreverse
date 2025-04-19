@@ -1,5 +1,5 @@
 // Import our DOM setup
-require("./dom_setup");
+import "./dom_setup";
 
 // Create simplified version of the controller for testing
 const ToastControllerClass = class {

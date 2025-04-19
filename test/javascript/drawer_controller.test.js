@@ -1,5 +1,5 @@
 // Import our DOM setup
-require("./dom_setup");
+import "./dom_setup";
 
 // Create a minimal version of the drawer controller for testing
 const DrawerControllerClass = class {
