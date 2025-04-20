@@ -59,7 +59,7 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL") { "info" }
 
   # Cache Store Configuration
-  config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }
+  config.cache_store = :solid_cache_store
 
   # Active Job Queue Adapter Configuration
   config.active_job.queue_adapter = :solid_queue
