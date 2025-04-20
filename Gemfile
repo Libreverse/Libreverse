@@ -84,6 +84,9 @@ gem "rubyzip"
 # Add lockbox gem for encrypted Active Storage attachments
 gem "lockbox"
 
+# Add view_component gem for ViewComponent support
+gem "view_component"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
