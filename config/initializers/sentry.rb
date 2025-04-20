@@ -7,7 +7,7 @@ Sentry.init do |config|
   config.breadcrumbs_logger = %i[active_support_logger http_logger]
 
   # Strip IP address PII
-  config.before_send = lambda do |event, hint|
+  config.before_send = lambda do |event, _hint|
     if (ip = event.dig(:user, :ip_address))
       event[:user][:ip_address] = IpAnonymizer.anonymise_ip(ip)
     end
