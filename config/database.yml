@@ -45,5 +45,9 @@ production:
         database: db/libreverse_production.sqlite3
     queue:
         <<: *default
-        database: db/libreverse_production_queue.sqlite3
+        database: db/libreverse_production.sqlite3
         migrations_paths: db/queue_migrate
+    cache:
+        <<: *default
+        database: db/libreverse_production.sqlite3
+        migrations_paths: db/cache_migrate
