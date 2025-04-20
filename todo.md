@@ -2,23 +2,17 @@
 
 ## Critical — current sprint (pre-alpha)
 
-1. □ **Add automated retention tasks**:
+1. ✓ **Ensure Active Storage encryption** or move to an encrypted cloud bucket.
 
-    - Purge expired `password_reset`, `login_change`, and `remember` keys.
-    - Rotate/expire sessions (e.g., 14 days) and logs (use `logrotate`).
-    - Ensure `has_one_attached :html_file` calls `dependent: :purge_later` or uses `after_destroy`.
+    - ✅ Attachments are encrypted at rest with Lockbox and marked private.
 
-2. □ **Ensure Active Storage encryption** or move to an encrypted cloud bucket.
+2. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
 
-    - Mark attachments as private/authenticated.
-
-3. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
-
-4. □ **Review Sentry config**:
+3. □ **Review Sentry config**:
 
     - Enable `before_send` to redact PII, pass only error fingerprints.
 
-5. □ **Build data-subject request workflow** (admin console + email confirmation).
+4. □ **Build data-subject request workflow** (admin console + email confirmation).
     - Track fulfillment timestamps.
 
 ---

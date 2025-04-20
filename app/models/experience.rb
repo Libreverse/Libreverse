@@ -7,6 +7,7 @@ class Experience < ApplicationRecord
 
   belongs_to :account, optional: true
   has_one_attached :html_file, dependent: :purge_later
+  encrypts_attached :html_file
 
   validates :title, presence: true, length: { maximum: 255 }
   validates :description, length: { maximum: 2000 }

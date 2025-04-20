@@ -80,6 +80,9 @@ gem "active_storage_validations"
 # Add rubyzip gem for account export
 gem "rubyzip"
 
+# Add lockbox gem for encrypted Active Storage attachments
+gem "lockbox"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
