@@ -228,6 +228,7 @@ GEM
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
     localhost (1.4.2)
+    lockbox (2.0.1)
     logger (1.7.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
@@ -540,6 +541,7 @@ DEPENDENCIES
   fasterer
   foreman
   htmlcompressor
+  lockbox
   mocha
   nokogiri
   ostruct
