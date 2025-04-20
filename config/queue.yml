@@ -15,4 +15,12 @@ test:
     <<: *default
 
 production:
-    <<: *default
+    workers:
+        - queues: "*"
+          threads: 2
+          processes: 1
+          polling_interval: 0.2
+    dispatchers:
+        - polling_interval: 1
+          batch_size: 200
+    scheduler: {}
