@@ -40,5 +40,10 @@ test:
 
 # Production settings
 production:
-    <<: *default
-    database: db/libreverse_production.sqlite3
+    primary:
+        <<: *default
+        database: db/libreverse_production.sqlite3
+    queue:
+        <<: *default
+        database: db/libreverse_production_queue.sqlite3
+        migrations_paths: db/queue_migrate
