@@ -51,3 +51,7 @@ production:
         <<: *default
         database: db/libreverse_production.sqlite3
         migrations_paths: db/cache_migrate
+    cable:
+        <<: *default
+        database: db/libreverse_production.sqlite3
+        migrations_paths: db/cable_migrate
