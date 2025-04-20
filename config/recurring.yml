@@ -1,23 +1,6 @@
-# This file contains configuration for recurring jobs to be run by Solid Queue
-# Format:
-#   job_name:
-#     class: JobClass
-#     queue: queue_name
-#     args: [ arg1, arg2, ... ]
-#     schedule: every hour / at 5am every day / etc.
+# This file defines recurring Solid Queue tasks per environment.
 
-# production:
-#   periodic_cleanup:
-#     class: CleanSoftDeletedRecordsJob
-#     queue: background
-#     args: [ 1000, { batch_size: 500 } ]
-#     schedule: every hour
-#   periodic_command:
-#     command: "SoftDeletedRecord.due.delete_all"
-#     priority: 2
-#     schedule: at 5am every day
-
-development:
+shared_tasks: &shared_tasks
     solid_cable_trim:
         class: SolidCable::TrimJob
         queue: default
@@ -27,14 +10,17 @@ development:
         class: CleanupAbandonedGuestsJob
         queue: default
         schedule: every day at 3:00am
+
+    retention_tasks:
+        class: PurgeRodauthTokensJob
+        queue: maintenance
+        schedule: "0 3 * * *"
 
 production:
-    solid_cable_trim:
-        class: SolidCable::TrimJob
-        queue: default
-        schedule: every hour
+    <<: *shared_tasks
 
-    cleanup_abandoned_guests:
-        class: CleanupAbandonedGuestsJob
-        queue: default
-        schedule: every day at 3:00am
+development:
+    <<: *shared_tasks
+
+test:
+    <<: *shared_tasks
