@@ -17,7 +17,6 @@
 4. □ **Review Sentry config**:
 
     - Enable `before_send` to redact PII, pass only error fingerprints.
-    - Sign DPA with Sentry (or self-host in EEA).
 
 5. □ **Build data-subject request workflow** (admin console + email confirmation).
     - Track fulfillment timestamps.
