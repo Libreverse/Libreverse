@@ -1,1 +1,1 @@
-perl static.pl || { echo "Static checks failed"; exit 1; }
+perl static.pl || exit 1
