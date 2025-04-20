@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ExperienceComponent
+class ExperienceComponent
   class ActionsComponent < ViewComponent::Base
     attr_reader :experience
 
