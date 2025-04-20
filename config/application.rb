@@ -28,24 +28,6 @@ module LibreverseInstance
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
-    # Use fibers for concurrency stonks
-    config.active_support.isolation_level = :fiber
-
-    # Configure security headers
-    config.action_dispatch.default_headers = {
-      # Prevent clickjacking
-      "X-Frame-Options" => "SAMEORIGIN",
-      # Prevents browsers from MIME-sniffing
-      "X-Content-Type-Options" => "nosniff",
-      # XSS protection
-      "X-XSS-Protection" => "1; mode=block",
-      # Referrer policy
-      "Referrer-Policy" => "strict-origin-when-cross-origin",
-      # Cross-origin policies
-      "Cross-Origin-Opener-Policy" => "same-origin",
-      "Cross-Origin-Resource-Policy" => "same-origin"
-    }
-
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

@@ -22,13 +22,10 @@ sub run_or_die {
 }
 
 # Synthesize the Dockerfile
-run_or_die("bin/rails", "generate", "dockerfile", "--force");
+# run_or_die("bin/rails", "generate", "dockerfile", "--force");
 
 # Run docker build
-run_or_die("docker", "build", "--no-cache", "--progress=plain", ".");
-
-# Run docker compose up
-run_or_die("docker", "compose", "up");
+run_or_die("docker", "build", "--platform", "linux/amd64", "-t", "libreverse:alpha", ".");
 
 print "--- Build script finished ---
 ";

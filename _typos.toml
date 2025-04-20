@@ -2,4 +2,4 @@
 Lazer = "Lazer"
 
 [files]
-extend-exclude = ["app/emoji/**", "nikto/**"]
+extend-exclude = ["app/emoji/**", "nikto/**", "config/credentials.yml.enc"]

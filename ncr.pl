@@ -30,9 +30,9 @@ sub run_script {
 }
 
 my @scripts_to_run = (
-    "./scripts/dockernuke.sh",
-    "./scripts/dbcleanse.sh",
-    "./scripts/build.sh",
+    "perl ./scripts/dockernuke.pl",
+    "perl ./scripts/dbcleanse.pl",
+    "perl ./scripts/build.pl",
 );
 
 my $overall_failure = 0;

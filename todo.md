@@ -24,27 +24,27 @@
 
     - _The clue is in the name._
 
-10. □ **Conditional compression tweaks**.
-
-    - CPU monitor fallback quality; skip compression on small `Set-Cookie` responses.
-
-11. □ **Local Active Storage tightening**.
+10. □ **Local Active Storage tightening**.
 
     - Serve downloads with `private, max-age=0`; ensure storage path owned by non-root UID.
 
-12. □ **Dependency hygiene in CI**.
+11. □ **Dependency hygiene in CI**.
 
     - Add `bundle audit`, `brakeman -Aq`, `npm audit --omit=dev`, Dependabot.
 
-13. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
+12. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
 
-14. □ **CSP violation endpoint** (`POST /csp-report`) — log to Sentry.
+13. □ **CSP violation endpoint** (`POST /csp-report`) — log to Sentry.
 
-15. □ **README updates**.
+14. □ **README updates**.
 
     - Reverse-proxy requirement (`X-Forwarded-Proto`).
     - Upload security / iframe script caveats.
     - Backup & restore commands.
+
+15. □ **Zip download streaming with Zipline**.
+
+    - <https://github.com/fringd/zipline?tab=readme-ov-file>
 
 ---
 

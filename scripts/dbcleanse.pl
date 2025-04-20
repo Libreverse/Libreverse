@@ -15,8 +15,15 @@ if (-d $source_dir) {
     # Remove existing backup first, if it exists
     if (-e $backup_dir) {
         print "Removing existing backup directory: $backup_dir\n";
-        remove_tree($backup_dir, { verbose => 0, error => \my $err }) or do {
-            warn "Could not remove existing backup $backup_dir: ", join(', ', @$err);
+        # File::Path expects a *scalar* ref for the `error` key. It will turn
+        # that scalar into an array‑ref internally and populate it with
+        # diagnostics. See perldoc File::Path.
+        my $errors;                             # will become an array‑ref
+        remove_tree( $backup_dir, { verbose => 0, error => \$errors } ) or do {
+            if ($errors && @$errors) {
+                warn "Could not remove existing backup $backup_dir: ",
+                     join( ', ', map { ( values %$_ )[0] } @$errors );
+            }
             # Decide if this is fatal
             # exit 1;
         };
@@ -42,8 +49,12 @@ if (-d $source_dir) {
 # Remove original directory (should not exist if move succeeded, but check anyway)
 if (-d $source_dir) {
     print "--- Removing $source_dir ---\n";
-    remove_tree($source_dir, { verbose => 0, error => \my $err }) or do {
-        warn "Could not remove $source_dir: ", join(', ', @$err);
+    my $errors;
+    remove_tree( $source_dir, { verbose => 0, error => \$errors } ) or do {
+        if ($errors && @$errors) {
+            warn "Could not remove $source_dir: ",
+                 join( ', ', map { ( values %$_ )[0] } @$errors );
+        }
         # Decide if this is fatal
         # exit 1;
     };

@@ -71,16 +71,11 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
+# Precompile assets with vite
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails vite:build
+
 # Final stage for app image
 FROM base
-
-# Install packages needed for deployment
-RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
-    --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
-    apt-get update -qq \
-    && apt-get install --no-install-recommends -y ruby-foreman
-
-RUN gem install foreman
 
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
@@ -100,13 +95,7 @@ ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Build a Procfile for production use
-COPY /rails/Procfile.prod <<- "EOF"
-rails: ./bin/rails server
-solidq: bundle exec rake solid_queue:start
-EOF
-
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
 VOLUME /data
-CMD ["foreman", "start", "--procfile=Procfile.prod"]
+CMD ["./bin/rails", "server"]

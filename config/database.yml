@@ -1,9 +1,12 @@
 # SQLite configuration for Libreverse
 # Uses the enhanced SQLite adapter for better features
 
+# <% require "etc" %>
+<% require "etc" %>
+
 default: &default
     adapter: sqlite3
-    pool: 10
+    pool: <%= Etc.nprocessors * 5 %>
     timeout: 5000
     # Use enhanced SQLite adapter features
     pragmas:
