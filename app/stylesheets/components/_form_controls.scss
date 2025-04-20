@@ -1,5 +1,5 @@
 @use "../variables";
-@use "../auth";
+@use "../templates/auth";
 @use "sass:color";
 
 // Form control styles that extend auth placeholders and add additional styling

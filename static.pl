@@ -8,8 +8,6 @@ use Cwd qw(abs_path);
 use IPC::Open3;
 use Symbol qw(gensym);
 
-# Script will always exit 0, reporting tool status individually.
-
 # Arrays to store status for the (now removed) summary
 # We keep them to track status internally if needed later, but don't display summary
 my @sequential_status;
@@ -284,7 +282,7 @@ for my $i (0 .. $num_tools - 1) {
 
 print "\n" if $any_logs_printed;
 
-# --- Final Summary --- (Removed)
-
-# Always exit with 0
-exit 0; 
+# Determine exit code based on failures
+my $exit_code = 0;
+$exit_code = 1 if grep { $_ eq '[NOTOK]' } @sequential_status, @parallel_status;
+exit $exit_code;

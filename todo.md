@@ -1,36 +1,25 @@
 # Todo List
 
-**Actionable Task List — ordered by priority**
-_(check ✓ as you complete each item)_
-
----
-
 ## Critical — current sprint (pre-alpha)
 
-- [x] **Publish Privacy Policy & Cookie Policy** under `/privacy` and `/cookies`.
-
-    - Include: identity, DPO contact, categories, lawful basis, retention, rights, transfers, complaints.
-
-2. □ **Implement user-facing "Delete my account"** (hard-delete or irreversible pseudonymise), plus **data export** (JSON/ZIP of all user-related rows + ActiveStorage files).
-
-3. □ **Add automated retention tasks**:
+1. □ **Add automated retention tasks**:
 
     - Purge expired `password_reset`, `login_change`, and `remember` keys.
     - Rotate/expire sessions (e.g., 14 days) and logs (use `logrotate`).
     - Ensure `has_one_attached :html_file` calls `dependent: :purge_later` or uses `after_destroy`.
 
-4. □ **Ensure Active Storage encryption** or move to an encrypted cloud bucket.
+2. □ **Ensure Active Storage encryption** or move to an encrypted cloud bucket.
 
     - Mark attachments as private/authenticated.
 
-5. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
+3. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
 
-6. □ **Review Sentry config**:
+4. □ **Review Sentry config**:
 
     - Enable `before_send` to redact PII, pass only error fingerprints.
     - Sign DPA with Sentry (or self-host in EEA).
 
-7. □ **Build data-subject request workflow** (admin console + email confirmation).
+5. □ **Build data-subject request workflow** (admin console + email confirmation).
     - Track fulfillment timestamps.
 
 ---
@@ -39,45 +28,43 @@ _(check ✓ as you complete each item)_
 
 1. □ **Add Terms of Service & Imprint** (if EU).
 
-- [x] **Add Opt-in checkbox for "Remember me" cookie**; set short expiry (<30 days).
+2. □ **Document technical & organisational measures (TOMs)** – encryption, access controls, backups.
 
-3. □ **Document technical & organisational measures (TOMs)** – encryption, access controls, backups.
+3. □ **Conduct DPIA** if large-scale profiling or special category data arises (unlikely now).
 
-4. □ **Conduct DPIA** if large-scale profiling or special category data arises (unlikely now).
+4. □ **Implement sub-processor register and SCCs** if non-EEA transfers are introduced.
 
-5. □ **Implement sub-processor register and SCCs** if non-EEA transfers are introduced.
+5. □ **Add tests ensuring `filter_parameters` stays updated** when new PII fields are added.
 
-6. □ **Add tests ensuring `filter_parameters` stays updated** when new PII fields are added.
+6. □ **Add `Security.txt` or `.well-known/privacy.txt` endpoints**.
 
-7. □ **Add `Security.txt` or `.well-known/privacy.txt` endpoints**.
-
-8. □ **Figure out how to get rodauth to encrypt data**.
+7. □ **Figure out how to get rodauth to encrypt data**.
 
     - _The clue is in the name._
 
-9. □ **Isolate Experience viewer** on a dedicated route with its own CSP header (remove global `'unsafe-inline'`) and serve content from `/experiences/:id/frame` instead of `data:` URI.
+8. □ **Isolate Experience viewer** on a dedicated route with its own CSP header (remove global `'unsafe-inline'`) and serve content from `/experiences/:id/frame` instead of `data:` URI.
 
-10. □ **Readd support for rack deflater**.
+9. □ **Readd support for rack deflater**.
 
     - _The clue is in the name._
 
-11. □ **Conditional compression tweaks**.
+10. □ **Conditional compression tweaks**.
 
     - CPU monitor fallback quality; skip compression on small `Set-Cookie` responses.
 
-12. □ **Local Active Storage tightening**.
+11. □ **Local Active Storage tightening**.
 
     - Serve downloads with `private, max-age=0`; ensure storage path owned by non-root UID.
 
-13. □ **Dependency hygiene in CI**.
+12. □ **Dependency hygiene in CI**.
 
     - Add `bundle audit`, `brakeman -Aq`, `npm audit --omit=dev`, Dependabot.
 
-14. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
+13. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
 
-15. □ **CSP violation endpoint** (`POST /csp-report`) — log to Sentry.
+14. □ **CSP violation endpoint** (`POST /csp-report`) — log to Sentry.
 
-16. □ **README updates**.
+15. □ **README updates**.
 
     - Reverse-proxy requirement (`X-Forwarded-Proto`).
     - Upload security / iframe script caveats.

@@ -37,5 +37,8 @@ Rails.application.routes.draw do
         get "display"
       end
     end
+    # Account actions (export & delete)
+    get "account/export", to: "account_actions#export", as: :account_export
+    delete "account", to: "account_actions#destroy", as: :account_destroy
   end
 end

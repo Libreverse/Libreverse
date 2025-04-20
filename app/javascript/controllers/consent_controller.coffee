@@ -6,4 +6,4 @@ export default class extends ApplicationController
 
   connect: ->
     # Nothing fancy yet; could add analytics‑free logging or animations
-    null 
+    null

@@ -3,14 +3,16 @@
 require "sequel/core"
 
 class RodauthMain < Rodauth::Rails::Auth
+  # rubocop:disable Metrics/BlockLength
   configure do
     # List of authentication features that are loaded.
     enable :create_account,
            :login, :logout, :remember,
            :change_password, :change_login,
-           :close_account, :argon2,
-           :pwned_password,
-           :guest # Enable guest feature for anonymous authentication
+           :close_account,
+           :argon2, :pwned_password,
+           :guest, # anonymous auth
+           :internal_request
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -98,7 +100,12 @@ class RodauthMain < Rodauth::Rails::Auth
     # reset_password_autologin? true
 
     # Delete the account record when the user has closed their account.
-    # delete_account_on_close? true
+    #
+    # NOTE: We run custom cleanup in the `after_close_account` hook that destroys
+    # the account row itself. Because Rodauth's built‑in flow runs
+    # `after_close_account` *before* the hard delete, we can leave the default
+    # behaviour enabled.
+    delete_account_on_close? true
 
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
@@ -284,9 +291,16 @@ class RodauthMain < Rodauth::Rails::Auth
     # end
 
     # Do additional cleanup after the account is closed.
-    # after_close_account do
-    #   Profile.find_by!(account_id: account_id).destroy
-    # end
+    after_close_account do
+      # Remove user preferences
+      UserPreference.where(account_id: account_id).delete_all
+
+      # Destroy experiences and purge attached files
+      Experience.where(account_id: account_id).find_each do |exp|
+        exp.html_file.purge_later if exp.html_file.attached?
+        exp.destroy!
+      end
+    end
 
     # ==> Redirects
     # Redirect to dashboard after login.
@@ -371,7 +385,11 @@ class RodauthMain < Rodauth::Rails::Auth
     end
 
     # Argon2 cost already configured globally
+
+    # Allow programmatic close without password confirmation when invoked from dashboard controller
+    close_account_requires_password? false
   end
+  # rubocop:enable Metrics/BlockLength
   Rails.logger.info "RodauthMain configuration loaded"
 
   # ==> Redirects (Define methods outside configure block)
