@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
     before_action :initialize_guest_preferences
     before_action :log_request_info
     after_action :log_response_info
+    before_action :set_current_ip
 
     helper_method :tutorial_dismissed?
 
@@ -56,5 +57,10 @@ class ApplicationController < ActionController::Base
 
     def log_response_info
       log_info("Response completed: #{response.status}")
+    end
+
+    def set_current_ip
+      Current.real_ip = request.env["remote_ip_original"] || request.remote_ip
+      Current.ip = request.remote_ip
     end
 end
