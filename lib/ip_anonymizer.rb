@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IpAnonymizer
   # Masks IP addresses so logs/controllers see an anonymised value
   # but leaves the original address intact for earlier middleware (Rack::Attack).
@@ -29,7 +31,11 @@ class IpAnonymizer
 
     # Also update the RemoteIp object Rails stores during processing
     if (remote_ip_obj = env["action_dispatch.remote_ip"])
-      remote_ip_obj.instance_variable_set(:@ip, anonymised_ip) rescue nil
+      begin
+        remote_ip_obj.instance_variable_set(:@ip, anonymised_ip)
+      rescue StandardError
+        nil
+      end
     else
       env["action_dispatch.remote_ip"] = anonymised_ip
     end
@@ -39,14 +45,18 @@ class IpAnonymizer
 
   def self.anonymise_ip(ip_string)
     require "ipaddr"
-    ip = IPAddr.new(ip_string) rescue nil
+    ip = begin
+           IPAddr.new(ip_string)
+    rescue StandardError
+           nil
+    end
     return ip_string unless ip
 
     if ip.ipv4?
-      (ip.mask(24)).to_s
+      ip.mask(24).to_s
     else
       # Mask everything after /48 (first three 16‑bit blocks)
-      (ip.mask(48)).to_s
+      ip.mask(48).to_s
     end
   end
-end 
+end

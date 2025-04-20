@@ -48,6 +48,22 @@ class AccountExporter
       zip.put_next_entry "preferences.json"
       prefs = UserPreference.where(account_id: @account.id).pluck(:key, :value).to_h
       zip.write JSON.pretty_generate(prefs)
+
+      # Experiences (metadata + HTML attachment)
+      @account.experiences.find_each do |experience|
+        # Metadata for the experience
+        zip.put_next_entry "experiences/#{experience.id}/metadata.json"
+        exp_json = experience.as_json(except: %i[account_id])
+        zip.write JSON.pretty_generate(exp_json)
+
+        # Attached HTML file (if present)
+        if experience.html_file.attached?
+          # Use original filename or fallback to a predictable name
+          filename = experience.html_file.filename.to_s.presence || "experience_#{experience.id}.html"
+          zip.put_next_entry "experiences/#{experience.id}/#{filename}"
+          zip.write experience.html_file.download
+        end
+      end
     end
     buffer.rewind
     buffer.read
