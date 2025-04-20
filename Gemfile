@@ -11,8 +11,9 @@ gem "rails"
 gem "activerecord-enhancedsqlite3-adapter"
 gem "sqlite3"
 
-# Use the falcon web server for better concurrency
-gem "falcon"
+# Use the Puma web server (multi-threaded, default for Rails)
+# Pin to latest stable major; adjust as needed.
+gem "puma"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
