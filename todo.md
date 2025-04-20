@@ -1,18 +1,5 @@
 # Todo List
 
-## Critical — current sprint (pre-alpha)
-
-1. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
-
-2. □ **Review Sentry config**:
-
-    - Enable `before_send` to redact PII, pass only error fingerprints.
-
-3. □ **Build data-subject request workflow** (admin console + email confirmation).
-    - Track fulfillment timestamps.
-
----
-
 ## HIGH — next sprint (post-alpha, still before public beta)
 
 1. □ **Add Terms of Service & Imprint** (if EU).

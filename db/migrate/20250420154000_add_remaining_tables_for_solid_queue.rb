@@ -36,10 +36,10 @@ class AddRemainingTablesForSolidQueue < ActiveRecord::Migration[8.0]
 
     unless table_exists?(:solid_queue_processes)
       create_table :solid_queue_processes do |t|
-        t.string   :kind,             null: false
+        t.string   :kind, null: false
         t.datetime :last_heartbeat_at, null: false
         t.bigint   :supervisor_id
-        t.integer  :pid,              null: false
+        t.integer  :pid, null: false
         t.string   :hostname
         t.text     :metadata
         t.datetime :created_at,       null: false
@@ -60,7 +60,8 @@ class AddRemainingTablesForSolidQueue < ActiveRecord::Migration[8.0]
       end
     end
 
-    unless table_exists?(:solid_queue_semaphores)
+    return if table_exists?(:solid_queue_semaphores)
+
       create_table :solid_queue_semaphores do |t|
         t.string   :key,       null: false
         t.integer  :value,     default: 1, null: false
@@ -72,6 +73,5 @@ class AddRemainingTablesForSolidQueue < ActiveRecord::Migration[8.0]
         t.index %i[key value]
         t.index :key, unique: true
       end
-    end
   end
-end 
+end
