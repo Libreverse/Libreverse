@@ -160,3 +160,6 @@ rescue ArgumentError
   # Rack::MaximumBodySize not present; prepend Rack::Attack
   middleware.insert_before 0, Rack::Attack
 end
+
+# Ensure IP anonymisation occurs after Rack::Attack (needs real IP)
+middleware.insert_after Rack::Attack, IpAnonymizer

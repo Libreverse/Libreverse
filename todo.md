@@ -2,17 +2,13 @@
 
 ## Critical — current sprint (pre-alpha)
 
-1. ✓ **Ensure Active Storage encryption** or move to an encrypted cloud bucket.
+1. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
 
-    - ✅ Attachments are encrypted at rest with Lockbox and marked private.
-
-2. □ **Move IP addresses & user agents** to a separate log channel with limited retention (<90 days) or anonymise IP (truncate last octet).
-
-3. □ **Review Sentry config**:
+2. □ **Review Sentry config**:
 
     - Enable `before_send` to redact PII, pass only error fingerprints.
 
-4. □ **Build data-subject request workflow** (admin console + email confirmation).
+3. □ **Build data-subject request workflow** (admin console + email confirmation).
     - Track fulfillment timestamps.
 
 ---
