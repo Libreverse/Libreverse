@@ -23,27 +23,19 @@
 #        helper.
 
 module EEAMode
-  CONFIG_PATH = Rails.root.join("libreverse.ini")
+  # ---------------------------------------------------------------------
+  # Configuration via ENV variable only
+  # ---------------------------------------------------------------------
 
-  # Return true if EEA mode should be active.
-  # Default:  true (fail‑secure) unless the ini sets `eea_mode = false`.
+  # Return true if EEA mode is active. Must be provided via EEA_MODE env var
+  # with a truthy value ("true", "1", "yes", "on"). Any other value is
+  # treated as disabled. Missing variable will raise at boot, enforcing
+  # explicit configuration.
   def self.enabled?
     return @enabled unless @enabled.nil?
 
-    # If the config file does not exist, default to enabled (fail‑secure).
-    unless CONFIG_PATH.exist?
-      @enabled = true
-      return @enabled
-    end
-
-    raw = File.read(CONFIG_PATH)
-
-    @enabled = if raw =~ /^\s*eea_mode\s*=\s*(\w+)/i
-                 value = Regexp.last_match(1).downcase
-                 !%w[false 0 no off].include?(value)
-    else
-                 true
-    end
+    raw = ENV.fetch("EEA_MODE") # raises KeyError if missing
+    @enabled = %w[true 1 yes on].include?(raw.to_s.downcase)
   end
 
   # Cookie key used to remember that the user has accepted privacy/cookie terms.
