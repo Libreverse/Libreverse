@@ -3,7 +3,8 @@
 # CORS Configuration
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "libreverse.geor.me", "libreverse.dev", "localhost:3000", "localhost", "127.0.0.1", "0.0.0.0"
+    cors_env = ENV.fetch("CORS_ORIGINS")
+    origins(*cors_env.split(/[,\s]+/).reject(&:blank?))
 
     resource "*",
              headers: :any,

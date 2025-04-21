@@ -78,3 +78,8 @@ Rails.application.configure do
   # config.vite.autoload = false
   # config.vite.dev_server_enabled = false
 end
+
+# Ensure required environment variables have default values in test suite
+ENV["EEA_MODE"]  ||= "false"
+ENV["FORCE_SSL"] ||= "false"
+ENV["CORS_ORIGINS"] ||= "localhost"

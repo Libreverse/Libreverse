@@ -22,8 +22,8 @@ Rails.application.configure do
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
 
-  # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  # Always serve precompiled static files from `public/`.
+  config.public_file_server.enabled = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -41,9 +41,13 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "https://your-production-domain.com", /https:\/\/your-production-domain.*/ ]
 
-  # SSL Enforcement
-  config.assume_ssl = true
-  config.force_ssl = true
+  # SSL Enforcement (forced via env var)
+  # Must provide FORCE_SSL with explicit truthy/falsey value, otherwise boot aborts.
+  ssl_flag = ENV.fetch("FORCE_SSL") # raises if missing
+  ssl_enabled = %w[true 1 yes on].include?(ssl_flag.to_s.downcase)
+
+  config.assume_ssl = ssl_enabled
+  config.force_ssl  = ssl_enabled
 
   # Logger Configuration
   config.logger =
@@ -55,8 +59,8 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
-  # Log level
-  config.log_level = ENV.fetch("RAILS_LOG_LEVEL") { "info" }
+  # Log level (must be provided via env var)
+  config.log_level = ENV.fetch("RAILS_LOG_LEVEL")
 
   # Cache Store Configuration
   config.cache_store = :solid_cache_store
@@ -76,9 +80,14 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # Host Authorization
-  # Allow requests from production domains and local development hosts
-  config.hosts = %w[libreverse.geor.me libreverse.dev localhost 127.0.0.1 0.0.0.0]
+  # Host Authorization - controlled via ALLOWED_HOSTS environment variable
+  allowed_hosts_env = ENV.fetch("ALLOWED_HOSTS")
+  allowed_hosts = allowed_hosts_env.split(/[\s,]+/).reject(&:blank?)
+
+  # Replace the default array entirely so we don't accumulate duplicates
+  config.hosts.clear
+  allowed_hosts.each { |host| config.hosts << host }
+
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
