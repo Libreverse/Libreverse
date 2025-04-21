@@ -134,32 +134,6 @@ export default defineConfig(({ mode }) => {
                     module: true,
                 },
             }),
-            vitePluginCompression({
-                algorithm: "brotliCompress",
-                compressionOptions: {
-                    params: {
-                        [constants.BROTLI_PARAM_QUALITY]: 11,
-                        [constants.BROTLI_PARAM_LGWIN]: 22,
-                        [constants.BROTLI_PARAM_LGBLOCK]: 0,
-                        [constants.BROTLI_PARAM_MODE]:
-                            constants.BROTLI_MODE_TEXT,
-                    },
-                },
-                filter: /\.(js|css|svg|json|html)$/i,
-                threshold: 0,
-                ext: ".br",
-                deleteOriginFile: false,
-            }),
-            vitePluginCompression({
-                algorithm: "gzip",
-                compressionOptions: {
-                    level: 6,
-                },
-                filter: /\.(js|css|svg|json|html)$/i,
-                threshold: 0,
-                ext: ".gz",
-                deleteOriginFile: false,
-            }),
         ],
     };
 });
