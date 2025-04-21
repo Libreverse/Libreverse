@@ -28,14 +28,14 @@ jobs:
 
             - name: Build Docker image
               run: |
-                  docker build -t quay.io/georgebaskervil/personal_website_rails:latest .
+                  docker build -t quay.io/georgebaskervil/libreverse:alpha .
 
             - name: Push to Quay.io
               run: |
-                  docker push quay.io/georgebaskervil/personal_website_rails:latest
+                  docker push quay.io/georgebaskervil/libreverse:alpha
 
             - name: Trigger Coolify Redeploy
               run: |
-                  curl -X GET "https://c.geor.me/api/v1/deploy?uuid=ugko8skkock08w4sw48s88kg&force=false" \
+                  curl -X GET "https://c.geor.me/api/v1/deploy?uuid=p4wg4ssgokg08s0wkk4cw0sk&force=false" \
                     -H "Content-Type: application/json" \
                     -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
