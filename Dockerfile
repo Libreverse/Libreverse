@@ -73,8 +73,8 @@ RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompile assets with vite (explicit production mode) and clean old dev/test outputs
 RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production VITE_RUBY_MODE=production \
-    ./bin/rails vite:build && \
-    rm -rf public/vite-dev public/vite-test
+    ./bin/rails vite:build \
+    && rm -rf public/vite-dev public/vite-test
 
 # Final stage for app image
 FROM base
