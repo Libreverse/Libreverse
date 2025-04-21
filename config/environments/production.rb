@@ -94,7 +94,7 @@ Rails.application.configure do
   # --- Use CookieStore (Permanent Change) ---
   config.session_store :cookie_store,
                        key: "_libreverse_session",
-                       secure: true, # Keep security settings
+                       secure: config.force_ssl,
                        httponly: true,
                        expire_after: 2.hours,
                        same_site: :strict # Keep security settings
