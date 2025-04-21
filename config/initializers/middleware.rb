@@ -159,13 +159,3 @@ end
 
 # Ensure IP anonymisation occurs after Rack::Attack (needs real IP)
 middleware.insert_after Rack::Attack, IpAnonymizer
-
-# Ensure Brotli compression runs *after* HTML minification
-if Rails.env.production?
-  middleware.insert_after HtmlCompressor::Rack, Rack::Brotli, {
-    quality: 11,
-    include: %w[text/html application/javascript text/css application/json application/xml],
-    deflater: { lgwin: 22, lgblock: 0, mode: :text }, # mode: :text better for HTML/JS/CSS
-    sync: false
-  }
-end
