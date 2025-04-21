@@ -63,7 +63,7 @@ Rails.application.configure do
 
   # Active Job Queue Adapter Configuration
   config.active_job.queue_adapter = :solid_queue
-  # config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   # config.active_job.queue_name_prefix = "libreverse_instance_production"
 
   # I18n Fallbacks
