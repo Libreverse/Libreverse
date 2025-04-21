@@ -77,7 +77,8 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Host Authorization
-  config.hosts = %w[libreverse.geor.me libreverse.dev localhost:3000]
+  # Allow requests from production domains and local development hosts
+  config.hosts = %w[libreverse.geor.me libreverse.dev localhost 127.0.0.1 0.0.0.0]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
