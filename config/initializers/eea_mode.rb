@@ -56,7 +56,9 @@ module EEAMode
 
     # Returns true if the signed consent cookie has been stored.
     def consent_given?
-      cookies.signed[EEAMode::CONSENT_COOKIE_KEY] == "1"
+      consent_value = cookies.signed[EEAMode::CONSENT_COOKIE_KEY]
+      Rails.logger.debug("[EEAMode] ConsentEnforcer#consent_given?: Read cookie value: #{consent_value.inspect}")
+      consent_value == "1"
     end
 
     # Determines whether the current request path is exempt from the consent
@@ -116,11 +118,12 @@ Rails.application.config.to_prepare do
 
       # POST /consent/accept
       def accept
+        Rails.logger.debug("[EEAMode] ConsentsController#accept: Attempting to set consent cookie.")
         cookies.signed[EEAMode::CONSENT_COOKIE_KEY] = {
           value: "1",
           expires: 1.year.from_now,
           same_site: :strict,
-          secure: Rails.env.production?,
+          secure: Rails.application.config.force_ssl,
           httponly: true
         }
 
@@ -129,13 +132,14 @@ Rails.application.config.to_prepare do
             value: "1",
             expires: 30.days.from_now,
             same_site: :strict,
-            secure: Rails.env.production?,
+            secure: Rails.application.config.force_ssl,
             httponly: true
           }
         else
           cookies.delete(:remember_opt_in)
         end
 
+        Rails.logger.debug("[EEAMode] ConsentsController#accept: Cookie set. Value: #{cookies.signed[EEAMode::CONSENT_COOKIE_KEY]}. Redirecting...")
         redirect_to(session.delete(:return_to) || root_path)
       end
 
