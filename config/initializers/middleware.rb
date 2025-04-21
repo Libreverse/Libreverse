@@ -11,13 +11,6 @@ require Rails.root.join("lib/ip_anonymizer")
 # Compression is now simplified to avoid Safari 'cannot decode raw data' errors caused by
 # double-compression. We only use Rack::Brotli in production – it will fall back to gzip
 # automatically when the client doesn't advertise `br`.
-if Rails.env.production?
-  Rails.application.config.middleware.use Rack::Brotli,
-                                          quality: 11,
-                                          include: %w[text/html],
-                                          deflater: { lgwin: 22, lgblock: 0, mode: :text },
-                                          sync: false
-end
 
 # ===== HTML Optimization =====
 # This option set is from the default readme of htmlcompressor
@@ -166,3 +159,13 @@ end
 
 # Ensure IP anonymisation occurs after Rack::Attack (needs real IP)
 middleware.insert_after Rack::Attack, IpAnonymizer
+
+# Ensure Brotli compression runs *after* HTML minification
+if Rails.env.production?
+  middleware.insert_after HtmlCompressor::Rack, Rack::Brotli, {
+    quality: 11,
+    include: %w[text/html application/javascript text/css application/json application/xml],
+    deflater: { lgwin: 22, lgblock: 0, mode: :text }, # mode: :text better for HTML/JS/CSS
+    sync: false
+  }
+end
