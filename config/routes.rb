@@ -35,10 +35,23 @@ Rails.application.routes.draw do
     resources :experiences do
       member do
         get "display"
+        patch "approve"
       end
     end
     # Account actions (export & delete)
     get "account/export", to: "account_actions#export", as: :account_export
     delete "account", to: "account_actions#destroy", as: :account_destroy
+  end
+
+  # ===== Admin Namespace =====
+  namespace :admin do
+    resources :experiences, only: [ :index ] do
+      member do
+        patch :approve # Route for PATCH /admin/experiences/:id/approve
+      end
+    end
+
+    # Redirect base /admin path to experiences index for now
+    root to: "experiences#index"
   end
 end

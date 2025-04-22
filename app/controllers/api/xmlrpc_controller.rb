@@ -195,8 +195,9 @@ module Api
     def process_method_call(method_name, _params)
       case method_name
       when "experiences.all"
-        # Get all experiences on the instance, sorted by most recent first
-        experiences = Experience.all.order(created_at: :desc)
+        # Get experiences; admins see all, others see only approved ones
+        scope = current_account&.admin? ? Experience : Experience.approved
+        experiences = scope.order(created_at: :desc)
         serialize_experiences(experiences)
       else
         raise "Unknown method: #{method_name}"

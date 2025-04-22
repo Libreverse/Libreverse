@@ -21,7 +21,8 @@ module Api
       title: "Test Experience 1",
       description: "Description for test 1",
       author: "Test Author 1",
-      account: accounts(:one)
+      account: accounts(:one),
+      approved: true
     )
 
     # Attach a basic HTML file for first experience
@@ -38,7 +39,8 @@ module Api
       title: "Test Experience 2",
       description: "Description for test 2",
       author: "Test Author 2",
-      account: accounts(:two)
+      account: accounts(:two),
+      approved: true
     )
 
     # Attach a basic HTML file for second experience

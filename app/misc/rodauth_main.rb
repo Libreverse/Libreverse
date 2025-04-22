@@ -371,6 +371,25 @@ class RodauthMain < Rodauth::Rails::Auth
         password_changed_at: Time.zone.now
       )
 
+      # --- Assign first non-guest account as admin --- Start
+      account_info = db.from(accounts_table).where(id: account_id).first
+      is_guest = account_info && account_info[:guest] == true
+
+      if is_guest
+        Rails.logger.debug "[Rodauth][after_create_account] Account ID: #{account_id} is a guest. Skipping admin check."
+      else
+        # Check if any *other* admin exists (excluding guests)
+        admin_exists = db.from(accounts_table).where(admin: true, guest: false).exclude(id: account_id).count.positive?
+
+        if admin_exists
+          Rails.logger.debug "[Rodauth][after_create_account] Admin already exists. Skipping admin assignment for account ID: #{account_id}"
+        else
+          Rails.logger.info "[Rodauth][after_create_account] Assigning admin role to first non-guest account ID: #{account_id}"
+          db.from(accounts_table).where(id: account_id).update(admin: true)
+        end
+      end
+      # --- Assign first non-guest account as admin --- End
+
       # Save password length in session
       set_session_value(:password_length, param(password_param).length)
 
