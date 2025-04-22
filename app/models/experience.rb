@@ -26,6 +26,15 @@ class Experience < ApplicationRecord
   # Ensure an owner is always associated
   before_validation :assign_owner, on: :create
 
+  # Add a scope for approved experiences
+  scope :approved, -> { where(approved: true) }
+
+  # Add a scope for experiences pending approval
+  scope :pending_approval, -> { where(approved: false) }
+
+  # Automatically mark experiences created by admins as approved
+  before_validation :auto_approve_for_admin, on: :create
+
   # private
 
   # def sanitize_content
@@ -42,5 +51,9 @@ class Experience < ApplicationRecord
   def assign_owner
     # Use Current.account set by Reflex or fallback to Rodauth
     self.account_id ||= Current.account&.id || nil
+  end
+
+  def auto_approve_for_admin
+    self.approved = true if account&.admin?
   end
 end

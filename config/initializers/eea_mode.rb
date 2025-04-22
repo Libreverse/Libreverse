@@ -110,6 +110,13 @@ Rails.application.config.to_prepare do
 
       layout "application"
 
+      # Skip CSRF verification for simple cookie‑setting endpoints. These
+      # endpoints don't mutate server‑side state beyond setting a cookie, and
+      # they are typically called from a fresh guest session without a valid
+      # CSRF token. Disabling verification avoids 422 errors on /consent/accept
+      # while keeping protection enabled elsewhere.
+      skip_forgery_protection only: %i[accept decline]
+
       # GET /consent (rendered automatically by interceptor but also routable)
       def show
         session[:return_to] ||= params[:return_to] || request.referer || root_path

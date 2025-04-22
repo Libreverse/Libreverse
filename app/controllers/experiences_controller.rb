@@ -2,12 +2,17 @@
 
 class ExperiencesController < ApplicationController
   before_action :require_authentication
-  before_action :set_experience, only: %i[show edit update destroy display]
+  before_action :set_experience, only: %i[show edit update destroy display approve]
   before_action :check_ownership, only: %i[edit update destroy]
+  before_action :require_admin, only: %i[approve]
 
   # GET /experiences
   def index
-    @experiences = Experience.all.order(created_at: :desc)
+    @experiences = if current_account&.admin?
+      Experience.order(created_at: :desc)
+    else
+      Experience.approved.order(created_at: :desc)
+    end
     @experience = Experience.new
   end
 
@@ -61,6 +66,11 @@ class ExperiencesController < ApplicationController
 
   # GET /experiences/1/display
   def display
+    unless @experience.approved? || current_account&.admin? || @experience.account_id == current_account.id
+      redirect_to experiences_path, alert: "Experience is awaiting approval."
+      return
+    end
+
     unless @experience.html_file.attached?
       redirect_to experiences_path, alert: "Experience content not found."
       return
@@ -71,6 +81,15 @@ class ExperiencesController < ApplicationController
     # Force browsers to treat the data as a download and prevent MIME sniffing
     response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
     response.headers["X-Content-Type-Options"] = "nosniff"
+  end
+
+  # PATCH /experiences/1/approve
+  def approve
+    if @experience.update(approved: true)
+      redirect_to experiences_path, notice: "Experience approved."
+    else
+      redirect_to experiences_path, alert: "Unable to approve experience."
+    end
   end
 
   private
@@ -108,5 +127,14 @@ class ExperiencesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def experience_params
     params.require(:experience).permit(:title, :description, :author, :html_file)
+  end
+
+  def require_admin
+    unless current_account&.admin?
+      flash[:alert] = "You must be an admin to perform that action."
+      redirect_to experiences_path
+      return false
+    end
+    true
   end
 end

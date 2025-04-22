@@ -22,7 +22,7 @@ StimulusReflex.configure do |config|
 
   # Override the logger that the StimulusReflex uses; default is Rails' logger
   # eg. Logger.new(RAILS_ROOT + "/log/reflex.log")
-  # config.logger = Rails.logger
+  config.logger = Rails.logger
 
   # Customize server-side Reflex logging format, with optional colorization:
   # Available tokens: session_id, session_id_full, reflex_info, operation, id, id_full, mode, selector, operation_counter, connection_id, connection_id_full, timestamp

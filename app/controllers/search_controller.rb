@@ -7,14 +7,14 @@ class SearchController < ApplicationController
     # Cap query length and validate input
     query = query[0...50]
 
-    @experiences = if query.present?
-      # Use parameterized safe approach instead of LIKE with interpolation
-      Experience.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
-                .order(created_at: :desc)
-                .limit(100)
-    else
-      Experience.order(created_at: :desc).limit(20)
-    end
+    scope = current_account&.admin? ? Experience : Experience.approved
+@experiences = if query.present?
+      scope.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
+           .order(created_at: :desc)
+           .limit(100)
+else
+      scope.order(created_at: :desc).limit(20)
+end
   end
 
   private

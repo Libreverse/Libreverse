@@ -98,12 +98,7 @@ ActionCable.server.config.logger = Rails.logger
 # Ensure ActiveJob uses the same logger as Rails
 ActiveJob::Base.logger = Rails.logger
 
-# Configure StimulusReflex to use the Rails logger
-StimulusReflex.configure do |config|
-  config.logger = Rails.logger
-end
-
-# Update Active Record, Action Controller, and other loggers
+# Ensure Active Record, Action Controller, and other loggers use Rails logger
 ActiveRecord::Base.logger = Rails.logger
 ActionController::Base.logger = Rails.logger
 ActionView::Base.logger = Rails.logger

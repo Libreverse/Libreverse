@@ -19,9 +19,17 @@
           <p class="creation-date">Created at:
             <%= experience.created_at.strftime("%B %d, %Y") %></p>
         <% end %>
+        <% unless experience.approved? %>
+          <p class="status-tag pending">Awaiting approval</p>
+        <% end %>
       </article>
     <% end %>
     <div class="experience-actions">
+      <% if current_account&.admin? && !experience.approved? %>
+        <%= button_to approve_experience_path(experience), method: :patch, class: "experience-action-left approve-action" do %>
+          Approve
+        <% end %>
+      <% end %>
       <%= link_to edit_experience_path(experience), class: "experience-action-left edit-action" do %>
         Edit Details
       <% end %>

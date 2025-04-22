@@ -1,1 +1,2 @@
+RAILS_LOG_LEVEL=debug ALLOWED_HOSTS=localhost EEA_MODE=true FORCE_SSL=false CORS_ORIGINS=localhost rails db:drop
 perl static.pl || exit 1

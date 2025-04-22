@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_20_154000) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_21_231000) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -42,6 +42,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_154000) do
     t.datetime "updated_at", null: false
     t.datetime "password_changed_at"
     t.boolean "guest", default: false
+    t.boolean "admin", default: false, null: false
+    t.index ["admin"], name: "index_accounts_on_admin"
     t.index ["username"], name: "index_accounts_on_username", unique: true
   end
 
@@ -80,8 +82,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_154000) do
     t.text "description"
     t.string "author"
     t.integer "account_id", null: false
+    t.boolean "approved", default: false, null: false
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
+    t.index ["approved"], name: "index_experiences_on_approved"
   end
 
   create_table "sessions", force: :cascade do |t|
