@@ -42,5 +42,5 @@ Rails.application.configure do
   end
 
   # Initially run in report‑only mode; switch to false after verifying
-  config.content_security_policy_report_only = true
+  config.content_security_policy_report_only = false
 end
