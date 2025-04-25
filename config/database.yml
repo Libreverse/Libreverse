@@ -1,24 +1,13 @@
 # SQLite configuration for Libreverse
 # Uses the enhanced SQLite adapter for better features
-
-<% require "etc" %>
-
 default: &default
     adapter: sqlite3
-    pool: 1
-    # Use enhanced SQLite adapter features
+    pool: 3
     pragmas:
-        # ACID compliance settings (highest priority)
         foreign_keys: 1
         trusted_schema: 0
-
-        # WAL mode for improved concurrency while maintaining ACID compliance
         journal_mode: wal
-
-        # Maximum durability setting for ACID compliance
         synchronous: FULL
-
-        # Performance settings
         temp_store: MEMORY
         cache_size: 5000
         busy_timeout: 5000
