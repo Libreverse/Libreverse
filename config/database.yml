@@ -5,8 +5,7 @@
 
 default: &default
     adapter: sqlite3
-    pool: <%= Etc.nprocessors * 5 %>
-    timeout: 5000
+    pool: 1
     # Use enhanced SQLite adapter features
     pragmas:
         # ACID compliance settings (highest priority)

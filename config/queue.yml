@@ -4,8 +4,8 @@ default: &default
           batch_size: 500
     workers:
         - queues: "*"
-          threads: <%= (require "etc"; Etc.nprocessors) %>
-          processes: <%= (require "etc"; Etc.nprocessors) %>
+          threads: 1
+          processes: 1
           polling_interval: 0.1
 
 development:
@@ -17,7 +17,7 @@ test:
 production:
     workers:
         - queues: "*"
-          threads: 2
+          threads: 1
           processes: 1
           polling_interval: 0.2
     dispatchers:
