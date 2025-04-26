@@ -4,21 +4,11 @@
   <%= render 'layouts/navigationshortcutswrapper' do %>
     <div
       class="hp-bg"
-      <%# Container for the effect %>
       role="presentation"
       data-controller="raindrop"
       data-raindrop-background-url-value="<%= bitmap_image_data_url('images/garage') %>"
-      <%# Use inline helper %>
-      <%# data-raindrop-particle-url-value="..." # Removed %>
-      <%# data-raindrop-options-value='#{ { rainChance: 0.2 }.to_json }' # Example options %>
     >
-      <iframe
-        data-raindrop-target="iframe"
-        class="raindrop-iframe"
-        title="Background Effect Container"
-        scrolling="no"
-        allowtransparency="true"
-      ></iframe>
+      <canvas class="raindrop-canvas"></canvas>
     </div>
 
     <div class="hp-centerify">
