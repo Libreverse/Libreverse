@@ -23,6 +23,7 @@ export default [
             "**.config.js",
             "public/**",
             "app//libs/**",
+            "app/javascript/libs/**",
         ],
     },
     ...compat.extends("eslint:recommended", "plugin:unicorn/recommended"),
