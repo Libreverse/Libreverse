@@ -3,8 +3,8 @@
 # CORS Configuration
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    cors_env = ENV.fetch("CORS_ORIGINS")
-    origins(*cors_env.split(/[,\s]+/).reject(&:blank?))
+    cors_env = ENV.fetch("CORS_ORIGINS") { Rails.env.development? || Rails.env.test? ? "http://localhost:3000" : nil }
+    origins(*cors_env.to_s.split(/[,\s]+/).reject(&:blank?))
 
     resource "*",
              headers: :any,
