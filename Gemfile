@@ -118,6 +118,9 @@ group :development do
 
   # foreman does not seem to be installed by rails automatically
   gem "foreman"
+
+  # Use bundle-audit to check for security vulnerabilities
+  gem "bundle-audit"
 end
 
 group :test do

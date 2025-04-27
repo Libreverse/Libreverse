@@ -83,6 +83,14 @@ run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
 # markdownlint needs shell globbing and negation
 run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' --fix --config .markdownlint.json");
 
+# Automated dependency upgrades (Ruby and Node)
+run_command("bundle update", "bundle", "update");
+run_command("bun update", "bun", "update");
+
+# Dependency analysis (Ruby and Node)
+run_command("bundle-audit", "bundle-audit", "check", "--update");
+run_command("npm audit", "sh", "-c", "npm i --package-lock-only --legacy-peer-deps && npm audit fix --production --legacy-peer-deps && bun install > /dev/null 2>&1; rm -f package-lock.json");
+
 # Special handling for Prettier + grep
 my $prettier_tool_name = "Prettier";
 push @sequential_tools, $prettier_tool_name;
