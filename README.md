@@ -1,6 +1,6 @@
 # Libreverse
 
-Libreverse is a privacy‑centric application for curating and sharing interactive "experiences" (self‑contained HTML documents). Powered by Hotwire, it delivers a seamless, single‑page‑application (SPA) experience entirely within the Ruby on Rails ecosystem while keeping all of your data on your own machine.
+Libreverse is a privacy‑centric application for curating and sharing interactive "experiences" (self‑contained HTML documents). Powered by Hotwire, it delivers a seamless, single‑page‑application (SPA) experience entirely within the Ruby on Rails ecosystem while keeping all data on whatever instance you choose to use.
 
 > **Alpha release** – this version is under active development. Expect breaking changes, incomplete features, and occasional rough edges. Planned work is tracked in our [road‑map](todo.md).
 
@@ -10,9 +10,9 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 
 - **Local‑first data management** – SQLite (via the enhanced adapter) provides generated columns, JSON queries, and full‑text search without a separate database server.
 - **Real‑time UI** – Turbo, Stimulus, and StimulusReflex enable instantaneous updates with minimal client‑side JavaScript.
-- **Secure account system** – [Rodauth](https://rodauth.dev/) with Argon2 hashing, email‑based login, remember‑me cookies, and optional guest mode.
+- **Secure account system** – Rodauth with Argon2 hashing, email‑based login, remember‑me cookies, and optional guest mode.
 - **Media attachments** – Active Storage with rigorous validations, encrypted blobs via _lockbox_, and one‑click ZIP export of your entire account.
-- **API functionality** – Experimental XML‑RPC endpoint and JSON search API.
+- **API functionality** – Experimental XML‑RPC endpoints.
 - **Zero‑Redis architecture** – Solid Cable and Solid Queue keep ActionCable and background jobs inside SQLite.
 - **Security‑centric design** – CSP, Rack::Attack rate limiting, Brotli compression, and an evolving [security roadmap](todo.md).
 
@@ -23,10 +23,10 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 | Layer           | Technology                                   |
 | --------------- | -------------------------------------------- |
 | Language        | Ruby 3.4 (YJIT enabled)                      |
-| Framework       | Rails 7.2 (Edge) + Hotwire                   |
+| Framework       | Rails 8.0.2 + Hotwire                        |
 | Database        | SQLite 3 (enhanced adapter)                  |
-| Build / Assets  | Vite 5 + Bun                                 |
-| Web Server      | Puma (threaded, Solid Queue plugin)          |
+| Build / Assets  | Vite 6 + Bun                                 |
+| Web Server      | Puma                                         |
 | Container Image | Multi‑stage Dockerfile (< 80 MB final image) |
 
 ---
@@ -72,6 +72,8 @@ sudo apt install ruby-full bun curl sqlite3 libsqlite3-dev imagemagick
 
 ## 🐳 Running with Docker
 
+> **Note:** Building the Docker image requires at least 8 GB of available memory, though the running container itself needs very little memory. If you encounter out-of-memory errors during the build, try increasing your Docker memory limit.
+
 ```bash
 docker build -t libreverse:alpha .
 # Persist database and uploads
@@ -85,13 +87,10 @@ The image exposes port **3000** and stores the production SQLite database and up
 ## 🧪 Testing & Quality Assurance
 
 ```bash
-bin/rails test                # Executes Minitest suite (unit + system)
-bin/rubocop -A                # Lints and auto‑corrects Ruby code
-bun run eslint .              # Lints JS/Coffee/Stimulus files
-bun run stylelint "**/*.scss" # Lints SCSS stylesheets
+perl static.pl
 ```
 
-Security audits (Brakeman, bundle‑audit, npm audit) run automatically in CI.
+This will run automatically as a pre-commit hook and contains all of the quality checks.
 
 ---
 
@@ -128,6 +127,22 @@ Looking for ideas? Check the [good first issue](https://github.com/your-org/libr
 ## 📄 License
 
 Libreverse is dual‑licensed under the **MIT License** for source code and various permissive licenses for assets. See the [licenses/](licenses/) directory for full texts.
+
+---
+
+## Caveats
+
+If you deploy Libreverse behind a reverse proxy (such as Nginx, Apache, or a cloud load balancer), you **must** ensure that the proxy sets the `X-Forwarded-Proto` header on all requests. This header is used by Rails and middleware to correctly identify whether the original request was made over HTTP or HTTPS. If this header is missing or misconfigured, you may experience issues such as:
+
+- Incorrect URL generation (e.g., HTTP links on an HTTPS site)
+- Broken redirects or authentication flows
+- Security features (like secure cookies or CSP) not working as intended
+
+**Solution:**
+
+- For Nginx, add: `proxy_set_header X-Forwarded-Proto $scheme;`
+- For Apache, add: `RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}`
+- For cloud providers, consult their documentation to ensure this header is set.
 
 ---
 

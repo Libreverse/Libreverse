@@ -3,34 +3,25 @@
 ## HIGH — next sprint (post-alpha, still before public beta)
 
 1. □ **Add rodauth-models plugin and use sequel column encryption to encrypt rodauth data**.
-
-2. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
-
-3. □ **README updates**.
-
-    - Reverse-proxy requirement (`X-Forwarded-Proto`).
-    - Upload security / iframe script caveats.
-    - Backup & restore commands.
-
-4. □ **Zip download streaming with Zipline**.
-
+2. □ **Zip download streaming with Zipline**.
     - <https://github.com/fringd/zipline?tab=readme-ov-file>
 
 ---
 
 ## MEDIUM — road-map (beta ➜ GA)
 
-1. □ **Update docs for technical & organisational measures (TOMs)** – encryption, access controls, backups.
-2. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic**.
-3. □ **Imprint for EU**
-4. □ **Implement cron-based backup/restore testing pipeline**.
-5. □ **Draft `docs/incident_response.md`** (key rotation, user notification).
-6. □ **Integrate OWASP ZAP baseline scan in CI**.
-7. □ **Emoji middleware**: switch to streaming enumerator.
-8. □ **Performance profiling route** with `rack-mini-profiler` (staging only).
-9. □ **Provide "download my experience files" bulk endpoint**.
-10. □ **Use `client_max_body_size` limits**child_process to reduce accidental PII ingestion.
-11. □ **Add CSRF + same-site tests** to system suite.
+1. □ **Add rodauth-i18n by janko and add i18n support generally**
+2. □ **Update docs for technical & organisational measures (TOMs)** – encryption, access controls, backups.
+3. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic**.
+4. □ **Imprint for EU**
+5. □ **Implement cron-based backup/restore testing pipeline**.
+6. □ **Draft `docs/incident_response.md`** (key rotation, user notification).
+7. □ **Integrate OWASP ZAP baseline scan in CI**.
+8. □ **Emoji middleware**: switch to streaming enumerator.
+9. □ **Performance profiling route** with `rack-mini-profiler` (staging only).
+10. □ **Provide "download my experience files" bulk endpoint**.
+11. □ **Use `client_max_body_size` limits**child_process to reduce accidental PII ingestion.
+12. □ **Add CSRF + same-site tests** to system suite.
 
 ---
 
