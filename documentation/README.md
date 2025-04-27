@@ -14,6 +14,7 @@ The documentation is organized by feature area:
 - [XML-RPC API](xmlrpc_api.md): Programmatic access to platform features
 - [User Preferences](user_preferences.md): User-specific settings and preferences
 - [Attribution Notes](attributionnotes.md): Credits for third-party assets
+- [Technical & Organisational Measures (TOMs)](toms.md): Security controls including encryption, access controls, and backups
 
 ## For Developers
 

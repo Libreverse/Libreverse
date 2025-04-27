@@ -60,7 +60,7 @@ class EmojiReplacer
 
   def process_with_nokogiri(html)
     # Prevent processing of obviously invalid HTML
-    if html.blank? || html.bytesize > 5.megabytes
+    if html.blank?
       Rails.logger.warn "EmojiReplacer: Skipping processing of invalid HTML"
       return html
     end
@@ -187,48 +187,52 @@ class EmojiReplacer
     codepoints = emoji.codepoints.reject { |cp| cp == 0xFE0F }.map { |cp| cp.to_s(16) }.join("-")
     Rails.logger.debug { "EmojiReplacer: Emoji codepoints for '#{emoji}': #{codepoints}" }
 
-    # Get the path to the SVG file
-    svg_path_from_vite = ViteRuby.instance.manifest.path_for("emoji/#{codepoints}.svg")
-    Rails.logger.debug { "EmojiReplacer: Resolved SVG path for emoji '#{emoji}': #{svg_path_from_vite}" }
-
-    if svg_path_from_vite.blank?
-      Rails.logger.warn "EmojiReplacer: SVG path not found for emoji '#{emoji}' with codepoints '#{codepoints}'."
+    begin
+      svg_path_from_vite = ViteRuby.instance.manifest.path_for("emoji/#{codepoints}.svg", { type: :image })
+    rescue ViteRuby::MissingEntrypointError
+      Rails.logger.warn "EmojiReplacer: SVG manifest entry not found for emoji '#{emoji}' with codepoints '#{codepoints}'."
       return CGI.escapeHTML(emoji)
     end
 
-    # Determine the actual file path in the file system
-    if Rails.env.development? || Rails.env.test?
-      # In development, the files are served from app/emoji
-      svg_file_path = Rails.root.join("app", "emoji", "#{codepoints}.svg")
-    else
-      # In production, the files are precompiled and served from public/vite-production
-      # We need to strip the URL path and get the actual file path
-      relative_path = svg_path_from_vite.sub(%r{^/[^/]+/}, "")
-      svg_file_path = Rails.root.join("public", relative_path)
-    end
+    return CGI.escapeHTML(emoji) if svg_path_from_vite.blank?
 
-    Rails.logger.debug { "EmojiReplacer: SVG file path: #{svg_file_path}" }
+    svg_content = read_vite_asset_content(svg_path_from_vite)
 
-    if File.exist?(svg_file_path)
-      svg_content = File.read(svg_file_path)
-
-      # Create a data URL from the SVG content using URL encoding instead of base64
-      # Use ERB::Util.url_encode for proper SVG data URL encoding
+    if svg_content
       data_url = "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
-
-      # Create an img tag with the data URL using the original emoji as alt text
-      img_tag =
-        %(<img src="#{data_url}" alt="#{emoji}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)
-
+      img_tag = %(<img src="#{data_url}" alt="#{emoji}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)
       Rails.logger.debug { "EmojiReplacer: Built img tag with data URL for emoji '#{emoji}'" }
       img_tag
     else
-      Rails.logger.warn "EmojiReplacer: SVG file not found at '#{svg_file_path}' for emoji '#{emoji}'."
+      Rails.logger.warn "EmojiReplacer: SVG file not found or unreadable for emoji '#{emoji}'."
       CGI.escapeHTML(emoji)
     end
   rescue StandardError => e
     Rails.logger.error "EmojiReplacer: Failed to build inline SVG for emoji '#{emoji}': #{e.message}"
     CGI.escapeHTML(emoji)
+  end
+
+  # Helper to read asset content based on environment (copied from emoji_helper.rb)
+  def read_vite_asset_content(path_from_manifest)
+    return nil if path_from_manifest.blank?
+
+    if Rails.env.development? || Rails.env.test?
+      begin
+        vite_uri = URI.join(ViteRuby.instance.config.public_base_url, path_from_manifest)
+        response_body = Net::HTTP.get(vite_uri)
+        response_body.presence
+      rescue StandardError => e
+        Rails.logger.error "EmojiReplacer: Error fetching asset from Vite dev server: #{e.message} for URI: #{vite_uri}"
+        nil
+      end
+    else
+      relative_path = path_from_manifest.sub(%r{^/?#{ViteRuby.instance.config.public_output_dir}/}, "")
+      public_path = Rails.root.join("public", ViteRuby.instance.config.public_output_dir, relative_path)
+      File.exist?(public_path) ? File.read(public_path) : nil
+    end
+  rescue StandardError => e
+    Rails.logger.error "EmojiReplacer: Error reading Vite asset content for path '#{path_from_manifest}': #{e.message}"
+    nil
   end
 
   def extract_context(text, match_start, match_end, window = 10)

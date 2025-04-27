@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get "search" => "search#index"
   post "search" => "search#create"
   root "homepage#index"
+  get "terms", to: "terms#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -54,4 +55,7 @@ Rails.application.routes.draw do
     # Redirect base /admin path to experiences index for now
     root to: "experiences#index"
   end
+
+  get ".well-known/security.txt", to: "well_known#security_txt", format: false
+  get ".well-known/privacy.txt", to: "well_known#privacy_txt", format: false
 end

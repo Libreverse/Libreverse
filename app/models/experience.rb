@@ -14,7 +14,6 @@ class Experience < ApplicationRecord
   validates :author, length: { maximum: 255 }
   validates :html_file, presence: true,
                         content_type: "text/html",
-                        size: { less_than: 5.megabytes, message: "file must be less than 5MB" },
                         filename: {
                           with: /\A[\w.-]+\z/,
                           message: "only letters, numbers, underscores, dashes and periods are allowed in filenames"

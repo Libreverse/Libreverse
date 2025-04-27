@@ -33,7 +33,45 @@ module LibreverseInstance
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    # Enable Gzip compression for dynamic responses and static assets
-    config.middleware.use Rack::Deflater
+    # For some reason I don't really understand, it only works if defined here.
+    # I would put it in an initializer, but it causes content encoding issues.
+
+    # Strange as it may seem this is the order that gets the html minifier
+    # to run before the deflater and brotli because middlewares are,
+    # unintuitively, run as a stack from the bottom up.
+    config.middleware.use Rack::Deflater,
+                          sync: false
+
+    config.middleware.use Rack::Brotli,
+                          quality: 11,
+                          deflater: {
+                            lgwin: 22,
+                            lgblock: 0,
+                            mode: :text
+                          },
+                          sync: false
+
+    # this option set is from the default readme of htmlcompressor
+    config.middleware.use HtmlCompressor::Rack,
+                          enabled: true,
+                          remove_spaces_inside_tags: true,
+                          remove_multi_spaces: true,
+                          remove_comments: true,
+                          remove_intertag_spaces: true,
+                          remove_quotes: false,
+                          compress_css: false,
+                          compress_javascript: false,
+                          simple_doctype: false,
+                          remove_script_attributes: false,
+                          remove_style_attributes: false,
+                          remove_link_attributes: false,
+                          remove_form_attributes: false,
+                          remove_input_attributes: false,
+                          remove_javascript_protocol: false,
+                          remove_http_protocol: false,
+                          remove_https_protocol: false,
+                          preserve_line_breaks: false,
+                          simple_boolean_attributes: false,
+                          compress_js_templates: false
   end
 end

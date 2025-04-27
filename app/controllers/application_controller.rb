@@ -10,11 +10,19 @@ class ApplicationController < ActionController::Base
     before_action :initialize_guest_preferences
     before_action :log_request_info
     after_action :log_response_info
+    after_action :set_compliance_headers, if: -> { EEAMode.enabled? }
     before_action :set_current_ip
 
-    helper_method :tutorial_dismissed?
+    helper_method :tutorial_dismissed?, :consent_given?, :consent_path
 
   private
+
+    def set_compliance_headers
+      response.headers["X-Privacy-Policy"] = privacy_policy_path
+      response.headers["X-Cookie-Policy"] = cookie_policy_path
+      response.headers["X-Consent-Required"] = (!consent_given?).to_s
+      response.headers["X-Consent-Status"] = consent_given? ? "accepted" : "pending"
+    end
 
     def current_account
         # Use Current.account if available (set by ApplicationReflex)
