@@ -278,7 +278,7 @@ module Api
     end
 
     def current_account
-      @current_account ||= Account.find_by(id: session[:account_id])
+      @current_account ||= AccountSequel.where(id: session[:account_id]).first
     end
 
     def force_xml_format

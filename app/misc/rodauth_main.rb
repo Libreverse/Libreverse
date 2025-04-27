@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../models/account"
+require "rodauth/model"
 require "sequel/core"
 
 class RodauthMain < Rodauth::Rails::Auth
@@ -13,6 +15,8 @@ class RodauthMain < Rodauth::Rails::Auth
            :argon2, :pwned_password,
            :guest, # anonymous auth
            :internal_request
+
+    rails_account_model AccountSequel
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html

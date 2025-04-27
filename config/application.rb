@@ -55,7 +55,7 @@ module LibreverseInstance
     config.middleware.use HtmlCompressor::Rack,
                           enabled: true,
                           remove_spaces_inside_tags: true,
-                          remove_multi_spaces: true,
+                          remove_multi_spaces: false,
                           remove_comments: true,
                           remove_intertag_spaces: true,
                           remove_quotes: false,

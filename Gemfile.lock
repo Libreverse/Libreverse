@@ -491,6 +491,7 @@ DEPENDENCIES
   rack-cors
   rails
   rodauth-guest
+  rodauth-model (~> 0.4)
   rodauth-pwned
   rodauth-rails
   rubocop
