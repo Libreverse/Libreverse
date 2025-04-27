@@ -4,23 +4,15 @@
 
 1. □ **Add rodauth-models plugin and use sequel column encryption to encrypt rodauth data**.
 
-2. □ **Local Active Storage tightening**.
+2. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
 
-    - Serve downloads with `private, max-age=0`; ensure storage path owned by non-root UID.
-
-3. □ **Dependency hygiene in CI**.
-
-    - Add `bundle audit`, `brakeman -Aq`, `npm audit --omit=dev`, Dependabot.
-
-4. □ **SolidCable interim limits** (`MAX_CONNECTIONS=100`); WAL autocheckpoint 1000.
-
-5. □ **README updates**.
+3. □ **README updates**.
 
     - Reverse-proxy requirement (`X-Forwarded-Proto`).
     - Upload security / iframe script caveats.
     - Backup & restore commands.
 
-6. □ **Zip download streaming with Zipline**.
+4. □ **Zip download streaming with Zipline**.
 
     - <https://github.com/fringd/zipline?tab=readme-ov-file>
 

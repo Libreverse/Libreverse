@@ -3,12 +3,10 @@ import rubyPlugin from "vite-plugin-ruby";
 import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
 import legacy from "@vitejs/plugin-legacy";
-import vitePluginCompression from "vite-plugin-compression";
 import postcssPresetEnv from "postcss-preset-env";
 import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
-import { constants } from "node:zlib";
 import coffee from "vite-plugin-coffee";
 
 export default defineConfig(({ mode }) => {
