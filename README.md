@@ -111,17 +111,15 @@ See the [`documentation/`](documentation/) directory for full guides.
 
 ## 🛡 Security
 
-Security is a core focus of Libreverse. We follow the guidelines in [SECURITY.md](SECURITY.md).  
-To report vulnerabilities, please email **<security@libreverse.dev>**.
+Security is a core focus of Libreverse. Please see [SECURITY.md](SECURITY.md) for more information.
 
 ---
 
 ## 🤝 Contributing
 
 1. Fork the repository and create a feature branch.
-2. Ensure `bin/test` passes and include tests for new functionality.
-3. Adhere to the [Code of Conduct](CODE_OF_CONDUCT.md).
-4. Open a pull request – we squash‑merge after review.
+2. Adhere to the [Code of Conduct](CODE_OF_CONDUCT.md).
+3. Open a pull request – we squash‑merge after review.
 
 Looking for ideas? Check the [good first issue](https://github.com/your-org/libreverse/labels/good%20first%20issue) label or our [road‑map](todo.md).
 

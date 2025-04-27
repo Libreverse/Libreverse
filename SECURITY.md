@@ -1,5 +1,7 @@
 # Libreverse General Security Policy
 
+> Note: This project provides a [security.txt](https://securitytxt.org/) endpoint at `/.well-known/security.txt` for automated vulnerability reporting and security contact discovery.
+
 ## Commitment
 
 We take the security of this project very seriously.

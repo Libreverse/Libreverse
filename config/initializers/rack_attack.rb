@@ -110,7 +110,7 @@ unless Rails.env.development?
   middleware = Rails.application.config.middleware
 
   # Insert MaximumBodySize first
-  middleware.insert_before 0, Rack::MaximumBodySize, 8.megabytes
+  middleware.insert_before 0, Rack::MaximumBodySize, 2.gigabytes
 
   begin
     # Try inserting after MaximumBodySize for ideal placement

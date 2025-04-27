@@ -2,7 +2,7 @@
 <%# Using sandbox="allow-scripts" for security: https://mionskowski.pl/posts/iframe-code-preview/ %>
 <%# Removed include_stylesheet "experiencedisplay" %>
 <iframe
-  src="data:text/html;charset=utf-8,<%= u(@html_content) %>"
+  srcdoc="<%=@html_content%>"
   sandbox="allow-scripts"
   title="Experience: <%= @experience.title %>"
   class="experiencedisplay-iframe"
