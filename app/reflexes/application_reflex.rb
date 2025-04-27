@@ -32,7 +32,7 @@ class ApplicationReflex < StimulusReflex::Reflex
     return @current_account.guest? if defined?(@current_account) && @current_account
 
     # Otherwise load from database
-    account = Account.find_by(id: current_account_id)
+    account = AccountSequel.where(id: current_account_id).first
     account&.guest?
   end
 
@@ -55,7 +55,7 @@ class ApplicationReflex < StimulusReflex::Reflex
 
   # Helper to access the current account
   def current_account
-    @current_account ||= Account.find_by(id: current_account_id)
+    @current_account ||= AccountSequel.where(id: current_account_id).first
   end
 
   # Put application-wide Reflex behavior and callbacks in this file.
@@ -105,7 +105,7 @@ class ApplicationReflex < StimulusReflex::Reflex
   def load_current_account
     return unless current_account_id
 
-      @current_account = Account.find_by(id: current_account_id)
+      @current_account = AccountSequel.where(id: current_account_id).first
       log_debug "Loaded account: #{current_account_id}" if @current_account
   end
 

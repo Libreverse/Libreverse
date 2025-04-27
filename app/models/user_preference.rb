@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UserPreference < ApplicationRecord
-  belongs_to :account
+  # belongs_to :account # Removed: Account is now a Sequel model
 
   validates :key, presence: true, uniqueness: { scope: :account_id }
   validates :key, length: { maximum: 50 } # Limit key length
@@ -73,5 +73,10 @@ class UserPreference < ApplicationRecord
     return false if account_id.nil?
 
     get(account_id, key) == "dismissed"
+  end
+
+  # Manual bridge to Sequel Account model
+  def sequel_account
+    AccountSequel[account_id]
   end
 end

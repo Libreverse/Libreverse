@@ -21,11 +21,11 @@ module ApplicationCable
 
       # Log successful connection identified via session
       begin
-        account = Account.find(current_account_id)
+        account = AccountSequel.with_pk!(current_account_id)
         account_type = account.guest? ? "guest" : "user"
-        Rails.logger.info "[ActionCable] Connection established for #{account_type} account_id: #{current_account_id}"
-      rescue ActiveRecord::RecordNotFound
-         Rails.logger.error "[ActionCable] Connection established but Account record not found for ID: #{current_account_id}"
+        Rails.logger.info "[ActionCable] Connection established for \\#{account_type} account_id: \\#{current_account_id}"
+      rescue Sequel::NoMatchingRow
+         Rails.logger.error "[ActionCable] Connection established but Account record not found for ID: \\#{current_account_id}"
          reject_unauthorized_connection # Reject if account doesn't exist
       end
     end
@@ -88,9 +88,9 @@ module ApplicationCable
 
       if account_id
          Rails.logger.debug "[ActionCable][CookieStore] Found account_id '#{account_id}' in session data using key '#{rodauth_session_key_string}'"
-         verified_account = Account.find_by(id: account_id)
+         verified_account = AccountSequel.where(id: account_id).first
          unless verified_account
-            Rails.logger.warn "[ActionCable][CookieStore] Account ID '#{account_id}' found in session does not exist in DB. Ignoring."
+            Rails.logger.warn "[ActionCable][CookieStore] Account ID '\\#{account_id}' found in session does not exist in DB. Ignoring."
             return nil
          end
          account_id # Return the verified ID

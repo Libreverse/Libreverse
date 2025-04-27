@@ -4,7 +4,7 @@ class MakeAccountIdNotNullOnExperiences < ActiveRecord::Migration[8.0]
   def up
     guest = Account.find_or_create_by!(guest: true) do |a|
       a.username = "guest"
-      a.password = SecureRandom.hex(16)
+      a.password_hash = SecureRandom.hex(16)
     end
 
     # fasterer:disable ForEach

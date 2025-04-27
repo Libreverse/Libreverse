@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_21_231000) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_27_194000) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -21,11 +21,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_231000) do
     t.string "key", null: false
     t.datetime "deadline", null: false
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_password_reset_keys_key_format"
+    t.check_constraint "LENGTH(key) >= 88", name: "account_password_reset_keys_key_length"
   end
 
   create_table "account_remember_keys", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "deadline", null: false
+    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_remember_keys_key_format"
+    t.check_constraint "LENGTH(key) >= 88", name: "account_remember_keys_key_length"
   end
 
   create_table "account_verification_keys", force: :cascade do |t|
@@ -45,6 +49,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_231000) do
     t.boolean "admin", default: false, null: false
     t.index ["admin"], name: "index_accounts_on_admin"
     t.index ["username"], name: "index_accounts_on_username", unique: true
+    t.check_constraint "(password_hash LIKE '$argon2id$%' OR password_hash LIKE '$argon2i$%' OR password_hash LIKE '$argon2d$%')", name: "accounts_password_hash_format"
+    t.check_constraint "LENGTH(password_hash) >= 88", name: "accounts_password_hash_length"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|

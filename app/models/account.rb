@@ -1,10 +1,27 @@
 # frozen_string_literal: true
 
-class Account < ApplicationRecord
-  include Rodauth::Rails.model
-  enum :status, { unverified: 1, verified: 2, closed: 3 }
-  has_many :user_preferences, dependent: :destroy
-  has_many :experiences, dependent: :destroy
+require "sequel/model"
+
+# Sequel model for Rodauth and Sequel-specific logic
+class AccountSequel < Sequel::Model(:accounts)
+  plugin :timestamps, update_on_create: true
+
+  # Sequel associations
+  one_to_many :user_preferences, key: :account_id
+  one_to_many :experiences, key: :account_id
+
+  # Status helpers (replace enum)
+  def unverified?
+    status == 1
+  end
+
+  def verified?
+    status == 2
+  end
+
+  def closed?
+    status == 3
+  end
 
   # Check if this account is a guest account
   def guest?
@@ -33,4 +50,35 @@ class Account < ApplicationRecord
   #   Rails.logger.info "[assign_first_admin] Assigning admin role to account ID: #{id || 'new'}"
   #   self.admin = true
   # end
+
+  # Sequel column encryption for Rodauth tables
+  # Removed encryption for password_hash (should not be encrypted)
+
+  # Nested Sequel models for remember and password reset keys
+  if defined?(SEQUEL_COLUMN_ENCRYPTION_KEY)
+    if DB.table_exists?(:account_remember_keys)
+      class RememberKey < Sequel::Model(:account_remember_keys)
+        plugin :column_encryption do |enc|
+          enc.key 0, SEQUEL_COLUMN_ENCRYPTION_KEY
+          enc.column :key, searchable: true
+        end
+      end
+    end
+
+    if DB.table_exists?(:account_password_reset_keys)
+      class PasswordResetKey < Sequel::Model(:account_password_reset_keys)
+        plugin :column_encryption do |enc|
+          enc.key 0, SEQUEL_COLUMN_ENCRYPTION_KEY
+          enc.column :key, searchable: true
+        end
+      end
+    end
+  end
+end
+
+# ActiveRecord bridge for associations
+class Account < ApplicationRecord
+  self.table_name = "accounts"
+
+  # Add any AR-specific logic or validations here if needed
 end
