@@ -15,7 +15,7 @@ class WellKnownController < ApplicationController
       Acknowledgements: https://libreverse.dev/security
       Expires: #{1.year.from_now.utc.strftime('%Y-%m-%dT%H:%M:%SZ')}
     TXT
-    render plain: content, content_type: 'text/plain'
+    render plain: content, content_type: "text/plain"
   end
 
   # Serve /.well-known/privacy.txt
@@ -24,6 +24,6 @@ class WellKnownController < ApplicationController
       This service is operated by Libreverse. See our privacy policy at:
       https://libreverse.dev/privacy
     TXT
-    render plain: content, content_type: 'text/plain'
+    render plain: content, content_type: "text/plain"
   end
-end 
+end
