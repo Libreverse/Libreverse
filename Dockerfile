@@ -42,7 +42,7 @@ ENV PATH=/usr/local/bun/bin:$PATH
 RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v${BUN_VERSION}"
 
 # Install node modules
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN --mount=type=cache,id=bld-bun-cache,target=/root/.bun \
     bun install --frozen-lockfile
 
