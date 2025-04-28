@@ -1,15 +1,9 @@
+# Solid Queue now runs in-process via config/initializers/solid_queue_in_process.rb
+# No external dispatcher/worker/scheduler processes are configured here.
 default: &default
-  dispatchers:
-    - polling_interval: 1
-      batch_size: 200
-      concurrency_maintenance_interval: 600 # High interval to reduce DB access
-  workers:
-    - queues: "*"
-      threads: 1
-      processes: 1
-      polling_interval: 0.1
-  scheduler:
-    polling_interval: 1 # Ensure minimal DB access
+  dispatchers: []
+  workers: []
+  scheduler: {}
 
 development:
   <<: *default

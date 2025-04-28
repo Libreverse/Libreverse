@@ -20,9 +20,7 @@ port Integer(ENV.fetch("PORT") { 3000 })
 # Specifies the `environment` that Puma will run in.
 environment(ENV.fetch("RAILS_ENV") { "development" })
 
-# Specifies the number of `workers` to boot in clustered mode.
-# Workers are forked web server processes. If using threads and workers together
-# the concurrency of the application would be max `threads` * `workers`.
+# Use a single worker to ensure a single process (required for in-process Solid Queue with SQLite)
 workers 0
 
 # Use the `preload_app!` method when specifying a `workers` number.
@@ -31,8 +29,6 @@ workers 0
 # process behavior so workers use less memory.
 preload_app!
 
-# Run Solid Queue supervisor alongside Puma so background jobs share the same
-# process pool.
-plugin :solid_queue
+# Solid Queue now runs in-process via an initializer, so the plugin is not needed.
 # Allow `bin/rails restart` to restart Puma.
 plugin :tmp_restart
