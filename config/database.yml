@@ -4,15 +4,28 @@ default: &default
     adapter: sqlite3
     pool: 3
     pragmas:
+        analysis_limit: 1000
+        auto_vacuum: 'INCREMENTAL'
+        automatic_index: 1
+        busy_timeout: 10000
+        cache_size: 10000
+        cache_spill: 1
+        cell_size_check: 1
+        checkpoint_fullfsync: 1
         foreign_keys: 1
+        fullfsync: 1
+        ignore_check_constraints: 0
+        journal_mode: 'WAL'
+        journal_size_limit: -1
+        locking_mode: 'NORMAL'
+        mmap_size: 268435456
+        page_size: 16384
+        secure_delete: 1
+        synchronous: 'NORMAL'
+        temp_store: 'MEMORY'
+        threads: 0
         trusted_schema: 0
-        journal_mode: wal
-        synchronous: FULL
-        temp_store: MEMORY
-        cache_size: 5000
-        busy_timeout: 5000
-        auto_vacuum: incremental
-        locking_mode: NORMAL
+        wal_autocheckpoint: 5000
 
 development:
     <<: *default
