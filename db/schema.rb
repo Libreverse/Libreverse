@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_27_194000) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_153606) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -246,9 +246,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_194000) do
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
     t.string "key", null: false
-    t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "value"
+    t.text "value_ciphertext"
     t.index ["account_id", "key"], name: "index_user_preferences_on_account_id_and_key", unique: true
     t.index ["account_id"], name: "index_user_preferences_on_account_id"
   end
