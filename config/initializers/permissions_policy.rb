@@ -14,8 +14,4 @@ Rails.application.config.permissions_policy do |policy|
   policy.midi           :none
   policy.display_capture :none
   policy.autoplay       :none
-
-  # Allow features that might be needed
-  policy.fullscreen     :self
-  policy.screen_wake_lock :self
 end
