@@ -73,6 +73,27 @@ class AccountSequel < Sequel::Model(:accounts)
         end
       end
     end
+
+    # Encrypt account verification keys
+    if DB.table_exists?(:account_verification_keys)
+      class VerificationKey < Sequel::Model(:account_verification_keys)
+        plugin :column_encryption do |enc|
+          enc.key 0, SEQUEL_COLUMN_ENCRYPTION_KEY
+          enc.column :key, searchable: true
+        end
+      end
+    end
+
+    # Encrypt account login change keys (both key and login columns)
+    if DB.table_exists?(:account_login_change_keys)
+      class LoginChangeKey < Sequel::Model(:account_login_change_keys)
+        plugin :column_encryption do |enc|
+          enc.key 0, SEQUEL_COLUMN_ENCRYPTION_KEY
+          enc.column :key, searchable: true
+          enc.column :login, searchable: true
+        end
+      end
+    end
   end
 end
 

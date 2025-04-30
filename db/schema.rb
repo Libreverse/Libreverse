@@ -10,11 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_153606) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_01_183500) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
     t.datetime "deadline", null: false
+    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_login_change_keys_key_format"
+    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_login_change_keys_key_format"
+    t.check_constraint "(login LIKE 'AA__A%' OR login LIKE 'Ag__A%' OR login LIKE 'AQ__A%')", name: "account_login_change_keys_login_format"
+    t.check_constraint "(login LIKE 'AA__A%' OR login LIKE 'Ag__A%' OR login LIKE 'AQ__A%')", name: "account_login_change_keys_login_format"
+    t.check_constraint "LENGTH(key) >= 88", name: "account_login_change_keys_key_length"
+    t.check_constraint "LENGTH(key) >= 88", name: "account_login_change_keys_key_length"
+    t.check_constraint "LENGTH(login) >= 88", name: "account_login_change_keys_login_length"
+    t.check_constraint "LENGTH(login) >= 88", name: "account_login_change_keys_login_length"
   end
 
   create_table "account_password_reset_keys", force: :cascade do |t|
@@ -36,6 +44,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_153606) do
     t.string "key", null: false
     t.datetime "requested_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_verification_keys_key_format"
+    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_verification_keys_key_format"
+    t.check_constraint "LENGTH(key) >= 88", name: "account_verification_keys_key_length"
+    t.check_constraint "LENGTH(key) >= 88", name: "account_verification_keys_key_length"
   end
 
   create_table "accounts", force: :cascade do |t|
@@ -242,6 +254,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_153606) do
     t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
+
+# Could not dump table "sqlite_stat1" because of following StandardError
+#   Unknown type '' for column 'tbl'
+
 
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
