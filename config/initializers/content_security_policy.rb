@@ -10,7 +10,7 @@ Rails.application.configure do
     policy.object_src  :none
 
     # ---- Dynamic script/style directives ----
-    script_sources = %i[self https unsafe_inline data]
+    script_sources = %i[self https unsafe_inline data blob]
     style_sources  = %i[self https unsafe_inline data]
 
     # Add nonce only for production/staging builds
@@ -18,11 +18,13 @@ Rails.application.configure do
 
     policy.script_src(*script_sources)
     policy.style_src(*style_sources)
+    policy.worker_src :self, :blob
 
     # Dev-only extra allowances (eval + websocket)
     if Rails.env.development?
       policy.script_src(*policy.script_src, :unsafe_eval)
       policy.connect_src(*policy.connect_src, "ws://#{ViteRuby.config.host_with_port}")
+      policy.worker_src(*policy.worker_src, :unsafe_eval)
     end
 
     # Allow generic WebSocket scheme (ws:) so localhost or custom ports work when not using SSL
