@@ -13,5 +13,5 @@ Rails.application.config.permissions_policy do |policy|
   policy.magnetometer   :none
   policy.midi           :none
   policy.display_capture :none
-  policy.autoplay       :none
+  policy.autoplay :none
 end
