@@ -8,8 +8,7 @@ Rails.application.config.after_initialize do
         secure_parsers = {}
 
         secure_parsers["libxml"] = XMLRPC::XMLParser::LibXMLParser if XMLRPC::XMLParser.const_defined?(:LibXMLParser)
-
-        secure_parsers["rex_stream"] = XMLRPC::XMLParser::REXMLStreamParser if secure_parsers.empty? && XMLRPC::XMLParser.const_defined?(:REXMLStreamParser)
+        # Do not include REXML parser fallback; we rely solely on Nokogiri
 
         unless secure_parsers.empty?
           XMLRPC::XMLParser.each_installed_parser do |name|
