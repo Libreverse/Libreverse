@@ -80,6 +80,7 @@ gem "active_storage_validations"
 
 # Add rubyzip gem for account export
 gem "rubyzip"
+gem "zipline"
 
 # Add lockbox gem for encrypted Active Storage attachments
 gem "lockbox"
@@ -89,6 +90,9 @@ gem "view_component"
 
 # For model-level Rodauth integration
 gem "rodauth-model", "~> 0.4"
+
+# Use zip_kit for streaming zip exports
+gem "zip_kit"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

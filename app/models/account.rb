@@ -101,5 +101,9 @@ end
 class Account < ApplicationRecord
   self.table_name = "accounts"
 
+  # Add ActiveRecord associations
+  has_many :experiences, dependent: :destroy
+  has_many :user_preferences, dependent: :destroy
+
   # Add any AR-specific logic or validations here if needed
 end

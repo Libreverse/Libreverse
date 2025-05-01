@@ -2,7 +2,7 @@
 
 ## HIGH — next sprint (post-alpha, still before public beta)
 
-1. □ **Add in active record encryption for sqlite**.
+1. □ **Make it so that the iframe can capture the mouse**.
 2. □ **Zip download streaming with Zipline**.
     - <https://github.com/fringd/zipline?tab=readme-ov-file>
 

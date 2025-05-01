@@ -255,10 +255,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_183500) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
-# Could not dump table "sqlite_stat1" because of following StandardError
-#   Unknown type '' for column 'tbl'
-
-
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
     t.string "key", null: false
