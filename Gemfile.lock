@@ -125,9 +125,12 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    childprocess (0.9.0)
+      ffi (~> 1.0, >= 1.0.11)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.3)
     crass (1.0.6)
+    curb (1.0.9)
     date (3.4.1)
     debug (1.10.0)
       irb (~> 1.10)
@@ -237,7 +240,7 @@ GEM
     prettier_print (1.2.1)
     prettyprint (0.2.0)
     prism (1.4.0)
-    psych (5.2.3)
+    psych (5.2.4)
       date
       stringio
     public_suffix (6.0.2)
@@ -303,7 +306,6 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
-    rexml (3.4.1)
     roda (3.91.0)
       rack
     rodauth (2.38.0)
@@ -350,21 +352,18 @@ GEM
     ruby_parser (3.21.1)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
-    rubyzip (2.4.1)
+    rubyzip (1.1.2)
     securerandom (0.4.1)
-    selenium-webdriver (4.31.0)
-      base64 (~> 0.2)
-      logger (~> 1.4)
-      rexml (~> 3.2, >= 3.2.5)
-      rubyzip (>= 1.2.2, < 3.0)
-      websocket (~> 1.0)
+    selenium-webdriver (3.8.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.0)
     sentry-rails (5.23.0)
       railties (>= 5.0)
       sentry-ruby (~> 5.23.0)
     sentry-ruby (5.23.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sequel (5.91.0)
+    sequel (5.92.0)
       bigdecimal
     sequel-activerecord_connection (2.0.0)
       activerecord (>= 5.0, < 8.1)
@@ -446,7 +445,6 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    websocket (1.2.11)
     websocket-driver (0.7.7)
       base64
       websocket-extensions (>= 0.1.0)
@@ -454,6 +452,11 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.7.2)
+    zip_kit (6.3.3)
+    zipline (0.0.7)
+      curb
+      rails (>= 3.2.1)
+      rubyzip (>= 1.0, <= 1.1.2)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -516,6 +519,8 @@ DEPENDENCIES
   vite_plugin_legacy
   vite_rails
   web-console
+  zip_kit
+  zipline
 
 RUBY VERSION
    ruby 3.4.1p0

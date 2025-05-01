@@ -1,14 +1,45 @@
 # frozen_string_literal: true
 
 class AccountActionsController < ApplicationController
+  include ZipKit::RailsStreaming
   before_action :require_logged_in
 
   # GET /account/export
   def export
-    exporter = AccountExporter.new(current_account)
-    send_data exporter.generate_zip,
-              filename: "libreverse-account-export-#{Time.current.to_i}.zip",
-              type: "application/zip"
+    zip_kit_stream do |zip|
+      # 1) Account JSON
+      zip.write_file "account.json" do |sink|
+        sink << JSON.pretty_generate(account_json)
+      end
+
+      # 2) Preferences JSON
+      prefs = UserPreference::ALLOWED_KEYS.each_with_object({}) do |key, h|
+        val = UserPreference.get(current_account.id, key)
+        h[key] = val if val.present?
+      end
+      zip.write_file "preferences.json" do |sink|
+        sink << JSON.pretty_generate(prefs)
+      end
+
+      # 3) Experiences
+      Experience.where(account_id: current_account.id).find_each do |exp|
+        # Metadata
+        zip.write_file "experiences/#{exp.id}/metadata.json" do |sink|
+          sink << JSON.pretty_generate(exp.as_json(except: %i[account_id]))
+        end
+
+        # HTML attachment
+        if exp.html_file.attached?
+          filename = exp.html_file.filename.to_s.presence || "experience_#{exp.id}.html"
+          zip.write_file "experiences/#{exp.id}/#{filename}" do |sink|
+              data = exp.html_file.download
+              sink << data if data
+          rescue StandardError => e
+              Rails.logger.error "[AccountExport] Error streaming html_file for experience #{exp.id}: #{e.message}"
+          end
+        end
+      end
+    end
   end
 
   # DELETE /account
@@ -30,48 +61,27 @@ class AccountActionsController < ApplicationController
   def require_logged_in
     redirect_to rodauth.login_path unless current_account
   end
-end
-
-# Simple service for packaging account data → ZIP.
-require "zip"
-class AccountExporter
-  def initialize(account)
-    @account = account
-  end
-
-  def generate_zip
-    buffer = Zip::OutputStream.write_buffer do |zip|
-      zip.put_next_entry "account.json"
-      zip.write JSON.pretty_generate(account_json)
-
-      # Preferences
-      zip.put_next_entry "preferences.json"
-      prefs = UserPreference.where(account_id: @account.id).pluck(:key, :value).to_h
-      zip.write JSON.pretty_generate(prefs)
-
-      # Experiences (metadata + HTML attachment)
-      @account.experiences.find_each do |experience|
-        # Metadata for the experience
-        zip.put_next_entry "experiences/#{experience.id}/metadata.json"
-        exp_json = experience.as_json(except: %i[account_id])
-        zip.write JSON.pretty_generate(exp_json)
-
-        # Attached HTML file (if present)
-        if experience.html_file.attached?
-          # Use original filename or fallback to a predictable name
-          filename = experience.html_file.filename.to_s.presence || "experience_#{experience.id}.html"
-          zip.put_next_entry "experiences/#{experience.id}/#{filename}"
-          zip.write experience.html_file.download
-        end
-      end
-    end
-    buffer.rewind
-    buffer.read
-  end
-
-  private
 
   def account_json
-    @account.as_json(except: %i[password_hash]).merge("exported_at" => Time.current)
+    # Only export non-sensitive account data
+    safe_attrs = current_account.as_json(
+      except: %i[password_hash created_at updated_at status]
+    )
+
+    # Add export metadata
+    safe_attrs.merge(
+      "exported_at" => Time.current,
+      "account_status" => account_status,
+      "export_version" => "1.0"
+    )
+  end
+
+  def account_status
+    case current_account.status
+    when 1 then "unverified"
+    when 2 then "verified"
+    when 3 then "closed"
+    else "unknown"
+    end
   end
 end
