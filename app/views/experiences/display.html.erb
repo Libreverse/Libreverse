@@ -3,7 +3,8 @@
 <%# Removed include_stylesheet "experiencedisplay" %>
 <iframe
   srcdoc="<%=@html_content%>"
-  sandbox="allow-scripts"
+  sandbox="allow-scripts allow-pointer-lock"
+  allow="pointer-lock"
   title="Experience: <%= @experience.title %>"
   class="experiencedisplay-iframe"
 ></iframe>
