@@ -29,6 +29,7 @@ export default class extends ApplicationController
   disconnect: ->
     super.disconnect()
     @rainyday?.destroy()
+    @rainyday = null
     return
 
   setupRainyDay: ->
@@ -83,11 +84,11 @@ export default class extends ApplicationController
       # Merge options: background image, parent, canvas, size, plus user config
       options = Object.assign {}, defaultRainyDayOptions, @rainydayOptionsValue
 
-      rainy = new window.RainyDay(options)
+      @rainyday = new window.RainyDay(options)
 
       min = 8
       base = 8
       rate = 1
       speed = 25
-      rainy.rain([[min, base, rate]], speed)
+      @rainyday.rain([[min, base, rate]], speed)
     return

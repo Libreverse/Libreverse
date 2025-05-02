@@ -17,6 +17,6 @@
 9. □ **Performance profiling route** with `rack-mini-profiler` (staging only).
 10. □ **Use `client_max_body_size` limits**child_process to reduce accidental PII ingestion.
 11. □ **Add CSRF + same-site tests** to system suite.
-12. □ **Add social logins for facebook, X, apple and google.** to system suite.
+12. □ **Add social logins for facebook, X, apple and google.**.
 
 ---
