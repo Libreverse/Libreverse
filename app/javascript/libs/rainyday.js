@@ -383,16 +383,45 @@ function RainyDay(options) {
  * Destroy RainyDay.js
  */
 RainyDay.prototype.destroy = function () {
+    // Stop animation
     this.pause();
-    this.canvas.remove();
 
-    if (this.bckStyle) {
+    // Remove event listeners
+    if (this._onResize) {
+        window.removeEventListener("resize", this._onResize);
+        globalThis.removeEventListener("orientationchange", this._onResize);
+        this._onResize = null;
+    }
+
+    // Remove canvas from DOM
+    if (this.canvas && this.canvas.remove) {
+        this.canvas.remove();
+    }
+
+    // Stop audio playback
+    if (this.audio) {
+        this.audio.pause();
+        this.audio = null;
+    }
+
+    // Restore original image styles or background
+    if (this.originalStyles && this.imgSource) {
+        var s = this.originalStyles;
+        this.imgSource.style.zIndex = s.zIndex;
+        this.imgSource.style.position = s.position;
+        this.imgSource.style.top = s.top;
+        this.imgSource.style.left = s.left;
+        this.imgSource.style.width = s.width;
+        this.imgSource.style.height = s.height;
+        this.imgSource.style.background = s.background;
+    } else if (this.bckStyle && this.imgSource) {
         this.imgSource.style.background = this.bckStyle.background;
     }
 
+    // Clean up all properties
     Object.keys(this).forEach(function (item) {
         delete this[item];
-    });
+    }, this);
 };
 
 /**
@@ -408,7 +437,7 @@ RainyDay.prototype.initialize = function (options) {
 
     this.imgDownscaled = this.customDrop || downscaleImage(this.img, 50);
     if (options.sound) {
-        playSound(options.sound);
+        this.audio = playSound(options.sound);
     }
 
     var defaults = {
@@ -479,22 +508,28 @@ RainyDay.prototype.prepareCanvas = function () {
     } else {
         canvas.style.zIndex = 99;
     }
-    // this.options.parentElement.appendChild(canvas);
     if (this.imgSource) {
-        this.options.parentElement.parentNode.insertBefore(
-            canvas,
-            this.imgSource,
-        );
+        this.options.parentElement.parentNode.insertBefore(canvas, this.imgSource);
 
-        // Set z-index to show canvas on top of img/element
+        // Backup original styles to restore on destroy
+        this.originalStyles = {
+            zIndex: this.imgSource.style.zIndex,
+            position: this.imgSource.style.position,
+            top: this.imgSource.style.top,
+            left: this.imgSource.style.left,
+            width: this.imgSource.style.width,
+            height: this.imgSource.style.height,
+            background: this.imgSource.style.background
+        };
+
+        // Set styles for rain effect
         this.imgSource.style.zIndex = 100;
         this.imgSource.style.position = position;
         this.imgSource.style.top = top;
         this.imgSource.style.left = left;
-        this.imgSource.style.width = width;
-        this.imgSource.style.height = height;
-        this.imgSource.style.background = "none";
         this.imgSource.style.width = width + "px";
+        this.imgSource.style.height = height + "px";
+        this.imgSource.style.background = "none";
     } else {
         this.options.parentElement.append(canvas);
     }
@@ -510,8 +545,10 @@ RainyDay.prototype.prepareCanvas = function () {
 };
 
 RainyDay.prototype.setResizeHandler = function () {
-    window.addEventListener("resize", this.checkSize.bind(this));
-    globalThis.addEventListener("orientationchange", this.checkSize.bind(this));
+    // Store bound listener to remove later
+    this._onResize = this.checkSize.bind(this);
+    window.addEventListener("resize", this._onResize);
+    globalThis.addEventListener("orientationchange", this._onResize);
 };
 
 /**
@@ -1242,15 +1279,10 @@ RainyDay.prototype.stackBlurCanvasRGB = function (width, height, radius) {
         428, 420, 412, 404, 396, 388, 381, 374, 367, 360, 354, 347, 341, 335,
         329, 323, 318, 312, 307, 302, 297, 292, 287, 282, 278, 273, 269, 265,
         261, 512, 505, 497, 489, 482, 475, 468, 461, 454, 447, 441, 435, 428,
-        422, 417, 411, 405, 399, 394, 389, 383, 378, 373, 368, 364, 359, 354,
-        350, 345, 341, 337, 332, 328, 324, 320, 316, 312, 309, 305, 301, 298,
-        294, 291, 287, 284, 281, 278, 274, 271, 268, 265, 262, 259, 257, 507,
-        501, 496, 491, 485, 480, 475, 470, 465, 460, 456, 451, 446, 442, 437,
-        433, 428, 424, 420, 416, 412, 408, 404, 400, 396, 392, 388, 385, 381,
-        377, 374, 370, 367, 363, 360, 357, 354, 350, 347, 344, 341, 338, 335,
-        332, 329, 326, 323, 320, 318, 315, 312, 310, 307, 304, 302, 299, 297,
-        294, 292, 289, 287, 285, 282, 280, 278, 275, 273, 271, 269, 267, 265,
-        263, 261, 259,
+        422, 417, 411, 405, 400, 396, 392, 388, 385, 381, 377, 374, 370, 367,
+        363, 360, 357, 354, 350, 347, 344, 341, 338, 335, 332, 329, 326, 323,
+        320, 318, 315, 312, 310, 307, 304, 302, 299, 297, 294, 292, 289, 287,
+        285, 282, 280, 278, 275, 273, 271, 269, 267, 265, 263, 261, 259,
     ];
 
     radius = Math.trunc(radius);
@@ -1688,6 +1720,7 @@ function playSound(url) {
     audio.loop = true;
     audio.volume = 0.25;
     audio.play();
+    return audio;
 }
 
 globalThis.RainyDay = RainyDay;
