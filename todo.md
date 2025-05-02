@@ -2,10 +2,6 @@
 
 ## HIGH — next sprint (post-alpha, still before public beta)
 
-1. □ **Make it so that the iframe can capture the mouse**.
-2. □ **Zip download streaming with Zipline**.
-    - <https://github.com/fringd/zipline?tab=readme-ov-file>
-
 ---
 
 ## MEDIUM — road-map (beta ➜ GA)
