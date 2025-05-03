@@ -17,6 +17,7 @@ Bundler.require(*Rails.groups)
 
 # Load custom middleware
 require_relative "../lib/middleware/whitespace_compressor"
+require_relative "../lib/middleware/zstd"
 
 # Configuration for the application, engines, and railties goes here.
 #
@@ -53,6 +54,14 @@ module LibreverseInstance
                             mode: :text
                           },
                           sync: false
+
+    # Zstandard compression middleware
+    if defined?(Rack::Zstd)
+      # Use default options or customize levels as needed
+      config.middleware.use Rack::Zstd,
+                            level: 3,
+                            sync: false
+    end
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
