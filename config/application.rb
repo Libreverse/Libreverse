@@ -15,6 +15,9 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Load custom middleware
+require_relative "../lib/middleware/whitespace_compressor"
+
 # Configuration for the application, engines, and railties goes here.
 #
 # These settings can be overridden in specific environments using the files
@@ -51,27 +54,7 @@ module LibreverseInstance
                           },
                           sync: false
 
-    # this option set is from the default readme of htmlcompressor
-    config.middleware.use HtmlCompressor::Rack,
-                          enabled: true,
-                          remove_spaces_inside_tags: true,
-                          remove_multi_spaces: false,
-                          remove_comments: true,
-                          remove_intertag_spaces: true,
-                          remove_quotes: false,
-                          compress_css: false,
-                          compress_javascript: false,
-                          simple_doctype: false,
-                          remove_script_attributes: false,
-                          remove_style_attributes: false,
-                          remove_link_attributes: false,
-                          remove_form_attributes: false,
-                          remove_input_attributes: false,
-                          remove_javascript_protocol: false,
-                          remove_http_protocol: false,
-                          remove_https_protocol: false,
-                          preserve_line_breaks: false,
-                          simple_boolean_attributes: false,
-                          compress_js_templates: false
+    # Add WhitespaceCompressor middleware to minify HTML before compression
+    config.middleware.use WhitespaceCompressor
   end
 end

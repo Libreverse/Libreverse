@@ -51,9 +51,6 @@ gem "solid_cable"
 # Used to monkey patch ActionCable to use the permessage_deflate extension
 gem "permessage_deflate"
 
-# HTML compressor to minify HTML when sent to the client
-gem "htmlcompressor"
-
 # Rack-Brotli to compress responses with Brotli
 gem "rack-brotli"
 
@@ -85,13 +82,13 @@ gem "lockbox"
 gem "view_component"
 
 # For model-level Rodauth integration
-gem "rodauth-model", "~> 0.4"
+gem "rodauth-model"
 
 # Use zip_kit for streaming zip exports
 gem "zip_kit"
 
-# XML parsing - use Nokogiri for production; include rexml gem for tests requiring it
-gem "rexml"
+# Add the RE2 Ruby gem to enable the RE2-based whitespace compressor middleware
+gem "re2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
