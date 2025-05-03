@@ -54,6 +54,9 @@ gem "permessage_deflate"
 # Rack-Brotli to compress responses with Brotli
 gem "rack-brotli"
 
+# Zstandard to compress responses with Zstandard
+gem "zstandard"
+
 # Rate limit everything on the app
 gem "rack-attack"
 
