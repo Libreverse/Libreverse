@@ -34,5 +34,22 @@ test:
     database: db/libreverse_test.sqlite3
 
 production:
-    <<: *default
-    database: db/production.sqlite3
+    primary:
+        <<: *default
+        adapter: sqlite3
+        database: &production_db "/data/production.sqlite3"
+    queue:
+        <<: *default
+        adapter: sqlite3
+        database: *production_db
+        migrations_paths: db/queue_migrate
+    cache:
+        <<: *default
+        adapter: sqlite3
+        database: *production_db
+        migrations_paths: db/cache_migrate
+    cable:
+        <<: *default
+        adapter: sqlite3
+        database: *production_db
+        migrations_paths: db/cable_migrate
