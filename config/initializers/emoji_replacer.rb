@@ -4,6 +4,7 @@
 class EmojiReplacer
   require "unicode"
   require "nokogiri"
+  require Rails.root.join("lib/emoji/renderer").to_s
 
   EMOJI_REGEX =
     /(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
@@ -120,28 +121,8 @@ class EmojiReplacer
   end
 
   def replace_emojis_with_nodes(text, _doc)
-    text = ensure_utf8(text)
-    return text unless text.match?(EMOJI_REGEX)
-
-    text.gsub(EMOJI_REGEX) do |emoji|
-      match_data = Regexp.last_match
-      context = extract_context(text, match_data.begin(0), match_data.end(0))
-      Rails.logger.debug { "EmojiReplacer: Detected emoji '#{emoji}' around: '#{context}'" }
-
-      # Use caching
-      img_tag = Rails.cache.fetch(cache_key(emoji), expires_in: 12.hours) do
-        Rails.logger.debug { "EmojiReplacer: Cache miss for emoji '#{emoji}'. Building inline SVG." }
-        build_inline_svg(emoji)
-      end
-
-      if img_tag
-        Rails.logger.debug { "EmojiReplacer: Replacing emoji '#{emoji}' with img tag." }
-        img_tag
-      else
-        Rails.logger.warn "EmojiReplacer: Failed to build img tag for emoji '#{emoji}'. Using original emoji."
-        emoji
-      end
-    end
+    Rails.logger.debug { "[EmojiReplacer] replace_emojis_with_nodes called" }
+    Emoji::Renderer.replace(text)
   end
 
   def within_excluded_node?(node, exclude_nodes)
@@ -157,82 +138,21 @@ class EmojiReplacer
   end
 
   def replace_emojis(text)
+    Rails.logger.debug { "[EmojiReplacer] replace_emojis called" }
     text = ensure_utf8(text)
-    text.gsub(EMOJI_REGEX) do |emoji|
-      match_data = Regexp.last_match
-      context = extract_context(text, match_data.begin(0), match_data.end(0))
-      Rails.logger.debug { "EmojiReplacer: Detected emoji '#{emoji}' around: '#{context}'" }
-
-      # Use caching
-      img_tag = Rails.cache.fetch(cache_key(emoji), expires_in: 12.hours) do
-        Rails.logger.debug { "EmojiReplacer: Cache miss for emoji '#{emoji}'. Building inline SVG." }
-        build_inline_svg(emoji)
-      end
-
-      if img_tag
-        Rails.logger.debug { "EmojiReplacer: Replacing emoji '#{emoji}' with img tag." }
-        img_tag
-      else
-        Rails.logger.warn "EmojiReplacer: Failed to build img tag for emoji '#{emoji}'. Using original emoji."
-        emoji
-      end
-    end
+    Emoji::Renderer.replace(text)
   end
 
   def cache_key(emoji)
-    "emoji_replacer/v10/#{emoji}"
+    Emoji::Renderer.send(:cache_key, emoji)
   end
 
   def build_inline_svg(emoji)
-    codepoints = emoji.codepoints.reject { |cp| cp == 0xFE0F }.map { |cp| cp.to_s(16) }.join("-")
-    Rails.logger.debug { "EmojiReplacer: Emoji codepoints for '#{emoji}': #{codepoints}" }
-
-    begin
-      svg_path_from_vite = ViteRuby.instance.manifest.path_for("emoji/#{codepoints}.svg", { type: :image })
-    rescue ViteRuby::MissingEntrypointError
-      Rails.logger.warn "EmojiReplacer: SVG manifest entry not found for emoji '#{emoji}' with codepoints '#{codepoints}'."
-      return CGI.escapeHTML(emoji)
-    end
-
-    return CGI.escapeHTML(emoji) if svg_path_from_vite.blank?
-
-    svg_content = read_vite_asset_content(svg_path_from_vite)
-
-    if svg_content
-      data_url = "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
-      img_tag = %(<img src="#{data_url}" alt="#{emoji}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)
-      Rails.logger.debug { "EmojiReplacer: Built img tag with data URL for emoji '#{emoji}'" }
-      img_tag
-    else
-      Rails.logger.warn "EmojiReplacer: SVG file not found or unreadable for emoji '#{emoji}'."
-      CGI.escapeHTML(emoji)
-    end
-  rescue StandardError => e
-    Rails.logger.error "EmojiReplacer: Failed to build inline SVG for emoji '#{emoji}': #{e.message}"
-    CGI.escapeHTML(emoji)
+    Emoji::Renderer.build_img_tag(emoji)
   end
 
-  # Helper to read asset content based on environment (copied from emoji_helper.rb)
   def read_vite_asset_content(path_from_manifest)
-    return nil if path_from_manifest.blank?
-
-    if Rails.env.development? || Rails.env.test?
-      begin
-        vite_uri = URI.join(ViteRuby.instance.config.public_base_url, path_from_manifest)
-        response_body = Net::HTTP.get(vite_uri)
-        response_body.presence
-      rescue StandardError => e
-        Rails.logger.error "EmojiReplacer: Error fetching asset from Vite dev server: #{e.message} for URI: #{vite_uri}"
-        nil
-      end
-    else
-      relative_path = path_from_manifest.sub(%r{^/?#{ViteRuby.instance.config.public_output_dir}/}, "")
-      public_path = Rails.root.join("public", ViteRuby.instance.config.public_output_dir, relative_path)
-      File.exist?(public_path) ? File.read(public_path) : nil
-    end
-  rescue StandardError => e
-    Rails.logger.error "EmojiReplacer: Error reading Vite asset content for path '#{path_from_manifest}': #{e.message}"
-    nil
+    Emoji::Renderer.send(:read_vite_asset_content, path_from_manifest)
   end
 
   def extract_context(text, match_start, match_end, window = 10)
