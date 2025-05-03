@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Emoji
   module Renderer
-    extend self
+    module_function
 
     require "cgi"
     require "erb"
@@ -9,7 +11,7 @@ module Emoji
     require "net/http"
 
     # Matches standard emojis, including sequences with ZWJ and skin tone modifiers
-    EMOJI_REGEX = /(?:\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?(?:\u{200D}\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/.freeze
+    EMOJI_REGEX = /(?:\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?(?:\u{200D}\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
 
     DEFAULT_CACHE_EXPIRY = 1.week
 
@@ -29,7 +31,7 @@ module Emoji
 
         tag = stored
 
-        unless tag.present?
+        if tag.blank?
           Rails.logger.debug { "[Emoji::Renderer] Cache MISS or empty value for emoji='#{emoji}'. Building img tag…" }
           tag = build_img_tag(emoji)
 
@@ -43,7 +45,7 @@ module Emoji
           end
         end
 
-        tag.present? ? tag : emoji
+        tag.presence || emoji
       end
     end
 
@@ -52,7 +54,7 @@ module Emoji
     def build_img_tag(emoji)
       Rails.logger.debug { "[Emoji::Renderer] build_img_tag called for emoji='#{emoji}'" }
       svg_content = fetch_svg_for_emoji(emoji)
-      return nil unless svg_content.present?
+      return nil if svg_content.blank?
 
       Rails.logger.debug { "[Emoji::Renderer] SVG content length=#{svg_content.bytesize} for emoji='#{emoji}'" }
       encoded_svg = ERB::Util.url_encode(svg_content)
@@ -117,4 +119,4 @@ module Emoji
       nil
     end
   end
-end 
+end
