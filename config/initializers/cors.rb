@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 're2'
+require "re2"
 
 # CORS Configuration
 Rails.application.config.middleware.insert_before 0, Rack::Cors do

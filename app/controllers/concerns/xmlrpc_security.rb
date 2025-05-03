@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 're2'
+
+require "re2"
 
 module XmlrpcSecurity
   extend ActiveSupport::Concern
@@ -30,7 +31,7 @@ module XmlrpcSecurity
 
     if params[:xml].present?
       begin
-        if (m = RE2::Regexp.new('<methodName>([^<]+)</methodName>').match(params[:xml]))
+        if (m = RE2::Regexp.new("<methodName>([^<]+)</methodName>").match(params[:xml]))
           method_name = m[1]
         end
       rescue StandardError
