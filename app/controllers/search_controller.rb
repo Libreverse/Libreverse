@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 're2'
 
 # app/controllers/search_controller.rb
 class SearchController < ApplicationController
@@ -8,13 +9,13 @@ class SearchController < ApplicationController
     query = query[0...50]
 
     scope = current_account&.admin? ? Experience : Experience.approved
-@experiences = if query.present?
+    @experiences = if query.present?
       scope.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
            .order(created_at: :desc)
            .limit(100)
-else
+    else
       scope.order(created_at: :desc).limit(20)
-end
+    end
   end
 
   private
@@ -22,6 +23,6 @@ end
   # Sanitize SQL LIKE wildcards to prevent injection
   def sanitize_sql_like(str)
     # Escape LIKE special characters: %, _, [, ], ^
-    str.gsub(/[%_\[\]\^\\]/) { |x| "\\#{x}" }
+    str.gsub(RE2::Regexp.new('[%_\\[\\]\\^\\\\]')) { |x| "\\#{x}" }
   end
 end

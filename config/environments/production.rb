@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_support/core_ext/integer/time"
+require 're2'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -82,7 +83,7 @@ Rails.application.configure do
 
   # Host Authorization - controlled via ALLOWED_HOSTS environment variable
   allowed_hosts_env = ENV.fetch("ALLOWED_HOSTS")
-  allowed_hosts = allowed_hosts_env.split(/[\s,]+/).reject(&:blank?)
+  allowed_hosts = allowed_hosts_env.split(RE2::Regexp.new('[\\s,]+')).reject(&:blank?)
 
   # Replace the default array entirely so we don't accumulate duplicates
   config.hosts.clear
