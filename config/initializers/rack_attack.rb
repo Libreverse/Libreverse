@@ -2,6 +2,7 @@
 
 # Ensure custom middleware constant is loaded before we reference it below
 require Rails.root.join("lib/ip_anonymizer")
+require 're2'
 
 # Maximum Body Size Middleware Definition
 # (Moved here from maximum_body_size.rb to resolve load order issues)
@@ -46,7 +47,7 @@ module Rack
     throttle("logins/username", limit: 5, period: 5.minutes) do |req|
       if req.path == "/login" && req.post?
         # Extract username from the login form - better sanitized
-        username = req.params["username"].to_s.downcase.gsub(/[^a-z0-9_-]/i, "")
+        username = req.params["username"].to_s.downcase.gsub(RE2::Regexp.new("[^a-z0-9_-]", RE2::Options::IGNORECASE), "")
         username.presence # Return nil if blank which won't be throttled
       end
     end
@@ -76,7 +77,7 @@ module Rack
       Rack::Attack::Fail2Ban.filter("pentesters/#{req.ip}", maxretry: 3, findtime: 10.minutes, bantime: 1.hour) do
         # Block if SQL injection or XSS is detected in parameters
         req.params.values.any? do |value|
-          value.to_s =~ /['"].*((select|union).*from|drop table|concat\(|javascript:|<script>|on\\w+=)/i
+          RE2::Regexp.new("['\"].*((select|union).*from|drop table|concat\\(|javascript:|<script>|on\\\\w+=)", RE2::Options::IGNORECASE).match?(value.to_s)
         end
       end
     end

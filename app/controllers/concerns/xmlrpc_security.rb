@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 're2'
 
 module XmlrpcSecurity
   extend ActiveSupport::Concern
@@ -29,8 +30,9 @@ module XmlrpcSecurity
 
     if params[:xml].present?
       begin
-        # Simple regex to extract method name rather than full XML parsing
-        method_name = ::Regexp.last_match(1) if params[:xml] =~ %r{<methodName>([^<]+)</methodName>}
+        if (m = RE2::Regexp.new('<methodName>([^<]+)</methodName>').match(params[:xml]))
+          method_name = m[1]
+        end
       rescue StandardError
         # Ignore extraction errors for logging
       end
@@ -55,7 +57,7 @@ module XmlrpcSecurity
   end
 
   def validate_method_name(method_name)
-    return if method_name.match?(/\A[a-zA-Z0-9._]+\z/)
+    return if RE2::Regexp.new('\\A[a-zA-Z0-9._]+\\z').match?(method_name)
 
     render xml: fault_response(400, "Invalid method name")
   end
