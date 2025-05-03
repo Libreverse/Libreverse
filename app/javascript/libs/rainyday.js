@@ -509,7 +509,10 @@ RainyDay.prototype.prepareCanvas = function () {
         canvas.style.zIndex = 99;
     }
     if (this.imgSource) {
-        this.options.parentElement.parentNode.insertBefore(canvas, this.imgSource);
+        this.options.parentElement.parentNode.insertBefore(
+            canvas,
+            this.imgSource,
+        );
 
         // Backup original styles to restore on destroy
         this.originalStyles = {
@@ -519,7 +522,7 @@ RainyDay.prototype.prepareCanvas = function () {
             left: this.imgSource.style.left,
             width: this.imgSource.style.width,
             height: this.imgSource.style.height,
-            background: this.imgSource.style.background
+            background: this.imgSource.style.background,
         };
 
         // Set styles for rain effect

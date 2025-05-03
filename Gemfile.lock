@@ -167,7 +167,6 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    htmlcompressor (0.4.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.0)
@@ -296,6 +295,14 @@ GEM
     rake (13.2.1)
     rdoc (6.13.1)
       psych (>= 4.0.0)
+    re2 (2.15.0-aarch64-linux-gnu)
+    re2 (2.15.0-aarch64-linux-musl)
+    re2 (2.15.0-arm-linux-gnu)
+    re2 (2.15.0-arm-linux-musl)
+    re2 (2.15.0-arm64-darwin)
+    re2 (2.15.0-x86_64-darwin)
+    re2 (2.15.0-x86_64-linux-gnu)
+    re2 (2.15.0-x86_64-linux-musl)
     redis (5.4.0)
       redis-client (>= 0.22.0)
     redis-client (0.24.0)
@@ -352,7 +359,7 @@ GEM
       sexp_processor (~> 4.16)
     rubyzip (2.4.1)
     securerandom (0.4.1)
-    selenium-webdriver (4.31.0)
+    selenium-webdriver (4.32.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -480,7 +487,6 @@ DEPENDENCIES
   erb_lint
   fasterer
   foreman
-  htmlcompressor
   lockbox
   mocha
   nokogiri
@@ -491,9 +497,9 @@ DEPENDENCIES
   rack-brotli
   rack-cors
   rails
-  rexml
+  re2
   rodauth-guest
-  rodauth-model (~> 0.4)
+  rodauth-model
   rodauth-pwned
   rodauth-rails
   rubocop
