@@ -35,9 +35,9 @@ module Rack
         vary << "Accept-Encoding" unless vary.include?("Accept-Encoding")
         headers["Vary"] = vary.join(", ")
 
-        [status, headers, [compressed]]
+        [ status, headers, [ compressed ] ]
       else
-        [status, headers, response]
+        [ status, headers, response ]
       end
     ensure
       response.close if response.respond_to?(:close)
@@ -47,6 +47,7 @@ module Rack
 
     def compressible?(env, headers)
       return false if headers["Content-Encoding"]
+
       accept_enc = env["HTTP_ACCEPT_ENCODING"].to_s
       accept_enc.split(/[
    ,]+/).include?("zstd")
@@ -56,4 +57,4 @@ module Rack
       @level ? Zstandard.deflate(string, @level) : Zstandard.deflate(string)
     end
   end
-end 
+end
