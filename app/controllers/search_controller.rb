@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 're2'
+
+require "re2"
 
 # app/controllers/search_controller.rb
 class SearchController < ApplicationController

@@ -2,7 +2,7 @@
 
 # Ensure custom middleware constant is loaded before we reference it below
 require Rails.root.join("lib/ip_anonymizer")
-require 're2'
+require "re2"
 
 # Maximum Body Size Middleware Definition
 # (Moved here from maximum_body_size.rb to resolve load order issues)
