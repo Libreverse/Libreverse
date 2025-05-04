@@ -60,17 +60,21 @@ module Rack
     private
 
     def compressible?(env, headers)
+      # Skip if already encoded
       return false if headers["Content-Encoding"]
 
+      # Check Accept-Encoding for zstd token, allowing for quality values (e.g. 'zstd;q=0.9')
       accept_enc = env["HTTP_ACCEPT_ENCODING"].to_s
-      accept_enc.split(/[
-   ,]+/).include?("zstd")
+      accept_enc.match?(/\bzstd\b/i)
     end
 
     def compress(string)
-      # Use zstd-ruby gem for compression
+      # Only simple compression options supported by zstd-ruby (level and dict)
       opts = @options.dup
-      Zstd.compress(string, **opts)
+      compress_args = {}
+      compress_args[:level] = opts.delete(:level) if opts.key?(:level)
+      compress_args[:dict]  = opts.delete(:dict)  if opts.key?(:dict)
+      ::Zstd.compress(string, **compress_args)
     end
   end
 end
