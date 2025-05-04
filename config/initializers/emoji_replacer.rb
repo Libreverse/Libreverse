@@ -15,16 +15,16 @@ class EmojiReplacer
   def initialize(app, options = {})
     @app = app
     @exclude_selectors = options[:exclude_selectors] || DEFAULT_EXCLUDE_SELECTORS
-    Rails.logger.debug { "EmojiReplacer: Initialized with exclude selectors: #{@exclude_selectors.inspect}" }
+    # Rails.logger.debug { "EmojiReplacer: Initialized with exclude selectors: #{@exclude_selectors.inspect}" }
   end
 
   def call(env)
-    Rails.logger.debug { "EmojiReplacer: Processing request for #{env['PATH_INFO']}" }
+    # Rails.logger.debug { "EmojiReplacer: Processing request for #{env['PATH_INFO']}" }
 
     status, headers, body = @app.call(env)
 
     if headers["Content-Type"]&.include?("text/html")
-      Rails.logger.debug "EmojiReplacer: Detected text/html content type"
+      # Rails.logger.debug "EmojiReplacer: Detected text/html content type"
 
       new_body = ""
       body.each do |part|
@@ -42,11 +42,9 @@ class EmojiReplacer
       body = [ new_body ]
       headers["Content-Length"] = new_body.bytesize.to_s
 
-      Rails.logger.debug do
-        "EmojiReplacer: Completed emoji replacement. Updated Content-Length to #{new_body.bytesize}."
-      end
-    else
-      Rails.logger.debug "EmojiReplacer: Skipping emoji replacement. Content-Type is not text/html."
+      # Rails.logger.debug do
+      #   "EmojiReplacer: Completed emoji replacement. Updated Content-Length to #{new_body.bytesize}."
+      # end
     end
 
     # Return the modified response
@@ -121,7 +119,7 @@ class EmojiReplacer
   end
 
   def replace_emojis_with_nodes(text, _doc)
-    Rails.logger.debug { "[EmojiReplacer] replace_emojis_with_nodes called" }
+    # Rails.logger.debug { "[EmojiReplacer] replace_emojis_with_nodes called" }
     Emoji::Renderer.replace(text)
   end
 
@@ -138,7 +136,7 @@ class EmojiReplacer
   end
 
   def replace_emojis(text)
-    Rails.logger.debug { "[EmojiReplacer] replace_emojis called" }
+    # Rails.logger.debug { "[EmojiReplacer] replace_emojis called" }
     text = ensure_utf8(text)
     Emoji::Renderer.replace(text)
   end

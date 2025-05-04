@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "rack"
-require "zstandard"
+require "zstd-ruby"
 
 module Rack
   # Rack middleware to compress HTTP responses using Zstandard.
@@ -10,10 +10,18 @@ module Rack
   #   :level - Integer compression level (optional)
   #   :sync  - Unused, provided for API consistency with other compression middlewares
   class Zstd
+    # Use class instance var instead of class var for compression logging
+    @logged_compression = false
+
+    class << self
+      attr_accessor :logged_compression
+    end
+
     def initialize(app, options = {})
-      @app   = app
-      @level = options[:level]
-      @sync  = options[:sync]
+      @app = app
+      # Store all compression options; :level will be remapped
+      @options = options.dup
+      @sync = @options.delete(:sync)
     end
 
     def call(env)
@@ -25,6 +33,12 @@ module Rack
         response.each { |chunk| body << chunk }
 
         compressed = compress(body)
+
+        # Log once when compression is used
+        unless self.class.logged_compression
+          Rails.logger.info("Rack::Zstd: response compressed with Zstandard")
+          self.class.logged_compression = true
+        end
 
         # Update headers
         headers["Content-Encoding"] = "zstd"
@@ -54,7 +68,9 @@ module Rack
     end
 
     def compress(string)
-      @level ? Zstandard.deflate(string, @level) : Zstandard.deflate(string)
+      # Use zstd-ruby gem for compression
+      opts = @options.dup
+      Zstd.compress(string, **opts)
     end
   end
 end

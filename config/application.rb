@@ -56,12 +56,14 @@ module LibreverseInstance
                           sync: false
 
     # Zstandard compression middleware
-    if defined?(Rack::Zstd)
-      # Use default options or customize levels as needed
-      config.middleware.use Rack::Zstd,
-                            level: 3,
-                            sync: false
-    end
+    config.middleware.use Rack::Zstd,
+                          window_log: 27,
+                          chain_log: 27,
+                          hash_log: 25,
+                          search_log: 9,
+                          min_match: 3,
+                          strategy: :btultra2,
+                          sync: false
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor

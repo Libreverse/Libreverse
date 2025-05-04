@@ -128,7 +128,7 @@
 
     .text-muted {
         // Nested class kept within placeholder
-        color: variables.$white-60 !important;
+        color: variables.$white-60;
     }
 }
 
@@ -136,7 +136,7 @@
 // Keeping it separate for now based on original structure.
 // Consider moving generic utilities like this elsewhere if applicable.
 %administrative-text-muted {
-    color: variables.$white-60 !important;
+    color: variables.$white-60;
 }
 
 %administrative-stat-value {
@@ -396,54 +396,46 @@
         90deg,
         color.adjust(variables.$dashboard-primary, $lightness: -10%),
         variables.$dashboard-primary
-    ) !important;
-    border-color: variables.$dashboard-primary !important;
+    );
+    border-color: variables.$dashboard-primary;
 
     &:hover {
         background: linear-gradient(
             90deg,
             variables.$dashboard-primary,
             color.adjust(variables.$dashboard-primary, $lightness: 10%)
-        ) !important;
+        );
         box-shadow: 0 4px 15px rgba(variables.$dashboard-primary, 0.4);
     }
 }
 
 %administrative-btn-outline-primary {
-    color: variables.$dashboard-primary !important;
-    border-color: variables.$dashboard-primary !important;
+    color: variables.$dashboard-primary;
+    border-color: variables.$dashboard-primary;
 
     &:hover {
-        background-color: rgba(variables.$dashboard-primary, 0.1) !important;
-        color: variables.$white-90 !important;
+        background-color: rgba(variables.$dashboard-primary, 0.1);
+        color: variables.$white-90;
     }
 }
 
 %administrative-btn-danger {
-    background: linear-gradient(
-        90deg,
-        variables.$pink,
-        variables.$danger
-    ) !important;
-    border: none !important;
+    background: linear-gradient(90deg, variables.$pink, variables.$danger);
+    border: none;
 
     &:hover {
-        background: linear-gradient(
-            90deg,
-            variables.$danger,
-            variables.$pink
-        ) !important;
+        background: linear-gradient(90deg, variables.$danger, variables.$pink);
         box-shadow: 0 4px 15px rgba(variables.$danger, 0.4);
     }
 }
 
 %administrative-btn-outline-secondary {
-    color: variables.$white-80 !important;
-    border-color: variables.$white-20 !important;
+    color: variables.$white-80;
+    border-color: variables.$white-20;
 
     &:hover {
-        background-color: variables.$white-10 !important;
-        color: variables.$white-90 !important;
+        background-color: variables.$white-10;
+        color: variables.$white-90;
     }
 }
 
@@ -469,7 +461,7 @@
 }
 
 %administrative-form-text {
-    color: rgb(255 255 255 / 70%) !important;
+    color: rgb(255 255 255 / 70%);
 }
 
 %administrative-input-group-text {
@@ -482,7 +474,7 @@
 // Note: Placeholder override might not work as expected globally.
 // This likely needs to remain a global style outside placeholders.
 // %administrative-placeholder {
-//  color: rgb(255 255 255 / 50%) !important;
+//  color: rgb(255 255 255 / 50%) ;
 //  opacity: 1;
 // }
 
