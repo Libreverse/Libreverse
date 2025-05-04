@@ -47,7 +47,7 @@ class WhitespaceCompressor
 
     # Step 5: Update headers and return response
     headers["Content-Length"] = html.bytesize.to_s
-    headers["Content-Encoding"] = "UTF-8"
+    headers.delete("Content-Encoding")
     [ status, headers, [ html ] ]
   end
 end
