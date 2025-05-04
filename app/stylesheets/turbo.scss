@@ -1,7 +1,17 @@
 @use "variables";
 
 .turbo-loading {
-    cursor: wait !important;
+    pointer-events: none !important; /* Disables pointer events on body */
+    position: relative; /* Ensures pseudo-element positioning */
+}
+
+.turbo-loading::before {
+    content: "";
+    position: fixed; /* Cover the entire viewport */
+    inset: 0;
+    cursor: wait !important; /* Displays the wait cursor */
+    pointer-events: auto !important; /* Allows pseudo-element to show cursor */
+    z-index: 9999; /* Ensures it’s on top */
 }
 
 /* Add a subtle indicator to input elements during form submissions */

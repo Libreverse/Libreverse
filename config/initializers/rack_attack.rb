@@ -47,7 +47,10 @@ module Rack
     throttle("logins/username", limit: 5, period: 5.minutes) do |req|
       if req.path == "/login" && req.post?
         # Extract username from the login form - better sanitized
-        username = req.params["username"].to_s.downcase.gsub(RE2::Regexp.new("[^a-z0-9_-]", RE2::Options::IGNORECASE), "")
+        username = req.params["username"].to_s.downcase.gsub(
+          RE2::Regexp.new("[^a-z0-9_-]", case_sensitive: false),
+          ""
+        )
         username.presence # Return nil if blank which won't be throttled
       end
     end
@@ -77,7 +80,7 @@ module Rack
       Rack::Attack::Fail2Ban.filter("pentesters/#{req.ip}", maxretry: 3, findtime: 10.minutes, bantime: 1.hour) do
         # Block if SQL injection or XSS is detected in parameters
         req.params.values.any? do |value|
-          RE2::Regexp.new("['\"].*((select|union).*from|drop table|concat\\(|javascript:|<script>|on\\\\w+=)", RE2::Options::IGNORECASE).match?(value.to_s)
+          RE2::Regexp.new("['\"].*((select|union).*from|drop table|concat\\(|javascript:|<script>|on\\\\w+=)", case_sensitive: false).match?(value.to_s)
         end
       end
     end
