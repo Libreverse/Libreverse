@@ -44,7 +44,7 @@
         "stylelint": "^16.19.1",
         "stylelint-config-standard-scss": "^14.0.0",
         "terser": "^5.39.0",
-        "vite": "^6.3.4",
+        "vite": "^6.3.5",
         "vite-plugin-coffee": "^2.2.1",
         "vite-plugin-compression": "^0.5.1",
         "vite-plugin-full-reload": "^1.2.0",
