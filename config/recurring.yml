@@ -21,11 +21,6 @@ shared_tasks: &shared_tasks
         queue: maintenance
         schedule: "0 0 * * *" # Every day at midnight
 
-    wal_checkpoint:
-        class: WalCheckpointJob
-        queue: maintenance
-        schedule: "0 */4 * * *" # Every 4 hours
-
     vacuum_database:
         class: VacuumDatabaseJob
         queue: maintenance

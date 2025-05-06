@@ -4,26 +4,25 @@ default: &default
     adapter: sqlite3
     pool: 1
     pragmas:
-        analysis_limit: 0           # No limit on rows analyzed for query optimization
-        auto_vacuum: 'INCREMENTAL'  # Enables incremental vacuuming, space reclaimed manually
-        automatic_index: 1          # Enables automatic temporary indexes for queries
-        busy_timeout: 0             # No waiting for locks (fine for single-threaded)
-        cache_size: -200000         # ~200 MB cache to reduce disk I/O
-        cache_spill: 1              # Allows spilling dirty pages mid-transaction
-        cell_size_check: 1          # Detects oversized cells for corruption checking
-        checkpoint_fullfsync: 1     # Ensures durability during checkpoints (Mac OS X)
-        foreign_keys: 1             # Enforces foreign key constraints
-        fullfsync: 1                # Maximum durability on Mac OS X
-        journal_mode: 'WAL'         # Write-Ahead Logging for read-while-write capability
-        journal_size_limit: -1      # No limit on WAL journal size
-        locking_mode: 'NORMAL'      # Even though it doesn't look like it, it won't work with EXCLUSIVE.
-        mmap_size: 200000000        # 200 MB memory-mapped I/O for better read performance
-        page_size: 16384            # Larger page size for large datasets
-        secure_delete: 'ON'         # Overwrites deleted data for security
-        synchronous: 3              # EXTRA mode for highest durability
-        temp_store: 2               # Stores temp tables in memory for speed
-        wal_autocheckpoint: 1000    # Auto-checkpoints WAL at 1000 pages
-        optimize: 1048578            # PRAGMA optimize=0x10002 on connection open
+        analysis_limit: 0           # No change; kept as is
+        auto_vacuum: 'NONE'         # Changed from 'INCREMENTAL' to avoid vacuuming overhead
+        automatic_index: 1          # No change; kept as is
+        busy_timeout: 0             # No change; kept as is
+        cache_size: -200000         # No change; kept as is
+        cache_spill: 1              # No change; kept as is
+        cell_size_check: 0          # Changed from 1 to disable overhead
+        checkpoint_fullfsync: 0     # Changed from 1 to speed up checkpoints
+        foreign_keys: 1             # No change; kept as requested
+        fullfsync: 0                # Changed from 1 to reduce sync overhead (macOS)
+        journal_mode: 'DELETE'      # Changed from 'WAL' to 'DELETE' to disable WAL mode
+        journal_size_limit: -1      # No change; kept as is
+        locking_mode: 'NORMAL'      # No change; kept as is
+        mmap_size: 200000000        # No change; kept as is
+        page_size: 16384            # No change; kept as is
+        secure_delete: 'ON'         # No change; kept as requested
+        synchronous: 2              # Changed from 3 to reduce syncs
+        temp_store: 2               # No change; kept as is
+        optimize: 1048578           # No change; kept as is
 
 development:
     <<: *default
