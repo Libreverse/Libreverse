@@ -1,9 +1,5 @@
 # Todo List
 
-## HIGH — next sprint (post-alpha, still before public beta)
-
----
-
 ## MEDIUM — road-map (beta ➜ GA)
 
 1. □ **Add rodauth-i18n by janko and add i18n support generally**
