@@ -85,6 +85,11 @@ Rails.application.configure do
   allowed_hosts_env = ENV.fetch("ALLOWED_HOSTS")
   allowed_hosts = allowed_hosts_env.split(RE2::Regexp.new('[\\s,]+')).reject(&:blank?)
 
+  # Always allow localhost and 127.0.0.1
+  %w[localhost 127.0.0.1].each do |local_host|
+    allowed_hosts << local_host unless allowed_hosts.include?(local_host)
+  end
+
   # Replace the default array entirely so we don't accumulate duplicates
   config.hosts.clear
   allowed_hosts.each { |host| config.hosts << host }
