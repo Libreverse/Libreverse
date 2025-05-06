@@ -1,9 +1,3 @@
-/* import * as Sentry from "@sentry/browser";
-
-Sentry.init({
-  dsn: "",
-}); */
-
 // Add js-loaded class to html element after page load to enable scrolling for pages
 document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.add("js-loaded");

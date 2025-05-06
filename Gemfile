@@ -25,10 +25,6 @@ gem "stimulus-rails"
 gem "vite_plugin_legacy"
 gem "vite_rails"
 
-# Sentry-Ruby to track backend crashes
-gem "sentry-rails"
-gem "sentry-ruby"
-
 # StimulusReflex framework
 gem "ostruct"
 gem "stimulus_reflex"

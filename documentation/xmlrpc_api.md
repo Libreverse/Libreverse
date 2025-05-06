@@ -15,7 +15,7 @@ API access requires authentication through session cookies. You must obtain a va
 All XML-RPC calls should be made to the following endpoint:
 
 ```http
-https://libreverse.dev/api/xmlrpc
+/api/xmlrpc
 ```
 
 ## Security Measures
