@@ -13,5 +13,5 @@ Bootsnap.setup(
   compile_cache_iseq: true,
   compile_cache_yaml: true,
   compile_cache_json: true,
-  readonly: true
+  readonly: false
 )

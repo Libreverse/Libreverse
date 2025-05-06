@@ -123,4 +123,4 @@ end
 
 ## Monitoring and Alerting
 
-Production logs should be monitored for ERROR and FATAL level messages, which may indicate issues requiring immediate attention. The logging system is designed to work with log aggregation services like LogRage, Datadog, or ELK stack.
+Production logs should be monitored for ERROR and FATAL level messages, which may indicate issues requiring immediate attention.

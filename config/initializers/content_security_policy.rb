@@ -34,7 +34,7 @@ Rails.application.configure do
     policy.frame_src   :self, :data
 
     # WebSocket & API connections
-    policy.connect_src :self, :https, "wss://*.libreverse.dev", "wss://*.geor.me", :data, "ws:"
+    policy.connect_src :self, :https, :data, "ws:"
 
     # Test allowances – blob URIs used by rails system tests
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
@@ -43,6 +43,6 @@ Rails.application.configure do
     policy.report_uri "/csp-report"
   end
 
-  # Initially run in report‑only mode; switch to false after verifying
+  # Initially ran in report‑only mode; switched to false after verifying
   config.content_security_policy_report_only = false
 end
