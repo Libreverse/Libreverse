@@ -24,9 +24,9 @@
       crossorigin
     >
     <%# Removed yield :fontpreloads %>
-    <%= vite_stylesheet_tag "~/stylesheets/application.scss" %>
+    <%= inline_vite_stylesheet "~/stylesheets/application.scss" %>
     <%# Removed yield :specific_stylesheets %>
-    <%= vite_javascript_tag "~/javascript/application.js", type: "module" %>
+    <%= inline_vite_javascript "~/javascript/application.js" %>
     <%= render "layouts/development_headers" if Rails.env.development? %>
 
     <%= render "layouts/meta_tags" %>
@@ -63,6 +63,7 @@
       <%= yield %>
     </main>
     <%= render partial: "layouts/drawer" if page_with_drawer? %>
-    <%= vite_legacy_javascript_tag "~/javascript/application.js" %>
+    <%#= vite_legacy_javascript_tag "~/javascript/application.js" %>
+    <%= inline_vite_legacy_javascript "~/javascript/application.js" %>
   </body>
 </html>
