@@ -228,7 +228,7 @@ module ApplicationHelper
       content = get_vite_asset_content(manifest_key, type: :stylesheet)
       # `content` is compiler-generated CSS, safe to insert verbatim.
       # Attach the current request's CSP nonce so that inline styles are allowed
-      nonce_opt = { nonce: content_security_policy_nonce(:style) }
+      nonce_opt = { nonce: content_security_policy_nonce }
       merged_opts = options.merge(nonce_opt) { |_k, old, new| old || new }
       # rubocop:disable Rails/OutputSafety
       tag.style(content.html_safe, **merged_opts) if content
@@ -279,6 +279,41 @@ module ApplicationHelper
         # rubocop:enable Rails/OutputSafety
       end
     end
+  end
+
+  # Inline font helper: Generates a style tag with an embedded @font-face rule.
+  # Example usage: inline_vite_font('~/fonts/myfont.woff2', font_family: 'MyFont')
+  def inline_vite_font(font_path, **options)
+    manifest_key = font_path.sub(%r{^~/}, "")
+    content = get_vite_asset_content(manifest_key, type: :font)
+    return if content.blank?
+
+    ext = File.extname(manifest_key).downcase
+    mime = case ext
+    when ".woff2" then "font/woff2"
+    when ".woff" then "font/woff"
+    when ".ttf"   then "font/ttf"
+    when ".otf"   then "font/otf"
+    else "application/octet-stream"
+    end
+
+    base64_content = Base64.strict_encode64(content)
+    data_uri = "data:#{mime};base64,#{base64_content}"
+
+    font_family = options.delete(:font_family) || File.basename(manifest_key, ext)
+    css = <<~CSS
+      @font-face {
+        font-family: '#{font_family}';
+        src: url(\"#{data_uri}\") format(\"#{ext.delete('.')}\");
+        font-weight: normal;
+        font-style: normal;
+      }
+    CSS
+
+    nonce_opt = Rails.env.production? ? { nonce: content_security_policy_nonce } : {}
+    # rubocop:disable Rails/OutputSafety
+    tag.style(css.html_safe, **nonce_opt.merge(options))
+    # rubocop:enable Rails/OutputSafety
   end
 
   private
