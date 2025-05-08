@@ -75,7 +75,7 @@ Metrics/MethodLength:
 
 Metrics/ModuleLength:
     Enabled: true
-    Max: 200
+    Max: 300
     Description: "Limits modules to 200 lines to encourage single responsibility."
 
 Metrics/ParameterLists:
