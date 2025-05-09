@@ -223,8 +223,9 @@ module ApplicationHelper
 
   def inline_vite_stylesheet(name_with_prefix, **options)
     unless Rails.env.production?
-      # Development / Test – let ViteRuby handle hot-reloading and asset serving
-      return vite_stylesheet_tag(name_with_prefix, **options)
+      # Development / Test – request the CSS build that Vite serves for the same entrypoint
+      css_entry = name_with_prefix.sub(/\.js\z/, ".css")
+      return vite_stylesheet_tag(css_entry, **options)
     end
 
     # Production – inline the compiled CSS to avoid extra requests.
