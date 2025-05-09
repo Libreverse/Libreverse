@@ -2,12 +2,10 @@
     "all": {
         "sourceCodeDir": "app",
         "additionalEntrypoints": [
-            "~/javascript/**/*",
-            "~/stylesheets/**/*",
+            "~/images/**/*",
             "~/emoji/**/*",
             "~/fonts/**/*",
-            "~/icons/**/*",
-            "~/images/**/*"
+            "~/icons/**/*"
         ]
     },
     "development": {

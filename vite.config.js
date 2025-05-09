@@ -27,13 +27,13 @@ export default defineConfig(({ mode }) => {
                     manualChunks: false,
                     entryFileNames: isDevelopment
                         ? "[name].js"
-                        : "[name]-[hash].js",
+                        : "[name].js",
                     chunkFileNames: isDevelopment
                         ? "[name].js"
-                        : "[name]-[hash].js",
+                        : "[name].js",
                     assetFileNames: isDevelopment
                         ? "[name].[ext]"
-                        : "[name]-[hash].[ext]",
+                        : "[name].[ext]",
                 },
             },
         },

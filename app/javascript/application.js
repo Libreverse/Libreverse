@@ -53,3 +53,6 @@ import "@hotwired/turbo-rails";
 import "./controllers";
 import "./config";
 import "./channels";
+
+// Import main stylesheet
+import "~/stylesheets/application.scss";
