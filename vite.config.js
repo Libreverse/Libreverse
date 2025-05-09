@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
         build: {
             sourcemap: false,
             cache: !isDevelopment,
-            cssCodeSplit: false,
+            cssCodeSplit: true,
             rollupOptions: {
                 input: "app/javascript/application.js",
                 output: {
