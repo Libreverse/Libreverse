@@ -18,10 +18,12 @@ export default defineConfig(({ mode }) => {
         },
         build: {
             sourcemap: false,
-            inlineDynamicImports: true,
             cache: !isDevelopment,
+            cssCodeSplit: false,
             rollupOptions: {
                 output: {
+                    inlineDynamicImports: true,
+                    manualChunks: () => null,
                     entryFileNames: isDevelopment
                         ? "[name].js"
                         : "[name]-[hash].js",
