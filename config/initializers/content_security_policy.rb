@@ -30,7 +30,7 @@ Rails.application.configure do
     policy.connect_src(*policy.connect_src, :self, :https, :data, "ws:")
 
     # Iframes for Experience viewer (data-URI) remain allowed.
-    policy.frame_src   :self, :data
+    policy.frame_src :self, :data
 
     # Test allowances – blob URIs used by rails system tests
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
