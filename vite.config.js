@@ -25,12 +25,8 @@ export default defineConfig(({ mode }) => {
                 output: {
                     inlineDynamicImports: true,
                     manualChunks: false,
-                    entryFileNames: isDevelopment
-                        ? "[name].js"
-                        : "[name].js",
-                    chunkFileNames: isDevelopment
-                        ? "[name].js"
-                        : "[name].js",
+                    entryFileNames: isDevelopment ? "[name].js" : "[name].js",
+                    chunkFileNames: isDevelopment ? "[name].js" : "[name].js",
                     assetFileNames: isDevelopment
                         ? "[name].[ext]"
                         : "[name].[ext]",
