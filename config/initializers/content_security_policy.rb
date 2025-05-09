@@ -13,8 +13,7 @@ Rails.application.configure do
     script_sources = %i[self https unsafe_inline data blob]
     style_sources  = %i[self https unsafe_inline data]
 
-    # Add per-request nonce in production/staging builds
-    script_sources << :nonce if Rails.env.production?
+    # Removed nonce requirement to allow inline scripts/styles since our app inlines large Vite bundles.
 
     policy.script_src(*script_sources)
     policy.style_src(*style_sources)
