@@ -238,7 +238,7 @@ module ApplicationHelper
     # Currently we inline the *first* stylesheet; if you code-split CSS you may
     # need a loop or merge – adjust as needed.
     css_rel_path = css_paths.first.sub(%r{^/?#{Regexp.escape(ViteRuby.instance.config.public_output_dir)}/}, "")
-    file_path     = Rails.root.join("public", ViteRuby.instance.config.public_output_dir, css_rel_path)
+    file_path = Rails.root.join("public", ViteRuby.instance.config.public_output_dir, css_rel_path)
 
     unless File.exist?(file_path)
       Rails.logger.error "[ViteInline] Stylesheet not found at #{file_path} (entry: #{manifest_key})"
