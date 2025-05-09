@@ -24,16 +24,15 @@
       crossorigin
     >
     <%# Removed yield :fontpreloads %>
-    <%= inline_vite_stylesheet "~/stylesheets/application.scss" %>
+    <%= inline_vite_stylesheet "~/stylesheets/application.scss", nonce: true %>
     <%# Removed yield :specific_stylesheets %>
-    <%= inline_vite_javascript "~/javascript/application.js" %>
+    <%= inline_vite_javascript "~/javascript/application.js", nonce: true %>
     <%= render "layouts/development_headers" if Rails.env.development? %>
 
     <%= render "layouts/meta_tags" %>
     <!--Some decently important security stuff, just matters that it's present,
     so we don't need to bother search engines by putting it at the top-->
     <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
     <!--Vite HMR in development. Does not result in anything in prod-->
     <%= vite_client_tag %>
   </head>
@@ -64,6 +63,6 @@
     </main>
     <%= render partial: "layouts/drawer" if page_with_drawer? %>
     <%#= vite_legacy_javascript_tag "~/javascript/application.js" %>
-    <%= inline_vite_legacy_javascript "~/javascript/application.js" %>
+    <%= inline_vite_legacy_javascript "~/javascript/application.js", nonce: true %>
   </body>
 </html>

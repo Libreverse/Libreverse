@@ -43,6 +43,29 @@ Rails.application.configure do
     policy.report_uri "/csp-report"
   end
 
+  # Configure a default Permissions-Policy (removing browsing-topics if it was added by default)
+  config.permissions_policy do |policy|
+    policy.accelerometer :none
+    policy.ambient_light_sensor :none
+    policy.autoplay :self
+    policy.camera :none
+    policy.display_capture :none
+    policy.encrypted_media :self
+    policy.fullscreen :self
+    policy.geolocation :none
+    policy.gyroscope :none
+    policy.magnetometer :none
+    policy.microphone :none
+    policy.midi :none
+    policy.payment :none
+    policy.picture_in_picture :self
+    policy.screen_wake_lock :none
+    policy.sync_xhr :self
+    policy.usb :none
+    # policy.xr_spatial_tracking :none # This directive is not supported
+    # Add other features as needed, explicitly avoiding 'browsing-topics'
+  end
+
   # Initially ran in report‑only mode; switched to false after verifying
   config.content_security_policy_report_only = false
 end
