@@ -22,7 +22,6 @@ export default defineConfig(({ mode }) => {
             cssCodeSplit: false,
             rollupOptions: {
                 output: {
-                    inlineDynamicImports: true,
                     manualChunks: () => null,
                     entryFileNames: isDevelopment
                         ? "[name].js"
