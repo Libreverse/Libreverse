@@ -218,8 +218,8 @@ module ApplicationHelper
 
   # --- Vite Asset Inlining Helpers ---
   # Guard patterns to safely inline assets without prematurely closing their tags
-  SCRIPT_CLOSE_REGEX = %r{</script\b}i.freeze
-  STYLE_CLOSE_REGEX  = %r{</style\b}i.freeze
+  SCRIPT_CLOSE_REGEX = %r{</script\b}i
+  STYLE_CLOSE_REGEX  = %r{</style\b}i
 
   def inline_vite_stylesheet(name_with_prefix, **options)
     unless Rails.env.production?
