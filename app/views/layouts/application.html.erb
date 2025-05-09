@@ -1,7 +1,6 @@
 <!doctype html>
 <html dir="ltr" lang="en-GB">
   <head>
-    <!--Important code-->
     <link
       rel="preload"
       href="<%= vite_asset_path '~/fonts/Lazer84.woff2' %>"
@@ -23,12 +22,10 @@
       type="font/woff2"
       crossorigin
     >
-    <%# Removed yield :fontpreloads %>
     <%= inline_vite_stylesheet "~/javascript/application.js" %>
-    <%# Removed yield :specific_stylesheets %>
     <%= inline_vite_javascript "~/javascript/application.js" %>
+    <%= inline_vite_legacy_javascript "~/javascript/application.js" %>
     <%= render "layouts/development_headers" if Rails.env.development? %>
-
     <%= render "layouts/meta_tags" %>
     <!--Some decently important security stuff, just matters that it's present,
     so we don't need to bother search engines by putting it at the top-->
@@ -62,7 +59,5 @@
       <%= yield %>
     </main>
     <%= render partial: "layouts/drawer" if page_with_drawer? %>
-    <%#= vite_legacy_javascript_tag "~/javascript/application.js" %>
-    <%= inline_vite_legacy_javascript "~/javascript/application.js" %>
   </body>
 </html>
