@@ -24,7 +24,7 @@
       crossorigin
     >
     <%# Removed yield :fontpreloads %>
-    <%= inline_vite_stylesheet "~/stylesheets/application.scss" %>
+    <%= inline_vite_stylesheet "~/javascript/application.js" %>
     <%# Removed yield :specific_stylesheets %>
     <%= inline_vite_javascript "~/javascript/application.js" %>
     <%= render "layouts/development_headers" if Rails.env.development? %>
