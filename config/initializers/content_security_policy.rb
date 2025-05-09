@@ -27,13 +27,10 @@ Rails.application.configure do
     end
 
     # Allow generic WebSocket scheme (ws:) so localhost or custom ports work when not using SSL
-    policy.connect_src(*policy.connect_src, "ws:")
+    policy.connect_src(*policy.connect_src, :self, :https, :data, "ws:")
 
-    # Iframes for Experience viewer (data‑URI) remain allowed.
+    # Iframes for Experience viewer (data-URI) remain allowed.
     policy.frame_src   :self, :data
-
-    # WebSocket & API connections
-    policy.connect_src :self, :https, :data, "ws:"
 
     # Test allowances – blob URIs used by rails system tests
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
