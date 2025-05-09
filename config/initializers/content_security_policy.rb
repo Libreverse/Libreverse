@@ -13,8 +13,8 @@ Rails.application.configure do
     script_sources = %i[self https unsafe_inline data blob]
     style_sources  = %i[self https unsafe_inline data]
 
-    # Add nonce only for production/staging builds
-    script_sources << -> { "'nonce-#{SecureRandom.base64(16)}'" } if Rails.env.production?
+    # Add per-request nonce in production/staging builds
+    script_sources << :nonce if Rails.env.production?
 
     policy.script_src(*script_sources)
     policy.style_src(*style_sources)
