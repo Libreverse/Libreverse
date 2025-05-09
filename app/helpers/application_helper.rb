@@ -269,11 +269,16 @@ module ApplicationHelper
       content ||= get_vite_asset_content(legacy_manifest_key, type: :javascript)
 
       if content
-        options_without_type = options.dup
-        options_without_type.delete(:type) # Ensure no type="module"
+        # Legacy scripts must be delivered without type="module" and with the
+        # "nomodule" attribute so that modern browsers skip execution and avoid
+        # errors like "Cannot use 'import.meta' outside a module".
+        options_for_legacy = options.dup
+        options_for_legacy.delete(:type) # Remove any module type
+        options_for_legacy[:nomodule] = true
+
         # Attach the current request's CSP nonce so that inline scripts are allowed
         nonce_opt = { nonce: content_security_policy_nonce }
-        merged_opts = options_without_type.merge(nonce_opt) { |_k, old, new| old || new }
+        merged_opts = options_for_legacy.merge(nonce_opt) { |_k, old, new| old || new }
         # rubocop:disable Rails/OutputSafety
         tag.script(content.html_safe, **merged_opts)
         # rubocop:enable Rails/OutputSafety
