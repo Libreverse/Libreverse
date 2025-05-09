@@ -50,13 +50,6 @@ Rails.application.configure do
   config.assume_ssl = ssl_enabled
   config.force_ssl  = ssl_enabled
 
-  # Logger Configuration
-  config.logger =
-    ActiveSupport::Logger
-    .new($stdout)
-    .tap { |logger| logger.formatter = ::Logger::Formatter.new }
-    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
-
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
@@ -105,7 +98,4 @@ Rails.application.configure do
                        expire_after: 2.hours,
                        same_site: :strict # Keep security settings
   # ----------------------------------------
-
-  # Action Cable Logging
-  ActionCable.server.config.logger = Logger.new(nil)
 end
