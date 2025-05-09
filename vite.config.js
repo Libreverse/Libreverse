@@ -21,8 +21,10 @@ export default defineConfig(({ mode }) => {
             cache: !isDevelopment,
             cssCodeSplit: false,
             rollupOptions: {
+                input: "app/javascript/application.js",
                 output: {
-                    manualChunks: () => null,
+                    inlineDynamicImports: true,
+                    manualChunks: false,
                     entryFileNames: isDevelopment
                         ? "[name].js"
                         : "[name]-[hash].js",
