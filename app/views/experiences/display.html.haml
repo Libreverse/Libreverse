@@ -1,1 +1,1 @@
-%iframe.experiencedisplay-iframe{allow: "pointer-lock", sandbox: "allow-scripts allow-pointer-lock", srcdoc: "#{@html_content}", title: "Experience: #{@experience.title}"}
+%iframe.experiencedisplay-iframe{allow: "pointer-lock", sandbox: "allow-scripts allow-pointer-lock", srcdoc: @html_content.to_s, title: "Experience: #{@experience.title}"}

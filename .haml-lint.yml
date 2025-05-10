@@ -1,3 +1,7 @@
 linters:
     LineLength:
         enabled: false
+    RuboCop:
+        enabled: false
+    SpaceInsideHashAttributes:
+        enabled: false

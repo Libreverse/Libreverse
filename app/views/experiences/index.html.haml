@@ -8,10 +8,10 @@
         %p.header-description Create and manage your experiences
       - if rodauth.logged_in? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
-          #experiences-tutorial.dashboard-section{"data-dismissible-key-value" => "experiences-tutorial", "data-dismissible-target" => "container"}
+          .dashboard-section#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial", "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
-                %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => "#{svg_icon_data_url('x')}", :width => "16"}/
+                %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
             %h2.section-heading Your Creative Collection
             %p.section-description
               Manage your experiences and create new ones to share with the
@@ -19,7 +19,7 @@
       - if @experiences.any?
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
-      %section#create-experience.experience-form-container.mt-5
+      %section.experience-form-container.mt-5#create-experience
         %h2.experience-form-heading
           Create a New Experience
         %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
