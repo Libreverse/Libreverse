@@ -1,0 +1,16 @@
+- experiences.each do |experience|
+  .sp-experience
+    = link_to display_experience_path(experience), class: "experience-link" do
+      %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
+        %h3{itemprop: "name"}= sanitize experience.title
+        %div{itemprop: "description"}
+          = sanitize simple_format(experience.description)
+        - if experience.author.present?
+          %p.sp-author
+            %span{itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
+              By
+              %span{itemprop: "name"}= sanitize experience.author
+        - if experience.created_at.present?
+          %p.creation-date
+            Created at:
+            \#{experience.created_at.strftime("%B %d, %Y")}

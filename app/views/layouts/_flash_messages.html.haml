@@ -1,0 +1,5 @@
+#toast-container.toast-container{"data-controller" => "toast", "data-toast-auto-hide-delay-value" => "5000", "data-toast-auto-hide-value" => "true", "data-toast-target" => "container"}
+  - if notice
+    = render "layouts/toast", type: "success", title: "Success", message: notice
+  - if alert
+    = render "layouts/toast", type: "error", title: "Alert", message: alert

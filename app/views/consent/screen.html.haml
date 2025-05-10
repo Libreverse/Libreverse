@@ -1,0 +1,28 @@
+.consent-overlay{ "data-controller" => "consent" }
+  .consent-card
+    %h1 Welcome to Libreverse
+    %p
+      To access the app, you must agree to our
+      %a{ href: privacy_policy_path, target: "_blank" } Privacy Policy
+      and
+      = succeed "." do
+        %a{ href: cookie_policy_path, target: "_blank" } Cookie Policy
+    %p
+      We also use an optional "Remember Me" cookie to store your login for
+      30 days.
+    %p.small
+      These policies are in English due to resource constraints. Translations
+      are planned for the future.
+    = form_with url: consent_accept_path, method: :post, local: true, data: { consent_target: "form", turbo: "false" } do |f|
+      .checkbox-row
+        = f.check_box :remember_opt_in, { data: { consent_target: "checkbox" } }, "1", "0"
+        = f.label :remember_opt_in,
+                  "Enable non-essential cookies required to stay logged in across sessions (technically optional but strongly recommended)"
+      .btn-row
+        = f.submit "Agree and Continue", class: "btn-primary"
+    .btn-row
+      = button_to "Decline",
+                  consent_decline_path,
+                  method: :post,
+                  class: "btn-secondary",
+                  data: { turbo: "false" }

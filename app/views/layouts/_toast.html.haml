@@ -1,0 +1,15 @@
+- toast_class_modifier = case type
+- when "success" then "toast-success"
+- when "error"   then "toast-error"
+- when "warning" then "toast-warning"
+- when "alert"   then "toast-error" # Assuming alert maps to error styling
+- else "toast-info" # Default to info styling
+- # Generate a unique ID for this toast
+- toast_id = "toast-#{SecureRandom.hex(4)}"
+%div{"aria-atomic" => "true", "aria-live" => "assertive", :class => "toast #{toast_class_modifier} show", "data-controller" => "toast", "data-toast-timeout-value" => "5000", :id => toast_id, :role => "alert"}
+  .toast-header
+    %strong.me-auto= title
+    %button.toast-close{"aria-label" => "Close", "data-action" => "toast#dismiss", :type => "button"}
+      %img.toast-close-icon{"aria-hidden" => "true", :decoding => "async", :draggable => "false", :fetchpriority => "low", :loading => "lazy", :src => "#{svg_icon_data_url('x')}", :tabindex => "-1"}/
+  .toast-body
+    = message

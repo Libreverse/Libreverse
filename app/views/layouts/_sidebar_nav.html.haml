@@ -1,0 +1,41 @@
+%nav{"aria-expanded" => "#{hover_enabled == 't' ? "true" : "false"}", "aria-label" => "Navigation Sidebar", :class => "sidebar #{'sidebar-hovered' if hover_enabled == 't'}", "data-action" => "mouseenter->sidebar#toggleHover mouseleave->sidebar#toggleHover", "data-controller" => "sidebar", "data-expanded" => "#{hover_enabled == 't' ? "true" : "false"}", "data-hover-enabled" => "#{hover_enabled == 't' ? "true" : "false"}", "data-reflex-root" => "#sidebar-nav-#{sidebar_id}", "data-sidebar-id" => sidebar_id, :id => "sidebar-nav-#{sidebar_id}", :role => "navigation"}
+  .sidebar-contents{"data-reflex-permanent" => ""}
+    - current_path = request.path
+    %a{"aria-label" => "Go to homepage", :class => "sidebar-link #{'sidebar-default-cursor' if current_path == '/'}", "data-action" => "click->link#click", "data-controller" => "link", "data-link-is-current-value" => "#{current_path == '/'}", :href => "/"}
+      = sidebar_icon(                                   |
+          svg_icon_data_url("libreverse-logo"),         |
+          current_path == "/" ? "sidebar-current" : "", |
+        )                                               |
+    %a{"aria-label" => "Go to search page", :class => "sidebar-link #{'sidebar-default-cursor' if current_path == '/search'}", "data-action" => "click->link#click", "data-controller" => "link", "data-link-is-current-value" => "#{current_path == '/search'}", :href => "/search"}
+      = sidebar_icon(                                         |
+          svg_icon_data_url("search"),                        |
+          current_path == "/search" ? "sidebar-current" : "", |
+        )                                                     |
+    / Authentication links
+    - if rodauth.logged_in? && !rodauth.guest_logged_in?
+      %a{"aria-label" => "Go to dashboard", :class => "sidebar-link #{'sidebar-default-cursor' if current_path == dashboard_path}", "data-action" => "click->link#click", "data-controller" => "link", "data-link-is-current-value" => "#{current_path == dashboard_path}", :href => dashboard_path}
+        = sidebar_icon(                                              |
+            svg_icon_data_url("dashboard"),                          |
+            current_path == dashboard_path ? "sidebar-current" : "", |
+          )                                                          |
+      %a{"aria-label" => "Manage experiences", :class => "sidebar-link #{'sidebar-default-cursor' if current_path == experiences_path}", "data-action" => "click->link#click", "data-controller" => "link", "data-link-is-current-value" => "#{current_path == experiences_path}", :href => experiences_path}
+        = sidebar_icon(                                                |
+            svg_icon_data_url("experiences"),                          |
+            current_path == experiences_path ? "sidebar-current" : "", |
+          )                                                            |
+      = button_to rodauth.logout_path,
+        method: :post,
+        class: "sidebar-link sidebar-logout-button",
+        aria: { label: "Sign out" } do
+        = sidebar_icon(svg_icon_data_url("logout"))
+    - else
+      %a{"aria-label" => "Sign in", :class => "sidebar-link #{'sidebar-default-cursor' if current_path == rodauth.login_path}", "data-action" => "click->link#click", "data-controller" => "link", "data-link-is-current-value" => "#{current_path == rodauth.login_path}", :href => "#{rodauth.login_path}"}
+        = sidebar_icon(                                                  |
+            svg_icon_data_url("login"),                                  |
+            current_path == rodauth.login_path ? "sidebar-current" : "", |
+          )                                                              |
+      %a{"aria-label" => "Sign up", :class => "sidebar-link #{'sidebar-default-cursor' if current_path == rodauth.create_account_path}", "data-action" => "click->link#click", "data-controller" => "link", "data-link-is-current-value" => "#{current_path == rodauth.create_account_path}", :href => "#{rodauth.create_account_path}"}
+        = sidebar_icon(                                                           |
+            svg_icon_data_url("signup"),                                          |
+            current_path == rodauth.create_account_path ? "sidebar-current" : "", |
+          )                                                                       |

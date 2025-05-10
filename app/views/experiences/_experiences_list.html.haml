@@ -1,0 +1,26 @@
+- experiences.each do |experience|
+  .sp-experience
+    = link_to display_experience_path(experience), class: "experience-link" do
+      %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
+        %h3{itemprop: "name"}= sanitize experience.title
+        %div{itemprop: "description"}
+          = sanitize simple_format(experience.description)
+        - if experience.author.present?
+          %p.sp-author
+            %span{itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
+              By
+              %span{itemprop: "name"}= sanitize experience.author
+        - if experience.created_at.present?
+          %p.creation-date
+            Created at:
+            \#{experience.created_at.strftime("%B %d, %Y")}
+        - unless experience.approved?
+          %p.status-tag.pending Awaiting approval
+    .experience-actions
+      - if current_account&.admin? && !experience.approved?
+        = button_to approve_experience_path(experience), method: :patch, class: "experience-action-left approve-action" do
+          Approve
+      = link_to edit_experience_path(experience), class: "experience-action-left edit-action" do
+        Edit Details
+      = button_to experience_path(experience), method: :delete, class: "experience-action-right delete-action", form: { data: { turbo_confirm: "Are you sure you want to delete this experience?" } } do
+        Delete

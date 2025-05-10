@@ -1,0 +1,41 @@
+%body
+  = render "layouts/sidebar"
+  = render "layouts/drawer"
+  = render "layouts/leniswrapper" do
+    = render "layouts/navigationshortcutswrapper" do
+      .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => "#{bitmap_image_data_url('images/garage')}", :role => "presentation"}
+        %canvas.raindrop-canvas
+      .hp-centerify
+        %header.hp-main{role: "banner"}
+          %h1.large Libreverse
+          %span.small{"aria-hidden" => "true", :tabindex => "-1"}
+            Libre
+            %br>/
+            verse
+        %section{"aria-labelledby" => "intro-heading"}
+          %h2#intro-heading.hp-secondary
+            Installment number infinity of open source software vs evil trillion
+            dollar company.
+          %section{"aria-labelledby" => "principle-heading"}
+            %h3#principle-heading.hp-sectionheader The principle:
+            %article{"aria-labelledby" => "principle-heading", :itemscope => "", :itemtype => "https://schema.org/Article"}
+              %p.hp-text{itemprop: "description"}
+                On October 28, 2021, Mark Zuckerberg had become the laughing
+                stock of the internet after rebranding Facebook to Meta Platforms
+                as part of his efforts to create an online Metaverse. Three years
+                later, it's looking increasingly like the internet is becoming
+                the laughing stock of Mark Zuckerberg, as the Metaverse grows
+                ever closer to reality.
+              %p.hp-italic-text
+                %a.hp-inline-link{"aria-label" => "Read full article about the Metaverse principle", :href => "https://libreverse.io"} Read more
+                (Article written by Libreverse creator
+                = succeed ")" do
+                  %a.hp-inline-link{href: "https://geor.me/", itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
+                    %span{itemprop: "name"} George Baskerville
+              %meta{content: "2021-10-28", itemprop: "datePublished"}/
+          %section{"aria-labelledby" => "getting-started-heading"}
+            %h3#getting-started-heading.hp-sectionheader How to get started:
+            %p.hp-text
+              Just click this link to search for an experience. The free digital
+              world awaits you.
+            %a.hp-link{"aria-label" => "Search for Libreverse experiences", :href => "/search"} Enter the Libreverse

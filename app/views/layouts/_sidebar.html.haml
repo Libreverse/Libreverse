@@ -1,0 +1,11 @@
+- sidebar_id = local_assigns.fetch(:sidebar_id, "main")
+- hover_enabled = local_assigns.fetch(:hover_enabled, sidebar_hover_enabled?)
+- rodauth_obj = local_assigns.fetch(:rodauth, rodauth)
+- Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, hover_enabled=#{hover_enabled}"
+%aside{:class => "sidebar-container #{'sidebar-hovered' if hover_enabled == 't'}", "data-expanded" => "#{hover_enabled == 't' ? "true" : "false"}", :id => "#{sidebar_id}-sidebar", :role => "complementary"}
+  = render partial: "layouts/sidebar_nav", |
+    locals: {                              |
+      sidebar_id: sidebar_id,              |
+      hover_enabled: hover_enabled,        |
+      rodauth: rodauth_obj,                |
+    }                                      |
