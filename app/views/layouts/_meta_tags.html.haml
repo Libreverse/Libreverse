@@ -1,0 +1,85 @@
+/ Basic HTML metadata
+%meta{charset: "utf-8"}/
+%meta{content: "width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover", name: "viewport"}/
+%meta{content: "#{seo_config('description')}", name: "description"}/
+%meta{content: "#{seo_config('keywords')}", name: "keywords"}/
+%meta{content: "#{seo_config_with_assets('preview_image')}", name: "image"}/
+%meta{content: "#{seo_config('theme_color')}", name: "theme-color"}/
+%meta{content: "all", name: "robots"}/
+%meta{content: "no-referrer-when-downgrade", name: "referrer"}/
+%meta{:content => "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible"}/
+%meta{:content => "#{seo_config('onion_url')}", "http-equiv" => "onion-location"}/
+%title
+  - if content_for?(:title)
+    = yield(:title)
+  - else
+    = seo_config("name")
+%link{href: "#{seo_config('url')}", rel: "canonical"}/
+%link{href: "#{seo_config('homepage')}", rel: "home"}/
+%link{href: "#{seo_config_with_assets('shortcut_icon')}", rel: "shortcut icon", type: "image/x-icon"}/
+%link{href: "#{seo_config_with_assets('apple_touch_icon')}", rel: "apple-touch-icon", type: "image/x-icon"}/
+%link{color: "#{seo_config('mask_icon_color')}", href: "#{seo_config_with_assets('mask_icon')}", rel: "mask-icon", sizes: "any"}/
+/ Schema.org metadata
+%script{type: "application/ld+json"}
+  :cdata
+    {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "#{seo_config('name')}",
+    "url": "#{seo_config('url')}",
+    "description": "#{seo_config('description')}",
+    "applicationCategory": "Communication",
+    "operatingSystem": "All",
+    "image": "#{seo_config('preview_image_url')}",
+    "inLanguage": "#{seo_config('locale')}"
+    }
+/ Open Graph metadata
+%meta{content: "#{seo_config('name')}", property: "og:site_name"}/
+%meta{content: "#{content_for?(:og_title) ? yield(:og_title) : seo_config('page_name')}", property: "og:title"}/
+%meta{content: "website", property: "og:type"}/
+%meta{content: "#{seo_config('url')}", property: "og:url"}/
+%meta{content: "#{seo_config_with_assets('preview_image')}", property: "og:image"}/
+%meta{content: "#{seo_config_with_assets('preview_image')}", property: "og:image:url"}/
+%meta{content: "#{seo_config_with_assets('preview_image')}", property: "og:image:secure_url"}/
+%meta{content: "#{seo_config('preview_image_type')}", property: "og:image:type"}/
+%meta{content: "#{seo_config('preview_image_width')}", property: "og:image:width"}/
+%meta{content: "#{seo_config('preview_image_height')}", property: "og:image:height"}/
+%meta{content: "#{seo_config('preview_image_alt')}", property: "og:image:alt"}/
+%meta{content: "#{seo_config('description')}", property: "og:description"}/
+%meta{content: "#{seo_config('determiner')}", property: "og:determiner"}/
+%meta{content: "#{seo_config('locale')}", property: "og:locale"}/
+/ Facebook-specific metadata
+%meta{content: "https://www.facebook.com/yourpage", property: "article:publisher"}/
+%meta{content: "Libreverse, libreverse, metaverse, open-source, FOSS", property: "article:tag"}/
+%meta{content: "#{seo_config('facebook_admins')}", property: "fb:admins"}/
+%meta{content: "#{seo_config('facebook_app_id')}", property: "fb:app_id"}/
+%meta{content: "#{seo_config('facebook_pages')}", property: "fb:pages"}/
+%meta{content: "#{seo_config('facebook_profile_id')}", property: "fb:profile_id"}/
+/ X/Twitter metadata
+%meta{content: "summary_large_image", name: "twitter:card"}/
+%meta{content: "#{seo_config('domain')}", name: "twitter:domain"}/
+%meta{content: "#{seo_config('twitter_site')}", name: "twitter:site"}/
+%meta{content: "#{seo_config('twitter_creator')}", name: "twitter:creator"}/
+%meta{content: "#{seo_config('name')}", name: "twitter:title"}/
+%meta{content: "#{seo_config('description')}", name: "twitter:description"}/
+%meta{content: "#{seo_config_with_assets('preview_image')}", name: "twitter:image"}/
+%meta{content: "#{seo_config('preview_image_alt')}", name: "twitter:image:alt"}/
+%meta{content: "#{seo_config('url')}", name: "twitter:url"}/
+/ Old windows pin-to-taskbar metadata
+%meta{content: "#{seo_config('windows7_tooltip')}", name: "msapplication-tooltip"}/
+%meta{content: "#{seo_config('windows7_starturl')}", name: "msapplication-starturl"}/
+%meta{content: "#{seo_config('windows7_tooltip')}", name: "msapplication-task"}/
+/ Mobile App Metadata
+%meta{content: "yes", name: "mobile-web-app-capable"}/
+%meta{content: "yes", name: "apple-mobile-web-app-capable"}/
+%meta{content: "#{seo_config('name')}", name: "apple-mobile-web-app-title"}/
+%meta{content: "#{seo_config('theme_color')}", name: "apple-mobile-web-app-status-bar-style"}/
+%meta{content: "#{seo_config('apple_app_store_app')}", name: "apple-itunes-app"}/
+/ Site verification tags
+%meta{content: "#{seo_config('google_site_verification')}", name: "google-site-verification"}/
+%meta{content: "#{seo_config('bing_site_verification')}", name: "msvalidate.01"}/
+%meta{content: "#{seo_config('pinterest_site_verification')}", name: "p:domain_verify"}/
+%meta{content: "#{seo_config('yandex_site_verification')}", name: "yandex-verification"}/
+%meta{content: "#{seo_config('norton_site_verification')}", name: "norton-safeweb-site-verification"}/
+/ Mastodoon and similar fedi metadata
+%link{href: "#{seo_config('mastodon_link')}", rel: "me"}/

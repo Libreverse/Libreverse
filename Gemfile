@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source "https://mirrors.tuna.tsinghua.edu.cn/rubygems"
 
 ruby "3.4.1"
 
@@ -89,6 +89,11 @@ gem "zip_kit"
 # Add the RE2 Ruby gem to enable the RE2-based whitespace compressor middleware
 gem "re2"
 
+# Haml for rendering views
+gem "haml"
+gem "haml-rails"
+gem "html2haml"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
@@ -104,7 +109,10 @@ group :development do
   gem "rubocop-rails"
 
   # Lint ERB files
-  gem "erb_lint"
+  # gem "erb_lint"
+
+  # Lint Haml files
+  gem "haml-lint"
 
   # Use the erb formatter to format ERB files
   gem "erb-formatter"

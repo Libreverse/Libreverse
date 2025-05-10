@@ -1,0 +1,17 @@
+.container.mx-auto.px-4.py-8
+  %h1.text-2xl.font-bold.mb-6 Experiences Pending Approval
+  - if @experiences.any?
+    %ul.space-y-4
+      - @experiences.each do |experience|
+        %li.bg-white.shadow.rounded-lg.p-4.flex.items-center.justify-between
+          %div
+            %h2.text-lg.font-semibold= experience.title
+            %p.text-sm.text-gray-600
+              Author: #{experience.author || "N/A"}
+            %p.text-sm.text-gray-600
+              Submitted by: #{experience.account&.username || "Unknown"} on #{experience.created_at.to_date}
+            = link_to "View", experience_display_path(experience), target: "_blank", class: "text-blue-500 hover:underline text-sm", rel: "noopener"
+          %div
+            = button_to "Approve", approve_admin_experience_path(experience), method: :patch, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+  - else
+    %p.text-gray-700 There are no experiences currently pending approval.

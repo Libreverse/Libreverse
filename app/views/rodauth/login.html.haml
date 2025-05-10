@@ -1,0 +1,22 @@
+= render "layouts/sidebar"
+= render "layouts/drawer"
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    .login-bg{role: "presentation"}
+    / Lamp effect with conical gradients
+    .lamp-effect-wrapper
+      .lamp-effect
+        .lamp-left-beam
+        .lamp-right-beam
+        .lamp-center-glow
+        .lamp-line
+      .login-container
+        .login-card
+          .login-header
+            %h1 Welcome Back
+            %p Sign in to your account
+          != rodauth.login_form_header
+          = render "login_form"
+          .login-footer
+            Don't have an account?
+            %a{href: "#{rodauth.create_account_path}"} Sign up

@@ -1,0 +1,17 @@
+= render "layouts/sidebar"
+= render "layouts/drawer"
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    / Including search styles for experience styling
+    .dashboard-container
+      .dashboard-header-section
+        %h1.display-heading Experience Details
+        %p.header-description Viewing details for an experience
+      = render ExperienceComponent.new(experience: @experience)
+      .dashboard-footer.mt-4
+        .d-flex.justify-content-between.align-items-center
+          %small.text-muted
+            Last updated:
+            \#{@experience.updated_at.strftime("%B %d, %Y at %H:%M")}
+          = link_to search_path(query: @experience.title), class: "btn btn-outline-info btn-sm" do
+            Find similar experiences

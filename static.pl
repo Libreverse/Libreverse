@@ -117,9 +117,7 @@ push @sequential_status, $prettier_status;
 
 # Run other sequential commands
 run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
-run_command("erb_lint",     "bundle", "exec", "erb_lint", "--lint-all", "--format", "compact", "--autocorrect");
-# erb-format needs shell globbing - use system with single string or File::Glob
-run_command("erb-formatter","sh", "-c", "erb-format app/views/**/*.html.erb --write");
+
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 # Stylelint needs shell globbing
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
