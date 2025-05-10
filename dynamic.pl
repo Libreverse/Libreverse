@@ -1,1 +1,0 @@
-# Here will go the code that builds the site and the runs nikto and lighthouse.
