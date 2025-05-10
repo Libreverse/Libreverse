@@ -28,7 +28,19 @@ module EmojiHelper
       next unless node.text? && node.content.present?
       next if node.ancestors.any? { |ancestor| %w[code pre].include?(ancestor.name) }
 
-      node.content = Emoji::Renderer.replace(node.content)
+      # Original content for comparison
+      original_content = node.content
+      # Replace emojis. This returns an HTML string for the image tag.
+      replaced_html_string = Emoji::Renderer.replace(original_content)
+
+      # If the content was changed (i.e., an emoji was replaced)
+      if replaced_html_string != original_content
+        # Parse the HTML string into a Nokogiri fragment
+        # and replace the original text node with this fragment.
+        # This ensures the HTML is treated as markup, not as literal text.
+        fragment = Nokogiri::HTML.fragment(replaced_html_string)
+        node.replace(fragment)
+      end
     end
 
     output = doc.to_html

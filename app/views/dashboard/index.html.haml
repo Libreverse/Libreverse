@@ -10,10 +10,10 @@
           \#{@account.username}
       - if rodauth.logged_in? && !tutorial_dismissed?("dashboard-tutorial")
         %div{"data-controller" => "dismissible"}
-          #dashboard-tutorial.dashboard-section{"data-dismissible-key-value" => "dashboard-tutorial", "data-dismissible-target" => "container"}
+          .dashboard-section#dashboard-tutorial{"data-dismissible-key-value" => "dashboard-tutorial", "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
-                %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => "#{svg_icon_data_url('x')}", :width => "16"}/
+                %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
             %h2.section-heading Your Account
             %p.section-description
               You are logged in to your account dashboard. Manage your account

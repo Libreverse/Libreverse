@@ -9,7 +9,7 @@
         - else
           Attribution
       %button.drawer-toggle{"aria-controls" => "drawer-content-#{drawer_id}", "aria-expanded" => expanded, "aria-label" => "Toggle drawer", "data-action" => "drawer#toggle", "data-reflex-root" => "##{drawer_id}-drawer, body", :type => "button"}
-        %img{:alt => "Toggle drawer", :class => "drawer-icons #{'rotated' if expanded}", "data-drawer-target" => "icon", :decoding => "async", :draggable => "false", :fetchpriority => "low", :loading => "lazy", :src => "#{svg_icon_data_url('chevron-up')}"}
+        %img{:alt => "Toggle drawer", :class => "drawer-icons #{'rotated' if expanded}", "data-drawer-target" => "icon", :decoding => "async", :draggable => "false", :fetchpriority => "low", :loading => "lazy", :src => svg_icon_data_url("chevron-up").to_s}
     .drawer-contents{"data-drawer-target" => "content", :id => "drawer-content-#{drawer_id}"}
       .drawer-content-container
         .drawer-content

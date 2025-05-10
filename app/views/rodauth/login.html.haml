@@ -19,4 +19,4 @@
           = render "login_form"
           .login-footer
             Don't have an account?
-            %a{href: "#{rodauth.create_account_path}"} Sign up
+            %a{href: rodauth.create_account_path.to_s} Sign up

@@ -3,12 +3,8 @@
   = render "layouts/drawer"
   = render "layouts/leniswrapper" do
     = render "layouts/navigationshortcutswrapper" do
-      .sp-bg
-        role="presentation"
-        data-controller="raindrop"
-        data-raindrop-background-url-value="#{bitmap_image_data_url("images/brasserie")}"
-        \&gt;
-        %iframe.raindrop-iframe{:allowtransparency => "true", "data-raindrop-target" => "iframe", :scrolling => "no", :title => "Background Effect Container"}
+      .sp-bg{role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": bitmap_image_data_url("images/brasserie")}}
+        %iframe.raindrop-iframe{allowtransparency: "true", "data-raindrop-target": "iframe", scrolling: "no", title: "Background Effect Container"}
       .sp-centerify
         %header.sp-main{role: "banner"}
           %h1.large Search Experiences
@@ -19,16 +15,16 @@
         %main
           - unless tutorial_dismissed?("search-tutorial")
             %div{"data-controller" => "dismissible"}
-              #search-tutorial.search-tutorial{"data-dismissible-key-value" => "search-tutorial", "data-dismissible-target" => "container"}
+              .search-tutorial#search-tutorial{"data-dismissible-key-value" => "search-tutorial", "data-dismissible-target" => "container"}
                 .tutorial-dismiss
                   %button.dismiss-button{"data-action" => "dismissible#dismiss"}
-                    %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => "#{svg_icon_data_url('x')}", :width => "16"}/
+                    %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
                 %h2.tutorial-heading Search Guide
                 %p.tutorial-description
                   Type keywords to find experiences in the Libreverse. Results
                   will appear as you type.
           %section{"aria-labelledby" => "search-heading"}
             .sp-search-bar
-              %input#search.sp-search-bar-input{"aria-label" => "Search Experiences", :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => "Search for an experience", :type => "text", :value => "#{params[:query]}"}/
-            #experiences_list.sp-experiences-list
+              %input.sp-search-bar-input#search{"aria-label" => "Search Experiences", :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => "Search for an experience", :type => "text", :value => params[:query].to_s}/
+            .sp-experiences-list#experiences-list
               = render partial: "search/experiences_list", locals: { experiences: @experiences }

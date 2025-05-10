@@ -3,7 +3,7 @@
   = render "layouts/drawer"
   = render "layouts/leniswrapper" do
     = render "layouts/navigationshortcutswrapper" do
-      .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => "#{bitmap_image_data_url('images/garage')}", :role => "presentation"}
+      .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => bitmap_image_data_url("images/garage").to_s, :role => "presentation"}
         %canvas.raindrop-canvas
       .hp-centerify
         %header.hp-main{role: "banner"}
@@ -13,11 +13,11 @@
             %br>/
             verse
         %section{"aria-labelledby" => "intro-heading"}
-          %h2#intro-heading.hp-secondary
+          %h2.hp-secondary#intro-heading
             Installment number infinity of open source software vs evil trillion
             dollar company.
           %section{"aria-labelledby" => "principle-heading"}
-            %h3#principle-heading.hp-sectionheader The principle:
+            %h3.hp-sectionheader#principle-heading The principle:
             %article{"aria-labelledby" => "principle-heading", :itemscope => "", :itemtype => "https://schema.org/Article"}
               %p.hp-text{itemprop: "description"}
                 On October 28, 2021, Mark Zuckerberg had become the laughing
@@ -34,7 +34,7 @@
                     %span{itemprop: "name"} George Baskerville
               %meta{content: "2021-10-28", itemprop: "datePublished"}/
           %section{"aria-labelledby" => "getting-started-heading"}
-            %h3#getting-started-heading.hp-sectionheader How to get started:
+            %h3.hp-sectionheader#getting-started-heading How to get started:
             %p.hp-text
               Just click this link to search for an experience. The free digital
               world awaits you.

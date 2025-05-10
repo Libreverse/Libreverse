@@ -117,7 +117,7 @@ push @sequential_status, $prettier_status;
 
 # Run other sequential commands
 run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
-
+run_command("haml-lint",    "bundle", "exec", "haml-lint", "-a", "app/views/");
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 # Stylelint needs shell globbing
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");

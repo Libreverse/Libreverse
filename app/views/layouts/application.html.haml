@@ -2,9 +2,9 @@
 %html{dir: "ltr", lang: "en-GB"}
   %head
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
-    %link{as: "font", crossorigin: "", href: "#{vite_asset_path '~/fonts/Lazer84.woff2'}", rel: "preload", type: "font/woff2"}/
-    %link{as: "font", crossorigin: "", href: "#{vite_asset_path '~/fonts/Hack-Regular.woff2'}", rel: "preload", type: "font/woff2"}/
-    %link{as: "font", crossorigin: "", href: "#{vite_asset_path '~/fonts/Hack-Italic.woff2'}", rel: "preload", type: "font/woff2"}/
+    %link{as: "font", crossorigin: "", href: vite_asset_path("~/fonts/Lazer84.woff2").to_s, rel: "preload", type: "font/woff2"}/
+    %link{as: "font", crossorigin: "", href: vite_asset_path("~/fonts/Hack-Regular.woff2").to_s, rel: "preload", type: "font/woff2"}/
+    %link{as: "font", crossorigin: "", href: vite_asset_path("~/fonts/Hack-Italic.woff2").to_s, rel: "preload", type: "font/woff2"}/
     - if Rails.env.development?
       = vite_stylesheet_tag "javascript/application.js"
       = vite_javascript_tag "javascript/application.js"

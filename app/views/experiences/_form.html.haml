@@ -3,7 +3,7 @@
   \/Users/george/code/Libreverse/app/views/experiences/_form.html.erb
 = form_with(model: experience, local: true, class: "experience-form") do |form|
   - if experience.errors.any?
-    #error_explanation.alert.alert-danger
+    .alert.alert-danger#error-explanation
       .d-flex.align-items-center.mb-2
         %h3.h6.mb-0
           = pluralize(experience.errors.count, "error")
@@ -20,10 +20,9 @@
   .form-group
     = form.label :description, class: "form-label"
     .input-group
-      = form.text_area :description, |
-                       class: "form-textarea", |
-                       placeholder: |
-                       "Describe your experience in detail. What makes it special?" |
+      = form.text_area :description,
+                       class: "form-textarea",
+                       placeholder: "Describe your experience in detail. What makes it special?"
     .form-text.text-muted
       Rich descriptions help others better understand your experience.
   .form-group
