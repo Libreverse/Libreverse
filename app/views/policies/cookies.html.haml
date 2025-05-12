@@ -1,10 +1,7 @@
-%h1 Cookie Policy
+%h1= t('.title')
 = PoliciesController::DISCLAIMER
-%p
-  Libreverse uses strictly necessary cookies for session security
-  ("_libreverse_session") and an optional remember‑me cookie ("remember_*")
-  which persists your login for 30 days.
-%p The remember‑me cookie is only set if you enable it on the consent screen.
+%p= t('.intro_html').html_safe
+%p The remember-me cookie is only set if you enable it on the consent screen.
 %h2 Cookie Details
 %table.cookie-table
   %thead
@@ -30,10 +27,6 @@
       %td 1 year
       %td First-party
 %h2 Your Choices
+%p= t('.manage_cookies')
 %p
-  You can manage cookies through your browser settings. However, disabling
-  strictly necessary cookies will prevent the site from functioning properly.
-%p
-  You can adjust your consent preferences at any time by visiting the
-  = succeed "." do
-    %a{href: "/consent"} consent page
+  = t('.adjust_preferences_html', consent_link: link_to(t('.consent_page'), '/consent')).html_safe

@@ -29,3 +29,142 @@
 
 en:
     hello: "Hello world"
+    policies:
+        privacy_policy: "Privacy Policy"
+        cookie_policy: "Cookie Policy"
+        view_privacy_policy: "View Privacy Policy"
+        view_cookie_policy: "View Cookie Policy"
+        cookies:
+            title: "Cookie Policy"
+            intro_html: 'Libreverse uses strictly necessary cookies for session security ("_libreverse_session") and an optional remember-me cookie ("remember_*") which persists your login for 30 days.'
+            manage_cookies: "You can manage cookies through your browser settings. However, disabling strictly necessary cookies will prevent the site from functioning properly."
+            adjust_preferences_html: "You can adjust your consent preferences at any time by visiting the %{consent_link}."
+            consent_page: "consent page"
+        privacy:
+            note_label: "Note:"
+            machine_readable: "A machine-readable"
+            endpoint_available_at: "endpoint is available at"
+            compliance_discovery: "for compliance and automated discovery."
+            data_storage_description: 'Libreverse stores only the data necessary to operate the service: account credentials, optional preferences, and any content you upload ("experiences"). We never sell your data and we do not use third-party trackers or analytics.'
+            lawful_basis_description: "Your data is processed on the basis of contract (to provide the service) and, where applicable, consent (optional cookies)."
+            rights_tools_info: "There are tools given in the account dashboard to exercise your rights where applicable."
+    consent:
+        screen:
+            title: "Welcome to Libreverse"
+            access_message_html: "To access the app, you must agree to our %{privacy_policy_link} and %{cookie_policy_link}."
+            remember_info_html: "We also use an optional 'Remember Me' cookie to store your login for 30 days."
+            english_only_notice: "These policies are in English due to resource constraints. Translations are planned for the future."
+            remember_opt_in_label: "Enable non-essential cookies required to stay logged in across sessions (technically optional but strongly recommended)"
+            agree_and_continue: "Agree and Continue"
+            decline: "Decline"
+    dashboard:
+        index:
+            title: "Dashboard"
+            welcome: "Welcome,"
+            tutorial_heading: "Your Account"
+            tutorial_description: "You are logged in to your account dashboard. Manage your account settings from here."
+            account_information_title: "Account Information"
+            account_actions_title: "Account Actions"
+            compliance_options_title: "Compliance Options"
+            change_password: "Change Password"
+            edit_profile: "Edit Profile"
+            account_settings: "Account Settings"
+            sign_out: "Sign Out"
+            review_consent: "Review Consent"
+            export_data: "Export Data"
+            delete_account: "Delete Account"
+
+    experiences:
+        experiences_list:
+            by: "By"
+            created_at: "Created at:"
+            awaiting_approval: "Awaiting approval"
+            approve: "Approve"
+            edit_details: "Edit Details"
+            delete: "Delete"
+        form:
+            errors_prohibited: "prohibited this experience from being saved:"
+            rich_description_help: "Rich descriptions help others better understand your experience."
+            upload_single_html_help: "Upload the single HTML file for your experience."
+            current_file: "Current file:"
+            replace_file: "(Replace by uploading a new file)"
+        edit:
+            title: "Edit Experience"
+            subtitle: "Make changes to your experience"
+            refining: 'Refining "%{title}"'
+            instructions: "Make changes to your experience below and save when you're ready."
+            view_current_experience: "View Current Experience"
+            back_to_experiences: "Back to Experiences"
+            created_and_updated_html: "This experience was created on %{created_date} and last updated %{updated_ago} ago."
+        index:
+            title: "My Experiences"
+            subtitle: "Create and manage your experiences"
+            tutorial_heading: "Your Creative Collection"
+            tutorial_description: "Manage your experiences and create new ones to share with the Libreverse community."
+            create_new_heading: "Create a New Experience"
+        new:
+            title: "New Experience"
+            back: "Back"
+        show:
+            title: "Experience Details"
+            subtitle: "Viewing details for an experience"
+            last_updated: "Last updated:"
+            find_similar: "Find similar experiences"
+
+    homepage:
+        index:
+            brand: "Libreverse"
+            libre_word: "Libre"
+            verse_word: "verse"
+            tagline: "Installment number infinity of open source software vs evil trillion dollar company."
+            article_excerpt: "On October 28, 2021, Mark Zuckerberg had become the laughing stock of the internet after rebranding Facebook to Meta Platforms as part of his efforts to create an online Metaverse. Three years later, it's looking increasingly like the internet is becoming the laughing stock of Mark Zuckerberg, as the Metaverse grows ever closer to reality."
+            read_full_article: "Read more"
+            read_full_article_aria: "Read full article about the Metaverse principle"
+            search_prompt: "Just click this link to search for an experience. The free digital world awaits you."
+            search_link: "Enter the Libreverse"
+            search_link_aria: "Search for Libreverse experiences"
+            article_written_by: "Article written by Libreverse creator"
+
+    layouts:
+        drawer:
+            attribution: "Attribution"
+        default_drawer:
+            intro_html: "At Libreverse, we ❤️ projects under open licenses and want to give credit to the projects that made libreverse possible. Currently, this only includes projects where attribution is a license requirement, but we have plans to expand it in the future."
+            libreverse_twemoji: "Libreverse-Twemoji"
+            modified_from: "which is modified from"
+            by: "by"
+            licensed_under: "licensed under"
+        application:
+            alpha_notice_html: "⚠️👨‍🔧 This is the v1 alpha release of Libreverse. Expect bad code, crashes, performance issues and downtime. 👨‍🔧⚠️"
+            noscript_heading: "JavaScript Required"
+            noscript_message: "This application requires JavaScript to function properly. Please enable JavaScript in your browser settings and refresh the page."
+
+    rodauth:
+        create_account:
+            footer_have_account: "Already have an account?"
+            sign_in: "Sign in"
+        login:
+            footer_no_account: "Don't have an account?"
+            sign_up: "Sign up"
+        multi_phase_login:
+            footer_need_help: "Need help?"
+            return_to_login: "Return to login"
+
+    search:
+        index:
+            title: "Search Experiences"
+            search_word: "Search"
+            experiences_word: "Experiences"
+            tutorial_heading: "Search Guide"
+            tutorial_description: "Type keywords to find experiences in the Libreverse. Results will appear as you type."
+            search_placeholder: "Search for an experience"
+            input_aria_label: "Search Experiences"
+
+    terms:
+        index:
+            intro: "Libreverse is a personal, non-commercial open-source project. By using this platform, you agree to:"
+            risk_clause: "Use at your own risk. We provide no warranties for performance or availability."
+            bullet_two: "Not misuse accounts or upload illegal content."
+            bullet_three: "Respect open-source licenses (e.g., CC-BY-4.0 for Libreverse-Twemoji)."
+            governing_law: "Governing law: UK."
+            title: "Libreverse Terms of Service"

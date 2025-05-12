@@ -1,3 +1,6 @@
+require:
+    - ./lib/haml_lint/linter/hardcoded_string_linter.rb
+
 linters:
     LineLength:
         enabled: false
@@ -5,3 +8,8 @@ linters:
         enabled: false
     SpaceInsideHashAttributes:
         enabled: false
+    HardcodedStringLinter:
+        enabled: true
+        excluded_attributes: ["class", "id", "data-test"]
+        autocorrect: true
+        i18n_load_path: "config/locales/en.yml"

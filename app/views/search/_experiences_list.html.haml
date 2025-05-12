@@ -8,9 +8,9 @@
         - if experience.author.present?
           %p.sp-author
             %span{itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
-              By
+              = t('experiences.experiences_list.by')
               %span{itemprop: "name"}= sanitize experience.author
         - if experience.created_at.present?
           %p.creation-date
-            Created at:
+            = t('experiences.experiences_list.created_at')
             \#{experience.created_at.strftime("%B %d, %Y")}

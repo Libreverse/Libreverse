@@ -63,5 +63,5 @@
                                   rodauth.field_error(rodauth.password_confirm_param),
                                   class: "login-invalid-feedback"
           .login-footer
-            Already have an account?
-            %a{ href: rodauth.login_path.to_s } Sign in
+            = t('rodauth.create_account.footer_have_account')
+            %a{ href: rodauth.login_path.to_s }= t('rodauth.create_account.sign_in')

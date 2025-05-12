@@ -1,5 +1,4 @@
-/
-  filepath: /Users/george/code/Libreverse/app/views/experiences/new.html.erb
-%h1 New Experience
+-# file: experiences/new.html.haml
+%h1= t('.title')
 = render "form", experience: @experience
-= link_to "Back", experiences_path
+= link_to t('.back'), experiences_path
