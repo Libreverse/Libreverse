@@ -19,5 +19,5 @@
           != rodauth.render_multi_phase_login_forms
           != rodauth.login_form_footer
           .login-footer
-            Need help?
-            %a{href: rodauth.login_path.to_s} Return to login
+            = t('rodauth.multi_phase_login.footer_need_help')
+            %a{href: rodauth.login_path.to_s}= t('rodauth.multi_phase_login.return_to_login')

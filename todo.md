@@ -1,12 +1,12 @@
 # Todo List
 
-1. □ **Add CSRF + same-site tests**
+1. □ **Add rodauth-i18n by Janko and add i18n support generally**
+   use httparty everywhere we use net/http and also keep the re2 usage rule up to date
 2. □ **Add social logins for Facebook, X, Apple, and Google**
-3. □ **Add rodauth-i18n by Janko and add i18n support generally**
-4. □ **Imprint for EU**
-5. □ **Enable all Haml lint checks**
-6. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic with instance data**
-7. □ **Implement federated authentication for metaverse instances**
+3. □ **Imprint for EU**
+4. □ **Enable all Haml lint checks**
+5. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic with instance data**
+6. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
         - □ Add `gem 'rodauth-oauth'` to the Gemfile

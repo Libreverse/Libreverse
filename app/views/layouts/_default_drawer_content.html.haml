@@ -1,14 +1,10 @@
-%p
-  At Libreverse, we ❤️ projects under open licenses and want to give credit to
-  the projects that made libreverse possible. Currently, this only includes
-  projects where attribution is a license requirement, but we have plans to
-  expand it in the future.
+%p= t('layouts.default_drawer.intro_html').html_safe
 %ul
   %li
-    %a.drawer-link{href: "https://github.com/twitter/twemoji?tab=readme-ov-file"} Libreverse-Twemoji
-    which is modified from
+    %a.drawer-link{href: "https://github.com/twitter/twemoji?tab=readme-ov-file"}= t('layouts.default_drawer.libreverse_twemoji')
+    = t('layouts.default_drawer.modified_from')
     %a.drawer-link{href: "https://github.com/twitter/twemoji?tab=readme-ov-file"} Twemoji
-    by
+    = t('layouts.default_drawer.by')
     %a.drawer-link{href: "https://x.com"} X Corp
-    licensed under
+    = t('layouts.default_drawer.licensed_under')
     %a.drawer-link{href: "https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS"} CC-BY-4.0

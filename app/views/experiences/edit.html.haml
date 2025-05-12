@@ -5,23 +5,21 @@
     / Including search styles for experience styling
     .dashboard-container
       .dashboard-header-section
-        %h1.display-heading Edit Experience
-        %p.header-description Make changes to your experience
+        %h1.display-heading= t('.title')
+        %p.header-description= t('.subtitle')
       .dashboard-section.welcome-section.mb-4
         %h2.h4.mb-2
-          Refining "#{@experience.title}"
-        %p.text-muted.mb-0 Make changes to your experience below and save when you're ready.
+          = t('.refining', title: @experience.title)
+        %p.text-muted.mb-0= t('.instructions')
       .experience-form-container
         = render "form", experience: @experience
       .actions-section.mt-4.d-flex.justify-content-between
         = link_to display_experience_path(@experience), class: "btn btn-outline-primary" do
-          View Current Experience
+          = t('.view_current_experience')
         = link_to experiences_path, class: "btn btn-outline-secondary" do
-          Back to Experiences
+          = t('.back_to_experiences')
       .dashboard-footer.mt-4
         %small.text-muted
-          This experience was created on
-          \#{@experience.created_at.strftime("%B %d, %Y")}
-          and last updated
-          \#{time_ago_in_words(@experience.updated_at)}
-          ago.
+          = sanitize(t('.created_and_updated_html',
+                       created_date: @experience.created_at.strftime("%B %d, %Y"),
+                       updated_ago:  time_ago_in_words(@experience.updated_at)))

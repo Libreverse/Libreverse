@@ -7,11 +7,11 @@
         %iframe.raindrop-iframe{allowtransparency: "true", "data-raindrop-target": "iframe", scrolling: "no", title: "Background Effect Container"}
       .sp-centerify
         %header.sp-main{role: "banner"}
-          %h1.large Search Experiences
+          %h1.large= t('search.index.title')
           %span.small{"aria-hidden" => "true", :tabindex => "-1"}
-            Search
+            = t('search.index.search_word')
             %br>/
-            Experiences
+            = t('search.index.experiences_word')
         %main
           - unless tutorial_dismissed?("search-tutorial")
             %div{"data-controller" => "dismissible"}
@@ -19,12 +19,10 @@
                 .tutorial-dismiss
                   %button.dismiss-button{"data-action" => "dismissible#dismiss"}
                     %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
-                %h2.tutorial-heading Search Guide
-                %p.tutorial-description
-                  Type keywords to find experiences in the Libreverse. Results
-                  will appear as you type.
+                %h2.tutorial-heading= t('search.index.tutorial_heading')
+                %p.tutorial-description= t('search.index.tutorial_description')
           %section{"aria-labelledby" => "search-heading"}
             .sp-search-bar
-              %input.sp-search-bar-input#search{"aria-label" => "Search Experiences", :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => "Search for an experience", :type => "text", :value => params[:query].to_s}/
+              %input.sp-search-bar-input#search{"aria-label" => t('search.index.input_aria_label'), :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => t('search.index.search_placeholder'), :type => "text", :value => params[:query].to_s}/
             .sp-experiences-list#experiences-list
               = render partial: "search/experiences_list", locals: { experiences: @experiences }

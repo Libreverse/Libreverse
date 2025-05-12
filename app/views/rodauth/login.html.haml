@@ -18,5 +18,5 @@
           != rodauth.login_form_header
           = render "login_form"
           .login-footer
-            Don't have an account?
-            %a{href: rodauth.create_account_path.to_s} Sign up
+            = t('rodauth.login.footer_no_account')
+            %a{href: rodauth.create_account_path.to_s}= t('rodauth.login.sign_up')

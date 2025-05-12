@@ -117,7 +117,7 @@ push @sequential_status, $prettier_status;
 
 # Run other sequential commands
 run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
-run_command("haml-lint",    "bundle", "exec", "haml-lint", "-a", "app/views/");
+run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 # Stylelint needs shell globbing
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
@@ -131,6 +131,7 @@ run_command("bun update", "bun", "update");
 # Dependency analysis (Ruby and Node)
 run_command("bundle-audit", "bundle-audit", "check", "--update");
 run_command("npm audit", "sh", "-c", "npm i --package-lock-only --legacy-peer-deps && npm audit fix --production --legacy-peer-deps && bun install > /dev/null 2>&1; rm -f package-lock.json");
+run_command("unlock_test_sqlite", "sh", "-c", "./scripts/unlock_sqlite_test.sh");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1); # Auto-cleanup

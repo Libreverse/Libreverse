@@ -4,9 +4,10 @@
   = render "layouts/navigationshortcutswrapper" do
     .dashboard-container
       .dashboard-header-section
-        %h1.display-heading Dashboard
+        %h1.display-heading= t('.title')
         %p.header-description
-          Welcome,
+          = t('.welcome')
+          \
           \#{@account.username}
       - if rodauth.logged_in? && !tutorial_dismissed?("dashboard-tutorial")
         %div{"data-controller" => "dismissible"}
@@ -14,11 +15,9 @@
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
                 %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
-            %h2.section-heading Your Account
-            %p.section-description
-              You are logged in to your account dashboard. Manage your account
-              settings from here.
-      %h3.section-title Account Information
+            %h2.section-heading= t('.tutorial_heading')
+            %p.section-description= t('.tutorial_description')
+      %h3.section-title= t('.account_information_title')
       .info-card
         .info-grid
           .info-item
@@ -39,55 +38,55 @@
           .info-item
             .info-label PASSWORD STRENGTH
             .info-value= @password_strength[:level].capitalize
-      %h3.section-title Account Actions
+      %h3.section-title= t('.account_actions_title')
       .info-card
         .info-grid
           .info-item
             .info-label PASSWORD
             .info-value
               = link_to "/change-password", class: "info-link" do
-                Change Password
+                = t('.change_password')
           .info-item
             .info-label PROFILE
             .info-value
               = link_to "/profile", class: "info-link" do
-                Edit Profile
+                = t('.edit_profile')
           .info-item
             .info-label ACCOUNT
             .info-value
               = link_to "/account-settings", class: "info-link" do
-                Account Settings
+                = t('.account_settings')
           .info-item
             .info-label SESSION
             .info-value
               = button_to rodauth.logout_path, method: :post, class: "info-button" do
-                Sign Out
-      %h3.section-title Compliance Options
+                = t('.sign_out')
+      %h3.section-title= t('.compliance_options_title')
       .info-card
         .info-grid
           .info-item
             .info-label PRIVACY POLICY
             .info-value
               = link_to privacy_policy_path, class: "info-link" do
-                View Privacy Policy
+                = t('policies.view_privacy_policy')
           .info-item
             .info-label COOKIE POLICY
             .info-value
               = link_to cookie_policy_path, class: "info-link" do
-                View Cookie Policy
+                = t('policies.view_cookie_policy')
           .info-item
             .info-label REVIEW CONSENT
             .info-value
               = link_to "/consent", class: "info-link" do
-                Review Consent
+                = t('.review_consent')
           .info-item
             .info-label EXPORT DATA
             .info-value
               = link_to account_export_path, class: "info-link" do
-                Export Data
+                = t('.export_data')
           .info-item
             .info-label DELETE ACCOUNT
             .info-value
               = button_to account_destroy_path, method: :delete, class: "info-button", data: { turbo_confirm: "Are you sure? This cannot be undone." } do
-                Delete Account
+                = t('.delete_account')
           .info-item

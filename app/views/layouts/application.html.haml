@@ -14,24 +14,18 @@
       = inline_vite_legacy_javascript "~/javascript/application.js"
     = render "layouts/development_headers" if Rails.env.development?
     = render "layouts/meta_tags"
-    /
-      Some decently important security stuff, just matters that it's present,
-      so we don't need to bother search engines by putting it at the top
+    -# security tags placeholder
     = csrf_meta_tags
     / Vite HMR in development. Does not result in anything in prod
     = vite_client_tag
   %body
     .underconstruction
-      %span
-        ⚠️👨‍🔧 This is the v1 alpha release of Libreverse. Expect bad code,
-        crashes, performance issues and downtime. 👨‍🔧⚠️
+      %span= t('layouts.application.alpha_notice_html').html_safe
     %noscript
       .noscript-message
         .noscript-message__content
-          %h1.noscript-message__heading JavaScript Required
-          %p.noscript-message__text
-            This application requires JavaScript to function properly. Please
-            enable JavaScript in your browser settings and refresh the page.
+          %h1.noscript-message__heading= t('layouts.application.noscript_heading')
+          %p.noscript-message__text= t('layouts.application.noscript_message')
     = render "layouts/flash_messages"
     #toast-container
     %main.content-wrapper

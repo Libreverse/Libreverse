@@ -4,23 +4,20 @@
   = render "layouts/navigationshortcutswrapper" do
     .dashboard-container
       .dashboard-header-section
-        %h1.display-heading My Experiences
-        %p.header-description Create and manage your experiences
+        %h1.display-heading= t('.title')
+        %p.header-description= t('.subtitle')
       - if rodauth.logged_in? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
           .dashboard-section#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial", "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
                 %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
-            %h2.section-heading Your Creative Collection
-            %p.section-description
-              Manage your experiences and create new ones to share with the
-              Libreverse community.
+            %h2.section-heading= t('.tutorial_heading')
+            %p.section-description= t('.tutorial_description')
       - if @experiences.any?
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
       %section.experience-form-container.mt-5#create-experience
-        %h2.experience-form-heading
-          Create a New Experience
+        %h2.experience-form-heading= t('.create_new_heading')
         %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
         = render "form", experience: @experience
