@@ -12,10 +12,12 @@ module ActionCable
         original_initialize(env, event_target, event_loop, protocols)
         deflate = PermessageDeflate.configure(
           level: Zlib::BEST_COMPRESSION,
+          mem_level: Zlib::MAX_MEM_LEVEL,
+          strategy: Zlib::DEFAULT_STRATEGY,
+          no_context_takeover: false,
+          request_no_context_takeover: false,
           max_window_bits: 15,
-          mem_level: 9,
-          no_context_takeover: true,
-          strategy: Zlib::FILTERED
+          request_max_window_bits: 15
         )
         @driver.add_extension(deflate)
       rescue StandardError => e
