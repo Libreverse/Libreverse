@@ -67,5 +67,9 @@ module LibreverseInstance
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
+
+    # I18n configuration
+    config.i18n.default_locale = :en
+    config.i18n.available_locales = [ :en ]
   end
 end

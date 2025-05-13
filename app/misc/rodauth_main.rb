@@ -14,7 +14,8 @@ class RodauthMain < Rodauth::Rails::Auth
            :close_account,
            :argon2, :pwned_password,
            :guest, # anonymous auth
-           :internal_request
+           :internal_request,
+           :i18n
 
     rails_account_model AccountSequel
 
