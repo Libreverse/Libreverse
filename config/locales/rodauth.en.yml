@@ -1,0 +1,55 @@
+en:
+    rodauth:
+        already_an_account_with_this_login_message: already an account with this login
+        change_login_button: Change Login
+        change_login_error_flash: There was an error changing your login
+        change_login_notice_flash: Your login has been changed
+        change_login_page_title: Change Login
+        change_password_button: Change Password
+        change_password_error_flash: There was an error changing your password
+        change_password_notice_flash: Your password has been changed
+        change_password_page_title: Change Password
+        close_account_button: Close Account
+        close_account_error_flash: There was an error closing your account
+        close_account_notice_flash: Your account has been closed
+        close_account_page_title: Close Account
+        contains_null_byte_message: contains null byte
+        create_account_button: Create Account
+        create_account_error_flash: There was an error creating your account
+        create_account_link_text: Create a New Account
+        create_account_notice_flash: Your account has been created
+        create_account_page_title: Create Account
+        input_field_label_suffix: ""
+        invalid_password_message: invalid password
+        login_button: Login
+        login_confirm_label: Confirm %{login_label}
+        login_error_flash: There was an error logging in
+        login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Other Options</h2>
+        login_label: Login
+        login_not_valid_email_message: not a valid email address
+        login_notice_flash: You have been logged in
+        login_page_title: Login
+        logins_do_not_match_message: logins do not match
+        logout_button: Logout
+        logout_notice_flash: You have been logged out
+        logout_page_title: Logout
+        multi_phase_login_page_title: Login
+        need_password_notice_flash: Login recognized, please enter your password
+        new_password_label: New Password
+        no_matching_login_message: no matching login
+        password_confirm_label: Confirm %{password_label}
+        password_label: Password
+        password_pwned_message: this password has previously appeared in a data breach and should never be used
+        passwords_do_not_match_message: passwords do not match
+        remember_button: Change Remember Setting
+        remember_disable_label: Disable Remember Me
+        remember_error_flash: There was an error updating your remember setting
+        remember_forget_label: Forget Me
+        remember_notice_flash: Your remember setting has been updated
+        remember_page_title: Change Remember Setting
+        remember_remember_label: Remember Me
+        require_login_error_flash: Please login to continue
+        same_as_current_login_message: same as current login
+        same_as_existing_password_message: invalid password, same as current password
+        strftime_format: "%F %T"
+        unverified_account_message: unverified account, please verify account before logging in

@@ -32,6 +32,7 @@ gem "stimulus_reflex"
 # Rodauth Rails integration for authentication
 gem "argon2"
 gem "rodauth-guest"
+gem "rodauth-i18n"
 gem "rodauth-pwned"
 gem "rodauth-rails"
 gem "sequel-activerecord_connection"
