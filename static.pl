@@ -20,6 +20,9 @@ my @pids;
 
 print "Running static analysis tasks...\n";
 
+# --- YAML Linting ---
+run_command("YAML Lint", "bunx", "yaml-lint", "config/locales/**/*.yml");
+
 # --- Sequential Tasks --- Function to run and check command
 sub run_command {
     my ($tool_name, @cmd) = @_;

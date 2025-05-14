@@ -1,0 +1,55 @@
+zh:
+    rodauth:
+        already_an_account_with_this_login_message: 已经是具有此登录名的帐户
+        change_login_button: 更改账号
+        change_login_error_flash: 更改账号时出错
+        change_login_notice_flash: 您的账号已更改
+        change_login_page_title: 更改登录名
+        change_password_button: 修改密码
+        change_password_error_flash: 更改密码时出错
+        change_password_notice_flash: 您的密码已更改
+        change_password_page_title: 修改密码
+        close_account_button: 关闭帐户
+        close_account_error_flash: 关闭您的帐户时出错
+        close_account_notice_flash: 您的帐户已关闭
+        close_account_page_title: 关闭帐户
+        contains_null_byte_message: 包含空字节
+        create_account_button: 创建帐户
+        create_account_error_flash: 创建帐户时出错
+        create_account_link_text: 创建新帐户
+        create_account_notice_flash: 您的帐户已创建
+        create_account_page_title: 创建帐户
+        input_field_label_suffix: ""
+        invalid_password_message: 密码无效
+        login_button: 登录
+        login_confirm_label: 确认%{login_label}
+        login_error_flash: 登录时出错
+        login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">其他选项</h2>
+        login_label: 登录
+        login_not_valid_email_message: 不是有效的电子邮件地址
+        login_notice_flash: 您已登录
+        login_page_title: 登录
+        logins_do_not_match_message: 登录名不匹配
+        logout_button: 注销
+        logout_notice_flash: 您已注销
+        logout_page_title: 注销
+        multi_phase_login_page_title: 登录
+        need_password_notice_flash: 登录已识别，请输入密码
+        new_password_label: 新密码
+        no_matching_login_message: 没有匹配的登录
+        password_confirm_label: 确认%{password_label}
+        password_label: 密码
+        password_pwned_message: 此密码曾出现在数据泄露事件中，不应再被使用
+        passwords_do_not_match_message: 密码不匹配
+        remember_button: 更改记忆设置
+        remember_disable_label: 禁用"记住我"
+        remember_error_flash: 更新记忆设置时出错
+        remember_forget_label: 忘记我吧
+        remember_notice_flash: 您的记忆设置已更新
+        remember_page_title: 更改记忆设置
+        remember_remember_label: 记住我
+        require_login_error_flash: 请登录以继续
+        same_as_current_login_message: 与当前登录相同
+        same_as_existing_password_message: 无效密码，与当前密码相同
+        strftime_format: "%Y-%m-%d %H:%M:%S"
+        unverified_account_message: 未验证的帐户，请在登录前验证帐户

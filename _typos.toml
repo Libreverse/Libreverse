@@ -3,4 +3,4 @@ Lazer = "Lazer"
 bck = "bck"
 
 [files]
-extend-exclude = ["app/emoji/**", "nikto/**", "config/credentials.yml.enc"]
+extend-exclude = ["app/emoji/**", "nikto/**", "config/credentials.yml.enc", "config/locales/**"]

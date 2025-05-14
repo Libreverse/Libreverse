@@ -1,0 +1,55 @@
+es:
+    rodauth:
+        already_an_account_with_this_login_message: ya existe una cuenta con este login
+        change_login_button: Modificar Login
+        change_login_error_flash: Hubo un error al modificar su login
+        change_login_notice_flash: Su login fue modificado
+        change_login_page_title: Modificar Login
+        change_password_button: Modificar contraseña
+        change_password_error_flash: Hubo un error al modificar su contraseña
+        change_password_notice_flash: Tu contraseña fue modificada
+        change_password_page_title: Cambiar Contraseña
+        close_account_button: Cerrar cuenta
+        close_account_error_flash: Hubo un error al cerrar su cuenta
+        close_account_notice_flash: Su cuenta fue cerrada
+        close_account_page_title: Cerrar Cuenta
+        contains_null_byte_message: contiene un byte nulo
+        create_account_button: Crear cuenta
+        create_account_error_flash: Hubo un error al crear su cuenta
+        create_account_link_text: Crea una nueva cuenta
+        create_account_notice_flash: Su cuenta fue creada
+        create_account_page_title: Crear Cuenta
+        input_field_label_suffix: ""
+        invalid_password_message: contraseña no válida
+        login_button: Iniciar sesión
+        login_confirm_label: Confirmar %{login_label}
+        login_error_flash: Hubo un error al iniciar la sesión
+        login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Otras Opciones</h2>
+        login_label: Login
+        login_not_valid_email_message: no es una dirección de email válida
+        login_notice_flash: Iniciaste sesión con éxito
+        login_page_title: Iniciar Sesión
+        logins_do_not_match_message: logins no coinciden
+        logout_button: Salir
+        logout_notice_flash: Se ha cerrado la sesión
+        logout_page_title: Cerrar Sesión
+        multi_phase_login_page_title: Login
+        need_password_notice_flash: Login reconocido, por favor, introduzca su contraseña
+        new_password_label: Nueva contraseña
+        no_matching_login_message: sin login correspondiente
+        password_confirm_label: Confirmar %{password_label}
+        password_label: Contraseña
+        password_pwned_message: esta contraseña ha aparecido previamente en una filtración de datos y nunca debe utilizarse
+        passwords_do_not_match_message: contraseñas no coinciden
+        remember_button: Cambiar configuración de "Recuérdame"
+        remember_disable_label: Desactivar "Recuérdame"
+        remember_error_flash: Hubo un error al actualizar la configuración de "Recuérdame"
+        remember_forget_label: Olvídame
+        remember_notice_flash: Se ha actualizado la configuración de "Recuérdame"
+        remember_page_title: Cambiar la configuración de "Recuérdame"
+        remember_remember_label: Recuérdame
+        require_login_error_flash: Inicie sesión para continuar
+        same_as_current_login_message: igual al login actual
+        same_as_existing_password_message: contraseña no válida, la misma que la actual
+        strftime_format: "%d/%m/%Y %H:%M:%S"
+        unverified_account_message: cuenta no verificada, verifique la cuenta antes de iniciar sesión

@@ -314,7 +314,7 @@ GEM
     reline (0.6.1)
       io-console (~> 0.5)
     rexml (3.4.1)
-    roda (3.91.0)
+    roda (3.92.0)
       rack
     rodauth (2.38.0)
       roda (>= 2.6.0)

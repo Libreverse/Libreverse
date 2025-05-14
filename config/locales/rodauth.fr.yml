@@ -1,0 +1,55 @@
+fr:
+    rodauth:
+        already_an_account_with_this_login_message: déjà un compte avec cet identifiant
+        change_login_button: Modifier l'identifiant
+        change_login_error_flash: Erreur lors de la modification de votre identifiant
+        change_login_notice_flash: Votre identifiant a été modifié
+        change_login_page_title: Modifier l'identifiant
+        change_password_button: Modifier le mot de passe
+        change_password_error_flash: Erreur lors de la modification de votre mot de passe
+        change_password_notice_flash: Votre mot de passe a été modifié
+        change_password_page_title: Modifier le mot de passe
+        close_account_button: Supprimer le compte
+        close_account_error_flash: Erreur lors de la suppression de votre compte
+        close_account_notice_flash: Votre compte a été supprimé
+        close_account_page_title: Supprimer le compte
+        contains_null_byte_message: contient un byte nul
+        create_account_button: Créer un compte
+        create_account_error_flash: Erreur lors de la création de votre compte
+        create_account_link_text: Créer un compte
+        create_account_notice_flash: Votre compte a été créé
+        create_account_page_title: Créer un nouveau compte
+        input_field_label_suffix: ""
+        invalid_password_message: mot de passe erroné
+        login_button: Se connecter
+        login_confirm_label: Confirmer %{login_label}
+        login_error_flash: Erreur lors de la connexion
+        login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Options supplémentaires</h2>
+        login_label: Se connecter
+        login_not_valid_email_message: n'est pas une adresse mail valide
+        login_notice_flash: Vous êtes connecté(e)
+        login_page_title: Se connecter
+        logins_do_not_match_message: les identifiants ne correspondent pas
+        logout_button: Se déconnecter
+        logout_notice_flash: Vous êtes déconnecté(e)
+        logout_page_title: Se déconnecter
+        multi_phase_login_page_title: Se connecter
+        need_password_notice_flash: Identifiant reconnu, veuillez entrer votre mot de passe
+        new_password_label: Nouveau mot de passe
+        no_matching_login_message: aucun identifiant correspondant
+        password_confirm_label: Confirmer %{password_label}
+        password_label: Mot de passe
+        password_pwned_message: ce mot de passe est apparu précédemment dans une fuite de données et ne devrait jamais être utilisé
+        passwords_do_not_match_message: les mots de passe ne correspondent pas
+        remember_button: Modifier paramètre "Se souvenir de moi"
+        remember_disable_label: Désactiver "Se souvenir de moi"
+        remember_error_flash: Erreur lors de la modification du paramètre "Se souvenir de moi"
+        remember_forget_label: M'oublier
+        remember_notice_flash: Votre paramètre "Se souvenir de moi" a été modifié
+        remember_page_title: Modifier paramètre "Se souvenir de moi"
+        remember_remember_label: Se souvenir de moi
+        require_login_error_flash: Veuillez vous identifier pour continuer
+        same_as_current_login_message: identique à l'identifiant actuel
+        same_as_existing_password_message: mot de passe erroné, identique au mot de passe actuel
+        strftime_format: "%d/%m/%Y %H:%M:%S"
+        unverified_account_message: compte non vérifié, veuillez vérifier votre compte avant de vous connecter.

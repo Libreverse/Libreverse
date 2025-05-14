@@ -70,6 +70,6 @@ module LibreverseInstance
 
     # I18n configuration
     config.i18n.default_locale = :en
-    config.i18n.available_locales = [ :en ]
+    config.i18n.available_locales = %i[en zh es hi ar pt fr ru de ja]
   end
 end

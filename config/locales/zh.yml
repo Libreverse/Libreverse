@@ -1,0 +1,143 @@
+zh:
+  hello: "你好世界"
+  policies:
+    privacy_policy: "隐私政策"
+    cookie_policy: "Cookie政策" 
+    view_privacy_policy: "查看隐私政策"
+    view_cookie_policy: "查看Cookie政策"
+    cookies:
+      title: "Cookie政策"
+      intro_html: 'Libreverse使用严格必要的会话安全Cookie（"_libreverse_session"）和可选的记住我Cookie（"remember_*"），该Cookie可将您的登录状态保持30天。'
+      manage_cookies: "您可以通过浏览器设置管理Cookie。但禁用严格必要的Cookie将导致网站无法正常运作。"
+      adjust_preferences_html: "您可随时通过访问%{consent_link}调整同意偏好。"
+      consent_page: "同意页面"
+    privacy:
+      note_label: "注意："
+      machine_readable: "可通过机器读取的"
+      endpoint_available_at: "端点已在此处提供"
+      compliance_discovery: "用于合规性和自动发现。"
+      data_storage_description: 'Libreverse仅存储服务运行所需的数据：账户凭证、可选偏好设置及您上传的任何内容（"体验"）。我们从不出售您的数据，也不使用第三方跟踪器或分析工具。'
+      lawful_basis_description: "我们处理您数据的法律依据是合同（提供服务）以及在适用情况下的同意（可选Cookie）。"
+      rights_tools_info: "账户仪表板中提供了行使您权利的工具（在适用情况下）。"
+
+  consent:
+    screen:
+      title: "欢迎来到Libreverse"
+      access_message_html: "要访问应用，您必须同意我们的%{privacy_policy_link}和%{cookie_policy_link}。"
+      remember_info_html: "我们还使用可选的'记住我'Cookie来存储您的登录状态30天。"
+      english_only_notice: "由于资源限制，这些政策目前仅提供英文版本。我们计划未来提供翻译版本。"
+      remember_opt_in_label: "启用非必要Cookie以保持跨会话登录（技术上可选但强烈推荐）"
+      agree_and_continue: "同意并继续"
+      decline: "拒绝"
+
+  dashboard:
+    index:
+      title: "仪表板"
+      welcome: "欢迎，"
+      tutorial_heading: "您的账户"
+      tutorial_description: "您已登录账户仪表板。可在此管理账户设置。"
+      account_information_title: "账户信息"
+      account_actions_title: "账户操作"
+      compliance_options_title: "合规选项"
+      change_password: "修改密码"
+      edit_profile: "编辑资料"
+      account_settings: "账户设置"
+      sign_out: "退出登录"
+      review_consent: "查看同意"
+      export_data: "导出数据"
+      delete_account: "删除账户"
+
+  experiences:
+    experiences_list:
+      by: "作者："
+      created_at: "创建时间："
+      awaiting_approval: "等待审核"
+      approve: "通过"
+      edit_details: "编辑详情"
+      delete: "删除"
+    form:
+      errors_prohibited: "以下问题导致体验保存失败："
+      rich_description_help: "丰富的描述有助于他人更好地理解您的体验。"
+      upload_single_html_help: "请上传体验的单个HTML文件。"
+      current_file: "当前文件："
+      replace_file: "（上传新文件以替换）"
+    edit:
+      title: "编辑体验"
+      subtitle: "修改您的体验"
+      refining: '正在优化"%{title}"'
+      instructions: "请在下方修改您的体验，准备就绪后保存。"
+      view_current_experience: "查看当前体验"
+      back_to_experiences: "返回体验列表"
+      created_and_updated_html: "此体验创建于%{created_date}，最近更新于%{updated_ago}前。"
+    index:
+      title: "我的体验"
+      subtitle: "创建和管理您的体验"
+      tutorial_heading: "您的创意集合"
+      tutorial_description: "管理您的体验并创建新体验与Libreverse社区分享。"
+      create_new_heading: "创建新体验"
+    new:
+      title: "新建体验"
+      back: "返回"
+    show:
+      title: "体验详情"
+      subtitle: "查看体验详细信息"
+      last_updated: "最后更新："
+      find_similar: "查找相似体验"
+
+  homepage:
+    index:
+      brand: "Libreverse"
+      libre_word: "自由"
+      verse_word: "之境"
+      tagline: "开源软件对抗邪恶万亿市值公司的无限续集。"
+      article_excerpt: "2021年10月28日，马克·扎克伯格将Facebook更名为Meta Platforms以推动其元宇宙计划，成为互联网笑柄。三年后，随着元宇宙逐渐成为现实，互联网似乎正在成为扎克伯格的笑柄。"
+      read_full_article: "阅读全文"
+      read_full_article_aria: "阅读关于元宇宙原则的完整文章"
+      search_prompt: "点击此链接即可搜索体验。自由的数字世界等您探索。"
+      search_link: "进入Libreverse"
+      search_link_aria: "搜索Libreverse体验"
+      article_written_by: "文章作者：Libreverse创建者"
+
+  layouts:
+    drawer:
+      attribution: "署名"
+    default_drawer:
+      intro_html: "在Libreverse，我们❤️采用开放许可的项目，并希望向使libreverse成为可能的项目致谢。目前仅包含需要署名的项目，但我们计划未来扩展此列表。"
+      libreverse_twemoji: "Libreverse-Twemoji"
+      modified_from: "修改自"
+      by: "作者："
+      licensed_under: "授权许可："
+    application:
+      alpha_notice_html: "⚠️👨‍🔧 此为Libreverse v1 alpha版本。可能出现代码问题、崩溃、性能问题和停机。👨‍🔧⚠️"
+      noscript_heading: "需要JavaScript支持"
+      noscript_message: "本应用需要JavaScript才能正常运行。请在浏览器设置中启用JavaScript并刷新页面。"
+
+  rodauth:
+    create_account:
+      footer_have_account: "已有账户？"
+      sign_in: "登录"
+    login:
+      footer_no_account: "没有账户？"
+      sign_up: "注册"
+    multi_phase_login:
+      footer_need_help: "需要帮助？"
+      return_to_login: "返回登录"
+
+  search:
+    index:
+      title: "搜索体验"
+      search_word: "搜索"
+      experiences_word: "体验"
+      tutorial_heading: "搜索指南"
+      tutorial_description: "输入关键词查找Libreverse中的体验。输入时实时显示结果。"
+      search_placeholder: "搜索体验"
+      input_aria_label: "搜索体验"
+
+  terms:
+    index:
+      intro: "Libreverse是个人非商业开源项目。使用本平台即表示您同意："
+      risk_clause: "使用风险自负。我们对性能和可用性不作任何保证。"
+      bullet_two: "不滥用账户或上传非法内容。"
+      bullet_three: "遵守开源许可（如Libreverse-Twemoji使用的CC-BY-4.0协议）。"
+      governing_law: "管辖法律：英国。"
+      title: "Libreverse服务条款" 
