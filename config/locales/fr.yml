@@ -1,0 +1,135 @@
+fr:
+    hello: "Bonjour le monde"
+    policies:
+        privacy_policy: "Politique de confidentialité"
+        cookie_policy: "Politique des cookies"
+        view_privacy_policy: "Voir la politique de confidentialité"
+        view_cookie_policy: "Voir la politique des cookies"
+        cookies:
+            title: "Politique des cookies"
+            intro_html: 'Libreverse utilise des cookies strictement nécessaires pour la sécurité de la session ("_libreverse_session") et un cookie optionnel de "se souvenir de moi" ("remember_*") qui conserve votre connexion pendant 30 jours.'
+            manage_cookies: "Vous pouvez gérer les cookies via les paramètres de votre navigateur. Cependant, désactiver les cookies strictement nécessaires empêchera le site de fonctionner correctement."
+            adjust_preferences_html: "Vous pouvez ajuster vos préférences de consentement à tout moment en visitant la %{consent_link}."
+            consent_page: "page de consentement"
+        privacy:
+            note_label: "Note :"
+            machine_readable: "Un"
+            endpoint_available_at: "point de terminaison est disponible à"
+            compliance_discovery: "pour la conformité et la découverte automatisée."
+            data_storage_description: "Libreverse ne stocke que les données nécessaires au fonctionnement du service : identifiants de compte, préférences optionnelles et tout contenu que vous téléchargez (\"expériences\"). Nous ne vendons jamais vos données et n'utilisons pas de traceurs ou d'analytiques tiers."
+            lawful_basis_description: "Vos données sont traitées sur la base d'un contrat (pour fournir le service) et, le cas échéant, sur la base du consentement (cookies optionnels)."
+            rights_tools_info: "Des outils sont fournis dans le tableau de bord du compte pour exercer vos droits lorsque cela est applicable."
+    consent:
+        screen:
+            title: "Bienvenue sur Libreverse"
+            access_message_html: "Pour accéder à l'application, vous devez accepter notre %{privacy_policy_link} et notre %{cookie_policy_link}."
+            remember_info_html: "Nous utilisons également un cookie optionnel 'Se souvenir de moi' pour stocker votre connexion pendant 30 jours."
+            english_only_notice: "Ces politiques sont en anglais en raison de contraintes de ressources. Des traductions sont prévues pour l'avenir."
+            remember_opt_in_label: "Activer les cookies non essentiels nécessaires pour rester connecté entre les sessions (techniquement optionnel mais fortement recommandé)"
+            agree_and_continue: "Accepter et continuer"
+            decline: "Refuser"
+    dashboard:
+        index:
+            title: "Tableau de bord"
+            welcome: "Bienvenue,"
+            tutorial_heading: "Votre compte"
+            tutorial_description: "Vous êtes connecté à votre tableau de bord de compte. Gérez les paramètres de votre compte à partir d'ici."
+            account_information_title: "Informations du compte"
+            account_actions_title: "Actions du compte"
+            compliance_options_title: "Options de conformité"
+            change_password: "Changer le mot de passe"
+            edit_profile: "Modifier le profil"
+            account_settings: "Paramètres du compte"
+            sign_out: "Se déconnecter"
+            review_consent: "Revoir le consentement"
+            export_data: "Exporter les données"
+            delete_account: "Supprimer le compte"
+    experiences:
+        experiences_list:
+            by: "Par"
+            created_at: "Créé le :"
+            awaiting_approval: "En attente d'approbation"
+            approve: "Approuver"
+            edit_details: "Modifier les détails"
+            delete: "Supprimer"
+        form:
+            errors_prohibited: "a empêché cette expérience d'être sauvegardée :"
+            rich_description_help: "Les descriptions riches aident les autres à mieux comprendre votre expérience."
+            upload_single_html_help: "Téléchargez le fichier HTML unique pour votre expérience."
+            current_file: "Fichier actuel :"
+            replace_file: "(Remplacer en téléchargeant un nouveau fichier)"
+        edit:
+            title: "Modifier l'expérience"
+            subtitle: "Apporter des modifications à votre expérience"
+            refining: 'Affiner "%{title}"'
+            instructions: "Apportez des modifications à votre expérience ci-dessous et enregistrez lorsque vous êtes prêt."
+            view_current_experience: "Voir l'expérience actuelle"
+            back_to_experiences: "Retour aux expériences"
+            created_and_updated_html: "Cette expérience a été créée le %{created_date} et mise à jour pour la dernière fois il y a %{updated_ago}."
+        index:
+            title: "Mes expériences"
+            subtitle: "Créez et gérez vos expériences"
+            tutorial_heading: "Votre collection créative"
+            tutorial_description: "Gérez vos expériences et créez-en de nouvelles à partager avec la communauté Libreverse."
+            create_new_heading: "Créer une nouvelle expérience"
+        new:
+            title: "Nouvelle expérience"
+            back: "Retour"
+        show:
+            title: "Détails de l'expérience"
+            subtitle: "Affichage des détails d'une expérience"
+            last_updated: "Dernière mise à jour :"
+            find_similar: "Trouver des expériences similaires"
+    homepage:
+        index:
+            brand: "Libreverse"
+            libre_word: "Libre"
+            verse_word: "verse"
+            tagline: "Épisode numéro infini du logiciel open source contre une entreprise maléfique de mille milliards de dollars."
+            article_excerpt: "Le 28 octobre 2021, Mark Zuckerberg était devenu la risée d'Internet après avoir renommé Facebook en Meta Platforms dans le cadre de ses efforts pour créer un métavers en ligne. Trois ans plus tard, il semble de plus en plus qu'Internet devienne la risée de Mark Zuckerberg, à mesure que le métavers se rapproche de la réalité."
+            read_full_article: "Lire la suite"
+            read_full_article_aria: "Lire l'article complet sur le principe du métavers"
+            search_prompt: "Cliquez simplement sur ce lien pour rechercher une expérience. Le monde numérique libre vous attend."
+            search_link: "Entrez dans Libreverse"
+            search_link_aria: "Rechercher des expériences Libreverse"
+            article_written_by: "Article écrit par le créateur de Libreverse"
+    layouts:
+        drawer:
+            attribution: "Attribution"
+        default_drawer:
+            intro_html: "Chez Libreverse, nous ❤️ les projets sous licences ouvertes et souhaitons donner du crédit aux projets qui ont rendu Libreverse possible. Actuellement, cela inclut uniquement les projets où l'attribution est une exigence de licence, mais nous prévoyons de l'étendre à l'avenir."
+            libreverse_twemoji: "Libreverse-Twemoji"
+            modified_from: "qui est modifié à partir de"
+            by: "par"
+            licensed_under: "sous licence"
+        application:
+            alpha_notice_html: "⚠️👨‍🔧 Ceci est la version alpha v1 de Libreverse. Attendez-vous à du mauvais code, des plantages, des problèmes de performance et des interruptions. 👨‍🔧⚠️"
+            noscript_heading: "JavaScript requis"
+            noscript_message: "Cette application nécessite JavaScript pour fonctionner correctement. Veuillez activer JavaScript dans les paramètres de votre navigateur et actualiser la page."
+    rodauth:
+        create_account:
+            footer_have_account: "Vous avez déjà un compte ?"
+            sign_in: "Se connecter"
+        login:
+            footer_no_account: "Vous n'avez pas de compte ?"
+            sign_up: "S'inscrire"
+        multi_phase_login:
+            footer_need_help: "Besoin d'aide ?"
+            return_to_login: "Retour à la connexion"
+    search:
+        index:
+            title: "Rechercher des expériences"
+            search_word: "Rechercher"
+            experiences_word: "Expériences"
+            tutorial_heading: "Guide de recherche"
+            tutorial_description: "Tapez des mots-clés pour trouver des expériences dans Libreverse. Les résultats apparaîtront au fur et à mesure que vous tapez."
+            search_placeholder: "Rechercher une expérience"
+            input_aria_label: "Rechercher des expériences"
+    terms:
+        index:
+            intro: "Libreverse est un projet personnel, non commercial et open source. En utilisant cette plateforme, vous acceptez :"
+            risk_clause: "D'utiliser à vos propres risques. Nous ne fournissons aucune garantie de performance ou de disponibilité."
+            bullet_two: "De ne pas abuser des comptes ou de télécharger du contenu illégal."
+            bullet_three: "De respecter les licences open source (par exemple, CC-BY-4.0 pour Libreverse-Twemoji)."
+            governing_law: "Loi applicable : Royaume-Uni."
+            title: "Conditions d'utilisation de Libreverse"

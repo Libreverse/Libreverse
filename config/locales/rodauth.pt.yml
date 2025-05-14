@@ -1,0 +1,55 @@
+pt:
+    rodauth:
+        already_an_account_with_this_login_message: já existe uma conta com este login
+        change_login_button: Modificar Login
+        change_login_error_flash: Houve um erro a modificar o seu login
+        change_login_notice_flash: O seu login foi modificado
+        change_login_page_title: Modificar Login
+        change_password_button: Modificar palavra-passe
+        change_password_error_flash: Houve um erro a mudar a sua palavra-passe
+        change_password_notice_flash: A sua palavra-passe foi mudada
+        change_password_page_title: Mudar palavra-passe
+        close_account_button: Fechar conta
+        close_account_error_flash: Houve um erro ao fechar a sua conta
+        close_account_notice_flash: A sua conta foi fechada
+        close_account_page_title: Fechar conta
+        contains_null_byte_message: contém um byte nulo
+        create_account_button: Criar conta
+        create_account_error_flash: Houve um erro ao criar a sua conta
+        create_account_link_text: Criar uma nova conta
+        create_account_notice_flash: A sua conta foi criada
+        create_account_page_title: Criar conta
+        input_field_label_suffix: ""
+        invalid_password_message: palavra-passe inválida
+        login_button: Login
+        login_confirm_label: Confirmar %{login_label}
+        login_error_flash: Houve um erro ao efectuar o login
+        login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Outras opções</h2>
+        login_label: Login
+        login_not_valid_email_message: não é um endereço de e-mail
+        login_notice_flash: Login efectuado com sucesso
+        login_page_title: Login
+        logins_do_not_match_message: logins não coincidem
+        logout_button: Encerrar sessão
+        logout_notice_flash: A sessão foi encerrada
+        logout_page_title: Encerrar sessão
+        multi_phase_login_page_title: Login
+        need_password_notice_flash: Login reconhecido, por favor insira a sua palavra-passe
+        new_password_label: Nova palavra-passe
+        no_matching_login_message: sem login correspondente
+        password_confirm_label: Confirmar %{password_label}
+        password_label: Palavra-passe
+        password_pwned_message: esta palavra-passe apareceu anteriormente numa violação de dados e nunca deve ser utilizada
+        passwords_do_not_match_message: palavras-chave não coincidem
+        remember_button: Modificar configurações de "Lembrar-me"
+        remember_disable_label: Desactivar "Lembrar-me"
+        remember_error_flash: Houve um erro ao actualizar a sua configuração de "Lembrar-me"
+        remember_forget_label: Esquecer-me
+        remember_notice_flash: A sua configuração de "Lembrar-me" foi actualizada
+        remember_page_title: Modificar configuração de "Lembrar-me"
+        remember_remember_label: Lembrar-me
+        require_login_error_flash: Por favor faça login para continuar
+        same_as_current_login_message: igual ao login actual
+        same_as_existing_password_message: palavra-passe inválida, igual à palavra-passe actual
+        strftime_format: "%d/%m/%Y %H:%M:%S"
+        unverified_account_message: conta não-verificada, por favor verifique a conta antes de fazer login
