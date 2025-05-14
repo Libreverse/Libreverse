@@ -16,7 +16,7 @@ fr:
             machine_readable: "Un"
             endpoint_available_at: "point de terminaison est disponible à"
             compliance_discovery: "pour la conformité et la découverte automatisée."
-            data_storage_description: "Libreverse ne stocke que les données nécessaires au fonctionnement du service : identifiants de compte, préférences optionnelles et tout contenu que vous téléchargez (\"expériences\"). Nous ne vendons jamais vos données et n'utilisons pas de traceurs ou d'analytiques tiers."
+            data_storage_description: 'Libreverse ne stocke que les données nécessaires au fonctionnement du service : identifiants de compte, préférences optionnelles et tout contenu que vous téléchargez ("expériences"). Nous ne vendons jamais vos données et n''utilisons pas de traceurs ou d''analytiques tiers.'
             lawful_basis_description: "Vos données sont traitées sur la base d'un contrat (pour fournir le service) et, le cas échéant, sur la base du consentement (cookies optionnels)."
             rights_tools_info: "Des outils sont fournis dans le tableau de bord du compte pour exercer vos droits lorsque cela est applicable."
     consent:
