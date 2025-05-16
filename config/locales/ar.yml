@@ -133,3 +133,8 @@ ar:
             bullet_three: "احترام التراخيص مفتوحة المصدر (على سبيل المثال، CC-BY-4.0 لـ Libreverse-Twemoji)."
             governing_law: "القانون الحاكم: المملكة المتحدة."
             title: "شروط خدمة Libreverse"
+    settings:
+        index:
+            title: "الإعدادات"
+            description: "إدارة تفضيلاتك."
+            language: "اللغة"

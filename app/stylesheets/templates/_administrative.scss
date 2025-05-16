@@ -59,6 +59,16 @@
     }
 }
 
+%administrative-card-hoverless {
+    @include glass-effect;
+
+    border-radius: 5px;
+    overflow: hidden;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
 %administrative-header {
     background: linear-gradient(
         90deg,

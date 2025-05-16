@@ -1,62 +1,71 @@
+-# Determine whether the sidebar should appear expanded on initial render.
+- expanded_on_render = local_assigns.fetch(:expanded, 'f') == 't'
+- sidebar_hovered = sidebar_hovered_bool = local_assigns.fetch(:sidebar_hovered, 'f') == 't' # Assumes sidebar_hovered is 't' or 'f'
+
 %nav{id: "sidebar-nav-#{sidebar_id}",
-     class: ["sidebar", ("sidebar-hovered" if hover_enabled == 't')].compact.join(" "),
+     class: ["sidebar", ("sidebar-hovered" if expanded_on_render)].compact.join(" "),
      role: "navigation",
-     aria: {expanded: (hover_enabled == 't' ? 'true' : 'false'), label: "Navigation Sidebar"},
-     data: {controller: "sidebar",
-            action: "mouseenter->sidebar#toggleHover mouseleave->sidebar#toggleHover",
-            expanded: (hover_enabled == 't' ? 'true' : 'false'),
-            "hover-enabled": (hover_enabled == 't' ? 'true' : 'false'),
-            "reflex-root": "#sidebar-nav-#{sidebar_id}",
-            "sidebar-id": sidebar_id}}
-  .sidebar-contents{data: {"reflex-permanent": ""}}
+     aria: {expanded: expanded_on_render.to_s, label: "Navigation Sidebar"},
+     data: {
+       controller: "sidebar",
+       action: "mouseenter->sidebar#mouseEnter mouseleave->sidebar#mouseLeave",
+
+       # Stimulus values (preferred)
+       "expanded-value": expanded_on_render.to_s,
+       "hovered-value": sidebar_hovered_bool.to_s,
+
+       # Legacy / CSS helpers (kept for compatibility – can be removed once all
+       # code paths rely exclusively on the `*-value` attributes above)
+       expanded: expanded_on_render.to_s,
+       "hovered": sidebar_hovered_bool.to_s,
+
+       "reflex-root": "#sidebar-nav-#{sidebar_id}",
+       "sidebar-id": sidebar_id,
+     }}
+  .sidebar-contents
     - current_path = request.path
-    %a{href: "/",
-       class: ["sidebar-link", ("sidebar-default-cursor" if current_path == '/')].compact.join(" "),
-       aria: {label: "Go to homepage"},
-       data: {controller: "link",
-              action: "click->link#click",
-              link_is_current_value: (current_path == '/').to_s}}
-      = sidebar_icon(svg_icon_data_url("libreverse-logo"), (current_path == "/" ? "sidebar-current" : ""))
-    %a{href: "/search",
-       class: ["sidebar-link", ("sidebar-default-cursor" if current_path == '/search')].compact.join(" "),
-       aria: {label: "Go to search page"},
-       data: {controller: "link",
-              action: "click->link#click",
-              link_is_current_value: (current_path == '/search').to_s}}
-      = sidebar_icon(svg_icon_data_url("search"), (current_path == "/search" ? "sidebar-current" : ""))
+
+    -# Public links – always visible
+    - public_links = [{ path: '/', icon: 'libreverse-logo', label: 'homepage' }, { path: '/search', icon: 'search', label: 'search page' }, { path: '/settings', icon: 'settings', label: 'settings page' }]
+    - public_links.each do |item|
+      - item_is_current = (current_path == item[:path])
+      = link_to item[:path],
+                class: "sidebar-link#{' sidebar-default-cursor' if item_is_current}",
+                aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
+                data: { controller: 'link',
+                        action: 'click->link#click',
+                        'link-is-current-value': item_is_current.to_s,
+                        path: item[:path] } do
+        = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
+
     / Authentication links
     - if rodauth.logged_in? && !rodauth.guest_logged_in?
-      %a{href: dashboard_path,
-         class: ["sidebar-link", ("sidebar-default-cursor" if current_path == dashboard_path)].compact.join(" "),
-         aria: {label: "Go to dashboard"},
-         data: {controller: "link",
-                action: "click->link#click",
-                link_is_current_value: (current_path == dashboard_path).to_s}}
-        = sidebar_icon(svg_icon_data_url("dashboard"), (current_path == dashboard_path ? "sidebar-current" : ""))
-      %a{href: experiences_path,
-         class: ["sidebar-link", ("sidebar-default-cursor" if current_path == experiences_path)].compact.join(" "),
-         aria: {label: "Manage experiences"},
-         data: {controller: "link",
-                action: "click->link#click",
-                link_is_current_value: (current_path == experiences_path).to_s}}
-        = sidebar_icon(svg_icon_data_url("experiences"), (current_path == experiences_path ? "sidebar-current" : ""))
+      - auth_links = [{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }]
+      - auth_links.each do |item|
+        - item_is_current = (current_path == item[:path])
+        = link_to item[:path],
+                  class: "sidebar-link#{' sidebar-default-cursor' if item_is_current}",
+                  aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
+                  data: { controller: 'link',
+                          action: 'click->link#click',
+                          'link-is-current-value': item_is_current.to_s,
+                          path: item[:path] } do
+          = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
+
       = button_to rodauth.logout_path,
                   method: :post,
-                  class: "sidebar-link sidebar-logout-button",
-                  aria: { label: "Sign out" } do
-        = sidebar_icon(svg_icon_data_url("logout"))
+                  class: 'sidebar-link sidebar-logout-button',
+                  aria: { label: 'Sign out' } do
+        = sidebar_icon(svg_icon_data_url('logout'))
     - else
-      %a{href: rodauth.login_path,
-         class: ["sidebar-link", ("sidebar-default-cursor" if current_path == rodauth.login_path)].compact.join(" "),
-         aria: {label: "Sign in"},
-         data: {controller: "link",
-                action: "click->link#click",
-                link_is_current_value: (current_path == rodauth.login_path).to_s}}
-        = sidebar_icon(svg_icon_data_url("login"), (current_path == rodauth.login_path ? "sidebar-current" : ""))
-      %a{href: rodauth.create_account_path,
-         class: ["sidebar-link", ("sidebar-default-cursor" if current_path == rodauth.create_account_path)].compact.join(" "),
-         aria: {label: "Sign up"},
-         data: {controller: "link",
-                action: "click->link#click",
-                link_is_current_value: (current_path == rodauth.create_account_path).to_s}}
-        = sidebar_icon(svg_icon_data_url("signup"), (current_path == rodauth.create_account_path ? "sidebar-current" : ""))
+      - guest_links = [{ path: rodauth.login_path, icon: 'login', label: 'login page' }, { path: rodauth.create_account_path, icon: 'signup', label: 'sign-up page' }]
+      - guest_links.each do |item|
+        - item_is_current = (current_path == item[:path])
+        = link_to item[:path],
+                  class: "sidebar-link#{' sidebar-default-cursor' if item_is_current}",
+                  aria: { label: (item_is_current ? "On #{item[:label]}" : (item[:label] == 'sign-up page' ? 'Sign up' : 'Sign in')) },
+                  data: { controller: 'link',
+                          action: 'click->link#click',
+                          'link-is-current-value': item_is_current.to_s,
+                          path: item[:path] } do
+          = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))

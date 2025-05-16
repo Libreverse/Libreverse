@@ -54,23 +54,11 @@ class DrawerReflex < ApplicationReflex
     Rails.logger.info "[DrawerReflex#toggle] Passing expanded value to partial for drawer #{drawer_id}: #{new_expanded}"
 
     # Add detailed logging for emoji rendering diagnostic
-    Rails.logger.info "[DrawerReflex#toggle] About to call render_and_morph_with_emojis with drawer_id: #{drawer_id}"
+    Rails.logger.info "[DrawerReflex#toggle] About to call render_and_morph with drawer_id: #{drawer_id}"
 
-    # Use the helper from ApplicationReflex to render, process emojis, and morph
-    render_and_morph_with_emojis(
-      selector: "#main-drawer", # Target selector for the drawer
-      partial: "layouts/drawer", # Path to the drawer partial
-      locals: { drawer_id: drawer_id, expanded: new_expanded }
-    )
-
-    Rails.logger.info "[DrawerReflex#toggle] render_and_morph_with_emojis completed for drawer #{drawer_id}"
-
-    # Broadcast the queued CableReady operations without accessing internal arrays
-    cable_ready.broadcast
-    Rails.logger.info "[DrawerReflex#toggle] CableReady broadcast completed for drawer #{drawer_id}"
-
-    # Ensure we don't do a full page refresh (keep the original morph mode)
-    morph :nothing
+    html_drawer = controller.render_to_string(partial: "layouts/drawer", locals: { drawer_id: drawer_id, expanded: new_expanded })
+    morph "#main-drawer", html_drawer
+    Rails.logger.info "[DrawerReflex#toggle] Drawer morph completed for drawer #{drawer_id}"
   rescue StandardError => e
     log_error "[DrawerReflex] Error in toggle: #{e.message}", e
     log_error e.backtrace.join("\n")

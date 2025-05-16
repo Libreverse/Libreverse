@@ -1,0 +1,6 @@
+.sidebar-link.sidebar-default-cursor,
+.sidebar-link.sidebar-default-cursor * {
+    pointer-events: none !important;
+    cursor: default !important;
+    color: #aaa !important; // Muted color for current link
+}

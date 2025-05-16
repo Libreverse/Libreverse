@@ -133,3 +133,8 @@ de:
             bullet_three: "Respektieren Sie Open-Source-Lizenzen (z.B. CC-BY-4.0 für Libreverse-Twemoji)."
             governing_law: "Geltendes Recht: UK."
             title: "Libreverse Nutzungsbedingungen"
+    settings:
+        index:
+            title: "Einstellungen"
+            description: "Verwalten Sie Ihre Einstellungen."
+            language: "Sprache"

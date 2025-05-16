@@ -82,6 +82,12 @@ class ApplicationReflex < StimulusReflex::Reflex
   # For code examples, considerations and caveats, see:
   # https://docs.stimulusreflex.com/guide/patterns#internationalization
 
+  # Override morph to inject emoji replacement centrally for SR 3.x
+  def morph(*args)
+    args[1] = Emoji::Renderer.replace(args[1]) if args.length >= 2 && args[1].is_a?(String)
+    super(*args)
+  end
+
   private
 
   # Logging callbacks
@@ -115,10 +121,28 @@ class ApplicationReflex < StimulusReflex::Reflex
     Current.account = @current_account if defined?(Current) && Current.respond_to?(:account=)
   end
 
-  # Set I18n locale based on session or default
+  # Set I18n.locale for Reflex rendering so that translations match user preferences.
+  #
+  # Priority order (highest to lowest):
+  #   1. Explicit user preference stored via UserPreference (if an authenticated or guest Account exists)
+  #   2. Session-persisted locale, updated by e.g. LanguagePickerReflex
+  #   3. Rails default locale (I18n.default_locale)
+  #
+  # We intentionally omit the "Accept-Language" header fallback here because
+  # Reflexes are executed over ActionCable where the full Rack request is not
+  # present. The header-based inference already occurred during the initial
+  # HTTP request that rendered the page, so by the time a Reflex is triggered
+  # the session or user preference will always reflect the client's desired
+  # language.
   def set_locale
-    I18n.locale = session[:locale] || I18n.default_locale
-    log_debug "Set locale to: #{I18n.locale}"
+    I18n.locale =
+      if current_account && (preferred = UserPreference.get(current_account.id, "locale")).present?
+        preferred
+      else
+        session[:locale] || I18n.default_locale
+      end
+
+    log_debug "[ApplicationReflex] Locale set to: #{I18n.locale}"
   end
 
   def handle_rodauth_halt
@@ -178,40 +202,5 @@ class ApplicationReflex < StimulusReflex::Reflex
   # Helper to get the login path - works with or without route helpers
   def login_path
     defined?(login_path) ? login_path : "/login"
-  end
-
-  # Renders a partial and morphs it to the DOM
-  def render_and_morph_with_emojis(selector:, partial:, locals: {}, **_options)
-    log_debug "[ApplicationReflex#render_and_morph_with_emojis] Rendering partial: #{partial}"
-
-    # Capture the current time for performance tracking
-    start_time = Time.zone.now
-
-    # Include the controller instance (via delegate_all) for rendering
-    rendered_html = controller.render_to_string(
-      partial: partial,
-      locals: locals
-    )
-
-    # Process emojis in the rendered HTML safely
-    processed_html = helpers.process_html_with_emojis(rendered_html)
-
-    # No need to mark as html_safe as CableReady handles this
-    # processed_html = processed_html.html_safe if processed_html.respond_to?(:html_safe)
-
-    # Log performance and details of the render/morph
-    duration = ((Time.zone.now - start_time) * 1000).round(1)
-    log_debug "[ApplicationReflex#render_and_morph_with_emojis] Rendered in #{duration}ms"
-    log_debug "[ApplicationReflex#render_and_morph_with_emojis] Morphing to selector: #{selector}"
-
-    # Use CableReady's morph operation with our processed HTML
-    cable_ready.morph(
-      selector: selector,
-      html: processed_html,
-      children_only: false,
-      permanent_attribute_name: "data-reflex-permanent"
-    )
-
-    true # Return success value
   end
 end

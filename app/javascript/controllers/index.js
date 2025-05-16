@@ -7,6 +7,9 @@ import { application } from "./application";
 import ApplicationController from "./application_controller";
 application.register("application", ApplicationController);
 
+import ConsentController from "./consent_controller";
+application.register("consent", ConsentController);
+
 import DismissibleController from "./dismissible_controller";
 application.register("dismissible", DismissibleController);
 
@@ -15,6 +18,9 @@ application.register("drawer", DrawerController);
 
 import FormAutoSubmitController from "./form_auto_submit_controller";
 application.register("form-auto-submit", FormAutoSubmitController);
+
+import LanguagePickerController from "./language_picker_controller";
+application.register("language-picker", LanguagePickerController);
 
 import LenisController from "./lenis_controller";
 application.register("lenis", LenisController);
@@ -36,6 +42,3 @@ application.register("sidebar", SidebarController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);
-
-import ConsentController from "./consent_controller";
-application.register("consent", ConsentController);

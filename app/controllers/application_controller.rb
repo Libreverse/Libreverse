@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
     after_action :log_response_info
     after_action :set_compliance_headers, if: -> { EEAMode.enabled? }
     before_action :set_current_ip
+    before_action :set_locale
 
     helper_method :tutorial_dismissed?, :consent_given?, :consent_path
 
@@ -70,5 +71,22 @@ class ApplicationController < ActionController::Base
     def set_current_ip
       Current.real_ip = request.env["remote_ip_original"] || request.remote_ip
       Current.ip = request.remote_ip
+    end
+
+    def set_locale
+      I18n.locale =
+        if current_account && (user_pref = UserPreference.get(current_account.id, "locale")).present?
+          user_pref
+        else
+          extract_locale_from_accept_language_header || session[:locale] || I18n.default_locale
+        end
+    end
+
+    def extract_locale_from_accept_language_header
+      return unless request.headers["Accept-Language"]
+
+      accepted = request.headers["Accept-Language"].scan(/[a-z]{2}(?=(-|;|,|$))/i).flatten.map(&:downcase)
+      available = I18n.available_locales.map(&:to_s)
+      accepted.find { |lang| available.include?(lang) }
     end
 end

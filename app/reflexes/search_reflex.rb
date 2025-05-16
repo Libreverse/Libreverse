@@ -21,19 +21,9 @@ class SearchReflex < ApplicationReflex
 
       log_info "[SearchReflex#perform] Found #{@experiences.size} experiences for query: '#{query}'"
 
-      # Always broadcast any CableReady operations before morphing
-      log_debug "[SearchReflex#perform] Broadcasting CableReady operations"
-      cable_ready.broadcast
-      log_info "[SearchReflex#perform] CableReady broadcast completed"
-
-      # Morph the experiences_list div with the new content
-      log_debug "[SearchReflex#perform] Morphing #experiences_list"
-      render_and_morph_with_emojis(
-        selector: "#experiences_list",
-        partial: "search/experiences_list",
-        locals: { experiences: @experiences }
-      )
-      log_info "[SearchReflex#perform] Search results morphed successfully"
+      html_results = controller.render_to_string(partial: "search/experiences_list", locals: { experiences: @experiences })
+      morph "#experiences_list", html_results
+      log_debug "[SearchReflex#perform] Morph completed for #experiences_list"
   rescue ActionController::RoutingError => e
       Rails.logger.warn "Search reflex routing error: #{e.message}"
       morph :nothing

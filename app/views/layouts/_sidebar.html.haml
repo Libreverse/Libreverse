@@ -1,8 +1,22 @@
 :ruby
   sidebar_id = local_assigns.fetch(:sidebar_id, "main")
-  hover_enabled = local_assigns.fetch(:hover_enabled, sidebar_hover_enabled?)
+  sidebar_hovered = local_assigns.fetch(:sidebar_hovered, sidebar_hovered? ? 't' : 'f')
+  # If the sidebar is hovered, force expanded state to true so it renders expanded.
+  expanded_pref = local_assigns.fetch(:expanded, sidebar_expanded? ? 't' : 'f')
+  expanded = (sidebar_hovered == 't') ? 't' : expanded_pref
   rodauth_obj = local_assigns.fetch(:rodauth, rodauth)
-  Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, hover_enabled=#{hover_enabled}"
+  Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, sidebar_hovered=#{sidebar_hovered}, expanded=#{expanded}"
 
-%aside{id: "#{sidebar_id}-sidebar", class: "sidebar-container #{'sidebar-hovered' if hover_enabled == 't'}", role: "complementary", data: { expanded: (hover_enabled == "t" ? "true" : "false") }}
-  = render partial: "layouts/sidebar_nav", locals: { sidebar_id: sidebar_id, hover_enabled: hover_enabled, rodauth: rodauth_obj }
+%aside{id: "#{sidebar_id}-sidebar",
+       class: "sidebar-container #{'sidebar-hovered' if expanded == 't'}",
+       role: "complementary",
+       data: {
+         # Stimulus values for child controllers (preferred)
+         "expanded-value": (expanded == 't' ? 'true' : 'false'),
+         "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
+
+         # Legacy attributes retained to avoid breaking any direct CSS/JS
+         expanded: (expanded == 't' ? 'true' : 'false'),
+         "hovered": (sidebar_hovered == 't' ? 'true' : 'false'),
+       }}
+  = render partial: "layouts/sidebar_nav", locals: { sidebar_id: sidebar_id, sidebar_hovered: sidebar_hovered, expanded: expanded, rodauth: rodauth_obj }

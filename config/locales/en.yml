@@ -139,3 +139,9 @@ en:
             bullet_three: "Respect open-source licenses (e.g., CC-BY-4.0 for Libreverse-Twemoji)."
             governing_law: "Governing law: UK."
             title: "Libreverse Terms of Service"
+
+    settings:
+        index:
+            title: "Settings"
+            description: "Manage your preferences."
+            language: "Language"

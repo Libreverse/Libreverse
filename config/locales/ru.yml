@@ -133,3 +133,8 @@ ru:
             bullet_three: "Соблюдать открытые лицензии (например, CC-BY-4.0 для Libreverse-Twemoji)."
             governing_law: "Применимое право: Великобритания."
             title: "Условия использования Libreverse"
+    settings:
+        index:
+            title: "Настройки"
+            description: "Управляйте своими предпочтениями."
+            language: "Язык"

@@ -1,12 +1,14 @@
 import { Application } from "@hotwired/stimulus"
 import consumer from "../channels/consumer"
+import StimulusReflex from "stimulus_reflex"
 
+# Start the Stimulus application
 app = Application.start()
 
-# Attach consumer to the Stimulus application instance
+# Attach ActionCable consumer so StimulusReflex can share the connection
 app.consumer = consumer
 
-# Configure Stimulus development experience
+# Optional debug logging for plain Stimulus (separate from StimulusReflex)
 if import.meta.env.MODE is "development"
   app.debug = true
   console.log "StimulusJS Debug Mode Enabled"

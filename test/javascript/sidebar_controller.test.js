@@ -13,17 +13,11 @@ const SidebarControllerClass = class {
     }
 
     hover() {
-        return this.stimulate("SidebarReflex#set_hover_state", {
-            sidebarId: this.element.dataset.sidebarId || "main",
-            desiredState: true,
-        });
+        return this.stimulate("SidebarReflex#set_hover_state", true);
     }
 
     unhover() {
-        return this.stimulate("SidebarReflex#set_hover_state", {
-            sidebarId: this.element.dataset.sidebarId || "main",
-            desiredState: false,
-        });
+        return this.stimulate("SidebarReflex#set_hover_state", false);
     }
 
     // Mock method for testing
@@ -61,10 +55,7 @@ describe("SidebarController", () => {
         expect(controller.lastReflexCalled).toBe(
             "SidebarReflex#set_hover_state",
         );
-        expect(controller.lastReflexOptions).toEqual({
-            sidebarId: "test-sidebar",
-            desiredState: true,
-        });
+        expect(controller.lastReflexOptions).toEqual(true);
     });
 
     test("unhover method sets hover state to false", () => {
@@ -75,10 +66,7 @@ describe("SidebarController", () => {
         expect(controller.lastReflexCalled).toBe(
             "SidebarReflex#set_hover_state",
         );
-        expect(controller.lastReflexOptions).toEqual({
-            sidebarId: "test-sidebar",
-            desiredState: false,
-        });
+        expect(controller.lastReflexOptions).toEqual(false);
     });
 
     test("uses 'main' as default sidebar ID when none provided", () => {
@@ -101,9 +89,6 @@ describe("SidebarController", () => {
         controllerWithoutId.hover();
 
         // Check that the default sidebar ID was used
-        expect(controllerWithoutId.lastReflexOptions).toEqual({
-            sidebarId: "main",
-            desiredState: true,
-        });
+        expect(controllerWithoutId.lastReflexOptions).toEqual(true);
     });
 });

@@ -133,3 +133,8 @@ fr:
             bullet_three: "De respecter les licences open source (par exemple, CC-BY-4.0 pour Libreverse-Twemoji)."
             governing_law: "Loi applicable : Royaume-Uni."
             title: "Conditions d'utilisation de Libreverse"
+    settings:
+        index:
+            title: "Paramètres"
+            description: "Gérez vos préférences."
+            language: "Langue"

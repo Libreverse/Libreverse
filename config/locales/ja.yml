@@ -133,3 +133,8 @@ ja:
             bullet_three: "オープンソースライセンスを尊重すること（たとえば、Libreverse-TwemojiのCC-BY-4.0など）。"
             governing_law: "準拠法：英国"
             title: "Libreverse利用規約"
+    settings:
+        index:
+            title: "設定"
+            description: "設定を管理します。"
+            language: "言語"
