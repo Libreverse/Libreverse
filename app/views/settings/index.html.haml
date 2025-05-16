@@ -1,0 +1,16 @@
+= render "layouts/sidebar"
+= render "layouts/drawer"
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    .dashboard-container
+      .dashboard-header-section
+        %h1.display-heading= t('settings.index.title')
+        %p.header-description
+          = t('settings.index.description')
+        %h3.section-title= t('settings.index.language')
+        .language-picker-board{ data: { controller: 'language-picker' } }
+          - I18n.available_locales.each do |locale|
+            - flag = locale_flag_emoji(locale)
+            - is_current = I18n.locale == locale
+            %span.language-flag{ data: { action: 'click->language-picker#select', locale: locale }, class: (is_current ? 'selected' : '') }
+              = flag

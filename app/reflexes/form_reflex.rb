@@ -24,21 +24,14 @@ class FormReflex < ApplicationReflex
       log_info "[FormReflex#submit] CableReady broadcast completed"
 
       # Use render_and_morph_with_emojis to update the error container
-      render_and_morph_with_emojis(
-        selector: "#form-errors",
-        partial: "layouts/form_errors",
-        locals: { errors: [] }
-      )
+      html = controller.render_to_string(partial: "layouts/form_errors", locals: { errors: [] })
     else
       log_info "[FormReflex#submit] Form validation failed with #{@validation_errors.length} errors"
       # Use render_and_morph_with_emojis to show error messages
-      render_and_morph_with_emojis(
-        selector: "#form-errors",
-        partial: "layouts/form_errors",
-        locals: { errors: @validation_errors }
-      )
+      html = controller.render_to_string(partial: "layouts/form_errors", locals: { errors: @validation_errors })
     end
-morph :nothing
+morph "#form-errors", html
+    # Finished processing form; no further morphs required
   rescue StandardError => e
     log_error "[FormReflex#submit] Error processing form: #{e.message}", e
     log_error e.backtrace.join("\n")
@@ -46,11 +39,8 @@ morph :nothing
     # Show error in form
     @validation_errors ||= []
     @validation_errors << "An error occurred processing the form"
-    render_and_morph_with_emojis(
-      selector: "#form-errors",
-      partial: "layouts/form_errors",
-      locals: { errors: @validation_errors }
-    )
+    html = controller.render_to_string(partial: "layouts/form_errors", locals: { errors: @validation_errors })
+    morph "#form-errors", html
   end
 
   private

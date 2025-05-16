@@ -141,3 +141,9 @@ zh:
             bullet_three: "遵守开源许可（如Libreverse-Twemoji使用的CC-BY-4.0协议）。"
             governing_law: "管辖法律：英国。"
             title: "Libreverse服务条款"
+
+    settings:
+        index:
+            title: "设置"
+            description: "管理您的偏好设置。"
+            language: "语言"

@@ -133,3 +133,8 @@ hi:
             bullet_three: "ओपन-सोर्स लाइसेंसों का सम्मान करें (उदाहरण के लिए, Libreverse-Twemoji के लिए CC-BY-4.0)।"
             governing_law: "शासी कानून: यूके।"
             title: "Libreverse सेवा की शर्तें"
+    settings:
+        index:
+            title: "सेटिंग्स"
+            description: "अपनी वरीयताएँ प्रबंधित करें।"
+            language: "भाषा"

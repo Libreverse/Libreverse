@@ -19,8 +19,9 @@ class UserPreference < ApplicationRecord
     feature-announcement
     theme-selection
     sidebar_expanded
-    sidebar_hover_enabled
+    sidebar_hovered
     drawer_expanded_main
+    locale
   ].freeze
 
   validate :key_must_be_allowed

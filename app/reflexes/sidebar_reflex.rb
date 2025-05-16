@@ -6,7 +6,7 @@ class SidebarReflex < ApplicationReflex
   # Toggles the sidebar hover state (persists only)
   def toggle_hover
     sidebar_id = element.dataset[:sidebar_id] || "main"
-    key = "sidebar_hover_enabled"
+    key = "sidebar_hovered"
 
     return unless current_account
 
@@ -27,43 +27,28 @@ class SidebarReflex < ApplicationReflex
 
     log_info "[SidebarReflex#toggle_hover] Sidebar hover toggled to: #{new_state} for account #{current_account.id} via UserPreference"
 
-    # Determine current expanded state using the reflex's @current_account
-    preference_value = @current_account ? UserPreference.get(@current_account.id, :sidebar_expanded) : nil
-    current_expanded_state = preference_value == "t" # Handle as 't'/'f' like hover_enabled
+    log_info "[SidebarReflex#toggle_hover] Updating sidebar DOM for ID: #{sidebar_id}, new hover state: #{new_state}"
 
-    # Get the expanded value as 't' or 'f' to match hover_enabled
-    expanded_value = current_expanded_state ? "t" : "f"
+    begin
+      if new_state
+        # Add hover classes
+        cable_ready.add_css_class selector: "##{sidebar_id}-sidebar", name: "sidebar-hovered"
+        cable_ready.add_css_class selector: "#sidebar-nav-#{sidebar_id}", name: "sidebar-hovered"
+      else
+        # Remove hover classes
+        cable_ready.remove_css_class selector: "##{sidebar_id}-sidebar", name: "sidebar-hovered"
+        cable_ready.remove_css_class selector: "#sidebar-nav-#{sidebar_id}", name: "sidebar-hovered"
+      end
 
-    log_info "[SidebarReflex#toggle_hover] Updating sidebar DOM for ID: #{sidebar_id}"
-    log_info "[SidebarReflex#toggle_hover] Expanded state: #{expanded_value}"
+      # Update attributes so future page loads/stimulus see correct values
+      hover_attr_value = new_state ? "true" : "false"
+      cable_ready.set_attribute selector: "##{sidebar_id}-sidebar", name: "data-hovered", value: hover_attr_value
+      cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "data-hovered", value: hover_attr_value
 
-    # First, update the sidebar container (parent element)
-    render_and_morph_with_emojis(
-      selector: "##{sidebar_id}-sidebar", # Target the container element
-      partial: "layouts/sidebar", # Render the main sidebar partial
-      locals: {
-        sidebar_id: sidebar_id,
-        hover_enabled: new_state ? "t" : "f", # Use 't'/'f' format consistently
-        expanded: expanded_value, # Use 't'/'f' format consistently
-        rodauth: controller.rodauth
-      }
-    )
-
-    # Then also update the nav element to ensure both are in sync
-    render_and_morph_with_emojis(
-      selector: "#sidebar-nav-#{sidebar_id}", # Target the inner nav element
-      partial: "layouts/sidebar_nav", # Render the extracted nav partial
-      locals: {
-        sidebar_id: sidebar_id,
-        hover_enabled: new_state ? "t" : "f", # Use 't'/'f' format consistently
-        expanded: expanded_value, # Use 't'/'f' format consistently
-        rodauth: controller.rodauth
-      }
-    )
-
-    log_debug "[SidebarReflex#toggle_hover] Broadcasting CableReady operations"
-    cable_ready.broadcast
-    log_info "[SidebarReflex#toggle_hover] CableReady broadcast completed"
+      cable_ready.broadcast
+    rescue StandardError => e
+      log_error "[SidebarReflex#toggle_hover] CableReady error: #{e.message}", e
+    end
 
     morph :nothing
   rescue StandardError => e
@@ -71,6 +56,69 @@ class SidebarReflex < ApplicationReflex
     log_error e.backtrace.join("\n")
     morph :nothing # Ensure we still morph nothing on error
   end
+
+  # ---------------------------------------------------------------------------
+  # NEW: Explicitly set the hover (expanded) state based on a boolean argument.
+  # This avoids repeatedly toggling the state when the sidebar element is
+  # re-rendered, which previously caused an infinite loop of mouseenter and
+  # mouseleave events. Instead of morphing the entire sidebar/nav elements we
+  # use CableReady operations to add or remove the `sidebar-hovered` class and
+  # keep aria / data attributes in sync. This updates the DOM in place so the
+  # browser does not fire additional hover events.
+  # ---------------------------------------------------------------------------
+  # rubocop:disable Naming/AccessorMethodName
+  def set_hover_state(hovered)
+    sidebar_id = element.dataset["sidebar_id"] || "main"
+
+    # Cast the incoming param to a proper boolean in a way that supports the
+    # JavaScript truthy/falsey values we might receive.
+    hovered_bool = ActiveModel::Type::Boolean.new.cast(hovered)
+
+    # Persist the hover state for logged-in users so that the next page
+    # render reflects the correct expanded/collapsed state.
+    if current_account
+      begin
+        UserPreference.set(current_account.id, "sidebar_hovered", hovered_bool ? "t" : "f")
+      rescue StandardError => e
+        log_error "[SidebarReflex#set_hover_state] Error persisting hover state: #{e.message}", e
+      end
+    end
+
+    begin
+      if hovered_bool
+        cable_ready.add_css_class selector: "##{sidebar_id}-sidebar", name: "sidebar-hovered"
+        cable_ready.add_css_class selector: "#sidebar-nav-#{sidebar_id}", name: "sidebar-hovered"
+
+        # Keep both legacy and value-style attributes in sync
+        cable_ready.set_attribute selector: "##{sidebar_id}-sidebar", name: "data-expanded", value: "true"
+        cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "data-expanded", value: "true"
+
+        cable_ready.set_attribute selector: "##{sidebar_id}-sidebar", name: "data-expanded-value", value: "true"
+        cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "data-expanded-value", value: "true"
+
+        cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "aria-expanded", value: "true"
+      else
+        cable_ready.remove_css_class selector: "##{sidebar_id}-sidebar", name: "sidebar-hovered"
+        cable_ready.remove_css_class selector: "#sidebar-nav-#{sidebar_id}", name: "sidebar-hovered"
+
+        # Keep both legacy and value-style attributes in sync
+        cable_ready.set_attribute selector: "##{sidebar_id}-sidebar", name: "data-expanded", value: "false"
+        cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "data-expanded", value: "false"
+
+        cable_ready.set_attribute selector: "##{sidebar_id}-sidebar", name: "data-expanded-value", value: "false"
+        cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "data-expanded-value", value: "false"
+
+        cable_ready.set_attribute selector: "#sidebar-nav-#{sidebar_id}", name: "aria-expanded", value: "false"
+      end
+
+      cable_ready.broadcast
+      morph :nothing
+    rescue StandardError => e
+      log_error "[SidebarReflex#set_hover_state] Error: #{e.message}", e
+      morph :nothing
+    end
+  end
+  # rubocop:enable Naming/AccessorMethodName
 
   # Optional: Add set_expanded_state if explicit toggle needed later
   # def set_expanded_state(expanded)

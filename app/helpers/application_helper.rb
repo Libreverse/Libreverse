@@ -154,12 +154,12 @@ module ApplicationHelper
     UserPreference.get(current_account.id, :sidebar_expanded) == "t"
   end
 
-  # Check if the sidebar hover feature is enabled for the current user
-  def sidebar_hover_enabled?
+  # Check if the sidebar is currently hovered for the current user
+  def sidebar_hovered?
     return "f" unless current_account
 
     # Ensure we check for 't' to match the stored pattern
-    UserPreference.get(current_account.id, "sidebar_hover_enabled") == "t"
+    UserPreference.get(current_account.id, "sidebar_hovered") == "t"
   end
 
   # Checks if a specific drawer is expanded.
@@ -178,6 +178,24 @@ module ApplicationHelper
   # end
 
   # --- End User Preference Helpers ---
+
+  # --- Locale Flag Emoji Helper ---
+  # Returns the flag emoji for a given locale symbol.
+  # Example: :en => 🇺🇸
+  def locale_flag_emoji(locale)
+    {
+      en: "🇺🇸",
+      zh: "🇨🇳",
+      es: "🇪🇸",
+      hi: "🇮🇳",
+      ar: "🇸🇦",
+      pt: "🇧🇷",
+      fr: "🇫🇷",
+      ru: "🇷🇺",
+      de: "🇩🇪",
+      ja: "🇯🇵"
+    }[locale.to_sym] || "🏳️"
+  end
 
   # --- SEO Asset Path Helpers (Moved from initializer) ---
 
