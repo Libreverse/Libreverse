@@ -20,7 +20,7 @@ export default class extends Controller
   init: ->
     try
       @scroll ||= new LocomotiveScroll({
-        el: @element || document.querySelector('[data-scroll-container]') || document.body,
+        el: @element or document.querySelector('[data-scroll-container]') or document.body,
         smooth: true,
         repeat: true,
         gestureDirection: 'vertical',
@@ -79,4 +79,4 @@ export default class extends Controller
     document.removeEventListener "turbo:before-render", @boundDestroyIfNeeded
     document.removeEventListener "turbo:render", @handleTurboRender
     window.removeEventListener "beforeunload", @boundDestroy
-    return 
+    return
