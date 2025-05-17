@@ -12,6 +12,7 @@
 ###
 import ApplicationController from "./application_controller"
 import "../libs/rainyday.js"
+import { setupLocomotiveScrollParallax } from "./parallax_utils.coffee"
 
 ###*
  * Manages an iframe containing the RaindropFX effect to isolate its context.
@@ -24,12 +25,16 @@ export default class extends ApplicationController
   connect: ->
     super.connect()
     @setupRainyDay()
+    @setupParallax()
+    @setupResizeListener()
     return
 
   disconnect: ->
     super.disconnect()
     @rainyday?.destroy()
     @rainyday = null
+    @removeParallax?()
+    @removeResizeListener?()
     return
 
   setupRainyDay: ->
@@ -91,4 +96,35 @@ export default class extends ApplicationController
       rate = 1
       speed = 25
       @rainyday.rain([[min, base, rate]], speed)
+    return
+
+  setupParallax: ->
+    return unless @element.hasAttribute?('data-scroll')
+    speed = parseFloat(@element.getAttribute('data-scroll-speed') or '-2')
+    @removeParallax = setupLocomotiveScrollParallax(@element, speed, @)
+    return
+
+  setupResizeListener: ->
+    # Debounce resize events to avoid excessive updates
+    debounce = (func, wait) ->
+      timeout = null
+      ->
+        clearTimeout(timeout)
+        timeout = setTimeout(func, wait)
+
+    @handleResize = debounce((=>
+      @updateRainyDayDimensions()
+    ), 200)
+
+    window.addEventListener 'resize', @handleResize
+    @removeResizeListener = =>
+      window.removeEventListener 'resize', @handleResize
+    return
+
+  updateRainyDayDimensions: ->
+    return unless @rainyday?
+    # Remove and re-setup RainyDay to update canvas size
+    @rainyday.destroy()
+    @rainyday = null
+    @setupRainyDay()
     return

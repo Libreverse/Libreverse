@@ -144,7 +144,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh + 30%);
     z-index: -1;
     overflow: hidden;
     background-color: variables.$background;
@@ -161,18 +161,6 @@
         z-index: 0;
         background: transparent;
     }
-}
-
-.sp-bg img {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    filter: blur(10px);
-    user-select: none;
 }
 
 .sp-centerify {

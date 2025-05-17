@@ -3,7 +3,7 @@
   = render "layouts/drawer"
   = render "layouts/leniswrapper" do
     = render "layouts/navigationshortcutswrapper" do
-      .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => bitmap_image_data_url("images/garage").to_s, :role => "presentation"}
+      .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => bitmap_image_data_url("images/garage").to_s, :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
         %canvas.raindrop-canvas
       .hp-centerify
         %header.hp-main{role: "banner"}

@@ -2,22 +2,23 @@
 = render "layouts/drawer"
 = render "layouts/leniswrapper" do
   = render "layouts/navigationshortcutswrapper" do
+    %div.administrative-background{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
     .dashboard-container
       .dashboard-header-section
-        %h1.display-heading= t('.title')
-        %p.header-description= t('.subtitle')
+        %h1.display-heading= t('experiences.index.title')
+        %p.header-description= t('experiences.index.subtitle')
       - if rodauth.logged_in? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
           .dashboard-section#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial", "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
                 %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
-            %h2.section-heading= t('.tutorial_heading')
-            %p.section-description= t('.tutorial_description')
+            %h2.section-heading= t('experiences.index.tutorial_heading')
+            %p.section-description= t('experiences.index.tutorial_description')
       - if @experiences.any?
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
       %section.experience-form-container.mt-5#create-experience
-        %h2.experience-form-heading= t('.create_new_heading')
+        %h2.experience-form-heading= t('experiences.index.create_new_heading')
         %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
         = render "form", experience: @experience
