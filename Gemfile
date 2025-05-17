@@ -94,9 +94,6 @@ gem "re2"
 gem "haml"
 gem "haml-rails"
 
-# This needs to go in prod because it' used in a rake task and zeitwerk will crash when it tries to autoload it.
-gem "haml-lint"
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
@@ -110,6 +107,9 @@ group :development do
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
+
+  # Lint Haml files
+  gem "haml-lint"
 
   # fly.io's dockerfile generator to generate a docker compose file for the site.
   gem "dockerfile-rails"
