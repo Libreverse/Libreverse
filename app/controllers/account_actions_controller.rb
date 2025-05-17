@@ -10,7 +10,7 @@ class AccountActionsController < ApplicationController
     zip_io = Zip::OutputStream.write_buffer do |zip|
       # 1) Account XML
       zip.put_next_entry("account.xml") # Add account.xml to the zip
-      zip.write account_json.to_xml(root: 'account')
+      zip.write account_json.to_xml(root: "account")
 
       # 2) Preferences XML
       prefs = UserPreference::ALLOWED_KEYS.each_with_object({}) do |key, h|
@@ -18,13 +18,13 @@ class AccountActionsController < ApplicationController
         h[key] = val if val.present?
       end
       zip.put_next_entry("preferences.xml") # Add preferences.xml to the zip
-      zip.write prefs.to_xml(root: 'preferences')
+      zip.write prefs.to_xml(root: "preferences")
 
       # 3) Experiences
       Experience.where(account_id: current_account.id).find_each do |exp|
         # Metadata
         zip.put_next_entry("experiences/#{exp.id}/metadata.xml") # Add metadata.xml for each experience
-        zip.write exp.as_json(except: %i[account_id]).to_xml(root: 'experience')
+        zip.write exp.as_json(except: %i[account_id]).to_xml(root: "experience")
 
         # HTML attachment
         if exp.html_file.attached?
