@@ -93,7 +93,8 @@ USER 1000:1000
 
 # Deployment options
 ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
-    RUBY_YJIT_ENABLE="1"
+    RUBY_YJIT_ENABLE="1"\
+    PORT=3000
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
@@ -101,4 +102,4 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
 VOLUME /data
-CMD ["./bin/rails", "server"]
+CMD ["bundle", "exec", "iodine"]
