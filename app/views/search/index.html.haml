@@ -3,7 +3,7 @@
   = render "layouts/drawer"
   = render "layouts/leniswrapper" do
     = render "layouts/navigationshortcutswrapper" do
-      .sp-bg{role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": bitmap_image_data_url("images/brasserie")}}
+      .sp-bg{role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": bitmap_image_data_url("images/brasserie"), scroll: true, "scroll-speed": "-2"}}
         %iframe.raindrop-iframe{allowtransparency: "true", "data-raindrop-target": "iframe", scrolling: "no", title: "Background Effect Container"}
       .sp-centerify
         %header.sp-main{role: "banner"}

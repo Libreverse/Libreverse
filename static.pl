@@ -20,9 +20,6 @@ my @pids;
 
 print "Running static analysis tasks...\n";
 
-# --- YAML Linting ---
-run_command("YAML Lint", "bunx", "yaml-lint", "config/locales/**/*.yml");
-
 # --- Sequential Tasks --- Function to run and check command
 sub run_command {
     my ($tool_name, @cmd) = @_;
@@ -122,19 +119,16 @@ push @sequential_status, $prettier_status;
 run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
 run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
 run_command("eslint",       "bun", "eslint", ".", "--fix");
-# Stylelint needs shell globbing
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
-# markdownlint needs shell globbing and negation
 run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' --fix --config .markdownlint.json");
-
-# Automated dependency upgrades (Ruby and Node)
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
-
-# Dependency analysis (Ruby and Node)
 run_command("bundle-audit", "bundle-audit", "check", "--update");
 run_command("npm audit", "sh", "-c", "npm i --package-lock-only --legacy-peer-deps && npm audit fix --production --legacy-peer-deps && bun install > /dev/null 2>&1; rm -f package-lock.json");
-run_command("unlock_test_sqlite", "sh", "-c", "./scripts/unlock_sqlite_test.sh");
+run_command("YAML Lint", "bunx", "yaml-lint", "config/locales/**/*.yml");
+run_command("unlock_sqlite", "sh", "-c", "./scripts/unlock_sqlite.pl");
+run_command("Haml Validation", "rake", "haml:check");
+run_command("i18n Validation", "rake", "i18n:validate_keys");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1); # Auto-cleanup

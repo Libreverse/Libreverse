@@ -37,17 +37,3 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar {
     display: none;
 }
-
-.underconstruction {
-    position: fixed;
-    background-color: #fdf3dc;
-    color: #333;
-    padding: 5px;
-    top: 0;
-    z-index: 3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #c0b9a8;
-    width: 100%;
-}

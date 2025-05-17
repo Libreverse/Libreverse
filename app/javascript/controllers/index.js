@@ -42,3 +42,6 @@ application.register("sidebar", SidebarController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);
+
+import ParallaxBackgroundController from "./parallax_background_controller";
+application.register("parallax-background", ParallaxBackgroundController);
