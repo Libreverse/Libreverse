@@ -23,6 +23,7 @@
         width 0.3s ease-in-out,
         margin 0.3s ease-in-out;
     overflow: hidden;
+    contain: layout paint;
 }
 
 /* Expanded drawer state */
@@ -103,6 +104,8 @@
     transition:
         opacity 0.3s ease-in-out,
         transform 0.3s ease-in-out;
+    will-change: transform, opacity;
+    contain: layout paint;
 }
 
 /* Show content when expanded */

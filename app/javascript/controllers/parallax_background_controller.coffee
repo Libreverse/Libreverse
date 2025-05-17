@@ -6,9 +6,9 @@ import { setupLocomotiveScrollParallax } from "./parallax_utils.coffee"
 # attached to, synchronising with the global LocomotiveScroll instance.
 #
 # Usage (HAML example):
-#   %div.administrative-background{ 
-#     "data-controller" => "parallax-background", 
-#     "data-scroll" => "",  
+#   %div.administrative-background{
+#     "data-controller" => "parallax-background",
+#     "data-scroll" => "",
 #     "data-scroll-speed" => "-3",  # optional, defaults to -2
 #   }
 #
@@ -32,4 +32,4 @@ export default class extends ApplicationController
   # Private helpers
   # ------------------------------------------------------------------
 
-  # Remove the setupLocomotiveScrollParallax method entirely 
+  # Remove the setupLocomotiveScrollParallax method entirely

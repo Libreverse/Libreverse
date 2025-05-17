@@ -19,6 +19,7 @@
     border-top-color: #3b82f6;
     animation: spin 1s infinite linear;
     z-index: 10;
+    will-change: transform;
 }
 
 @keyframes spin {

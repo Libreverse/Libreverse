@@ -9,11 +9,13 @@
 setupLocomotiveScrollParallax = (element, speed = -2, context = null) ->
   # Find the LocomotiveScroll instance
   locomotiveController = document.querySelector('[data-controller="locomotive-scroll"]')
-  return -> unless locomotiveController?
+  if not locomotiveController?
+    return -> return
 
   scrollInstance = locomotiveController?.__stimulus_controller__?.scroll
   scrollInstance ?= window.locomotiveScrollInstance
-  return -> unless scrollInstance?
+  if not scrollInstance?
+    return -> return
 
   handler = (args) =>
     y = args?.scroll?.y or 0
@@ -29,4 +31,4 @@ setupLocomotiveScrollParallax = (element, speed = -2, context = null) ->
     element.style.transform = ''
 
 # Export for use in controllers
-export { setupLocomotiveScrollParallax } 
+export { setupLocomotiveScrollParallax }

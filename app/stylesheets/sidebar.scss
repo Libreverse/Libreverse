@@ -13,6 +13,7 @@
     z-index: 5;
     transition: width 0.3s ease;
     position: fixed;
+    will-change: width;
 
     &.sidebar-hovered {
         width: 100px;
@@ -27,6 +28,7 @@
     display: flex;
     align-items: center;
     transition: width 0.3s ease;
+    will-change: width;
 
     &.sidebar-hovered {
         width: 100px; // Matches the width of .sidebar when hovered
@@ -117,6 +119,7 @@
 
 .sidebar-not-allowed-shake {
     animation: sidebar-shake 0.75s ease-in-out infinite;
+    will-change: transform;
 }
 
 .sidebar-default-cursor {

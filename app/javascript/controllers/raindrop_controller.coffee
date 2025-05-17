@@ -106,9 +106,9 @@ export default class extends ApplicationController
 
   setupResizeListener: ->
     # Debounce resize events to avoid excessive updates
-    debounce = (func, wait) ->
+    debounce = (func, wait) =>
       timeout = null
-      ->
+      =>
         clearTimeout(timeout)
         timeout = setTimeout(func, wait)
 
