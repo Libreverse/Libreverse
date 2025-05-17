@@ -1,1 +1,18 @@
 @use "locomotive-scroll/dist/locomotive-scroll.css";
+
+/* -------------------------------------------------------------
+   Performance hints for Locomotive Scroll
+   ------------------------------------------------------------- */
+
+// Hint GPU that the smooth-scroll container will be transformed continuously.
+[data-scroll-container] {
+    will-change: transform;
+}
+
+// Parallax / speed elements change transform frequently as well.
+// Apply cautiously – DO NOT target every element with data-scroll
+// or we risk overwhelming the compositor. Limiting to elements that
+// explicitly request scroll speed (parallax) is safer.
+[data-scroll-speed] {
+    will-change: transform;
+}
