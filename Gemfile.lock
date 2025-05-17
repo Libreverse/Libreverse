@@ -129,8 +129,6 @@ GEM
       rails (>= 3.0.0)
     drb (2.2.1)
     dry-cli (1.2.0)
-    erb-formatter (0.7.3)
-      syntax_tree (~> 6.0)
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
@@ -236,7 +234,6 @@ GEM
     permessage_deflate (0.1.4)
     pp (0.6.2)
       prettyprint
-    prettier_print (1.2.1)
     prettyprint (0.2.0)
     prism (1.4.0)
     psych (5.2.6)
@@ -416,8 +413,6 @@ GEM
       railties (>= 5.2)
       redis (>= 4.0, < 6.0)
     stringio (3.1.7)
-    syntax_tree (6.2.0)
-      prettier_print (>= 1.2.0)
     sysexits (1.2.0)
     temple (0.10.3)
     thor (1.3.2)
@@ -486,7 +481,6 @@ DEPENDENCIES
   capybara
   debug
   dockerfile-rails
-  erb-formatter
   fasterer
   foreman
   haml
