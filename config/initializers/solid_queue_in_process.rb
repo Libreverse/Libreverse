@@ -31,15 +31,17 @@ if Rails.env.development? || Rails.env.production?
 
         loop do
           begin
-            # Attempt to connect and verify at least one Solid Queue table
-            ActiveRecord::Base.connection
-            if ActiveRecord::Base.connection.data_source_exists?("solid_queue_jobs")
-              Rails.logger.info "Solid Queue tables detected. Bootstrapping dispatcher/worker/scheduler..."
-              break
-            else
-              Rails.logger.info "Solid Queue tables not yet found; retrying in 5s..."
+            # Obtain a connection only for the duration of the check to avoid
+            # holding on to it and exhausting the pool.
+            ActiveRecord::Base.connection_pool.with_connection do |conn|
+              if conn.data_source_exists?("solid_queue_jobs")
+                Rails.logger.info "Solid Queue tables detected. Bootstrapping dispatcher/worker/scheduler..."
+                break
+              else
+                Rails.logger.info "Solid Queue tables not yet found; retrying in 5s..."
+              end
             end
-          rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid => e
+          rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid, ActiveRecord::ConnectionTimeoutError => e
             Rails.logger.info "Database not ready (#{e.class}); retrying in 5s..."
           end
 
