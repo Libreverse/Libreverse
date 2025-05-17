@@ -11,9 +11,8 @@ gem "rails"
 gem "activerecord-enhancedsqlite3-adapter"
 gem "sqlite3"
 
-# Use the Puma web server (multi-threaded, default for Rails)
-# Pin to latest stable major; adjust as needed.
-gem "puma"
+# Use the Iodine web server (multi-threaded, C-based for performance)
+gem "iodine", "~> 0.7"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
@@ -84,8 +83,8 @@ gem "view_component"
 # For model-level Rodauth integration
 gem "rodauth-model"
 
-# Use zip_kit for streaming zip exports
-gem "zip_kit"
+# Use rubyzip for zip exports
+gem "rubyzip"
 
 # Add the RE2 Ruby gem to enable the RE2-based whitespace compressor middleware
 gem "re2"

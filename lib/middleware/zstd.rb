@@ -59,9 +59,29 @@ module Rack
 
     private
 
+    COMPRESSIBLE_CONTENT_TYPES = %w[\\
+      text/html\\
+      text/plain\\
+      text/css\\
+      text/javascript\\
+      application/javascript\\
+      application/json\\
+      application/xml\\
+      application/rss+xml\\
+      application/atom+xml\\
+      image/svg+xml\\
+    ].map(&:downcase).freeze
+
     def compressible?(env, headers)
       # Skip if already encoded
       return false if headers["Content-Encoding"]
+
+      # Check Content-Type
+      header_content_type = headers["Content-Type"]
+      return false if header_content_type.nil? || header_content_type.empty?
+
+      content_type = header_content_type.split(';').first.to_s.strip.downcase
+      return false unless COMPRESSIBLE_CONTENT_TYPES.include?(content_type)
 
       # Check Accept-Encoding for zstd token, allowing for quality values (e.g. 'zstd;q=0.9')
       accept_enc = env["HTTP_ACCEPT_ENCODING"].to_s

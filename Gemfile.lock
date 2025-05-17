@@ -171,6 +171,7 @@ GEM
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.0)
+    iodine (0.7.58)
     irb (1.15.2)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
@@ -240,8 +241,6 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (6.6.0)
-      nio4r (~> 2.0)
     pwned (2.4.1)
     raabro (1.4.0)
     racc (1.8.1)
@@ -458,7 +457,6 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.7.2)
-    zip_kit (6.3.3)
     zstd-ruby (1.5.6.6)
 
 PLATFORMS
@@ -486,12 +484,12 @@ DEPENDENCIES
   haml
   haml-lint
   haml-rails
+  iodine (~> 0.7)
   lockbox
   mocha
   nokogiri
   ostruct
   permessage_deflate
-  puma
   rack-attack
   rack-brotli
   rack-cors
@@ -505,6 +503,7 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails
+  rubyzip
   selenium-webdriver
   sequel-activerecord_connection
   solid_cable
@@ -521,7 +520,6 @@ DEPENDENCIES
   vite_plugin_legacy
   vite_rails
   web-console
-  zip_kit
   zstd-ruby
 
 RUBY VERSION
