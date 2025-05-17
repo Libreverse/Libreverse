@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
-import Lenis from "lenis"
+import LocomotiveScroll from "locomotive-scroll"
 
 export default class extends Controller
   connect: ->
-    @lenis = undefined
+    @scroll = undefined
     @boundDestroyIfNeeded = @destroyIfNeeded.bind(@)
     @boundDestroy = @destroy.bind(@)
     @handleTurboLoad = @handleTurboLoad.bind(@)
@@ -19,42 +19,49 @@ export default class extends Controller
 
   init: ->
     try
-      @lenis ||= new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        touchMultiplier: 2,
-        infinite: false,
-        autoRaf: true,
+      @scroll ||= new LocomotiveScroll({
+        el: @element || document.querySelector('[data-scroll-container]') || document.body,
+        smooth: true,
+        repeat: true,
+        gestureDirection: 'vertical',
+        reloadOnContextChange: false,
+        resetNativeScroll: false,
+        smartphone: {
+          smooth: true
+        },
+        tablet: {
+          smooth: true
+        }
       })
     catch error
-      console.error "Failed to initialize Lenis:", error
+      console.error "Failed to initialize LocomotiveScroll:", error
     return
 
   destroy: ->
-    if @lenis
-      @lenis.destroy()
-      @lenis = undefined
+    if @scroll?
+      @scroll.destroy()
+      @scroll = undefined
     return
 
   resume: ->
-    if @lenis
-      @lenis.start()
+    if @scroll?
+      @scroll.update()
     return
 
   destroyIfNeeded: (event) =>
-    if @lenis and (not event or event.target.controller isnt "Turbo.FrameController")
+    if @scroll? and (not event or event.target.controller isnt "Turbo.FrameController")
       @destroy()
     return
 
   handleTurboLoad: =>
-    if @lenis
+    if @scroll?
       @resume()
     else
       @init()
     return
 
   handleTurboRender: =>
-    unless @lenis
+    unless @scroll?
       @init()
     return
 
@@ -72,4 +79,4 @@ export default class extends Controller
     document.removeEventListener "turbo:before-render", @boundDestroyIfNeeded
     document.removeEventListener "turbo:render", @handleTurboRender
     window.removeEventListener "beforeunload", @boundDestroy
-    return
+    return 

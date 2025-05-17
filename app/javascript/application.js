@@ -1,8 +1,3 @@
-// Add js-loaded class to html element after page load to enable scrolling for pages
-document.addEventListener("DOMContentLoaded", () => {
-    document.documentElement.classList.add("js-loaded");
-});
-
 import sxwjs from "@sxwjs/sxwjs";
 // Custom configuration
 const myConfig = {

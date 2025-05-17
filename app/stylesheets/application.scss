@@ -17,30 +17,35 @@
 @use "emoji";
 @use "drawer";
 @use "password_requirements";
-@use "lenis";
+@use "locomotive_scroll";
 @use "consent";
 @use "settings";
 
-html,
-body {
+html, body {
     width: 100%;
     height: 100%;
+    margin: 0;
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    position: fixed;
+    overflow: hidden;
 }
 
-html:not(.js-loaded) {
-    overflow: hidden;
-    position: fixed;
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none;
 }
 
 .underconstruction {
+    position: fixed;
     background-color: #fdf3dc;
     color: #333;
-    padding: 15px;
+    padding: 5px;
     top: 0;
     z-index: 3;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: top 0.3s;
     border: 1px solid #c0b9a8;
+    width: 100%;
 }

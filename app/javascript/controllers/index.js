@@ -22,8 +22,8 @@ application.register("form-auto-submit", FormAutoSubmitController);
 import LanguagePickerController from "./language_picker_controller";
 application.register("language-picker", LanguagePickerController);
 
-import LenisController from "./lenis_controller";
-application.register("lenis", LenisController);
+import LocomotiveScrollController from "./locomotive_scroll_controller";
+application.register("locomotive-scroll", LocomotiveScrollController);
 
 import LinkController from "./link_controller";
 application.register("link", LinkController);
