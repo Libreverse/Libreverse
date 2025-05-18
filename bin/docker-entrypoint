@@ -6,9 +6,6 @@ if [ -z "${LD_PRELOAD+x}" ]; then
     export LD_PRELOAD
 fi
 
-# If we're launching the Iodine Rack server, ensure the database is ready first
-if [ "$(basename "$1")" = "iodine" ]; then
-    ./bin/rails db:prepare
-fi
+./bin/rails db:prepare
 
 exec "${@}"
