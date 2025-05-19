@@ -1,15 +1,26 @@
-.consent-overlay{ "data-controller" => "consent" }
-  .consent-card
-    %h1= t('.title')
-    %p= t('.access_message_html', privacy_policy_link: link_to(t('policies.privacy_policy'), privacy_policy_path, target: '_blank'), cookie_policy_link: link_to(t('policies.cookie_policy'), cookie_policy_path, target: '_blank')).html_safe
-    %p= t('.remember_info_html')
-    %p.small= t('.english_only_notice')
-    .checkbox-row
-      %input{ type: "checkbox", id: "remember_opt_in", 'data-consent-target' => "checkbox" }
-      %label{ for: "remember_opt_in" }= t('.remember_opt_in_label')
-    .btn-row
-      %button.btn-primary{ type: "button", 'data-action' => "click->consent#accept" }
-        = t('.agree_and_continue')
-    .btn-row
-      %button.btn-secondary{ type: "button", 'data-action' => "click->consent#decline" }
-        = t('.decline')
+%body
+  = render "layouts/leniswrapper" do
+    .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => bitmap_image_data_url("images/garage").to_s, :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
+      %canvas.raindrop-canvas
+    .hp-centerify{ "data-controller" => "consent" }
+      %header.hp-main{role: "banner"}
+        %h1.large= t('homepage.index.brand')
+        %span.small{"aria-hidden" => "true", :tabindex => "-1"}
+          = t('homepage.index.libre_word')
+          %br>/
+          = t('homepage.index.verse_word')
+      %section{"aria-labelledby" => "intro-heading"}
+        %h2.hp-secondary#intro-heading
+          = "Welcome to Libreverse! A few things before we get started:"
+      %section{"aria-labelledby" => "principle-heading"}
+        %p.hp-text= t('consent.screen.access_message_html', privacy_policy_link: link_to(t('policies.privacy_policy'), privacy_policy_path, target: '_blank'), cookie_policy_link: link_to(t('policies.cookie_policy'), cookie_policy_path, target: '_blank')).html_safe
+        %p.hp-text= t('consent.screen.remember_info_html')
+        %p.hp-text= t('consent.screen.english_only_notice')
+        .checkbox-row
+          %input{ type: "checkbox", id: "remember_opt_in", 'data-consent-target' => "checkbox" }
+          %label{ for: "remember_opt_in" }= t('consent.screen.remember_opt_in_label')
+        .btn-row
+          %button{ type: "button", 'data-action' => "click->consent#accept" }
+            = t('consent.screen.agree_and_continue')
+          %button{ type: "button", 'data-action' => "click->consent#decline" }
+            = t('consent.screen.decline')
