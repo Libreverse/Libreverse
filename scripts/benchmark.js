@@ -7,6 +7,6 @@ export let options = {
 };
 
 export default function () {
-    http.get("http://localhost:3000/");
+    http.get("https://libreverse.geor.me");
     sleep(1); // Simulate user think time
 }

@@ -43,11 +43,10 @@ sxwjs.setContent(myContent);
 // Print the customized warning
 sxwjs.printWarning("en");
 
-import "@hotwired/turbo-rails";
-
+import * as Turbo from "@hotwired/turbo";
+import TurboPower from "turbo_power";
+TurboPower.initialize(Turbo.StreamActions);
+import "./config/stimulus_reflex";
 import "./controllers";
 import "./config";
 import "./channels";
-
-// Import main stylesheet
-import "~/stylesheets/application.scss";

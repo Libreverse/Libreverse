@@ -4,15 +4,12 @@
     %p= t('.access_message_html', privacy_policy_link: link_to(t('policies.privacy_policy'), privacy_policy_path, target: '_blank'), cookie_policy_link: link_to(t('policies.cookie_policy'), cookie_policy_path, target: '_blank')).html_safe
     %p= t('.remember_info_html')
     %p.small= t('.english_only_notice')
-    = form_with url: consent_accept_path, method: :post, local: true, data: { consent_target: "form", turbo: "false" } do |f|
-      .checkbox-row
-        = f.check_box :remember_opt_in, { data: { consent_target: "checkbox" } }, "1", "0"
-        = f.label :remember_opt_in, t('.remember_opt_in_label')
-      .btn-row
-        = f.submit t('.agree_and_continue'), class: 'btn-primary'
+    .checkbox-row
+      %input{ type: "checkbox", id: "remember_opt_in", 'data-consent-target' => "checkbox" }
+      %label{ for: "remember_opt_in" }= t('.remember_opt_in_label')
     .btn-row
-      = button_to t('.decline'),
-                  consent_decline_path,
-                  method: :post,
-                  class: 'btn-secondary',
-                  data: { turbo: 'false' }
+      %button.btn-primary{ type: "button", 'data-action' => "click->consent#accept" }
+        = t('.agree_and_continue')
+    .btn-row
+      %button.btn-secondary{ type: "button", 'data-action' => "click->consent#decline" }
+        = t('.decline')

@@ -4,130 +4,63 @@ source "https://rubygems.org"
 
 ruby "3.4.1"
 
-# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails"
-
-# Use SQLite as the database for Active Record with enhanced adapter
 gem "activerecord-enhancedsqlite3-adapter"
-gem "sqlite3"
-
-# Use the Iodine web server (multi-threaded, C-based for performance)
-gem "iodine", "~> 0.7"
-
-# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-gem "turbo-rails"
-
-# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "stimulus-rails"
-
-# Use vite build system
-gem "vite_plugin_legacy"
-gem "vite_rails"
-
-# StimulusReflex framework
-gem "ostruct"
-gem "stimulus_reflex"
-
-# Rodauth Rails integration for authentication
-gem "argon2"
-gem "rodauth-guest"
-gem "rodauth-i18n"
-gem "rodauth-pwned"
-gem "rodauth-rails"
-gem "sequel-activerecord_connection"
-gem "tilt"
-
-# Solid cache and queue for caching and background jobs
-gem "solid_cache"
-gem "solid_queue"
-
-# Solid Cable for database-backed ActionCable without Redis
-gem "solid_cable"
-
-# Used to monkey patch ActionCable to use the permessage_deflate extension
-gem "permessage_deflate"
-
-# Rack-Brotli to compress responses with Brotli
-gem "rack-brotli"
-
-# Zstandard to compress responses with Zstandard
-gem "zstd-ruby"
-
-# Rate limit everything on the app
-gem "rack-attack"
-
-# CORS support
-gem "rack-cors"
-
-# Unicode to handle emoji
-gem "unicode"
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[windows jruby]
-
-# Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap"
-
-# Secure XML parsing
-gem "nokogiri"
-
-# Active Storage validations
 gem "active_storage_validations"
-
-# Add lockbox gem for encrypted Active Storage attachments
-gem "lockbox"
-
-# Add view_component gem for ViewComponent support
-gem "view_component"
-
-# For model-level Rodauth integration
-gem "rodauth-model"
-
-# Use rubyzip for zip exports
-gem "rubyzip"
-
-# Add the RE2 Ruby gem to enable the RE2-based whitespace compressor middleware
-gem "re2"
-
-# Haml for rendering views
+gem "argon2"
+gem "bootsnap"
 gem "haml"
 gem "haml-rails"
+gem "iodine"
+gem "lockbox"
+gem "nokogiri"
+gem "ostruct"
+gem "permessage_deflate"
+gem "rack-attack"
+gem "rack-brotli"
+gem "rack-cors"
+gem "rails"
+gem "re2"
+gem "rodauth-guest"
+gem "rodauth-i18n"
+gem "rodauth-model"
+gem "rodauth-pwned"
+gem "rodauth-rails"
+gem "rubyzip"
+gem "sequel-activerecord_connection"
+gem "solid_cable"
+gem "solid_cache"
+gem "solid_queue"
+gem "sqlite3"
+gem "stimulus-rails"
+gem "stimulus_reflex"
+gem "tilt"
+gem "turbo_power"
+gem "turbo-rails"
+gem "tzinfo-data", platforms: %i[windows jruby]
+gem "unicode"
+gem "view_component"
+gem "vite_plugin_legacy"
+gem "vite_rails"
+gem "zstd-ruby"
 
 group :development, :test do
-  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
 end
 
 group :development do
-  # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
-
-  # Make the code actually look good among other things
+  gem "brakeman"
+  gem "bundle-audit"
+  gem "dockerfile-rails"
+  gem "fasterer"
+  gem "foreman"
+  gem "haml-lint"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
-
-  # Lint Haml files
-  gem "haml-lint"
-
-  # fly.io's dockerfile generator to generate a docker compose file for the site.
-  gem "dockerfile-rails"
-
-  # Use fasterer for speed improvement hints
-  gem "fasterer"
-
-  # Use the brakeman gem to check for security vulnerabilities
-  gem "brakeman"
-
-  # foreman does not seem to be installed by rails automatically
-  gem "foreman"
-
-  # Use bundle-audit to check for security vulnerabilities
-  gem "bundle-audit"
+  gem "web-console"
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "mocha"
   gem "selenium-webdriver"

@@ -121,15 +121,16 @@ end
 # Remove eager controller definitions to avoid ApplicationController missing
 
 Rails.application.routes.append do
-  scope "/" do
-    get  "consent",          to: "consents#show", as: :consent
-    post "consent/accept",   to: "consents#accept",  as: :consent_accept
-    post "consent/decline",  to: "consents#decline", as: :consent_decline
+  rs = Rails.application.routes
+  unless rs.named_routes.key?(:consent_accept)
+    scope "/" do
+      get  "consent",          to: "consents#show", as: :consent unless rs.named_routes.key?(:consent)
+      post "consent/accept",   to: "consents#accept",  as: :consent_accept
+      post "consent/decline",  to: "consents#decline", as: :consent_decline
 
-    # -----------------------------------------------------------------------
-    # Policies (Privacy & Cookies)
-    # -----------------------------------------------------------------------
-    get "privacy", to: "policies#privacy",  as: :privacy_policy
-    get "cookies", to: "policies#cookies",  as: :cookie_policy
+      # -----------------------------------------------------------------------
+      # Policies (Privacy & Cookies)
+      # -----------------------------------------------------------------------
+    end
   end
 end
