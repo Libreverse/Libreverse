@@ -1,3 +1,5 @@
+@use "variables";
+
 .consent-overlay {
     position: fixed;
     inset: 0;
@@ -48,7 +50,95 @@
         }
 
         a {
-            color: #1e8bff;
+            color: variables.$hp-secondary;
         }
     }
 }
+
+// Styles for the standalone consent screen (homepage style)
+.hp-centerify {
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    margin: 1rem 15%;
+
+    input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: variables.$hp-secondary;
+      cursor: pointer;
+    }
+
+    label {
+      margin-left: 0.5rem;
+      font-family: Hack, monospace;
+      color: variables.$hp-primary;
+      cursor: pointer;
+    }
+  }
+
+  .btn-row {
+    margin: 2rem 15% 0;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+
+    button {
+      font-family: Hack, monospace;
+      font-size: 18px;
+      padding: 0.5rem 1.25rem;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+
+      &:active {
+        transform: scale(0.97);
+      }
+    }
+
+    button[data-action*="accept"] {
+      background: #9b5287;
+      color: #fff;
+
+      &:hover {
+        background: darken(#9b5287, 8%);
+      }
+    }
+
+    button[data-action*="decline"] {
+      background: transparent;
+      color: #9b5287;
+      border: 1px solid #9b5287;
+
+      &:hover {
+        background: #210f1e;
+      }
+    }
+  }
+}
+
+@media (width <= 600px) {
+  .hp-centerify {
+    .checkbox-row {
+      margin: 1rem 10%;
+    }
+
+    .btn-row {
+      margin: 1.5rem 10% 0;
+
+      button {
+        font-size: 16px;
+        padding: 0.4rem 1rem;
+      }
+    }
+  }
+}
+
+.hp-text a {
+    font-family: Hack-Italic, monospace;
+    font-size: 18px;
+    color: variables.$hp-secondary;
+    text-decoration: underline;
+}
+

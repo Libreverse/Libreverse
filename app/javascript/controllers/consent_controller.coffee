@@ -1,4 +1,3 @@
-# Turbo client
 import * as Turbo from "@hotwired/turbo"
 import ApplicationController from "./application_controller"
 import { get, post } from "@rails/request.js"
