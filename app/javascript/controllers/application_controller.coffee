@@ -16,7 +16,10 @@ import StimulusReflex from "stimulus_reflex"
 export default class extends Controller
 
   connect: ->
-    StimulusReflex.register @
+    if typeof StimulusReflex isnt 'undefined' and typeof StimulusReflex.register is 'function'
+      StimulusReflex.register(@)
+    else
+      console.warn('StimulusReflex is not defined yet, skipping registration.')
 
   # Application-wide lifecycle methods have been removed as they were unused.
   # Restore them from version control if needed.

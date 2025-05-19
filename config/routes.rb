@@ -59,4 +59,13 @@ Rails.application.routes.draw do
 
   get ".well-known/security.txt", to: "well_known#security_txt", format: false
   get ".well-known/privacy.txt", to: "well_known#privacy_txt", format: false
+
+  # Consent routes using Turbo Streams
+  get  "consent/screen", to: "consent#screen", as: :consent_screen
+  post "consent/accept", to: "consent#accept"
+  post "consent/decline", to: "consent#decline"
+
+  # Policies (Privacy & Cookies)
+  get "privacy", to: "policies#privacy", as: :privacy_policy
+  get "cookies", to: "policies#cookies", as: :cookie_policy
 end

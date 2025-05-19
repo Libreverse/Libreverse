@@ -5,6 +5,7 @@
     "dependencies": {
         "@hotwired/stimulus": "^3.2.2",
         "@hotwired/turbo-rails": "^8.0.13",
+        "@rails/request.js": "^0.0.12",
         "@sxwjs/sxwjs": "^4.0.0",
         "cable_ready": "5.0.6",
         "hotkeys-js": "^3.13.10",
@@ -12,6 +13,7 @@
         "stimulus-use": "^0.52.3",
         "stimulus-vite-helpers": "^3.1.0",
         "stimulus_reflex": "3.5.3",
+        "turbo_power": "^0.7.1",
         "yaml-lint": "^1.7.0"
     },
     "devDependencies": {

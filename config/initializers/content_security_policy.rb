@@ -42,7 +42,6 @@ Rails.application.configure do
   # Configure a default Permissions-Policy (removing browsing-topics if it was added by default)
   config.permissions_policy do |policy|
     policy.accelerometer :none
-    policy.ambient_light_sensor :none
     policy.autoplay :self
     policy.camera :none
     policy.display_capture :none
@@ -58,8 +57,6 @@ Rails.application.configure do
     policy.screen_wake_lock :none
     policy.sync_xhr :self
     policy.usb :none
-    # policy.xr_spatial_tracking :none # This directive is not supported
-    # Add other features as needed, explicitly avoiding 'browsing-topics'
   end
 
   # Initially ran in report‑only mode; switched to false after verifying
