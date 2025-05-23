@@ -127,8 +127,9 @@ GEM
       reline (>= 0.3.8)
     dockerfile-rails (1.7.9)
       rails (>= 3.0.0)
-    drb (2.2.1)
+    drb (2.2.3)
     dry-cli (1.2.0)
+    erb (5.0.1)
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
@@ -176,7 +177,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.12.0)
+    json (2.12.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     lockbox (2.0.1)
@@ -276,7 +277,7 @@ GEM
       activesupport (= 8.0.2)
       bundler (>= 1.15.0)
       railties (= 8.0.2)
-    rails-dom-testing (2.2.0)
+    rails-dom-testing (2.3.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -293,7 +294,8 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.2.1)
-    rdoc (6.13.1)
+    rdoc (6.14.0)
+      erb
       psych (>= 4.0.0)
     re2 (2.15.0-aarch64-linux-gnu)
     re2 (2.15.0-aarch64-linux-musl)
@@ -313,7 +315,7 @@ GEM
     rexml (3.4.1)
     roda (3.92.0)
       rack
-    rodauth (2.38.0)
+    rodauth (2.39.0)
       roda (>= 2.6.0)
       sequel (>= 4)
     rodauth-guest (0.0.1)
@@ -331,7 +333,7 @@ GEM
       roda (~> 3.76)
       rodauth (~> 2.36)
       rodauth-model (~> 0.2)
-    rubocop (1.75.6)
+    rubocop (1.75.7)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -362,7 +364,7 @@ GEM
       sexp_processor (~> 4.16)
     rubyzip (2.4.1)
     securerandom (0.4.1)
-    selenium-webdriver (4.32.0)
+    selenium-webdriver (4.33.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -431,9 +433,9 @@ GEM
     unicode-emoji (4.0.4)
     uri (1.0.3)
     useragent (0.16.11)
-    view_component (3.21.0)
+    view_component (3.23.2)
       activesupport (>= 5.2.0, < 8.1)
-      concurrent-ruby (~> 1.0)
+      concurrent-ruby (~> 1)
       method_source (~> 1.0)
     vite_plugin_legacy (3.0.2)
       vite_ruby (~> 3.0, >= 3.0.4)
@@ -458,7 +460,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.7.2)
+    zeitwerk (2.7.3)
     zstd-ruby (1.5.6.6)
 
 PLATFORMS
@@ -513,7 +515,7 @@ DEPENDENCIES
   solid_queue
   sqlite3
   stimulus-rails
-  stimulus_reflex
+  stimulus_reflex (= 3.5.3)
   tilt
   turbo-rails
   turbo_power

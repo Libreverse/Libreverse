@@ -1,7 +1,4 @@
 @use "variables";
-@use "fonts/Lazer84";
-@use "fonts/Hack";
-@use "fonts/Hack-Italic";
 
 .hp-main {
     font-family: "Lazer84", cursive;
@@ -197,4 +194,309 @@
 
 .squisher {
     display: flex;
+}
+
+.pre-book {
+    font-family: Waiting-for-the-Sunrise, cursive;
+    margin: 0;
+    padding: 3rem;
+    line-height: 1.8;
+    font-size: 1.5rem;
+    position: relative;
+}
+
+.paper-container {
+    max-width: 100ch;
+    margin: 0 auto;
+    padding: 1rem 2rem 0.05rem;
+    background-color: transparent;
+    border-radius: 2px;
+    box-shadow:
+        0 4px 8px rgb(0 0 0 / 20%),
+        0 6px 20px rgb(0 0 0 / 10%);
+    position: relative;
+
+    img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        user-select: none;
+    }
+
+    img.before {
+        z-index: -2;
+        transform: rotate(1deg);
+        filter: invert(0.1);
+    }
+
+    img.main {
+        z-index: -1;
+    }
+
+    img.after {
+        z-index: -2;
+        transform: rotate(-2deg);
+        filter: invert(0.15);
+    }
+}
+
+.pre-book h1 {
+    color: #2c2c2d;
+    margin-bottom: 2rem;
+    font-size: 96px;
+    line-height: 1.1;
+    text-rendering: optimizelegibility;
+}
+
+.pre-book p {
+    color: #2c2c2d;
+    margin-bottom: 1.5rem;
+    font-size: 30px;
+    line-height: 1.2;
+    text-rendering: optimizelegibility;
+    letter-spacing: 0.02rem;
+    word-spacing: 0.0005rem;
+}
+
+.new-hp-bg {
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh + 65%);
+    z-index: -4;
+    background-color: black;
+    overflow: hidden;
+    user-select: none;
+
+    img {
+        vertical-align: bottom;
+    }
+}
+
+.cta-container-container {
+    max-width: 100ch;
+    margin: 0 auto;
+    padding: 0 2rem 0.05rem;
+    line-height: 1.8;
+    font-size: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.cta-container {
+    color: white;
+    font-family: Silkscreen-Regular, monospace;
+    overflow: visible;
+    padding-top: 0;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    text-align: center;
+    margin-left: 15%;
+    margin-right: 15%;
+    position: relative;
+    z-index: 2;
+
+    a {
+        background-color: #6e80ad;
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        font-size: 1.2rem;
+    }
+}
+
+.cta-xai-effect {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 180vw;
+    max-width: none;
+    height: 350px;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(
+        ellipse at 50% 100%,
+        rgb(255 255 255 / 100%) 0%,
+        rgb(255 230 160 / 85%) 20%,
+        rgb(255 200 100 / 55%) 45%,
+        rgb(255 150 50 / 32%) 70%,
+        rgb(255 100 0 / 12%) 85%,
+        rgb(0 0 0 / 0%) 100%
+    );
+    filter: blur(60px);
+    opacity: 0.95;
+    animation: cta-xai-shimmer 3.5s infinite ease-in-out;
+}
+
+// Add a secondary, subtler animated layer for extra depth
+.cta-xai-effect::after {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 120vw;
+    height: 280px;
+    background: radial-gradient(
+        ellipse at 50% 100%,
+        rgb(255 255 255 / 50%) 0%,
+        rgb(255 200 100 / 18%) 60%,
+        rgb(255 150 50 / 8%) 85%,
+        rgb(0 0 0 / 0%) 100%
+    );
+    filter: blur(40px);
+    opacity: 0.7;
+    animation: cta-xai-secondary-shimmer 6s infinite alternate;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes cta-xai-shimmer {
+    0% {
+        transform: translateX(-50%) scaleY(1.05);
+        opacity: 0.92;
+    }
+
+    40% {
+        transform: translateX(-50%) scaleY(1.18);
+        opacity: 1;
+    }
+
+    60% {
+        transform: translateX(-50%) scaleY(1.22);
+        opacity: 0.98;
+    }
+
+    100% {
+        transform: translateX(-50%) scaleY(1.05);
+        opacity: 0.92;
+    }
+}
+
+@keyframes cta-xai-secondary-shimmer {
+    0% {
+        opacity: 0.7;
+        filter: blur(40px);
+    }
+
+    50% {
+        opacity: 0.9;
+        filter: blur(60px);
+    }
+
+    100% {
+        opacity: 0.7;
+        filter: blur(40px);
+    }
+}
+
+.cta-container > *:not(.cta-xai-effect) {
+    position: relative;
+    z-index: 1;
+}
+
+.cta-xai-particles {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 180vw;
+    height: 350px;
+    pointer-events: none;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.cta-xai-particles .particle {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50%;
+    opacity: 0.7;
+    pointer-events: none;
+    filter: blur(1.5px);
+    animation: cta-particle-float 4s linear infinite;
+}
+
+// Example: 7 particles, each with different size, color, position, delay, and duration
+.cta-xai-particles .particle1 {
+    left: 20%;
+    width: 10px;
+    height: 10px;
+    background: rgb(255 255 255 / 80%);
+    animation-delay: 0s;
+    animation-duration: 4.2s;
+}
+
+.cta-xai-particles .particle2 {
+    left: 40%;
+    width: 7px;
+    height: 7px;
+    background: rgb(255 200 100 / 70%);
+    animation-delay: 1.2s;
+    animation-duration: 3.7s;
+}
+
+.cta-xai-particles .particle3 {
+    left: 60%;
+    width: 12px;
+    height: 12px;
+    background: rgb(255 150 50 / 60%);
+    animation-delay: 2.1s;
+    animation-duration: 4.8s;
+}
+
+.cta-xai-particles .particle4 {
+    left: 80%;
+    width: 8px;
+    height: 8px;
+    background: rgb(255 255 255 / 60%);
+    animation-delay: 0.7s;
+    animation-duration: 3.9s;
+}
+
+.cta-xai-particles .particle5 {
+    left: 30%;
+    width: 6px;
+    height: 6px;
+    background: rgb(255 230 160 / 70%);
+    animation-delay: 2.7s;
+    animation-duration: 4.5s;
+}
+
+.cta-xai-particles .particle6 {
+    left: 55%;
+    width: 9px;
+    height: 9px;
+    background: rgb(255 255 255 / 50%);
+    animation-delay: 1.8s;
+    animation-duration: 4.1s;
+}
+
+.cta-xai-particles .particle7 {
+    left: 70%;
+    width: 13px;
+    height: 13px;
+    background: rgb(255 200 100 / 50%);
+    animation-delay: 3.2s;
+    animation-duration: 5.2s;
+}
+
+@keyframes cta-particle-float {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-220px) scale(1.3);
+        opacity: 0;
+    }
 }

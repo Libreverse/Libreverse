@@ -25,12 +25,6 @@ Rails.application.routes.draw do
     post "xmlrpc", to: "xmlrpc#endpoint"
   end
 
-  # Legacy JSON API routes (commented out, replaced by XML-RPC)
-  # namespace :api do
-  #   get "preferences/is_dismissed", to: "preferences#is_dismissed"
-  #   post "preferences/dismiss", to: "preferences#dismiss"
-  # end
-
   # Routes available only if authenticated via Rodauth
   constraints Rodauth::Rails.authenticate do
     get "dashboard", to: "dashboard#index"

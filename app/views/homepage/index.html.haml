@@ -3,32 +3,38 @@
   = render "layouts/drawer"
   = render "layouts/leniswrapper" do
     = render "layouts/navigationshortcutswrapper" do
-      .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => bitmap_image_data_url("images/garage").to_s, :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
-        %canvas.raindrop-canvas
-      .hp-centerify
-        %header.hp-main{role: "banner"}
-          %h1.large= t('homepage.index.brand')
-          %span.small{"aria-hidden" => "true", :tabindex => "-1"}
-            = t('homepage.index.libre_word')
-            %br>/
-            = t('homepage.index.verse_word')
-        %section{"aria-labelledby" => "intro-heading"}
-          %h2.hp-secondary#intro-heading
-            = t('homepage.index.tagline')
-          %section{"aria-labelledby" => "principle-heading"}
-            %h3.hp-sectionheader#principle-heading The principle:
-            %article{"aria-labelledby" => "principle-heading", :itemscope => "", :itemtype => "https://schema.org/Article"}
-              %p.hp-text{itemprop: "description"}
-                = t('homepage.index.article_excerpt')
-              %p.hp-italic-text
-                %a.hp-inline-link{"aria-label" => t('homepage.index.read_full_article_aria'), :href => "https://libreverse.io"}= t('homepage.index.read_full_article')
-                (#{t('homepage.index.article_written_by')}
-                = succeed ")" do
-                  %a.hp-inline-link{href: "https://geor.me/", itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
-                    %span{itemprop: "name"} George Baskerville
-              %meta{content: "2021-10-28", itemprop: "datePublished"}/
-          %section{"aria-labelledby" => "getting-started-heading"}
-            %h3.hp-sectionheader#getting-started-heading How to get started:
-            %p.hp-text
-              = t('homepage.index.search_prompt')
-            %a.hp-link{"aria-label" => t('homepage.index.search_link_aria'), :href => "/search"}= t('homepage.index.search_link')
+      .new-hp-bg{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
+        - wood_img = bitmap_image_data_url("images/wood")
+        - paper_img = bitmap_image_data_url("images/paper")
+        = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+        = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+        = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      .pre-book
+        .paper-container
+          = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
+          = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
+          = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
+          %h1= t('homepage.index.case_for_open_source_metaverse')
+          %p= t('homepage.index.zuckerberg_rebrand')
+          %p= t('homepage.index.internet_laughing_stock')
+          %p= t('homepage.index.metaverse_backlash_reason')
+          %p= t('homepage.index.metaverse_purpose')
+          %p= t('homepage.index.matrix_question')
+          %p= t('homepage.index.companies_bad_but_grow')
+          %p= t('homepage.index.short_term_appeal')
+          %p= t('homepage.index.gambling_porn_fast_food')
+          %p= t('homepage.index.system_refined')
+          %p= t('homepage.index.metaverse_reward_system')
+          %p= t('homepage.index.meta_matrix_sentence')
+          %p= t('homepage.index.open_source_competitor_need')
+          %p= t('homepage.index.metaverse_inevitable')
+          %p= t('homepage.index.libreverse_cant_let_happen')
+      .cta-container-container
+        .cta-xai-particles{"data-controller" => "cta-particles"}
+        .cta-xai-effect
+        .cta-container
+          %h2= t('homepage.index.take_control')
+          %p= t('homepage.index.help_build_alternative')
+          = link_to t('homepage.index.get_started'), "/create-account"
+
+.cta-xai-particles

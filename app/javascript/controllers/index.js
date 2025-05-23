@@ -45,3 +45,6 @@ application.register("toast", ToastController);
 
 import ParallaxBackgroundController from "./parallax_background_controller";
 application.register("parallax-background", ParallaxBackgroundController);
+
+import CtaParticlesController from "./cta_particles_controller.coffee";
+application.register("cta-particles", CtaParticlesController);

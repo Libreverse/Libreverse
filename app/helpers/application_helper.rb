@@ -26,9 +26,9 @@ module ApplicationHelper
   def sidebar_icon(path, additional_class = "")
     image_tag(path,
               class: "sidebar-icons #{additional_class}".strip,
-              loading: "lazy",
-              decoding: "async",
-              fetchpriority: "low",
+              loading: "eager",
+              decoding: "sync",
+              fetchpriority: "high",
               draggable: "false",
               aria: { hidden: true },
               tabindex: "-1")
@@ -71,46 +71,33 @@ module ApplicationHelper
     "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
   end
 
-  # Generates a Base64-encoded data URI for a bitmap image.
+  # Generates Base64-encoded data URIs for all available bitmap image versions.
   # Looks for the image in the source asset directories (e.g., app/images)
-  # and automatically selects the most efficient format available (AVIF > WebP > PNG > JPG > GIF)
-  # for the given base image path relative to the source root.
+  # and returns a hash of all found versions (AVIF, WebP, PNG, JPG, GIF) for the given base image path.
   #
   # @param source_relative_path [String] The path relative to the asset source root (e.g., "images/logo").
-  # @return [String] The data URI string (e.g., "data:image/avif;base64,..."), or an empty string if no supported image is found.
+  # @return [Hash{String=>String}] A hash mapping file extension (e.g., ".webp") to the data URI string (e.g., "data:image/webp;base64,...").
+  #   Returns an empty hash if no supported images are found.
   def bitmap_image_data_url(source_relative_path)
     # Basic validation for relative path
     unless source_relative_path.match?(%r{\A[a-zA-Z0-9_./-]+\z}) && !source_relative_path.include?("..")
       Rails.logger.warn "Invalid characters or path traversal attempt in source relative path: #{source_relative_path}"
-      return ""
+      return {}
     end
 
-    # Assuming 'app' is the primary source directory for assets like images
-    # Adjust if your Vite setup uses a different root like 'app/frontend'
     source_root = Rails.root.join("app")
-
-    # Define preferred formats in order of efficiency
     preferred_extensions = %w[.avif .webp .png .jpg .jpeg .gif]
-    found_path = nil
-    mime_type = nil
+    results = {}
 
-    # Find the first existing source file matching the preferred extensions
     preferred_extensions.each do |ext|
       potential_path = source_root.join("#{source_relative_path}#{ext}").cleanpath
-
-      # Resolve any symlinks before continuing. This prevents a malicious symlink
-      # inside the app directory from escaping to an arbitrary location on disk.
       begin
         resolved_path = Pathname.new(File.realpath(potential_path))
       rescue Errno::ENOENT, Errno::EINVAL
-        # The file doesn't exist or couldn't be resolved – skip this extension.
         next
       end
-
-      # Security check: Ensure the *resolved* path is within the intended source area
       next unless resolved_path.to_s.start_with?(source_root.to_s) && resolved_path.file?
 
-      found_path = resolved_path
       mime_type = case ext
       when ".png" then "image/png"
       when ".jpg", ".jpeg" then "image/jpeg"
@@ -119,24 +106,36 @@ module ApplicationHelper
       when ".avif" then "image/avif"
       else "application/octet-stream"
       end
-      break # Found the best available format
+
+      begin
+        image_data = File.binread(resolved_path)
+        encoded_data = Base64.strict_encode64(image_data)
+        results[ext] = "data:#{mime_type};base64,#{encoded_data}"
+      rescue StandardError => e
+        Rails.logger.error "Error reading or encoding bitmap image #{resolved_path}: #{e.message}"
+        next
+      end
     end
 
-    # If no suitable image was found
-    unless found_path
-      Rails.logger.warn "No suitable bitmap image found for source path: #{source_relative_path} within #{source_root}"
-      return ""
-    end
+    Rails.logger.warn "No suitable bitmap images found for source path: #{source_relative_path} within #{source_root}" if results.empty?
+    results
+  end
 
-    # Read, encode, and return data URI for the found image
-    begin
-      image_data = File.binread(found_path)
-      encoded_data = Base64.strict_encode64(image_data)
-      "data:#{mime_type};base64,#{encoded_data}"
-    rescue StandardError => e
-      Rails.logger.error "Error reading or encoding bitmap image #{found_path}: #{e.message}"
-      "" # Return empty string on error
-    end
+  # Returns a srcset string for all available formats in the bitmap image hash.
+  # Example: bitmap_image_srcset(bitmap_image_data_url('images/foo'))
+  # => "data:image/avif;base64,... type(image/avif), data:image/webp;base64,... type(image/webp), ..."
+  def bitmap_image_srcset(image_hash)
+    return "" unless image_hash.is_a?(Hash)
+
+    preferred = [
+      [ ".avif", "image/avif" ],
+      [ ".webp", "image/webp" ],
+      [ ".png", "image/png" ],
+      [ ".jpg", "image/jpeg" ],
+      [ ".jpeg", "image/jpeg" ],
+      [ ".gif", "image/gif" ]
+    ]
+    preferred.map { |ext, mime| image_hash[ext] && "#{image_hash[ext]} type(#{mime})" }.compact.join(", ")
   end
 
   # --- User Preference Helpers ---
