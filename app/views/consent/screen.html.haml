@@ -1,6 +1,7 @@
 %body
   = render "layouts/leniswrapper" do
-    .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => bitmap_image_data_url("images/garage").to_s, :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
+    - garage_img = bitmap_image_data_url("images/garage")
+    .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => garage_img['.jpg'], :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
       %canvas.raindrop-canvas
     .hp-centerify{ "data-controller" => "consent" }
       %header.hp-main{role: "banner"}
@@ -11,7 +12,7 @@
           = t('homepage.index.verse_word')
       %section{"aria-labelledby" => "intro-heading"}
         %h2.hp-secondary#intro-heading
-          = "Welcome to Libreverse! A few things before we get started:"
+          = t('consent.screen.intro')
       %section{"aria-labelledby" => "principle-heading"}
         %p.hp-text= t('consent.screen.access_message_html', privacy_policy_link: link_to(t('policies.privacy_policy'), privacy_policy_path, target: '_blank'), cookie_policy_link: link_to(t('policies.cookie_policy'), cookie_policy_path, target: '_blank')).html_safe
         %p.hp-text= t('consent.screen.remember_info_html')

@@ -8,6 +8,7 @@ import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import coffee from "vite-plugin-coffee";
+import postcssUrl from "postcss-url";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
@@ -32,6 +33,7 @@ export default defineConfig(({ mode }) => {
                         : "[name].[ext]",
                 },
             },
+            assetsInlineLimit: 1000000,
         },
         server: {
             hmr: { overlay: false },
@@ -42,8 +44,6 @@ export default defineConfig(({ mode }) => {
                 ? {
                       "Cache-Control":
                           "no-store, no-cache, must-revalidate, max-age=0",
-                      Pragma: "no-cache",
-                      Expires: "Fri, 01 Jan 1990 00:00:00 GMT",
                   }
                 : {},
         },
@@ -57,6 +57,7 @@ export default defineConfig(({ mode }) => {
                 plugins: [
                     postcssPresetEnv({ stage: 3 }),
                     postcssFlexbugsFixes(),
+                    postcssUrl({ url: "inline", maxSize: 50000 }), // Match a reasonable Vite limit
                     postcssInlineRtl(),
                     cssnano({
                         preset: [

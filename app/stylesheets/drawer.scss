@@ -21,6 +21,7 @@
     z-index: 3;
     transition: height 0.3s ease;
     flex-direction: column; // changed from column-reverse
+    pointer-events: auto;
 
     @media screen and (width <= 450px) {
         right: auto;
@@ -45,6 +46,7 @@
     display: flex;
     z-index: 2;
     transition: height 0.3s;
+    pointer-events: none;
 
     @media screen and (width <= 450px) {
         right: auto;

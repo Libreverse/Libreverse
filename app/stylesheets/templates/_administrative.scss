@@ -1,8 +1,6 @@
 @use "../variables";
 @use "sass:color";
 @use "../components/experience_cards"; // Keep if used by placeholders, otherwise remove
-@use "../fonts/Hack";
-@use "../fonts/Lazer84";
 
 // Mixin for blurred glass effect consistent with search
 @mixin glass-effect {

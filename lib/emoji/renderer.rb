@@ -48,7 +48,7 @@ module Emoji
       return nil if svg_content.blank?
 
       encoded_svg = ERB::Util.url_encode(svg_content)
-      %(<img src="data:image/svg+xml,#{encoded_svg}" alt="#{CGI.escapeHTML(emoji)}" class="emoji" loading="eager" decoding="async" fetchpriority="low" draggable="false" tabindex="-1">)
+      %(<img src="data:image/svg+xml,#{encoded_svg}" alt="#{CGI.escapeHTML(emoji)}" class="emoji" loading="eager" decoding="sync" fetchpriority="high" draggable="false" tabindex="-1">)
     rescue StandardError => e
       Rails.logger.error "Emoji::Renderer#build_img_tag – #{e.class}: #{e.message}"
       nil
