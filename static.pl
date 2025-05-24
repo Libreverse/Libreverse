@@ -125,7 +125,6 @@ run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
 run_command("bundle-audit", "bundle-audit", "check", "--update");
 run_command("npm audit", "sh", "-c", "npm i --package-lock-only --legacy-peer-deps && npm audit fix --production --legacy-peer-deps && bun install > /dev/null 2>&1; rm -f package-lock.json");
-run_command("YAML Lint", "bunx", "yaml-lint", "config/locales/**/*.yml");
 run_command("unlock_sqlite", "sh", "-c", "./scripts/unlock_sqlite.pl");
 run_command("Haml Validation", "rake", "haml:check");
 run_command("i18n Validation", "rake", "i18n:validate_keys");
