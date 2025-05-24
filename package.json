@@ -14,8 +14,7 @@
         "stimulus-use": "^0.52.3",
         "stimulus-vite-helpers": "^3.1.0",
         "stimulus_reflex": "3.5.3",
-        "turbo_power": "^0.7.1",
-        "yaml-lint": "^1.7.0"
+        "turbo_power": "^0.7.1"
     },
     "devDependencies": {
         "@coffeelint/cli": "^5.2.11",

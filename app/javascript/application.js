@@ -1,3 +1,4 @@
+import "../stylesheets/application.scss";
 import sxwjs from "@sxwjs/sxwjs";
 // Custom configuration
 const myConfig = {
