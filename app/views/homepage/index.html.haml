@@ -1,40 +1,38 @@
-%body
-  = render "layouts/sidebar"
-  = render "layouts/drawer"
-  = render "layouts/leniswrapper" do
-    = render "layouts/navigationshortcutswrapper" do
-      .new-hp-bg{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
-        - wood_img = bitmap_image_data_url("images/wood")
-        - paper_img = bitmap_image_data_url("images/paper")
-        = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-        = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-        = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-      .pre-book
-        .paper-container
-          = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
-          = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
-          = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
-          %h1= t('homepage.index.case_for_open_source_metaverse')
-          %p= t('homepage.index.zuckerberg_rebrand')
-          %p= t('homepage.index.internet_laughing_stock')
-          %p= t('homepage.index.metaverse_backlash_reason')
-          %p= t('homepage.index.metaverse_purpose')
-          %p= t('homepage.index.matrix_question')
-          %p= t('homepage.index.companies_bad_but_grow')
-          %p= t('homepage.index.short_term_appeal')
-          %p= t('homepage.index.gambling_porn_fast_food')
-          %p= t('homepage.index.system_refined')
-          %p= t('homepage.index.metaverse_reward_system')
-          %p= t('homepage.index.meta_matrix_sentence')
-          %p= t('homepage.index.open_source_competitor_need')
-          %p= t('homepage.index.metaverse_inevitable')
-          %p= t('homepage.index.libreverse_cant_let_happen')
-      .cta-container-container
-        .cta-xai-particles{"data-controller" => "cta-particles"}
-        .cta-xai-effect
-        .cta-container
-          %h2= t('homepage.index.take_control')
-          %p= t('homepage.index.help_build_alternative')
-          = link_to t('homepage.index.get_started'), "/create-account"
-
+= render "layouts/sidebar"
+= render "layouts/drawer"
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    .new-hp-bg{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
+      - wood_img = bitmap_image_data_url("images/wood")
+      - paper_img = bitmap_image_data_url("images/paper")
+      = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+    .pre-book
+      .paper-container
+        = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
+        = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
+        = image_tag(paper_img['.jpg'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
+        %h1= t('homepage.index.case_for_open_source_metaverse')
+        %p= t('homepage.index.zuckerberg_rebrand')
+        %p= t('homepage.index.internet_laughing_stock')
+        %p= t('homepage.index.metaverse_backlash_reason')
+        %p= t('homepage.index.metaverse_purpose')
+        %p= t('homepage.index.matrix_question')
+        %p= t('homepage.index.companies_bad_but_grow')
+        %p= t('homepage.index.short_term_appeal')
+        %p= t('homepage.index.gambling_porn_fast_food')
+        %p= t('homepage.index.system_refined')
+        %p= t('homepage.index.metaverse_reward_system')
+        %p= t('homepage.index.meta_matrix_sentence')
+        %p= t('homepage.index.open_source_competitor_need')
+        %p= t('homepage.index.metaverse_inevitable')
+        %p= t('homepage.index.libreverse_cant_let_happen')
+    .cta-container-container
+      .cta-xai-particles{"data-controller" => "cta-particles"}
+      .cta-xai-effect
+      .cta-container
+        %h2= t('homepage.index.take_control')
+        %p= t('homepage.index.help_build_alternative')
+        = link_to t('homepage.index.get_started'), "/create-account"
 .cta-xai-particles

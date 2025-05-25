@@ -19,6 +19,6 @@
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
       %section.experience-form-container.mt-5#create-experience
-        %h2.experience-form-heading= t('experiences.index.create_new_heading')
+        %h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
         %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
         = render "form", experience: @experience

@@ -1,29 +1,28 @@
-%body
-  = render "layouts/sidebar"
-  = render "layouts/drawer"
-  = render "layouts/leniswrapper" do
-    = render "layouts/navigationshortcutswrapper" do
-      - brasserie_img = bitmap_image_data_url("images/brasserie")
-      .sp-bg{role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": brasserie_img['.jpg'], scroll: true, "scroll-speed": "-2"}}
-        %iframe.raindrop-iframe{allowtransparency: "true", "data-raindrop-target": "iframe", scrolling: "no", title: "Background Effect Container"}
-      .sp-centerify
-        %header.sp-main{role: "banner"}
-          %h1.large= t('search.index.title')
-          %span.small{"aria-hidden" => "true", :tabindex => "-1"}
-            = t('search.index.search_word')
-            %br>/
-            = t('search.index.experiences_word')
-        %main
-          - unless tutorial_dismissed?("search-tutorial")
-            %div{"data-controller" => "dismissible"}
-              .search-tutorial#search-tutorial{"data-dismissible-key-value" => "search-tutorial", "data-dismissible-target" => "container"}
-                .tutorial-dismiss
-                  %button.dismiss-button{"data-action" => "dismissible#dismiss"}
-                    %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
-                %h2.tutorial-heading= t('search.index.tutorial_heading')
-                %p.tutorial-description= t('search.index.tutorial_description')
-          %section{"aria-labelledby" => "search-heading"}
-            .sp-search-bar
-              %input.sp-search-bar-input#search{"aria-label" => t('search.index.input_aria_label'), :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => t('search.index.search_placeholder'), :type => "text", :value => params[:query].to_s}/
-            .sp-experiences-list#experiences-list
-              = render partial: "search/experiences_list", locals: { experiences: @experiences }
+= render "layouts/sidebar"
+= render "layouts/drawer"
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    - brasserie_img = bitmap_image_data_url("images/brasserie")
+    .sp-bg{role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": brasserie_img['.jpg'], scroll: true, "scroll-speed": "-2"}}
+      %iframe.raindrop-iframe{allowtransparency: "true", "data-raindrop-target": "iframe", scrolling: "no", title: "Background Effect Container"}
+    .sp-centerify
+      %header.sp-main{role: "banner"}
+        %h1.large= t('search.index.title')
+        %span.small{"aria-hidden" => "true", :tabindex => "-1"}
+          = t('search.index.search_word')
+          %br>/
+          = t('search.index.experiences_word')
+      %main
+        - unless tutorial_dismissed?("search-tutorial")
+          %div{"data-controller" => "dismissible"}
+            .search-tutorial#search-tutorial{"data-dismissible-key-value" => "search-tutorial", "data-dismissible-target" => "container"}
+              .tutorial-dismiss
+                %button.dismiss-button{"data-action" => "dismissible#dismiss"}
+                  %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
+              %h2.tutorial-heading= t('search.index.tutorial_heading')
+              %p.tutorial-description= t('search.index.tutorial_description')
+        %section{"aria-labelledby" => "search-heading"}
+          .sp-search-bar
+            %input.sp-search-bar-input#search{"aria-label" => t('search.index.input_aria_label'), :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => t('search.index.search_placeholder'), :type => "text", :value => params[:query].to_s}/
+          .sp-experiences-list#experiences-list
+            = render partial: "search/experiences_list", locals: { experiences: @experiences }
