@@ -1,5 +1,6 @@
 @use "templates/administrative";
 @use "variables";
+@use "sass:color";
 
 .dashboard-container {
     @extend %administrative-container;
@@ -54,20 +55,31 @@
     @extend %administrative-experience-form-heading;
 }
 
-.form-group {
-    @extend %administrative-form-group;
-
-    .form-input {
-        @extend %administrative-form-input;
-    }
-
-    .form-textarea {
-        @extend %administrative-form-textarea;
-    }
-}
-
 .form-submit {
-    @extend %administrative-form-submit;
+    background: linear-gradient(
+        90deg,
+        color.adjust(variables.$dashboard-primary, $lightness: -10%),
+        variables.$dashboard-primary
+    );
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    color: variables.$white-90;
+    font-family: Hack, monospace;
+
+    &:active {
+        transform: scale(0.97);
+    }
+
+    &:hover {
+        background: linear-gradient(
+            90deg,
+            color.adjust(variables.$dashboard-primary, $lightness: -8%),
+            variables.$dashboard-primary
+        );
+    }
 }
 
 .btn-primary {

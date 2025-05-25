@@ -1,5 +1,6 @@
 @use "templates/administrative";
 @use "variables";
+@use "sass:color";
 
 .dashboard-container {
     @extend %administrative-container;
@@ -52,19 +53,62 @@
 }
 
 .form-group {
-    @extend %administrative-form-group;
+    margin-bottom: 1.5rem;
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        margin-left: 0;
+    }
 
     .form-input {
-        @extend %administrative-form-input;
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background-color: rgb(30 37 52 / 50%);
+        border: 1px solid hsl(0deg 0% 50% / 30%);
+        border-radius: 6px;
+        color: variables.$white-90;
+        transition: border-color 0.2s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:focus {
+            border-color: variables.$dashboard-primary;
+            outline: none;
+        }
+
+        &.is-invalid {
+            border-color: variables.$danger;
+        }
     }
 
     .form-textarea {
-        @extend %administrative-form-textarea;
-    }
-}
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background-color: rgb(30 37 52 / 50%);
+        border: 1px solid hsl(0deg 0% 50% / 30%);
+        border-radius: 6px;
+        color: variables.$white-90;
+        transition: border-color 0.2s;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
-.form-submit {
-    @extend %administrative-form-submit;
+        &:focus {
+            border-color: variables.$dashboard-primary;
+            outline: none;
+        }
+
+        &.is-invalid {
+            border-color: variables.$danger;
+        }
+    }
 }
 
 .btn-primary {
@@ -101,6 +145,12 @@
 
 .form-text {
     @extend %administrative-form-text;
+}
+
+.form-text-2 {
+    @extend %administrative-form-text;
+
+    margin-top: 1.2px;
 }
 
 .input-group-text {
@@ -205,4 +255,49 @@
 
 .dashboard-footer {
     @extend %administrative-footer;
+}
+
+// Drag-and-drop upload styles
+.dropzone {
+    border: 1px solid hsl(0deg 0% 50% / 30%);
+    border-radius: 6px;
+    padding: 2rem;
+    background: rgb(30 37 52 / 50%);
+    cursor: pointer;
+    transition:
+        border-color 0.2s,
+        background 0.2s;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box; // Add this to include padding in width calculation
+    max-width: 100%; // Ensure it doesn't overflow container
+    overflow: hidden; // Prevent content from overflowing
+}
+
+// Style the file input directly
+input[type="file"].dropzone {
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+    font-size: 1rem;
+    background-color: rgb(30 37 52 / 50%);
+    border: 1px solid hsl(0deg 0% 50% / 30%);
+    border-radius: 6px;
+    color: #747474;
+    transition: border-color 0.2s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.75rem 1rem 5rem;
+
+    &::-webkit-file-upload-button {
+        display: none;
+    }
+}
+
+.dropzone-error {
+    color: #c00;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    display: block;
+    word-wrap: break-word; // Break long words if needed
 }

@@ -12,34 +12,23 @@
   .form-group
     = form.label :title, class: "form-label"
     .input-group
-      = form.text_field :title,
-                        class: "form-input",
-                        placeholder: "Give your experience a compelling title"
+      = form.text_field :title, class: "form-input", placeholder: "Give your experience a compelling title"
   .form-group
     = form.label :description, class: "form-label"
     .input-group
-      = form.text_area :description,
-                       class: "form-textarea",
-                       placeholder: "Describe your experience in detail. What makes it special?"
+      = form.text_area :description, class: "form-textarea", placeholder: "Describe your experience in detail. What makes it special?"
     .form-text.text-muted= t('.rich_description_help')
-  .form-group
-    = form.label :author, class: "form-label"
-    .input-group
-      = form.text_field :author,
-                        class: "form-input",
-                        placeholder: "Your name or pseudonym"
   .form-group
     = form.label :html_file, "Experience HTML File", class: "form-label"
     .input-group
-      = form.file_field :html_file, class: "form-control", accept: "text/html"
-    .form-text.text-muted= t('.upload_single_html_help')
+      = form.file_field :html_file, class: "form-control dropzone", accept: "text/html", data: { controller: "experience_upload", action: "dragover->experience_upload#dragOver dragleave->experience_upload#dragLeave drop->experience_upload#drop change->experience_upload#handleChange" }
+      .dropzone-error{ data: { experience_upload_target: "error" }, style: "display:none; color: red;" }
+    .form-text-2.text-muted= t('.upload_single_html_help')
     - if experience.html_file.attached?
       .mt-2.text-muted
         = t('.current_file')
         = experience.html_file.filename
         = t('.replace_file')
-  = content_tag :p,
-                "Your experience will be available after admin approval.",
-                class: "form-note"
+  = content_tag :p, "Your experience will be available after admin approval.", class: "form-note"
   .mt-4
     = form.submit class: "form-submit"

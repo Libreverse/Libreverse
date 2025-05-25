@@ -57,7 +57,7 @@ en:
         form:
             errors_prohibited: "prohibited this experience from being saved:"
             rich_description_help: "Rich descriptions help others better understand your experience."
-            upload_single_html_help: "Upload the single HTML file for your experience."
+            upload_single_html_help: "Drag and drop your HTML file here, or click to select."
             current_file: "Current file:"
             replace_file: "(Replace by uploading a new file)"
         edit:

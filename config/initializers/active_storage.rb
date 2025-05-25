@@ -10,7 +10,8 @@ Rails.application.reloader.to_prepare do
     defined?(ActiveStorage::DiskController) && ActiveStorage::DiskController
   ].compact.each do |controller|
     controller.class_eval do
-      after_action only: %i[show download] do
+      actions = %i[show download].select { |a| action_methods.include?(a.to_s) }
+      after_action only: actions do
         response.headers["Cache-Control"] = "private, max-age=0"
       end
     end

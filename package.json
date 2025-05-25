@@ -5,6 +5,7 @@
     "dependencies": {
         "@hotwired/stimulus": "^3.2.2",
         "@hotwired/turbo-rails": "^8.0.13",
+        "@rails/activestorage": "^8.0.200",
         "@rails/request.js": "^0.0.12",
         "@sxwjs/sxwjs": "^4.0.0",
         "cable_ready": "5.0.6",

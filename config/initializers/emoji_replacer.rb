@@ -12,6 +12,12 @@ class EmojiReplacer
   # Default selectors to exclude from emoji replacement
   DEFAULT_EXCLUDE_SELECTORS = %w[script style pre code textarea svg noscript].freeze
 
+  # Paths to exclude from processing completely
+  EXCLUDED_PATHS = [
+    %r{^/rails/active_storage/},
+    %r{^/active_storage/}
+  ].freeze
+
   def initialize(app, options = {})
     @app = app
     @exclude_selectors = options[:exclude_selectors] || DEFAULT_EXCLUDE_SELECTORS
@@ -19,6 +25,12 @@ class EmojiReplacer
   end
 
   def call(env)
+    # Skip processing for excluded paths or special content types
+    path = env["PATH_INFO"]
+    return @app.call(env) if path_excluded?(path)
+
+    return @app.call(env) if request_is_binary?(env)
+
     # Rails.logger.debug { "EmojiReplacer: Processing request for #{env['PATH_INFO']}" }
 
     status, headers, body = @app.call(env)
@@ -52,10 +64,27 @@ class EmojiReplacer
   rescue StandardError => e
     Rails.logger.error "EmojiReplacer: Error processing request: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    [ 500, { "Content-Type" => "text/plain" }, [ "Internal Server Error" ] ]
+    safe_status = defined?(status) ? status : 500
+    safe_headers = defined?(headers) ? headers : { "Content-Type" => "text/plain" }
+    safe_body = defined?(body) ? body : [ "Internal Server Error" ]
+    [ safe_status, safe_headers, safe_body ]
   end
 
   private
+
+  def path_excluded?(path)
+    EXCLUDED_PATHS.any? { |pattern| path.match?(pattern) }
+  end
+
+  def request_is_binary?(env)
+    # Skip for binary content types, file uploads, etc.
+    return true if env["CONTENT_TYPE"]&.start_with?("multipart/form-data")
+    return true if env["HTTP_ACCEPT"]&.include?("application/octet-stream")
+    return true if env["HTTP_CONTENT_DISPOSITION"]&.include?("attachment")
+    return true if env["CONTENT_LENGTH"] && env["CONTENT_LENGTH"].to_i > 1_000_000 # Skip large request bodies
+
+    false
+  end
 
   def process_with_nokogiri(html)
     # Prevent processing of obviously invalid HTML
@@ -161,9 +190,16 @@ class EmojiReplacer
 end
 
 # ===== Emoji Processing Middleware Configuration =====
-# Ensure this middleware runs before HTML compression but after general request processing.
-# It's placed here rather than middleware.rb to keep the EmojiReplacer logic contained.
-Rails.application.config.middleware.use EmojiReplacer, exclude_selectors: [
-  "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
-  ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
-]
+# Remove the old middleware registration if it exists
+Rails.application.config.middleware.delete(EmojiReplacer)
+
+# Insert the middleware at a specific position in the stack
+# Place it after ActionDispatch::Static to ensure it doesn't interfere with ActiveStorage
+Rails.application.config.middleware.insert_after(
+  ActionDispatch::Static,
+  EmojiReplacer,
+  exclude_selectors: [
+    "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
+    ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
+  ]
+)
