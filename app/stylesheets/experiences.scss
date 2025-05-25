@@ -1,4 +1,5 @@
 @use "templates/administrative";
+@use "variables";
 
 .dashboard-container {
     @extend %administrative-container;
@@ -44,8 +45,10 @@
     @extend %administrative-experience-form-container;
 }
 
-.experience-form-heading {
-    @extend %administrative-experience-form-heading;
+.experiences-experience-form-heading {
+    color: variables.$dashboard-primary;
+    font-weight: 600;
+    font-family: Hack, monospace;
 }
 
 .form-group {

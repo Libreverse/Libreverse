@@ -31,3 +31,13 @@
         color: white;
     }
 }
+
+main.content-wrapper {
+    /* height: 100%; */
+    position: relative;
+}
+
+[data-scroll-container] {
+    /* height: 100%; */
+    min-height: 100vh;
+}

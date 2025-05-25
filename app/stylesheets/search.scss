@@ -145,6 +145,7 @@
     z-index: -1;
     overflow: hidden;
     background-color: variables.$background;
+    pointer-events: none;
 
     // Style for the raindrop effect iframe
     .raindrop-iframe {
