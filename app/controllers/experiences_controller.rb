@@ -30,14 +30,13 @@ class ExperiencesController < ApplicationController
   def create
     @experience = Experience.new(experience_params)
     @experience.account_id = current_account.id if current_account
-
-    @experience.html_file.attach(params[:experience][:html_file]) if params[:experience][:html_file].present?
+    @experience.author = current_account.username if current_account
 
     if @experience.save
       redirect_to display_experience_path(@experience), notice: "Experience created successfully."
     else
       @experiences = Experience.all.order(created_at: :desc)
-      @experience.html_file.purge if @experience.html_file.attached?
+      Rails.logger.error "EXPERIENCE ERRORS: #{@experience.errors.full_messages.inspect}"
       render :index, status: :unprocessable_entity
     end
   end
@@ -48,12 +47,12 @@ class ExperiencesController < ApplicationController
 
   # PATCH/PUT /experiences/1
   def update
-    @experience.html_file.attach(params[:experience][:html_file]) if params[:experience][:html_file].present?
-
-    if @experience.update(experience_params.except(:html_file))
+    attrs = experience_params
+    attrs[:author] = current_account.username if current_account
+    if @experience.update(attrs)
       redirect_to display_experience_path(@experience), notice: "Experience was successfully updated."
     else
-      @experience.html_file.purge if params[:experience][:html_file].present? && @experience.errors.any?
+      Rails.logger.error "EXPERIENCE ERRORS: #{@experience.errors.full_messages.inspect}"
       render :edit, status: :unprocessable_entity
     end
   end
@@ -70,6 +69,8 @@ class ExperiencesController < ApplicationController
       redirect_to experiences_path, alert: "Experience is awaiting approval."
       return
     end
+
+    @experience.reload
 
     unless @experience.html_file.attached?
       redirect_to experiences_path, alert: "Experience content not found."
@@ -126,7 +127,7 @@ class ExperiencesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def experience_params
-    params.require(:experience).permit(:title, :description, :author, :html_file)
+    params.require(:experience).permit(:title, :description, :html_file)
   end
 
   def require_admin

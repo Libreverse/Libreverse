@@ -1,2 +1,131 @@
 // Login page styles
 @use "templates/auth";
+
+.auth-bg {
+    @extend %auth-bg;
+}
+
+.auth-container {
+    @extend %auth-container;
+}
+
+.auth-card {
+    @extend %auth-card;
+}
+
+.auth-header {
+    @extend %auth-header;
+}
+
+.auth-footer {
+    @extend %auth-footer;
+}
+
+.auth-form-group {
+    @extend %auth-form-group;
+}
+
+.auth-form-label {
+    @extend %auth-form-label;
+}
+
+.auth-form-control {
+    @extend %auth-form-control;
+}
+
+.auth-form-control-plaintext {
+    @extend %auth-form-control-plaintext;
+}
+
+.auth-invalid-feedback {
+    @extend %auth-invalid-feedback;
+}
+
+.auth-btn {
+    @extend %auth-btn;
+}
+
+.auth-btn-primary {
+    @extend %auth-btn-primary;
+}
+
+.login-bg {
+    @extend %auth-bg;
+}
+
+.login-container {
+    @extend %auth-container;
+}
+
+.login-card {
+    @extend %auth-card;
+}
+
+.login-header {
+    @extend %auth-header;
+}
+
+.login-footer {
+    @extend %auth-footer;
+}
+
+.login-form-group {
+    @extend %auth-form-group;
+}
+
+.login-form-label {
+    @extend %auth-form-label;
+}
+
+.login-form-control {
+    @extend %auth-form-control;
+}
+
+.login-form-control-plaintext {
+    @extend %auth-form-control-plaintext;
+}
+
+.login-invalid-feedback {
+    @extend %auth-invalid-feedback;
+}
+
+.login-btn {
+    @extend %auth-btn;
+}
+
+.login-btn-primary {
+    @extend %auth-btn-primary;
+}
+
+// Change password page specific
+.changepassword-bg {
+    @extend %auth-bg;
+}
+
+.changepassword-container {
+    @extend %auth-container;
+}
+
+.changepassword-card {
+    @extend %auth-card;
+}
+
+.changepassword-header {
+    @extend %auth-header;
+}
+
+.changepassword-form-group {
+    @extend %auth-form-group;
+}
+
+.changepassword-form-label {
+    @extend %auth-form-label;
+}
+
+.changepassword-form-control {
+    @extend %auth-form-control;
+}
+
+.changepassword-password-requirements {
+    @extend %auth-password-requirements;
+}

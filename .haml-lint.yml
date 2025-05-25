@@ -13,3 +13,5 @@ linters:
         excluded_attributes: ["class", "id", "data-test"]
         autocorrect: true
         i18n_load_path: "config/locales/en.yml"
+    InlineStyles:
+        enabled: false

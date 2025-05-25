@@ -51,3 +51,5 @@ import "./config/stimulus_reflex";
 import "./controllers";
 import "./config";
 import "./channels";
+import { start } from "@rails/activestorage";
+start();
