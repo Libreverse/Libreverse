@@ -11,9 +11,9 @@ module Api
   setup do
     # Start with a clean slate
     Experience.delete_all
+    UserPreference.delete_all
 
     # Skip certain before_action methods that could cause issues
-    @controller.stubs(:validate_method_access).returns(true)
     @controller.stubs(:apply_rate_limit).returns(true)
 
     # Create two test experiences
@@ -53,12 +53,31 @@ module Api
 
     @experience2.save!
 
+    # Create an unapproved experience for testing
+    @unapproved_experience = Experience.new(
+      title: "Unapproved Experience",
+      description: "This experience needs approval",
+      author: "Test Author",
+      account: accounts(:one),
+      approved: false
+    )
+
+    html_content3 = "<html><body><h1>Unapproved Experience</h1></body></html>"
+    @unapproved_experience.html_file.attach(
+      io: StringIO.new(html_content3),
+      filename: "unapproved_experience.html",
+      content_type: "text/html"
+    )
+
+    @unapproved_experience.save!
+
     # Set the XML content type for all requests
     @request.env["CONTENT_TYPE"] = "text/xml"
   end
 
   teardown do
     Experience.delete_all
+    UserPreference.delete_all
   end
 
   test "should get all experiences" do
@@ -80,10 +99,238 @@ module Api
     assert_equal 2, experiences.count
   end
 
-  test "should reject deeply nested XML" do
-    # Temporarily unstub validate_method_access to allow the method to run
-    @controller.unstub(:validate_method_access)
+  test "should get single experience" do
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.get</methodName>
+        <params>
+          <param><value><int>#{@experience1.id}</int></value></param>
+        </params>
+      </methodCall>
+    XML
 
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    title = xml_response.xpath("//struct/member[name='title']/value/string").text
+    assert_equal "Safe Experience One", title
+  end
+
+  test "should get approved experiences only" do
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.approved</methodName>
+        <params></params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    experiences = xml_response.xpath("//array/data/value")
+
+    # Should only return approved experiences
+    assert_equal 2, experiences.count
+  end
+
+  test "should search experiences with public query" do
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>search.public_query</methodName>
+        <params>
+          <param><value><string>Safe</string></value></param>
+          <param><value><int>10</int></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    experiences = xml_response.xpath("//array/data/value")
+
+    assert_equal 2, experiences.count
+  end
+
+  test "should create experience when authenticated" do
+    # Simulate authentication
+    @controller.stubs(:current_account).returns(accounts(:one))
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.create</methodName>
+        <params>
+          <param><value><string>New Test Experience</string></value></param>
+          <param><value><string>Test description</string></value></param>
+          <param><value><string>&lt;html&gt;&lt;body&gt;&lt;h1&gt;Test&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</string></value></param>
+          <param><value><string>Test Author</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    title = xml_response.xpath("//struct/member[name='title']/value/string").text
+    assert_equal "New Test Experience", title
+  end
+
+  test "should handle preferences.set" do
+    # Simulate authentication
+    @controller.stubs(:current_account).returns(accounts(:one))
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>preferences.set</methodName>
+        <params>
+          <param><value><string>dashboard-tutorial</string></value></param>
+          <param><value><string>true</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    success = xml_response.xpath("//struct/member[name='success']/value/boolean").text
+    assert_equal "1", success
+  end
+
+  test "should handle preferences.get" do
+    # Simulate authentication and set a preference first
+    @controller.stubs(:current_account).returns(accounts(:one))
+    UserPreference.set(accounts(:one).id, "dashboard-tutorial", "t")
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>preferences.get</methodName>
+        <params>
+          <param><value><string>dashboard-tutorial</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    value = xml_response.xpath("//struct/member[name='value']/value/string").text
+    assert_equal "t", value
+  end
+
+  test "should handle preferences.is_dismissed" do
+    # Simulate authentication and set a dismissed preference
+    @controller.stubs(:current_account).returns(accounts(:one))
+    UserPreference.dismiss(accounts(:one).id, "welcome-message")
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>preferences.is_dismissed</methodName>
+        <params>
+          <param><value><string>welcome-message</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    dismissed = xml_response.xpath("//struct/member[name='dismissed']/value/boolean").text
+    assert_equal "1", dismissed
+  end
+
+  test "should get account info when authenticated" do
+    # Simulate authentication
+    @controller.stubs(:current_account).returns(accounts(:one))
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>account.get_info</methodName>
+        <params></params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    username = xml_response.xpath("//struct/member[name='username']/value/string").text
+    assert_equal accounts(:one).username, username
+  end
+
+  test "should require authentication for protected methods" do
+    # Don't authenticate
+    @controller.stubs(:current_account).returns(nil)
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.create</methodName>
+        <params>
+          <param><value><string>Test</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    fault = xml_response.xpath("//fault/value/struct/member[name='faultCode']/value/int")
+
+    assert fault.present?
+    assert_equal "403", fault.text
+  end
+
+  test "should reject invalid preference keys" do
+    # Simulate authentication
+    @controller.stubs(:current_account).returns(accounts(:one))
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>preferences.get</methodName>
+        <params>
+          <param><value><string>invalid-key</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    fault = xml_response.xpath("//fault/value/struct/member[name='faultCode']/value/int")
+
+    assert fault.present?
+    assert_equal "500", fault.text
+  end
+
+  test "should reject deeply nested XML" do
     # Create a deeply nested XML document (more than 100 levels)
     xml_body = "<?xml version=\"1.0\"?>\n<methodCall><methodName>experiences.all</methodName><params>"
     150.times do |i|

@@ -17,7 +17,6 @@ module Api
     protect_from_forgery with: :exception, unless: -> { valid_xmlrpc_request? }
     before_action :apply_rate_limit
     before_action :current_account
-    before_action :validate_method_access
     before_action :validate_content_type
 
     # POST /api/xmlrpc
@@ -35,9 +34,8 @@ module Api
         # Parse the XML using Nokogiri with security options
         doc = Nokogiri::XML(xml_content) do |config|
           config.options = Nokogiri::XML::ParseOptions::NOBLANKS |
-                           Nokogiri::XML::ParseOptions::NONET |  # Prevent network access
-                           Nokogiri::XML::ParseOptions::NOENT    # Don't expand entities
-          config.strict.nonet                                    # Strict parsing, no network
+                           Nokogiri::XML::ParseOptions::NONET # Prevent network access
+            config.strict.nonet # Strict parsing, no network
         end
 
         # Apply a processing timeout
@@ -141,13 +139,35 @@ module Api
       # Methods requiring authentication
       authenticated_methods = %w[
         experiences.create
-        experiences.delete
         experiences.update
+        experiences.delete
+        experiences.approve
+        experiences.pending_approval
+        preferences.get
+        preferences.set
+        preferences.dismiss
+        preferences.is_dismissed
+        account.get_info
+        moderation.get_logs
+        search.query
       ]
 
       # Public methods (no authentication required)
       public_methods = %w[
         experiences.all
+        experiences.get
+        experiences.approved
+        search.public_query
+      ]
+
+      # Admin-only methods
+      admin_methods = %w[
+        experiences.all_with_unapproved
+        experiences.approve
+        experiences.pending_approval
+        moderation.get_logs
+        admin.experiences.all
+        admin.experiences.approve
       ]
 
       if authenticated_methods.include?(method_name) && !current_account
@@ -155,8 +175,13 @@ module Api
         return false
       end
 
-      # Check if method is either public or authenticated
-      public_methods.include?(method_name) || authenticated_methods.include?(method_name)
+      if admin_methods.include?(method_name) && !current_account&.admin?
+        # Require admin role for these methods
+        return false
+      end
+
+      # Check if method is either public, authenticated, or admin
+      public_methods.include?(method_name) || authenticated_methods.include?(method_name) || admin_methods.include?(method_name)
     end
 
     def parse_value(value_element)
@@ -192,15 +217,196 @@ module Api
       end
     end
 
-    def process_method_call(method_name, _params)
+    def process_method_call(method_name, params)
       case method_name
       when "experiences.all"
         # Get experiences; admins see all, others see only approved ones
         scope = current_account&.admin? ? Experience : Experience.approved
         experiences = scope.order(created_at: :desc)
         serialize_experiences(experiences)
+
+      when "experiences.get"
+        experience_id = params[0]
+        experience = if current_account&.admin?
+          Experience.find_by(id: experience_id)
+        else
+          Experience.approved.find_by(id: experience_id)
+        end
+
+        raise "Experience not found or not accessible" unless experience
+
+          serialize_experience(experience)
+
+      when "experiences.approved"
+        experiences = Experience.approved.order(created_at: :desc)
+        serialize_experiences(experiences)
+
+      when "experiences.all_with_unapproved"
+        # Admin only - already checked in permitted_method?
+        experiences = Experience.order(created_at: :desc)
+        serialize_experiences(experiences)
+
+      when "experiences.pending_approval"
+        # Admin or authenticated users only
+        experiences = if current_account&.admin?
+          Experience.pending_approval.order(created_at: :desc)
+        else
+          Experience.where(account_id: current_account.id, approved: false).order(created_at: :desc)
+        end
+        serialize_experiences(experiences)
+
+      when "experiences.create"
+        title = params[0]
+        description = params[1]
+        html_content = params[2]
+        author = params[3] || current_account.username
+
+        experience = Experience.new(
+          title: title,
+          description: description,
+          author: author,
+          account_id: current_account.id
+        )
+
+        if html_content.present?
+          experience.html_file.attach(
+            io: StringIO.new(html_content),
+            filename: "experience_#{Time.current.to_i}.html",
+            content_type: "text/html"
+          )
+        end
+
+        raise "Failed to create experience: #{experience.errors.full_messages.join(', ')}" unless experience.save
+
+          serialize_experience(experience)
+
+      when "experiences.update"
+        experience_id = params[0]
+        updates = params[1] || {}
+
+        experience = Experience.find_by(id: experience_id, account_id: current_account.id)
+        raise "Experience not found or not owned by current user" unless experience
+
+        update_params = {}
+        update_params[:title] = updates["title"] if updates["title"]
+        update_params[:description] = updates["description"] if updates["description"]
+        update_params[:author] = updates["author"] if updates["author"]
+
+        raise "Failed to update experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(update_params)
+
+          serialize_experience(experience)
+
+      when "experiences.delete"
+        experience_id = params[0]
+        experience = Experience.find_by(id: experience_id, account_id: current_account.id)
+        raise "Experience not found or not owned by current user" unless experience
+
+        raise "Failed to delete experience" unless experience.destroy
+
+          { "success" => true, "message" => "Experience deleted successfully" }
+
+      when "experiences.approve"
+        # Admin only
+        experience_id = params[0]
+        experience = Experience.find_by(id: experience_id)
+        raise "Experience not found" unless experience
+
+        raise "Failed to approve experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(approved: true)
+
+          serialize_experience(experience)
+
+      when "preferences.get"
+        key = params[0]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+
+        value = UserPreference.get(current_account.id, key)
+        { "key" => key, "value" => value }
+
+      when "preferences.set"
+        key = params[0]
+        value = params[1]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+
+        result = UserPreference.set(current_account.id, key, value)
+        raise "Failed to set preference" unless result
+
+          { "key" => key, "value" => result, "success" => true }
+
+      when "preferences.dismiss"
+        key = params[0]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+
+        result = UserPreference.dismiss(current_account.id, key)
+        raise "Failed to dismiss preference" unless result
+
+          { "key" => key, "dismissed" => true, "success" => true }
+
+      when "preferences.is_dismissed"
+        key = params[0]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+
+        dismissed = UserPreference.dismissed?(current_account.id, key)
+        { "key" => key, "dismissed" => dismissed }
+
+      when "account.get_info"
+        {
+          "id" => current_account.id,
+          "username" => current_account.username,
+          "admin" => current_account.admin?,
+          "guest" => current_account.guest?,
+          "status" => account_status_string(current_account.status)
+        }
+
+      when "search.query", "search.public_query"
+        query = params[0]
+        limit = [ params[1] || 20, 100 ].min # Cap at 100 results
+
+        scope = if method_name == "search.query" && current_account&.admin?
+          Experience
+        else
+          Experience.approved
+        end
+
+        experiences = if query.present?
+          # Limit query length and sanitize
+          query = query.to_s.strip[0...50]
+          scope.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
+               .order(created_at: :desc)
+               .limit(limit)
+        else
+          scope.order(created_at: :desc).limit(limit)
+        end
+
+        serialize_experiences(experiences)
+
+      when "moderation.get_logs"
+        # Admin only or user's own logs
+        logs = if current_account&.admin?
+          ModerationLog.recent.limit(100)
+        else
+          ModerationLog.where(account_id: current_account.id).recent.limit(100)
+        end
+
+        serialize_moderation_logs(logs)
+
+      when "admin.experiences.all"
+        # Admin only
+        experiences = Experience.order(created_at: :desc)
+        serialize_experiences(experiences)
+
+      when "admin.experiences.approve"
+        # Admin only
+        experience_id = params[0]
+        experience = Experience.find_by(id: experience_id)
+        raise "Experience not found" unless experience
+
+        raise "Failed to approve experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(approved: true)
+
+          serialize_experience(experience)
+
       else
-        raise "Unknown method: #{method_name}"
+        render xml: fault_response(404, "Method not found")
+        nil
       end
     end
 
@@ -216,6 +422,53 @@ module Api
           "updated_at" => experience.updated_at.iso8601
         }
       end
+    end
+
+    # Helper method to serialize a single experience
+    def serialize_experience(experience)
+      {
+        "id" => experience.id,
+        "title" => experience.title,
+        "description" => experience.description,
+        "author" => experience.author,
+        "approved" => experience.approved,
+        "account_id" => experience.account_id,
+        "has_html_file" => experience.html_file.attached?,
+        "created_at" => experience.created_at.iso8601,
+        "updated_at" => experience.updated_at.iso8601
+      }
+    end
+
+    # Helper method to serialize moderation logs
+    def serialize_moderation_logs(logs)
+      logs.map do |log|
+        {
+          "id" => log.id,
+          "field" => log.field,
+          "model_type" => log.model_type,
+          "content" => log.content,
+          "reason" => log.reason,
+          "account_id" => log.account_id,
+          "violations" => log.violations,
+          "created_at" => log.created_at.iso8601
+        }
+      end
+    end
+
+    # Helper method to convert account status to string
+    def account_status_string(status)
+      case status
+      when 1 then "unverified"
+      when 2 then "verified"
+      when 3 then "closed"
+      else "unknown"
+      end
+    end
+
+    # Sanitize SQL LIKE wildcards to prevent injection
+    def sanitize_sql_like(str)
+      # Escape LIKE special characters: %, _, [, ], ^
+      str.gsub(/[%_\[\]\^\\]/) { |x| "\\#{x}" }
     end
 
     def generate_response(result)
@@ -272,9 +525,10 @@ module Api
       key = "xmlrpc_rate_limit:#{request.ip}"
       count = Rails.cache.increment(key, 1, expires_in: 1.minute)
 
-      return unless count > 30
+      return true unless count > 30
 
       render xml: fault_response(429, "Rate limit exceeded")
+      false # Halt the filter chain
     end
 
     def current_account
