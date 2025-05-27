@@ -1,10 +1,9 @@
 # Todo List
 
-1. □ **Add social logins for Facebook, X, Apple, and Google**
+1. □ **Fix bugged search**
 2. □ **Imprint for EU**
-3. □ **Enable all Haml lint checks**
-4. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic with instance data**
-5. □ **Implement federated authentication for metaverse instances**
+3. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic with instance data**
+4. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
         - □ Add `gem 'rodauth-oauth'` to the Gemfile
