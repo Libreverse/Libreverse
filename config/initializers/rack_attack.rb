@@ -90,17 +90,29 @@ module Rack
       match_data = request.env["rack.attack.match_data"]
       now = Time.zone.now
 
+      # Calculate retry after time, defaulting to 60 seconds if calculation fails
+      retry_after = begin
+        raise ArgumentError, "Missing match_data" if match_data.nil?
+        raise ArgumentError, "Missing period in match_data" if match_data[:period].nil?
+        raise ArgumentError, "Missing epoch in match_data" if match_data[:epoch].nil?
+
+        (match_data[:period] - (now - match_data[:epoch])).to_i
+      rescue ArgumentError, TypeError => e
+        Rails.logger.warn("Rack::Attack retry_after calculation failed: #{e.message}")
+        60
+      end
+
       headers = {
         "Content-Type" => "application/json",
-        "Retry-After" => (match_data[:period] - (now - match_data[:epoch])).to_i.to_s
+        "Retry-After" => retry_after.to_s
       }
 
       [ 429, headers, [ {
         error: {
-          message: "You've hit your request limit. Please try again in #{headers['Retry-After']} seconds.",
+          message: "You've hit your request limit. Please try again in #{retry_after} seconds.",
           limit: match_data[:limit],
           remaining: [ 0, match_data[:limit] - match_data[:count] ].max,
-          reset_at: (now + match_data[:period] - (now - match_data[:epoch])).to_i
+          reset_at: (now + retry_after).to_i
         }
       }.to_json ] ]
     end

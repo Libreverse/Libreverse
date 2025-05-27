@@ -1,6 +1,8 @@
 [default.extend-words]
 Lazer = "Lazer"
 bck = "bck"
+nd = "nd"
+ue = "ue"
 
 [files]
 extend-exclude = ["app/emoji/**", "nikto/**", "config/credentials.yml.enc", "config/locales/**"]

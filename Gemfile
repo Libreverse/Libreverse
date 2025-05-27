@@ -38,6 +38,7 @@ gem "turbo_power"
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "unicode"
+gem "unidecoder"
 gem "view_component"
 gem "vite_plugin_legacy"
 gem "vite_rails"

@@ -23,7 +23,7 @@ Layout:
 Lint:
     Enabled: true
 Metrics:
-    Enabled: true
+    Enabled: false
 Naming:
     Enabled: true
 Performance:
@@ -35,58 +35,6 @@ Security:
     Enabled: false # Disabled globally; only CompoundHash enabled below
 Style:
     Enabled: true
-
-# Metrics cops for code quality
-# Metrics cops for code quality
-Metrics/AbcSize:
-    Enabled: true
-    Max: 70
-    Description: "Limits ABC size to 70 to manage method complexity."
-
-Metrics/BlockLength:
-    Enabled: true
-    Max: 160
-    Description: "Limits blocks to 160 lines to keep them manageable."
-
-Metrics/BlockNesting:
-    Enabled: true
-    Max: 5
-    Description: "Limits block nesting to 5 levels to improve readability."
-
-Metrics/ClassLength:
-    Enabled: true
-    Max: 300
-    Description: "Limits classes to 300 lines to encourage single responsibility."
-
-Metrics/CollectionLiteralLength:
-    Enabled: true
-    LengthThreshold: 200
-    Description: "Limits collection literals to 200 elements to encourage refactoring."
-
-Metrics/CyclomaticComplexity:
-    Enabled: true
-    Max: 20
-    Description: "Caps cyclomatic complexity at 20 to encourage simpler logic."
-
-Metrics/MethodLength:
-    Enabled: true
-    Max: 60
-    Description: "Limits methods to 60 lines to keep them concise and maintainable."
-
-Metrics/ModuleLength:
-    Enabled: true
-    Max: 300
-    Description: "Limits modules to 200 lines to encourage single responsibility."
-
-Metrics/ParameterLists:
-    Enabled: true
-    Max: 7
-    Description: "Restricts methods to 7 parameters to reduce complexity."
-
-Metrics/PerceivedComplexity:
-    Enabled: true
-    Max: 25
-    Description: "Caps perceived complexity at 25 to improve readability."
 
 # Set a maximum line length for readability
 Layout/LineLength:

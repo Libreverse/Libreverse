@@ -1,14 +1,22 @@
 # frozen_string_literal: true
 
 require "sequel/model"
+require_relative "../services/moderation_service"
 
 # Sequel model for Rodauth and Sequel-specific logic
 class AccountSequel < Sequel::Model(:accounts)
   plugin :timestamps, update_on_create: true
+  plugin :validation_helpers
 
   # Sequel associations
   one_to_many :user_preferences, key: :account_id
   one_to_many :experiences, key: :account_id
+
+  # Content moderation validation for usernames
+  def validate
+    super
+    validate_username_moderation if username
+  end
 
   # Status helpers (replace enum)
   def unverified?
@@ -95,6 +103,36 @@ class AccountSequel < Sequel::Model(:accounts)
       end
     end
   end
+
+  private
+
+  def validate_username_moderation
+    return if username.blank?
+
+    return unless ModerationService.contains_inappropriate_content?(username)
+
+    violations = ModerationService.get_violation_details(username)
+    log_moderation_violation("username", username, violations)
+    errors.add(:username, "contains inappropriate content and cannot be saved")
+  end
+
+  def log_moderation_violation(field, _content, violations)
+    violations ||= []
+    reason = if violations.empty?
+      "content flagged by comprehensive moderation system"
+    else
+      violations.map { |v| "#{v[:type]}#{v[:details] ? " (#{v[:details].join(', ')})" : ''}" }.join("; ")
+    end
+
+    # Only log to Rails logger to avoid recursion since Account moderation
+    # would trigger when creating ModerationLog records
+    Rails.logger.warn "Moderation violation in #{self.class.name} #{field}: #{reason}"
+
+    # NOTE: We don't log Account violations to database to avoid infinite recursion
+    # since the ModerationLog belongs_to :account, which would trigger Account validation again
+  rescue StandardError => e
+    Rails.logger.error "Failed to log moderation violation: #{e.message}"
+  end
 end
 
 # ActiveRecord bridge for associations
@@ -104,6 +142,40 @@ class Account < ApplicationRecord
   # Add ActiveRecord associations
   has_many :experiences, dependent: :destroy
   has_many :user_preferences, dependent: :destroy
+  has_many :moderation_logs, dependent: :destroy
+
+  # Content moderation validations
+  validate :username_moderation
 
   # Add any AR-specific logic or validations here if needed
+
+  private
+
+  def username_moderation
+    return if username.blank?
+
+    return unless ModerationService.contains_inappropriate_content?(username)
+
+      violations = ModerationService.get_violation_details(username)
+      log_moderation_violation("username", username, violations)
+      errors.add(:username, "contains inappropriate content and cannot be saved")
+  end
+
+  def log_moderation_violation(field, _content, violations)
+    violations ||= []
+    reason = if violations.empty?
+      "content flagged by comprehensive moderation system"
+    else
+      violations.map { |v| "#{v[:type]}#{v[:details] ? " (#{v[:details].join(', ')})" : ''}" }.join("; ")
+    end
+
+    # Only log to Rails logger to avoid recursion since Account moderation
+    # would trigger when creating ModerationLog records
+    Rails.logger.warn "Moderation violation in #{self.class.name} #{field}: #{reason}"
+
+    # NOTE: We don't log Account violations to database to avoid infinite recursion
+    # since the ModerationLog belongs_to :account, which would trigger Account validation again
+  rescue StandardError => e
+    Rails.logger.error "Failed to log moderation violation: #{e.message}"
+  end
 end

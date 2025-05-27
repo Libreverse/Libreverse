@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require_relative "../models/account"
+require_relative "../services/moderation_service"
 require "rodauth/model"
 require "sequel/core"
 
 class RodauthMain < Rodauth::Rails::Auth
-  # rubocop:disable Metrics/BlockLength
   configure do
     # List of authentication features that are loaded.
     enable :create_account,
@@ -366,6 +366,24 @@ class RodauthMain < Rodauth::Rails::Auth
       now = Time.current
       account[:created_at] = now
       account[:updated_at] = now
+
+      # Validate username for inappropriate content
+      username = param(login_param)
+      if username.present? && ModerationService.contains_inappropriate_content?(username)
+        violations = ModerationService.get_violation_details(username)
+
+        # Log the violation
+        reason = if violations.empty?
+          "content flagged by comprehensive moderation system"
+        else
+          violations.map { |v| "#{v[:type]}#{v[:details] ? " (#{v[:details].join(', ')})" : ''}" }.join("; ")
+        end
+
+        Rails.logger.warn "Moderation violation in account creation username: #{reason}"
+
+        # Throw validation error - this will prevent account creation and show error to user
+        throw_error_status(422, login_param, "contains inappropriate content and cannot be saved")
+      end
     end
 
     # Auto-verify accounts immediately after creation
