@@ -43,14 +43,9 @@ class LibreverseXmlrpcClient
 
     # Configure SSL verification
     if uri.scheme == 'https'
-      if ENV['XMLRPC_DISABLE_SSL_VERIFY'] == 'true'
-        warn "WARNING: SSL verification is disabled. This is not recommended for production use."
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      else
         http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-        # Optionally set custom CA certificate path if needed
-        # http.ca_file = '/path/to/ca-certificates.crt'
-      end
+      # Optionally set custom CA certificate path if needed
+      # http.ca_file = '/path/to/ca-certificates.crt'
     end
 
     request = Net::HTTP::Post.new(uri)
