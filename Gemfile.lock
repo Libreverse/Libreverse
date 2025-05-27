@@ -44,7 +44,7 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
-    active_storage_validations (2.0.3)
+    active_storage_validations (2.0.4)
       activejob (>= 6.1.4)
       activemodel (>= 6.1.4)
       activestorage (>= 6.1.4)
@@ -431,6 +431,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    unidecoder (1.1.2)
     uri (1.0.3)
     useragent (0.16.11)
     view_component (3.23.2)
@@ -521,6 +522,7 @@ DEPENDENCIES
   turbo_power
   tzinfo-data
   unicode
+  unidecoder
   view_component
   vite_plugin_legacy
   vite_rails

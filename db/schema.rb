@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_01_183500) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_25_235723) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -104,6 +104,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_183500) do
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
     t.index ["approved"], name: "index_experiences_on_approved"
+  end
+
+  create_table "moderation_logs", force: :cascade do |t|
+    t.string "field"
+    t.string "model_type"
+    t.text "content"
+    t.string "reason"
+    t.integer "account_id"
+    t.text "violations_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_moderation_logs_on_account_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -255,10 +267,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_183500) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
-# Could not dump table "sqlite_stat1" because of following StandardError
-#   Unknown type '' for column 'tbl'
-
-
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
     t.string "key", null: false
@@ -277,6 +285,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_183500) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "experiences", "accounts"
+  add_foreign_key "moderation_logs", "accounts"
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
