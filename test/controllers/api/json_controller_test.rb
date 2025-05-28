@@ -145,7 +145,7 @@ module Api
         method: "experiences.create",
         title: "New Test Experience",
         description: "Test description",
-        html_content: "<html><body><h1>Test</h1></body></html>"
+        html_content: "<html><body>Test content</body></html>",
         # Don't specify author, let it default to current_account.username
       }
 
@@ -301,7 +301,8 @@ module Api
       post :endpoint, params: {
         method: "experiences.create",
         title: "Test Experience",
-        description: "Test description"
+        description: "Test description",
+        html_content: "<html><body>Test content</body></html>"
       }
 
       assert_response :forbidden
@@ -327,7 +328,8 @@ module Api
       post :endpoint, params: {
         method: "experiences.create",
         title: "Test Experience",
-        description: "Test description"
+        description: "Test description",
+        html_content: "<html><body>Test content</body></html>"
         # Don't specify author, let it default to current_account.username
       }
 

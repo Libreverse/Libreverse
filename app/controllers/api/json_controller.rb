@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "stringio"
+
 module Api
   class JsonController < ApplicationController
     include XmlrpcSecurity
@@ -24,13 +26,15 @@ module Api
 
       # Validate method name format (no consecutive dots, must start/end with alphanumeric, allow underscores)
       unless method_name.present? && method_name.match?(/\A[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)*\z/)
-        render json: { error: "Invalid method name" }, status: :bad_request
+        @error_message = "Invalid method name"
+        render "api/json/error", status: :bad_request
         return
       end
 
       # Validate permissions for the method
       unless permitted_method?(method_name)
-        render json: { error: "Method not allowed" }, status: :forbidden
+        @error_message = "Method not allowed"
+        render "api/json/error", status: :forbidden
         return
       end
 
@@ -39,22 +43,18 @@ module Api
 
       begin
         # Apply a processing timeout
-        result = nil
         ActiveSupport::Notifications.instrument("json_api.process") do
-          result = process_method_call(method_name, method_params)
+          process_method_call(method_name, method_params)
         end
         # Rack / Puma request_timeout middleware or nginx proxy_timeout
         # should already enforce an upper bound on total request time.
-        if result.nil?
-          render json: { error: "Method processing failed" }, status: :internal_server_error
-        else
-          render json: { result: result }
-        end
       rescue Timeout::Error
-        render json: { error: "Request timeout" }, status: :request_timeout
+        @error_message = "Request timeout"
+        render "api/json/error", status: :request_timeout
       rescue StandardError => e
         Rails.logger.error("JSON API error: #{e.message}")
-        render json: { error: "Internal server error" }, status: :internal_server_error
+        @error_message = "Internal server error"
+        render "api/json/error", status: :internal_server_error
       end
     end
 
@@ -89,7 +89,8 @@ module Api
         token = request.headers["X-CSRF-Token"] || params[:authenticity_token]
 
         unless token.present? && valid_authenticity_token?(session, token)
-          render json: { error: "CSRF token missing or invalid" }, status: :forbidden
+          @error_message = "CSRF token missing or invalid"
+          render "api/json/error", status: :forbidden
           return false
         end
       end
@@ -103,8 +104,8 @@ module Api
       valid_types = [ "application/json", "text/json" ]
 
       unless valid_types.any? { |type| request.content_type&.include?(type) }
-        render json: { error: "Unsupported content type. Use application/json" },
-               status: :unsupported_media_type
+        @error_message = "Unsupported content type. Use application/json"
+        render "api/json/error", status: :unsupported_media_type
         return false
       end
 
@@ -166,7 +167,6 @@ module Api
 
       # Admin-only methods
       admin_methods = %w[
-        experiences.all_with_unapproved
         experiences.approve
         experiences.pending_approval
         moderation.get_logs
@@ -191,79 +191,72 @@ module Api
       when "experiences.all"
         # Get experiences; admins see all, others see only approved ones
         scope = current_account&.admin? ? Experience : Experience.approved
-        experiences = scope.order(created_at: :desc)
-        serialize_experiences(experiences)
+        @experiences = scope.order(created_at: :desc)
+        render "api/json/experiences_all"
 
       when "experiences.get"
         experience_id = params[0]
-        experience = if current_account&.admin?
+        @experience = if current_account&.admin?
           Experience.find_by(id: experience_id)
         else
           Experience.approved.find_by(id: experience_id)
         end
+        raise "Experience not found" unless @experience
 
-        raise "Experience not found or not accessible" unless experience
-
-        serialize_experience(experience)
+        render "api/json/experience_get"
 
       when "experiences.approved"
-        experiences = Experience.approved.order(created_at: :desc)
-        serialize_experiences(experiences)
-
-      when "experiences.all_with_unapproved"
-        # Admin only - already checked in permitted_method?
-        experiences = Experience.order(created_at: :desc)
-        serialize_experiences(experiences)
+        @experiences = Experience.approved.order(created_at: :desc)
+        render "api/json/experiences_all"
 
       when "experiences.pending_approval"
-        # Admin or authenticated users only
-        experiences = if current_account&.admin?
-          Experience.pending_approval.order(created_at: :desc)
-        else
-          Experience.where(account_id: current_account.id, approved: false).order(created_at: :desc)
-        end
-        serialize_experiences(experiences)
+        @experiences = Experience.pending_approval.order(created_at: :desc)
+        render "api/json/experiences_pending_approval"
 
       when "experiences.create"
         title = params[0]
         description = params[1]
         html_content = params[2]
-        author = params[3] || current_account.username
+        author = params[3]
 
-        experience = Experience.new(
+        raise "Title is required" if title.blank?
+        raise "HTML content is required" if html_content.blank?
+
+        @experience = Experience.new(
           title: title,
           description: description,
           author: author,
-          account_id: current_account.id
+          account: current_account
         )
 
-        if html_content.present?
-          experience.html_file.attach(
-            io: StringIO.new(html_content),
-            filename: "experience_#{Time.current.to_i}.html",
-            content_type: "text/html"
-          )
-        end
+        # Use StringIO to keep content in memory instead of writing to disk
+        html_io = StringIO.new(html_content)
 
-        raise "Failed to create experience: #{experience.errors.full_messages.join(', ')}" unless experience.save
+        @experience.html_file.attach(
+          io: html_io,
+          filename: "#{title.parameterize}.html",
+          content_type: "text/html"
+        )
 
-        serialize_experience(experience)
+        raise "Failed to create experience: #{@experience.errors.full_messages.join(', ')}" unless @experience.save
+
+        render "api/json/experience_create"
 
       when "experiences.update"
         experience_id = params[0]
-        updates = params[1] || {}
+        updates = params[1]
 
-        experience = Experience.find_by(id: experience_id, account_id: current_account.id)
-        raise "Experience not found or not owned by current user" unless experience
+        @experience = Experience.find_by(id: experience_id, account_id: current_account.id)
+        raise "Experience not found or not owned by current user" unless @experience
 
         update_params = {}
-        update_params[:title] = updates["title"] if updates["title"]
-        update_params[:description] = updates["description"] if updates["description"]
-        update_params[:author] = updates["author"] if updates["author"]
+        update_params[:title] = updates["title"] if updates["title"].present?
+        update_params[:description] = updates["description"] if updates["description"].present?
+        update_params[:author] = updates["author"] if updates["author"].present?
 
-        raise "Failed to update experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(update_params)
+        raise "Failed to update experience: #{@experience.errors.full_messages.join(', ')}" unless @experience.update(update_params)
 
-        serialize_experience(experience)
+        render "api/json/experience_update"
 
       when "experiences.delete"
         experience_id = params[0]
@@ -272,59 +265,55 @@ module Api
 
         raise "Failed to delete experience" unless experience.destroy
 
-        { "success" => true, "message" => "Experience deleted successfully" }
+        render "api/json/experience_delete"
 
       when "experiences.approve"
         # Admin only
         experience_id = params[0]
-        experience = Experience.find_by(id: experience_id)
-        raise "Experience not found" unless experience
+        @experience = Experience.find_by(id: experience_id)
+        raise "Experience not found" unless @experience
 
-        raise "Failed to approve experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(approved: true)
+        raise "Failed to approve experience: #{@experience.errors.full_messages.join(', ')}" unless @experience.update(approved: true)
 
-        serialize_experience(experience)
+        render "api/json/experience_approve"
 
       when "preferences.get"
-        key = params[0]
-        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+        @key = params[0]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(@key)
 
-        value = UserPreference.get(current_account.id, key)
-        { "key" => key, "value" => value }
+        @value = UserPreference.get(current_account.id, @key)
+        render "api/json/preference_get"
 
       when "preferences.set"
-        key = params[0]
-        value = params[1]
-        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+        @key = params[0]
+        @value = params[1]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(@key)
 
-        result = UserPreference.set(current_account.id, key, value)
-        raise "Failed to set preference" unless result
+        @value = UserPreference.set(current_account.id, @key, @value)
+        raise "Failed to set preference" unless @value
 
-        { "key" => key, "value" => result, "success" => true }
+        render "api/json/preference_set"
 
       when "preferences.dismiss"
-        key = params[0]
-        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
+        @key = params[0]
+        raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(@key)
 
-        result = UserPreference.dismiss(current_account.id, key)
+        result = UserPreference.dismiss(current_account.id, @key)
         raise "Failed to dismiss preference" unless result
 
-        { "key" => key, "dismissed" => true, "success" => true }
+        render "api/json/preference_dismiss"
 
       when "preferences.is_dismissed"
         key = params[0]
         raise "Invalid preference key" unless UserPreference::ALLOWED_KEYS.include?(key)
 
-        dismissed = UserPreference.dismissed?(current_account.id, key)
-        { "dismissed" => dismissed }
+        @dismissed = UserPreference.dismissed?(current_account.id, key)
+        render "api/json/preference_is_dismissed"
 
       when "account.get_info"
-        {
-          "id" => current_account.id,
-          "username" => current_account.username,
-          "admin" => current_account.admin?,
-          "guest" => current_account.guest?,
-          "status" => account_status_string(current_account.status)
-        }
+        @account = current_account
+        @status = account_status_string(current_account.status)
+        render "api/json/account_get_info"
 
       when "search.query", "search.public_query"
         query = params[0]
@@ -339,7 +328,7 @@ module Api
           Experience.approved
         end
 
-        experiences = if query.present?
+        @experiences = if query.present?
           # Limit query length and sanitize
           query = query.to_s.strip[0...50]
           scope.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
@@ -349,78 +338,33 @@ module Api
           scope.order(created_at: :desc).limit(limit)
         end
 
-        serialize_experiences(experiences)
+        render "api/json/search_query"
 
       when "moderation.get_logs"
         # Admin only or user's own logs
-        logs = if current_account&.admin?
+        @logs = if current_account&.admin?
           ModerationLog.recent.limit(100)
         else
           ModerationLog.where(account_id: current_account.id).recent.limit(100)
         end
 
-        serialize_moderation_logs(logs)
+        render "api/json/moderation_get_logs"
 
       when "admin.experiences.all"
         # Admin only
-        experiences = Experience.order(created_at: :desc)
-        serialize_experiences(experiences)
+        @experiences = Experience.order(created_at: :desc)
+        render "api/json/admin_experiences_all"
 
       when "admin.experiences.approve"
         # Admin only
         experience_id = params[0]
-        experience = Experience.find_by(id: experience_id)
-        raise "Experience not found" unless experience
+        @experience = Experience.find_by(id: experience_id)
+        raise "Experience not found" unless @experience
 
-        raise "Failed to approve experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(approved: true)
+        raise "Failed to approve experience: #{@experience.errors.full_messages.join(', ')}" unless @experience.update(approved: true)
 
-        serialize_experience(experience)
+        render "api/json/admin_experiences_approve"
 
-      end
-    end
-
-    # Helper method to serialize experiences into a format suitable for JSON
-    def serialize_experiences(experiences)
-      experiences.map do |experience|
-        {
-          "id" => experience.id,
-          "title" => experience.title,
-          "description" => experience.description,
-          "author" => experience.author,
-          "created_at" => experience.created_at.iso8601,
-          "updated_at" => experience.updated_at.iso8601
-        }
-      end
-    end
-
-    # Helper method to serialize a single experience
-    def serialize_experience(experience)
-      {
-        "id" => experience.id,
-        "title" => experience.title,
-        "description" => experience.description,
-        "author" => experience.author,
-        "approved" => experience.approved,
-        "account_id" => experience.account_id,
-        "html_file" => experience.html_file?,
-        "created_at" => experience.created_at.iso8601,
-        "updated_at" => experience.updated_at.iso8601
-      }
-    end
-
-    # Helper method to serialize moderation logs
-    def serialize_moderation_logs(logs)
-      logs.map do |log|
-        {
-          "id" => log.id,
-          "field" => log.field,
-          "model_type" => log.model_type,
-          "content" => log.content,
-          "reason" => log.reason,
-          "account_id" => log.account_id,
-          "violations" => log.violations,
-          "created_at" => log.created_at.iso8601
-        }
       end
     end
 
@@ -446,7 +390,8 @@ module Api
 
       return true unless count > 60 # Higher limit for JSON API
 
-      render json: { error: "Rate limit exceeded" }, status: :too_many_requests
+      @error_message = "Rate limit exceeded"
+      render "api/json/error", status: :too_many_requests
       false # Halt the filter chain
     end
 

@@ -3,13 +3,12 @@
 1. □ **Fix bugged search**
 2. □ **Imprint for EU**
 3. □ **Make `Security.txt` and `.well-known/privacy.txt` dynamic with instance data**
-4. □ **Refactor JSON API to use Jbuilder templates**
-5. □ **Implement Voight-Kampff bot detection**
-6. □ **Make moderation system configurable**
-7. □ **Add sitemap_generator for automatic sitemaps**
-8. □ **Add invisible_captcha for signup protection**
-9. □ **Add experience federation through custom activitypub fields**
-10. □ **Implement federated authentication for metaverse instances**
+4. □ **Implement Voight-Kampff bot detection**
+5. □ **Make moderation system configurable**
+6. □ **Add sitemap_generator for automatic sitemaps**
+7. □ **Add invisible_captcha for signup protection**
+8. □ **Add experience federation through custom activitypub fields**
+9. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
         - □ Add `gem 'rodauth-oauth'` to the Gemfile
