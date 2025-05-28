@@ -1,11 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-    key: MyString
-    value: MyText
-    description: MyText
+test_instance_name:
+    key: instance_name
+    value: Test Instance
+    description: Test instance name
 
-two:
-    key: MyString
-    value: MyText
-    description: MyText
+test_admin_email:
+    key: admin_email
+    value: test@example.com
+    description: Test admin email
