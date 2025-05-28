@@ -223,7 +223,7 @@ for my $i (0 .. $num_tools - 1) {
     } elsif ($tool_name eq "Typos") {
         @cmd = ("typos");
     } elsif ($tool_name eq "Jest") {
-        @cmd = ("sh", "-c", "NODE_OPTIONS='--experimental-vm-modules' npx jest");
+        @cmd = ("sh", "-c", "NODE_OPTIONS='--experimental-vm-modules' npx jest --coverage=false");
     } elsif ($tool_name eq "Rails test") {
         @cmd = ("bundle", "exec", "rails", "test");
     } elsif ($tool_name eq "Brakeman") {
