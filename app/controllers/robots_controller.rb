@@ -32,4 +32,4 @@ class RobotsController < ApplicationController
     Rails.logger.error "[RobotsController] Error checking no_bots_mode setting: #{e.message}"
     false # Default to allowing bots if we can't check the setting
   end
-end 
+end

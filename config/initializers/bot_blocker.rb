@@ -7,4 +7,4 @@ require_relative "../../lib/middleware/bot_blocker"
 
 # Add the middleware to the Rails application configuration
 # This approach works in all environments
-Rails.application.config.middleware.use BotBlocker 
+Rails.application.config.middleware.use BotBlocker
