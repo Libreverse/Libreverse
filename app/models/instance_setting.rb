@@ -23,6 +23,7 @@ class InstanceSetting < ApplicationRecord
     privacy_policy_url
     acknowledgements_url
     preferred_languages
+    no_bots_mode
   ].freeze
 
   validate :key_must_be_allowed
@@ -78,7 +79,8 @@ class InstanceSetting < ApplicationRecord
       "security_contact_twitter" => ENV["SECURITY_CONTACT_TWITTER"] || "",
       "privacy_policy_url" => "/privacy",
       "acknowledgements_url" => "/security",
-      "preferred_languages" => "en"
+      "preferred_languages" => "en",
+      "no_bots_mode" => "false"
     }
 
     defaults.each do |key, default_value|
