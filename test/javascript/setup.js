@@ -1,5 +1,11 @@
+// Polyfill TextEncoder and TextDecoder for jsdom compatibility
+import { TextEncoder, TextDecoder } from "node:util";
+globalThis.TextEncoder = TextEncoder;
+globalThis.TextDecoder = TextDecoder;
+
 // Import Jest DOM matchers
 import "@testing-library/jest-dom";
+import { jest } from "@jest/globals";
 
 // Mock Turbo's visit function which is used in many controllers
 globalThis.Turbo = {

@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
 class ModerationLog < ApplicationRecord
+  include GraphqlRails::Model
+
+  graphql do |c|
+    c.attribute(:id, type: "ID!")
+    c.attribute(:field, type: "String!")
+    c.attribute(:model_type, type: "String!")
+    c.attribute(:content, type: "String!")
+    c.attribute(:reason, type: "String!")
+    c.attribute(:account_id, type: "ID")
+    c.attribute(:violations, type: "[String]") # Parsed violations array
+    c.attribute(:created_at, type: "String!")
+  end
+
   belongs_to :account, optional: true
 
   validates :field, presence: true

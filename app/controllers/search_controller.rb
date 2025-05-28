@@ -23,7 +23,6 @@ class SearchController < ApplicationController
 
   # Sanitize SQL LIKE wildcards to prevent injection
   def sanitize_sql_like(str)
-    # Escape LIKE special characters: %, _, [, ], ^
-    str.gsub(RE2::Regexp.new('[%_\\[\\]\\^\\\\]')) { |x| "\\#{x}" }
+    ActiveRecord::Base.sanitize_sql_like(str)
   end
 end

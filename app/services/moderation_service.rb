@@ -249,7 +249,7 @@ class ModerationService
                             .gsub(/[‘’‛‹›`´]/, "'") # Replace curly apostrophes & graves with straight ones
                             .gsub(/[“”„«»]/, '"') # Replace curly double-quotes with straight ones
                             .gsub(/[–—]/, "-") # Replace en/em dashes with hyphens
-      Rails.logger.debug "DEBUG [contains_profanity? for text: '#{normalized_text}']" if debug_logging_enabled?
+      # rails.logger.debug "DEBUG [contains_profanity? for text: '#{normalized_text}']" if debug_logging_enabled?
 
       spaced_text = normalized_text.gsub(/[_\-.\s]/, "")
       collapsed_text = normalized_text.gsub(/(.)\1+/, '\1')
@@ -282,13 +282,13 @@ class ModerationService
       end
 
       # Check using cached creative pattern regexes
-      CACHED_PROFANITY_REGEXES.each do |bad_word_str, regex|
+      CACHED_PROFANITY_REGEXES.each_value do |regex|
         if debug_logging_enabled?
-          Rails.logger.debug "  DEBUG: checking bad_word = '#{bad_word_str}'"
+          # rails.logger.debug "  DEBUG: checking bad_word = '#{bad_word_str}'"
           match_result_norm = regex.match?(normalized_text)
-          Rails.logger.debug "    DEBUG: normalized_text ('#{normalized_text}') match? #{match_result_norm}"
+          # rails.logger.debug "    DEBUG: normalized_text ('#{normalized_text}') match? #{match_result_norm}"
           if match_result_norm
-            Rails.logger.debug "      MATCHED! Returning true."
+            # rails.logger.debug "      MATCHED! Returning true."
             return true
           end
         end
@@ -323,7 +323,7 @@ class ModerationService
                             .gsub(/[“”„«»]/, '"') # Replace curly double-quotes with straight ones
                             .gsub(/[–—]/, "-") # Replace en/em dashes with hyphens
 
-      Rails.logger.debug "DEBUG [contains_spam? for text: '#{normalized_text}']" if debug_logging_enabled?
+      # rails.logger.debug "DEBUG [contains_spam? for text: '#{normalized_text}']" if debug_logging_enabled?
 
       spaced_text = normalized_text.gsub(/[_\-.\s]/, "")
       collapsed_text = normalized_text.gsub(/(.)\1+/, '\1')
@@ -367,13 +367,13 @@ class ModerationService
       end
 
       # Check using cached creative pattern regexes for spam
-      CACHED_SPAM_REGEXES.each do |spam_word_str, regex|
+      CACHED_SPAM_REGEXES.each_value do |regex|
         if debug_logging_enabled?
-          Rails.logger.debug "  DEBUG (spam): checking spam_word = '#{spam_word_str}'"
+          # # rails.logger.debug "  DEBUG (spam): checking spam_word = '#{spam_word_str}'"
           match_result_norm = regex.match?(normalized_text)
-          Rails.logger.debug "    DEBUG (spam): normalized_text ('#{normalized_text}') match? #{match_result_norm}"
+          # # rails.logger.debug "    DEBUG (spam): normalized_text ('#{normalized_text}') match? #{match_result_norm}"
           if match_result_norm
-            Rails.logger.debug "      MATCHED (spam)! Returning true."
+            # # rails.logger.debug "      MATCHED (spam)! Returning true."
             return true
           end
         end

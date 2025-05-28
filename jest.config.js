@@ -2,7 +2,6 @@ export default {
     testEnvironment: "jsdom",
     moduleDirectories: ["node_modules", "<rootDir>"],
     transform: {},
-    extensionsToTreatAsEsm: [".js"],
     moduleNameMapper: {
         "^@hotwired/(.*)$": "<rootDir>/node_modules/@hotwired/$1",
         "^~/(.*)$": "<rootDir>/app/javascript/$1",
@@ -21,4 +20,7 @@ export default {
     ],
     coverageReporters: ["text", "html"],
     coverageDirectory: "coverage",
+    testEnvironmentOptions: {
+        customExportConditions: ["node", "node-addons"],
+    },
 };

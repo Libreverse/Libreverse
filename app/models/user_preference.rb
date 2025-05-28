@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class UserPreference < ApplicationRecord
+  include GraphqlRails::Model
+
+  graphql do |c|
+    c.attribute(:id, type: "ID!")
+    c.attribute(:account_id, type: "ID!")
+    c.attribute(:key, type: "String!")
+    c.attribute(:value, type: "String")
+    c.attribute(:created_at, type: "String!")
+    c.attribute(:updated_at, type: "String!")
+  end
+
   # belongs_to :account # Removed: Account is now a Sequel model
 
   # Encrypt the value field since it may contain sensitive user preferences

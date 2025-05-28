@@ -24,6 +24,7 @@ export default [
             "public/**",
             "app//libs/**",
             "app/javascript/libs/**",
+            "coverage/**",
         ],
     },
     ...compat.extends("eslint:recommended", "plugin:unicorn/recommended"),

@@ -480,7 +480,7 @@ module Api
         "author" => experience.author,
         "approved" => experience.approved,
         "account_id" => experience.account_id,
-        "has_html_file" => experience.html_file.attached?,
+        "html_file" => experience.html_file?,
         "created_at" => experience.created_at.iso8601,
         "updated_at" => experience.updated_at.iso8601
       }
@@ -514,8 +514,7 @@ module Api
 
     # Sanitize SQL LIKE wildcards to prevent injection
     def sanitize_sql_like(str)
-      # Escape LIKE special characters: %, _, [, ], ^
-      str.gsub(/[%_\[\]\^\\]/) { |x| "\\#{x}" }
+      ActiveRecord::Base.sanitize_sql_like(str)
     end
 
     def generate_response(result)

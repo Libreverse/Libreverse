@@ -36,7 +36,6 @@ class SearchReflex < ApplicationReflex
 
   # Sanitize SQL LIKE wildcards to prevent injection
   def sanitize_sql_like(str)
-    # Escape LIKE special characters: %, _, [, ], ^
-    str.gsub(/[%_\[\]\^\\]/) { |x| "\\#{x}" }
+    ActiveRecord::Base.sanitize_sql_like(str)
   end
 end

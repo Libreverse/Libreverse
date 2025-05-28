@@ -1,5 +1,6 @@
 // Import our DOM setup
 import "./dom_setup";
+import { jest } from "@jest/globals";
 
 // Mock the xmlrpc utility
 const mockXmlrpc = jest.fn(() => Promise.resolve());

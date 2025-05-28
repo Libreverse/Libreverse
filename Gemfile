@@ -44,6 +44,9 @@ gem "vite_plugin_legacy"
 gem "vite_rails"
 gem "zstd-ruby"
 
+# GraphQL API
+gem "graphql_rails"
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
 end
