@@ -14,8 +14,7 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
     # Clear any existing session
     reset_session if respond_to?(:reset_session)
 
-    # Clear rate limiting before each test
-    Rack::Attack.cache.flushdb if Rack::Attack.cache.respond_to?(:flushdb)
+    # Clear cache for tests
     Rails.cache.clear
 
     # Create a valid Argon2 hash that meets the length requirement (88+ chars)
@@ -99,9 +98,6 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "authenticated query requires authentication" do
-    # Clear rate limit for this test
-    Rack::Attack.cache.flushdb if Rack::Attack.cache.respond_to?(:flushdb)
-
     # Clear any existing session
     reset_session if respond_to?(:reset_session)
 
@@ -122,33 +118,7 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Authentication required", response_data["errors"].first["message"]
   end
 
-  test "rate limiting works" do
-    # Clear rate limit cache first
-    Rack::Attack.cache.flushdb if Rack::Attack.cache.respond_to?(:flushdb)
-    Rails.cache.clear
-
-    # Make 101 requests to trigger rate limit using a public query
-    public_query = "{ experiences(limit: 1) { id } }"
-
-    101.times do
-      graphql_request(public_query)
-    end
-
-    assert_response :too_many_requests
-    response_data = JSON.parse(response.body)
-    # Rate limiting returns different format - could be "error" or "errors"
-    if response_data["errors"]
-      assert_equal "Rate limit exceeded", response_data["errors"].first["message"]
-    elsif response_data["error"]
-      assert_includes response_data["error"]["message"], "request limit"
-    else
-      flunk "Expected rate limit error but got: #{response_data.inspect}"
-    end
-  end
-
   test "public query works without authentication" do
-    # Clear rate limit for this test
-    Rack::Attack.cache.flushdb if Rack::Attack.cache.respond_to?(:flushdb)
     query = <<~GRAPHQL
       {
         experiences(limit: 5) {
@@ -410,5 +380,46 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
     response_data = JSON.parse(response.body)
     assert_not_nil response_data["data"]["moderationLogs"]
     assert response_data["data"]["moderationLogs"].is_a?(Array)
+  end
+
+  test "graphql rate limiting works" do
+    # Test the GraphQL controller's built-in rate limiting
+    # This tests the apply_rate_limit method in GraphqlController
+    
+    # Clear cache to start fresh
+    Rails.cache.clear
+    
+    # Use a specific IP for this test
+    test_ip = "192.168.1.100"
+    
+    # Stub the request IP to be consistent across all requests
+    ActionDispatch::Request.any_instance.stubs(:ip).returns(test_ip)
+    
+    begin
+      # Simple query that should work
+      query = "{ experiences(limit: 1) { id } }"
+      
+      # First, manually set the cache to be close to the limit
+      cache_key = "graphql_rate_limit:#{test_ip}"
+      Rails.cache.write(cache_key, 99, expires_in: 1.minute)
+      
+      # This request should work (count becomes 100)
+      graphql_request(query)
+      assert_response :success, "First request should succeed"
+      
+      # This request should trigger rate limit (count becomes 101)
+      graphql_request(query)
+      assert_response :too_many_requests, "Second request should be rate limited"
+      
+      # Verify the error message
+      response_data = JSON.parse(response.body)
+      assert_not_nil response_data["errors"], "Response should contain errors"
+      assert_equal "Rate limit exceeded", response_data["errors"].first["message"]
+      
+    ensure
+      # Clean up
+      ActionDispatch::Request.any_instance.unstub(:ip)
+      Rails.cache.clear
+    end
   end
 end

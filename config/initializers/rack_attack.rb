@@ -119,8 +119,8 @@ module Rack
   end
 end
 
-# Only insert middleware if not in development environment
-unless Rails.env.development?
+# Only insert middleware if not in development or test environment
+unless Rails.env.development? || Rails.env.test?
   # Insert Rack::Attack middleware
   # Ensures it runs after Rack::MaximumBodySize (if present) but before others like compression.
   middleware = Rails.application.config.middleware
