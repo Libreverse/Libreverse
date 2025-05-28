@@ -385,37 +385,36 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
   test "graphql rate limiting works" do
     # Test the GraphQL controller's built-in rate limiting
     # This tests the apply_rate_limit method in GraphqlController
-    
+
     # Clear cache to start fresh
     Rails.cache.clear
-    
+
     # Use a specific IP for this test
     test_ip = "192.168.1.100"
-    
+
     # Stub the request IP to be consistent across all requests
     ActionDispatch::Request.any_instance.stubs(:ip).returns(test_ip)
-    
+
     begin
       # Simple query that should work
       query = "{ experiences(limit: 1) { id } }"
-      
+
       # First, manually set the cache to be close to the limit
       cache_key = "graphql_rate_limit:#{test_ip}"
       Rails.cache.write(cache_key, 99, expires_in: 1.minute)
-      
+
       # This request should work (count becomes 100)
       graphql_request(query)
       assert_response :success, "First request should succeed"
-      
+
       # This request should trigger rate limit (count becomes 101)
       graphql_request(query)
       assert_response :too_many_requests, "Second request should be rate limited"
-      
+
       # Verify the error message
       response_data = JSON.parse(response.body)
       assert_not_nil response_data["errors"], "Response should contain errors"
       assert_equal "Rate limit exceeded", response_data["errors"].first["message"]
-      
     ensure
       # Clean up
       ActionDispatch::Request.any_instance.unstub(:ip)

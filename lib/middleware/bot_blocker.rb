@@ -10,7 +10,7 @@ class BotBlocker
   def call(env)
     # Skip bot detection for certain paths that should always be accessible
     request = Rack::Request.new(env)
-    
+
     # Allow robots.txt, security.txt, and admin routes to pass through
     return @app.call(env) if skip_bot_detection?(request.path)
 
@@ -20,7 +20,7 @@ class BotBlocker
     # Check if the request is from a bot
     if bot_request?(env)
       Rails.logger.info "[BotBlocker] Blocking bot request from #{request.ip} - User-Agent: #{request.user_agent}"
-      
+
       # Return 403 Forbidden for bots
       return [
         403,
@@ -28,7 +28,7 @@ class BotBlocker
           "Content-Type" => "text/plain",
           "Content-Length" => "9"
         },
-        ["Forbidden"]
+        [ "Forbidden" ]
       ]
     end
 
@@ -44,10 +44,10 @@ class BotBlocker
       "/.well-known/security.txt",
       "/.well-known/privacy.txt"
     ]
-    
+
     # Allow admin routes (admins need to be able to configure the setting)
     return true if path.start_with?("/admin")
-    
+
     allowed_paths.any? { |allowed_path| path == allowed_path }
   end
 
@@ -56,13 +56,13 @@ class BotBlocker
     # Use a cached approach to avoid hitting the database on every request
     @no_bots_mode_cache ||= {}
     cache_key = "no_bots_mode_#{Time.current.to_i / 60}" # Cache for 1 minute
-    
+
     return @no_bots_mode_cache[cache_key] if @no_bots_mode_cache.key?(cache_key)
-    
+
     begin
       # Clear old cache entries
       @no_bots_mode_cache.clear if @no_bots_mode_cache.size > 5
-      
+
       setting_value = InstanceSetting.get("no_bots_mode")
       enabled = setting_value.to_s.downcase.in?(%w[true 1 yes on enabled])
       @no_bots_mode_cache[cache_key] = enabled
@@ -74,12 +74,10 @@ class BotBlocker
   end
 
   def bot_request?(env)
-    begin
       # Use voight-kampff to detect bots
       VoightKampff.bot?(env["HTTP_USER_AGENT"])
-    rescue StandardError => e
+  rescue StandardError => e
       Rails.logger.error "[BotBlocker] Error in bot detection: #{e.message}"
       false # Default to not blocking if detection fails
-    end
   end
-end 
+end
