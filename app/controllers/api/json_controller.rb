@@ -1,177 +1,109 @@
 # frozen_string_literal: true
 
-require "nokogiri"
-require "cgi"
-
 module Api
-  class XmlrpcController < ApplicationController
+  class JsonController < ApplicationController
     include XmlrpcSecurity
 
-    # Ensure XML responses are rendered without being hijacked by global HTML
+    # Ensure JSON responses are rendered without being hijacked by global HTML
     # filters (e.g. the privacy‑consent screen).
-    prepend_before_action :force_xml_format
+    prepend_before_action :force_json_format
     skip_before_action :_enforce_privacy_consent, raise: false
 
-    # Use null_session for XML-RPC requests to avoid session reset but still protect against CSRF
-    protect_from_forgery with: :null_session, if: -> { xmlrpc_request? }
-    protect_from_forgery with: :exception, unless: -> { xmlrpc_request? }
+    # Use null_session for JSON requests to avoid session reset but still protect against CSRF
+    protect_from_forgery with: :null_session, if: -> { json_request? }
+    protect_from_forgery with: :exception, unless: -> { json_request? }
 
     before_action :apply_rate_limit
     before_action :current_account
     before_action :validate_content_type
     before_action :verify_csrf_for_state_changing_methods
 
-    # POST /api/xmlrpc
+    # GET/POST /api/json/:method
     def endpoint
-      # Read the XML from the FormData
-      xml_content = params[:xml]
+      method_name = params[:method]
 
-      # Ensure we have content
-      if xml_content.blank?
-        render xml: fault_response(400, "Empty request body")
+      # Validate method name format (no consecutive dots, must start/end with alphanumeric, allow underscores)
+      unless method_name.present? && method_name.match?(/\A[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)*\z/)
+        render json: { error: "Invalid method name" }, status: :bad_request
         return
       end
 
+      # Validate permissions for the method
+      unless permitted_method?(method_name)
+        render json: { error: "Method not allowed" }, status: :forbidden
+        return
+      end
+
+      # Extract parameters from request
+      method_params = extract_params
+
       begin
-        # Parse the XML using Nokogiri with security options
-        doc = Nokogiri::XML(xml_content) do |config|
-          config.options = Nokogiri::XML::ParseOptions::NOBLANKS |
-                           Nokogiri::XML::ParseOptions::NONET # Prevent network access
-            config.strict.nonet # Strict parsing, no network
-        end
-
         # Apply a processing timeout
-        Timeout.timeout(3) do
-          # Validate the XML-RPC structure
-          method_name = doc.at_xpath("//methodName")&.text&.strip
-          unless method_name
-            render xml: fault_response(400, "Invalid XML-RPC request: No methodName element found")
-            return
-          end
-
-          # Extract parameters
-          params = []
-          doc.xpath("//methodCall/params/param").each do |param|
-            value_element = param.at_xpath("value")
-            params << parse_value(value_element) if value_element
-          end
-
-          # Validate permissions for the method
-          unless permitted_method?(method_name)
-            render xml: fault_response(403, "Method not allowed")
-            return
-          end
-
-          # Process the method call
-          result = process_method_call(method_name, params)
-
-          # Generate the XML response
-          response_xml = generate_response(result)
-
-          render xml: response_xml
+        result = nil
+        ActiveSupport::Notifications.instrument("json_api.process") do
+          result = process_method_call(method_name, method_params)
+        end
+        # Rack / Puma request_timeout middleware or nginx proxy_timeout
+        # should already enforce an upper bound on total request time.
+        if result.nil?
+          render json: { error: "Method processing failed" }, status: :internal_server_error
+        else
+          render json: { result: result }
         end
       rescue Timeout::Error
-        render xml: fault_response(408, "Request timeout")
-      rescue Nokogiri::XML::SyntaxError
-        # Mark this request as having failed XML parsing for rate limiting
-        request.env["xmlrpc.parse_failed"] = true
-        render xml: fault_response(400, "Invalid XML-RPC request")
+        render json: { error: "Request timeout" }, status: :request_timeout
       rescue StandardError => e
-        Rails.logger.error("XML-RPC error: #{e.message}")
-        render xml: fault_response(500, "Internal server error")
+        Rails.logger.error("JSON API error: #{e.message}")
+        render json: { error: "Internal server error" }, status: :internal_server_error
       end
-    end
-
-    # Generate a standard XMLRPC fault response
-    def fault_response(code, message)
-      builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
-        xml.methodResponse do
-          xml.fault do
-            xml.value do
-              xml.struct do
-                xml.member do
-                  xml.name("faultCode")
-                  xml.value do
-                    xml.int(code.to_s)
-                  end
-                end
-                xml.member do
-                  xml.name("faultString")
-                  xml.value do
-                    xml.string(CGI.escapeHTML(message))
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-      builder.to_xml
     end
 
     private
 
-    def xmlrpc_request?
-      request.path == "/api/xmlrpc" && request.post? &&
-        (request.content_type&.include?("text/xml") ||
-         request.content_type&.include?("application/xml"))
+    def json_request?
+      request.path.start_with?("/api/json") &&
+        (request.content_type&.include?("application/json") || params[:method].present?)
     end
 
     def verify_csrf_for_state_changing_methods
-      return true unless xmlrpc_request?
+      return true unless json_request?
+      return true if request.get? || request.head? || request.options?
 
-      # For XML-RPC, all requests are POST but we need to check if they're state-changing
-      # Parse the method name from XML to determine if it's state-changing
-      xml_content = params[:xml]
-      return true if xml_content.blank?
+      # For state-changing methods (POST, PUT, PATCH, DELETE), require CSRF token
+      method_name = params[:method]
+      return true if method_name.blank?
 
-      begin
-        doc = Nokogiri::XML(xml_content) do |config|
-          config.options = Nokogiri::XML::ParseOptions::NOBLANKS |
-                           Nokogiri::XML::ParseOptions::NONET
+      # List of methods that change state and require CSRF protection
+      state_changing_methods = %w[
+        experiences.create
+        experiences.update
+        experiences.delete
+        experiences.approve
+        preferences.set
+        preferences.dismiss
+        admin.experiences.approve
+      ]
+
+      if state_changing_methods.include?(method_name)
+        # Check for X-CSRF-Token header or form authenticity token
+        token = request.headers["X-CSRF-Token"] || params[:authenticity_token]
+
+        unless token.present? && valid_authenticity_token?(session, token)
+          render json: { error: "CSRF token missing or invalid" }, status: :forbidden
+          return false
         end
-
-        method_name = doc.at_xpath("//methodName")&.text&.strip
-        return true if method_name.blank?
-
-        # List of methods that change state and require CSRF protection
-        state_changing_methods = %w[
-          experiences.create
-          experiences.update
-          experiences.delete
-          experiences.approve
-          preferences.set
-          preferences.dismiss
-          admin.experiences.approve
-        ]
-
-        if state_changing_methods.include?(method_name)
-          # For XML-RPC, check for X-CSRF-Token header
-          token = request.headers["X-CSRF-Token"]
-
-          unless token.present? && valid_authenticity_token?(session, token)
-            render xml: fault_response(403, "CSRF token missing or invalid")
-            return false
-          end
-        end
-
-        true
-      rescue Nokogiri::XML::SyntaxError
-        # If we can't parse XML, let the main endpoint handle the error
-        true
       end
+
+      true
     end
 
-    # Ensure the request is sent with an XML content‑type *unless* the XML is supplied
-    # via the `xml` form param (as is the case in our test suite). This prevents legitimate
-    # form submissions from being rejected when the body itself isn't encoded as XML.
     def validate_content_type
-      return true if params[:xml].present?
+      return true if params[:method].present? # Allow URL parameter method calls
 
-      valid_types = [ "text/xml", "application/xml" ]
+      valid_types = [ "application/json", "text/json" ]
 
       unless valid_types.any? { |type| request.content_type&.include?(type) }
-        render xml: fault_response(415, "Unsupported content type. Use text/xml or application/xml"),
+        render json: { error: "Unsupported content type. Use application/json" },
                status: :unsupported_media_type
         return false
       end
@@ -179,16 +111,41 @@ module Api
       true
     end
 
+    def extract_params
+      # Handle different parameter sources
+      method_params = []
+
+      method_params[0] = params[:id] if params[:id].present?
+
+      if params[:query].present?
+        method_params[0] = params[:query] if method_params[0].blank?
+        method_params[1] = params[:limit] if params[:limit].present?
+      elsif params[:title].present?
+        method_params[0] = params[:title]
+        method_params[1] = params[:description]
+        method_params[2] = params[:html_content]
+        method_params[3] = params[:author]
+      elsif params[:key].present?
+        method_params[0] = params[:key]
+        method_params[1] = params[:value] if params[:value].present?
+      elsif params[:updates].present?
+        method_params[1] = params[:updates]
+      end
+
+      # Handle limit parameter for search
+      method_params[1] = params[:limit].to_i if params[:limit].present? && method_params[1].blank?
+
+      method_params.compact
+    end
+
     def permitted_method?(method_name)
       method_name = method_name.to_s.strip
-      return false unless method_name.match?(/\A[a-zA-Z0-9._]+\z/)
 
       # Methods requiring authentication
       authenticated_methods = %w[
         experiences.create
         experiences.update
         experiences.delete
-        experiences.approve
         experiences.pending_approval
         preferences.get
         preferences.set
@@ -217,51 +174,16 @@ module Api
         admin.experiences.approve
       ]
 
-      if authenticated_methods.include?(method_name) && !current_account
-        # Require authentication for these methods
-        return false
-      end
+      # Check if method exists at all
+      all_methods = public_methods + authenticated_methods + admin_methods
+      return false unless all_methods.include?(method_name)
 
-      if admin_methods.include?(method_name) && !current_account&.admin?
-        # Require admin role for these methods
-        return false
-      end
+      # Check authentication requirements
+      return false if authenticated_methods.include?(method_name) && !current_account
 
-      # Check if method is either public, authenticated, or admin
-      public_methods.include?(method_name) || authenticated_methods.include?(method_name) || admin_methods.include?(method_name)
-    end
+      return false if admin_methods.include?(method_name) && !current_account&.admin?
 
-    def parse_value(value_element)
-      # Check for direct text content (string value)
-      return CGI.escapeHTML(value_element.text.strip) if value_element.children.size == 1 && value_element.children.first.text?
-
-      # Get the type node - first element child of value
-      type_node = value_element.element_children.first
-
-      return nil unless type_node
-
-      case type_node.name
-      when "string"
-        CGI.escapeHTML(type_node.text)
-      when "int", "i4"
-        type_node.text.to_i
-      when "boolean"
-        type_node.text == "1"
-      when "double"
-        type_node.text.to_f
-      when "array"
-        type_node.xpath(".//value").map { |v| parse_value(v) }
-      when "struct"
-        struct = {}
-        type_node.xpath("./member").each do |member|
-          name = CGI.escapeHTML(member.at_xpath("name").text)
-          value = parse_value(member.at_xpath("value"))
-          struct[name] = value
-        end
-        struct
-      else
-        CGI.escapeHTML(type_node.text)
-      end
+      true
     end
 
     def process_method_call(method_name, params)
@@ -282,7 +204,7 @@ module Api
 
         raise "Experience not found or not accessible" unless experience
 
-          serialize_experience(experience)
+        serialize_experience(experience)
 
       when "experiences.approved"
         experiences = Experience.approved.order(created_at: :desc)
@@ -325,7 +247,7 @@ module Api
 
         raise "Failed to create experience: #{experience.errors.full_messages.join(', ')}" unless experience.save
 
-          serialize_experience(experience)
+        serialize_experience(experience)
 
       when "experiences.update"
         experience_id = params[0]
@@ -341,7 +263,7 @@ module Api
 
         raise "Failed to update experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(update_params)
 
-          serialize_experience(experience)
+        serialize_experience(experience)
 
       when "experiences.delete"
         experience_id = params[0]
@@ -350,7 +272,7 @@ module Api
 
         raise "Failed to delete experience" unless experience.destroy
 
-          { "success" => true, "message" => "Experience deleted successfully" }
+        { "success" => true, "message" => "Experience deleted successfully" }
 
       when "experiences.approve"
         # Admin only
@@ -360,7 +282,7 @@ module Api
 
         raise "Failed to approve experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(approved: true)
 
-          serialize_experience(experience)
+        serialize_experience(experience)
 
       when "preferences.get"
         key = params[0]
@@ -377,7 +299,7 @@ module Api
         result = UserPreference.set(current_account.id, key, value)
         raise "Failed to set preference" unless result
 
-          { "key" => key, "value" => result, "success" => true }
+        { "key" => key, "value" => result, "success" => true }
 
       when "preferences.dismiss"
         key = params[0]
@@ -386,7 +308,7 @@ module Api
         result = UserPreference.dismiss(current_account.id, key)
         raise "Failed to dismiss preference" unless result
 
-          { "key" => key, "dismissed" => true, "success" => true }
+        { "key" => key, "dismissed" => true, "success" => true }
 
       when "preferences.is_dismissed"
         key = params[0]
@@ -406,7 +328,10 @@ module Api
 
       when "search.query", "search.public_query"
         query = params[0]
-        limit = [ params[1] || 20, 100 ].min # Cap at 100 results
+        limit = params[1]
+
+        # Ensure limit is an integer
+        limit = limit.present? ? [ limit.to_i, 100 ].min : 20
 
         scope = if method_name == "search.query" && current_account&.admin?
           Experience
@@ -449,15 +374,12 @@ module Api
 
         raise "Failed to approve experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(approved: true)
 
-          serialize_experience(experience)
+        serialize_experience(experience)
 
-      else
-        render xml: fault_response(404, "Method not found")
-        nil
       end
     end
 
-    # Helper method to serialize experiences into a format suitable for XML-RPC
+    # Helper method to serialize experiences into a format suitable for JSON
     def serialize_experiences(experiences)
       experiences.map do |experience|
         {
@@ -518,63 +440,14 @@ module Api
       str.gsub(/[%_\[\]\^\\]/) { |x| "\\#{x}" }
     end
 
-    def generate_response(result)
-      builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
-        xml.methodResponse do
-          xml.params do
-            xml.param do
-              xml.value do
-                add_typed_value(xml, result)
-              end
-            end
-          end
-        end
-      end
-      builder.to_xml
-    end
-
-    # Helper method to add a typed value to XML-RPC response
-    def add_typed_value(xml, value)
-      case value
-      when TrueClass, FalseClass
-        xml.boolean(value ? "1" : "0")
-      when Integer
-        xml.int(value.to_s)
-      when Float
-        xml.double(value.to_s)
-      when Array
-        xml.array do
-          xml.data do
-            value.each do |item|
-              xml.value do
-                add_typed_value(xml, item)
-              end
-            end
-          end
-        end
-      when Hash
-        xml.struct do
-          value.each do |key, val|
-            xml.member do
-              xml.name(key.to_s)
-              xml.value do
-                add_typed_value(xml, val)
-              end
-            end
-          end
-        end
-      else
-        xml.string(CGI.escapeHTML(value.to_s))
-      end
-    end
-
     def apply_rate_limit
-      key = "xmlrpc_rate_limit:#{request.ip}"
+      key = "json_api_rate_limit:#{request.ip}"
       count = Rails.cache.increment(key, 1, expires_in: 1.minute)
+      count ||= 1 # first hit returns nil on some back-ends
 
-      return true unless count > 30
+      return true unless count > 60 # Higher limit for JSON API
 
-      render xml: fault_response(429, "Rate limit exceeded")
+      render json: { error: "Rate limit exceeded" }, status: :too_many_requests
       false # Halt the filter chain
     end
 
@@ -582,8 +455,8 @@ module Api
       @current_account ||= AccountSequel.where(id: session[:account_id]).first
     end
 
-    def force_xml_format
-      request.format = :xml
+    def force_json_format
+      request.format = :json
     end
   end
 end
