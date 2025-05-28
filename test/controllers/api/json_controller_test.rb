@@ -145,7 +145,7 @@ module Api
         method: "experiences.create",
         title: "New Test Experience",
         description: "Test description",
-        html_content: "<html><body>Test content</body></html>",
+        html_content: "<html><body>Test content</body></html>"
         # Don't specify author, let it default to current_account.username
       }
 
