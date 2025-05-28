@@ -1,0 +1,39 @@
+.container.mx-auto.px-4.py-8
+  %h1.text-2xl.font-bold.mb-6 Instance Settings
+  %p.text-gray-600.mb-4 Configure instance-specific settings for security.txt and privacy.txt files.
+
+  = link_to "Add New Setting", new_admin_instance_setting_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-6 inline-block"
+
+  - if @instance_settings.any?
+    .bg-white.shadow.rounded-lg.overflow-hidden
+      %table.min-w-full.divide-y.divide-gray-200
+        %thead.bg-gray-50
+          %tr
+            %th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider Key
+            %th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider Value
+            %th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider Description
+            %th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider Actions
+        %tbody.bg-white.divide-y.divide-gray-200
+          - @instance_settings.each do |setting|
+            %tr
+              %td.px-6.py-4.whitespace-nowrap
+                %code.text-sm.bg-gray-100.px-2.py-1.rounded= setting.key
+              %td.px-6.py-4
+                - if setting.value.present?
+                  - if setting.value.length > 50
+                    %span.text-sm.text-gray-900= truncate(setting.value, length: 50)
+                  - else
+                    %span.text-sm.text-gray-900= setting.value
+                - else
+                  %em.text-sm.text-gray-500 (empty)
+              %td.px-6.py-4
+                - if setting.description.present?
+                  %span.text-sm.text-gray-900= setting.description
+                - else
+                  %em.text-sm.text-gray-500 No description
+              %td.px-6.py-4.whitespace-nowrap.text-sm.font-medium
+                = link_to "Edit", edit_admin_instance_setting_path(setting), class: "text-indigo-600 hover:text-indigo-900 mr-3"
+                = link_to "Delete", admin_instance_setting_path(setting), method: :delete,
+                          confirm: "Are you sure?", class: "text-red-600 hover:text-red-900"
+  - else
+    %p.text-gray-700 No instance settings configured yet.

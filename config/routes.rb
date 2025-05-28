@@ -51,6 +51,9 @@ Rails.application.routes.draw do
       end
     end
 
+    # Instance settings management
+    resources :instance_settings
+
     # Redirect base /admin path to experiences index for now
     root to: "experiences#index"
   end
