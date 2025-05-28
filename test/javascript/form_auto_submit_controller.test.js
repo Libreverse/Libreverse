@@ -1,5 +1,6 @@
 // Import our DOM setup
 import "./dom_setup";
+import { jest } from "@jest/globals";
 
 // Create a simplified version of the controller for testing
 const FormAutoSubmitControllerClass = class {

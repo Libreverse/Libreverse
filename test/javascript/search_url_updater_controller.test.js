@@ -1,5 +1,6 @@
 // Import our DOM setup
 import "./dom_setup";
+import { jest } from "@jest/globals";
 
 // Create a minimal version of the search url updater controller for testing
 const SearchUrlUpdaterControllerClass = class {

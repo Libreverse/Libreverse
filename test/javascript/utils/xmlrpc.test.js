@@ -1,5 +1,6 @@
 // Import our DOM setup
 import "../dom_setup";
+import { jest } from "@jest/globals";
 
 // Mock browser DOM elements
 globalThis.Element = globalThis.HTMLElement;
@@ -73,8 +74,9 @@ globalThis.XMLHttpRequest = class {
     send(data) {
         this.data = data;
 
-        // Simulate a successful response
-        setTimeout(() => {
+        // Simulate a successful response using real setTimeout
+        const realSetTimeout = globalThis.setTimeout;
+        realSetTimeout(() => {
             this.readyState = 4;
             this.status = 200;
             this.responseXML = {
@@ -161,6 +163,11 @@ console.log = jest.fn();
 console.error = jest.fn();
 
 describe("xmlrpc utility", () => {
+    // Use real timers for this test suite
+    beforeAll(() => {
+        jest.useRealTimers();
+    });
+
     // Mock CSRF token element
     beforeEach(() => {
         // Create meta element for CSRF token

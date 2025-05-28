@@ -1,5 +1,6 @@
 // Import our DOM setup
 import "./dom_setup";
+import { jest } from "@jest/globals";
 
 // Create simplified version of the controller for testing
 const ToastControllerClass = class {

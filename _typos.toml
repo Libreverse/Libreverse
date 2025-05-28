@@ -5,4 +5,4 @@ nd = "nd"
 ue = "ue"
 
 [files]
-extend-exclude = ["app/emoji/**", "nikto/**", "config/credentials.yml.enc", "config/locales/**"]
+extend-exclude = ["app/emoji/**", "nikto/**", "config/credentials.yml.enc", "config/locales/**", "coverage/**"]

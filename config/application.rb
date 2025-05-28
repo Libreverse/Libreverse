@@ -29,6 +29,7 @@ require_relative "../lib/middleware/zstd"
 
 module LibreverseInstance
   class Application < Rails::Application
+    config.autoload_paths << "app/graphql"
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  post "/graphql", to: "graphql#execute"
   resources :search_new, only: [ :index ]
   get "search_new/index"
   get "search" => "search#index"

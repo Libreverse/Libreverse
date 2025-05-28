@@ -4,6 +4,19 @@ require "active_storage_validations"
 
 class Experience < ApplicationRecord
   include ActiveStorageValidations::Model
+  include GraphqlRails::Model
+
+  graphql do |c|
+    c.attribute(:id, type: "ID!")
+    c.attribute(:title, type: "String!")
+    c.attribute(:description, type: "String")
+    c.attribute(:author, type: "String")
+    c.attribute(:approved, type: "Boolean!")
+    c.attribute(:account_id, type: "ID")
+    c.attribute(:html_file?, type: "Boolean!")
+    c.attribute(:created_at, type: "String!")
+    c.attribute(:updated_at, type: "String!")
+  end
 
   belongs_to :account, optional: true
   has_one_attached :html_file, dependent: :purge_later
@@ -57,6 +70,10 @@ class Experience < ApplicationRecord
 
   def auto_approve_for_admin
     self.approved = true if account&.admin?
+  end
+
+  def html_file?
+    html_file.attached?
   end
 
   private
