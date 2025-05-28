@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_25_235723) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -104,6 +104,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_25_235723) do
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
     t.index ["approved"], name: "index_experiences_on_approved"
+  end
+
+  create_table "instance_settings", force: :cascade do |t|
+    t.string "key", null: false
+    t.text "value"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_instance_settings_on_key", unique: true
   end
 
   create_table "moderation_logs", force: :cascade do |t|
@@ -266,6 +275,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_25_235723) do
     t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
+
+# Could not dump table "sqlite_stat1" because of following StandardError
+#   Unknown type '' for column 'tbl'
+
 
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
