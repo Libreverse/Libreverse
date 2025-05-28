@@ -8,13 +8,15 @@ module Api
   # Don't use fixtures for this test
   self.use_transactional_tests = true
 
-  setup do
-    # Start with a clean slate
-    Experience.delete_all
-    UserPreference.delete_all
+      setup do
+      # Start with a clean slate
+      Experience.delete_all
+      UserPreference.delete_all
 
-    # Skip certain before_action methods that could cause issues
-    @controller.stubs(:apply_rate_limit).returns(true)
+      # Skip certain before_action methods that could cause issues
+      @controller.stubs(:apply_rate_limit).returns(true)
+      # Skip CSRF verification for most tests (but we'll test it separately)
+      @controller.stubs(:verify_csrf_for_state_changing_methods).returns(true)
 
     # Create two test experiences
     @experience1 = Experience.new(
@@ -73,7 +75,7 @@ module Api
 
     # Set the XML content type for all requests
     @request.env["CONTENT_TYPE"] = "text/xml"
-  end
+      end
 
   teardown do
     Experience.delete_all
@@ -406,6 +408,103 @@ module Api
 
     fault_string = xml_response.xpath("//fault/value/struct/member[name='faultString']/value/string")
     assert_match(/No methodName element found/, fault_string.text)
+  end
+
+  test "should require CSRF token for state-changing XML-RPC methods" do
+    # Remove the CSRF stub to test actual CSRF protection
+    @controller.unstub(:verify_csrf_for_state_changing_methods)
+    @controller.stubs(:current_account).returns(accounts(:one))
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.create</methodName>
+        <params>
+          <param><value><string>Test Experience</string></value></param>
+          <param><value><string>Test description</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    # Attempt to create experience without CSRF token
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    fault = xml_response.xpath("//fault/value/struct/member[name='faultCode']/value/int")
+
+    assert fault.present?
+    assert_equal "403", fault.text
+
+    fault_string = xml_response.xpath("//fault/value/struct/member[name='faultString']/value/string")
+    assert_equal "CSRF token missing or invalid", fault_string.text
+  end
+
+  test "should allow state-changing XML-RPC methods with valid CSRF token" do
+    # Remove the CSRF stub to test actual CSRF protection
+    @controller.unstub(:verify_csrf_for_state_changing_methods)
+    @controller.stubs(:current_account).returns(accounts(:one))
+
+    # Temporarily disable moderation for this test
+    Experience.any_instance.stubs(:content_moderation).returns(nil)
+
+    # Get a valid CSRF token
+    csrf_token = @controller.send(:form_authenticity_token)
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.create</methodName>
+        <params>
+          <param><value><string>Test Experience</string></value></param>
+          <param><value><string>Test description</string></value></param>
+        </params>
+      </methodCall>
+    XML
+
+    # Set the CSRF token header
+    @request.env["HTTP_X_CSRF_TOKEN"] = csrf_token
+
+    # Attempt to create experience with CSRF token
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    # Should not have a fault
+    fault = xml_response.xpath("//fault")
+    assert fault.empty?
+
+    # Should have a successful response
+    response_element = xml_response.xpath("//methodResponse")
+    assert response_element.present?
+  end
+
+  test "should allow read-only XML-RPC methods without CSRF token" do
+    # Remove the CSRF stub to test that read-only methods work without CSRF
+    @controller.unstub(:verify_csrf_for_state_changing_methods)
+
+    xml_content = <<~XML
+      <?xml version="1.0"?>
+      <methodCall>
+        <methodName>experiences.all</methodName>
+        <params></params>
+      </methodCall>
+    XML
+
+    post :endpoint, params: { xml: xml_content }
+
+    assert_response :success
+
+    xml_response = Nokogiri::XML(response.body)
+    # Should not have a fault
+    fault = xml_response.xpath("//fault")
+    assert fault.empty?
+
+    # Should have a successful response
+    response_element = xml_response.xpath("//methodResponse")
+    assert response_element.present?
   end
   end
 end
