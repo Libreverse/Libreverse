@@ -136,11 +136,11 @@ Sensitive columns in Rodauth tables are encrypted using Sequel's built-in `colum
 
 - **Key Management:** The key is stable as long as `secret_key_base` does not change. If it does, you must re-encrypt existing data.
 - **Encrypted Columns:**
-  - `accounts.password_hash`
-  - `account_remember_keys.key` (searchable)
-  - `account_password_reset_keys.key` (searchable)
+    - `accounts.password_hash`
+    - `account_remember_keys.key` (searchable)
+    - `account_password_reset_keys.key` (searchable)
 - **Database Constraints:**
-  - Encrypted columns have `CHECK` constraints to ensure only encrypted data is stored (see `db/migrate/20250501000000_add_column_encryption_constraints_to_rodauth.rb`).
+    - Encrypted columns have `CHECK` constraints to ensure only encrypted data is stored (see `db/migrate/20250501000000_add_column_encryption_constraints_to_rodauth.rb`).
 
 No additional gem is required; this uses Sequel's built-in plugin. All Rodauth features continue to work seamlessly with encrypted data.
 

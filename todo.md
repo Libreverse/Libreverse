@@ -2,12 +2,10 @@
 
 1. □ **Fix bugged search**
 2. □ **Imprint for EU**
-3. □ **Implement a no bots mode that sets robots.txt to disallow all and uses voight-kampff to 403 ignoring bots**
-4. □ **Make moderation system configurable**
-5. □ **Add sitemap_generator for automatic sitemaps**
-6. □ **Add invisible_captcha for signup protection**
-7. □ **Add experience federation through custom activitypub fields**
-8. □ **Implement federated authentication for metaverse instances**
+3. □ **Add sitemap_generator for automatic sitemaps**
+4. □ **Add invisible_captcha for signup protection**
+5. □ **Add experience federation through custom activitypub fields**
+6. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
         - □ Add `gem 'rodauth-oauth'` to the Gemfile

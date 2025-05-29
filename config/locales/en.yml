@@ -164,3 +164,12 @@ en:
             title: "Settings"
             description: "Manage your preferences."
             language: "Language"
+
+    admin:
+        instance_settings:
+            security_compliance_title: "Security & Compliance Settings"
+            security_compliance_description: "Configure instance-wide security and compliance features."
+            automoderation_title: "Content Automoderation"
+            automoderation_description: "Automatically check all user content for inappropriate material before saving. Recommended for public instances."
+            eea_mode_title: "EEA Privacy Mode"
+            eea_mode_description: "Enable enhanced privacy protections and consent requirements for European Economic Area compliance."

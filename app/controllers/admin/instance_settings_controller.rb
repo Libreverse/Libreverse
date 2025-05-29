@@ -7,6 +7,10 @@ module Admin
 
     def index
       @instance_settings = InstanceSetting.all.order(:key)
+
+      # Provide current values for toggle switches
+      @automoderation_enabled = InstanceSetting.get_with_fallback("automoderation_enabled", nil, "true") == "true"
+      @eea_mode_enabled = InstanceSetting.get_with_fallback("eea_mode_enabled", "EEA_MODE", "true") == "true"
     end
 
     def show

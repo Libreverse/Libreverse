@@ -53,6 +53,12 @@ module EEAMode
     @enabled = %w[true 1 yes on].include?(raw.to_s.downcase)
   end
 
+  # Check if EEA mode is enabled instance-wide (defaults to true for compliance)
+  def self.enabled_for_user?(_account_id = nil)
+    # EEA mode is now instance-wide, not user-specific
+    InstanceSetting.get_with_fallback("eea_mode_enabled", "EEA_MODE", "true") == "true"
+  end
+
   def self.verify_compliance
     COMPLIANCE[:required].each do |key, value|
       raise "EEA Compliance Violation: #{key} not configured properly" unless value
@@ -84,6 +90,10 @@ module EEAMode
     # Main guard. Enforce consent for all HTML requests in EEA mode
     def _enforce_privacy_consent
       return unless EEAMode.enabled?
+
+      # Check if EEA mode is enabled for this specific user
+      current_account_id = respond_to?(:current_account) && current_account&.id
+      return unless EEAMode.enabled_for_user?(current_account_id)
 
       # Skip for policy pages that must be accessible without consent
       path = request.path

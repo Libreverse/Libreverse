@@ -24,6 +24,8 @@ class InstanceSetting < ApplicationRecord
     acknowledgements_url
     preferred_languages
     no_bots_mode
+    automoderation_enabled
+    eea_mode_enabled
   ].freeze
 
   validate :key_must_be_allowed
@@ -80,7 +82,9 @@ class InstanceSetting < ApplicationRecord
       "privacy_policy_url" => "/privacy",
       "acknowledgements_url" => "/security",
       "preferred_languages" => "en",
-      "no_bots_mode" => "false"
+      "no_bots_mode" => "false",
+      "automoderation_enabled" => "true",
+      "eea_mode_enabled" => "true"
     }
 
     defaults.each do |key, default_value|

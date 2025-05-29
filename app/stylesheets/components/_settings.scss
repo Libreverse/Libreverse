@@ -1,0 +1,99 @@
+// Settings page styles
+.settings-section {
+    margin-top: 2rem;
+
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .setting-info {
+        flex: 1;
+        margin-right: 2rem;
+
+        .setting-title {
+            margin: 0 0 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary, #1f2937);
+        }
+
+        .setting-description {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #6b7280);
+            line-height: 1.4;
+        }
+    }
+
+    .setting-control {
+        flex-shrink: 0;
+    }
+}
+
+// Toggle switch component
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    cursor: pointer;
+
+    input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background-color: var(--toggle-bg-off, #cbd5e1);
+        border-radius: 34px;
+        transition: all 0.2s ease;
+
+        &::before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+        }
+    }
+
+    input:checked + .toggle-slider {
+        background-color: var(--primary-color, #3b82f6);
+
+        &::before {
+            transform: translateX(26px);
+        }
+    }
+
+    input:focus + .toggle-slider {
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 10%);
+    }
+}
+
+// Section title styling
+.section-title {
+    margin: 2rem 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+
+    &:first-of-type {
+        margin-top: 1rem;
+    }
+}
