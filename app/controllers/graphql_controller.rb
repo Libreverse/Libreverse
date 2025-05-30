@@ -14,6 +14,7 @@ class GraphqlController < ApplicationController
   before_action :apply_rate_limit
   before_action :current_account
   before_action :verify_csrf_for_state_changing_methods
+  before_action :set_no_cache_headers
 
   def execute
     render json: GraphqlRails::QueryRunner.call(
@@ -23,6 +24,13 @@ class GraphqlController < ApplicationController
   end
 
   private
+
+  def set_no_cache_headers
+    # API responses should not be cached as they're dynamic and user-specific
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+  end
 
   def graphql_request?
     request.path == "/graphql" && request.post? &&

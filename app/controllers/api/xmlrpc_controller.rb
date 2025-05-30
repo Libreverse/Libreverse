@@ -20,6 +20,7 @@ module Api
     before_action :current_account
     before_action :validate_content_type
     before_action :verify_csrf_for_state_changing_methods
+    before_action :set_no_cache_headers
 
     # POST /api/xmlrpc
     def endpoint
@@ -110,6 +111,13 @@ module Api
     end
 
     private
+
+    def set_no_cache_headers
+      # API responses should not be cached as they're dynamic and user-specific
+      response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+      response.headers["Pragma"] = "no-cache"
+      response.headers["Expires"] = "0"
+    end
 
     def xmlrpc_request?
       request.path == "/api/xmlrpc" && request.post? &&

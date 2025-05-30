@@ -6,6 +6,10 @@ class WellKnownController < ApplicationController
 
   # Serve /.well-known/security.txt
   def security_txt
+    # Cache for 1 day since security contact info doesn't change frequently
+    # Skip cache headers in development to avoid masking application errors
+    expires_in 1.day, public: true unless Rails.env.development?
+
     # Get dynamic instance settings with fallbacks
     contacts = build_contact_list
     policy_url = InstanceSetting.get_with_fallback("privacy_policy_url", nil, "/privacy")
@@ -25,6 +29,10 @@ class WellKnownController < ApplicationController
 
   # Serve /.well-known/privacy.txt
   def privacy_txt
+    # Cache for 1 day since privacy policy info doesn't change frequently
+    # Skip cache headers in development to avoid masking application errors
+    expires_in 1.day, public: true unless Rails.env.development?
+
     instance_name = InstanceSetting.get_with_fallback("instance_name", nil, "Libreverse Instance")
     policy_url = InstanceSetting.get_with_fallback("privacy_policy_url", nil, "/privacy")
 

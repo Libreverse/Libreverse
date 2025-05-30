@@ -61,6 +61,7 @@ Rails.application.routes.draw do
   get ".well-known/security.txt", to: "well_known#security_txt", format: false
   get ".well-known/privacy.txt", to: "well_known#privacy_txt", format: false
   get "robots.txt", to: "robots#show", format: false
+  get "sitemap.xml", to: "sitemap#show", format: false
 
   # Consent routes using Turbo Streams
   get  "consent/screen", to: "consent#screen", as: :consent_screen
