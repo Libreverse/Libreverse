@@ -14,6 +14,7 @@ class InstanceSetting < ApplicationRecord
     instance_name
     instance_description
     instance_domain
+    canonical_host
     admin_email
     admin_signal_url
     admin_twitter_handle

@@ -26,6 +26,12 @@ Rails.application.configure do
   # Always serve precompiled static files from `public/`.
   config.public_file_server.enabled = true
 
+  # Set appropriate cache headers for static files in production
+  config.public_file_server.headers = {
+    "Cache-Control" => "public, max-age=#{1.year.to_i}, immutable",
+    "Expires" => 1.year.from_now.httpdate
+  }
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 

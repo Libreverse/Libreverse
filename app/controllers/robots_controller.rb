@@ -6,6 +6,10 @@ class RobotsController < ApplicationController
 
   # Serve /robots.txt
   def show
+    # Set cache headers - robots.txt changes infrequently
+    # Skip cache headers in development to avoid masking application errors
+    expires_in 1.day, public: true unless Rails.env.development?
+
     content = if no_bots_mode_enabled?
       # Disallow all bots when no_bots_mode is enabled
       <<~TXT
@@ -14,9 +18,17 @@ class RobotsController < ApplicationController
       TXT
     else
       # Default robots.txt - allow all
+      host = InstanceSetting.get("canonical_host")
+host ||= begin
+  uri = URI.parse(request.base_url)
+  # Allow only well-formed http(s) schemes and strip user-info, port, etc.
+  %w[http https].include?(uri.scheme) ? "#{uri.scheme}://#{uri.host}" : ""
+end
       <<~TXT
         User-agent: *
         Disallow:
+
+        Sitemap: #{host}/sitemap.xml
       TXT
     end
 

@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require "digest"
+
 class ExperiencesController < ApplicationController
   before_action :require_authentication
   before_action :set_experience, only: %i[show edit update destroy display approve]
   before_action :check_ownership, only: %i[edit update destroy]
   before_action :require_admin, only: %i[approve]
+  before_action :set_cache_headers_for_index, only: [ :index ]
 
   # GET /experiences
   def index
@@ -14,6 +17,23 @@ class ExperiencesController < ApplicationController
       Experience.approved.order(created_at: :desc)
     end
     @experience = Experience.new
+
+    # Generate ETag for conditional requests based on experiences and user role
+    # Extract timestamp from loaded collection to avoid additional query
+    timestamps = @experiences.map(&:updated_at)
+    timestamp = timestamps.any? ? timestamps.max.to_i : 0
+    user_role = current_account&.admin? ? "admin" : "user"
+    cache_key = "experiences_index/#{user_role}/#{@experiences.size}/#{timestamp}"
+    etag = Digest::MD5.hexdigest(cache_key)
+
+    # Handle conditional requests - if content hasn't changed, return 304
+    # Skip ETags in development to avoid masking application errors
+    return if Rails.env.development?
+
+    # Bail out unless the representation is stale.
+    nil unless stale?(etag: etag, public: false)
+
+    # Content has changed or no ETag in request, proceed with rendering
   end
 
   # GET /experiences/1
@@ -137,5 +157,12 @@ class ExperiencesController < ApplicationController
       return false
     end
     true
+  end
+
+  def set_cache_headers_for_index
+    # Cache experiences index for 5 minutes for authenticated users
+    # Content changes when experiences are added/updated/approved
+    # Skip cache headers in development to avoid masking application errors
+    expires_in 5.minutes, public: false unless Rails.env.development?
   end
 end
