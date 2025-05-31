@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
     include CableReady::Broadcaster
     include PasswordSecurityEnforcer
     include Loggable
+    include SpamDetection
     helper_method :current_account
 
     before_action :disable_browser_cache, if: -> { Rails.env.development? }

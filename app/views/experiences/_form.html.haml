@@ -1,5 +1,6 @@
 -# file: experiences/_form.html.haml
 = form_with(model: experience, local: true, class: "experience-form") do |form|
+  = invisible_captcha # Use random honeypot from expanded list, with I18n messages
   - if experience.errors.any?
     .alert.alert-danger#error-explanation
       .d-flex.align-items-center.mb-2

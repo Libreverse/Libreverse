@@ -3,6 +3,14 @@
 require "digest"
 
 class ExperiencesController < ApplicationController
+  # Enhanced spam protection using all invisible_captcha methods
+  invisible_captcha only: %i[create update],
+                    honeypot: nil, # Use random honeypot from expanded list
+                    on_spam: :handle_comprehensive_spam_detection,
+                    on_timestamp_spam: :handle_timestamp_spam_detection,
+                    timestamp_threshold: 3, # Stricter timing for form submissions
+                    timestamp_enabled: true
+
   before_action :require_authentication
   before_action :set_experience, only: %i[show edit update destroy display approve]
   before_action :check_ownership, only: %i[edit update destroy]

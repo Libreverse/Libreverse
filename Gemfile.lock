@@ -89,7 +89,7 @@ GEM
     ast (2.4.3)
     base64 (0.3.0)
     benchmark (0.4.1)
-    bigdecimal (3.2.0)
+    bigdecimal (3.2.1)
     bindex (0.8.1)
     bootsnap (1.18.6)
       msgpack (~> 1.2)
@@ -179,6 +179,8 @@ GEM
       sysexits (~> 1.1)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    invisible_captcha (2.3.0)
+      rails (>= 5.2)
     io-console (0.8.0)
     iodine (0.7.58)
     irb (1.15.2)
@@ -505,6 +507,7 @@ DEPENDENCIES
   haml
   haml-lint
   haml-rails
+  invisible_captcha
   iodine
   jbuilder
   lockbox

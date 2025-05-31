@@ -15,6 +15,7 @@
             %h1 Create Account
             %p Sign up to get started
           = form_with url: rodauth.create_account_path, method: :post, class: "login-form", data: { controller: "form-auto-submit", form_auto_submit_target: "form", form_auto_submit_min_password_length_value: "12" } do |form|
+            = invisible_captcha # Use random honeypot with I18n messages
             .login-form-group
               = form.label :login, rodauth.login_label, class: "login-form-label"
               - login_field_class = "login-form-control"

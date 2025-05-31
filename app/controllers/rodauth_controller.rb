@@ -4,6 +4,10 @@ class RodauthController < ApplicationController
   # Used by Rodauth for rendering views, CSRF protection, running any
   # registered action callbacks and rescue handlers, instrumentation etc.
 
+  # NOTE: invisible_captcha protection is handled in individual form views
+  # (login_form, create_account, etc.) rather than at the controller level
+  # to ensure it only applies to POST requests, not GET requests
+
   # Controller callbacks and rescue handlers will run around Rodauth endpoints.
   # before_action :verify_captcha, only: :login, if: -> { request.post? }
   # rescue_from("SomeError") { |exception| ... }

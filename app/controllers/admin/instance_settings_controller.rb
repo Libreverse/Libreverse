@@ -2,6 +2,14 @@
 
 module Admin
   class InstanceSettingsController < ApplicationController
+    # Enhanced spam protection for admin settings
+    invisible_captcha only: %i[create update],
+                      honeypot: nil, # Use random honeypot
+                      on_spam: :handle_comprehensive_spam_detection,
+                      on_timestamp_spam: :handle_timestamp_spam_detection,
+                      timestamp_threshold: 2, # Even stricter for admin actions
+                      timestamp_enabled: true
+
     before_action :require_admin
     before_action :set_instance_setting, only: %i[show edit update destroy]
 

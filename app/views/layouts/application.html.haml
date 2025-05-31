@@ -2,7 +2,6 @@
 - rtl_locales = %w[ar]
 %html{ dir: (rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr'), lang: I18n.locale.to_s }
   %head
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
     - if Rails.env.development?
       = vite_stylesheet_tag "~/stylesheets/application.scss"
       = vite_javascript_tag "~/javascript/application.js"
@@ -15,6 +14,7 @@
     = render "layouts/meta_tags"
     = csrf_meta_tags
     = vite_client_tag
+    = invisible_captcha_styles
   %body
     %noscript
       .noscript-message
