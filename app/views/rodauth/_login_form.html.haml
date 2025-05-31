@@ -1,4 +1,5 @@
 = form_with url: rodauth.login_path, method: :post, data: { controller: "form-auto-submit", form_auto_submit_target: "form", form_auto_submit_debounce_time_value: 800, form_auto_submit_min_password_length_value: 12 } do |form|
+  = invisible_captcha # Use random honeypot with I18n messages
   - if rodauth.skip_login_field_on_login?
     .login-form-group.mb-3
       = form.label :login, rodauth.login_label, class: "login-form-label"

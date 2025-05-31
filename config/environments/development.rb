@@ -15,13 +15,18 @@ Rails.application.configure do
   config.session_store :cookie_store,
                        key: "_libreverse_session",
                        expire_after: 2.hours, # Match previous setting
-                       domain: "localhost" # Keep domain for dev consistency
+                       domain: nil # Allow both localhost and ::1 in development
   # ------------------------------------------
 
   # === Configure ActionCable URL for consistency ===
   # Ensure this matches the port your server ACTUALLY runs on (e.g., via Foreman)
+  # Support both IPv4 and IPv6 localhost
   config.action_cable.url = "ws://localhost:5000/cable"
-  config.action_cable.allowed_request_origins = [ "http://localhost:5000" ]
+  config.action_cable.allowed_request_origins = [
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    "http://[::1]:5000"
+  ]
   # ===============================================
 
   # Default URL options should also match

@@ -1,5 +1,35 @@
 en:
     hello: "Hello world"
+
+    # Invisible Captcha translations
+    invisible_captcha:
+        sentence_for_humans: "This field should be left empty to prevent spam. If you are human, please ignore this field."
+        timestamp_error_message: "Form submitted too quickly. Please wait a moment and try again."
+        spam_detection:
+            honeypot_triggered: "Spam detected: hidden field was filled"
+            timestamp_violation: "Spam detected: form submitted too quickly"
+            spinner_validation_failed: "Spam detected: invalid submission token"
+            general_spam: "Your submission appears to be spam. Please try again."
+
+    # Flash message types for better UX
+    flash:
+        spam_detected: "Your submission appears to be spam. Please try again."
+        form_submitted_successfully: "Your form has been submitted successfully."
+        please_try_again: "Please try again in a moment."
+        content_flagged: "Your submission contains content that appears to be spam."
+        too_many_requests: "You're submitting forms too quickly. Please wait a moment."
+        suspicious_activity: "Suspicious activity detected. Please try again later."
+
+    # Enhanced captcha success messages
+    captcha:
+        form_success: "Thank you! Your submission has been received."
+        experience_created: "Experience created successfully!"
+        experience_updated: "Experience updated successfully!"
+        settings_updated: "Settings updated successfully!"
+        login_successful: "Welcome back!"
+        account_created: "Account created successfully!"
+        password_changed: "Password changed successfully!"
+
     policies:
         privacy_policy: "Privacy Policy"
         cookie_policy: "Cookie Policy"

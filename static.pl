@@ -124,10 +124,7 @@ run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/no
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
 run_command("bundle-audit", "bundle-audit", "check", "--update");
-run_command("npm audit", "sh", "-c", "npm i --package-lock-only --legacy-peer-deps && npm audit fix --production --legacy-peer-deps && bun install > /dev/null 2>&1; rm -f package-lock.json");
-run_command("unlock_sqlite", "sh", "-c", "./scripts/unlock_sqlite.pl");
-run_command("Haml Validation", "rake", "haml:check");
-run_command("i18n Validation", "rake", "i18n:validate_keys");
+run_command("bun audit", "bun", "audit", "--fix");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1); # Auto-cleanup
@@ -186,7 +183,7 @@ my @coffee_files;
 my $find_output = qx(find . -path ./node_modules -prune -o -name '*.coffee' -print0);
 @coffee_files = split /\0/, $find_output;
 
-@parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman");
+@parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman", "Haml Validation", "i18n Validation");
 my $num_tools = scalar @parallel_tools;
 
 for my $i (0 .. $num_tools - 1) {
@@ -228,6 +225,10 @@ for my $i (0 .. $num_tools - 1) {
         @cmd = ("bundle", "exec", "rails", "test");
     } elsif ($tool_name eq "Brakeman") {
         @cmd = ("brakeman", "--quiet", "--no-summary", "--no-pager");
+    } elsif ($tool_name eq "Haml Validation") {
+        @cmd = ("rake", "haml:check");
+    } elsif ($tool_name eq "i18n Validation") {
+        @cmd = ("rake", "i18n:validate_keys");
     }
 
     run_in_background($i, $tool_name, @cmd);

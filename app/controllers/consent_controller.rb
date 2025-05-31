@@ -3,6 +3,14 @@
 class ConsentController < ApplicationController
   include Turbo::Streams::ActionHelper
 
+  # Add spam protection to consent forms to prevent abuse
+  invisible_captcha only: %i[accept decline],
+                    honeypot: nil, # Use random honeypot
+                    on_spam: :handle_comprehensive_spam_detection,
+                    on_timestamp_spam: :handle_timestamp_spam_detection,
+                    timestamp_threshold: 2, # Quick threshold for consent forms
+                    timestamp_enabled: true
+
   # GET /consent/screen (or /consent)
   def screen
     render turbo_stream: turbo_stream.morph(".consent-overlay", render_to_string("consent/screen", layout: false))
