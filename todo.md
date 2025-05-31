@@ -2,8 +2,6 @@
 
 1. □ **Fix bugged search**
 2. □ **Imprint for EU**
-3. □ **Add sitemap_generator for automatic sitemaps**
-4. □ **Add invisible_captcha for signup protection**
 5. □ **Add experience federation through custom activitypub fields**
 6. □ **Implement federated authentication for metaverse instances**
 
