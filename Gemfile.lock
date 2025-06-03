@@ -160,9 +160,8 @@ GEM
     graphql_rails (3.1.0)
       activesupport (>= 4)
       graphql (~> 2)
-    haml (6.3.0)
-      temple (>= 0.8.2)
-      thor
+    haml (5.2.2)
+      temple (>= 0.8.0)
       tilt
     haml-lint (0.999.999)
       haml_lint
@@ -504,7 +503,7 @@ DEPENDENCIES
   fasterer
   foreman
   graphql_rails
-  haml
+  haml (~> 5.2)
   haml-lint
   haml-rails
   invisible_captcha

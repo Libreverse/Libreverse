@@ -29,7 +29,7 @@
         border-color 0.3s ease;
     position: relative;
     overflow: hidden;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     color: variables.$white-90;
 
     &::before {
@@ -62,7 +62,7 @@
         font-weight: 600;
         margin-bottom: 1rem;
         color: variables.$sp-primary;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
 
         a {
             color: variables.$sp-primary;
@@ -81,7 +81,7 @@
     margin-top: 1rem;
     position: relative;
     padding-left: 1.25rem;
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
 
     &::before {
         content: "✍️";
@@ -95,7 +95,7 @@
     font-size: 0.85rem;
     color: variables.$white-90;
     margin-top: 0.75rem;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
 }
 
 %experience-actions-base {
@@ -122,7 +122,7 @@
         padding: 0.5rem 0.75rem;
         margin: 0; // reset default form margin
         color: variables.$dashboard-primary;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
         font-size: 0.95rem;
         font-weight: 600;
         text-align: center;
@@ -166,7 +166,7 @@
         padding: 0.5rem 0.75rem;
         margin: 0; // reset default form margin
         color: variables.$dashboard-primary;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
         font-size: 0.95rem;
         font-weight: 600;
         text-align: center;

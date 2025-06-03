@@ -82,7 +82,9 @@ module Emoji
       return if manifest_path.blank?
 
       if Rails.env.development? || Rails.env.test?
-        dev_uri = URI.join(ViteRuby.instance.config.public_base_url, manifest_path)
+        # Construct the development server URL using host_with_port
+        dev_url = "http://#{ViteRuby.config.host_with_port}#{manifest_path}"
+        dev_uri = URI.parse(dev_url)
         Net::HTTP.get(dev_uri)
       else
         relative  = manifest_path.sub(%r{^/?#{ViteRuby.instance.config.public_output_dir}/}, "")

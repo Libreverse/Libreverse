@@ -1,7 +1,7 @@
 @use "variables";
 
 .hp-main {
-    font-family: "Lazer84", cursive;
+    font-family: "Lazer84", Noto-Sans, cursive;
     color: variables.$hp-primary;
     margin: 0;
     padding: 0;
@@ -56,7 +56,7 @@
 }
 
 .hp-secondary {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 24px;
     color: variables.$hp-primary;
     margin-bottom: 20px;
@@ -72,7 +72,7 @@
 }
 
 .hp-sectionheader {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 20px;
     color: variables.$hp-primary;
     text-align: left;
@@ -88,7 +88,7 @@
 }
 
 .hp-link {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-secondary;
     margin-left: 15%;
@@ -103,7 +103,7 @@
 }
 
 .hp-inline-link {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-secondary;
     text-decoration: underline;
@@ -116,7 +116,7 @@
 }
 
 .hp-enterbutton {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 20px;
     color: variables.$hp-secondary;
     margin-left: 15%;
@@ -131,7 +131,7 @@
 }
 
 .hp-text {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-primary;
     text-align: left;
@@ -146,7 +146,7 @@
 }
 
 .hp-italic-text {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-primary;
     text-align: left;
@@ -197,7 +197,7 @@
 }
 
 .pre-book {
-    font-family: Waiting-for-the-Sunrise, cursive;
+    font-family: Waiting-for-the-Sunrise, Noto-Sans, cursive;
     margin: 0;
     padding: 3rem;
     line-height: 1.8;
@@ -290,7 +290,7 @@
 
 .cta-container {
     color: white;
-    font-family: Silkscreen-Regular, monospace;
+    font-family: Silkscreen-Regular, Noto-Sans, monospace;
     overflow: visible;
     padding-top: 0;
     padding-left: 2rem;

@@ -2,7 +2,7 @@
 @use "sass:color";
 
 .sp-main {
-    font-family: "Lazer84", cursive;
+    font-family: "Lazer84", Noto-Sans, cursive;
     color: variables.$sp-primary;
     margin: 0;
     padding: 0 20px;
@@ -83,7 +83,7 @@
     box-shadow: 0 4px 30px variables.$box-shadow;
     border: 1px solid variables.$glass-border;
     color: variables.$sp-primary;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     flex-grow: 1;
     padding: 10px;
     font-size: 18px;
@@ -111,7 +111,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$sp-primary;
 }
@@ -174,7 +174,7 @@
 }
 
 .sp-author {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$sp-primary;
     text-align: left;
@@ -247,7 +247,7 @@
     }
 
     .tutorial-heading {
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
         color: variables.$sp-primary;
         margin-top: 0;
         margin-bottom: 0.5rem;
@@ -257,6 +257,6 @@
     .tutorial-description {
         color: variables.$white-80;
         margin-bottom: 0;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
     }
 }

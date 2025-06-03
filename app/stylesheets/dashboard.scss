@@ -38,7 +38,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$sp-primary;
 }
@@ -67,7 +67,7 @@
     font-weight: 500;
     transition: all 0.3s ease;
     color: variables.$white-90;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
 
     &:active {
         transform: scale(0.97);
