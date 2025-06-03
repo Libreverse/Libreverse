@@ -34,5 +34,6 @@
       .cta-container
         %h2= t('homepage.index.take_control')
         %p= t('homepage.index.help_build_alternative')
-        = link_to t('homepage.index.get_started'), "/create-account"
+        %form{ action: "/create-account", method: "get"}
+          %button.action{ type: "submit" } Create Account
 .cta-xai-particles
