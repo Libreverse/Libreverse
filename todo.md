@@ -2,8 +2,8 @@
 
 1. □ **Fix bugged search**
 2. □ **Imprint for EU**
-5. □ **Add experience federation through custom activitypub fields**
-6. □ **Implement federated authentication for metaverse instances**
+3. □ **Add experience federation through custom activitypub fields**
+4. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
         - □ Add `gem 'rodauth-oauth'` to the Gemfile

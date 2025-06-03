@@ -68,6 +68,11 @@
     align-items: center;
     justify-content: center;
     padding: 2px 0;
+    transition: transform 0.1s ease;
+
+    &:active:not(.sidebar-default-cursor) {
+        transform: scale(0.97);
+    }
 }
 
 .sidebar-logout-button {
@@ -79,6 +84,11 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    transition: transform 0.1s ease;
+
+    &:active {
+        transform: scale(0.97);
+    }
 }
 
 @media (width <= 600px) {
