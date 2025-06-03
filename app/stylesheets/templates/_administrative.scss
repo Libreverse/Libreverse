@@ -14,7 +14,7 @@
     min-height: 100vh;
     padding: 3rem 50px 4rem 100px;
     color: variables.$dashboard-primary;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     max-width: 1400px;
     margin: 0 auto;
     position: relative;
@@ -79,7 +79,7 @@
         font-weight: 600;
         position: relative;
         z-index: 2;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
         letter-spacing: 1px;
     }
 }
@@ -93,7 +93,7 @@
     border-left: 4px solid variables.$dashboard-primary;
 
     h2 {
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
         color: variables.$dashboard-primary;
     }
 
@@ -240,7 +240,7 @@
     @extend %experience-list-base;
 
     font-family:
-        Hack, monospace; // Specific override from original .dashboard-experiences-list
+        Hack, Noto-Sans, monospace; // Specific override from original .dashboard-experiences-list
 }
 
 %administrative-experience {
@@ -277,7 +277,7 @@
     margin-bottom: 1.5rem;
     color: variables.$dashboard-primary;
     font-weight: 600;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
 
     &::after {
         content: "";
@@ -297,7 +297,7 @@
         font-weight: 500;
         margin-bottom: 0.5rem;
         color: variables.$dashboard-primary;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
     }
 
     .form-input, // Nested class requires specific placeholder or direct styling
@@ -310,7 +310,7 @@
         width: 100%;
         transition: all 0.2s ease;
         color: variables.$white-90;
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
 
         &::placeholder {
             color: variables.$white-50;
@@ -338,7 +338,7 @@
     width: 100%;
     transition: all 0.2s ease;
     color: variables.$white-90;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
 
     &::placeholder {
         color: variables.$white-50;
@@ -369,7 +369,7 @@
     font-weight: 500;
     transition: all 0.3s ease;
     color: variables.$white-90;
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
 
     &:hover {
         background: linear-gradient(
@@ -433,7 +433,7 @@
 }
 
 %administrative-badge {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
 }
 
 %administrative-card-footer {
@@ -482,7 +482,7 @@
         font-weight: 600;
         margin-bottom: 0.5rem;
         color: variables.$dashboard-primary;
-        font-family: "Lazer84", cursive;
+        font-family: "Lazer84", Noto-Sans, cursive;
         position: relative;
         display: inline-block;
 
@@ -516,7 +516,7 @@
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: variables.$dashboard-primary;
-    font-family: "Lazer84", cursive;
+    font-family: "Lazer84", Noto-Sans, cursive;
     position: relative;
     display: inline-block;
 
@@ -577,7 +577,7 @@
     }
 
     h2 {
-        font-family: Hack, monospace;
+        font-family: Hack, Noto-Sans, monospace;
         color: variables.$dashboard-primary;
         margin-top: 0;
     }
@@ -612,7 +612,7 @@
 }
 
 %administrative-section-heading {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     color: variables.$dashboard-primary;
     font-size: 1.25rem;
     margin: 0;
@@ -625,7 +625,7 @@
 }
 
 %administrative-section-title {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     color: variables.$dashboard-primary;
     font-size: 1.1rem;
     margin: 1.5rem 0 0.5rem;

@@ -16,7 +16,7 @@ label {
 }
 
 .hp-text a {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-secondary;
     text-decoration: underline;
@@ -79,7 +79,7 @@ label {
 
         label {
             margin-left: 0.5rem;
-            font-family: Hack, monospace;
+            font-family: Hack, Noto-Sans, monospace;
             color: variables.$hp-primary;
             cursor: pointer;
         }
@@ -92,7 +92,7 @@ label {
         justify-content: space-between;
 
         button {
-            font-family: Hack, monospace;
+            font-family: Hack, Noto-Sans, monospace;
             font-size: 18px;
             padding: 0.5rem 1.25rem;
             border-radius: 4px;

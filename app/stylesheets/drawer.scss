@@ -100,7 +100,7 @@
 }
 
 .drawer-content-container {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-primary;
     background: variables.$vulcan;
@@ -112,7 +112,7 @@
 }
 
 .drawer-content {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-primary;
     text-align: left;
@@ -127,7 +127,7 @@
 }
 
 .drawer-link {
-    font-family: Hack-Italic, monospace;
+    font-family: Hack-Italic, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-secondary;
     text-decoration: underline;
@@ -140,7 +140,7 @@
 }
 
 .drawer-title {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     font-size: 20px;
     color: variables.$sidebar-icon;
     margin-left: 5%;

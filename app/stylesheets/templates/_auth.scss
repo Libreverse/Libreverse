@@ -34,7 +34,7 @@
 }
 
 %auth-container {
-    font-family: Hack, monospace;
+    font-family: Hack, Noto-Sans, monospace;
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -78,7 +78,7 @@
         color: variables.$login-primary;
         text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
         animation: text-glow 3s ease-in-out infinite alternate;
-        font-family: "Lazer84", cursive;
+        font-family: "Lazer84", Noto-Sans, cursive;
     }
 
     p {
