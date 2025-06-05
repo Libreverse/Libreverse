@@ -4,9 +4,8 @@ class RodauthController < ApplicationController
   # Used by Rodauth for rendering views, CSRF protection, running any
   # registered action callbacks and rescue handlers, instrumentation etc.
 
-  # NOTE: invisible_captcha protection is handled in individual form views
-  # (login_form, create_account, etc.) rather than at the controller level
-  # to ensure it only applies to POST requests, not GET requests
+  # Apply invisible captcha validation to authentication POST requests
+  before_action :apply_invisible_captcha_to_auth_forms, if: -> { request.post? }
 
   # Controller callbacks and rescue handlers will run around Rodauth endpoints.
   # before_action :verify_captcha, only: :login, if: -> { request.post? }
@@ -40,6 +39,41 @@ class RodauthController < ApplicationController
 
   def set_request
     @request = request
+  end
+
+  # Apply invisible captcha validation based on the current Rodauth route
+  def apply_invisible_captcha_to_auth_forms
+    return unless rodauth.respond_to?(:current_route)
+
+    case rodauth.current_route
+    when :login, :create_account, :change_password, :reset_password
+      # Manually trigger invisible captcha validation for these forms
+      validate_invisible_captcha!
+    end
+  end
+
+  # Manual invisible captcha validation
+  def validate_invisible_captcha!
+    return unless request.post?
+
+    # Check honeypot field
+    honeypot_key = params.keys.find { |key| key.match?(/^[a-f0-9]{8,}$/) && key != "invisible_captcha_timestamp" }
+    if honeypot_key && params[honeypot_key].present?
+      handle_honeypot_spam
+      return
+    end
+
+    # Check timestamp
+    return if params[:invisible_captcha_timestamp].blank?
+
+      timestamp = params[:invisible_captcha_timestamp].to_i
+      current_time = Time.current.to_i
+      threshold = 2 # seconds
+
+      return unless (current_time - timestamp) < threshold
+
+        handle_timestamp_spam
+        nil
   end
 
 =begin

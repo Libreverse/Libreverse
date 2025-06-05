@@ -89,6 +89,13 @@ export default class extends ApplicationController
   onFormValidated: ->
     # Prevent double submission
     return if @isSubmitting
+
+    # Check if invisible captcha fields are present and validate timing
+    if @hasInvisibleCaptcha()
+      unless @validateInvisibleCaptchaTiming()
+        console.warn("Form submission blocked: invisible captcha timing validation failed")
+        return
+
     @isSubmitting = true
 
     # Submit the form
@@ -103,3 +110,32 @@ export default class extends ApplicationController
       setTimeout (=> @isSubmitting = false), 1000
     ), 100
     return
+
+  # Check if form has invisible captcha fields
+  hasInvisibleCaptcha: ->
+    return false unless @hasFormTarget
+
+    # Look for timestamp field
+    timestampField = @formTarget.querySelector('input[name="invisible_captcha_timestamp"]')
+    # Look for honeypot field (random hex name)
+    honeypotField = @formTarget.querySelector('input[type="text"][name^=""][style*="display:none"], input[type="text"][name^=""][style*="visibility:hidden"]')
+
+    return timestampField? or honeypotField?
+
+  # Validate invisible captcha timing constraints
+  validateInvisibleCaptchaTiming: ->
+    return true unless @hasFormTarget
+
+    timestampField = @formTarget.querySelector('input[name="invisible_captcha_timestamp"]')
+    return true unless timestampField?.value
+
+    timestamp = parseInt(timestampField.value, 10)
+    return true if isNaN(timestamp)
+
+    currentTime = Math.floor(Date.now() / 1000)
+    timeDiff = currentTime - timestamp
+
+    # Require at least 2 seconds (configurable threshold)
+    minThreshold = @data.get("minTimestamp") or 2
+
+    return timeDiff >= minThreshold
