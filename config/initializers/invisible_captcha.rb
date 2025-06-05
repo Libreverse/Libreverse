@@ -1,33 +1,29 @@
 # frozen_string_literal: true
 
+require "active_support/key_generator"
+
 InvisibleCaptcha.setup do |config|
   # Configure the default time threshold (in seconds) for when the form is submitted
   # Forms submitted faster than this are considered spam
   # More lenient in development to prevent issues during testing
-  config.timestamp_threshold = Rails.env.development? ? 1 : 3
-  config.timestamp_enabled   = true
+  config.timestamp_threshold = Rails.env.development? ? 2 : 4
+  config.timestamp_enabled = !Rails.env.test?
 
-  # Configure expanded honeypot field names that bots will try to fill
-  # Using a diverse set of field names that bots commonly target
-  config.honeypots = %i[
-    website subtitle email_address phone_number full_name first_name last_name
-    address city state country zip_code postal_code company organization
-    comment message description notes url homepage link verification
-  ]
-
-  # Configure whether to use visual honeypots (keep false for production)
+  # Configure whether to use visual honeypots (ALWAYS false - honeypots should be invisible)
   config.visual_honeypots = false
 
   # Configure spinner (visual element to encourage users to wait)
-  config.spinner_enabled = true
+  config.spinner_enabled = false
 
-  # Injectable styles for the honeypot field (enabled for better CSP compliance)
-  config.injectable_styles = true
+  # Injectable styles for the honeypot field (disabled - we'll handle CSS ourselves)
+  config.injectable_styles = false
 
-  # Use I18n for localized error messages instead of hardcoded strings
-  # These will fallback to the I18n keys if translations are available
-  # config.sentence_for_humans     = "This field should be left empty"
-  # config.timestamp_error_message = "Form submitted too quickly. Please wait and try again."
+  # Set the internal secret to a derived key from Rails.application.secret_key_base for consistency
+  config.secret = ActiveSupport::KeyGenerator.new(Rails.application.secret_key_base, iterations: 1000).generate_key("invisible_captcha_secret", 32).unpack1("H*")
+
+  # Override default messages to use I18n keys
+  config.sentence_for_humans = I18n.t("invisible_captcha.sentence_for_humans", default: "Please leave this field empty")
+  config.timestamp_error_message = I18n.t("invisible_captcha.timestamp_error_message", default: "Form submitted too quickly. Please wait and try again.")
 end
 
 # Set up global spam detection event handler for logging and monitoring
@@ -53,9 +49,33 @@ ActiveSupport::Notifications.subscribe("invisible_captcha.spam_detected") do |*_
     )
   end
 
-  # You can add additional spam handling here:
-  # - Store in database for analysis
-  # - Send alerts to admins
-  # - Update IP reputation scores
-  # - Trigger additional security measures
+  # Record spam attempt in monitoring service
+  spam_type = case data[:message]
+  when /honeypot/i
+    :honeypot
+  when /timestamp/i
+    :timestamp
+  when /spinner/i
+    :spinner
+  else
+    :unknown
+  end
+
+  # Safely record spam attempt with error handling
+  begin
+    SpamMonitoringService.record_spam_attempt(
+      spam_type,
+      data[:remote_ip],
+      {
+        user_agent: data[:user_agent],
+        path: data[:url],
+        controller: data[:controller],
+        action: data[:action],
+        detection_method: "invisible_captcha_notification",
+        message: data[:message]
+      }
+    )
+  rescue StandardError => e
+    Rails.logger.error("[SPAM_MONITORING] Failed to record spam attempt: #{e.message}")
+  end
 end

@@ -33,7 +33,22 @@ class InstanceSetting < ApplicationRecord
 
   # Get a setting value by key
   def self.get(key)
-    find_by(key: key)&.value
+    value = find_by(key: key)&.value
+
+    # Ensure we always return a string or nil for consistency
+    # This handles cases where encrypted values might deserialize as different types
+    case value
+    when String
+      value
+    when NilClass
+      nil
+    when Integer, Numeric, TrueClass, FalseClass
+      value.to_s
+    else
+      # Log unexpected types for debugging
+      Rails.logger.warn "[InstanceSetting] Unexpected value type for key '#{key}': #{value.class} - #{value.inspect}"
+      value.to_s
+    end
   end
 
   # Set a setting value by key

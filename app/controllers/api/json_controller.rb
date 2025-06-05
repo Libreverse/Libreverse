@@ -6,6 +6,9 @@ module Api
   class JsonController < ApplicationController
     include XmlrpcSecurity
 
+    # Don't use any layout for JSON responses
+    layout false
+
     # Ensure JSON responses are rendered without being hijacked by global HTML
     # filters (e.g. the privacy‑consent screen).
     prepend_before_action :force_json_format

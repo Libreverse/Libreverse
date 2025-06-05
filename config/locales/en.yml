@@ -3,7 +3,7 @@ en:
 
     # Invisible Captcha translations
     invisible_captcha:
-        sentence_for_humans: "This field should be left empty to prevent spam. If you are human, please ignore this field."
+        sentence_for_humans: "Please leave this field empty"
         timestamp_error_message: "Form submitted too quickly. Please wait a moment and try again."
         spam_detection:
             honeypot_triggered: "Spam detected: hidden field was filled"

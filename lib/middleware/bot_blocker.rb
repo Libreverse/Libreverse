@@ -64,11 +64,29 @@ class BotBlocker
       @no_bots_mode_cache.clear if @no_bots_mode_cache.size > 5
 
       setting_value = InstanceSetting.get("no_bots_mode")
-      enabled = setting_value.to_s.downcase.in?(%w[true 1 yes on enabled])
+
+      # Handle various data types that might be returned from encrypted storage
+      normalized_value = case setting_value
+      when String
+        setting_value.downcase
+      when Integer, Numeric
+        setting_value.to_s.downcase
+      when TrueClass, FalseClass
+        setting_value.to_s.downcase
+      when NilClass
+        "false"
+      else
+        # Log unexpected type for debugging
+        Rails.logger.warn "[BotBlocker] Unexpected setting value type: #{setting_value.class} - #{setting_value.inspect}"
+        setting_value.to_s.downcase
+      end
+
+      enabled = normalized_value.in?(%w[true 1 yes on enabled])
       @no_bots_mode_cache[cache_key] = enabled
       enabled
     rescue StandardError => e
       Rails.logger.error "[BotBlocker] Error checking no_bots_mode setting: #{e.message}"
+      Rails.logger.error "[BotBlocker] Error details: #{e.class} - #{e.backtrace&.first(3)&.join("\n")}"
       false # Default to allowing requests if we can't check the setting
     end
   end

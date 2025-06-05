@@ -14,7 +14,7 @@ default: &default
         checkpoint_fullfsync: 0     # Changed from 1 to speed up checkpoints
         foreign_keys: 1             # No change; kept as requested
         fullfsync: 0                # Changed from 1 to reduce sync overhead (macOS)
-        journal_mode: 'TRUNCATE'     # Changed from 'WAL' to 'DELETE' to disable WAL mode
+        journal_mode: 'DELETE'     # Changed from 'WAL' to 'DELETE' to disable WAL mode
         journal_size_limit: -1      # No change; kept as is
         locking_mode: 'NORMAL'      # No change; kept as is
         mmap_size: 200000000        # No change; kept as is
