@@ -4,8 +4,8 @@ class ConsentController < ApplicationController
     include Turbo::Streams::ActionHelper
 
     # Configure invisible captcha for consent forms to prevent automated abuse
-    invisible_captcha only: %i[accept decline],
-                      timestamp_threshold: 1 # Very short threshold for consent
+    # invisible_captcha only: %i[accept decline],
+    # timestamp_threshold: 1 # Very short threshold for consent
 
     # Skip CSRF for consent flow but maintain spam protection
     skip_before_action :verify_authenticity_token
