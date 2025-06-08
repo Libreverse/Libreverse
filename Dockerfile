@@ -5,6 +5,10 @@
 ARG RUBY_VERSION=3.4.1
 FROM quay.io/evl.ms/fullstaq-ruby:${RUBY_VERSION}-jemalloc-slim AS base
 
+ENV CFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
+ENV CXXFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
+ENV LDFLAGS="-Wl,-z,relro -Wl,-z,now"
+
 # Rails app lives here
 WORKDIR /rails
 
