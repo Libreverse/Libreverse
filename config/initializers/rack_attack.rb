@@ -4,24 +4,6 @@
 require Rails.root.join("lib/ip_anonymizer")
 require "re2"
 
-# Maximum Body Size Middleware Definition
-# (Moved here from maximum_body_size.rb to resolve load order issues)
-module Rack
-  class MaximumBodySize
-    def initialize(app, limit_bytes)
-      @app = app
-      @limit = limit_bytes
-    end
-
-    def call(env)
-      length = env["CONTENT_LENGTH"].to_i
-      return [ 413, { "Content-Type" => "text/plain" }, [ "Payload Too Large" ] ] if length > @limit && @limit.positive?
-
-      @app.call(env)
-    end
-  end
-end
-
 # Rack::Attack Rate Limiting Configuration
 module Rack
   class Attack
@@ -122,19 +104,10 @@ end
 # Only insert middleware if not in development or test environment
 unless Rails.env.development? || Rails.env.test?
   # Insert Rack::Attack middleware
-  # Ensures it runs after Rack::MaximumBodySize (if present) but before others like compression.
   middleware = Rails.application.config.middleware
 
-  # Insert MaximumBodySize first
-  middleware.insert_before 0, Rack::MaximumBodySize, 2.gigabytes
-
-  begin
-    # Try inserting after MaximumBodySize for ideal placement
-    middleware.insert_after Rack::MaximumBodySize, Rack::Attack
-  rescue ArgumentError
-    # Fallback: Insert near the top if MaximumBodySize isn't found
-    middleware.insert_before 0, Rack::Attack
-  end
+  # Insert Rack::Attack middleware
+  middleware.insert_before 0, Rack::Attack
 
   # Ensure IP anonymisation occurs after Rack::Attack (needs real IP)
   middleware.insert_after Rack::Attack, IpAnonymizer
