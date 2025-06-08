@@ -7,7 +7,6 @@ module XmlrpcSecurity
 
   included do
     before_action :configure_xml_security
-    before_action :validate_request_size
     before_action :sanitize_logs
     before_action :validate_session
   end
@@ -17,12 +16,6 @@ module XmlrpcSecurity
   def configure_xml_security
     # Nokogiri security is configured through options when parsing
     # No global configuration needed as with REXML
-  end
-
-  def validate_request_size
-    return unless request.content_length && request.content_length > 1.megabyte
-
-    render xml: fault_response(413, "Request too large")
   end
 
   def sanitize_logs
