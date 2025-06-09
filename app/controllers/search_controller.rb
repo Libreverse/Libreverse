@@ -23,14 +23,13 @@ class SearchController < ApplicationController
     # Handle conditional requests before database query
     return if !Rails.env.development? && request.fresh?(etag: etag)
 
-     scope = current_account&.admin? ? Experience : Experience.approved
-     @experiences = if query.present?
-       scope.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
-            .order(created_at: :desc)
-            .limit(100)
-     else
-       scope.order(created_at: :desc).limit(20)
-     end
+    scope = current_account&.admin? ? Experience : Experience.approved
+    @experiences = if query.present?
+      # Use the new VSS search system
+      VectorSearchService.search_similar_experiences(query, limit: 100)
+    else
+      scope.order(created_at: :desc).limit(20)
+    end
 
     # Handle conditional requests for all search results
     # Handle conditional requests (skip in development to avoid masking errors)

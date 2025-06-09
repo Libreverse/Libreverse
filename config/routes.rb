@@ -2,10 +2,7 @@
 
 Rails.application.routes.draw do
   post "/graphql", to: "graphql#execute"
-  resources :search_new, only: [ :index ]
-  get "search_new/index"
   get "search" => "search#index"
-  post "search" => "search#create"
   root "homepage#index"
   get "terms", to: "terms#index"
   get "settings", to: "settings#index"
