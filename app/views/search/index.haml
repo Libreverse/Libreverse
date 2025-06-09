@@ -23,6 +23,6 @@
               %p.tutorial-description= t('search.index.tutorial_description')
         %section{"aria-labelledby" => "search-heading"}
           .sp-search-bar
-            %input.sp-search-bar-input#search{"aria-label" => t('search.index.input_aria_label'), :autocomplete => "off", "data-controller" => "search-url-updater", "data-reflex" => "input->SearchReflex#perform", "data-reflex-root" => "true", :placeholder => t('search.index.search_placeholder'), :type => "text", :value => params[:query].to_s}/
+            %input.sp-search-bar-input#search{"aria-label" => t('search.index.input_aria_label'), :autocomplete => "off", "data-controller" => "search-url-updater", :placeholder => t('search.index.search_placeholder'), :type => "text", :value => params[:query].to_s}/
           .sp-experiences-list#experiences-list
             = render partial: "search/experiences_list", locals: { experiences: @experiences }

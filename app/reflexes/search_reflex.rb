@@ -22,8 +22,8 @@ class SearchReflex < ApplicationReflex
       log_info "[SearchReflex#perform] Found #{@experiences.size} experiences for query: '#{query}'"
 
       html_results = controller.render_to_string(partial: "search/experiences_list", locals: { experiences: @experiences })
-      morph "#experiences_list", html_results
-      log_debug "[SearchReflex#perform] Morph completed for #experiences_list"
+      morph "#experiences-list", html_results
+      log_debug "[SearchReflex#perform] Morph completed for #experiences-list"
   rescue ActionController::RoutingError => e
       Rails.logger.warn "Search reflex routing error: #{e.message}"
       morph :nothing
