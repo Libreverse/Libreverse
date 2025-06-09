@@ -18,6 +18,7 @@ Bundler.require(*Rails.groups)
 # Load custom middleware
 require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/zstd"
+require_relative "../lib/middleware/emoji_replacer"
 
 # Configuration for the application, engines, and railties goes here.
 #
@@ -68,6 +69,15 @@ module LibreverseInstance
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
+
+    # Add EmojiReplacer middleware to process emoji replacement in HTML responses
+    # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
+    config.middleware.insert_before WhitespaceCompressor, EmojiReplacer, {
+      exclude_selectors: [
+        "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
+        ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
+      ]
+    }
 
     # I18n configuration
     config.i18n.default_locale = :en

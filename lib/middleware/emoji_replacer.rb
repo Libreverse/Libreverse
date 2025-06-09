@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-# ===== Emoji Replacement =====
+# ===== Emoji Replacement Middleware =====
 class EmojiReplacer
   require "unicode"
   require "nokogiri"
-  require Rails.root.join("lib/emoji/renderer").to_s
 
   EMOJI_REGEX =
     /(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
@@ -71,6 +70,11 @@ class EmojiReplacer
   end
 
   private
+
+  def require_emoji_renderer
+    return if defined?(Emoji::Renderer)
+    require Rails.root.join("lib/emoji/renderer").to_s
+  end
 
   def path_excluded?(path)
     EXCLUDED_PATHS.any? { |pattern| path.match?(pattern) }
@@ -149,6 +153,7 @@ class EmojiReplacer
 
   def replace_emojis_with_nodes(text, _doc)
     # Rails.logger.debug { "[EmojiReplacer] replace_emojis_with_nodes called" }
+    require_emoji_renderer
     Emoji::Renderer.replace(text)
   end
 
@@ -167,18 +172,22 @@ class EmojiReplacer
   def replace_emojis(text)
     # Rails.logger.debug { "[EmojiReplacer] replace_emojis called" }
     text = ensure_utf8(text)
+    require_emoji_renderer
     Emoji::Renderer.replace(text)
   end
 
   def cache_key(emoji)
+    require_emoji_renderer
     Emoji::Renderer.send(:cache_key, emoji)
   end
 
   def build_inline_svg(emoji)
+    require_emoji_renderer
     Emoji::Renderer.build_img_tag(emoji)
   end
 
   def read_vite_asset_content(path_from_manifest)
+    require_emoji_renderer
     Emoji::Renderer.send(:read_vite_asset_content, path_from_manifest)
   end
 
@@ -188,18 +197,3 @@ class EmojiReplacer
     text[start_index...end_index]
   end
 end
-
-# ===== Emoji Processing Middleware Configuration =====
-# Remove the old middleware registration if it exists
-Rails.application.config.middleware.delete(EmojiReplacer)
-
-# Insert the middleware at a specific position in the stack
-# Place it after ActionDispatch::Static to ensure it doesn't interfere with ActiveStorage
-Rails.application.config.middleware.insert_after(
-  ActionDispatch::Static,
-  EmojiReplacer,
-  exclude_selectors: [
-    "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
-    ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
-  ]
-)

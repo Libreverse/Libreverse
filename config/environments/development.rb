@@ -49,11 +49,7 @@ Rails.application.configure do
   config.server_timing = true
 
   # Disable browser caching in development
-  config.public_file_server.headers = {
-    "Cache-Control" => "no-store, no-cache, must-revalidate, max-age=0",
-    "Pragma" => "no-cache",
-    "Expires" => "Fri, 01 Jan 1990 00:00:00 GMT"
-  }
+  config.public_file_server.enabled = false
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
