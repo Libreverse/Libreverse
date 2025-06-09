@@ -1,8 +1,9 @@
 # Todo List
 
-1. □ **Fix bugged search & add <https://alessandrominali.github.io/captcha.html>**
+1. □ **Fix bugged search**
 2. □ **Imprint for EU**
 3. □ **Add experience federation through custom activitypub fields**
+4. ✅ **Add example experiences through Rails runner** - COMPLETED!
 4. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
