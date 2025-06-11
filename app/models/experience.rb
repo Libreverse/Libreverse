@@ -47,10 +47,6 @@ class Experience < ApplicationRecord
   # Add a scope for experiences pending approval
   scope :pending_approval, -> { where(approved: false) }
 
-  # Vector search callbacks
-  after_save :update_embedding_async, if: :should_update_embedding?
-  after_create :generate_initial_embedding_async
-
   # Automatically mark experiences created by admins as approved
   before_validation :auto_approve_for_admin, on: :create
 
@@ -152,27 +148,5 @@ class Experience < ApplicationRecord
     )
   rescue StandardError => e
     Rails.logger.error "Failed to log moderation violation: #{e.message}"
-  end
-
-  def should_update_embedding?
-    # Use saved_change_to_* methods which work in after_save callbacks
-    saved_change_to_title? || saved_change_to_description?
-  end
-
-  def update_embedding
-    VectorSearchService.update_experience_embedding(self)
-  end
-
-  def generate_initial_embedding
-    VectorSearchService.update_experience_embedding(self)
-  end
-
-  # Async versions for better performance with user-generated content
-  def update_embedding_async
-    GenerateEmbeddingJob.perform_later(id)
-  end
-
-  def generate_initial_embedding_async
-    GenerateEmbeddingJob.perform_later(id)
   end
 end

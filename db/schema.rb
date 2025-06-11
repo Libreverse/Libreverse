@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_221000) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
@@ -93,15 +93,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_221000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "experience_vss_mappings", force: :cascade do |t|
-    t.integer "experience_id", null: false
-    t.integer "vss_rowid", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["experience_id"], name: "index_experience_vss_mappings_on_experience_id", unique: true
-    t.index ["vss_rowid"], name: "index_experience_vss_mappings_on_vss_rowid", unique: true
-  end
-
   create_table "experiences", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -110,12 +101,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_221000) do
     t.string "author"
     t.integer "account_id", null: false
     t.boolean "approved", default: false, null: false
-    t.text "embedding"
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
     t.index ["approved"], name: "index_experiences_on_approved"
-    t.index ["description"], name: "index_experiences_on_description_text"
-    t.index ["title"], name: "index_experiences_on_title_text"
   end
 
   create_table "instance_settings", force: :cascade do |t|
