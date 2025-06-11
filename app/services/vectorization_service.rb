@@ -21,7 +21,7 @@ class VectorizationService
 
       # Get document frequencies for IDF calculation
       document_frequencies = get_document_frequencies(vocabulary)
-      total_documents = Experience.approved.count
+      total_documents = Experience.count
 
       # Generate TF-IDF vector
       generate_tfidf_vector(term_frequencies, document_frequencies, total_documents, vocabulary)
@@ -39,7 +39,7 @@ class VectorizationService
 
       # Get document frequencies for IDF calculation
       document_frequencies = get_document_frequencies(vocabulary)
-      total_documents = Experience.approved.count
+      total_documents = Experience.count
 
       # Generate TF-IDF vector
       generate_tfidf_vector(term_frequencies, document_frequencies, total_documents, vocabulary)
@@ -121,7 +121,7 @@ class VectorizationService
     def calculate_document_frequencies(vocabulary)
       document_frequencies = Hash.new(0)
 
-      Experience.approved.find_each do |experience|
+      Experience.find_each do |experience|
         content = TextPreprocessingService.combine_experience_text(experience)
         terms = TextPreprocessingService.preprocess(content)
         unique_terms = terms.to_set
@@ -138,7 +138,7 @@ class VectorizationService
     def calculate_vocabulary
       all_terms = Set.new
 
-      Experience.approved.find_each do |experience|
+      Experience.find_each do |experience|
         content = TextPreprocessingService.combine_experience_text(experience)
         terms = TextPreprocessingService.preprocess(content)
         all_terms.merge(terms)
@@ -147,7 +147,7 @@ class VectorizationService
       # Limit vocabulary size to most frequent terms
       term_frequencies = Hash.new(0)
 
-      Experience.approved.find_each do |experience|
+      Experience.find_each do |experience|
         content = TextPreprocessingService.combine_experience_text(experience)
         terms = TextPreprocessingService.preprocess(content)
         terms.each { |term| term_frequencies[term] += 1 }

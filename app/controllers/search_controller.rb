@@ -34,13 +34,13 @@ class SearchController < ApplicationController
         use_vector_search: true
       )
 
-      # Extract experiences from search results
-      @experiences = search_results.map { |result| result[:experience] }
+      # Search results are now Experience objects directly (not hashes)
+      @experiences = search_results
 
       # Store search metadata for potential display
       @search_metadata = {
         total_results: search_results.length,
-        search_type: search_results.first&.dig(:search_type) || :none,
+        search_type: :vector, # Default to vector since ExperienceSearchService handles fallback internally
         query: query
       }
     else

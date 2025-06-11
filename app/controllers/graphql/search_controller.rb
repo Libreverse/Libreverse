@@ -22,15 +22,15 @@ module Graphql
         query = query.to_s.strip[0...50]
 
         # Use vector similarity search with fallback to LIKE search
-        search_results = ExperienceSearchService.search(
+        ExperienceSearchService.search(
           query,
           scope: scope,
           limit: limit,
           use_vector_search: true
         )
 
-        # Extract experiences from search results
-        search_results.map { |result| result[:experience] }
+        # search_results are already Experience objects
+
       else
         scope.order(created_at: :desc).limit(limit)
       end

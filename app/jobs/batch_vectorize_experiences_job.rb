@@ -6,13 +6,14 @@ class BatchVectorizeExperiencesJob < ApplicationJob
   # This job may take a while for large numbers of experiences
   retry_on StandardError, wait: :exponentially_longer, attempts: 2
 
-  def perform(batch_size: 50, force_regeneration: false, approved_only: true)
+  def perform(batch_size: 50, force_regeneration: false, approved_only: false)
     Rails.logger.info "[BatchVectorizeExperiencesJob] Starting batch vectorization"
 
     scope = approved_only ? Experience.approved : Experience.all
     total_experiences = scope.count
 
-    Rails.logger.info "[BatchVectorizeExperiencesJob] Processing #{total_experiences} experiences in batches of #{batch_size}"
+    scope_description = approved_only ? "approved experiences" : "all experiences"
+    Rails.logger.info "[BatchVectorizeExperiencesJob] Processing #{total_experiences} #{scope_description} in batches of #{batch_size}"
 
     processed = 0
     errors = 0

@@ -14,11 +14,8 @@ class VectorizeExperienceJob < ApplicationJob
       return
     end
 
-    # Skip if experience is not approved (unless it's being updated)
-    unless experience.approved?
-      Rails.logger.info "[VectorizeExperienceJob] Skipping vectorization for unapproved experience #{experience_id}"
-      return
-    end
+    # Vectorize ALL experiences, regardless of approval status
+    # This enables comprehensive search and better admin/moderator tools
 
     existing_vector = experience.experience_vector
 

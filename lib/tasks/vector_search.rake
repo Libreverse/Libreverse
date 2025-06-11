@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
 namespace :vector_search do
-  desc "Initialize vector search system by vectorizing all approved experiences"
+  desc "Initialize vector search system by vectorizing all experiences"
   task initialize: :environment do
     puts "🚀 Initializing vector search system..."
 
-    total_experiences = Experience.approved.count
-    puts "📊 Found #{total_experiences} approved experiences to vectorize"
+    total_experiences = Experience.count
+    puts "📊 Found #{total_experiences} experiences to vectorize"
 
     if total_experiences.zero?
-      puts "⚠️  No approved experiences found. Vector search system will be ready when experiences are created."
+      puts "⚠️  No experiences found. Vector search system will be ready when experiences are created."
       next
     end
 
-    # Queue batch vectorization job
+    # Queue batch vectorization job for ALL experiences
     BatchVectorizeExperiencesJob.perform_later(
       batch_size: 50,
       force_regeneration: false,
-      approved_only: true
+      approved_only: false
     )
 
     puts "✅ Batch vectorization job queued. Check logs for progress."
@@ -29,10 +29,12 @@ namespace :vector_search do
     puts "📈 Vector Search System Status"
     puts "=" * 40
 
-    total_experiences = Experience.approved.count
-    vectorized_experiences = ExperienceVector.joins(:experience).where(experience: { approved: true }).count
+    total_experiences = Experience.count
+    approved_experiences = Experience.approved.count
+    vectorized_experiences = ExperienceVector.count
 
-    puts "Total approved experiences: #{total_experiences}"
+    puts "Total experiences: #{total_experiences}"
+    puts "Approved experiences: #{approved_experiences}"
     puts "Vectorized experiences: #{vectorized_experiences}"
 
     if total_experiences.positive?
@@ -110,13 +112,13 @@ namespace :vector_search do
     Rails.cache.delete_matched("search/*")
 
     # Queue batch vectorization with force regeneration
-    total_experiences = Experience.approved.count
+    total_experiences = Experience.count
     puts "📊 Queuing vectorization for #{total_experiences} experiences..."
 
     BatchVectorizeExperiencesJob.perform_later(
       batch_size: 50,
       force_regeneration: true,
-      approved_only: true
+      approved_only: false
     )
 
     puts "✅ Rebuild started. Check logs for progress."

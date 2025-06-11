@@ -17,18 +17,23 @@ class ExperienceSearchService
 
       # Try vector search first if enabled and vectors exist
       if use_vector_search && vectors_available?
-        results = vector_search(query, scope: scope, limit: limit)
+        vector_results = vector_search(query, scope: scope, limit: limit)
+
+        # Extract experiences from vector search results
+        results = vector_results.map { |result| result[:experience] }
 
         # Fall back to LIKE search if no vector results
         if results.empty?
           Rails.logger.info "[ExperienceSearchService] Vector search returned no results, falling back to LIKE search"
-          results = like_search(query, scope: scope, limit: limit)
+          like_results = like_search(query, scope: scope, limit: limit)
+          results = like_results.map { |result| result[:experience] }
         end
 
         results
       else
         # Use traditional LIKE search
-        like_search(query, scope: scope, limit: limit)
+        like_results = like_search(query, scope: scope, limit: limit)
+        like_results.map { |result| result[:experience] }
       end
     end
 

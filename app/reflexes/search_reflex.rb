@@ -11,20 +11,24 @@ class SearchReflex < ApplicationReflex
       @experiences = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
         log_debug "[SearchReflex#perform] Cache miss for query: '#{query}', fetching from database"
 
-        if query.present?
+        scope = current_account&.admin? ? Experience : Experience.approved
+if query.present?
+          # Determine scope based on user permissions (like SearchController)
+
           # Use vector similarity search with fallback to LIKE search
           search_results = ExperienceSearchService.search(
             query,
-            scope: Experience.approved,
+            scope: scope,
             limit: 100,
             use_vector_search: true
           )
 
-          # Extract experiences from search results
-          search_results.map { |result| result[:experience] }
-        else
-          Experience.approved.order(created_at: :desc).limit(20)
-        end
+          # Search results are already Experience objects (not hashes)
+          search_results
+else
+          # Same scope logic for empty query
+          scope.order(created_at: :desc).limit(20)
+end
       end
 
       log_info "[SearchReflex#perform] Found #{@experiences.size} experiences for query: '#{query}'"

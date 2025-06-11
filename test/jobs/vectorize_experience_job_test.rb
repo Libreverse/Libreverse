@@ -1,0 +1,277 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class VectorizeExperienceJobTest < ActiveJob::TestCase
+  setup do
+    # Clear any existing vectors and jobs
+    ExperienceVector.delete_all
+    clear_enqueued_jobs
+
+    @experience = Experience.create!(
+      title: "Machine Learning Basics",
+      description: "Introduction to machine learning algorithms",
+      author: "Data Scientist",
+      account: accounts(:one)
+    )
+  end
+
+  test "enqueues job successfully" do
+    assert_enqueued_with(job: VectorizeExperienceJob, args: [ @experience.id ]) do
+      VectorizeExperienceJob.perform_later(@experience.id)
+    end
+  end
+
+  test "performs vectorization successfully" do
+    # Mock VectorizationService to return predictable vector
+    mock_vector = [ 0.1, 0.2, 0.3, 0.4, 0.5 ]
+    VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
+
+    assert_difference("ExperienceVector.count", 1) do
+      VectorizeExperienceJob.perform_now(@experience.id)
+    end
+
+    # Check that vector was created correctly
+    vector = @experience.reload.experience_vector
+    assert_not_nil vector
+    assert_equal mock_vector, vector.vector_data
+    assert_equal 1, vector.version
+    assert_not_nil vector.generated_at
+  end
+
+  test "updates existing vector when one exists" do
+    # Create initial vector
+    initial_vector = ExperienceVector.create!(
+      experience: @experience,
+      vector_data: [ 0.1, 0.2, 0.3 ],
+      vector_hash: "old_hash",
+      generated_at: 1.hour.ago,
+      version: 1
+    )
+
+    # Mock new vector data
+    new_vector = [ 0.4, 0.5, 0.6, 0.7, 0.8 ]
+    VectorizationService.stubs(:vectorize_experience).returns(new_vector)
+
+    assert_no_difference("ExperienceVector.count") do
+      VectorizeExperienceJob.perform_now(@experience.id)
+    end
+
+    # Check that vector was updated
+    initial_vector.reload
+    assert_equal new_vector, initial_vector.vector_data
+    assert_equal 2, initial_vector.version
+    assert initial_vector.generated_at > 30.minutes.ago
+  end
+
+  test "forces regeneration when requested" do
+    # Create vector with current content hash (normally wouldn't need regeneration)
+    current_hash = ExperienceVector.generate_content_hash(
+      @experience.title,
+      @experience.description,
+      @experience.author
+    )
+
+    existing_vector = ExperienceVector.create!(
+      experience: @experience,
+      vector_data: [ 0.1, 0.2, 0.3 ],
+      vector_hash: current_hash,
+      generated_at: Time.current,
+      version: 1
+    )
+
+    # Mock new vector
+    new_vector = [ 0.4, 0.5, 0.6 ]
+    VectorizationService.stubs(:vectorize_experience).returns(new_vector)
+
+    # Force regeneration
+    VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: true)
+
+    # Vector should be updated even though content hash matched
+    existing_vector.reload
+    assert_equal new_vector, existing_vector.vector_data
+    assert_equal 2, existing_vector.version
+  end
+
+  test "skips vectorization when not needed and not forced" do
+    # Create vector with current content hash
+    current_hash = ExperienceVector.generate_content_hash(
+      @experience.title,
+      @experience.description,
+      @experience.author
+    )
+
+    existing_vector = ExperienceVector.create!(
+      experience: @experience,
+      vector_data: [ 0.1, 0.2, 0.3 ],
+      vector_hash: current_hash,
+      generated_at: Time.current,
+      version: 1
+    )
+
+    original_version = existing_vector.version
+    original_data = existing_vector.vector_data.dup
+
+    # Don't mock VectorizationService - it shouldn't be called
+    VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: false)
+
+    # Vector should remain unchanged
+    existing_vector.reload
+    assert_equal original_version, existing_vector.version
+    assert_equal original_data, existing_vector.vector_data
+  end
+
+  test "handles missing experience gracefully" do
+    non_existent_id = 99_999
+
+    assert_nothing_raised do
+      VectorizeExperienceJob.perform_now(non_existent_id)
+    end
+
+    # No vector should be created
+    assert_equal 0, ExperienceVector.count
+  end
+
+  test "handles vectorization service errors" do
+    # Mock VectorizationService to raise an error
+    VectorizationService.stubs(:vectorize_experience).raises(StandardError.new("Vectorization failed"))
+
+    assert_raises(StandardError) do
+      VectorizeExperienceJob.perform_now(@experience.id)
+    end
+
+    # No vector should be created
+    assert_equal 0, ExperienceVector.count
+  end
+
+  test "logs successful vectorization" do
+    mock_vector = [ 0.1, 0.2, 0.3 ]
+    VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
+
+    # Capture log output
+    log_output = capture_log do
+      VectorizeExperienceJob.perform_now(@experience.id)
+    end
+
+    assert_includes log_output, "Created vector for experience #{@experience.id}"
+  end
+
+  test "logs successful vector update" do
+    # Create existing vector
+    ExperienceVector.create!(
+      experience: @experience,
+      vector_data: [ 0.1, 0.2, 0.3 ],
+      vector_hash: "old_hash",
+      generated_at: 1.hour.ago,
+      version: 1
+    )
+
+    mock_vector = [ 0.4, 0.5, 0.6 ]
+    VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
+
+    log_output = capture_log do
+      VectorizeExperienceJob.perform_now(@experience.id)
+    end
+
+    assert_includes log_output, "Updated vector for experience #{@experience.id}"
+  end
+
+  test "logs errors appropriately" do
+    VectorizationService.stubs(:vectorize_experience).raises(StandardError.new("Test error"))
+
+    log_output = capture_log do
+      assert_raises(StandardError) do
+        VectorizeExperienceJob.perform_now(@experience.id)
+      end
+    end
+
+    assert_includes log_output, "Failed to vectorize experience #{@experience.id}: Test error"
+  end
+
+  test "clears search caches after vectorization" do
+    mock_vector = [ 0.1, 0.2, 0.3 ]
+    VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
+
+    # Set some cache values
+    Rails.cache.write("search_vocabulary", %w[test vocab])
+    Rails.cache.write("document_frequencies", { "test" => 1 })
+
+    VectorizeExperienceJob.perform_now(@experience.id)
+
+    # Caches should be cleared
+    assert_nil Rails.cache.read("search_vocabulary")
+    assert_nil Rails.cache.read("document_frequencies")
+  end
+
+  test "retries on failure with exponential backoff" do
+    # Verify retry configuration
+    VectorizeExperienceJob.new
+
+    # Check that retry is configured (this tests the retry_on declaration)
+    assert_includes VectorizeExperienceJob.retry_on_exceptions, StandardError
+  end
+
+  test "processes job in correct queue" do
+    job = VectorizeExperienceJob.new
+    assert_equal "default", job.queue_name
+  end
+
+  test "handles experience with minimal content" do
+    minimal_experience = Experience.create!(
+      title: "",
+      description: "",
+      author: "",
+      account: accounts(:one)
+    )
+
+    mock_vector = [ 0.0, 0.0, 0.0 ] # Empty content might produce zero vector
+    VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
+
+    assert_difference("ExperienceVector.count", 1) do
+      VectorizeExperienceJob.perform_now(minimal_experience.id)
+    end
+
+    vector = minimal_experience.reload.experience_vector
+    assert_not_nil vector
+    assert_equal mock_vector, vector.vector_data
+  end
+
+  test "handles experience with special characters" do
+    special_experience = Experience.create!(
+      title: "Test with émojis 🎉 and spëcial chars!",
+      description: "Content with <HTML> tags & symbols @#$%",
+      author: "Authôr Namé",
+      account: accounts(:one)
+    )
+
+    mock_vector = [ 0.1, 0.2, 0.3, 0.4 ]
+    VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
+
+    assert_nothing_raised do
+      VectorizeExperienceJob.perform_now(special_experience.id)
+    end
+
+    vector = special_experience.reload.experience_vector
+    assert_not_nil vector
+  end
+
+  private
+
+  def capture_log
+    log_stream = StringIO.new
+    old_logger = Rails.logger
+    Rails.logger = Logger.new(log_stream)
+
+    yield
+
+    log_stream.string
+  ensure
+    Rails.logger = old_logger
+  end
+
+  teardown do
+    ExperienceVector.delete_all
+    clear_enqueued_jobs
+    Rails.cache.clear
+  end
+end
