@@ -18,9 +18,11 @@ module Graphql
       end
 
       if query.present?
-        # Limit query length and use VSS search
+        # Limit query length and sanitize
         query = query.to_s.strip[0...50]
-        VectorSearchService.search_similar_experiences(query, limit: limit)
+        scope.where("title LIKE ?", "%#{ActiveRecord::Base.sanitize_sql_like(query)}%")
+             .order(created_at: :desc)
+             .limit(limit)
       else
         scope.order(created_at: :desc).limit(limit)
       end

@@ -73,7 +73,6 @@ class EmojiReplacer
 
   def require_emoji_renderer
     return if defined?(Emoji::Renderer)
-
     require Rails.root.join("lib/emoji/renderer").to_s
   end
 

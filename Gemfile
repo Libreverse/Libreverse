@@ -73,7 +73,3 @@ group :test do
   gem "mocha"
   gem "selenium-webdriver"
 end
-
-# Vector search extension for SQLite - platform specific builds
-# Supports macOS (both Intel and ARM) and Linux x86_64 (for Docker production)
-gem "sqlite-vss", "~> 0.1.2"

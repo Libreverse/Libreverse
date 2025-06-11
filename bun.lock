@@ -28,7 +28,7 @@
         "cssnano-preset-advanced": "^7.0.7",
         "eslint": "^9.28.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-jest": "^28.13.0",
+        "eslint-plugin-jest": "^28.12.0",
         "eslint-plugin-unicorn": "^56.0.1",
         "globals": "^15.15.0",
         "husky": "^9.1.7",
@@ -47,7 +47,7 @@
         "sass-embedded": "1.89.0",
         "stylelint": "^16.20.0",
         "stylelint-config-standard-scss": "^14.0.0",
-        "terser": "^5.42.0",
+        "terser": "^5.41.0",
         "vite": "^6.3.5",
         "vite-plugin-coffee": "^2.2.1",
         "vite-plugin-compression": "^0.5.1",
@@ -1651,7 +1651,7 @@
 
     "table": ["table@6.9.0", "", { "dependencies": { "ajv": "^8.0.1", "lodash.truncate": "^4.4.2", "slice-ansi": "^4.0.0", "string-width": "^4.2.3", "strip-ansi": "^6.0.1" } }, "sha512-9kY+CygyYM6j02t5YFHbNz2FN5QmYGv9zAjVp4lCDjlCw7amdckXlEt/bjMhUIfj4ThGRE4gCUH5+yGnNuPo5A=="],
 
-    "terser": ["terser@5.42.0", "", { "dependencies": { "@jridgewell/source-map": "^0.3.3", "acorn": "^8.14.0", "commander": "^2.20.0", "source-map-support": "~0.5.20" }, "bin": { "terser": "bin/terser" } }, "sha512-UYCvU9YQW2f/Vwl+P0GfhxJxbUGLwd+5QrrGgLajzWAtC/23AX0vcise32kkP7Eu0Wu9VlzzHAXkLObgjQfFlQ=="],
+    "terser": ["terser@5.41.0", "", { "dependencies": { "@jridgewell/source-map": "^0.3.3", "acorn": "^8.14.0", "commander": "^2.20.0", "source-map-support": "~0.5.20" }, "bin": { "terser": "bin/terser" } }, "sha512-H406eLPXpZbAX14+B8psIuvIr8+3c+2hkuYzpMkoE0ij+NdsVATbA78vb8neA/eqrj7rywa2pIkdmWRsXW6wmw=="],
 
     "test-exclude": ["test-exclude@6.0.0", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^7.1.4", "minimatch": "^3.0.4" } }, "sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w=="],
 
