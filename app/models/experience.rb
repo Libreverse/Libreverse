@@ -19,6 +19,7 @@ class Experience < ApplicationRecord
   end
 
   belongs_to :account, optional: true
+  has_one :experience_vector, dependent: :destroy
   has_one_attached :html_file, dependent: :purge_later
   encrypts_attached :html_file
 
@@ -35,9 +36,6 @@ class Experience < ApplicationRecord
   # Content moderation validation
   validate :content_moderation
 
-  # Ensure content is sanitized before saving
-  # before_save :sanitize_content
-
   # Ensure an owner is always associated
   before_validation :assign_owner, on: :create
 
@@ -50,18 +48,8 @@ class Experience < ApplicationRecord
   # Automatically mark experiences created by admins as approved
   before_validation :auto_approve_for_admin, on: :create
 
-  # private
-
-  # def sanitize_content
-  #   return unless content_changed?
-  #
-  #   # Rails' sanitize helper
-  #   self.content = ActionController::Base.helpers.sanitize(
-  #     content,
-  #     tags: %w[p br h1 h2 h3 h4 h5 h6 ul ol li strong em b i u code pre blockquote],
-  #     attributes: %w[class id]
-  #   )
-  # end
+  # Schedule vectorization after creation and updates
+  after_commit :schedule_vectorization, on: %i[create update], if: :needs_vectorization?
 
   def assign_owner
     # Use Current.account set by Reflex or fallback to Rodauth
@@ -74,6 +62,22 @@ class Experience < ApplicationRecord
 
   def html_file?
     html_file.attached?
+  end
+
+  # Check if this experience needs vectorization
+  def needs_vectorization?
+    return false unless approved?
+
+    # No vector exists
+    return true unless experience_vector
+
+    # Vector is outdated
+    experience_vector.needs_regeneration?(self)
+  end
+
+  # Find similar experiences using vector search
+  def find_similar(limit: 10)
+    ExperienceSearchService.find_related(self, limit: limit)
   end
 
   private
@@ -121,7 +125,7 @@ class Experience < ApplicationRecord
     # Log a single violation entry if any violations were found
     return unless violations_found
 
-      log_moderation_violations(all_violations)
+    log_moderation_violations(all_violations)
   end
 
   def log_moderation_violations(all_violations)
@@ -148,5 +152,20 @@ class Experience < ApplicationRecord
     )
   rescue StandardError => e
     Rails.logger.error "Failed to log moderation violation: #{e.message}"
+  end
+
+  # Determine if this experience should be vectorized
+  def should_vectorize?
+    # Only vectorize approved experiences
+    approved? &&
+      # Only if content has changed or no vector exists
+      (saved_change_to_title? || saved_change_to_description? || saved_change_to_author? || !experience_vector)
+  end
+
+  # Schedule vectorization job
+  def schedule_vectorization
+    VectorizeExperienceJob.perform_later(id)
+  rescue StandardError => e
+    Rails.logger.error "Failed to schedule vectorization for experience #{id}: #{e.message}"
   end
 end

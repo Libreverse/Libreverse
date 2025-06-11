@@ -23,14 +23,31 @@ class SearchController < ApplicationController
     # Handle conditional requests before database query
     return if !Rails.env.development? && request.fresh?(etag: etag)
 
-     scope = current_account&.admin? ? Experience : Experience.approved
-     @experiences = if query.present?
-       scope.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
-            .order(created_at: :desc)
-            .limit(100)
-     else
-       scope.order(created_at: :desc).limit(20)
-     end
+    scope = current_account&.admin? ? Experience : Experience.approved
+
+    if query.present?
+      # Use vector similarity search with fallback to LIKE search
+      search_results = ExperienceSearchService.search(
+        query,
+        scope: scope,
+        limit: 100,
+        use_vector_search: true
+      )
+
+      # Extract experiences from search results
+      @experiences = search_results.map { |result| result[:experience] }
+
+      # Store search metadata for potential display
+      @search_metadata = {
+        total_results: search_results.length,
+        search_type: search_results.first&.dig(:search_type) || :none,
+        query: query
+      }
+    else
+      # No query - show recent experiences
+      @experiences = scope.order(created_at: :desc).limit(20)
+      @search_metadata = { total_results: @experiences.length, search_type: :recent }
+    end
 
     # Handle conditional requests for all search results
     # Handle conditional requests (skip in development to avoid masking errors)

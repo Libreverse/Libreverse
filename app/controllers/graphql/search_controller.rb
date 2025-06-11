@@ -20,9 +20,17 @@ module Graphql
       if query.present?
         # Limit query length and sanitize
         query = query.to_s.strip[0...50]
-        scope.where("title LIKE ?", "%#{ActiveRecord::Base.sanitize_sql_like(query)}%")
-             .order(created_at: :desc)
-             .limit(limit)
+
+        # Use vector similarity search with fallback to LIKE search
+        search_results = ExperienceSearchService.search(
+          query,
+          scope: scope,
+          limit: limit,
+          use_vector_search: true
+        )
+
+        # Extract experiences from search results
+        search_results.map { |result| result[:experience] }
       else
         scope.order(created_at: :desc).limit(limit)
       end

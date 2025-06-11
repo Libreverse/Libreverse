@@ -11,7 +11,7 @@ admin_account = Account.find_by(admin: true)
 
 if admin_account.nil?
   puts "⚠️  No admin account found. Creating one..."
-  
+
   # Create an admin account (bypassing validations for username)
   admin_account = Account.new(
     username: "admin_demo",
@@ -19,7 +19,7 @@ if admin_account.nil?
     admin: true,
     guest: false
   )
-  
+
   # Save without validations to avoid moderation issues with demo data
   admin_account.save!(validate: false)
   puts "✅ Created admin account: #{admin_account.username} (ID: #{admin_account.id})"
@@ -101,7 +101,7 @@ sample_html_files = [
                   <button class="choice-btn" onclick="updateStory('stream')">Follow the sound of a babbling stream</button>
               </div>
           </div>
-          
+      #{'    '}
           <script>
               function updateStory(choice) {
                   const storyElement = document.getElementById('story');
@@ -189,7 +189,7 @@ sample_html_files = [
                   </div>
               </div>
           </div>
-          
+      #{'    '}
           <script>
               // Create twinkling stars
               function createStars() {
@@ -205,7 +205,7 @@ sample_html_files = [
                       starsContainer.appendChild(star);
                   }
               }
-              
+      #{'        '}
               createStars();
           </script>
       </body>
@@ -240,12 +240,12 @@ sample_html_files = [
               <button class="btn" onclick="changeMode()">Change Mode</button>
               <button class="btn" onclick="randomize()">Randomize</button>
           </div>
-          
+      #{'    '}
           <script>
               let isPlaying = false;
               let animationId;
               let mode = 0;
-              
+      #{'        '}
               function createBars() {
                   const visualizer = document.getElementById('visualizer');
                   visualizer.innerHTML = '';
@@ -257,7 +257,7 @@ sample_html_files = [
                       visualizer.appendChild(bar);
                   }
               }
-              
+      #{'        '}
               function animateBars() {
                   const bars = document.querySelectorAll('.bar');
                   bars.forEach((bar, index) => {
@@ -275,12 +275,12 @@ sample_html_files = [
                       }
                       bar.style.height = height + 'px';
                   });
-                  
+      #{'            '}
                   if (isPlaying) {
                       animationId = requestAnimationFrame(animateBars);
                   }
               }
-              
+      #{'        '}
               function startVisualization() {
                   isPlaying = !isPlaying;
                   if (isPlaying) {
@@ -291,13 +291,13 @@ sample_html_files = [
                       event.target.textContent = 'Start Visualization';
                   }
               }
-              
+      #{'        '}
               function changeMode() {
                   mode = (mode + 1) % 3;
                   const modes = ['Wave', 'Random', 'Pulse'];
                   event.target.textContent = 'Mode: ' + modes[mode];
               }
-              
+      #{'        '}
               function randomize() {
                   const bars = document.querySelectorAll('.bar');
                   bars.forEach(bar => {
@@ -305,7 +305,7 @@ sample_html_files = [
                       bar.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
                   });
               }
-              
+      #{'        '}
               createBars();
           </script>
       </body>
@@ -350,13 +350,13 @@ sample_html_files = [
                   <button class="garden-btn" onclick="makeItRain()">🌧️ Rain</button>
               </div>
           </div>
-          
+      #{'    '}
           <script>
               let flowerCount = 0;
               let cloudCount = 3;
-              
+      #{'        '}
               const flowers = ['🌸', '🌺', '🌻', '🌷', '🌹', '💐', '🌼'];
-              
+      #{'        '}
               function plantFlower() {
                   const garden = document.getElementById('garden');
                   const flower = document.createElement('div');
@@ -368,12 +368,12 @@ sample_html_files = [
                   flower.onclick = function() { this.remove(); updateFlowerCount(-1); };
                   garden.appendChild(flower);
                   updateFlowerCount(1);
-                  
+      #{'            '}
                   // Grow animation
                   flower.style.transform = 'scale(0)';
                   setTimeout(() => { flower.style.transform = 'scale(1)'; }, 10);
               }
-              
+      #{'        '}
               function addCloud() {
                   const garden = document.getElementById('garden');
                   const cloud = document.createElement('div');
@@ -384,18 +384,18 @@ sample_html_files = [
                   cloud.style.left = '-100px';
                   cloud.style.animationDuration = (Math.random() * 10 + 15) + 's';
                   garden.appendChild(cloud);
-                  
+      #{'            '}
                   setTimeout(() => cloud.remove(), 25000);
                   updateCloudCount(1);
               }
-              
+      #{'        '}
               function clearGarden() {
                   const flowers = document.querySelectorAll('.flower');
                   flowers.forEach(flower => flower.remove());
                   flowerCount = 0;
                   document.getElementById('flower-count').textContent = flowerCount;
               }
-              
+      #{'        '}
               function makeItRain() {
                   const garden = document.getElementById('garden');
                   for (let i = 0; i < 20; i++) {
@@ -409,27 +409,27 @@ sample_html_files = [
                           raindrop.style.animation = 'fall 2s linear';
                           raindrop.style.pointerEvents = 'none';
                           garden.appendChild(raindrop);
-                          
+      #{'                    '}
                           setTimeout(() => raindrop.remove(), 2000);
                       }, i * 100);
                   }
               }
-              
+      #{'        '}
               function updateFlowerCount(delta) {
                   flowerCount += delta;
                   document.getElementById('flower-count').textContent = flowerCount;
               }
-              
+      #{'        '}
               function updateCloudCount(delta) {
                   cloudCount += delta;
                   document.getElementById('cloud-count').textContent = cloudCount;
               }
-              
+      #{'        '}
               // Initialize with some clouds
               for (let i = 0; i < 3; i++) {
                   setTimeout(addCloud, i * 2000);
               }
-              
+      #{'        '}
               // Add CSS for falling animation
               const style = document.createElement('style');
               style.textContent = `
@@ -529,14 +529,14 @@ experiences_data = [
                     <button class="control-btn" onclick="shoot()">🔥 FIRE</button>
                 </div>
             </div>
-            
+        #{'    '}
             <script>
                 let gameStarted = false;
                 let score = 0;
                 let playerPos = 50;
                 let enemies = [];
                 let bullets = [];
-                
+        #{'        '}
                 function startGame() {
                     gameStarted = true;
                     document.getElementById('title').style.display = 'none';
@@ -544,19 +544,19 @@ experiences_data = [
                     document.getElementById('player').style.display = 'block';
                     spawnEnemies();
                 }
-                
+        #{'        '}
                 function moveLeft() {
                     if (!gameStarted) return;
                     playerPos = Math.max(5, playerPos - 10);
                     document.getElementById('player').style.left = playerPos + '%';
                 }
-                
+        #{'        '}
                 function moveRight() {
                     if (!gameStarted) return;
                     playerPos = Math.min(95, playerPos + 10);
                     document.getElementById('player').style.left = playerPos + '%';
                 }
-                
+        #{'        '}
                 function shoot() {
                     if (!gameStarted) return;
                     const bullet = document.createElement('div');
@@ -567,47 +567,47 @@ experiences_data = [
                     bullet.style.left = playerPos + '%';
                     bullet.style.bottom = '90px';
                     document.getElementById('gameArea').appendChild(bullet);
-                    
+        #{'            '}
                     bullets.push({ element: bullet, x: playerPos, y: 90 });
                     moveBullets();
                 }
-                
+        #{'        '}
                 function spawnEnemies() {
                     if (!gameStarted) return;
-                    
+        #{'            '}
                     const enemy = document.createElement('div');
                     enemy.className = 'enemy';
                     enemy.innerHTML = '👾';
                     enemy.style.left = Math.random() * 90 + '%';
                     enemy.style.top = '0px';
                     document.getElementById('gameArea').appendChild(enemy);
-                    
+        #{'            '}
                     enemies.push({ element: enemy, x: Math.random() * 90, y: 0 });
-                    
+        #{'            '}
                     setTimeout(spawnEnemies, 2000);
                 }
-                
+        #{'        '}
                 function moveBullets() {
                     bullets.forEach((bullet, index) => {
                         bullet.y += 10;
                         bullet.element.style.bottom = bullet.y + 'px';
-                        
+        #{'                '}
                         if (bullet.y > window.innerHeight) {
                             bullet.element.remove();
                             bullets.splice(index, 1);
                         }
                     });
-                    
+        #{'            '}
                     if (bullets.length > 0) {
                         setTimeout(moveBullets, 100);
                     }
                 }
-                
+        #{'        '}
                 function updateScore() {
                     score += 10;
                     document.getElementById('score').textContent = 'SCORE: ' + score;
                 }
-                
+        #{'        '}
                 // Keyboard controls
                 document.addEventListener('keydown', function(e) {
                     switch(e.key) {
@@ -668,29 +668,29 @@ experiences_data = [
                 <div class="quote" id="quote">
                     "Peace comes from within. Do not seek it without." - Buddha
                 </div>
-                
+        #{'        '}
                 <div class="breathing-circle" id="breathingCircle">
                     <div class="inner-circle">
                         <span id="breathingGuidance">🌸</span>
                     </div>
                 </div>
-                
+        #{'        '}
                 <div class="breathing-text" id="breathingText">
                     Click "Start Breathing" to begin your meditation journey
                 </div>
-                
+        #{'        '}
                 <div class="meditation-controls">
                     <button class="med-btn" onclick="startBreathing()">Start Breathing</button>
                     <button class="med-btn" onclick="changeQuote()">New Quote</button>
                     <button class="med-btn" onclick="toggleAmbience()">Ambient Mode</button>
                 </div>
             </div>
-            
+        #{'    '}
             <script>
                 let breathingActive = false;
                 let breathingCycle = 0;
                 let ambienceMode = false;
-                
+        #{'        '}
                 const quotes = [
                     "Peace comes from within. Do not seek it without. - Buddha",
                     "The present moment is the only time over which we have dominion. - Thích Nhất Hạnh",
@@ -699,11 +699,11 @@ experiences_data = [
                     "The thing about meditation is: You become more and more you. - David Lynch",
                     "In the midst of movement and chaos, keep stillness inside of you. - Deepak Chopra"
                 ];
-                
+        #{'        '}
                 function startBreathing() {
                     breathingActive = !breathingActive;
                     const button = event.target;
-                    
+        #{'            '}
                     if (breathingActive) {
                         button.textContent = 'Stop Breathing';
                         breathe();
@@ -712,14 +712,14 @@ experiences_data = [
                         document.getElementById('breathingText').textContent = 'Breathing exercise stopped. Take a moment to notice how you feel.';
                     }
                 }
-                
+        #{'        '}
                 function breathe() {
                     if (!breathingActive) return;
-                    
+        #{'            '}
                     const circle = document.getElementById('breathingCircle');
                     const text = document.getElementById('breathingText');
                     const guidance = document.getElementById('breathingGuidance');
-                    
+        #{'            '}
                     if (breathingCycle % 2 === 0) {
                         // Inhale
                         circle.classList.add('inhale');
@@ -744,7 +744,7 @@ experiences_data = [
                         }, 4000);
                     }
                 }
-                
+        #{'        '}
                 function changeQuote() {
                     const quoteElement = document.getElementById('quote');
                     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -754,11 +754,11 @@ experiences_data = [
                         quoteElement.style.opacity = '1';
                     }, 300);
                 }
-                
+        #{'        '}
                 function toggleAmbience() {
                     ambienceMode = !ambienceMode;
                     const button = event.target;
-                    
+        #{'            '}
                     if (ambienceMode) {
                         button.textContent = 'Stop Ambience';
                         createParticles();
@@ -769,10 +769,10 @@ experiences_data = [
                         document.body.style.background = 'radial-gradient(circle, #2c3e50 0%, #1a252f 70%)';
                     }
                 }
-                
+        #{'        '}
                 function createParticles() {
                     if (!ambienceMode) return;
-                    
+        #{'            '}
                     const container = document.getElementById('particles');
                     const particle = document.createElement('div');
                     particle.className = 'particle';
@@ -781,14 +781,14 @@ experiences_data = [
                     particle.style.height = particle.style.width;
                     particle.style.animationDelay = Math.random() * 5 + 's';
                     container.appendChild(particle);
-                    
+        #{'            '}
                     setTimeout(() => particle.remove(), 20000);
-                    
+        #{'            '}
                     if (ambienceMode) {
                         setTimeout(createParticles, 2000);
                     }
                 }
-                
+        #{'        '}
                 // Initialize with some particles
                 for (let i = 0; i < 10; i++) {
                     setTimeout(createParticles, i * 1000);
@@ -806,9 +806,12 @@ puts "\n🌱 Creating experiences..."
 created_count = 0
 failed_count = 0
 
-experiences_data.each_with_index do |exp_data, index|
+# Use while loop instead of each_with_index for better performance
+index = 0
+while index < experiences_data.length
+  exp_data = experiences_data[index]
   puts "\n📝 Creating: '#{exp_data[:title]}'..."
-  
+
   begin
     # Create the experience
     experience = Experience.new(
@@ -818,23 +821,23 @@ experiences_data.each_with_index do |exp_data, index|
       account: admin_account,
       approved: true # Auto-approve since it's created by admin
     )
-    
+
     # Create and attach the HTML file
     html_content = exp_data[:html_file_data][:content]
     filename = exp_data[:html_file_data][:filename]
-    
+
     # Create a temporary file
-    temp_file = Tempfile.new([filename.gsub('.html', ''), '.html'])
+    temp_file = Tempfile.new([ filename.gsub('.html', ''), '.html' ])
     temp_file.write(html_content)
     temp_file.rewind
-    
+
     # Attach the file
     experience.html_file.attach(
       io: temp_file,
       filename: filename,
       content_type: 'text/html'
     )
-    
+
     # Save the experience (skip validations to bypass moderation for demo data)
     if experience.save(validate: false)
       puts "   ✅ Successfully created '#{experience.title}' (ID: #{experience.id})"
@@ -843,20 +846,20 @@ experiences_data.each_with_index do |exp_data, index|
       puts "   ❌ Failed to create '#{exp_data[:title]}': #{experience.errors.full_messages.join(', ')}"
       failed_count += 1
     end
-    
+
     temp_file.close
     temp_file.unlink
-    
-  rescue => e
+  rescue StandardError => e
     puts "   ❌ Error creating '#{exp_data[:title]}': #{e.message}"
     failed_count += 1
   end
-  
+
   # Small delay between creations
   sleep(0.1)
+  index += 1
 end
 
-puts "\n" + "="*60
+puts "\n#{'=' * 60}"
 puts "🎯 Experience Creation Summary:"
 puts "   ✅ Successfully created: #{created_count} experiences"
 puts "   ❌ Failed to create: #{failed_count} experiences"
@@ -864,7 +867,7 @@ puts "   📊 Total experiences in database: #{Experience.count}"
 puts "   🎉 Approved experiences: #{Experience.approved.count}"
 puts "   ⏳ Pending approval: #{Experience.pending_approval.count}"
 
-if created_count > 0
+if created_count.positive?
   puts "\n🚀 Great! You now have example experiences to explore."
   puts "   💡 Visit the experiences page to see them in action!"
   puts "   🔗 Or use the API to interact with them programmatically."

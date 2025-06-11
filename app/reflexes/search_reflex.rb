@@ -10,12 +10,20 @@ class SearchReflex < ApplicationReflex
 
       @experiences = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
         log_debug "[SearchReflex#perform] Cache miss for query: '#{query}', fetching from database"
+
         if query.present?
-          Experience.where("title LIKE ?", "%#{sanitize_sql_like(query)}%")
-                    .order(created_at: :desc)
-                    .limit(100)
+          # Use vector similarity search with fallback to LIKE search
+          search_results = ExperienceSearchService.search(
+            query,
+            scope: Experience.approved,
+            limit: 100,
+            use_vector_search: true
+          )
+
+          # Extract experiences from search results
+          search_results.map { |result| result[:experience] }
         else
-          Experience.order(created_at: :desc).limit(20)
+          Experience.approved.order(created_at: :desc).limit(20)
         end
       end
 

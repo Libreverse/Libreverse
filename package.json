@@ -9,9 +9,8 @@
         "@rails/request.js": "^0.0.12",
         "@sxwjs/sxwjs": "^4.0.0",
         "cable_ready": "5.0.6",
-        "hotkeys-js": "^3.13.10",
+        "hotkeys-js": "^3.13.11",
         "locomotive-scroll": "^4.1.4",
-        "postcss-url": "^10.1.3",
         "stimulus-use": "^0.52.3",
         "stimulus-vite-helpers": "^3.1.0",
         "stimulus_reflex": "3.5.3",
@@ -27,7 +26,7 @@
         "cssnano-preset-advanced": "^7.0.7",
         "eslint": "^9.28.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-jest": "^28.13.0",
+        "eslint-plugin-jest": "^28.13.3",
         "eslint-plugin-unicorn": "^56.0.1",
         "globals": "^15.15.0",
         "husky": "^9.1.7",
@@ -36,23 +35,24 @@
         "jsdom": "^26.1.0",
         "markdownlint-cli2": "^0.16.0",
         "normalise.scss": "^1.0.1",
-        "postcss": "^8.5.4",
+        "postcss": "^8.5.5",
         "postcss-cli": "^11.0.1",
         "postcss-flexbugs-fixes": "^5.0.2",
         "postcss-inline-rtl": "^0.9.8",
-        "postcss-preset-env": "^10.2.1",
+        "postcss-preset-env": "^10.2.3",
         "prettier": "^3.5.3",
         "prettier-plugin-sh": "^0.14.0",
         "sass-embedded": "1.89.0",
         "stylelint": "^16.20.0",
         "stylelint-config-standard-scss": "^14.0.0",
-        "terser": "^5.41.0",
+        "terser": "^5.42.0",
         "vite": "^6.3.5",
         "vite-plugin-coffee": "^2.2.1",
         "vite-plugin-compression": "^0.5.1",
         "vite-plugin-full-reload": "^1.2.0",
         "vite-plugin-ruby": "^5.1.1",
-        "vite-plugin-stimulus-hmr": "^3.0.0"
+        "vite-plugin-stimulus-hmr": "^3.0.0",
+        "postcss-url": "^10.1.3"
     },
     "trustedDependencies": [
         "@parcel/watcher",
@@ -62,7 +62,7 @@
     ],
     "packageManager": "bun@1.1.36",
     "overrides": {
-        "postcss": "^8.5.4"
+        "postcss": "^8.5.5"
     },
     "scripts": {
         "build": "vite build --outDir public",
