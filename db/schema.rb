@@ -118,18 +118,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_150302) do
     t.binary "rowids", null: false
   end
 
-# Could not dump table "experiences_vec_info" because of following StandardError
-#   Unknown type 'ANY' for column 'value'
-
-
-# Could not dump table "experiences_vec_rowids" because of following StandardError
-#   Unknown type '' for column 'id'
-
-
-# Could not dump table "experiences_vec_vector_chunks00" because of following StandardError
-#   Unknown type '' for column 'rowid'
-
-
   create_table "instance_settings", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -290,10 +278,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_150302) do
     t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
-
-# Could not dump table "sqlite_stat1" because of following StandardError
-#   Unknown type '' for column 'tbl'
-
 
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
