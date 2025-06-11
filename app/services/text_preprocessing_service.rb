@@ -3,11 +3,11 @@
 class TextPreprocessingService
   # Common English stop words
   STOP_WORDS = %w[
-    a an and are as at be by for from has he in is it its of on that the to was will with
-    the this that these those am is are was were been being have has had do does did
-    can could should would may might must shall will going get got getting gets
-    i me my myself we our ours ourselves you your yours yourself yourselves
-    he him his himself she her hers herself it its itself they them their theirs themselves
+    a am an and are as at be been being by can could did do does for from get gets getting
+    got going had has have he her hers herself him himself his i in is it its itself
+    may me might must my myself of on our ours ourselves shall she should that the
+    their theirs them themselves these they this those to was were will with would
+    you your yours yourself yourselves
   ].to_set.freeze
 
   # Punctuation and special characters to remove
