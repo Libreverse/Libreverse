@@ -10,18 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_11_150302) do
   create_table "account_login_change_keys", force: :cascade do |t|
     t.string "key", null: false
     t.string "login", null: false
     t.datetime "deadline", null: false
     t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_login_change_keys_key_format"
-    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_login_change_keys_key_format"
-    t.check_constraint "(login LIKE 'AA__A%' OR login LIKE 'Ag__A%' OR login LIKE 'AQ__A%')", name: "account_login_change_keys_login_format"
     t.check_constraint "(login LIKE 'AA__A%' OR login LIKE 'Ag__A%' OR login LIKE 'AQ__A%')", name: "account_login_change_keys_login_format"
     t.check_constraint "LENGTH(key) >= 88", name: "account_login_change_keys_key_length"
-    t.check_constraint "LENGTH(key) >= 88", name: "account_login_change_keys_key_length"
-    t.check_constraint "LENGTH(login) >= 88", name: "account_login_change_keys_login_length"
     t.check_constraint "LENGTH(login) >= 88", name: "account_login_change_keys_login_length"
   end
 
@@ -29,15 +25,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.string "key", null: false
     t.datetime "deadline", null: false
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_password_reset_keys_key_format"
-    t.check_constraint "LENGTH(key) >= 88", name: "account_password_reset_keys_key_length"
   end
 
   create_table "account_remember_keys", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "deadline", null: false
-    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_remember_keys_key_format"
-    t.check_constraint "LENGTH(key) >= 88", name: "account_remember_keys_key_length"
   end
 
   create_table "account_verification_keys", force: :cascade do |t|
@@ -45,8 +37,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.datetime "requested_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_verification_keys_key_format"
-    t.check_constraint "(key LIKE 'AA__A%' OR key LIKE 'Ag__A%' OR key LIKE 'AQ__A%')", name: "account_verification_keys_key_format"
-    t.check_constraint "LENGTH(key) >= 88", name: "account_verification_keys_key_length"
     t.check_constraint "LENGTH(key) >= 88", name: "account_verification_keys_key_length"
   end
 
@@ -62,7 +52,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.index ["admin"], name: "index_accounts_on_admin"
     t.index ["username"], name: "index_accounts_on_username", unique: true
     t.check_constraint "(password_hash LIKE '$argon2id$%' OR password_hash LIKE '$argon2i$%' OR password_hash LIKE '$argon2d$%')", name: "accounts_password_hash_format"
-    t.check_constraint "LENGTH(password_hash) >= 88", name: "accounts_password_hash_length"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -93,6 +82,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "experience_vectors", force: :cascade do |t|
+    t.integer "experience_id", null: false
+    t.text "vector_data", null: false
+    t.string "vector_hash", null: false
+    t.datetime "generated_at", null: false
+    t.integer "version", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["experience_id"], name: "index_experience_vectors_on_experience_id", unique: true
+    t.index ["generated_at"], name: "index_experience_vectors_on_generated_at"
+    t.index ["vector_hash", "experience_id"], name: "index_experience_vectors_on_vector_hash_and_experience_id", unique: true
+    t.index ["vector_hash"], name: "index_experience_vectors_on_vector_hash"
+  end
+
   create_table "experiences", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -101,10 +104,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.string "author"
     t.integer "account_id", null: false
     t.boolean "approved", default: false, null: false
+    t.text "embedding"
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
     t.index ["approved"], name: "index_experiences_on_approved"
+    t.index ["description"], name: "index_experiences_on_description_text"
+    t.index ["title"], name: "index_experiences_on_title_text"
   end
+
+  create_table "experiences_vec_chunks", primary_key: "chunk_id", force: :cascade do |t|
+    t.integer "size", null: false
+    t.binary "validity", null: false
+    t.binary "rowids", null: false
+  end
+
+# Could not dump table "experiences_vec_info" because of following StandardError
+#   Unknown type 'ANY' for column 'value'
+
+
+# Could not dump table "experiences_vec_rowids" because of following StandardError
+#   Unknown type '' for column 'id'
+
+
+# Could not dump table "experiences_vec_vector_chunks00" because of following StandardError
+#   Unknown type '' for column 'rowid'
+
 
   create_table "instance_settings", force: :cascade do |t|
     t.string "key", null: false
@@ -125,15 +149,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_moderation_logs_on_account_id"
-  end
-
-  create_table "sessions", force: :cascade do |t|
-    t.string "session_id", null: false
-    t.text "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
-    t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
@@ -276,6 +291,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+# Could not dump table "sqlite_stat1" because of following StandardError
+#   Unknown type '' for column 'tbl'
+
+
   create_table "user_preferences", force: :cascade do |t|
     t.integer "account_id", null: false
     t.string "key", null: false
@@ -293,6 +312,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_175828) do
   add_foreign_key "account_verification_keys", "accounts", column: "id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "experience_vectors", "experiences"
   add_foreign_key "experiences", "accounts"
   add_foreign_key "moderation_logs", "accounts"
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

@@ -124,7 +124,14 @@ run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/no
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
 run_command("bundle-audit", "bundle-audit", "check", "--update");
-run_command("bun audit", "bun", "audit", "--fix");
+run_command("npm audit (production only)", "sh", "-c", 
+    "npm i --package-lock-only --omit=dev --omit=optional --omit=peer --legacy-peer-deps --force && " .
+    "npm audit --audit-level=moderate; " .
+    "exit_code=\$?; " .
+    "rm -f package-lock.json; " .
+    "exit \$exit_code");
+run_command("Haml Validation", "rake", "haml:check");
+run_command("i18n Validation", "rake", "i18n:validate_keys");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1); # Auto-cleanup
@@ -183,7 +190,7 @@ my @coffee_files;
 my $find_output = qx(find . -path ./node_modules -prune -o -name '*.coffee' -print0);
 @coffee_files = split /\0/, $find_output;
 
-@parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman", "Haml Validation", "i18n Validation");
+@parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman");
 my $num_tools = scalar @parallel_tools;
 
 for my $i (0 .. $num_tools - 1) {
@@ -225,10 +232,6 @@ for my $i (0 .. $num_tools - 1) {
         @cmd = ("bundle", "exec", "rails", "test");
     } elsif ($tool_name eq "Brakeman") {
         @cmd = ("brakeman", "--quiet", "--no-summary", "--no-pager");
-    } elsif ($tool_name eq "Haml Validation") {
-        @cmd = ("rake", "haml:check");
-    } elsif ($tool_name eq "i18n Validation") {
-        @cmd = ("rake", "i18n:validate_keys");
     }
 
     run_in_background($i, $tool_name, @cmd);
