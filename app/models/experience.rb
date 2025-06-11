@@ -66,7 +66,8 @@ class Experience < ApplicationRecord
 
   # Check if this experience needs vectorization
   def needs_vectorization?
-    return false unless approved?
+    # Vectorize ALL experiences, regardless of approval status
+    # This allows for better search and admin/moderator functionality
 
     # No vector exists
     return true unless experience_vector
@@ -156,15 +157,20 @@ class Experience < ApplicationRecord
 
   # Determine if this experience should be vectorized
   def should_vectorize?
-    # Only vectorize approved experiences
-    approved? &&
-      # Only if content has changed or no vector exists
-      (saved_change_to_title? || saved_change_to_description? || saved_change_to_author? || !experience_vector)
+    # Vectorize ALL experiences for comprehensive search functionality
+    # Content has changed or no vector exists
+    saved_change_to_title? || saved_change_to_description? || saved_change_to_author? || !experience_vector
   end
 
   # Schedule vectorization job
   def schedule_vectorization
-    VectorizeExperienceJob.perform_later(id)
+    if Rails.env.development?
+      # Run synchronously in development for immediate vector search
+      VectorizeExperienceJob.perform_now(id)
+    else
+      # Run asynchronously in production
+      VectorizeExperienceJob.perform_later(id)
+    end
   rescue StandardError => e
     Rails.logger.error "Failed to schedule vectorization for experience #{id}: #{e.message}"
   end
