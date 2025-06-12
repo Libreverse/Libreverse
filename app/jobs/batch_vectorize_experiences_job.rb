@@ -4,7 +4,7 @@ class BatchVectorizeExperiencesJob < ApplicationJob
   queue_as :default
 
   # This job may take a while for large numbers of experiences
-  retry_on StandardError, wait: :exponentially_longer, attempts: 2
+  retry_on StandardError, wait: 5.seconds, attempts: 2
 
   def perform(batch_size: 50, force_regeneration: false, approved_only: false)
     Rails.logger.info "[BatchVectorizeExperiencesJob] Starting batch vectorization"

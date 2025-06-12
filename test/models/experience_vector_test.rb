@@ -75,7 +75,8 @@ class ExperienceVectorTest < ActiveSupport::TestCase
       experience: @experience,
       vector_data: @vector_data,
       vector_hash: @content_hash,
-      generated_at: Time.current
+      generated_at: Time.current,
+      version: nil
     )
 
     assert_not vector.valid?
@@ -285,15 +286,15 @@ class ExperienceVectorTest < ActiveSupport::TestCase
   end
 
   test "handles experience with missing content in regeneration check" do
-    # Create experience with nil/empty content
+    # Create experience with minimal content
     empty_experience = Experience.create!(
-      title: nil,
+      title: "Empty",
       description: "",
       author: nil,
       account: accounts(:one)
     )
 
-    hash = ExperienceVector.generate_content_hash(nil, "", nil)
+    hash = ExperienceVector.generate_content_hash("Empty", "", nil)
 
     vector = ExperienceVector.create!(
       experience: empty_experience,

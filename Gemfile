@@ -8,6 +8,7 @@ gem "activerecord-enhancedsqlite3-adapter"
 gem "active_storage_validations"
 gem "argon2"
 gem "bootsnap"
+gem "graphql_rails"
 gem "haml", "~> 5.2"
 gem "haml-rails"
 gem "invisible_captcha"
@@ -47,9 +48,6 @@ gem "vite_plugin_legacy"
 gem "vite_rails"
 gem "voight_kampff"
 gem "zstd-ruby"
-
-# GraphQL API
-gem "graphql_rails"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
