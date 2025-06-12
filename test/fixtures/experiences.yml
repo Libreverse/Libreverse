@@ -4,8 +4,10 @@ one:
     title: First Experience
     description: This is the first test experience
     account: one
+    approved: true
 
 two:
     title: Second Experience
     description: This is the second test experience
     account: two
+    approved: true

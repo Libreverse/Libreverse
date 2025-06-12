@@ -8,6 +8,8 @@ class VectorSearchIntegrationTest < ActionDispatch::IntegrationTest
     Experience.delete_all
     ExperienceVector.delete_all
     Rails.cache.clear
+    @original_moderation_setting = InstanceSetting.get("automoderation_enabled")
+    InstanceSetting.set("automoderation_enabled", "false", "Temporarily disable moderation for tests")
 
     # Create test experiences
     @ml_experience = Experience.create!(
@@ -301,5 +303,8 @@ class VectorSearchIntegrationTest < ActionDispatch::IntegrationTest
     Experience.delete_all
     ExperienceVector.delete_all
     Rails.cache.clear
+        
+    # Restore original moderation setting
+    InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end
 end

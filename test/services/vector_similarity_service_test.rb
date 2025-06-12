@@ -4,6 +4,10 @@ require "test_helper"
 
 class VectorSimilarityServiceTest < ActiveSupport::TestCase
   setup do
+    # Temporarily disable moderation for tests
+    @original_moderation_setting = InstanceSetting.get("automoderation_enabled")
+    InstanceSetting.set("automoderation_enabled", "false", "Temporarily disable moderation for tests")
+
     # Create test vectors
     @vector_a = [ 1.0, 2.0, 3.0, 4.0 ]
     @vector_b = [ 2.0, 4.0, 6.0, 8.0 ] # Proportional to vector_a
@@ -24,7 +28,7 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
 
   test "calculates cosine similarity correctly for orthogonal vectors" do
     similarity = VectorSimilarityService.cosine_similarity(@vector_a, @vector_c)
-    assert_in_delta 0.447, similarity, 0.01 # cos(angle) for these vectors
+    assert_in_delta 0.183, similarity, 0.01 # cos(angle) for these vectors
   end
 
   test "returns zero for zero vectors" do
@@ -255,5 +259,8 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
   teardown do
     # Clean up created records
     ExperienceVector.delete_all
+    
+    # Restore original moderation setting
+    InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end
 end

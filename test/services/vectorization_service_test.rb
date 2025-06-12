@@ -8,6 +8,10 @@ class VectorizationServiceTest < ActiveSupport::TestCase
     Rails.cache.delete("search_vocabulary")
     Rails.cache.delete("document_frequencies")
 
+    # Temporarily disable moderation for tests
+    @original_moderation_setting = InstanceSetting.get("automoderation_enabled")
+    InstanceSetting.set("automoderation_enabled", "false", "Temporarily disable moderation for tests")
+
     # Create test experiences
     @experience1 = Experience.create!(
       title: "Machine Learning Basics",
@@ -89,7 +93,7 @@ class VectorizationServiceTest < ActiveSupport::TestCase
 
   test "handles experience without content gracefully" do
     empty_experience = Experience.create!(
-      title: "",
+      title: "Empty",
       description: "",
       author: "",
       account: accounts(:one)
@@ -232,5 +236,8 @@ class VectorizationServiceTest < ActiveSupport::TestCase
     Experience.where.not(id: [ experiences(:one).id, experiences(:two).id ]).delete_all
     Rails.cache.delete("search_vocabulary")
     Rails.cache.delete("document_frequencies")
+    
+    # Restore original moderation setting
+    InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end
 end

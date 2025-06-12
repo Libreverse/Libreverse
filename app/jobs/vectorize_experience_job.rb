@@ -4,7 +4,7 @@ class VectorizeExperienceJob < ApplicationJob
   queue_as :default
 
   # Retry configuration
-  retry_on StandardError, wait: :exponentially_longer, attempts: 3
+  retry_on StandardError, wait: 5.seconds, attempts: 3
 
   def perform(experience_id, force_regeneration: false)
     experience = Experience.find_by(id: experience_id)
