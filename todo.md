@@ -1,10 +1,9 @@
 # Todo List
 
-1. □ **Fix bugged search**
-2. □ **Imprint for EU**
-3. □ **Add experience federation through custom activitypub fields**
-4. ✅ **Add example experiences through Rails runner** - COMPLETED!
-5. □ **Implement federated authentication for metaverse instances**
+1. □ **Imprint for EU**
+2. □ **Add experience federation through custom activitypub fields**
+3. ✅ **Add example experiences through Rails runner** - COMPLETED!
+4. □ **Implement federated authentication for metaverse instances**
 
     - □ **Set up each instance as an OIDC provider using `rodauth-oauth`**
         - □ Add `gem 'rodauth-oauth'` to the Gemfile

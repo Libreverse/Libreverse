@@ -82,5 +82,8 @@ module LibreverseInstance
     # I18n configuration
     config.i18n.default_locale = :en
     config.i18n.available_locales = %i[en zh es hi ar pt fr ru de ja]
+
+    # I prefer this. It's just nicer, somehow.
+    config.active_record.schema_format = :sql
   end
 end
