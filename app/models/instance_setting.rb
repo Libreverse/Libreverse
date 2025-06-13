@@ -27,6 +27,7 @@ class InstanceSetting < ApplicationRecord
     no_bots_mode
     automoderation_enabled
     eea_mode_enabled
+    federation_description_limit
   ].freeze
 
   validate :key_must_be_allowed
@@ -100,7 +101,8 @@ class InstanceSetting < ApplicationRecord
       "preferred_languages" => "en",
       "no_bots_mode" => "false",
       "automoderation_enabled" => "true",
-      "eea_mode_enabled" => "true"
+      "eea_mode_enabled" => "true",
+      "federation_description_limit" => "300"
     }
 
     defaults.each do |key, default_value|

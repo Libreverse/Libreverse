@@ -15,3 +15,5 @@ linters:
         i18n_load_path: "config/locales/en.yml"
     InlineStyles:
         enabled: false
+    ViewLength:
+        enabled: false

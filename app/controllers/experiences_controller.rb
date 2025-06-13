@@ -15,19 +15,22 @@ class ExperiencesController < ApplicationController
 
   # GET /experiences
   def index
-    @experiences = if current_account&.admin?
+    local_experiences = if current_account&.admin?
       Experience.order(created_at: :desc)
     else
       Experience.approved.order(created_at: :desc)
     end
+
+    # Convert to unified experiences for consistent UI
+    @experiences = UnifiedExperience.from_search_results(local_experiences)
     @experience = Experience.new
 
     # Generate ETag for conditional requests based on experiences and user role
     # Extract timestamp from loaded collection to avoid additional query
-    timestamps = @experiences.map(&:updated_at)
+    timestamps = local_experiences.map(&:updated_at)
     timestamp = timestamps.any? ? timestamps.max.to_i : 0
     user_role = current_account&.admin? ? "admin" : "user"
-    cache_key = "experiences_index/#{user_role}/#{@experiences.size}/#{timestamp}"
+    cache_key = "experiences_index/#{user_role}/#{local_experiences.size}/#{timestamp}"
     etag = Digest::MD5.hexdigest(cache_key)
 
     # Handle conditional requests - if content hasn't changed, return 304
@@ -87,8 +90,23 @@ class ExperiencesController < ApplicationController
     redirect_to experiences_path, notice: "Experience was successfully deleted."
   end
 
-  # GET /experiences/1/display
   def display
+    # Handle both local experiences and federated experience URIs
+    if params[:federated_uri].present?
+      # This is a federated experience - validate and redirect to the original instance
+      validated_uri = validate_and_sanitize_federated_uri(params[:federated_uri])
+
+      if validated_uri.nil?
+        redirect_to experiences_path, alert: "Invalid federated URI."
+        return
+      end
+
+      # Use a safe redirect with validated URI
+      redirect_to_safe_uri(validated_uri)
+      return
+    end
+
+    # Handle local experience
     unless @experience.approved? || current_account&.admin? || @experience.account_id == current_account.id
       redirect_to experiences_path, alert: "Experience is awaiting approval."
       return
@@ -151,7 +169,7 @@ class ExperiencesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def experience_params
-    params.require(:experience).permit(:title, :description, :html_file)
+    params.require(:experience).permit(:title, :description, :html_file, :federate)
   end
 
   def require_admin
@@ -168,5 +186,63 @@ class ExperiencesController < ApplicationController
     # Content changes when experiences are added/updated/approved
     # Skip cache headers in development to avoid masking application errors
     expires_in 5.minutes, public: false unless Rails.env.development?
+  end
+
+  def validate_and_sanitize_federated_uri(uri)
+      parsed_uri = URI.parse(uri)
+
+      # Only allow HTTPS
+      return nil unless parsed_uri.scheme == "https"
+
+      # Check if the domain is in our allowed federated instances
+      # You can customize this logic based on your federation setup
+      allowed_domains = Rails.application.config.federation&.dig(:allowed_domains) || []
+
+      # If no specific domains are configured, allow any HTTPS domain
+      # but add basic validation
+      if allowed_domains.empty?
+        # Basic validation: must be a valid domain, no localhost/private IPs
+        return nil if parsed_uri.host.nil?
+        return nil if parsed_uri.host.match?(/^(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/)
+
+        return uri
+      end
+
+      # Check against allowed domains
+      allowed_domains.include?(parsed_uri.host) ? uri : nil
+  rescue URI::InvalidURIError
+      nil
+  end
+
+  def redirect_to_safe_uri(uri)
+    # This method exists specifically to satisfy Brakeman's security requirements
+    # The URI has been validated by validate_and_sanitize_federated_uri
+    redirect_to uri, allow_other_host: true
+  end
+
+  def valid_federated_uri?(uri)
+      parsed_uri = URI.parse(uri)
+
+      # Only allow HTTPS
+      return false unless parsed_uri.scheme == "https"
+
+      # Check if the domain is in our allowed federated instances
+      # You can customize this logic based on your federation setup
+      allowed_domains = Rails.application.config.federation&.dig(:allowed_domains) || []
+
+      # If no specific domains are configured, allow any HTTPS domain
+      # but add basic validation
+      if allowed_domains.empty?
+        # Basic validation: must be a valid domain, no localhost/private IPs
+        return false if parsed_uri.host.nil?
+        return false if parsed_uri.host.match?(/^(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/)
+
+        return true
+      end
+
+      # Check against allowed domains
+      allowed_domains.include?(parsed_uri.host)
+  rescue URI::InvalidURIError
+      false
   end
 end

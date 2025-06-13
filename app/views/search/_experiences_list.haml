@@ -1,16 +1,34 @@
 - experiences.each do |experience|
-  .sp-experience
-    = link_to display_experience_path(experience), class: "experience-link" do
-      %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
-        %h3{itemprop: "name"}= sanitize experience.title
-        %div{itemprop: "description"}
-          = sanitize simple_format(experience.description)
-        - if experience.author.present?
+  .sp-experience{ class: experience.federated? ? 'federated-experience' : 'local-experience' }
+    - if experience.federated?
+      -# Federated experience link
+      = link_to experience.experience_url, class: "experience-link federated-link", target: "_blank", rel: "noopener" do
+        %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
+          %h3{itemprop: "name"}
+            = sanitize experience.title
+            %span.federated-badge 🌐 Federated
+          %div{itemprop: "description"}
+            %p.federated-description
+              = t('search.federated_experience_description', domain: experience.source_domain)
           %p.sp-author
-            %span{itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
-              = t('experiences.experiences_list.by')
-              %span{itemprop: "name"}= sanitize experience.author
-        - if experience.created_at.present?
+            %span.federated-source
+              = t('search.from_instance', domain: experience.source_domain)
           %p.creation-date
-            = t('experiences.experiences_list.created_at')
-            \#{experience.created_at.strftime("%B %d, %Y")}
+            = t('search.announced_at')
+            \#{experience.announced_at.strftime("%B %d, %Y")}
+    - else
+      -# Local experience (using unified interface)
+      = link_to experience.display_path, class: "experience-link" do
+        %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
+          %h3{itemprop: "name"}= sanitize experience.title
+          %div{itemprop: "description"}
+            = sanitize simple_format(experience.description)
+          - if experience.author.present?
+            %p.sp-author
+              %span{itemprop: "author", itemscope: "", itemtype: "https://schema.org/Person"}
+                = t('experiences.experiences_list.by')
+                %span{itemprop: "name"}= sanitize experience.author
+          - if experience.created_at.present?
+            %p.creation-date
+              = t('experiences.experiences_list.created_at')
+              \#{experience.created_at.strftime("%B %d, %Y")}

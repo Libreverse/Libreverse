@@ -178,7 +178,10 @@ en:
             tutorial_heading: "Search Guide"
             tutorial_description: "Type keywords to find experiences in the Libreverse. Results will appear as you type."
             search_placeholder: "Search for an experience"
-            input_aria_label: "Search Experiences"
+            input_aria_label: "Search for experiences"
+        federated_experience_description: "This experience is hosted on %{domain} and will open in a new tab"
+        from_instance: "From %{domain}"
+        announced_at: "Announced on:"
 
     terms:
         index:

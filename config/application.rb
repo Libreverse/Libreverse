@@ -85,5 +85,8 @@ module LibreverseInstance
 
     # I prefer this. It's just nicer, somehow.
     config.active_record.schema_format = :sql
+
+    # Instance domain configuration for federation
+    config.x.instance_domain = ENV["INSTANCE_DOMAIN"] || "localhost:3000"
   end
 end

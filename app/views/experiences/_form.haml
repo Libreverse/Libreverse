@@ -30,6 +30,15 @@
         = t('.current_file')
         = experience.html_file.filename
         = t('.replace_file')
+
+  - if rodauth.logged_in? && current_account&.verified?
+    .form-group
+      .form-check
+        = form.check_box :federate, class: "form-check-input", checked: true
+        = form.label :federate, "Share with other Libreverse instances", class: "form-check-label"
+        %small.form-text.text-muted
+          When enabled, this experience will be shared with connected Libreverse instances through ActivityPub federation.
+
   = content_tag :p, "Your experience will be available after admin approval.", class: "form-note"
   .mt-4
     = form.submit class: "form-submit"

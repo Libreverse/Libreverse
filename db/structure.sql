@@ -52,7 +52,7 @@ FOREIGN KEY ("blob_id")
   REFERENCES "active_storage_blobs" ("id")
 );
 CREATE UNIQUE INDEX "index_active_storage_variant_records_uniqueness" ON "active_storage_variant_records" ("blob_id", "variation_digest");
-CREATE TABLE IF NOT EXISTS "experiences" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "title" varchar, "description" text, "author" varchar, "account_id" integer NOT NULL, "approved" boolean DEFAULT 0 NOT NULL, CONSTRAINT "fk_rails_3898738ded"
+CREATE TABLE IF NOT EXISTS "experiences" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "title" varchar, "description" text, "author" varchar, "account_id" integer NOT NULL, "approved" boolean DEFAULT 0 NOT NULL, "federate" boolean DEFAULT 1 NOT NULL, "federated_blocked" boolean DEFAULT 0 NOT NULL, CONSTRAINT "fk_rails_3898738ded"
 FOREIGN KEY ("account_id")
   REFERENCES "accounts" ("id")
 );
@@ -113,7 +113,61 @@ FOREIGN KEY ("experience_id")
 CREATE UNIQUE INDEX "index_experience_vectors_on_experience_id" ON "experience_vectors" ("experience_id");
 CREATE INDEX "index_experience_vectors_on_vector_hash" ON "experience_vectors" ("vector_hash");
 CREATE INDEX "index_experience_vectors_on_generated_at" ON "experience_vectors" ("generated_at");
+CREATE TABLE IF NOT EXISTS "federails_actors" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "federated_url" varchar, "username" varchar, "server" varchar, "inbox_url" varchar, "outbox_url" varchar, "followers_url" varchar, "followings_url" varchar, "profile_url" varchar, "entity_id" integer, "entity_type" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar DEFAULT NULL, "public_key" text, "private_key" text, "extensions" json DEFAULT NULL, "local" boolean DEFAULT 0 NOT NULL, "actor_type" varchar, "tombstoned_at" datetime(6) DEFAULT NULL);
+CREATE UNIQUE INDEX "index_federails_actors_on_federated_url" ON "federails_actors" ("federated_url");
+CREATE UNIQUE INDEX "index_federails_actors_on_entity" ON "federails_actors" ("entity_type", "entity_id");
+CREATE TABLE IF NOT EXISTS "federails_followings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "actor_id" integer NOT NULL, "target_actor_id" integer NOT NULL, "status" integer DEFAULT 0, "federated_url" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar DEFAULT NULL, CONSTRAINT "fk_rails_2e62338faa"
+FOREIGN KEY ("actor_id")
+  REFERENCES "federails_actors" ("id")
+, CONSTRAINT "fk_rails_4a2870c181"
+FOREIGN KEY ("target_actor_id")
+  REFERENCES "federails_actors" ("id")
+);
+CREATE INDEX "index_federails_followings_on_actor_id" ON "federails_followings" ("actor_id");
+CREATE INDEX "index_federails_followings_on_target_actor_id" ON "federails_followings" ("target_actor_id");
+CREATE UNIQUE INDEX "index_federails_followings_on_actor_id_and_target_actor_id" ON "federails_followings" ("actor_id", "target_actor_id");
+CREATE TABLE IF NOT EXISTS "federails_activities" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entity_type" varchar NOT NULL, "entity_id" integer NOT NULL, "action" varchar NOT NULL, "actor_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar DEFAULT NULL, CONSTRAINT "fk_rails_85ef6259df"
+FOREIGN KEY ("actor_id")
+  REFERENCES "federails_actors" ("id")
+);
+CREATE INDEX "index_federails_activities_on_entity" ON "federails_activities" ("entity_type", "entity_id");
+CREATE INDEX "index_federails_activities_on_actor_id" ON "federails_activities" ("actor_id");
+CREATE UNIQUE INDEX "index_federails_actors_on_uuid" ON "federails_actors" ("uuid");
+CREATE UNIQUE INDEX "index_federails_activities_on_uuid" ON "federails_activities" ("uuid");
+CREATE UNIQUE INDEX "index_federails_followings_on_uuid" ON "federails_followings" ("uuid");
+CREATE TABLE IF NOT EXISTS "federails_moderation_reports" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "federated_url" varchar, "federails_actor_id" integer, "content" varchar, "object_type" varchar, "object_id" integer, "resolved_at" datetime(6), "resolution" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_a5cda24d4c"
+FOREIGN KEY ("federails_actor_id")
+  REFERENCES "federails_actors" ("id")
+);
+CREATE INDEX "index_federails_moderation_reports_on_federails_actor_id" ON "federails_moderation_reports" ("federails_actor_id");
+CREATE INDEX "index_federails_moderation_reports_on_object" ON "federails_moderation_reports" ("object_type", "object_id");
+CREATE TABLE IF NOT EXISTS "federails_moderation_domain_blocks" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "domain" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE UNIQUE INDEX "index_federails_moderation_domain_blocks_on_domain" ON "federails_moderation_domain_blocks" ("domain");
+CREATE TABLE IF NOT EXISTS "blocked_domains" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "domain" varchar NOT NULL, "reason" text, "blocked_at" datetime(6) NOT NULL, "blocked_by" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE UNIQUE INDEX "index_blocked_domains_on_domain" ON "blocked_domains" ("domain");
+CREATE TABLE IF NOT EXISTS "blocked_experiences" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "activitypub_uri" varchar NOT NULL, "reason" text, "blocked_at" datetime(6) NOT NULL, "blocked_by" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE UNIQUE INDEX "index_blocked_experiences_on_activitypub_uri" ON "blocked_experiences" ("activitypub_uri");
+CREATE TABLE IF NOT EXISTS "federated_announcements" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "activitypub_uri" varchar NOT NULL, "title" varchar(255), "source_domain" varchar NOT NULL, "announced_at" datetime(6) NOT NULL, "experience_url" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE UNIQUE INDEX "index_federated_announcements_on_activitypub_uri" ON "federated_announcements" ("activitypub_uri");
+CREATE INDEX "index_federated_announcements_on_source_domain" ON "federated_announcements" ("source_domain");
+CREATE INDEX "index_federated_announcements_on_announced_at" ON "federated_announcements" ("announced_at");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250613175424'),
+('20250613174038'),
+('20250613174030'),
+('20250613160722'),
+('20250613134458'),
+('20250613134013'),
+('20250613134012'),
+('20250613134011'),
+('20250613134010'),
+('20250613134009'),
+('20250613134008'),
+('20250613134007'),
+('20250613134006'),
+('20250613134005'),
+('20250613134004'),
+('20250613134003'),
 ('20250611142704'),
 ('20250528175828'),
 ('20250525235723'),

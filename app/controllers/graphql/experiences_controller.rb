@@ -15,13 +15,15 @@ module Graphql
       title: "String!",
       description: "String",
       html_content: "String",
-      author: "String"
+      author: "String",
+      federate: "Boolean"
     ).returns("Experience!")
     action(:update).permit(
       id: "ID!",
       title: "String",
       description: "String",
-      author: "String"
+      author: "String",
+      federate: "Boolean"
     ).returns("Experience!")
     action(:destroy).permit(id: "ID!").returns("Boolean")
     action(:approve).permit(id: "ID!").returns("Experience!")
@@ -76,7 +78,8 @@ module Graphql
         title: params[:title],
         description: params[:description],
         author: params[:author] || current_account.username,
-        account_id: current_account.id
+        account_id: current_account.id,
+        federate: params[:federate].nil? || params[:federate]
       )
 
       if params[:html_content].present?
@@ -102,6 +105,7 @@ module Graphql
       update_params[:title] = params[:title] if params[:title]
       update_params[:description] = params[:description] if params[:description]
       update_params[:author] = params[:author] if params[:author]
+      update_params[:federate] = params[:federate] if params.key?(:federate)
 
       raise GraphqlRails::ExecutionError, "Failed to update experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(update_params)
 
