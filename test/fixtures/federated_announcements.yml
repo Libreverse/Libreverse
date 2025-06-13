@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+    activitypub_uri: https://example.com/announcements/1
+    title: MyString
+    source_domain: MyString
+    announced_at: 2025-06-13 18:54:24
+    experience_url: MyString
+
+two:
+    activitypub_uri: https://example.com/announcements/2
+    title: MyString
+    source_domain: MyString
+    announced_at: 2025-06-13 18:54:24
+    experience_url: MyString

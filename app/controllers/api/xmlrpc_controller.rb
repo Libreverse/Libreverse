@@ -223,7 +223,15 @@ module Api
         moderation.get_logs
         admin.experiences.all
         admin.experiences.approve
+        federation.block_instance
+        federation.unblock_instance
+        federation.blocked_domains
+        federation.stats
       ]
+
+      # Public federation methods
+      public_methods << "federation.search"
+      public_methods << "federation.discover_instances"
 
       if authenticated_methods.include?(method_name) && !current_account
         # Require authentication for these methods
@@ -315,12 +323,14 @@ module Api
         description = params[1]
         html_content = params[2]
         author = params[3] || current_account.username
+        federate = params[4].nil? || params[4]
 
         experience = Experience.new(
           title: title,
           description: description,
           author: author,
-          account_id: current_account.id
+          account_id: current_account.id,
+          federate: federate
         )
 
         if html_content.present?
@@ -459,6 +469,46 @@ module Api
 
           serialize_experience(experience)
 
+      when "federation.search"
+        query = params[0]
+        limit = [ params[1]&.to_i || 20, 100 ].min
+
+        results = FederatedExperienceSearchService.search_across_instances(query, limit: limit)
+        unified_results = UnifiedExperience.from_search_results(results)
+        serialize_unified_experiences(unified_results)
+
+      when "federation.discover_instances"
+        instances = FederatedExperienceSearchService.discover_libreverse_instances
+        instances.map { |domain| { "domain" => domain } }
+
+      when "federation.block_instance"
+        # Admin only
+        domain = params[0]
+        reason = params[1]
+
+        success = LibreverseModeration.block_instance(domain, reason)
+        { "success" => success, "domain" => domain, "reason" => reason }
+
+      when "federation.unblock_instance"
+        # Admin only
+        domain = params[0]
+
+        success = LibreverseModeration.unblock_instance(domain)
+        { "success" => success, "domain" => domain }
+
+      when "federation.blocked_domains"
+        # Admin only
+        domains = LibreverseModeration.blocked_domains
+        domains.map { |domain| { "domain" => domain } }
+
+      when "federation.stats"
+        # Admin only
+        stats = LibreverseModeration.blocking_stats
+        stats.merge({
+                      "local_experiences" => Experience.where(federate: true, approved: true).count,
+                      "federation_enabled" => true
+                    })
+
       else
         render xml: fault_response(404, "Method not found")
         nil
@@ -489,9 +539,37 @@ module Api
         "approved" => experience.approved,
         "account_id" => experience.account_id,
         "html_file" => experience.html_file?,
+        "federate" => experience.federate,
         "created_at" => experience.created_at.iso8601,
         "updated_at" => experience.updated_at.iso8601
       }
+    end
+
+    # Helper method to serialize unified experiences (both local and federated)
+    def serialize_unified_experiences(experiences)
+      experiences.map do |experience|
+        {
+          "id" => experience.id,
+          "title" => experience.title,
+          "description" => experience.description,
+          "author" => experience.author,
+          "source_type" => experience.source_type.to_s,
+          "source_domain" => experience.source_domain,
+          "local" => experience.local?,
+          "federated" => experience.federated?,
+          "activitypub_uri" => experience.activitypub_uri,
+          "experience_url" => experience.federated? ? experience.experience_url : nil,
+          "created_at" => experience.created_at.iso8601,
+          "updated_at" => experience.updated_at.iso8601
+        }
+      end
+    end
+
+    # Helper method to serialize federated experiences (legacy - deprecated)
+    def serialize_federated_experiences(experiences)
+      # Convert to unified experiences for consistency
+      unified = experiences.is_a?(Array) ? UnifiedExperience.from_search_results(experiences) : [ UnifiedExperience.new(experiences) ]
+      serialize_unified_experiences(unified)
     end
 
     # Helper method to serialize moderation logs

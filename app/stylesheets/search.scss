@@ -132,6 +132,42 @@
     padding: 0;
     text-align: center;
     min-height: 50px;
+
+    // Federated experience styling
+    &.federated-experience {
+        border-color: rgb(100 200 255 / 40%);
+        background: linear-gradient(
+            135deg,
+            rgb(100 200 255 / 15%) 0%,
+            variables.$glass 60%
+        );
+
+        .federated-badge {
+            display: inline-block;
+            background: rgb(100 200 255 / 20%);
+            color: rgb(100 200 255 / 100%);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 8px;
+            border: 1px solid rgb(100 200 255 / 30%);
+        }
+
+        .federated-description {
+            font-style: italic;
+            color: rgb(100 200 255 / 90%);
+        }
+
+        .federated-source {
+            color: rgb(100 200 255 / 80%);
+            font-weight: 500;
+        }
+    }
+
+    // Local experience styling
+    &.local-experience {
+        // Keep existing styling as default
+    }
 }
 
 .sp-bg {

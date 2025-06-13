@@ -1,0 +1,131 @@
+%h1 Federation Management
+= link_to "← Back to Dashboard", admin_root_path
+
+.row
+  .col-md-6
+    .card
+      .card-header
+        %h2 Federation Statistics
+      .card-body
+        %ul.list-unstyled
+          %li
+            %strong Federation Status:
+            %span.badge.bg-success Enabled
+          %li
+            %strong Local Federated Experiences:
+            = @federated_experiences_count
+          %li
+            %strong Blocked Domains:
+            = @stats[:blocked_domains_count]
+          %li
+            %strong Remote Actors:
+            = @recent_federated_actors.count
+          %li
+            %strong Blocked Experiences:
+            = @stats[:blocked_experiences_count]
+
+  .col-md-6
+    .card
+      .card-header
+        %h2 Quick Actions
+      .card-body
+        = link_to "View Federated Experiences", admin_federation_federated_experiences_path, class: "btn btn-primary btn-sm mb-2 d-block"
+        = button_to "Generate Missing Actors", admin_federation_generate_actors_path, method: :post, class: "btn btn-info btn-sm mb-2"
+        %small.text-muted Generate federation actors for accounts that don't have them yet
+
+%hr
+
+.row
+  .col-md-6
+    .card
+      .card-header
+        %h2 Block Domain
+      .card-body
+        = form_with url: admin_federation_block_domain_path, method: :post, local: true do |form|
+          .form-group.mb-3
+            = form.label :domain, "Domain to Block", class: "form-label"
+            = form.text_field :domain, class: "form-control", placeholder: "example.com"
+          .form-group.mb-3
+            = form.label :reason, "Reason (optional)", class: "form-label"
+            = form.text_area :reason, class: "form-control", rows: 3, placeholder: "Reason for blocking this domain"
+          = form.submit "Block Domain", class: "btn btn-danger"
+
+  .col-md-6
+    .card
+      .card-header
+        %h2 Blocked Domains
+      .card-body
+        - if @blocked_domains.any?
+          %ul.list-group
+            - @blocked_domains.each do |domain|
+              %li.list-group-item.d-flex.justify-content-between.align-items-center
+                %span= domain
+                = button_to "Unblock", admin_unblock_domain_path(domain: domain), method: :delete, class: "btn btn-success btn-sm", data: { confirm: "Are you sure you want to unblock #{domain}?" }
+        - else
+          %p.text-muted No domains are currently blocked.
+
+%hr
+
+.row
+  .col-12
+    .card
+      .card-header
+        %h2 Recent Federated Actors
+      .card-body
+        - if @recent_federated_actors.any?
+          .table-responsive
+            %table.table.table-sm
+              %thead
+                %tr
+                  %th Username
+                  %th Server
+                  %th Federated URL
+                  %th Created
+              %tbody
+                - @recent_federated_actors.each do |actor|
+                  %tr
+                    %td= actor.username
+                    %td= actor.server
+                    %td
+                      %a{href: actor.federated_url, target: "_blank", rel: "noopener"}= truncate(actor.federated_url, length: 50)
+                    %td= actor.created_at.strftime("%Y-%m-%d %H:%M")
+        - else
+          %p.text-muted No federated actors found.
+
+.row.mt-4
+  .col-12
+    .card
+      .card-header
+        %h2 Federation Security Notice
+      .card-body
+        .alert.alert-warning
+          %h5 🔒 Link-Exclusive Federation
+          %p
+            %strong Security First:
+            This instance uses link-exclusive federation for enhanced security.
+            We only share metadata and links, never full content or search vectors.
+          %ul
+            %li
+              %strong No Vector Sharing:
+              Search vectors are computed locally to prevent manipulation attacks
+            %li
+              %strong No Content Sync:
+              Each instance maintains its own data to prevent cross-instance corruption
+            %li
+              %strong Link Discovery:
+              Other instances can discover and link to our content via announcements
+            %li
+              %strong User Privacy:
+              Users maintain full control over their data on their chosen instance
+        %p
+          %strong About Federation:
+          Libreverse uses ActivityPub federation to share experience announcements across instances.
+          This allows users on different servers to discover content from your instance
+          while maintaining decentralized control and preventing data manipulation attacks.
+        %p
+          %strong Key Features:
+        %ul
+          %li Link-only experience announcements to prevent content tampering
+          %li Domain-level blocking for comprehensive moderation
+          %li Secure metadata sharing with Libreverse-specific ActivityPub fields
+          %li Cross-instance discovery without exposing sensitive search data

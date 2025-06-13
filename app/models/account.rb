@@ -139,6 +139,14 @@ end
 class Account < ApplicationRecord
   self.table_name = "accounts"
 
+  # Include Federails ActorEntity for ActivityPub federation
+  include Federails::ActorEntity
+
+  # Configure field names for federation
+  acts_as_federails_actor username_field: :username,
+                          name_field: :username,
+                          profile_url_method: :profile_url
+
   # Add ActiveRecord associations
   has_many :experiences, dependent: :destroy
   has_many :user_preferences, dependent: :destroy
@@ -148,6 +156,33 @@ class Account < ApplicationRecord
   validate :username_moderation
 
   # Add any AR-specific logic or validations here if needed
+
+  # Status helpers (matching Sequel model)
+  def unverified?
+    status == 1
+  end
+
+  def verified?
+    status == 2
+  end
+
+  def closed?
+    status == 3
+  end
+
+  # Check if this account is a guest account
+  def guest?
+    guest == true
+  end
+
+  # Determines if the account is an admin
+  def admin?
+    admin == true
+  end
+
+  def profile_url
+    "#{Rails.application.config.x.instance_domain}/users/#{username}"
+  end
 
   private
 

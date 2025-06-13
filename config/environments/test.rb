@@ -47,6 +47,10 @@ Rails.application.configure do
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
 
+  # Set log level to ERROR to minimize noise during testing
+  # The log capture system in test_helper.rb will handle showing logs for failed tests
+  config.log_level = :error
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # Mount Federails engine at root for ActivityPub federation
+  mount Federails::Engine => "/"
+
   post "/graphql", to: "graphql#execute"
   resources :search_new, only: [ :index ]
   get "search_new/index"
@@ -62,12 +65,26 @@ Rails.application.routes.draw do
 
     # Instance settings management
     resources :instance_settings
+
+    # Federation management
+    get "federation", to: "federation#index"
+    post "federation/block_domain", to: "federation#block_domain"
+    delete "federation/unblock_domain/:domain", to: "federation#unblock_domain", as: :unblock_domain
+    post "federation/generate_actors", to: "federation#generate_actors"
+    get "federation/federated_experiences", to: "federation#federated_experiences"
   end
 
   get ".well-known/security.txt", to: "well_known#security_txt", format: false
   get ".well-known/privacy.txt", to: "well_known#privacy_txt", format: false
+  get ".well-known/libreverse", to: "federation#libreverse_discovery", format: false
   get "robots.txt", to: "robots#show", format: false
   get "sitemap.xml", to: "sitemap#show", format: false
+
+  # ActivityPub federation endpoints
+  get "/api/activitypub/experiences", to: "federation#experiences_collection"
+  get "/api/activitypub/search", to: "federation#search"
+  post "/api/activitypub/announce", to: "federation#announce"
+  post "/api/activitypub/announce", to: "federation#announce"
 
   # Consent routes using Turbo Streams
   get  "consent/screen", to: "consent#screen", as: :consent_screen

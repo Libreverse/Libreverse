@@ -82,7 +82,9 @@ Rails.logger = logger
 if Rails.env.development?
   Rails.logger.level = Logger::DEBUG
 elsif Rails.env.test?
-  Rails.logger.level = Logger::WARN
+  # In test environment, use ERROR level by default to minimize noise
+  # The log capture system in test_helper.rb will show logs for failed tests
+  Rails.logger.level = Logger::ERROR
 else
   # In production, we use the RAILS_LOG_LEVEL env var or default to info
   level_str = ENV.fetch("RAILS_LOG_LEVEL") { "info" }

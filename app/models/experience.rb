@@ -5,6 +5,7 @@ require "active_storage_validations"
 class Experience < ApplicationRecord
   include ActiveStorageValidations::Model
   include GraphqlRails::Model
+  include FederatableExperience
 
   graphql do |c|
     c.attribute(:id, type: "ID!")
@@ -14,6 +15,7 @@ class Experience < ApplicationRecord
     c.attribute(:approved, type: "Boolean!")
     c.attribute(:account_id, type: "ID")
     c.attribute(:html_file?, type: "Boolean!")
+    c.attribute(:federate, type: "Boolean!")
     c.attribute(:created_at, type: "String!")
     c.attribute(:updated_at, type: "String!")
   end
@@ -26,6 +28,7 @@ class Experience < ApplicationRecord
   validates :title, presence: true, length: { maximum: 255 }
   validates :description, length: { maximum: 2000 }
   validates :author, length: { maximum: 255 }
+  validates :federate, inclusion: { in: [ true, false ] }
   validates :html_file, presence: true,
                         content_type: "text/html",
                         filename: {

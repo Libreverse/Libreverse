@@ -31,23 +31,42 @@ class SearchController < ApplicationController
 
     if query.present?
       begin
-        # Use vector similarity search with fallback to LIKE search
-        search_results = ExperienceSearchService.search(
-          query,
-          scope: scope,
-          limit: 100,
-          use_vector_search: true
-        )
+        # Check if federated search is requested
+        if params[:federated] == "true"
+          # Use federated search across instances with unified interface
+          search_results = FederatedExperienceSearchService.search_across_instances(
+            query,
+            limit: 50
+          )
 
-        # Search results are now Experience objects directly (not hashes)
-        @experiences = search_results
+          # Convert to unified experiences for consistent UI treatment
+          @experiences = UnifiedExperience.from_search_results(search_results)
+          @search_metadata = {
+            total_results: @experiences.length,
+            search_type: :federated,
+            query: query,
+            federated: true
+          }
+        else
+          # Use local search with unified experience interface
+          local_results = ExperienceSearchService.search(
+            query,
+            scope: scope,
+            limit: 100,
+            use_vector_search: true
+          )
 
-        # Store search metadata for potential display
-        @search_metadata = {
-          total_results: search_results.length,
-          search_type: :vector, # Default to vector since ExperienceSearchService handles fallback internally
-          query: query
-        }
+          # Convert to unified experiences for consistent UI treatment
+          @experiences = UnifiedExperience.from_search_results(local_results)
+
+          # Store search metadata for potential display
+          @search_metadata = {
+            total_results: @experiences.length,
+            search_type: :vector, # Default to vector since ExperienceSearchService handles fallback internally
+            query: query,
+            federated: false
+          }
+        end
       rescue StandardError => e
         Rails.logger.error "Search failed for query '#{query}': #{e.message}"
         @experiences = []
@@ -59,8 +78,9 @@ class SearchController < ApplicationController
         }
       end
     else
-      # No query - show recent experiences
-      @experiences = scope.order(created_at: :desc).limit(20)
+      # No query - show recent local experiences as unified experiences
+      recent_experiences = scope.order(created_at: :desc).limit(20)
+      @experiences = UnifiedExperience.from_search_results(recent_experiences)
       @search_metadata = { total_results: @experiences.length, search_type: :recent }
     end
 

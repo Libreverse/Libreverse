@@ -11,8 +11,10 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 - **Local‑first data management** – SQLite (via the enhanced adapter) provides generated columns, JSON queries, and full‑text search without a separate database server.
 - **Real‑time UI** – Turbo, Stimulus, and StimulusReflex enable instantaneous updates with minimal client‑side JavaScript.
 - **Secure account system** – Rodauth with Argon2 hashing, email‑based login, remember‑me cookies, and optional guest mode.
+- **ActivityPub Federation** – Share experiences across Libreverse instances using ActivityPub protocol with custom metaverse-specific fields.
+- **Cross-instance Discovery** – Search and discover experiences from other federated Libreverse instances.
 - **Media attachments** – Active Storage with rigorous validations, encrypted blobs via _lockbox_, and one‑click ZIP export of your entire account.
-- **API functionality** – Experimental XML‑RPC endpoints.
+- **API functionality** – Experimental XML‑RPC endpoints and GraphQL API with federation support.
 - **Zero‑Redis architecture** – Solid Cable and Solid Queue keep ActionCable and background jobs inside SQLite.
 - **Security‑centric design** – CSP, Rack::Attack rate limiting, Brotli compression, and an evolving [security roadmap](todo.md).
 
@@ -67,6 +69,32 @@ brew install ruby bun sqlite imagemagick
 # Ubuntu
 sudo apt install ruby-full bun curl sqlite3 libsqlite3-dev imagemagick
 ```
+
+---
+
+## 🌐 ActivityPub Federation
+
+Libreverse supports decentralized federation using the ActivityPub protocol, allowing instances to share experiences while maintaining local control.
+
+### Federation Features
+
+- **Experience Sharing**: Framework for sharing approved experiences with federated instances
+- **Cross-Instance Discovery**: Search framework for finding content from other Libreverse instances
+- **Custom ActivityPub Fields**: Rich metadata for metaverse experiences using Libreverse extensions
+- **Privacy Controls**: Users can choose whether to federate each experience
+- **Admin Tools**: Complete federation management interface for instance administrators
+
+### Configuration
+
+Set your instance domain in environment variables:
+
+```bash
+export INSTANCE_DOMAIN=your-domain.com
+```
+
+Admin users can manage federation settings at `/admin/federation`. Federation is implemented with a simplified delivery approach to ensure stability - full ActivityPub delivery can be enabled when desired.
+
+For detailed federation documentation, see [`documentation/federation.md`](documentation/federation.md).
 
 ---
 

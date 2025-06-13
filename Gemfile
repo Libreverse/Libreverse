@@ -50,6 +50,10 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "zstd-ruby"
 
+# ActivityPub Federation
+gem "federails", ">= 0.4"
+gem "federails-moderation"
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
 end
