@@ -11,6 +11,10 @@ class SitemapControllerTest < ActionController::TestCase
     # Disable content moderation for these tests
     Experience.any_instance.stubs(:content_moderation).returns(nil)
 
+    # Delete all ExperienceVector and Experience records
+    ExperienceVector.delete_all
+    Experience.delete_all
+
     # Create test experiences with approved status using safe content
     @approved_experience1 = Experience.create!(
       title: "A Nice Day Outside",
@@ -40,6 +44,7 @@ class SitemapControllerTest < ActionController::TestCase
   end
 
   teardown do
+    ExperienceVector.delete_all
     Experience.delete_all
     Rails.cache.clear
     # Unstub content moderation

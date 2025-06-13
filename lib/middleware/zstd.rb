@@ -26,6 +26,10 @@ module Rack
 
     def call(env)
       status, headers, response = @app.call(env)
+      headers ||= {}
+
+      # If the response is nil or not enumerable, return as-is (fixes NoMethodError in error cases)
+      return [ status, headers, response ] unless response.respond_to?(:each)
 
       if compressible?(env, headers)
         # Aggregate body
@@ -72,6 +76,7 @@ module Rack
                                     image/svg+xml\\].map(&:downcase).freeze
 
     def compressible?(env, headers)
+      return false if headers.nil?
       # Skip if already encoded
       return false if headers["Content-Encoding"]
 

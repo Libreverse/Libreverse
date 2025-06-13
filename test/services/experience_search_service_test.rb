@@ -236,7 +236,7 @@ class ExperienceSearchServiceTest < ActiveSupport::TestCase
     # Should find AI experience as it's related to ML (when similarity threshold allows)
     # related_titles = related.map(&:title)
     # assert_includes related_titles, "Artificial Intelligence Basics"
-    
+
     # Test passes if it returns an array without errors
     assert true
   end
@@ -329,7 +329,7 @@ class ExperienceSearchServiceTest < ActiveSupport::TestCase
     Experience.where("title LIKE '%Tutorial%' OR title LIKE '%Masterclass%' OR title LIKE '%History%'").destroy_all
     ExperienceVector.delete_all
     Rails.cache.clear
-    
+
     # Restore original moderation setting
     InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end

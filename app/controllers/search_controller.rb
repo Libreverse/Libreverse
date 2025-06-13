@@ -5,11 +5,12 @@ require "digest"
 
 # app/controllers/search_controller.rb
 class SearchController < ApplicationController
+  skip_before_action :global_spam_protection_check
   before_action :set_cache_headers_for_search
 
   def index
-    query = params[:query].to_s.strip
-    # Cap query length and validate input
+    # Ensure query is a string and handle nil/malformed queries gracefully
+    query = params[:query].is_a?(String) ? params[:query].strip : ""
     query = query[0...50]
     # Generate ETag before expensive database query
     user_role = current_account&.admin? ? "admin" : "user"
@@ -18,31 +19,45 @@ class SearchController < ApplicationController
     # For search, we could use a simpler cache key without exact count/timestamp
     # since search results can tolerate some staleness
     cache_key = "search/#{user_role}/#{query_hash}/#{Time.current.beginning_of_minute.to_i}"
-    etag = Digest::MD5.hexdigest(cache_key)
+    etag_value = Digest::MD5.hexdigest(cache_key)
 
     # Handle conditional requests before database query
-    return if !Rails.env.development? && request.fresh?(etag: etag)
+    if !Rails.env.development? && request.headers["If-None-Match"] == etag_value
+      head :not_modified
+      return
+    end
 
     scope = current_account&.admin? ? Experience : Experience.approved
 
     if query.present?
-      # Use vector similarity search with fallback to LIKE search
-      search_results = ExperienceSearchService.search(
-        query,
-        scope: scope,
-        limit: 100,
-        use_vector_search: true
-      )
+      begin
+        # Use vector similarity search with fallback to LIKE search
+        search_results = ExperienceSearchService.search(
+          query,
+          scope: scope,
+          limit: 100,
+          use_vector_search: true
+        )
 
-      # Search results are now Experience objects directly (not hashes)
-      @experiences = search_results
+        # Search results are now Experience objects directly (not hashes)
+        @experiences = search_results
 
-      # Store search metadata for potential display
-      @search_metadata = {
-        total_results: search_results.length,
-        search_type: :vector, # Default to vector since ExperienceSearchService handles fallback internally
-        query: query
-      }
+        # Store search metadata for potential display
+        @search_metadata = {
+          total_results: search_results.length,
+          search_type: :vector, # Default to vector since ExperienceSearchService handles fallback internally
+          query: query
+        }
+      rescue StandardError => e
+        Rails.logger.error "Search failed for query '#{query}': #{e.message}"
+        @experiences = []
+        @search_metadata = {
+          total_results: 0,
+          search_type: :error,
+          query: query,
+          error_message: "Search temporarily unavailable"
+        }
+      end
     else
       # No query - show recent experiences
       @experiences = scope.order(created_at: :desc).limit(20)
@@ -53,7 +68,8 @@ class SearchController < ApplicationController
     # Handle conditional requests (skip in development to avoid masking errors)
     return if Rails.env.development?
 
-      nil unless stale?(etag: etag, public: false)
+      response.headers["ETag"] = etag_value
+      head :not_modified if request.headers["If-None-Match"] == etag_value
 
     # Content has changed or no ETag in request, proceed with rendering
   end

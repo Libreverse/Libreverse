@@ -106,19 +106,19 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
     experience1 = experiences(:one)
     experience2 = experiences(:two)
 
-    # Create experience vectors
-    ExperienceVector.create!(
-      experience: experience1,
+    # Update or create experience vectors with unique hashes
+    vector1 = ExperienceVector.find_or_initialize_by(experience: experience1)
+    vector1.update!(
       vector_data: @vector_a,
-      vector_hash: "hash1",
+      vector_hash: "vector_search_test_hash1_#{Time.current.to_f}",
       generated_at: Time.current,
       version: 1
     )
 
-    ExperienceVector.create!(
-      experience: experience2,
+    vector2 = ExperienceVector.find_or_initialize_by(experience: experience2)
+    vector2.update!(
       vector_data: @vector_b,
-      vector_hash: "hash2",
+      vector_hash: "vector_search_test_hash2_#{Time.current.to_f}",
       generated_at: Time.current,
       version: 1
     )
@@ -147,19 +147,19 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
     experience1 = experiences(:one)
     experience2 = experiences(:two)
 
-    # Create experience vectors
-    ExperienceVector.create!(
-      experience: experience1,
+    # Update or create experience vectors with unique hashes
+    vector1 = ExperienceVector.find_or_initialize_by(experience: experience1)
+    vector1.update!(
       vector_data: @vector_a,
-      vector_hash: "hash1",
+      vector_hash: "target_test_hash1_#{Time.current.to_f}",
       generated_at: Time.current,
       version: 1
     )
 
-    ExperienceVector.create!(
-      experience: experience2,
+    vector2 = ExperienceVector.find_or_initialize_by(experience: experience2)
+    vector2.update!(
       vector_data: @vector_b,
-      vector_hash: "hash2",
+      vector_hash: "target_test_hash2_#{Time.current.to_f}",
       generated_at: Time.current,
       version: 1
     )
@@ -179,7 +179,12 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
 
   test "returns empty array when no vector exists for target experience" do
     experience = experiences(:one)
-    # No vector created for this experience
+    # Delete any existing vector for this experience to test the no-vector case
+    experience.experience_vector&.destroy
+    experience.reload # Ensure the association is refreshed
+
+    # Verify the vector was actually deleted
+    assert_nil experience.experience_vector, "Vector should be deleted"
 
     results = VectorSimilarityService.find_similar_to_experience(
       experience,
@@ -194,19 +199,19 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
     experience1 = experiences(:one)
     experience2 = experiences(:two)
 
-    # Create vectors with very different similarity
-    ExperienceVector.create!(
-      experience: experience1,
+    # Update or create vectors with very different similarity and unique hashes
+    vector1 = ExperienceVector.find_or_initialize_by(experience: experience1)
+    vector1.update!(
       vector_data: @vector_a,
-      vector_hash: "hash1",
+      vector_hash: "threshold_test_hash1_#{Time.current.to_f}",
       generated_at: Time.current,
       version: 1
     )
 
-    ExperienceVector.create!(
-      experience: experience2,
+    vector2 = ExperienceVector.find_or_initialize_by(experience: experience2)
+    vector2.update!(
       vector_data: @vector_c, # Very different vector
-      vector_hash: "hash2",
+      vector_hash: "threshold_test_hash2_#{Time.current.to_f}",
       generated_at: Time.current,
       version: 1
     )
@@ -238,7 +243,7 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
       ExperienceVector.create!(
         experience: exp,
         vector_data: @vector_a.map { |v| v + i * 0.1 }, # Slightly different vectors
-        vector_hash: "hash#{i}",
+        vector_hash: "limit_test_hash#{i}_#{Time.current.to_f}",
         generated_at: Time.current,
         version: 1
       )
@@ -259,7 +264,7 @@ class VectorSimilarityServiceTest < ActiveSupport::TestCase
   teardown do
     # Clean up created records
     ExperienceVector.delete_all
-    
+
     # Restore original moderation setting
     InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end

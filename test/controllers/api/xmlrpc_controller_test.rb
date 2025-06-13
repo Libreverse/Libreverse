@@ -10,6 +10,7 @@ module Api
 
       setup do
       # Start with a clean slate
+      ExperienceVector.delete_all
       Experience.delete_all
       UserPreference.delete_all
 
@@ -78,6 +79,7 @@ module Api
       end
 
   teardown do
+    ExperienceVector.delete_all
     Experience.delete_all
     UserPreference.delete_all
   end
