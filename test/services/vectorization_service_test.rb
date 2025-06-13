@@ -236,7 +236,7 @@ class VectorizationServiceTest < ActiveSupport::TestCase
     Experience.where.not(id: [ experiences(:one).id, experiences(:two).id ]).delete_all
     Rails.cache.delete("search_vocabulary")
     Rails.cache.delete("document_frequencies")
-    
+
     # Restore original moderation setting
     InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end

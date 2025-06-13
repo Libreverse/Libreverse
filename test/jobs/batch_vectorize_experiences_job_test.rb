@@ -4,20 +4,23 @@ require "test_helper"
 
 class BatchVectorizeExperiencesJobTest < ActiveJob::TestCase
   setup do
-    Experience.delete_all
     ExperienceVector.delete_all
+    Experience.delete_all
     clear_enqueued_jobs
 
+    @account = Account.create!(username: "testaccount", status: 2)
     @experiences = []
     5.times do |i|
       @experiences << Experience.create!(
         title: "Experience #{i}",
         description: "Description for experience #{i}",
         author: "Author #{i}",
-        account: accounts(:one),
+        account: @account,
         approved: true
       )
     end
+
+    # NOTE: VectorizeExperienceJob stubbing moved to individual tests that need it
   end
 
   test "enqueues batch vectorization job" do
@@ -33,6 +36,7 @@ class BatchVectorizeExperiencesJobTest < ActiveJob::TestCase
   end
 
   test "handles empty experience set gracefully" do
+    ExperienceVector.delete_all
     Experience.delete_all
 
     assert_nothing_raised do
@@ -52,7 +56,7 @@ class BatchVectorizeExperiencesJobTest < ActiveJob::TestCase
 
     BatchVectorizeExperiencesJob.perform_now(batch_size: 2)
 
-    assert logs.any? { |log| log.include?("batch") }
+    assert(logs.any? { |log| log.include?("batch") })
   ensure
     Rails.logger = old_logger
   end

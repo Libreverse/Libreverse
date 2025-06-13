@@ -107,7 +107,15 @@ class ExperienceSearchService
 
     # Check if vector search is available
     def vectors_available?
-      ExperienceVector.exists? && VectorizationService.current_vocabulary.any?
+      return false unless ExperienceVector.exists?
+
+      begin
+        vocabulary = VectorizationService.current_vocabulary
+        vocabulary.is_a?(Array) && vocabulary.any?
+      rescue StandardError => e
+        Rails.logger.warn "Error checking vocabulary availability: #{e.message}"
+        false
+      end
     end
 
     # Get search suggestions based on query

@@ -139,23 +139,27 @@ class VectorizeExperienceJobTest < ActiveJob::TestCase
   test "handles vectorization service errors gracefully" do
     # Ensure we start with no vectors
     ExperienceVector.delete_all
-    
+
     # Debug: verify no vectors exist
     assert_equal 0, ExperienceVector.count, "Should start with no vectors"
-    
+
     # Mock VectorizationService to raise an error consistently
     VectorizationService.expects(:vectorize_experience).with(@experience).raises(StandardError.new("Vectorization failed")).at_least_once
 
     # The job will handle the error internally (retry mechanism)
     # We don't expect it to bubble up, we just want to verify it doesn't create a vector
-    VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: true) rescue nil
+    begin
+      VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: true)
+    rescue StandardError
+      nil
+    end
 
     # Error should result in no vector being created
     assert_equal 0, ExperienceVector.count
   end
 
   test "logs successful vectorization" do
-    mock_vector = [0.1, 0.2, 0.3]
+    mock_vector = [ 0.1, 0.2, 0.3 ]
     VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
 
     VectorizeExperienceJob.perform_now(@experience.id)
@@ -170,13 +174,13 @@ class VectorizeExperienceJobTest < ActiveJob::TestCase
     # Create existing vector
     ExperienceVector.create!(
       experience: @experience,
-      vector_data: [0.1, 0.2, 0.3],
+      vector_data: [ 0.1, 0.2, 0.3 ],
       vector_hash: "old_hash",
       generated_at: 1.hour.ago,
       version: 1
     )
 
-    mock_vector = [0.4, 0.5, 0.6]
+    mock_vector = [ 0.4, 0.5, 0.6 ]
     VectorizationService.stubs(:vectorize_experience).returns(mock_vector)
 
     VectorizeExperienceJob.perform_now(@experience.id)
@@ -190,12 +194,16 @@ class VectorizeExperienceJobTest < ActiveJob::TestCase
   test "reraises errors from vectorization service" do
     # Ensure clean state
     ExperienceVector.delete_all
-    
+
     VectorizationService.expects(:vectorize_experience).with(@experience).raises(StandardError.new("Test error")).at_least_once
 
     # The job handles errors with retry mechanism - verify it tries and doesn't crash
-    VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: true) rescue nil
-    
+    begin
+      VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: true)
+    rescue StandardError
+      nil
+    end
+
     # Test passes if we reach here without the process crashing
     assert true
   end
@@ -283,7 +291,7 @@ class VectorizeExperienceJobTest < ActiveJob::TestCase
     ExperienceVector.delete_all
     clear_enqueued_jobs
     Rails.cache.clear
-    
+
     # Restore original moderation setting
     InstanceSetting.set("automoderation_enabled", @original_moderation_setting || "true", "Restore moderation setting") if defined?(@original_moderation_setting)
   end

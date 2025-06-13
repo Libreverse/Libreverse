@@ -9,8 +9,23 @@ module Api
 
     setup do
       # Start with a clean slate
+      # Only clean up records created by this test, not global tables
+      # Remove global deletes for ExperienceVector, ActiveStorage, ModerationLog, Account
+      # Instead, rely on transactional tests for isolation
+      ExperienceVector.delete_all
       Experience.delete_all
       UserPreference.delete_all
+      # Ensure required accounts exist for tests
+      @account_one = if Account.exists?(id: 1)
+        Account.find(1)
+      else
+        Account.create!(id: 1, username: "testuser1", status: 2, admin: false, guest: false)
+      end
+      @account_two = if Account.exists?(id: 2)
+        Account.find(2)
+      else
+        Account.create!(id: 2, username: "testuser2", status: 2, admin: false, guest: false)
+      end
 
       # Skip certain before_action methods that could cause issues
       @controller.stubs(:apply_rate_limit).returns(true)
@@ -22,7 +37,7 @@ module Api
         title: "Safe Experience One",
         description: "A safe description for the first experience",
         author: "Safe Author One",
-        account: accounts(:one),
+        account: @account_one,
         approved: true
       )
 
@@ -40,7 +55,7 @@ module Api
         title: "Safe Experience Two",
         description: "A safe description for the second experience",
         author: "Safe Author Two",
-        account: accounts(:two),
+        account: @account_two,
         approved: true
       )
 
@@ -59,7 +74,7 @@ module Api
         title: "Unapproved Experience",
         description: "This experience needs approval",
         author: "Test Author",
-        account: accounts(:one),
+        account: @account_one,
         approved: false
       )
 
@@ -77,6 +92,7 @@ module Api
     end
 
     teardown do
+      ExperienceVector.delete_all
       Experience.delete_all
       UserPreference.delete_all
     end
@@ -134,9 +150,9 @@ module Api
       assert_equal 2, json_response["result"].length
     end
 
-        test "should create experience when authenticated" do
+    test "should create experience when authenticated" do
       # Simulate authentication
-      @controller.stubs(:current_account).returns(accounts(:one))
+      @controller.stubs(:current_account).returns(@account_one)
 
       # Temporarily disable moderation for this test
       Experience.any_instance.stubs(:content_moderation).returns(nil)
@@ -153,11 +169,11 @@ module Api
       json_response = JSON.parse(response.body)
 
       assert_equal "New Test Experience", json_response["result"]["title"]
-        end
+    end
 
     test "should handle preferences.set" do
       # Simulate authentication
-      @controller.stubs(:current_account).returns(accounts(:one))
+      @controller.stubs(:current_account).returns(@account_one)
 
       post :endpoint, params: {
         method: "preferences.set",
@@ -173,8 +189,8 @@ module Api
 
     test "should handle preferences.get" do
       # Simulate authentication and set a preference first
-      @controller.stubs(:current_account).returns(accounts(:one))
-      UserPreference.set(accounts(:one).id, "dashboard-tutorial", "t")
+      @controller.stubs(:current_account).returns(@account_one)
+      UserPreference.set(@account_one.id, "dashboard-tutorial", "t")
 
       get :endpoint, params: {
         method: "preferences.get",
@@ -189,8 +205,8 @@ module Api
 
     test "should handle preferences.is_dismissed" do
       # Simulate authentication and set a dismissed preference
-      @controller.stubs(:current_account).returns(accounts(:one))
-      UserPreference.dismiss(accounts(:one).id, "welcome-message")
+      @controller.stubs(:current_account).returns(@account_one)
+      UserPreference.dismiss(@account_one.id, "welcome-message")
 
       get :endpoint, params: {
         method: "preferences.is_dismissed",
@@ -205,14 +221,14 @@ module Api
 
     test "should get account info when authenticated" do
       # Simulate authentication
-      @controller.stubs(:current_account).returns(accounts(:one))
+      @controller.stubs(:current_account).returns(@account_one)
 
       get :endpoint, params: { method: "account.get_info" }
 
       assert_response :success
       json_response = JSON.parse(response.body)
 
-      assert_equal accounts(:one).username, json_response["result"]["username"]
+      assert_equal @account_one.username, json_response["result"]["username"]
     end
 
     test "should require authentication for protected methods" do
@@ -232,7 +248,7 @@ module Api
 
     test "should reject invalid preference keys" do
       # Simulate authentication
-      @controller.stubs(:current_account).returns(accounts(:one))
+      @controller.stubs(:current_account).returns(@account_one)
 
       get :endpoint, params: {
         method: "preferences.get",
@@ -295,7 +311,7 @@ module Api
     test "should require CSRF token for state-changing methods" do
       # Remove the CSRF stub to test actual CSRF protection
       @controller.unstub(:verify_csrf_for_state_changing_methods)
-      @controller.stubs(:current_account).returns(accounts(:one))
+      @controller.stubs(:current_account).returns(@account_one)
 
       # Attempt to create experience without CSRF token
       post :endpoint, params: {
@@ -314,7 +330,7 @@ module Api
     test "should allow state-changing methods with valid CSRF token" do
       # Remove the CSRF stub to test actual CSRF protection
       @controller.unstub(:verify_csrf_for_state_changing_methods)
-      @controller.stubs(:current_account).returns(accounts(:one))
+      @controller.stubs(:current_account).returns(@account_one)
 
       # Temporarily disable moderation for this test
       Experience.any_instance.stubs(:content_moderation).returns(nil)

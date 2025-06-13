@@ -5,6 +5,7 @@ require "test_helper"
 class SearchControllerTest < ActionController::TestCase
   setup do
     # Start with a clean slate
+    ExperienceVector.delete_all
     Experience.delete_all
 
     # Skip view rendering entirely
@@ -30,6 +31,7 @@ class SearchControllerTest < ActionController::TestCase
   end
 
   teardown do
+    ExperienceVector.delete_all
     Experience.delete_all
   end
 

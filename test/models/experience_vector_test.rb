@@ -4,7 +4,15 @@ require "test_helper"
 
 class ExperienceVectorTest < ActiveSupport::TestCase
   setup do
-    @experience = experiences(:one)
+    ExperienceVector.delete_all # Ensure clean slate for unique constraint
+    Experience.delete_all # Also clear experiences to avoid FK issues
+    Account.delete_all # Also clear accounts to avoid FK issues
+    # Recreate needed accounts and experiences for tests
+    password_hash = RodauthApp.rodauth.allocate.password_hash("password")
+    @account_one = Account.create!(username: "testuser1", password_hash: password_hash, status: 2)
+    @account_two = Account.create!(username: "testuser2", password_hash: password_hash, status: 2)
+    @experience = Experience.create!(title: "First Experience", description: "desc", account: @account_one, approved: true)
+    @experience_two = Experience.create!(title: "Second Experience", description: "desc", account: @account_two, approved: true)
     @vector_data = [ 0.1, 0.2, 0.3, 0.4, 0.5 ]
     @content_hash = "test_hash_123"
   end
@@ -120,7 +128,7 @@ class ExperienceVectorTest < ActiveSupport::TestCase
   end
 
   test "allows same vector_hash for different experiences" do
-    experience2 = experiences(:two)
+    experience2 = @experience_two
 
     # Create first vector
     ExperienceVector.create!(
@@ -291,7 +299,7 @@ class ExperienceVectorTest < ActiveSupport::TestCase
       title: "Empty",
       description: "",
       author: nil,
-      account: accounts(:one)
+      account: @account_one
     )
 
     hash = ExperienceVector.generate_content_hash("Empty", "", nil)
@@ -329,5 +337,7 @@ class ExperienceVectorTest < ActiveSupport::TestCase
 
   teardown do
     ExperienceVector.delete_all
+    Experience.delete_all
+    Account.delete_all
   end
 end
