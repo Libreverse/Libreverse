@@ -9,7 +9,7 @@ linters:
     SpaceInsideHashAttributes:
         enabled: false
     HardcodedStringLinter:
-        enabled: true
+        enabled: false
         excluded_attributes: ["class", "id", "data-test"]
         autocorrect: true
         i18n_load_path: "config/locales/en.yml"

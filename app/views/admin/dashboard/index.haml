@@ -1,0 +1,25 @@
+%div
+  %h1 Admin Dashboard
+
+  %div
+    -# Experiences Management Section
+    %div
+      %h2 Experiences Management
+      - if @pending_experiences_count && @pending_experiences_count > 0
+        %span
+          = @pending_experiences_count
+          pending
+      - else
+        %span All approved
+      %p Review and approve user-submitted experiences before they go live on the platform.
+      = link_to "Manage Experiecleances", admin_experiences_path
+
+    -# Instance Settings Section
+    %div
+      %h2 Instance Settings
+      %p Configure global settings for your Libreverse instance including appearance, features, and policies.
+      = link_to "Instance Settings", admin_instance_settings_path
+
+  %div
+    %p Welcome to the Libreverse Admin Panel
+    %p Use the links above to navigate to different administrative functions. More features will be added as the platform grows.

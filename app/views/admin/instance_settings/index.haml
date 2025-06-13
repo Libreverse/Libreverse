@@ -1,6 +1,8 @@
-.container.mx-auto.px-4.py-8
-  %h1.text-2xl.font-bold.mb-6 Instance Settings
-  %p.text-gray-600.mb-4 Configure instance-specific settings for security.txt and privacy.txt files.
+%div
+  %div
+    %h1 Instance Settings
+    = link_to "← Back to Dashboard", admin_root_path
+  %p Configure instance-specific settings for security.txt and privacy.txt files.
 
   -# Security Settings Section
   .bg-white.shadow.rounded-lg.p-6.mb-6{ data: { controller: 'instance-settings' } }

@@ -45,17 +45,23 @@ Rails.application.routes.draw do
 
   # ===== Admin Namespace =====
   namespace :admin do
+    # Dashboard
+    resources :dashboard, only: [ :index ]
+    root to: "dashboard#index"
+
     resources :experiences, only: [ :index ] do
       member do
         patch :approve # Route for PATCH /admin/experiences/:id/approve
+      end
+      collection do
+        post :add_examples
+        post :restore_examples
+        delete :delete_examples
       end
     end
 
     # Instance settings management
     resources :instance_settings
-
-    # Redirect base /admin path to experiences index for now
-    root to: "experiences#index"
   end
 
   get ".well-known/security.txt", to: "well_known#security_txt", format: false
