@@ -51,7 +51,7 @@ gem "voight_kampff"
 gem "zstd-ruby"
 
 # ActivityPub Federation
-gem "federails", ">= 0.4"
+gem "federails"
 gem "federails-moderation"
 
 group :development, :test do

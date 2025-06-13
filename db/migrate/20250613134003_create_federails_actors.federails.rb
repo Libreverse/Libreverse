@@ -5,7 +5,7 @@ class CreateFederailsActors < ActiveRecord::Migration[7.0]
   def change
     create_table :federails_actors do |t|
       t.string :name
-      t.string :federated_url
+      t.text   :federated_url
       t.string :username
       t.string :server
       t.string :inbox_url

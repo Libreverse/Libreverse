@@ -21,6 +21,8 @@ module FederatableExperience
   end
 
   def federails_content
+    # Security: Only send safe metadata for link-exclusive federation
+    # Never include vectors, full content, or manipulable data
     {
       "@context" => [
         "https://www.w3.org/ns/activitystreams",
@@ -28,84 +30,48 @@ module FederatableExperience
       ],
       type: "Note",
       id: federails_uri,
+      url: federails_uri, # Link back to original instance
       attributedTo: account&.federails_actor&.federated_url,
       name: title,
-      content: description,
-      mediaType: "text/html",
-      attachment: html_file_attachment,
+      content: description&.truncate(
+        InstanceSetting.get_with_fallback("federation_description_limit", nil, "300").to_i
+      ), # Configurable limit for federation security
       published: created_at.iso8601,
       updated: updated_at.iso8601,
-      # Custom Libreverse fields for metaverse experiences
+      # Custom Libreverse fields - only safe metadata
       "libreverse:experienceType" => "interactive_html",
       "libreverse:author" => author,
-      "libreverse:approved" => approved,
-      "libreverse:htmlContent" => html_file_url,
-      "libreverse:moderationStatus" => moderation_status,
-      "libreverse:interactionCapabilities" => interaction_capabilities,
-      "libreverse:tags" => extract_tags_from_description,
+      "libreverse:moderationStatus" => approved? ? "approved" : "pending",
       "libreverse:instanceDomain" => Rails.application.config.x.instance_domain,
       "libreverse:creatorAccount" => account&.username
+      # Security: Never include vectors, full HTML content, interaction capabilities,
+      # tags, or other data that could be manipulated to attack search systems
     }
   end
+
+  def should_federate?
+    # Only federate approved experiences to prevent spam/malicious content
+    # User must explicitly opt-in to federation
+    federate? && approved?
+  end
+
+  # Security: Remove methods that could expose vectors or manipulable data
+  # The following methods are intentionally removed for security:
+  # - html_file_activitypub_attachment (exposes full content)
+  # - html_file_url (exposes downloadable content)
+  # - interaction_capabilities (could be manipulated)
+  # - extract_tags_from_description (could be manipulated)
 
   private
-
-  def html_file_attachment
-    return nil unless html_file.attached?
-
-    {
-      type: "Document",
-      mediaType: "text/html",
-      name: "#{title} - Interactive Experience",
-      url: html_file_url
-    }
-  end
-
-  def html_file_url
-    return nil unless html_file.attached?
-
-    Rails.application.routes.url_helpers.rails_blob_url(
-      html_file,
-      host: Rails.application.config.x.instance_domain
-    )
-  end
-
-  def interaction_capabilities
-    %w[
-      navigate
-      interact
-      immersive_view
-    ]
-  end
-
-  def moderation_status
-    return "pending" unless approved?
-
-    "approved"
-  end
-
-  def extract_tags_from_description
-    # Extract hashtags or keywords from description
-    description&.scan(/#\w+/) || []
-  end
 
   def federate_experience_activity
     return unless should_federate?
 
-    FederateExperienceJob.perform_later(self, activity_type)
+    FederateExperienceJob.perform_later(id, activity_type)
   end
 
   def federate_experience_deletion
     FederateExperienceDeletionJob.perform_later(federails_uri) if federails_uri
-  end
-
-  def should_federate?
-    # Only federate experiences that:
-    # 1. Have federation enabled
-    # 2. Are approved
-    # 3. Belong to verified accounts
-    # 4. Have a federails actor
-    federate && approved? && account&.verified? && !Rails.env.test? && account.federails_actor
   end
 
   def activity_type

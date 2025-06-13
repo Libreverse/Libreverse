@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use File::Temp qw(tempfile tempdir);
 use File::Path qw(remove_tree);
+use File::Copy qw(copy);
 use Cwd qw(abs_path);
 use IPC::Open3;
 use Symbol qw(gensym);
@@ -109,10 +110,9 @@ sub install_typos {
         return 0;
     }
     
-    my $copy_cmd = $is_windows ? ["copy", "\"$local_script\"", "\"$install_script\""] : ["cp", $local_script, $install_script];
-    system(@$copy_cmd);
-    if ($? != 0) {
-        warn "Failed to copy local gh-install script from $local_script\n";
+    # Copy local gh-install script to temp location using File::Copy for portability
+    unless (copy($local_script, $install_script)) {
+        warn "Failed to copy local gh-install script from $local_script to $install_script: $!\n";
         return 0;
     }
     
@@ -264,10 +264,13 @@ run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
 run_command("bundle-audit", "bundle-audit", "check", "--update");
 run_command("npm audit (production only)", "sh", "-c", 
+    "# Backup existing package-lock.json if it exists; " .
+    "if [ -f package-lock.json ]; then cp package-lock.json package-lock.json.backup; fi && " .
     "npm i --package-lock-only --omit=dev --omit=optional --omit=peer --legacy-peer-deps --force && " .
     "npm audit --audit-level=moderate; " .
     "exit_code=\$?; " .
-    "rm -f package-lock.json; " .
+    "# Restore original package-lock.json if backup exists, otherwise remove generated one; " .
+    "if [ -f package-lock.json.backup ]; then mv package-lock.json.backup package-lock.json; else rm -f package-lock.json; fi; " .
     "exit \$exit_code");
 run_command("Haml Validation", "rake", "haml:check");
 run_command("i18n Validation", "rake", "i18n:validate_keys");

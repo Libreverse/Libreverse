@@ -16,9 +16,12 @@ module LibreverseModeration
       true
     end
 
-    def should_federate_to?(_domain)
-      # For now, allow federation to all domains
-      true
+    def should_federate_to?(domain)
+      # Check if the domain is in the blocked domains list
+      # Return false if blocked, true if allowed
+      return false if domain.blank?
+
+      !blocked_domains.include?(domain.to_s.downcase.strip)
     end
 
     def blocked_domains
@@ -28,9 +31,9 @@ module LibreverseModeration
 
     def blocking_stats
       {
-        blocked_domains_count: 0,
+        blocked_domains_count: BlockedDomain.count,
         blocked_experiences_count: Experience.where(federated_blocked: true).count,
-        total_federated_actors: 0
+        total_federated_actors: Federails::Actor.count
       }
     end
   end

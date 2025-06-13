@@ -1,6 +1,30 @@
 # frozen_string_literal: true
 
 namespace :vector_search do
+  # Helper method to check if operations should be forced without prompting
+  def force_operation?
+    ENV["FORCE"]&.downcase == "yes" || ARGV.include?("--force")
+  end
+
+  # Helper method to get user confirmation or proceed if forced
+  def confirm_operation(message, success_message = nil, cancel_message = nil)
+    if force_operation?
+      puts success_message || "✅ Proceeding (forced)"
+      return true
+    end
+
+    print "⚠️  #{message} Continue? (y/N): "
+    confirmation = $stdin.gets.chomp.downcase
+
+    if %w[y yes].include?(confirmation)
+      puts success_message || "✅ Proceeding"
+      true
+    else
+      puts cancel_message || "❌ Operation cancelled"
+      false
+    end
+  end
+
   desc "Initialize vector search system by vectorizing all experiences"
   task initialize: :environment do
     puts "🚀 Initializing vector search system..."
@@ -94,13 +118,7 @@ namespace :vector_search do
   task rebuild: :environment do
     puts "🔨 Rebuilding entire vector search index..."
 
-    print "⚠️  This will regenerate ALL vectors. Continue? (y/N): "
-    confirmation = $stdin.gets.chomp.downcase
-
-    unless %w[y yes].include?(confirmation)
-      puts "❌ Rebuild cancelled"
-      next
-    end
+    next unless confirm_operation("This will regenerate ALL vectors.", nil, "❌ Rebuild cancelled")
 
     # Clear existing vectors
     puts "🗑️  Clearing existing vectors..."
@@ -161,13 +179,7 @@ namespace :vector_search do
   task clear: :environment do
     puts "🗑️  Clearing vector search data..."
 
-    print "⚠️  This will delete ALL vector data. Continue? (y/N): "
-    confirmation = $stdin.gets.chomp.downcase
-
-    unless %w[y yes].include?(confirmation)
-      puts "❌ Clear cancelled"
-      next
-    end
+    next unless confirm_operation("This will delete ALL vector data.", nil, "❌ Clear cancelled")
 
     # Delete all vectors
     deleted_count = ExperienceVector.count

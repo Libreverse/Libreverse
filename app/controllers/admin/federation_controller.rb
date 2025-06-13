@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "re2"
+
 module Admin
   # Controller for managing federation features within the Admin namespace
   class FederationController < BaseController
@@ -16,11 +18,21 @@ module Admin
 
     # POST /admin/federation/block_domain
     def block_domain
-      domain = params[:domain]&.strip
+      # Normalize domain: strip whitespace and convert to lowercase
+      domain = params[:domain]&.strip&.downcase
       reason = params[:reason]&.strip
 
       if domain.blank?
         redirect_to admin_federation_path, alert: "Domain cannot be blank"
+        return
+      end
+
+      # Validate domain format using RE2 regex
+      # Matches valid domain names including subdomains, internationalized domains, and standard TLDs
+      domain_regex = RE2::Regexp.new('\A(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\z', case_insensitive: true)
+
+      unless domain_regex.match?(domain)
+        redirect_to admin_federation_path, alert: "Invalid domain format"
         return
       end
 
@@ -33,7 +45,21 @@ module Admin
 
     # DELETE /admin/federation/unblock_domain/:domain
     def unblock_domain
-      domain = params[:domain]
+      # Normalize domain: strip whitespace and convert to lowercase
+      domain = params[:domain]&.strip&.downcase
+
+      if domain.blank?
+        redirect_to admin_federation_path, alert: "Domain cannot be blank"
+        return
+      end
+
+      # Validate domain format using RE2 regex
+      domain_regex = RE2::Regexp.new('\A(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\z', case_insensitive: true)
+
+      unless domain_regex.match?(domain)
+        redirect_to admin_federation_path, alert: "Invalid domain format"
+        return
+      end
 
       if LibreverseModeration.unblock_instance(domain)
         redirect_to admin_federation_path, notice: "Successfully unblocked domain: #{domain}"
@@ -54,13 +80,24 @@ module Admin
     def federated_experiences
       # This would show experiences from other instances
       # For now, we'll show local federated experiences
-      @experiences = Experience.where(federate: true).includes(:account).order(created_at: :desc).limit(50)
+      @experiences = Experience.federating.includes(:account).order(created_at: :desc).limit(50)
     end
 
     private
 
     def set_blocked_domain
-      @domain = params[:domain]
+      # Normalize domain: strip whitespace and convert to lowercase
+      @domain = params[:domain]&.strip&.downcase
+
+      # Validate domain format if present
+      return if @domain.blank?
+
+        domain_regex = RE2::Regexp.new('\A(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\z', case_insensitive: true)
+
+        return if domain_regex.match?(@domain)
+
+          redirect_to admin_federation_path, alert: "Invalid domain format"
+          nil
     end
   end
 end

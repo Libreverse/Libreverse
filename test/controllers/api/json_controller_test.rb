@@ -15,12 +15,12 @@ module Api
       ExperienceVector.delete_all
       Experience.delete_all
       UserPreference.delete_all
-      # Ensure required accounts exist for tests
-      @account_one = if Account.exists?(id: 1)
-        Account.find(1)
-      else
-        Account.create!(id: 1, username: "testuser1", status: 2, admin: false, guest: false)
-      end
+# Ensure required accounts exist for tests
+@account_one = Account.find_or_create_by!(username: "testuser1") do |a|
+  a.status = 2
+  a.admin  = false
+  a.guest  = false
+end
       @account_two = if Account.exists?(id: 2)
         Account.find(2)
       else

@@ -113,7 +113,8 @@ class ExampleExperiencesService
           username: "admin_demo",
           status: 2, # verified
           admin: true,
-          guest: false
+          guest: false,
+          service: true # Mark as service account to prevent interactive login
         )
         admin_account.save!(validate: false)
       end

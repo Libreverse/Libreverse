@@ -20,15 +20,18 @@ end
 
 # Configure Federails with Libreverse-specific settings
 Federails.configure do |config|
-  # Use instance domain from application config
-  if Rails.application.config.x.instance_domain.include?(":")
-    host, port = Rails.application.config.x.instance_domain.split(":")
+# Use instance domain from application config
+instance_domain = Rails.application.config.x.instance_domain
+raise "Missing config.x.instance_domain – required for Federails initialisation" if instance_domain.blank?
+
+if instance_domain.include?(":")
+   host, port = instance_domain.split(":")
     config.site_host = host
     config.site_port = port.to_i
-  else
+else
     config.site_host = Rails.application.config.x.instance_domain
     config.site_port = Rails.env.production? ? 443 : 3000
-  end
+end
 
   # App identification
   config.app_name = "Libreverse"

@@ -336,8 +336,10 @@ class ExperienceVectorTest < ActiveSupport::TestCase
   end
 
   teardown do
-    ExperienceVector.delete_all
-    Experience.delete_all
-    Account.delete_all
+# With transactional tests, this is usually unnecessary.
+# If explicit cleanup is required:
+ExperienceVector.destroy_all
+Experience.destroy_all
+Account.destroy_all
   end
 end

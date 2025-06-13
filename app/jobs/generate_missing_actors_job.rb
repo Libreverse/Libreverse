@@ -16,8 +16,8 @@ class GenerateMissingActorsJob < ApplicationJob
         # The Federails::ActorEntity concern should automatically create the actor
         # when we access the federails_actor method, but let's ensure it exists
         if account.federails_actor.nil?
-          # Manually trigger actor creation by accessing the association
-          account.send(:create_federails_actor)
+          # Use the new public method to ensure actor creation
+          account.ensure_federails_actor!
           generated_count += 1
           Rails.logger.info "Generated federails actor for account #{account.id} (#{account.username})"
         end
@@ -25,7 +25,7 @@ class GenerateMissingActorsJob < ApplicationJob
         Rails.logger.error "Failed to generate federails actor for account #{account.id}: #{e.message}"
     end
 
-    Rails.logger.info "Generated #{generated_count} new federails actors"
+    Rails.logger.info "Generated #{generated_count} federails actors"
     generated_count
   end
 end

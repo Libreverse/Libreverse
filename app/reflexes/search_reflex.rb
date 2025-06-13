@@ -4,7 +4,8 @@ class SearchReflex < ApplicationReflex
   def perform(_options = {})
       query = element[:value].to_s.strip
       query = query[0...50] # Cap the query length to 50 characters
-      cache_key = "search/reflex/#{query}"
+      role_suffix = current_account&.admin? ? "admin" : "public"
+cache_key = "search/reflex/#{role_suffix}/#{query}"
 
       log_info "[SearchReflex#perform] Processing search query: '#{query}'"
 

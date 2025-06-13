@@ -38,14 +38,15 @@ class VectorizeExperienceJob < ApplicationJob
         experience.author
       )
 
-      # Create or update the vector
       if existing_vector
-        existing_vector.update!(
-          vector_data: vector_data,
-          vector_hash: content_hash,
-          generated_at: Time.current,
-          version: existing_vector.version + 1
-        )
+        existing_vector.with_lock do
+          existing_vector.update!(
+            vector_data: vector_data,
+            vector_hash: content_hash,
+            generated_at: Time.current,
+            version: existing_vector.version + 1
+          )
+        end
         Rails.logger.info "[VectorizeExperienceJob] Updated vector for experience #{experience_id}"
       else
         ExperienceVector.create!(

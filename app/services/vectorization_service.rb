@@ -55,6 +55,7 @@ class VectorizationService
     # Recalculate and cache vocabulary
     def refresh_vocabulary
       Rails.cache.delete("search_vocabulary")
+      Rails.cache.delete("document_frequencies")
       current_vocabulary
     end
 
@@ -103,8 +104,8 @@ class VectorizationService
         tf = term_frequencies[term] || 0.0
         df = document_frequencies[term] || 1
 
-        # Calculate IDF with smoothing
-        idf = Math.log(total_documents.to_f / df)
+        # Calculate IDF with smoothing to prevent division by zero
+        idf = Math.log((total_documents + 1).to_f / (df + 1))
 
         tf * idf
       end

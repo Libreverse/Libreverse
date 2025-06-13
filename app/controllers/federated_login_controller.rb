@@ -62,12 +62,13 @@ class FederatedLoginController < ApplicationController
 
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    http.open_timeout = 5
     http.read_timeout = 5
 
     request = Net::HTTP::Get.new(uri)
     response = http.request(request)
 
-    if response.code == "200"
+    if response.code == "200" && response.content_type&.start_with?("application/json")
       data = JSON.parse(response.body)
       data["software"] == "libreverse"
     else
@@ -107,7 +108,7 @@ class FederatedLoginController < ApplicationController
     request["Content-Type"] = "application/json"
     request.body = {
       client_name: "Libreverse Instance (#{Rails.application.config.x.instance_domain})",
-      redirect_uris: [ "#{request.base_url}/auth/dynamic/callback" ],
+      redirect_uris: [ "#{Rails.application.config.x.instance_domain}/auth/dynamic/callback" ],
       grant_types: [ "authorization_code" ],
       response_types: [ "code" ],
       scope: "openid profile email"

@@ -6,7 +6,7 @@ class CreateFederailsFollowings < ActiveRecord::Migration[7.0]
     create_table :federails_followings do |t|
       t.references :actor, null: false, foreign_key: { to_table: :federails_actors }
       t.references :target_actor, null: false, foreign_key: { to_table: :federails_actors }
-      t.integer :status, default: 0
+      t.integer :status, default: 0, null: false
       t.string :federated_url
 
       t.timestamps

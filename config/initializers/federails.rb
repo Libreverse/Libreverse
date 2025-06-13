@@ -35,3 +35,13 @@ Federails.configure do |config|
   # Optionally uncomment if you need to customize the base controller
   # config.base_client_controller = ::ActionController::Base
 end
+
+# Configure encryption for Federails Actor private keys
+Rails.application.config.after_initialize do
+  # Extend the Federails::Actor model to encrypt private keys
+  if defined?(Federails::Actor)
+    Federails::Actor.class_eval do
+      encrypts :private_key
+    end
+  end
+end

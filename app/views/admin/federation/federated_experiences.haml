@@ -18,7 +18,7 @@
             - @experiences.each do |experience|
               .dashboard-experience
                 %h3= experience.title
-                %p= truncate(experience.description, length: 200)
+                %p= truncate(strip_tags(experience.description), length: 200)
                 %p.text-muted
                   %strong Author:
                   = experience.author || "Unknown"
