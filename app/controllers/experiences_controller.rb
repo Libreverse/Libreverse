@@ -205,7 +205,8 @@ class ExperiencesController < ApplicationController
         return nil if parsed_uri.host.nil?
         return nil if parsed_uri.host.match?(/^(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/)
 
-        return uri
+        canonical = Addressable::URI.heuristic_parse(uri).normalize
+ canonical.to_s
       end
 
       # Check against allowed domains

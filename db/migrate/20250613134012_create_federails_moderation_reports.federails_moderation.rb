@@ -9,7 +9,9 @@ class CreateFederailsModerationReports < ActiveRecord::Migration[7.0]
       t.string :content
       t.references :object, polymorphic: true
       t.datetime :resolved_at
-      t.string :resolution
+      t.text   :content
+      t.text   :resolution
+
       t.timestamps
     end
   end

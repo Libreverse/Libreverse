@@ -9,7 +9,8 @@ module Graphql
 
     def experiences
       query = params[:query]
-      limit = [ params[:limit] || 20, 100 ].min
+      limit_param = params[:limit].presence&.to_i || 20
+      limit       = [ limit_param, 100 ].min
 
       scope = if current_account&.admin?
         Experience

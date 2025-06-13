@@ -19,7 +19,7 @@ class SearchController < ApplicationController
     # For search, we could use a simpler cache key without exact count/timestamp
     # since search results can tolerate some staleness
     cache_key = "search/#{user_role}/#{query_hash}/#{Time.current.beginning_of_minute.to_i}"
-    etag_value = Digest::MD5.hexdigest(cache_key)
+    etag_value = %("#{Digest::MD5.hexdigest(cache_key)}")
 
     # Handle conditional requests before database query
     if !Rails.env.development? && request.headers["If-None-Match"] == etag_value

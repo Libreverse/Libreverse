@@ -139,8 +139,14 @@ class FederationController < ApplicationController
   def libreverse_instance?(domain)
     return false unless domain
 
-    uri = URI("https://#{domain}/.well-known/libreverse")
-
+ uri = if URI::DEFAULT_PARSER.make_regexp(%w[http https]).match?(domain)
+  URI(domain)
+ else
+  URI("https://#{domain}/.well-known/libreverse")
+ end
+ ...
+ http.open_timeout = 1
+ http.read_timeout = 2
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.read_timeout = 3

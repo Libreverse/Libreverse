@@ -16,6 +16,13 @@ module TestLogCapture
   @original_logger = nil
   @current_test_logs = nil
   @capture_enabled = false
+  @original_logdev = nil
+  @original_level = nil
+  @original_verbose = nil
+  @original_stdout = nil
+  @original_stderr = nil
+  @stdout_buffer = nil
+  @stderr_buffer = nil
 
   def self.setup
     return if @original_logger
@@ -37,20 +44,120 @@ module TestLogCapture
     # Create a string buffer to capture logs
     @current_test_logs = StringIO.new
 
-    # Clone the original logger's configuration but redirect output to our buffer
-    buffer_logger = @original_logger.dup
-    buffer_logger.instance_variable_set(:@logdev, Logger::LogDevice.new(@current_test_logs))
-    buffer_logger.level = Logger::DEBUG # Capture all logs during test
+    # Also capture STDOUT/STDERR to silence noisy gems that write directly to them
+    @original_stdout = $stdout
+    @original_stderr = $stderr
+    @stdout_buffer = StringIO.new
+    @stderr_buffer = StringIO.new
+    $stdout = @stdout_buffer
+    $stderr = @stderr_buffer
 
-    # Replace Rails logger temporarily
-    Rails.logger = buffer_logger
+    # Instead of replacing the logger, we'll intercept its output by replacing the log device
+    # This preserves all the logger's functionality including tagged logging
+    if @original_logger.respond_to?(:instance_variable_get)
+      # For TaggedLogging, we need to access the underlying logger
+      underlying_logger = @original_logger
+      underlying_logger = @original_logger.instance_variable_get(:@logger) if @original_logger.is_a?(ActiveSupport::TaggedLogging)
+
+      # Store the original log device so we can restore it later
+      @original_logdev = underlying_logger.instance_variable_get(:@logdev)
+
+      # Replace the log device with our string buffer
+      new_logdev = Logger::LogDevice.new(@current_test_logs)
+      underlying_logger.instance_variable_set(:@logdev, new_logdev)
+
+      # Set debug level to capture all logs during test
+      @original_level = underlying_logger.level
+      underlying_logger.level = Logger::DEBUG
+    else
+      # Fallback: create a new logger if we can't modify the existing one
+      buffer_logger = ActiveSupport::Logger.new(@current_test_logs)
+      buffer_logger.level = Logger::DEBUG
+      buffer_logger.extend(ActiveSupport::LoggerSilencer) unless buffer_logger.respond_to?(:silence)
+      buffer_logger = ActiveSupport::TaggedLogging.new(buffer_logger)
+
+      buffer_logger.formatter = @original_logger.formatter if @original_logger.respond_to?(:formatter) && @original_logger.formatter
+
+      Rails.logger = buffer_logger
+    end
+
+    # Silence noisy gems that write directly to STDOUT/STDERR
+    silence_noisy_gems
+  end
+
+  def self.silence_noisy_gems
+    # Silence sitemap generator output completely in test environment
+    if defined?(SitemapGenerator)
+      # Monkey-patch various SitemapGenerator classes to silence all output
+      if defined?(SitemapGenerator::Builder::SitemapFile)
+        SitemapGenerator::Builder::SitemapFile.class_eval do
+          def log(action, name = nil, link_count = nil)
+            # Silence all sitemap file logging in test environment
+          end
+        end
+      end
+
+      if defined?(SitemapGenerator::SitemapIndexFile)
+        SitemapGenerator::SitemapIndexFile.class_eval do
+          def log(*args)
+            # Silence sitemap index logging
+          end
+        end
+      end
+
+      if defined?(SitemapGenerator::Sitemap)
+        SitemapGenerator::Sitemap.class_eval do
+          def self.verbose
+            false # Always return false in test environment
+          end
+
+          def self.verbose=(value)
+            # Ignore attempts to set verbose to true in test environment
+          end
+        end
+      end
+    end
+
+    # Suppress Ruby warnings about frozen string literals in test environment
+    original_verbose = $VERBOSE
+    $VERBOSE = nil
+    # NOTE: $VERBOSE will be restored in finish_capture_for_test
+    @original_verbose = original_verbose
   end
 
   def self.finish_capture_for_test(test_instance, test_name)
     return unless @original_logger
 
-    # Restore original logger
-    Rails.logger = @original_logger if @capture_enabled
+    # Restore original verbose setting
+    $VERBOSE = @original_verbose if @original_verbose
+
+    # Restore original STDOUT/STDERR
+    if @original_stdout && @original_stderr
+      $stdout = @original_stdout
+      $stderr = @original_stderr
+      @original_stdout = nil
+      @original_stderr = nil
+      @stdout_buffer = nil
+      @stderr_buffer = nil
+    end
+
+    # Restore original logger/log device
+    if @capture_enabled
+      if @original_logdev && @original_logger.respond_to?(:instance_variable_get)
+        # Restore the original log device and level
+        underlying_logger = @original_logger
+        underlying_logger = @original_logger.instance_variable_get(:@logger) if @original_logger.is_a?(ActiveSupport::TaggedLogging)
+
+        underlying_logger.instance_variable_set(:@logdev, @original_logdev)
+        underlying_logger.level = @original_level if @original_level
+
+        @original_logdev = nil
+        @original_level = nil
+      else
+        # Fallback: restore the original logger reference
+        Rails.logger = @original_logger
+      end
+    end
 
     # Check if test passed by examining the test instance
     test_passed = true
@@ -58,22 +165,32 @@ module TestLogCapture
       test_passed = false
     elsif test_instance.respond_to?(:failure) && test_instance.failure
       test_passed = false
+    elsif test_instance.respond_to?(:failures) && test_instance.failures.any?
+      test_passed = false
     end
 
     # Only output captured logs if the test failed
     if !test_passed && @current_test_logs && @capture_enabled
       captured_logs = @current_test_logs.string
       if captured_logs.present?
+        # Restore stdout first so we can output the logs
+        original_stdout = $stdout
+        $stdout = @original_stdout if @original_stdout
+
         puts "\n#{'=' * 80}"
         puts "LOGS FOR FAILED TEST: #{test_name}"
         puts "=" * 80
         puts captured_logs
         puts "#{'=' * 80}\n"
+
+        # Restore the buffer if needed
+        $stdout = original_stdout unless @original_stdout
       end
     end
 
     # Clean up
     @current_test_logs = nil
+    @original_verbose = nil
   end
 end
 
@@ -90,17 +207,17 @@ module ActiveSupport
 
     # Set up log capture for each test - but disable during fixture loading
     setup do
-      # TestLogCapture.setup
+      TestLogCapture.setup
       # Enable capture only after fixtures are loaded
-      # TestLogCapture.enable_capture
-      # TestLogCapture.start_capture_for_test
+      TestLogCapture.enable_capture
+      TestLogCapture.start_capture_for_test
     end
 
     # Finish log capture after each test
     teardown do
-      # test_name = "#{self.class.name}##{method_name}"
-      # TestLogCapture.finish_capture_for_test(self, test_name)
-      # TestLogCapture.disable_capture
+      test_name = "#{self.class.name}##{method_name}"
+      TestLogCapture.finish_capture_for_test(self, test_name)
+      TestLogCapture.disable_capture
     end
 
     # Add more helper methods to be used by all tests here...

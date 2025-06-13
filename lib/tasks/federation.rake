@@ -3,12 +3,16 @@
 namespace :federation do
   desc "Clean up old federated announcements to prevent database bloat"
   task cleanup_announcements: :environment do
-    puts "Cleaning up federated announcements older than 30 days..."
-
+task cleanup_announcements: :environment do
+  Rails.logger.info "[federation] cleaning up old federated announcements"
+  begin
     deleted_count = FederatedAnnouncement.cleanup_old_announcements
-
-    puts "Cleaned up #{deleted_count} old federated announcements"
-    puts "Current announcement count: #{FederatedAnnouncement.count}"
+    Rails.logger.info "[federation] cleaned #{deleted_count}; remaining: #{FederatedAnnouncement.count}"
+  rescue StandardError => e
+    Rails.logger.error "[federation] cleanup failed – #{e.class}: #{e.message}"
+    raise
+  end
+end
   end
 
   desc "Show federation statistics"

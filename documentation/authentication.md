@@ -10,10 +10,10 @@ Libreverse uses the secure Rodauth framework for all authentication and account 
 
 - **Registration Process**: New users can create an account with a valid email address and password
 - **Password Requirements**: System enforces strong password requirements:
-  - Minimum length of 8 characters
-  - Mix of uppercase and lowercase letters
-  - At least one number and one special character
-  - Rejection of common passwords
+    - Minimum length of 8 characters
+    - Mix of uppercase and lowercase letters
+    - At least one number and one special character
+    - Rejection of common passwords
 - **Email Verification**: Account activation requires email verification
 - **CAPTCHA Protection**: Registration form is protected by CAPTCHA to prevent automated submissions
 

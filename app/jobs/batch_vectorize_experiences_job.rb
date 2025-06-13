@@ -38,7 +38,12 @@ class BatchVectorizeExperiencesJob < ApplicationJob
       end
 
       # Log progress
-      completion_percentage = ((processed + errors + skipped).to_f / total_experiences * 100).round(1)
+      completion_percentage =
+        if total_experiences.zero?
+  100.0
+        else
+  (((processed + errors + skipped).to_f / total_experiences) * 100).round(1)
+        end
       Rails.logger.info "[BatchVectorizeExperiencesJob] Progress: #{completion_percentage}% (#{processed} queued, #{skipped} skipped, #{errors} errors)"
     end
 

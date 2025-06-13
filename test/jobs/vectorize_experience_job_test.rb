@@ -197,6 +197,9 @@ class VectorizeExperienceJobTest < ActiveJob::TestCase
 
     VectorizationService.expects(:vectorize_experience).with(@experience).raises(StandardError.new("Test error")).at_least_once
 
+    # Stub the retry_job method to verify it gets called
+    VectorizeExperienceJob.any_instance.expects(:retry_job).once
+
     # The job handles errors with retry mechanism - verify it tries and doesn't crash
     begin
       VectorizeExperienceJob.perform_now(@experience.id, force_regeneration: true)
@@ -204,8 +207,7 @@ class VectorizeExperienceJobTest < ActiveJob::TestCase
       nil
     end
 
-    # Test passes if we reach here without the process crashing
-    assert true
+    # Test passes if we reach here and retry_job was called
   end
 
   test "clears search caches after vectorization" do

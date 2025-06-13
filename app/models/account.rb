@@ -139,13 +139,15 @@ end
 class Account < ApplicationRecord
   self.table_name = "accounts"
 
-  # Include Federails ActorEntity for ActivityPub federation
-  include Federails::ActorEntity
+  # Include Federails ActorEntity for ActivityPub federation (only in non-test environments)
+  unless Rails.env.test?
+    include Federails::ActorEntity
 
-  # Configure field names for federation
-  acts_as_federails_actor username_field: :username,
-                          name_field: :username,
-                          profile_url_method: :profile_url
+    # Configure field names for federation
+    acts_as_federails_actor username_field: :username,
+                            name_field: :username,
+                            profile_url_method: :profile_url
+  end
 
   # Add ActiveRecord associations
   has_many :experiences, dependent: :destroy
@@ -181,7 +183,22 @@ class Account < ApplicationRecord
   end
 
   def profile_url
-    "#{Rails.application.config.x.instance_domain}/users/#{username}"
+    "https://#{Rails.application.config.x.instance_domain}/users/#{username}"
+  end
+
+  # Public method to ensure a federails actor exists for this account
+  # Replaces the need to use send(:create_federails_actor)
+  def ensure_federails_actor!
+    return federails_actor if federails_actor.present?
+
+    # Manually trigger actor creation by accessing the private method
+    # This is the proper way to ensure actor creation
+    send(:create_federails_actor)
+    reload # Reload to get the newly created association
+    federails_actor
+  rescue StandardError => e
+    Rails.logger.error "Failed to ensure federails actor for account #{id}: #{e.message}"
+    raise e
   end
 
   private

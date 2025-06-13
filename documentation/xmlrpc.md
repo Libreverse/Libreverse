@@ -22,7 +22,7 @@ Check if a preference has been dismissed.
 
 - **Authentication**: Public
 - **Parameters**:
-  - `preference_key` (string): The key of the preference to check
+    - `preference_key` (string): The key of the preference to check
 - **Returns**: Boolean (true if dismissed, false otherwise)
 
 Example:
@@ -45,7 +45,7 @@ Dismiss a preference.
 
 - **Authentication**: Public
 - **Parameters**:
-  - `preference_key` (string): The key of the preference to dismiss
+    - `preference_key` (string): The key of the preference to dismiss
 - **Returns**: Boolean (true if successful)
 
 Example:
@@ -69,13 +69,13 @@ Get all experiences on the instance, sorted by most recent first.
 - **Authentication**: Public
 - **Parameters**: None
 - **Returns**: Array of experience objects with the following properties:
-  - `id` (int): The ID of the experience
-  - `title` (string): The title of the experience
-  - `description` (string): The description of the experience
-  - `author` (string): The author of the experience
-  - `content` (string): The content of the experience
-  - `created_at` (string): ISO8601 formatted creation timestamp
-  - `updated_at` (string): ISO8601 formatted last update timestamp
+    - `id` (int): The ID of the experience
+    - `title` (string): The title of the experience
+    - `description` (string): The description of the experience
+    - `author` (string): The author of the experience
+    - `content` (string): The content of the experience
+    - `created_at` (string): ISO8601 formatted creation timestamp
+    - `updated_at` (string): ISO8601 formatted last update timestamp
 
 Example:
 

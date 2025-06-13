@@ -74,6 +74,8 @@ class FederatedExperienceSearchService
       score += (word_overlap.to_f / total_words) * 0.4 if total_words.positive?
 
       # Recency bonus (prefer recent announcements)
+      return score if announcement.announced_at.blank?
+
       days_ago = (Time.current - announcement.announced_at) / 1.day
       recency_score = Math.exp(-days_ago / 30.0) * 0.2 # 30-day half-life
       score += recency_score

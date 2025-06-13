@@ -34,7 +34,7 @@ class FederateExperienceJob < ApplicationJob
       id: "#{actor.federated_url}/activities/#{SecureRandom.uuid}",
       type: activity_type,
       actor: actor.federated_url,
-      object: experience.federails_content,
+      "object" => experience.federails_content,
       published: Time.current.iso8601,
       to: determine_recipients(experience, actor)
     }
@@ -84,6 +84,7 @@ class FederateExperienceJob < ApplicationJob
 
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = uri.scheme == "https"
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER if http.use_ssl
     http.read_timeout = 5
     http.open_timeout = 3
 

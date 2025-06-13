@@ -6,14 +6,13 @@ require "base64"
 
 class ModerationServiceTest < ActiveSupport::TestCase
   def setup
-    # Silence logger during tests to avoid noise
-    Rails.logger.level = Logger::FATAL # Restore to FATAL
-    # Rails.logger.level = Logger::DEBUG # Temporarily set to DEBUG
+    # Clear cache to ensure fresh word lists
+    Rails.cache.clear
   end
 
   def teardown
-    # Reset logger level
-    Rails.logger.level = Logger::DEBUG
+    # Clean up cache
+    Rails.cache.clear
   end
 
   test "system processes text without errors" do

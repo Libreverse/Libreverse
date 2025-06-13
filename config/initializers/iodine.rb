@@ -65,7 +65,8 @@ if defined?(Iodine)
   end
 
   # Apply optimized settings only if not already set
-  Iodine.threads = iodine_threads if Iodine.threads.zero?
+  current_threads = Iodine.threads.to_i
+Iodine.threads = iodine_threads if current_threads.zero?
   Iodine.workers = iodine_workers if Iodine.workers.zero?
 
   # Port configuration with environment variable support

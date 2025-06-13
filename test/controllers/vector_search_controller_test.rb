@@ -132,21 +132,27 @@ class VectorSearchControllerTest < ActionController::TestCase
     assert_equal first_results.map(&:id).sort, second_results.map(&:id).sort
   end
 
-  test "search handles concurrent requests" do
-    # This tests that the controller can handle multiple simultaneous requests
-    threads = []
-    results = []
-
-    3.times do
-      threads << Thread.new do
-        get :index, params: { query: "machine" }
-        results << response.status
-      end
-    end
-
-    threads.each(&:join)
-    assert(results.all? { |status| status == 200 })
-  end
+  # NOTE: Concurrency testing removed from controller tests as ActionController::TestCase
+  # is not thread-safe and can cause flaky tests. For testing concurrent requests,
+  # create an integration test using ActionDispatch::IntegrationTest instead.
+  # Example integration test structure:
+  #
+  # class VectorSearchIntegrationTest < ActionDispatch::IntegrationTest
+  #   test "search handles concurrent requests" do
+  #     threads = []
+  #     results = []
+  #
+  #     3.times do
+  #       threads << Thread.new do
+  #         get search_index_path(query: "machine")
+  #         results << response.status
+  #       end
+  #     end
+  #
+  #     threads.each(&:join)
+  #     assert(results.all? { |status| status == 200 })
+  #   end
+  # end
 
   test "search respects limit parameters" do
     # Create many experiences

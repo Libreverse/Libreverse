@@ -15,7 +15,7 @@
               = t('search.from_instance', domain: experience.source_domain)
           %p.creation-date
             = t('search.announced_at')
-            \#{experience.announced_at.strftime("%B %d, %Y")}
+            \#{experience.announced_at.present? ? experience.announced_at.strftime("%B %d, %Y") : t('search.unknown')}
     - else
       -# Local experience (using unified interface)
       = link_to experience.display_path, class: "experience-link" do

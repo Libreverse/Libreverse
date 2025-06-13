@@ -48,11 +48,15 @@ class Experience < ApplicationRecord
   # Add a scope for experiences pending approval
   scope :pending_approval, -> { where(approved: false) }
 
+  # Add a scope for experiences configured to federate
+  scope :federating, -> { where(federate: true) }
+
   # Automatically mark experiences created by admins as approved
   before_validation :auto_approve_for_admin, on: :create
 
   # Schedule vectorization after creation and updates
-  after_commit :schedule_vectorization, on: %i[create update], if: :needs_vectorization?
+  # Only trigger if key attributes changed or it's a new record to avoid redundant job enqueues
+  after_commit :schedule_vectorization, on: %i[create update], if: :should_vectorize?
 
   def assign_owner
     # Use Current.account set by Reflex or fallback to Rodauth
@@ -161,8 +165,13 @@ class Experience < ApplicationRecord
   # Determine if this experience should be vectorized
   def should_vectorize?
     # Vectorize ALL experiences for comprehensive search functionality
-    # Content has changed or no vector exists
-    saved_change_to_title? || saved_change_to_description? || saved_change_to_author? || !experience_vector
+
+    # No vector exists - always needs vectorization
+    return true unless experience_vector
+
+    # Check if content has changed since last vectorization using persisted attributes
+    # This works in async jobs unlike saved_change_to_*? methods
+    experience_vector.needs_regeneration?(self)
   end
 
   # Schedule vectorization job

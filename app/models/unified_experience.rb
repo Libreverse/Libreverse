@@ -61,20 +61,6 @@ class UnifiedExperience
     end
   end
 
-  # Check if this represents a federated announcement link
-  def respond_to?(method_name, include_private: false)
-    case method_name.to_s
-    when "activitypub_uri"
-      federated?
-    when "source_domain"
-      true
-    when "announced_at"
-      federated?
-    else
-      super
-    end
-  end
-
   # Method delegation to maintain compatibility
   def announced_at
     federated? ? @created_at : nil

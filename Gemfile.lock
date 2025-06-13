@@ -562,7 +562,7 @@ DEPENDENCIES
   debug
   dockerfile-rails
   fasterer
-  federails (>= 0.4)
+  federails
   federails-moderation
   foreman
   graphql_rails

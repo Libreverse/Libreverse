@@ -15,6 +15,7 @@ class FederateExperienceDeletionJob < ApplicationJob
     # 3. Delivering to follower inboxes
   rescue StandardError => e
     Rails.logger.error "Failed to federate experience deletion #{experience_uri}: #{e.message}"
-    # Don't re-raise to avoid job failures
+    # Let the job retry so the event isn’t silently dropped.
+    raise
   end
 end

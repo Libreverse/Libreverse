@@ -59,7 +59,11 @@ if ($tag -eq "") {
 }
 
 if ($target -eq "") {
-    $rustc = rustc -Vv | Out-String
+    try {
+        $rustc = rustc -Vv | Out-String
+    } catch {
+        err "rustc not found – specify -target manually or install Rust tool-chain."
+    }
     if ($rustc -match "host: ([^ \r\n]*)") {
         $target = $matches[1]
     } else {
@@ -78,7 +82,11 @@ say_err "Downloading: $download_url"
 
 $td = NewTemporaryDirectory
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Invoke-WebRequest -Uri $download_url -OutFile "$td\$tarball"
+try {
+    Invoke-WebRequest -Uri $download_url -OutFile "$td\$tarball" -ErrorAction Stop
+} catch {
+    err "Download failed: $($_.Exception.Message)"
+}
 Expand-Archive "$td\$tarball"  -DestinationPath $td
 
 $exes = Get-ChildItem $td -Filter *.exe

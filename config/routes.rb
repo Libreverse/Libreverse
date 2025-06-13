@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Mount Federails engine at root for ActivityPub federation
-  mount Federails::Engine => "/"
-
   post "/graphql", to: "graphql#execute"
   resources :search_new, only: [ :index ]
   get "search_new/index"
@@ -94,4 +91,7 @@ Rails.application.routes.draw do
   # Policies (Privacy & Cookies)
   get "privacy", to: "policies#privacy", as: :privacy_policy
   get "cookies", to: "policies#cookies", as: :cookie_policy
+
+  # Mount Federails engine at root for ActivityPub federation
+  mount Federails::Engine => "/"
 end

@@ -13,9 +13,9 @@ The Libreverse XML-RPC API has been significantly expanded to provide comprehens
 ### After Expansion
 
 - **18 methods** across 4 access levels:
-  - **4 public methods** (no authentication required)
-  - **10 authenticated methods** (session required)
-  - **4 admin-only methods** (admin role required)
+    - **4 public methods** (no authentication required)
+    - **10 authenticated methods** (session required)
+    - **4 admin-only methods** (admin role required)
 
 ## New Methods Added
 
