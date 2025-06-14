@@ -2,3 +2,12 @@
 **.coffee
 config/database.yml
 config/queue.yml
+vendor/**
+node_modules/**
+tmp/**
+log/**
+coverage/**
+**/gems/**
+**/haml_lint*/**
+**/openid_connect*/**
+**/iodine*/**
