@@ -14,9 +14,18 @@
         .login-card
           .login-header
             %h1 Welcome Back
-            %p Sign in to your account
+            %p Sign in with your username or federated identifier
           != rodauth.login_form_header
           = render "login_form"
+
+          .login-info
+            %p.text-muted.small
+              You can sign in using:
+            %ul.login-options.text-muted.small
+              %li Your local username: #{Rails.application.config.x.instance_domain ? "username" : "username"}
+              %li Your full federated ID: @username@#{Rails.application.config.x.instance_domain || 'instance.com'}
+              %li Remote federated ID: @username@other-instance.com
+
           .login-footer
             = t('rodauth.login.footer_no_account')
             %a{href: rodauth.create_account_path.to_s}= t('rodauth.login.sign_up')

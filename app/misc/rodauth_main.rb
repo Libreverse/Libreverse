@@ -15,9 +15,33 @@ class RodauthMain < Rodauth::Rails::Auth
            :argon2, :pwned_password,
            :guest, # anonymous auth
            :internal_request,
-           :i18n
+           :i18n,
+           :oauth_authorization_code_grant,
+           :oidc,
+           :omniauth
 
     rails_account_model AccountSequel
+
+    # ==> OAuth Configuration
+    # Configure OAuth scopes for this instance
+    oauth_application_scopes %w[openid profile email]
+
+    # Configure default OAuth response modes (prevents nil errors)
+    oauth_response_mode "query"
+
+    # Configure this instance as an OIDC provider
+    # oidc_issuer will be configured properly after we determine the correct method
+
+    # See the Rodauth documentation for the list of available config options:
+
+    # Override load_memory to handle nil values gracefully
+    load_memory do
+      return unless logged_in?
+      return unless account_from_session
+
+      # Ensure account has required fields before proceeding
+      super() if account.respond_to?(:status)
+    end
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -430,6 +454,46 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Allow programmatic close without password confirmation when invoked from dashboard controller
     close_account_requires_password? false
+
+    # ==> Manual Federated Authentication
+    # We handle federated authentication manually in the FederatedLoginController
+    # instead of using OmniAuth providers
+
+    # ==> Unified Username Processing
+    # Handle both local and federated username formats during login
+    # This allows users to login with @username@instance format even for local accounts
+    before_login do
+      login_value = param(login_param)
+      return if login_value.blank?
+
+      # Remove @ prefix if present
+      login_value = login_value.sub(/^@/, "")
+
+      # Check if it's in federated format (username@domain)
+      if login_value.include?("@")
+        username, domain = login_value.split("@", 2)
+        local_domain = Rails.application.config.x.instance_domain || "localhost"
+
+        # If the domain matches our local instance, treat as local account
+        if domain == local_domain
+          # Update the login parameter to just the username for local processing
+          set_param(login_param, username)
+        else
+          # This is a federated account - redirect to federated login
+          redirect_to_federated_login(login_value)
+        end
+      end
+      # If no @ symbol, treat as local username (no changes needed)
+    end
+
+    # Helper method to handle federated login redirects
+    def redirect_to_federated_login(federated_identifier)
+      # Store the federated identifier for the federated login controller
+      session[:pending_federated_login] = federated_identifier
+
+      # Redirect to federated login with the identifier pre-filled
+      redirect "/federated-login?identifier=#{CGI.escape("@#{federated_identifier}")}"
+    end
   end
   # rubocop:enable Metrics/BlockLength
   Rails.logger.info "RodauthMain configuration loaded"

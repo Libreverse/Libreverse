@@ -25,7 +25,7 @@
             %p
               Author: #{experience.author || "N/A"}
             %p
-              Submitted by: #{experience.account&.username || "Unknown"} on #{experience.created_at.to_date}
+              Submitted by: #{experience.account&.federated_identifier || "Unknown"} on #{experience.created_at.to_date}
             = link_to "View", experience_display_path(experience), target: "_blank", rel: "noopener"
           %div
             = button_to "Approve", approve_admin_experience_path(experience), method: :patch

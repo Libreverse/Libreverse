@@ -20,21 +20,21 @@ Incidents are classified based on their severity and type to prioritize response
 ### Severity Levels
 
 - **Critical (Severity 1)**:
-    - **Description**: Incidents that cause a complete outage of critical services, widespread data breach of sensitive information (PII, financial data), or pose an immediate threat to the platform's integrity or user safety. Significant legal, reputational, or financial impact.
-    - **Examples**: Major DDoS attack rendering the site unusable, compromise of production database with user credentials, ransomware infection encrypting critical systems.
-    - **Response**: Immediate, all-hands response required.
+  - **Description**: Incidents that cause a complete outage of critical services, widespread data breach of sensitive information (PII, financial data), or pose an immediate threat to the platform's integrity or user safety. Significant legal, reputational, or financial impact.
+  - **Examples**: Major DDoS attack rendering the site unusable, compromise of production database with user credentials, ransomware infection encrypting critical systems.
+  - **Response**: Immediate, all-hands response required.
 - **High (Severity 2)**:
-    - **Description**: Incidents that cause significant degradation of critical services, partial data breach, or involve a serious security vulnerability with a high likelihood of exploitation. Potential for significant impact if not addressed quickly.
-    - **Examples**: Exploited XSS vulnerability affecting a large number of users, partial service outage, loss of non-critical but important data.
-    - **Response**: Urgent response required, mobilize relevant teams.
+  - **Description**: Incidents that cause significant degradation of critical services, partial data breach, or involve a serious security vulnerability with a high likelihood of exploitation. Potential for significant impact if not addressed quickly.
+  - **Examples**: Exploited XSS vulnerability affecting a large number of users, partial service outage, loss of non-critical but important data.
+  - **Response**: Urgent response required, mobilize relevant teams.
 - **Medium (Severity 3)**:
-    - **Description**: Incidents that cause minor service degradation, limited data exposure, or involve a moderate security vulnerability. Impact is limited but could escalate.
-    - **Examples**: Minor bug affecting a non-critical feature, isolated malware infection on an internal system, discovery of a moderate vulnerability with no evidence of exploitation.
-    - **Response**: Prompt response, address during business hours or by on-call personnel.
+  - **Description**: Incidents that cause minor service degradation, limited data exposure, or involve a moderate security vulnerability. Impact is limited but could escalate.
+  - **Examples**: Minor bug affecting a non-critical feature, isolated malware infection on an internal system, discovery of a moderate vulnerability with no evidence of exploitation.
+  - **Response**: Prompt response, address during business hours or by on-call personnel.
 - **Low (Severity 4)**:
-    - **Description**: Incidents with minimal impact, such as minor operational issues, low-risk vulnerabilities, or policy violations with no immediate threat.
-    - **Examples**: Failed cron job with no user impact, discovery of a low-risk vulnerability, non-compliance with an internal security policy.
-    - **Response**: Address as part of routine operations.
+  - **Description**: Incidents with minimal impact, such as minor operational issues, low-risk vulnerabilities, or policy violations with no immediate threat.
+  - **Examples**: Failed cron job with no user impact, discovery of a low-risk vulnerability, non-compliance with an internal security policy.
+  - **Response**: Address as part of routine operations.
 
 ### Incident Types
 

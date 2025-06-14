@@ -21,6 +21,12 @@ Rails.application.routes.draw do
   # Authentication routes (/login, /create-account, etc.) are automatically handled by Rodauth
   # See app/misc/rodauth_app.rb and run `rails rodauth:routes` to view all available routes
 
+  # Federated authentication routes
+  get "/federated-login", to: "federated_login#new"
+  post "/federated-login", to: "federated_login#create"
+  get "/auth/federated/callback", to: "federated_login#callback"
+  get "/auth/failure", to: "federated_login#failure"
+
   # XML-RPC API endpoint
   namespace :api do
     post "xmlrpc", to: "xmlrpc#endpoint"
