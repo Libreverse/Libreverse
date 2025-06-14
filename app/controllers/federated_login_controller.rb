@@ -1,129 +1,188 @@
 # frozen_string_literal: true
 
-# Controller for handling federated login with other Libreverse instances
 class FederatedLoginController < ApplicationController
+  include FederatedAuthHelper
+
   def create
-    identifier = params[:identifier]
-    user, domain = parse_identifier(identifier)
+    identifier = params[:identifier]&.strip
 
-    unless domain
-      flash[:error] = "Invalid identifier format. Use format: user@instance.com"
-      return redirect_to "/login"
+    if identifier.blank?
+      flash[:error] = "Please enter a federated identifier"
+      return redirect_to login_path
     end
 
-    # Verify it's a Libreverse instance
-    unless libreverse_instance?(domain)
-      flash[:error] = "The specified domain is not a recognized Libreverse instance"
-      return redirect_to "/login"
+    username, domain = parse_identifier(identifier)
+    unless username && domain
+      flash[:error] = "Invalid identifier format. Please use: username@instance.com"
+      return redirect_to login_path
     end
 
+    # Fetch OIDC configuration from the domain
     config = fetch_oidc_config(domain)
     unless config
-      flash[:error] = "Unable to fetch OIDC configuration from #{domain}"
-      return redirect_to "/login"
+      flash[:error] = "Unable to fetch authentication configuration from #{domain}"
+      return redirect_to login_path
     end
 
-    # Register as a dynamic OIDC client
-    client_data = register_oidc_client(config, domain)
+    # Check if dynamic client registration is supported
+    registration_endpoint = config["registration_endpoint"]
+    unless registration_endpoint
+      flash[:error] = "The instance #{domain} does not support dynamic client registration"
+      return redirect_to login_path
+    end
+
+    # Register as an OAuth client
+    redirect_uri = "https://#{Rails.application.config.x.instance_domain}/auth/federated/callback"
+    client_data = register_dynamic_client(registration_endpoint, redirect_uri)
+
     unless client_data
-      flash[:error] = "Failed to register with #{domain}"
-      return redirect_to "/login"
+      flash[:error] = "Failed to register with #{domain}. Please try again."
+      return redirect_to login_path
     end
 
-    # Store client data in session
-    session[:federated_login] = {
-      domain: domain,
-      user: user,
-      client_id: client_data["client_id"],
-      client_secret: client_data["client_secret"],
-      config: config
-    }
+    # Store client credentials and domain in session for OmniAuth setup
+    session[:client_id] = client_data["client_id"]
+    session[:client_secret] = client_data["client_secret"]
+    session[:oidc_domain] = domain
+    session[:federated_username] = username
+    session[:federated_identifier] = identifier
 
-    # Redirect to dynamic OIDC provider
-    redirect_to "/auth/dynamic"
+    Rails.logger.info "Starting federated authentication for #{identifier}"
+
+    # Redirect to OmniAuth for authentication
+    redirect_to "/auth/federated"
+  end
+
+  # Handle OmniAuth callback
+  def callback
+    auth_hash = request.env["omniauth.auth"]
+
+    unless auth_hash
+      flash[:error] = "Authentication failed. Please try again."
+      return redirect_to login_path
+    end
+
+    # Extract user information from the auth hash
+    provider_uid = auth_hash["uid"]
+    provider = "oidc"
+    federated_identifier = session[:federated_identifier]
+    federated_username = session[:federated_username]
+    oidc_domain = session[:oidc_domain]
+
+    # Clean up session
+    session.delete(:client_id)
+    session.delete(:client_secret)
+    session.delete(:oidc_domain)
+    session.delete(:federated_username)
+    session.delete(:federated_identifier)
+
+    # Look for existing account with this federated identity
+    account = Account.find_by(provider: provider, provider_uid: provider_uid)
+
+    if account
+      # Account exists, log them in using Rodauth
+      Rails.logger.info "Logging in existing federated user: #{federated_identifier}"
+
+      # Use Rodauth's login functionality
+      login_account(account)
+
+      flash[:notice] = "Successfully logged in via federated authentication"
+      redirect_to after_login_path
+    else
+      # Create new account for this federated user
+      Rails.logger.info "Creating new federated user: #{federated_identifier}"
+
+      # Create a unique username for the local account
+      local_username = build_federated_username(federated_username, oidc_domain || "unknown")
+
+      # Ensure username is unique
+      counter = 1
+      original_username = local_username
+      while Account.exists?(username: local_username)
+        local_username = "#{original_username}.#{counter}"
+        counter += 1
+      end
+
+      # Create the account
+      account = Account.new(
+        username: local_username,
+        federated_id: federated_identifier,
+        provider: provider,
+        provider_uid: provider_uid,
+        status: 2, # verified
+        guest: false
+      )
+
+      if account.save
+        Rails.logger.info "Created new federated account: #{account.id} for #{federated_identifier}"
+
+        # Log them in using Rodauth
+        login_account(account)
+
+        flash[:notice] = "Welcome! Your federated account has been created and you are now logged in."
+        redirect_to after_login_path
+      else
+        Rails.logger.error "Failed to create federated account for #{federated_identifier}: #{account.errors.full_messages}"
+        flash[:error] = "Failed to create your account. Please try again."
+        redirect_to login_path
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.error "Error in federated authentication callback: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    flash[:error] = "An error occurred during authentication. Please try again."
+    redirect_to login_path
+  end
+
+  def failure
+    error_type = params[:error] || params[:message] || "unknown"
+    Rails.logger.warn "Federated authentication failed: #{error_type}"
+
+    # Clean up session
+    session.delete(:client_id)
+    session.delete(:client_secret)
+    session.delete(:oidc_domain)
+    session.delete(:federated_username)
+    session.delete(:federated_identifier)
+
+    error_message = case error_type
+    when "federation_failed"
+                      "Federation authentication failed. Please check your identifier and try again."
+    when "access_denied"
+                      "Access was denied by the authentication provider."
+    when "invalid_request"
+                      "Invalid authentication request."
+    else
+                      "Authentication failed. Please try again."
+    end
+
+    flash[:error] = error_message
+    redirect_to login_path
+  end
+
+  def new
+    # Show federated login form
+    # Pre-fill identifier if coming from a redirect
+    @identifier = params[:identifier] || session[:pending_federated_login]
+    session.delete(:pending_federated_login) # Clear after use
   end
 
   private
 
-  def parse_identifier(identifier)
-    return nil unless identifier.include?("@")
-
-    parts = identifier.split("@")
-    return nil unless parts.length == 2
-
-    user, domain = parts
-    return nil if user.blank? || domain.blank?
-
-    [ user, domain ]
+  def login_path
+    # Use Rodauth's login path
+    "/login"
   end
 
-  def libreverse_instance?(domain)
-    uri = URI("https://#{domain}/.well-known/libreverse")
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.open_timeout = 5
-    http.read_timeout = 5
-
-    request = Net::HTTP::Get.new(uri)
-    response = http.request(request)
-
-    if response.code == "200" && response.content_type&.start_with?("application/json")
-      data = JSON.parse(response.body)
-      data["software"] == "libreverse"
-    else
-      false
-    end
-  rescue StandardError => e
-    Rails.logger.warn "Failed to verify Libreverse instance #{domain}: #{e.message}"
-    false
+  def after_login_path
+    # Redirect to dashboard after successful login
+    "/dashboard"
   end
 
-  def fetch_oidc_config(domain)
-    uri = URI("https://#{domain}/.well-known/openid-configuration")
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 5
-
-    request = Net::HTTP::Get.new(uri)
-    response = http.request(request)
-
-    JSON.parse(response.body) if response.code == "200"
-  rescue StandardError => e
-    Rails.logger.warn "Failed to fetch OIDC config from #{domain}: #{e.message}"
-    nil
-  end
-
-  def register_oidc_client(config, _domain)
-    return nil unless config["registration_endpoint"]
-
-    uri = URI(config["registration_endpoint"])
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme == "https"
-    http.read_timeout = 10
-
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request.body = {
-      client_name: "Libreverse Instance (#{Rails.application.config.x.instance_domain})",
-      redirect_uris: [ "#{Rails.application.config.x.instance_domain}/auth/dynamic/callback" ],
-      grant_types: [ "authorization_code" ],
-      response_types: [ "code" ],
-      scope: "openid profile email"
-    }.to_json
-
-    response = http.request(request)
-
-    if response.code.to_i >= 200 && response.code.to_i < 300
-      JSON.parse(response.body)
-    else
-      Rails.logger.error "OIDC client registration failed: #{response.code} #{response.body}"
-      nil
-    end
-  rescue StandardError => e
-    Rails.logger.error "Error registering OIDC client: #{e.message}"
-    nil
+  def login_account(account)
+    # Set the session to log in the user
+    session[:account_id] = account.id
+    # This mimics what Rodauth does for login
+    session[:authenticated] = true
   end
 end

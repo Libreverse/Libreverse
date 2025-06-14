@@ -133,6 +133,46 @@ class AccountSequel < Sequel::Model(:accounts)
   rescue StandardError => e
     Rails.logger.error "Failed to log moderation violation: #{e.message}"
   end
+
+  # ==> Federated Username Display Methods
+
+  # Returns the full federated identifier (@username@instance or @username@local)
+  def federated_identifier
+    if federated_id.present?
+      # Already has a federated ID like "username@remote.instance"
+      "@#{federated_id}"
+    else
+      # Local account - use local instance domain
+      instance_domain = Rails.application.config.x.instance_domain || "localhost"
+      "@#{username}@#{instance_domain}"
+    end
+  end
+
+  # Returns just the username part without @ symbols
+  def display_username
+    username
+  end
+
+  # Returns the instance domain part
+  def instance_domain
+    if federated_id.present?
+      # Extract domain from federated_id (format: username@domain)
+      federated_id.split("@").last
+    else
+      # Local instance
+      Rails.application.config.x.instance_domain || "localhost"
+    end
+  end
+
+  # Check if this is a federated (remote) account
+  def federated?
+    federated_id.present?
+  end
+
+  # Check if this is a local account
+  def local?
+    !federated?
+  end
 end
 
 # ActiveRecord bridge for associations
@@ -229,5 +269,45 @@ class Account < ApplicationRecord
     # since the ModerationLog belongs_to :account, which would trigger Account validation again
   rescue StandardError => e
     Rails.logger.error "Failed to log moderation violation: #{e.message}"
+  end
+
+  # ==> Federated Username Display Methods (matching Sequel model)
+
+  # Returns the full federated identifier (@username@instance or @username@local)
+  def federated_identifier
+    if federated_id.present?
+      # Already has a federated ID like "username@remote.instance"
+      "@#{federated_id}"
+    else
+      # Local account - use local instance domain
+      instance_domain = Rails.application.config.x.instance_domain || "localhost"
+      "@#{username}@#{instance_domain}"
+    end
+  end
+
+  # Returns just the username part without @ symbols
+  def display_username
+    username
+  end
+
+  # Returns the instance domain part
+  def instance_domain
+    if federated_id.present?
+      # Extract domain from federated_id (format: username@domain)
+      federated_id.split("@").last
+    else
+      # Local instance
+      Rails.application.config.x.instance_domain || "localhost"
+    end
+  end
+
+  # Check if this is a federated (remote) account
+  def federated?
+    federated_id.present?
+  end
+
+  # Check if this is a local account
+  def local?
+    !federated?
   end
 end

@@ -77,14 +77,14 @@
             %table.table.table-sm
               %thead
                 %tr
-                  %th Username
+                  %th Federated ID
                   %th Server
                   %th Federated URL
                   %th Created
               %tbody
                 - @recent_federated_actors.each do |actor|
                   %tr
-                    %td= actor.username
+                    %td= actor.federated_identifier
                     %td= actor.server
                     %td
                       %a{href: actor.federated_url, target: "_blank", rel: "noopener"}= truncate(actor.federated_url, length: 50)

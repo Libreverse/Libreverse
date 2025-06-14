@@ -9,7 +9,7 @@
         %p.header-description
           = t('dashboard.index.welcome')
           \
-          \#{@account.username}
+          \#{@account.federated_identifier}
       - if rodauth.logged_in? && !tutorial_dismissed?("dashboard-tutorial")
         %div{"data-controller" => "dismissible"}
           .dashboard-section#dashboard-tutorial{"data-dismissible-key-value" => "dashboard-tutorial", "data-dismissible-target" => "container"}
@@ -22,8 +22,8 @@
       .info-card
         .info-grid
           .info-item
-            .info-label USERNAME
-            .info-value= @account.username
+            .info-label FEDERATED ID
+            .info-value= @account.federated_identifier
           .info-item
             .info-label ACCOUNT CREATED
             .info-value= @account_created_at

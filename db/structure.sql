@@ -82,7 +82,7 @@ CREATE INDEX "index_solid_queue_semaphores_on_expires_at" ON "solid_queue_semaph
 CREATE INDEX "index_solid_queue_semaphores_on_key_and_value" ON "solid_queue_semaphores" ("key", "value");
 CREATE UNIQUE INDEX "index_solid_queue_semaphores_on_key" ON "solid_queue_semaphores" ("key");
 CREATE INDEX "index_experiences_on_approved" ON "experiences" ("approved");
-CREATE TABLE IF NOT EXISTS "accounts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "status" integer DEFAULT 1 NOT NULL, "username" text NOT NULL, "password_hash" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "password_changed_at" datetime(6), "guest" boolean DEFAULT 0, "admin" boolean DEFAULT 0 NOT NULL, CONSTRAINT accounts_password_hash_format CHECK ((password_hash IS NULL OR password_hash LIKE '$argon2id$%' OR password_hash LIKE '$argon2i$%' OR password_hash LIKE '$argon2d$%')));
+CREATE TABLE IF NOT EXISTS "accounts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "status" integer DEFAULT 1 NOT NULL, "username" text NOT NULL, "password_hash" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "password_changed_at" datetime(6), "guest" boolean DEFAULT 0, "admin" boolean DEFAULT 0 NOT NULL, "federated_id" varchar, "provider" varchar, "provider_uid" varchar, CONSTRAINT accounts_password_hash_format CHECK ((password_hash IS NULL OR password_hash LIKE '$argon2id$%' OR password_hash LIKE '$argon2i$%' OR password_hash LIKE '$argon2d$%')));
 CREATE UNIQUE INDEX "index_accounts_on_username" ON "accounts" ("username");
 CREATE INDEX "index_accounts_on_admin" ON "accounts" ("admin");
 CREATE TABLE IF NOT EXISTS "user_preferences" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "account_id" integer NOT NULL, "key" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "value" varchar, "value_ciphertext" text, CONSTRAINT "fk_rails_d3b54c2dba"
@@ -151,7 +151,47 @@ CREATE TABLE IF NOT EXISTS "federated_announcements" ("id" integer PRIMARY KEY A
 CREATE UNIQUE INDEX "index_federated_announcements_on_activitypub_uri" ON "federated_announcements" ("activitypub_uri");
 CREATE INDEX "index_federated_announcements_on_source_domain" ON "federated_announcements" ("source_domain");
 CREATE INDEX "index_federated_announcements_on_announced_at" ON "federated_announcements" ("announced_at");
+CREATE TABLE IF NOT EXISTS "oauth_applications" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "account_id" bigint, "name" varchar NOT NULL, "description" varchar, "homepage_url" varchar, "redirect_uri" varchar NOT NULL, "client_id" varchar NOT NULL, "client_secret" varchar NOT NULL, "registration_access_token" varchar, "scopes" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "token_endpoint_auth_method" varchar, "grant_types" varchar, "response_types" varchar, "client_uri" varchar, "logo_uri" varchar, "tos_uri" varchar, "policy_uri" varchar, "jwks_uri" varchar, "jwks" varchar, "contacts" varchar, "software_id" varchar, "software_version" varchar, "sector_identifier_uri" varchar, "application_type" varchar, "initiate_login_uri" varchar, "subject_type" varchar, "id_token_signed_response_alg" varchar, "id_token_encrypted_response_alg" varchar, "id_token_encrypted_response_enc" varchar, "userinfo_signed_response_alg" varchar, "userinfo_encrypted_response_alg" varchar, "userinfo_encrypted_response_enc" varchar, "request_object_signing_alg" varchar, "request_object_encryption_alg" varchar, "request_object_encryption_enc" varchar, "request_uris" varchar, "require_signed_request_object" boolean, "require_pushed_authorization_requests" boolean DEFAULT 0 NOT NULL, "dpop_bound_access_tokens" varchar, "tls_client_auth_subject_dn" varchar, "tls_client_auth_san_dns" varchar, "tls_client_auth_san_uri" varchar, "tls_client_auth_san_ip" varchar, "tls_client_auth_san_email" varchar, "tls_client_certificate_bound_access_tokens" boolean DEFAULT 0, "post_logout_redirect_uris" varchar NOT NULL, "frontchannel_logout_uri" varchar, "frontchannel_logout_session_required" boolean DEFAULT 0, "backchannel_logout_uri" varchar, "backchannel_logout_session_required" boolean DEFAULT 0, CONSTRAINT "fk_rails_211c1cecac"
+FOREIGN KEY ("account_id")
+  REFERENCES "accounts" ("id")
+);
+CREATE UNIQUE INDEX "index_oauth_applications_on_client_id" ON "oauth_applications" ("client_id");
+CREATE UNIQUE INDEX "index_oauth_applications_on_client_secret" ON "oauth_applications" ("client_secret");
+CREATE TABLE IF NOT EXISTS "oauth_grants" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "account_id" bigint, "oauth_application_id" bigint, "type" varchar, "code" varchar, "token" varchar, "refresh_token" varchar, "expires_in" datetime(6) NOT NULL, "redirect_uri" varchar, "revoked_at" datetime(6), "scopes" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "access_type" varchar DEFAULT 'offline' NOT NULL, "dpop_jwk" varchar, "code_challenge" varchar, "code_challenge_method" varchar, "user_code" varchar, "last_polled_at" datetime(6), "certificate_thumbprint" varchar, "resource" varchar, "nonce" varchar, "acr" varchar, "claims_locales" varchar, "claims" varchar, "dpop_jkt" varchar, CONSTRAINT "fk_rails_3e095b0b7e"
+FOREIGN KEY ("account_id")
+  REFERENCES "accounts" ("id")
+, CONSTRAINT "fk_rails_d5addd7cc9"
+FOREIGN KEY ("oauth_application_id")
+  REFERENCES "oauth_applications" ("id")
+);
+CREATE UNIQUE INDEX "index_oauth_grants_on_oauth_application_id_and_code" ON "oauth_grants" ("oauth_application_id", "code");
+CREATE UNIQUE INDEX "index_oauth_grants_on_token" ON "oauth_grants" ("token");
+CREATE UNIQUE INDEX "index_oauth_grants_on_refresh_token" ON "oauth_grants" ("refresh_token");
+CREATE UNIQUE INDEX "index_oauth_grants_on_user_code" ON "oauth_grants" ("user_code");
+CREATE TABLE IF NOT EXISTS "oauth_pushed_requests" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "oauth_application_id" bigint, "code" varchar NOT NULL, "params" varchar NOT NULL, "expires_in" datetime(6) NOT NULL, "dpop_jkt" varchar, CONSTRAINT "fk_rails_c46eab5056"
+FOREIGN KEY ("oauth_application_id")
+  REFERENCES "oauth_applications" ("id")
+);
+CREATE UNIQUE INDEX "index_oauth_pushed_requests_on_code" ON "oauth_pushed_requests" ("code");
+CREATE UNIQUE INDEX "index_oauth_pushed_requests_on_oauth_application_id_and_code" ON "oauth_pushed_requests" ("oauth_application_id", "code");
+CREATE TABLE IF NOT EXISTS "oauth_saml_settings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "oauth_application_id" bigint, "idp_cert" text, "idp_cert_fingerprint" text, "idp_cert_fingerprint_algorithm" varchar, "check_idp_cert_expiration" boolean, "name_identifier_format" text, "audience" varchar, "issuer" varchar NOT NULL, CONSTRAINT "fk_rails_73255239bb"
+FOREIGN KEY ("oauth_application_id")
+  REFERENCES "oauth_applications" ("id")
+);
+CREATE UNIQUE INDEX "index_oauth_saml_settings_on_issuer" ON "oauth_saml_settings" ("issuer");
+CREATE TABLE IF NOT EXISTS "oauth_dpop_proofs" ("jti" varchar NOT NULL PRIMARY KEY, "first_use" datetime(6) NOT NULL);
+CREATE INDEX "index_accounts_on_federated_id" ON "accounts" ("federated_id");
+CREATE UNIQUE INDEX "index_accounts_on_provider_and_provider_uid" ON "accounts" ("provider", "provider_uid");
+CREATE TABLE IF NOT EXISTS "account_active_session_keys" ("account_id" bigint NOT NULL, "session_id" varchar NOT NULL, "created_at" datetime(6) DEFAULT CURRENT_TIMESTAMP NOT NULL, "last_use" datetime(6) DEFAULT CURRENT_TIMESTAMP NOT NULL, CONSTRAINT "fk_rails_cdedf5be2c"
+FOREIGN KEY ("account_id")
+  REFERENCES "accounts" ("id")
+);
+CREATE UNIQUE INDEX "index_account_active_session_keys_on_account_id_and_session_id" ON "account_active_session_keys" ("account_id", "session_id");
+CREATE UNIQUE INDEX "index_account_active_session_keys_on_session_id" ON "account_active_session_keys" ("session_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250614124224'),
+('20250614113146'),
+('20250614112410'),
 ('20250613175424'),
 ('20250613174038'),
 ('20250613174030'),

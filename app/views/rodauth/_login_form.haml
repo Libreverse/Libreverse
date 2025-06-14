@@ -10,7 +10,7 @@
                         class: "login-form-control-plaintext"
   - else
     .login-form-group.mb-3
-      = form.label :login, rodauth.login_label, class: "login-form-label"
+      = form.label :login, "Username or Federated ID", class: "login-form-label"
       - login_field_class = "login-form-control"
       - login_aria_attrs = {}
       - if rodauth.field_error(rodauth.login_param)
@@ -19,6 +19,7 @@
       = form.text_field rodauth.login_param,
                         value: params[rodauth.login_param],
                         id: "login",
+                        placeholder: "@username@#{Rails.application.config.x.instance_domain} or username",
                         autocomplete: "username",
                         required: true,
                         data: { form_auto_submit_target: "input" },

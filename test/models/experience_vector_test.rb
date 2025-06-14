@@ -8,7 +8,7 @@ class ExperienceVectorTest < ActiveSupport::TestCase
     Experience.delete_all # Also clear experiences to avoid FK issues
     Account.delete_all # Also clear accounts to avoid FK issues
     # Recreate needed accounts and experiences for tests
-    password_hash = RodauthApp.rodauth.allocate.password_hash("password")
+    password_hash = Argon2::Password.create("password")
     @account_one = Account.create!(username: "testuser1", password_hash: password_hash, status: 2)
     @account_two = Account.create!(username: "testuser2", password_hash: password_hash, status: 2)
     @experience = Experience.create!(title: "First Experience", description: "desc", account: @account_one, approved: true)

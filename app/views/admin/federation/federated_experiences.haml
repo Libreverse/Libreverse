@@ -24,7 +24,7 @@
                   = experience.author || "Unknown"
                 %p.text-muted
                   %strong Created by:
-                  = experience.account&.username || "Unknown user"
+                  = experience.account&.federated_identifier || "Unknown user"
                 %p.text-muted
                   %strong Status:
                   - if experience.approved?

@@ -115,6 +115,12 @@ class ApplicationController < ActionController::Base
       redirect_to root_path
     end
 
+    # Helper method to get current account's federated identifier
+    def current_account_federated_id
+      current_account&.federated_identifier || "@guest@#{Rails.application.config.x.instance_domain || 'localhost'}"
+    end
+    helper_method :current_account_federated_id
+
     # Global spam protection method - acts as a safety net for forms that might bypass controller-specific protection
     def global_spam_protection_check
       return unless should_check_for_spam?
