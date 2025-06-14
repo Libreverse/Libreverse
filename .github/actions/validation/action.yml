@@ -1,0 +1,13 @@
+name: 'Template & Config Validation'
+description: 'Run template and configuration validation'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Haml validation
+      shell: bash
+      run: bundle exec rake haml:check
+      
+    - name: Run i18n validation
+      shell: bash
+      run: bundle exec rake i18n:validate_keys
