@@ -114,11 +114,13 @@ The image exposes port **3000** and stores the production SQLite database and up
 
 ## 🧪 Testing & Quality Assurance
 
-```bash
-perl static.pl
-```
+Quality checks now run automatically via GitHub Actions CI on every push and pull request.
 
-This will run automatically as a pre-commit hook and contains all of the quality checks.
+To run quality checks manually (original script preserved):
+
+```bash
+perl scripts/static.pl
+```
 
 ---
 
