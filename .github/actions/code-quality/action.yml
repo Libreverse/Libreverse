@@ -1,0 +1,37 @@
+name: 'Code Quality Analysis'
+description: 'Run code quality analysis tools'
+
+inputs:
+  tool:
+    description: 'Code quality tool to run (fasterer, coffeelint, typos)'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install typos
+      if: inputs.tool == 'typos'
+      shell: bash
+      run: |
+        curl -LsSf https://github.com/crate-ci/typos/releases/latest/download/typos-x86_64-unknown-linux-musl.tar.gz | tar xzf - -C ${CARGO_HOME:-~/.cargo}/bin
+        
+    - name: Run Fasterer
+      if: inputs.tool == 'fasterer'
+      shell: bash
+      run: fasterer
+      
+    - name: Run Coffeelint
+      if: inputs.tool == 'coffeelint'
+      shell: bash
+      run: |
+        coffee_files=$(find . -path ./node_modules -prune -o -name '*.coffee' -print)
+        if [ -n "$coffee_files" ]; then
+          echo "$coffee_files" | xargs bun coffeelint -f coffeelint.json
+        else
+          echo "No .coffee files found, skipping Coffeelint"
+        fi
+        
+    - name: Run Typos
+      if: inputs.tool == 'typos'
+      shell: bash
+      run: typos

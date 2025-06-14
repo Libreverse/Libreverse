@@ -1,0 +1,30 @@
+name: 'Code Formatting'
+description: 'Run code formatting tools (Prettier, Rubocop, ESLint, etc.)'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Prettier
+      shell: bash
+      run: |
+        timeout 30s bun prettier --write . || exit 1
+        
+    - name: Run Rubocop
+      shell: bash
+      run: bundle exec rubocop -A
+      
+    - name: Run haml-lint
+      shell: bash
+      run: bundle exec haml-lint --auto-correct .
+      
+    - name: Run ESLint
+      shell: bash
+      run: bun eslint . --fix
+      
+    - name: Run Stylelint
+      shell: bash
+      run: bun stylelint '**/*.scss' --fix
+      
+    - name: Run markdownlint
+      shell: bash
+      run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' --fix --config .markdownlint.json

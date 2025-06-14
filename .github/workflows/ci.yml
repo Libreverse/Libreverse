@@ -1,17 +1,109 @@
-name: Build and Push to Quay
+name: CI/CD Pipeline
 
 on:
     push:
         branches:
             - "main"
+    pull_request:
+        branches:
+            - "main"
 
 jobs:
-    build-push:
+    # Quality checks that run on all pushes and PRs
+    quality-checks:
+        name: 🔍 Quality Checks
         runs-on: ubuntu-22.04
+        if: always()
+        
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+
+            - name: Setup Environment
+              uses: ./.github/actions/setup-environment
+
+            - name: Code Formatting
+              uses: ./.github/actions/code-formatting
+
+            - name: Template & Config Validation
+              uses: ./.github/actions/validation
+
+    # Security analysis (runs in parallel)
+    security-analysis:
+        name: 🔒 Security Analysis
+        runs-on: ubuntu-22.04
+        if: always()
+        strategy:
+            fail-fast: false
+            matrix:
+                tool: [brakeman, bundle-audit, npm-audit]
+                
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+
+            - name: Setup Environment
+              uses: ./.github/actions/setup-environment
+
+            - name: Run Security Analysis
+              uses: ./.github/actions/security-analysis
+              with:
+                  tool: ${{ matrix.tool }}
+
+    # Code quality analysis (runs in parallel)
+    code-quality:
+        name: 📊 Code Quality
+        runs-on: ubuntu-22.04
+        if: always()
+        strategy:
+            fail-fast: false
+            matrix:
+                tool: [fasterer, coffeelint, typos]
+                
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+
+            - name: Setup Environment
+              uses: ./.github/actions/setup-environment
+
+            - name: Run Code Quality Analysis
+              uses: ./.github/actions/code-quality
+              with:
+                  tool: ${{ matrix.tool }}
+
+    # Testing (runs in parallel)
+    testing:
+        name: 🧪 Testing
+        runs-on: ubuntu-22.04
+        if: always()
+        strategy:
+            fail-fast: false
+            matrix:
+                test-suite: [jest, rails-test]
+                
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+
+            - name: Setup Environment
+              uses: ./.github/actions/setup-environment
+
+            - name: Run Tests
+              uses: ./.github/actions/run-tests
+              with:
+                  test-suite: ${{ matrix.test-suite }}
+
+    # Build and deployment (only runs on main branch and after quality checks pass)
+    build-push:
+        name: 🚀 Build & Deploy
+        runs-on: ubuntu-22.04
+        needs: [quality-checks, security-analysis, code-quality, testing]
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
         steps:
             - name: Check out code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
 
             - name: Bypass Cloudflare for Github Action
               uses: ./.github/actions/bypass-cloudflare
@@ -20,7 +112,7 @@ jobs:
                   cf_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
             - name: Log in to Quay
-              uses: docker/login-action@v2
+              uses: docker/login-action@v3
               with:
                   registry: quay.io
                   username: ${{ secrets.QUAY_USERNAME }}
