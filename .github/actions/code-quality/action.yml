@@ -16,8 +16,8 @@ runs:
         echo "Current directory: $(pwd)"
         echo "Bundle config:"
         bundle config list
-        echo "Running fasterer..."
-        bundle exec fasterer
+        echo "Running fasterer on app/, lib/, config/ directories..."
+        bundle exec fasterer app/ lib/ config/
       
     - name: Run Coffeelint
       if: inputs.tool == 'coffeelint'
