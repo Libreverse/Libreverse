@@ -124,7 +124,7 @@ class FederationController < ApplicationController
       published: experience.created_at.iso8601,
       "libreverse:author" => experience.author,
       "libreverse:moderationStatus" => experience.approved? ? "approved" : "pending",
-      "libreverse:instanceDomain" => Rails.application.config.x.instance_domain,
+      "libreverse:instanceDomain" => current_instance_domain,
       "libreverse:experienceType" => "interactive_html"
       # Security: Never include vectors, detailed content, or manipulable metadata
     }
@@ -139,22 +139,15 @@ class FederationController < ApplicationController
   def libreverse_instance?(domain)
     return false unless domain
 
- uri = if URI::DEFAULT_PARSER.make_regexp(%w[http https]).match?(domain)
-  URI(domain)
- else
-  URI("https://#{domain}/.well-known/libreverse")
- end
- ...
- http.open_timeout = 1
- http.read_timeout = 2
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 3
+    url = if URI::DEFAULT_PARSER.make_regexp(%w[http https]).match?(domain)
+      domain
+    else
+      "https://#{domain}/.well-known/libreverse"
+    end
 
-    request = Net::HTTP::Get.new(uri)
-    response = http.request(request)
+    response = HTTParty.get(url, timeout: 3)
 
-    if response.code == "200"
+    if response.code == 200
       data = JSON.parse(response.body)
       data["software"] == "libreverse"
     else

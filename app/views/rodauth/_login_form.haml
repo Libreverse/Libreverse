@@ -19,7 +19,7 @@
       = form.text_field rodauth.login_param,
                         value: params[rodauth.login_param],
                         id: "login",
-                        placeholder: "@username@#{Rails.application.config.x.instance_domain} or username",
+                        placeholder: "@username@#{current_instance_domain} or username",
                         autocomplete: "username",
                         required: true,
                         data: { form_auto_submit_target: "input" },

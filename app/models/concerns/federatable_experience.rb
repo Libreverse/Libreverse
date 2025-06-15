@@ -60,7 +60,7 @@ module FederatableExperience
       "libreverse:moderationStatus" => moderation_status,
       "libreverse:interactionCapabilities" => interaction_capabilities,
       "libreverse:tags" => extract_tags_from_description,
-      "libreverse:instanceDomain" => Rails.application.config.x.instance_domain,
+      "libreverse:instanceDomain" => LibreverseInstance::Application.instance_domain,
       "libreverse:creatorAccount" => account&.username
     }
   end
@@ -87,7 +87,7 @@ module FederatableExperience
 
     Rails.application.routes.url_helpers.rails_blob_url(
       html_file,
-      host: Rails.application.config.x.instance_domain
+      host: LibreverseInstance::Application.instance_domain
     )
   end
 

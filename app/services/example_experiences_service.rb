@@ -128,7 +128,8 @@ class ExampleExperiencesService
         description: exp_data[:description],
         author: exp_data[:author],
         account: admin_account,
-        approved: true
+        approved: true,
+        federate: false # Example experiences should not be federated
       )
 
       attach_html_file(experience, exp_data[:html_file_data])

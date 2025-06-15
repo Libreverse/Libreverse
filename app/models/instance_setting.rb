@@ -28,6 +28,12 @@ class InstanceSetting < ApplicationRecord
     automoderation_enabled
     eea_mode_enabled
     federation_description_limit
+    rails_log_level
+    allowed_hosts
+    force_ssl
+    no_ssl
+    cors_origins
+    port
   ].freeze
 
   validate :key_must_be_allowed
@@ -89,20 +95,30 @@ class InstanceSetting < ApplicationRecord
     defaults = {
       "instance_name" => "Libreverse Instance",
       "instance_description" => "An instance of the Metaverse, but open-source",
-      "instance_domain" => ENV["INSTANCE_DOMAIN"] || "localhost:3000",
-      "admin_email" => ENV["ADMIN_EMAIL"] || "admin@example.com",
-      "admin_signal_url" => ENV["ADMIN_SIGNAL_URL"] || "",
-      "admin_twitter_handle" => ENV["ADMIN_TWITTER_HANDLE"] || "",
-      "security_contact_email" => ENV["SECURITY_CONTACT_EMAIL"] || "",
-      "security_contact_signal" => ENV["SECURITY_CONTACT_SIGNAL"] || "",
-      "security_contact_twitter" => ENV["SECURITY_CONTACT_TWITTER"] || "",
+      "instance_domain" => ENV["INSTANCE_DOMAIN"] || (Rails.env.production? ? "localhost" : "localhost:3000"),
+      "admin_email" => "admin@localhost",
+      "admin_signal_url" => "",
+      "admin_twitter_handle" => "",
+      "security_contact_email" => "",
+      "security_contact_signal" => "",
+      "security_contact_twitter" => "",
       "privacy_policy_url" => "/privacy",
       "acknowledgements_url" => "/security",
       "preferred_languages" => "en",
       "no_bots_mode" => "false",
       "automoderation_enabled" => "true",
       "eea_mode_enabled" => "true",
-      "federation_description_limit" => "300"
+      "federation_description_limit" => "300",
+      "rails_log_level" => (if Rails.env.development?
+"debug"
+                            else
+(Rails.env.test? ? "error" : "info")
+                            end),
+      "allowed_hosts" => "localhost",
+      "force_ssl" => (Rails.env.production? ? "true" : "false"),
+      "no_ssl" => "false",
+      "cors_origins" => (Rails.env.development? || Rails.env.test? ? "*" : "localhost"),
+      "port" => "3000"
     }
 
     defaults.each do |key, default_value|

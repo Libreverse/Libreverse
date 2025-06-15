@@ -2,14 +2,7 @@
 
 require_relative "boot"
 
-require "rails"
-require "active_record/railtie"
-require "active_storage/engine"
-require "action_controller/railtie"
-require "action_view/railtie"
-require "active_job/railtie"
-require "action_cable/engine"
-require "rails/test_unit/railtie"
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -24,9 +17,8 @@ require_relative "../lib/middleware/emoji_replacer"
 #
 # These settings can be overridden in specific environments using the files
 # in config/environments, which are processed later.
-#
+
 # config.time_zone = "Central Time (US & Canada)"
-# config.eager_load_paths << Rails.root.join("extras")
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -86,7 +78,152 @@ module LibreverseInstance
     # I prefer this. It's just nicer, somehow.
     config.active_record.schema_format = :sql
 
-    # Instance domain configuration for federation
-    config.x.instance_domain = ENV["INSTANCE_DOMAIN"] || "localhost:3000"
+    # Class method to get instance domain, delegating to module-level method
+    def self.instance_domain
+      LibreverseInstance.instance_domain
+    end
+  end
+
+  # Simple configuration methods for early boot
+  # Port is hardcoded, domain uses smart detection, others have sensible defaults
+
+  def self.port
+    3000 # Hardcoded as requested
+  end
+
+  def self.admin_email
+    return @admin_email if defined?(@admin_email)
+
+    @admin_email = if can_access_database?
+      setting = InstanceSetting.find_by(key: "admin_email")
+      setting&.value || "admin@localhost"
+    else
+      "admin@localhost"
+    end
+  end
+
+  def self.instance_domain
+    return @instance_domain if defined?(@instance_domain)
+
+    @instance_domain = if can_access_database?
+      setting = InstanceSetting.find_by(key: "instance_domain")
+      setting&.value || fallback_instance_domain
+    else
+      fallback_instance_domain
+    end
+  end
+
+  def self.rails_log_level
+    return @rails_log_level if defined?(@rails_log_level)
+
+    @rails_log_level = if can_access_database?
+      setting = InstanceSetting.find_by(key: "rails_log_level")
+      setting&.value || "info"
+    else
+      "info"
+    end
+  end
+
+  def self.cors_origins
+    return @cors_origins if defined?(@cors_origins)
+
+    @cors_origins = if can_access_database?
+      setting = InstanceSetting.find_by(key: "cors_origins")
+      if setting&.value.present?
+        setting.value.split(",").map(&:strip)
+      else
+        fallback_cors_origins
+      end
+    else
+      fallback_cors_origins
+    end
+  end
+
+  def self.reset_all_cached_config!
+    remove_instance_variable(:@admin_email) if defined?(@admin_email)
+    remove_instance_variable(:@instance_domain) if defined?(@instance_domain)
+    remove_instance_variable(:@rails_log_level) if defined?(@rails_log_level)
+    remove_instance_variable(:@cors_origins) if defined?(@cors_origins)
+  end
+
+  class << self
+    private
+
+    # Check if we can safely access the database
+    def can_access_database?
+      defined?(InstanceSetting) &&
+        Rails.application.initialized? &&
+        ActiveRecord::Base.connection.table_exists?("instance_settings")
+    rescue StandardError
+      false
+    end
+
+    # Smart domain detection for federation
+    def fallback_instance_domain
+      # Try environment variable first
+      return ENV["INSTANCE_DOMAIN"] if ENV["INSTANCE_DOMAIN"].present?
+
+      # Environment-specific defaults with auto-detection
+      case Rails.env
+      when "development"
+        "localhost:3000"
+      when "test"
+        "localhost"
+      when "production"
+        detect_production_domain
+      else
+        "localhost"
+      end
+    end
+
+    def fallback_cors_origins
+      # Allow all origins in development/test, restrict in production
+      if Rails.env.development? || Rails.env.test?
+        [ "*" ]
+      else
+        domain = fallback_instance_domain
+        [ "https://#{domain}", "http://#{domain}" ]
+      end
+    end
+
+    def detect_production_domain
+      ip = fetch_public_ip
+      domain = fetch_reverse_dns(ip)
+
+      raise <<~ERROR unless domain
+        ❌ No domain resolves to this server's public IP (#{ip}).
+        Please make sure you've configured DNS (A or AAAA records) so that a domain name points to this IP.
+
+        If you're self-hosting, you'll need to set up DNS with your registrar or cloud provider.
+      ERROR
+
+Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
+        domain
+    rescue StandardError => e
+      raise "🚨 Domain check failed: #{e.message}"
+    end
+
+    def fetch_public_ip
+      require "open-uri"
+      URI.open("https://api.ipify.org").read.strip
+    rescue StandardError => e
+      raise "Could not retrieve public IP: #{e.message}"
+    end
+
+    def fetch_reverse_dns(ip)
+      require "open-uri"
+      require "json"
+
+      url = "https://freeapi.robtex.com/ipquery/#{ip}"
+      json = URI.open(url).read
+      data = JSON.parse(json)
+
+      if data["status"] == "ok" && data["pas"].is_a?(Array) && !data["pas"].empty?
+        # Return the first PTR record domain
+        data["pas"].first["o"]
+      end
+    rescue StandardError => e
+      raise "Failed reverse DNS lookup: #{e.message}"
+    end
   end
 end

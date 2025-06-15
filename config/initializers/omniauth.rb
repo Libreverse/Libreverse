@@ -24,7 +24,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
                  client_secret: session[:client_secret],
                  scope: %w[openid profile email],
                  response_type: "code",
-                 redirect_uri: "https://#{Rails.application.config.x.instance_domain}/auth/federated/callback"
+                 redirect_uri: "https://#{LibreverseInstance::Application.instance_domain}/auth/federated/callback"
                )
              else
                # If we don't have session data, this will cause the auth to fail

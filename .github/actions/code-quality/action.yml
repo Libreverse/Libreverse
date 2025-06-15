@@ -1,39 +1,39 @@
-name: 'Code Quality Analysis'
-description: 'Run code quality analysis tools'
+name: "Code Quality Analysis"
+description: "Run code quality analysis tools"
 
 inputs:
-  tool:
-    description: 'Code quality tool to run (fasterer, coffeelint, typos)'
-    required: true
+    tool:
+        description: "Code quality tool to run (fasterer, coffeelint, typos)"
+        required: true
 
 runs:
-  using: 'composite'
-  steps:
-    - name: Run Fasterer
-      if: inputs.tool == 'fasterer'
-      shell: bash
-      run: |
-        echo "Current directory: $(pwd)"
-        echo "Bundle config:"
-        bundle config list
-        echo "Running fasterer on app/, lib/, config/ directories..."
-        bundle exec fasterer app/ lib/ config/
-      
-    - name: Run Coffeelint
-      if: inputs.tool == 'coffeelint'
-      shell: bash
-      run: |
-        echo "Searching for CoffeeScript files..."
-        coffee_files=$(find . -path ./node_modules -prune -o -path ./vendor -prune -o -path ./tmp -prune -o -name '*.coffee' -print)
-        if [ -n "$coffee_files" ]; then
-          echo "Found CoffeeScript files:"
-          echo "$coffee_files"
-          echo "Running coffeelint..."
-          echo "$coffee_files" | xargs bun coffeelint -f coffeelint.json
-        else
-          echo "No .coffee files found, skipping Coffeelint"
-        fi
-        
-    - name: typos-action
-      if: inputs.tool == 'typos'
-      uses: crate-ci/typos@v1.33.1
+    using: "composite"
+    steps:
+        - name: Run Fasterer
+          if: inputs.tool == 'fasterer'
+          shell: bash
+          run: |
+              echo "Current directory: $(pwd)"
+              echo "Bundle config:"
+              bundle config list
+              echo "Running fasterer on app/, lib/, config/ directories..."
+              bundle exec fasterer app/ lib/ config/
+
+        - name: Run Coffeelint
+          if: inputs.tool == 'coffeelint'
+          shell: bash
+          run: |
+              echo "Searching for CoffeeScript files..."
+              coffee_files=$(find . -path ./node_modules -prune -o -path ./vendor -prune -o -path ./tmp -prune -o -name '*.coffee' -print)
+              if [ -n "$coffee_files" ]; then
+                echo "Found CoffeeScript files:"
+                echo "$coffee_files"
+                echo "Running coffeelint..."
+                echo "$coffee_files" | xargs bun coffeelint -f coffeelint.json
+              else
+                echo "No .coffee files found, skipping Coffeelint"
+              fi
+
+        - name: typos-action
+          if: inputs.tool == 'typos'
+          uses: crate-ci/typos@v1.33.1

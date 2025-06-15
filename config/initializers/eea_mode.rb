@@ -42,21 +42,21 @@ module EEAMode
   # Configuration via ENV variable only
   # ---------------------------------------------------------------------
 
-  # Return true if EEA mode is active. Must be provided via EEA_MODE env var
-  # with a truthy value ("true", "1", "yes", "on"). Any other value is
-  # treated as disabled. Missing variable will raise at boot, enforcing
-  # explicit configuration.
+  # Return true if EEA mode is active. Defaults to true for compliance.
+  # Can be overridden via instance settings in the UI.
   def self.enabled?
     return @enabled unless @enabled.nil?
 
-    raw = ENV.fetch("EEA_MODE") # raises KeyError if missing
+    # Default to true for GDPR compliance, allow override via ENV for testing
+    raw = ENV.fetch("EEA_MODE") { "true" }
     @enabled = %w[true 1 yes on].include?(raw.to_s.downcase)
   end
 
   # Check if EEA mode is enabled instance-wide (defaults to true for compliance)
   def self.enabled_for_user?(_account_id = nil)
     # EEA mode is now instance-wide, not user-specific
-    InstanceSetting.get_with_fallback("eea_mode_enabled", "EEA_MODE", "true") == "true"
+    # Use instance setting with true as fallback (no env var dependency)
+    InstanceSetting.get_with_fallback("eea_mode_enabled", nil, "true") == "true"
   end
 
   def self.verify_compliance

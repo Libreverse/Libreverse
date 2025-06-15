@@ -42,10 +42,8 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "https://your-production-domain.com", /https:\/\/your-production-domain.*/ ]
 
-  # SSL Enforcement (forced via env var)
-  # Must provide FORCE_SSL with explicit truthy/falsey value, otherwise boot aborts.
-  ssl_flag = ENV.fetch("FORCE_SSL") # raises if missing
-  ssl_enabled = %w[true 1 yes on].include?(ssl_flag.to_s.downcase)
+  # SSL Enforcement (using centralized configuration)
+  ssl_enabled = LibreverseInstance::Application.force_ssl?
 
   config.assume_ssl = ssl_enabled
   config.force_ssl  = ssl_enabled
@@ -53,8 +51,8 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
-  # Log level (must be provided via env var)
-  config.log_level = ENV.fetch("RAILS_LOG_LEVEL")
+  # Log level (using centralized configuration)
+  config.log_level = LibreverseInstance::Application.rails_log_level
 
   # Cache Store Configuration
   config.cache_store = :solid_cache_store
@@ -74,9 +72,8 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # Host Authorization - controlled via ALLOWED_HOSTS environment variable
-  allowed_hosts_env = ENV.fetch("ALLOWED_HOSTS")
-  allowed_hosts = allowed_hosts_env.split(RE2::Regexp.new('[\\s,]+')).reject(&:blank?)
+  # Host Authorization - using centralized configuration
+  allowed_hosts = LibreverseInstance::Application.allowed_hosts
 
   # Always allow localhost and 127.0.0.1
   %w[localhost 127.0.0.1].each do |local_host|

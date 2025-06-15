@@ -24,7 +24,7 @@ def hardware_threads
         return line.strip.to_i if /^\d+/.match?(line)
       end
     end
-    return ENV["NUMBER_OF_PROCESSORS"]&.to_i if ENV["NUMBER_OF_PROCESSORS"]
+    # Fallback to Etc.nprocessors instead of environment variable
   end
 
   # Fallback to Etc.nprocessors
@@ -69,13 +69,13 @@ if defined?(Iodine)
 Iodine.threads = iodine_threads if current_threads.zero?
   Iodine.workers = iodine_workers if Iodine.workers.zero?
 
-  # Port configuration with environment variable support
-  Iodine::DEFAULT_SETTINGS[:port] ||= ENV.fetch("PORT") { "3000" }
+  # Port configuration - always use port 3000
+  Iodine::DEFAULT_SETTINGS[:port] = "3000"
 
   # Advanced Performance Optimizations
 
   # Enable static file serving for better performance (bypass Ruby layer)
-  if Rails.env.production? && !ENV["DISABLE_STATIC_FILES"]
+  if Rails.env.production?
     # Serve static files from public directory with native C implementation
     Iodine::DEFAULT_SETTINGS[:public] ||= Rails.public_path.to_s
 
@@ -109,7 +109,7 @@ Iodine.threads = iodine_threads if current_threads.zero?
   end
 
   # Connection and timeout optimizations
-  Iodine::DEFAULT_SETTINGS[:timeout] ||= ENV.fetch("IODINE_TIMEOUT") { "40" }.to_i
+  Iodine::DEFAULT_SETTINGS[:timeout] ||= 40
 
   # WebSocket and upgrade optimizations (if using WebSockets)
   if Rails.application.config.respond_to?(:action_cable)
@@ -118,13 +118,13 @@ Iodine.threads = iodine_threads if current_threads.zero?
   end
 
   # Logging configuration
-  if ENV["IODINE_VERBOSE"] || Rails.env.development?
+  if Rails.env.development?
     # This enables optimized HTTP request logging
     # More efficient than Rails logging middleware for high-traffic apps
   end
 
   # Security and resource limits
-  Iodine::DEFAULT_SETTINGS[:max_body] ||= ENV.fetch("MAX_BODY_SIZE") { "2048" }.to_i # MB (2GB)
+  Iodine::DEFAULT_SETTINGS[:max_body] ||= 2048 # MB (2GB)
 
   # Performance monitoring hooks
   if Rails.env.production?

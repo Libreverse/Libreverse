@@ -32,7 +32,7 @@ class FederatedLoginController < ApplicationController
     end
 
     # Register as an OAuth client
-    redirect_uri = "https://#{Rails.application.config.x.instance_domain}/auth/federated/callback"
+    redirect_uri = "https://#{LibreverseInstance::Application.instance_domain}/auth/federated/callback"
     client_data = register_dynamic_client(registration_endpoint, redirect_uri)
 
     unless client_data

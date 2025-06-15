@@ -19,18 +19,17 @@ Rails.application.configure do
   # ------------------------------------------
 
   # === Configure ActionCable URL for consistency ===
-  # Ensure this matches the port your server ACTUALLY runs on (e.g., via Foreman)
-  # Support both IPv4 and IPv6 localhost
-  config.action_cable.url = "ws://localhost:5000/cable"
+  # Hardcode port to 3000 for development
+  config.action_cable.url = "ws://localhost:3000/cable"
   config.action_cable.allowed_request_origins = [
-    "http://localhost:5000",
-    "http://127.0.0.1:5000",
-    "http://[::1]:5000"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://[::1]:3000"
   ]
   # ===============================================
 
   # Default URL options should also match
-  config.action_controller.default_url_options = { host: "localhost", port: 5000 }
+  config.action_controller.default_url_options = { host: "localhost", port: 3000 }
 
   # Settings specified here will take precedence over those in config/application.rb.
 

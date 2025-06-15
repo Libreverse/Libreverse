@@ -8,19 +8,48 @@ Federails.configure do |config|
   config.app_name = "Libreverse"
   config.app_version = "1.0.0"
 
+  # Get instance domain from environment or sensible defaults
+  # Don't rely on application methods during initialization
+  instance_domain = ENV["INSTANCE_DOMAIN"] || case Rails.env
+                                              when "development"
+                                                "localhost:3000"
+                                              when "test"
+                                                "localhost"
+                                              when "production"
+                                                # Simplified: require explicit configuration in production
+                                                "localhost"
+                                              else
+                                                "localhost"
+                                              end
+  raise "Missing instance domain – required for Federails initialisation" if instance_domain.blank?
+
+  raise "Missing instance domain configuration – required for Federails initialisation" if instance_domain.blank?
+
   # SSL and domain configuration
   if Rails.env.production?
     config.force_ssl = true
-    config.site_host = "https://#{Rails.application.config.x.instance_domain}"
-    config.site_port = 3000
+    if instance_domain.include?(":")
+      host, port = instance_domain.split(":")
+      config.site_host = "https://#{host}"
+      config.site_port = port.to_i
+    else
+      config.site_host = "https://#{instance_domain}"
+      config.site_port = 443
+    end
   elsif Rails.env.test?
     config.force_ssl = false
     config.site_host = "http://localhost"
     config.site_port = nil # No port for test
   else # development
     config.force_ssl = false
-    config.site_host = "http://localhost"
-    config.site_port = 3000
+    if instance_domain.include?(":")
+      host, port = instance_domain.split(":")
+      config.site_host = "http://#{host}"
+      config.site_port = port.to_i
+    else
+      config.site_host = "http://#{instance_domain}"
+      config.site_port = 3000
+    end
   end
 
   # Federation features

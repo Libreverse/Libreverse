@@ -17,7 +17,7 @@ class UnifiedExperience
       @created_at = source.created_at
       @updated_at = source.updated_at
       @source_type = :local
-      @source_domain = Rails.application.config.x.instance_domain
+      @source_domain = safe_instance_domain
       @experience_url = nil # Will use regular display path
       @activitypub_uri = nil
       @source_object = source
@@ -38,6 +38,30 @@ class UnifiedExperience
       raise ArgumentError, "Unknown source type: #{source.class}"
     end
   end
+
+  # Safe method to get instance domain that works during tests and initialization
+  def safe_instance_domain
+    # Try to get from application if available
+    if defined?(LibreverseInstance::Application) &&
+       LibreverseInstance::Application.respond_to?(:instance_domain)
+      begin
+        LibreverseInstance::Application.instance_domain
+      rescue StandardError
+        fallback_instance_domain
+      end
+    else
+      fallback_instance_domain
+    end
+  end
+
+  private
+
+  def fallback_instance_domain
+    # Use environment variable or localhost as fallback
+    ENV["INSTANCE_DOMAIN"] || "localhost"
+  end
+
+  public
 
   # For compatibility with existing views and paths
   def to_param

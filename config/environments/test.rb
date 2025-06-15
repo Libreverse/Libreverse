@@ -17,7 +17,8 @@ Rails.application.configure do
   # this is usually not necessary, and can slow down your test suite. However, it's
   # recommended that you enable it in continuous integration systems to ensure eager
   # loading is working properly before deploying your code.
-  config.eager_load = ENV["CI"].present?
+  # Enable eager loading on CI for better test coverage
+  config.eager_load = defined?(ENV["CI"]) && ENV["CI"].present?
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = false
@@ -80,7 +81,4 @@ Rails.application.configure do
   # config.vite.dev_server_enabled = false
 end
 
-# Ensure required environment variables have default values in test suite
-ENV["EEA_MODE"]  ||= "false"
-ENV["FORCE_SSL"] ||= "false"
-ENV["CORS_ORIGINS"] ||= "localhost"
+# EEA mode now defaults to true, no environment variable needed
