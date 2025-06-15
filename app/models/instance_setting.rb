@@ -36,6 +36,11 @@ class InstanceSetting < ApplicationRecord
     port
   ].freeze
 
+  # Conditional validations based on key
+  validates :value, inclusion: { in: %w[true false], message: "must be 'true' or 'false'" }, if: :boolean_setting?
+  validates :value, format: { with: /\A\d+\z/, message: "must be a valid integer" }, if: :port_setting?
+  validate :port_within_range, if: :port_setting?
+
   validate :key_must_be_allowed
 
   # Get a setting value by key
@@ -134,5 +139,22 @@ class InstanceSetting < ApplicationRecord
     return if ALLOWED_KEYS.include?(key)
 
     errors.add(:key, "is not an allowed setting key")
+  end
+
+  def boolean_setting?
+    %w[force_ssl no_ssl].include?(key)
+  end
+
+  def port_setting?
+    key == "port"
+  end
+
+  def port_within_range
+    return unless value.present? && value.match?(/\A\d+\z/)
+
+    port_number = value.to_i
+    return if port_number.between?(1, 65_535)
+
+      errors.add(:value, "must be between 1 and 65535")
   end
 end

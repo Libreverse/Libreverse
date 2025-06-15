@@ -82,13 +82,25 @@ module LibreverseInstance
     def self.instance_domain
       LibreverseInstance.instance_domain
     end
+
+    # Delegate reset method to module
+    def self.reset_all_cached_config!
+      LibreverseInstance.reset_all_cached_config!
+    end
   end
 
   # Simple configuration methods for early boot
-  # Port is hardcoded, domain uses smart detection, others have sensible defaults
+  # Port, domain uses smart detection, others have sensible defaults
 
   def self.port
-    3000 # Hardcoded as requested
+    return @port if defined?(@port)
+
+    @port = if can_access_database?
+      setting = InstanceSetting.find_by(key: "port")
+      setting&.value&.to_i || 3000
+    else
+      3000
+    end
   end
 
   def self.admin_email
@@ -139,11 +151,57 @@ module LibreverseInstance
     end
   end
 
+  # Legacy method bridges for backward compatibility
+  def self.allowed_hosts
+    return @allowed_hosts if defined?(@allowed_hosts)
+
+    @allowed_hosts = if can_access_database?
+      setting = InstanceSetting.find_by(key: "allowed_hosts")
+      if setting&.value.present?
+        setting.value.split(",").map(&:strip)
+      else
+        [ instance_domain ]
+      end
+    else
+      [ instance_domain ]
+    end
+  end
+
+  def self.force_ssl?
+    return @force_ssl if defined?(@force_ssl)
+
+    @force_ssl = if can_access_database?
+      setting = InstanceSetting.find_by(key: "force_ssl")
+      setting&.value == "true"
+    else
+      Rails.env.production?
+    end
+  end
+
+  def self.no_ssl?
+    !force_ssl?
+  end
+
+  def self.eea_mode_enabled?
+    return @eea_mode_enabled if defined?(@eea_mode_enabled)
+
+    @eea_mode_enabled = if can_access_database?
+      setting = InstanceSetting.find_by(key: "eea_mode_enabled")
+      setting&.value == "true"
+    else
+      false
+    end
+  end
+
   def self.reset_all_cached_config!
+    remove_instance_variable(:@port) if defined?(@port)
     remove_instance_variable(:@admin_email) if defined?(@admin_email)
     remove_instance_variable(:@instance_domain) if defined?(@instance_domain)
     remove_instance_variable(:@rails_log_level) if defined?(@rails_log_level)
     remove_instance_variable(:@cors_origins) if defined?(@cors_origins)
+    remove_instance_variable(:@allowed_hosts) if defined?(@allowed_hosts)
+    remove_instance_variable(:@force_ssl) if defined?(@force_ssl)
+    remove_instance_variable(:@eea_mode_enabled) if defined?(@eea_mode_enabled)
   end
 
   class << self

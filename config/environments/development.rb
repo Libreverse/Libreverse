@@ -16,20 +16,19 @@ Rails.application.configure do
                        key: "_libreverse_session",
                        expire_after: 2.hours, # Match previous setting
                        domain: nil # Allow both localhost and ::1 in development
-  # ------------------------------------------
+# ------------------------------------------
+# === Configure ActionCable URL for consistency ===
+# Use default port for development (3000)
+config.action_cable.url = "ws://localhost:3000/cable"
+config.action_cable.allowed_request_origins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://[::1]:3000"
+]
+# ===============================================
 
-  # === Configure ActionCable URL for consistency ===
-  # Hardcode port to 3000 for development
-  config.action_cable.url = "ws://localhost:3000/cable"
-  config.action_cable.allowed_request_origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://[::1]:3000"
-  ]
-  # ===============================================
-
-  # Default URL options should also match
-  config.action_controller.default_url_options = { host: "localhost", port: 3000 }
+# Default URL options should also match
+config.action_controller.default_url_options = { host: "localhost", port: 3000 }
 
   # Settings specified here will take precedence over those in config/application.rb.
 

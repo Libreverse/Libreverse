@@ -8,19 +8,9 @@ Federails.configure do |config|
   config.app_name = "Libreverse"
   config.app_version = "1.0.0"
 
-  # Get instance domain from environment or sensible defaults
-  # Don't rely on application methods during initialization
-  instance_domain = ENV["INSTANCE_DOMAIN"] || case Rails.env
-                                              when "development"
-                                                "localhost:3000"
-                                              when "test"
-                                                "localhost"
-                                              when "production"
-                                                # Simplified: require explicit configuration in production
-                                                "localhost"
-                                              else
-                                                "localhost"
-                                              end
+  # Get instance domain from the centralized configuration system
+  # Use LibreverseInstance.instance_domain which handles environment detection and fallbacks
+  instance_domain = LibreverseInstance.instance_domain
   raise "Missing instance domain – required for Federails initialisation" if instance_domain.blank?
 
   raise "Missing instance domain configuration – required for Federails initialisation" if instance_domain.blank?
@@ -29,7 +19,7 @@ Federails.configure do |config|
   if Rails.env.production?
     config.force_ssl = true
     if instance_domain.include?(":")
-      host, port = instance_domain.split(":")
+      host, port = instance_domain.split(":", 2)
       config.site_host = "https://#{host}"
       config.site_port = port.to_i
     else
@@ -43,7 +33,7 @@ Federails.configure do |config|
   else # development
     config.force_ssl = false
     if instance_domain.include?(":")
-      host, port = instance_domain.split(":")
+      host, port = instance_domain.split(":", 2)
       config.site_host = "http://#{host}"
       config.site_port = port.to_i
     else

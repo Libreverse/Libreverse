@@ -145,7 +145,7 @@ class FederationController < ApplicationController
       "https://#{domain}/.well-known/libreverse"
     end
 
-    response = HTTParty.get(url, timeout: 3)
+    response = HTTParty.get(url, open_timeout: 3, read_timeout: 3)
 
     if response.code == 200
       data = JSON.parse(response.body)

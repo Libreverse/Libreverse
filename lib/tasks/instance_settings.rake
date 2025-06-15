@@ -37,7 +37,7 @@ namespace :instance_settings do
   desc "Reset all cached configuration values"
   task reset_cache: :environment do
     puts "Resetting cached configuration values..."
-    LibreverseInstance::Application.reset_all_cached_config!
+    LibreverseInstance.reset_all_cached_config!
     puts "✓ Cache reset successfully"
   end
 

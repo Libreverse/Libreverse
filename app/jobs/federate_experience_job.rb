@@ -80,6 +80,8 @@ class FederateExperienceJob < ApplicationJob
 
   def announce_to_instance(domain, activity, actor)
     # Send announcement to instance's discovery endpoint
+    return unless /\A[a-z0-9\-.]+\z/i.match?(domain) # allow hostname only
+
     url = "https://#{domain}/api/activitypub/announce"
 
     # Only send link and metadata, not full content

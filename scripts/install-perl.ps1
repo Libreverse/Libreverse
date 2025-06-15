@@ -60,11 +60,14 @@ function Install-Perl {
     
     # Determine download URL based on architecture
     $baseUrl = "https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download"
-    if ($Architecture -eq "64bit") {
-        $filename = "strawberry-perl-$Version-64bit.msi"
-    } else {
-        $filename = "strawberry-perl-$Version-32bit.msi"
+switch ($Architecture.ToLower()) {
+    "64bit" { $filename = "strawberry-perl-$Version-64bit.msi" }
+    "32bit" { $filename = "strawberry-perl-$Version-32bit.msi" }
+    default {
+        Write-ColorOutput "Unsupported architecture: $Architecture" "Red"
+        exit 1
     }
+}
     
     $downloadUrl = "$baseUrl/SP_$($Version.Replace('.', '_'))/$filename"
     $tempPath = "$env:TEMP\$filename"

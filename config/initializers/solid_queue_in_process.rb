@@ -14,7 +14,8 @@ unless Rails.env.test?
     # 1. We are running inside a long-lived web/server process (eg. Puma),
     # 2. The database is reachable **and** the Solid Queue tables exist.
     Rails.logger.info "Solid Queue guard clause check: Console? #{defined?(Rails::Console)}, PROGRAM_NAME: #{File.basename($PROGRAM_NAME)}"
-    next if defined?(Rails::Console) || File.basename($PROGRAM_NAME) == "rake"
+    next if Rails.const_defined?(:Console) ||
+            %w[rake runner].include?(File.basename($PROGRAM_NAME))
 
     Rails.logger.info "Solid Queue guard clauses passed, starting bootstrap..."
 
