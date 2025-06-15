@@ -4,8 +4,9 @@
     = link_to "← Back to Dashboard", admin_root_path
   %p Configure instance-specific settings for security.txt and privacy.txt files.
 
-  -# Instance Identity Section
-  .bg-white.shadow.rounded-lg.p-6.mb-6{ data: { controller: 'instance-settings' } }
+  .instance-settings-container{ data: { controller: 'instance-settings' } }
+    -# Instance Identity Section
+    .bg-white.shadow.rounded-lg.p-6.mb-6
     %h2.text-xl.font-semibold.mb-4.text-gray-900 Instance Identity
     %p.text-gray-600.mb-4 Configure basic instance information and contact details.
 
@@ -19,8 +20,8 @@
         .setting-control
           %input.form-input.w-full{ type: 'email', value: @admin_email, data: { action: 'change->instance-settings#updateAdminEmail' }, placeholder: 'admin@localhost' }
 
-  -# Security Settings Section
-  .bg-white.shadow.rounded-lg.p-6.mb-6{ data: { controller: 'instance-settings' } }
+    -# Security Settings Section
+    .bg-white.shadow.rounded-lg.p-6.mb-6
     %h2.text-xl.font-semibold.mb-4.text-gray-900 Security & Compliance Settings
     %p.text-gray-600.mb-4 Configure instance-wide security and compliance features.
 
@@ -43,8 +44,8 @@
             %input{ type: 'checkbox', checked: @eea_mode_enabled, data: { action: 'change->instance-settings#toggleEeaMode' } }
             %span.toggle-slider
 
-  -# Application Configuration Section
-  .bg-white.shadow.rounded-lg.p-6.mb-6{ data: { controller: 'instance-settings' } }
+    -# Application Configuration Section
+    .bg-white.shadow.rounded-lg.p-6.mb-6
     %h2.text-xl.font-semibold.mb-4.text-gray-900 Application Configuration
     %p.text-gray-600.mb-4 Configure core application settings including SSL, logging, and network options.
 
@@ -87,8 +88,8 @@
         .setting-control
           %input.form-input.w-full{ type: 'text', value: @cors_origins, data: { action: 'change->instance-settings#updateCorsOrigins' }, placeholder: Rails.env.development? ? '*' : 'https://yourdomain.com' }
 
-  -# Advanced Settings Section (Collapsible)
-  .bg-white.shadow.rounded-lg.p-6.mb-6{ data: { controller: 'instance-settings' } }
+    -# Advanced Settings Section (Collapsible)
+    .bg-white.shadow.rounded-lg.p-6.mb-6
     %details.advanced-settings
       %summary.cursor-pointer.text-xl.font-semibold.text-gray-900.mb-4
         Advanced Settings

@@ -13,30 +13,57 @@ module Admin
     before_action :require_admin
     before_action :set_instance_setting, only: %i[show edit update destroy]
 
-    def index
-      @instance_settings = InstanceSetting.all.order(:key)
+  def index
+    @instance_settings = InstanceSetting.all.order(:key)
 
-      # Provide current values for toggle switches
-      @automoderation_enabled = InstanceSetting.get_with_fallback("automoderation_enabled", nil, "true") == "true"
-      @eea_mode_enabled = InstanceSetting.get_with_fallback("eea_mode_enabled", nil, "true") == "true"
-      @force_ssl = InstanceSetting.get_with_fallback("force_ssl", nil, Rails.env.production? ? "true" : "false") == "true"
+    # Preload all required settings in a single query to avoid N+1 queries
+    required_keys = %w[
+      automoderation_enabled
+      eea_mode_enabled
+      force_ssl
+      rails_log_level
+      allowed_hosts
+      cors_origins
+      admin_email
+      no_ssl
+      port
+    ]
+    settings_hash = InstanceSetting.where(key: required_keys).pluck(:key, :value).to_h
 
-      # Get current values for text inputs
-      rails_log_default = if Rails.env.development?
-        "debug"
-      else
-        Rails.env.test? ? "error" : "info"
+    # Helper method to get setting with fallback using preloaded hash
+    get_setting_with_fallback = lambda do |key, env_var = nil, default = nil|
+      value = settings_hash[key]
+      return value if value.present?
+
+      if env_var.present?
+        env_value = ENV[env_var]
+        return env_value if env_value.present?
       end
-      @rails_log_level = InstanceSetting.get_with_fallback("rails_log_level", "RAILS_LOG_LEVEL", rails_log_default)
-      @allowed_hosts = InstanceSetting.get_with_fallback("allowed_hosts", "ALLOWED_HOSTS", "localhost")
-      cors_default = Rails.env.development? || Rails.env.test? ? "*" : "localhost"
-      @cors_origins = InstanceSetting.get_with_fallback("cors_origins", "CORS_ORIGINS", cors_default)
-      @admin_email = InstanceSetting.get_with_fallback("admin_email", "ADMIN_EMAIL", "admin@localhost")
 
-      # Advanced settings (loaded on demand)
-      @no_ssl = InstanceSetting.get_with_fallback("no_ssl", "NO_SSL", "false") == "true"
-      @port = InstanceSetting.get_with_fallback("port", "PORT", "3000")
+      default
     end
+
+    # Provide current values for toggle switches
+    @automoderation_enabled = get_setting_with_fallback.call("automoderation_enabled", nil, "true") == "true"
+    @eea_mode_enabled = get_setting_with_fallback.call("eea_mode_enabled", nil, "true") == "true"
+    @force_ssl = get_setting_with_fallback.call("force_ssl", nil, Rails.env.production? ? "true" : "false") == "true"
+
+    # Get current values for text inputs
+    rails_log_default = if Rails.env.development?
+      "debug"
+    else
+      Rails.env.test? ? "error" : "info"
+    end
+    @rails_log_level = get_setting_with_fallback.call("rails_log_level", "RAILS_LOG_LEVEL", rails_log_default)
+    @allowed_hosts = get_setting_with_fallback.call("allowed_hosts", "ALLOWED_HOSTS", "localhost")
+    cors_default = Rails.env.development? || Rails.env.test? ? "*" : "localhost"
+    @cors_origins = get_setting_with_fallback.call("cors_origins", "CORS_ORIGINS", cors_default)
+    @admin_email = get_setting_with_fallback.call("admin_email", "ADMIN_EMAIL", "admin@localhost")
+
+    # Advanced settings (loaded on demand)
+    @no_ssl = get_setting_with_fallback.call("no_ssl", "NO_SSL", "false") == "true"
+    @port = get_setting_with_fallback.call("port", "PORT", "3000")
+  end
 
     def show
     end

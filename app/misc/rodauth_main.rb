@@ -68,41 +68,46 @@ class RodauthMain < Rodauth::Rails::Auth
 
       Rails.logger.info "[Rodauth][before_delete_guest] Transferring data from guest account #{guest_account_id} to new account #{new_account_id}"
 
-      # Transfer experiences from guest account to the new account
-      Experience.where(account_id: guest_account_id).update_all(account_id: new_account_id)
+      # Wrap the entire guest data migration in a transaction for atomicity
+      db.transaction do
+        # Transfer experiences from guest account to the new account
+        # rubocop:disable Rails/SkipsModelValidations
+        Experience.where(account_id: guest_account_id).update_all(account_id: new_account_id)
+        # rubocop:enable Rails/SkipsModelValidations
 
-      # Transfer preferences from guest account to the new account
-      UserPreference.where(account_id: guest_account_id).find_each do |preference|
-        # Only transfer if the new account doesn't already have this preference
-        UserPreference.set(new_account_id, preference.key, preference.value) unless UserPreference.exists?(
-          account_id: new_account_id, key: preference.key
-        )
+        # Transfer preferences from guest account to the new account
+        UserPreference.where(account_id: guest_account_id).find_each do |preference|
+          # Only transfer if the new account doesn't already have this preference
+          UserPreference.set(new_account_id, preference.key, preference.value) unless UserPreference.exists?(
+            account_id: new_account_id, key: preference.key
+          )
+        end
+
+        # Clean up data that shouldn't be transferred before deleting the guest account
+
+        # Delete moderation logs for guest account (these are typically admin-only and shouldn't transfer)
+        ModerationLog.where(account_id: guest_account_id).delete_all if defined?(ModerationLog)
+
+        # Delete OAuth applications and grants for guest account (these shouldn't transfer)
+        if defined?(OauthApplication)
+          OauthGrant.where(account_id: guest_account_id).delete_all
+          OauthApplication.where(account_id: guest_account_id).delete_all
+        end
+
+        # Delete Rodauth-related records that use account ID as primary key
+        # These are extension tables where ID = account ID
+        db.from(:account_password_reset_keys).where(id: guest_account_id).delete
+        db.from(:account_remember_keys).where(id: guest_account_id).delete
+        db.from(:account_verification_keys).where(id: guest_account_id).delete
+        db.from(:account_login_change_keys).where(id: guest_account_id).delete
+
+        # Delete active session keys (uses account_id as foreign key, not primary key)
+        db.from(:account_active_session_keys).where(account_id: guest_account_id).delete
+
+        # Delete any remaining user preferences for the guest account
+        # to avoid foreign key constraint violation when deleting the guest account
+        UserPreference.where(account_id: guest_account_id).destroy_all
       end
-
-      # Clean up data that shouldn't be transferred before deleting the guest account
-
-      # Delete moderation logs for guest account (these are typically admin-only and shouldn't transfer)
-      ModerationLog.where(account_id: guest_account_id).delete_all if defined?(ModerationLog)
-
-      # Delete OAuth applications and grants for guest account (these shouldn't transfer)
-      if defined?(OauthApplication)
-        OauthGrant.where(account_id: guest_account_id).delete_all
-        OauthApplication.where(account_id: guest_account_id).delete_all
-      end
-
-      # Delete Rodauth-related records that use account ID as primary key
-      # These are extension tables where ID = account ID
-      db.from(:account_password_reset_keys).where(id: guest_account_id).delete
-      db.from(:account_remember_keys).where(id: guest_account_id).delete
-      db.from(:account_verification_keys).where(id: guest_account_id).delete
-      db.from(:account_login_change_keys).where(id: guest_account_id).delete
-
-      # Delete active session keys (uses account_id as foreign key, not primary key)
-      db.from(:account_active_session_keys).where(account_id: guest_account_id).delete
-
-      # Delete any remaining user preferences for the guest account
-      # to avoid foreign key constraint violation when deleting the guest account
-      UserPreference.where(account_id: guest_account_id).destroy_all
 
       Rails.logger.info "[Rodauth][before_delete_guest] Data transfer completed for guest account #{guest_account_id}"
     end
@@ -502,8 +507,12 @@ class RodauthMain < Rodauth::Rails::Auth
         username, domain = login_value.split("@", 2)
         local_domain = LibreverseInstance::Application.instance_domain
 
+        # Normalize domains for comparison (case-insensitive, ignore ports)
+        normalized_domain = domain.split(":").first.downcase
+        normalized_local_domain = local_domain.split(":").first.downcase
+
         # If the domain matches our local instance, treat as local account
-        if domain == local_domain
+        if normalized_domain == normalized_local_domain
           # Update the login parameter to just the username for local processing
           set_param(login_param, username)
         else

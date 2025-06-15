@@ -95,7 +95,7 @@ function Install-Perl {
     try {
         $process = Start-Process -FilePath "msiexec.exe" -ArgumentList $installArgs -Wait -PassThru
         
-        if ($process.ExitCode -eq 0) {
+        if ($process.ExitCode -in 0, 3010) {
             Write-ColorOutput "Perl installation completed successfully!" "Green"
         } else {
             Write-ColorOutput "Installation failed with exit code: $($process.ExitCode)" "Red"

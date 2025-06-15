@@ -15,8 +15,7 @@ module Graphql
       title: "String!",
       description: "String",
       html_content: "String",
-      author: "String",
-      federate: "Boolean"
+      author: "String"
     ).returns("Experience!")
     action(:update).permit(
       id: "ID!",

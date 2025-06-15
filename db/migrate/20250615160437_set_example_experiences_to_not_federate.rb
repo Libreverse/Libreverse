@@ -12,7 +12,9 @@ class SetExampleExperiencesToNotFederate < ActiveRecord::Migration[8.0]
       "Retro Arcade Experience"
     ]
 
+    # rubocop:disable Rails/SkipsModelValidations
     Experience.where(title: example_titles).update_all(federate: false)
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def down
@@ -26,6 +28,8 @@ class SetExampleExperiencesToNotFederate < ActiveRecord::Migration[8.0]
       "Retro Arcade Experience"
     ]
 
+    # rubocop:disable Rails/SkipsModelValidations
     Experience.where(title: example_titles).update_all(federate: true)
+    # rubocop:enable Rails/SkipsModelValidations
   end
 end

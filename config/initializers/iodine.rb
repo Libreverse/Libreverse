@@ -74,13 +74,51 @@ Iodine.threads = iodine_threads if current_threads.zero?
 
   # Advanced Performance Optimizations
 
-  # Enable static file serving for better performance (bypass Ruby layer)
-  if Rails.env.production?
-    # Serve static files from public directory with native C implementation
-    Iodine::DEFAULT_SETTINGS[:public] ||= Rails.public_path.to_s
+  # Detect if we're behind a reverse proxy to avoid double-serving static files
+  def behind_reverse_proxy?
+    # Common reverse proxy headers
+    proxy_headers = %w[
+      HTTP_X_FORWARDED_FOR
+      HTTP_X_FORWARDED_HOST
+      HTTP_X_FORWARDED_PROTO
+      HTTP_X_REAL_IP
+      HTTP_CF_RAY
+      HTTP_CF_CONNECTING_IP
+      HTTP_X_FORWARDED_SERVER
+      HTTP_X_CLUSTER_CLIENT_IP
+    ]
 
-    # Enable compression for static files (gzip support)
-    # Automatically serves .gz files when available and client supports it
+    # Check if any proxy headers are present in the environment
+    # This suggests we're behind a proxy like nginx, Apache, CloudFlare, etc.
+    proxy_detected = proxy_headers.any? { |header| ENV.key?(header) }
+
+    # Additional checks for common deployment patterns
+    heroku_detected = ENV.key?("DYNO") # Heroku
+    railway_detected = ENV.key?("RAILWAY_ENVIRONMENT") # Railway
+    render_detected = ENV.key?("RENDER") # Render
+    fly_detected = ENV.key?("FLY_APP_NAME") # Fly.io
+    docker_detected = File.exist?("/.dockerenv") || ENV.key?("DOCKER_CONTAINER")
+
+    # Platform checks - these typically use reverse proxies
+    platform_with_proxy = heroku_detected || railway_detected || render_detected || fly_detected
+
+    proxy_detected || platform_with_proxy || docker_detected
+  end
+
+  # Smart static file serving configuration
+  if Rails.env.production?
+    # Auto-detect: only enable if we don't detect a reverse proxy
+    enable_static = !behind_reverse_proxy?
+
+    if enable_static
+      Iodine::DEFAULT_SETTINGS[:public] = Rails.public_path.to_s
+      Rails.logger.info "Iodine: Static file serving enabled (no reverse proxy detected)"
+    else
+      Rails.logger.info "Iodine: Static file serving disabled (reverse proxy detected)"
+    end
+  elsif Rails.env.development?
+    # Always enable in development for convenience
+    Iodine::DEFAULT_SETTINGS[:public] ||= Rails.public_path.to_s
   end
 
   # Memory optimization settings
@@ -142,5 +180,12 @@ Iodine.threads = iodine_threads if current_threads.zero?
   end
 
   # Configuration summary for debugging
-  Rails.logger.info "Iodine Configuration - Workers: #{Iodine.workers}, Threads: #{Iodine.threads}, CPU Cores: #{cpu_cores}"
+  static_files_status = if Rails.env.production?
+    proxy_detected = behind_reverse_proxy?
+    proxy_detected ? "disabled (proxy auto-detected)" : "enabled (no proxy detected)"
+  else
+    "enabled (development)"
+  end
+
+  Rails.logger.info "Iodine Configuration - Workers: #{Iodine.workers}, Threads: #{Iodine.threads}, CPU Cores: #{cpu_cores}, Static Files: #{static_files_status}"
 end
