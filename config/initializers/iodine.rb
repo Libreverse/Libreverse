@@ -76,33 +76,17 @@ Iodine.threads = iodine_threads if current_threads.zero?
 
   # Detect if we're behind a reverse proxy to avoid double-serving static files
   def behind_reverse_proxy?
-    # Common reverse proxy headers
-    proxy_headers = %w[
-      HTTP_X_FORWARDED_FOR
-      HTTP_X_FORWARDED_HOST
-      HTTP_X_FORWARDED_PROTO
-      HTTP_X_REAL_IP
-      HTTP_CF_RAY
-      HTTP_CF_CONNECTING_IP
-      HTTP_X_FORWARDED_SERVER
-      HTTP_X_CLUSTER_CLIENT_IP
-    ]
+    # Note: HTTP proxy headers (X-Forwarded-For, X-Real-IP, etc.) are only available
+    # in request.env during HTTP requests, not in ENV at boot time. For header-based
+    # detection, implement a Rack middleware that checks request.env per request.
 
-    # Check if any proxy headers are present in the environment
-    # This suggests we're behind a proxy like nginx, Apache, CloudFlare, etc.
-    proxy_detected = proxy_headers.any? { |header| ENV.key?(header) }
+    # Platform checks - these platforms typically use reverse proxies by default
+    heroku_detected = ENV.key?("DYNO") # Heroku always uses a router/proxy
+    railway_detected = ENV.key?("RAILWAY_ENVIRONMENT") # Railway uses reverse proxy
+    render_detected = ENV.key?("RENDER") # Render uses reverse proxy
+    fly_detected = ENV.key?("FLY_APP_NAME") # Fly.io uses reverse proxy
 
-    # Additional checks for common deployment patterns
-    heroku_detected = ENV.key?("DYNO") # Heroku
-    railway_detected = ENV.key?("RAILWAY_ENVIRONMENT") # Railway
-    render_detected = ENV.key?("RENDER") # Render
-    fly_detected = ENV.key?("FLY_APP_NAME") # Fly.io
-    docker_detected = File.exist?("/.dockerenv") || ENV.key?("DOCKER_CONTAINER")
-
-    # Platform checks - these typically use reverse proxies
-    platform_with_proxy = heroku_detected || railway_detected || render_detected || fly_detected
-
-    proxy_detected || platform_with_proxy || docker_detected
+    heroku_detected || railway_detected || render_detected || fly_detected
   end
 
   # Smart static file serving configuration

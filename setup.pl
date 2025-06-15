@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Cwd qw(abs_path);
 use File::Copy qw(copy);
+use File::Temp;
 
 print "Installing\n";
 
@@ -33,8 +34,14 @@ unless (command_exists('node')) {
 unless (command_exists('bun')) {
     print "  Bun not found. Installing Bun (via install script)...\n";
     
-    # Create a temporary file for the install script
-    my $temp_script = "/tmp/bun_install_$$.sh";
+    # Create a secure temporary file for the install script
+    my $temp_fh = File::Temp->new(
+        TEMPLATE => 'bun_install_XXXXXX',
+        SUFFIX   => '.sh',
+        UNLINK   => 0  # We'll handle cleanup manually for better error handling
+    );
+    my $temp_script = $temp_fh->filename;
+    close $temp_fh;  # Close the filehandle but keep the file
     
     # Download the install script securely
     my $download_cmd = "curl -fsSL --tlsv1.2 --proto '=https' --max-time 30 --retry 3 -o '$temp_script' 'https://bun.sh/install'";

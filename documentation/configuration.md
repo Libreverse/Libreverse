@@ -40,6 +40,19 @@ The system follows this priority order:
 | ------------ | -------------- | -------------------- | ------------------------------------------- | -------------------------------------------- |
 | CORS Origins | `cors_origins` | `CORS_ORIGINS`       | `*` in dev/test, domain-based in production | Comma-separated list of allowed CORS origins |
 
+### Reverse Proxy Auto-Detection
+
+LibReverse automatically detects when running behind a reverse proxy on known platforms and adjusts static file serving accordingly:
+
+- **Heroku**: Detected via `DYNO` environment variable
+- **Railway**: Detected via `RAILWAY_ENVIRONMENT` environment variable  
+- **Render**: Detected via `RENDER` environment variable
+- **Fly.io**: Detected via `FLY_APP_NAME` environment variable
+
+When a reverse proxy is detected, Iodine disables static file serving to avoid conflicts with the proxy's static file handling.
+
+**Header-based Detection**: HTTP headers like `X-Forwarded-For` are only available during individual requests, not at boot time. If you need header-based proxy detection, implement it in a Rack middleware that can access `request.env`.
+
 ## Environment-Aware Defaults
 
 The system automatically adjusts certain settings based on the Rails environment:
