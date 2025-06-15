@@ -8,7 +8,7 @@ module Emoji
     require "erb"
     require "digest/sha1"
     require "uri"
-    require "net/http"
+    require "httparty"
 
     # Matches standard emojis, including sequences with ZWJ and skin tone modifiers. Note that it's an exception to the general re2 use rule as the identifiers it needs aren't supported by RE2.
     EMOJI_REGEX = /(?:\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?(?:\u{200D}\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
@@ -84,8 +84,7 @@ module Emoji
       if Rails.env.development? || Rails.env.test?
         # Construct the development server URL using host_with_port
         dev_url = "http://#{ViteRuby.config.host_with_port}#{manifest_path}"
-        dev_uri = URI.parse(dev_url)
-        Net::HTTP.get(dev_uri)
+        HTTParty.get(dev_url).body
       else
         relative  = manifest_path.sub(%r{^/?#{ViteRuby.instance.config.public_output_dir}/}, "")
         file_path = Rails.root.join("public", ViteRuby.instance.config.public_output_dir, relative)

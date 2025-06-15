@@ -80,17 +80,7 @@ class FederateExperienceJob < ApplicationJob
 
   def announce_to_instance(domain, activity, actor)
     # Send announcement to instance's discovery endpoint
-    uri = URI("https://#{domain}/api/activitypub/announce")
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme == "https"
-    http.verify_mode = OpenSSL::SSL::VERIFY_PEER if http.use_ssl
-    http.read_timeout = 5
-    http.open_timeout = 3
-
-    request = Net::HTTP::Post.new(uri.path)
-    request["Content-Type"] = "application/activity+json"
-    request["User-Agent"] = "Libreverse/1.0 (#{Rails.application.config.x.instance_domain})"
+    url = "https://#{domain}/api/activitypub/announce"
 
     # Only send link and metadata, not full content
     announcement = {
@@ -104,16 +94,20 @@ class FederateExperienceJob < ApplicationJob
         "url" => activity["object"]["id"], # Link back to original
         "attributedTo" => activity["object"]["attributedTo"],
         "published" => activity["object"]["published"],
-        "libreverse:instanceDomain" => Rails.application.config.x.instance_domain
+        "libreverse:instanceDomain" => LibreverseInstance::Application.instance_domain
       },
       "published" => Time.current.iso8601
     }
 
-    request.body = announcement.to_json
+    response = HTTParty.post(url,
+                             body: announcement.to_json,
+                             headers: {
+                               "Content-Type" => "application/activity+json",
+                               "User-Agent" => "Libreverse/1.0 (#{LibreverseInstance::Application.instance_domain})"
+                             },
+                             timeout: 5)
 
-    response = http.request(request)
-
-    if response.code.to_i >= 200 && response.code.to_i < 300
+    if response.code >= 200 && response.code < 300
       Rails.logger.info "Successfully announced to #{domain}"
     else
       Rails.logger.warn "Failed to announce to #{domain}: #{response.code}"
@@ -123,16 +117,11 @@ class FederateExperienceJob < ApplicationJob
   end
 
   def libreverse_instance?(domain)
-    uri = URI("https://#{domain}/.well-known/libreverse")
+    url = "https://#{domain}/.well-known/libreverse"
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 3
+    response = HTTParty.get(url, timeout: 3)
 
-    request = Net::HTTP::Get.new(uri)
-    response = http.request(request)
-
-    if response.code == "200"
+    if response.code == 200
       data = JSON.parse(response.body)
       data["software"] == "libreverse"
     else

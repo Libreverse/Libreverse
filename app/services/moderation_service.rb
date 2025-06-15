@@ -8,7 +8,7 @@ require "base64"
 class ModerationService
   # Configuration for debug logging
   def self.debug_logging_enabled?
-    Rails.env.development? || Rails.env.test? || ENV["MODERATION_DEBUG"].to_s.downcase == "true"
+    Rails.env.development? || Rails.env.test?
   end
 
   # Load banned words from base64 encoded YAML file

@@ -17,8 +17,16 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [prettier, rubocop, haml-lint, eslint, stylelint, markdownlint]
-        
+                tool:
+                    [
+                        prettier,
+                        rubocop,
+                        haml-lint,
+                        eslint,
+                        stylelint,
+                        markdownlint,
+                    ]
+
         steps:
             - name: Check out code
               uses: actions/checkout@v4
@@ -30,32 +38,32 @@ jobs:
               if: matrix.tool == 'prettier'
               shell: bash
               run: |
-                set -e
-                timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
-                  echo "Prettier failed or timed out, but continuing..."
-                  exit 0
-                }
-                
+                  set -e
+                  timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
+                    echo "Prettier failed or timed out, but continuing..."
+                    exit 0
+                  }
+
             - name: Run Rubocop
               if: matrix.tool == 'rubocop'
               shell: bash
               run: bundle exec rubocop -A
-              
+
             - name: Run haml-lint
               if: matrix.tool == 'haml-lint'
               shell: bash
               run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*'
-              
+
             - name: Run ESLint
               if: matrix.tool == 'eslint'
               shell: bash
               run: bun eslint . --fix
-              
+
             - name: Run Stylelint
               if: matrix.tool == 'stylelint'
               shell: bash
               run: bun stylelint '**/*.scss' --fix
-              
+
             - name: Run markdownlint
               if: matrix.tool == 'markdownlint'
               shell: bash
@@ -70,7 +78,7 @@ jobs:
             fail-fast: false
             matrix:
                 tool: [haml-validation, i18n-validation]
-        
+
         steps:
             - name: Check out code
               uses: actions/checkout@v4
@@ -82,7 +90,7 @@ jobs:
               if: matrix.tool == 'haml-validation'
               shell: bash
               run: bundle exec rake haml:check
-              
+
             - name: Run i18n validation
               if: matrix.tool == 'i18n-validation'
               shell: bash
@@ -97,7 +105,7 @@ jobs:
             fail-fast: false
             matrix:
                 tool: [brakeman, bundle-audit, npm-audit]
-                
+
         steps:
             - name: Check out code
               uses: actions/checkout@v4
@@ -105,7 +113,7 @@ jobs:
             - name: Setup Environment
               uses: ./.github/actions/setup-environment
               env:
-                MATRIX_JOB: security-${{ matrix.tool }}
+                  MATRIX_JOB: security-${{ matrix.tool }}
 
             - name: Run Security Analysis
               uses: ./.github/actions/security-analysis
@@ -121,7 +129,7 @@ jobs:
             fail-fast: false
             matrix:
                 tool: [fasterer, coffeelint, typos]
-                
+
         steps:
             - name: Check out code
               uses: actions/checkout@v4
@@ -129,7 +137,7 @@ jobs:
             - name: Setup Environment
               uses: ./.github/actions/setup-environment
               env:
-                MATRIX_JOB: quality-${{ matrix.tool }}
+                  MATRIX_JOB: quality-${{ matrix.tool }}
 
             - name: Run Code Quality Analysis
               uses: ./.github/actions/code-quality
@@ -145,7 +153,7 @@ jobs:
             fail-fast: false
             matrix:
                 test-suite: [jest, rails-test]
-                
+
         steps:
             - name: Check out code
               uses: actions/checkout@v4
@@ -153,7 +161,7 @@ jobs:
             - name: Setup Environment
               uses: ./.github/actions/setup-environment
               env:
-                MATRIX_JOB: test-${{ matrix.test-suite }}
+                  MATRIX_JOB: test-${{ matrix.test-suite }}
 
             - name: Run Tests
               uses: ./.github/actions/run-tests
@@ -164,7 +172,8 @@ jobs:
     build-push:
         name: Build & Deploy
         runs-on: ubuntu-22.04
-        needs: [formatting, validation, security-analysis, code-quality, testing]
+        needs:
+            [formatting, validation, security-analysis, code-quality, testing]
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
         steps:

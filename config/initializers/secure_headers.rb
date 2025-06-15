@@ -13,8 +13,8 @@ base_headers = {
   "X-Permitted-Cross-Domain-Policies" => "none"
 }
 
-# Conditionally merge HSTS
-base_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains" if ENV.fetch("FORCE_SSL") { "false" }.to_s.downcase.in?(%w[true 1 yes on])
+# Conditionally merge HSTS based on production environment
+base_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains" if Rails.env.production?
 
 SECURE_HEADERS = base_headers.freeze
 

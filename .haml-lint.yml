@@ -2,12 +2,12 @@ require:
     - ./lib/haml_lint/linter/hardcoded_string_linter.rb
 
 exclude:
-    - 'vendor/**/*'
-    - 'vendor/**/*.haml'
-    - 'vendor/**/*.html.haml'
-    - '**/vendor/**/*'
-    - '**/vendor/**/*.haml'
-    - '**/vendor/**/*.html.haml'
+    - "vendor/**/*"
+    - "vendor/**/*.haml"
+    - "vendor/**/*.html.haml"
+    - "**/vendor/**/*"
+    - "**/vendor/**/*.haml"
+    - "**/vendor/**/*.html.haml"
 
 linters:
     LineLength:

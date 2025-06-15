@@ -1,25 +1,25 @@
-name: 'Run Tests'
-description: 'Run test suites'
+name: "Run Tests"
+description: "Run test suites"
 
 inputs:
-  test-suite:
-    description: 'Test suite to run (jest, rails-test)'
-    required: true
+    test-suite:
+        description: "Test suite to run (jest, rails-test)"
+        required: true
 
 runs:
-  using: 'composite'
-  steps:
-    - name: Run Jest
-      if: inputs.test-suite == 'jest'
-      shell: bash
-      run: NODE_OPTIONS='--experimental-vm-modules' npx jest --coverage=false
-      
-    - name: Run Rails tests
-      if: inputs.test-suite == 'rails-test'
-      shell: bash
-      run: |
-        echo "Setting up test database..."
-        RAILS_ENV=test bundle exec rails db:create
-        RAILS_ENV=test bundle exec rails db:schema:load
-        echo "Running Rails tests..."
-        bundle exec rails test
+    using: "composite"
+    steps:
+        - name: Run Jest
+          if: inputs.test-suite == 'jest'
+          shell: bash
+          run: NODE_OPTIONS='--experimental-vm-modules' npx jest --coverage=false
+
+        - name: Run Rails tests
+          if: inputs.test-suite == 'rails-test'
+          shell: bash
+          run: |
+              echo "Setting up test database..."
+              RAILS_ENV=test bundle exec rails db:create
+              RAILS_ENV=test bundle exec rails db:schema:load
+              echo "Running Rails tests..."
+              bundle exec rails test

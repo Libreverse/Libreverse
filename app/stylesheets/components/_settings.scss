@@ -97,3 +97,43 @@
         margin-top: 1rem;
     }
 }
+
+// Advanced settings collapsible section
+.advanced-settings {
+    summary {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::before {
+            content: "▶";
+            display: inline-block;
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease;
+            color: var(--text-secondary, #6b7280);
+        }
+
+        &:hover {
+            color: var(--text-primary, #1f2937);
+
+            &::before {
+                color: var(--primary-color, #3b82f6);
+            }
+        }
+    }
+
+    &[open] summary::before {
+        transform: rotate(90deg);
+    }
+
+    &[open] summary {
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        padding-bottom: 1rem;
+    }
+}

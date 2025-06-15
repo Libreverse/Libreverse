@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
-require 'net/http'
+require 'httparty'
 require 'uri'
 require 'yaml'
 require 'base64'
 
 # Download the offensive words list
 url = 'https://raw.githubusercontent.com/OOPSpam/spam-words/refs/heads/main/spam-words-EN.txt'
-uri = URI(url)
 
 puts "Downloading offensive words list from #{url}..."
 
 begin
-  response = Net::HTTP.get_response(uri)
+  response = HTTParty.get(url)
 
-if response.code == '200'
+if response.code == 200
     # Validate content before processing
     if response.body.strip.empty?
       puts "Error: Downloaded content is empty"

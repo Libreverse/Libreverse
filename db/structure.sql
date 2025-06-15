@@ -189,6 +189,7 @@ FOREIGN KEY ("account_id")
 CREATE UNIQUE INDEX "index_account_active_session_keys_on_account_id_and_session_id" ON "account_active_session_keys" ("account_id", "session_id");
 CREATE UNIQUE INDEX "index_account_active_session_keys_on_session_id" ON "account_active_session_keys" ("session_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250615160437'),
 ('20250614124224'),
 ('20250614113146'),
 ('20250614112410'),

@@ -1,56 +1,56 @@
-name: 'Setup Environment'
-description: 'Set up Ruby, Bun, Node.js and install dependencies'
+name: "Setup Environment"
+description: "Set up Ruby, Bun, Node.js and install dependencies"
 
 runs:
-  using: 'composite'
-  steps:
-    - name: Fix File Permissions
-      shell: bash
-      run: sudo chmod -R u+w .
-      
-    - name: Cache Ruby Dependencies
-      uses: actions/cache@v3
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gemfile-${{ hashFiles('**/Gemfile.lock') }}-${{ github.run_id }}-${{ env.MATRIX_JOB || 'single' }}
-        restore-keys: |
-          ${{ runner.os }}-gemfile-${{ hashFiles('**/Gemfile.lock') }}-
-          ${{ runner.os }}-gemfile-
-          
-    - name: Cache Bun Dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.bun
-        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}-${{ github.run_id }}-${{ env.MATRIX_JOB || 'single' }}
-        restore-keys: |
-          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}-
-          ${{ runner.os }}-bun-
-        
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        bundler-cache: false
-        
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
-        
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        
-    - name: Install dependencies
-      shell: bash
-      run: |
-        bundle config set --local path 'vendor/bundle'
-        bundle install --retry 3 --jobs 4
-        bun install --verbose
-        
-    - name: Verify bundle installation
-      shell: bash
-      run: |
-        bundle list
-        which bundler || echo "Bundler not in PATH"
-        bundle exec ruby -v
+    using: "composite"
+    steps:
+        - name: Fix File Permissions
+          shell: bash
+          run: sudo chmod -R u+w .
+
+        - name: Cache Ruby Dependencies
+          uses: actions/cache@v3
+          with:
+              path: vendor/bundle
+              key: ${{ runner.os }}-gemfile-${{ hashFiles('**/Gemfile.lock') }}-${{ github.run_id }}-${{ env.MATRIX_JOB || 'single' }}
+              restore-keys: |
+                  ${{ runner.os }}-gemfile-${{ hashFiles('**/Gemfile.lock') }}-
+                  ${{ runner.os }}-gemfile-
+
+        - name: Cache Bun Dependencies
+          uses: actions/cache@v3
+          with:
+              path: ~/.bun
+              key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}-${{ github.run_id }}-${{ env.MATRIX_JOB || 'single' }}
+              restore-keys: |
+                  ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}-
+                  ${{ runner.os }}-bun-
+
+        - name: Setup Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+              bundler-cache: false
+
+        - name: Setup Bun
+          uses: oven-sh/setup-bun@v2
+          with:
+              bun-version: latest
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+              node-version: "20"
+
+        - name: Install dependencies
+          shell: bash
+          run: |
+              bundle config set --local path 'vendor/bundle'
+              bundle install --retry 3 --jobs 4
+              bun install --verbose
+
+        - name: Verify bundle installation
+          shell: bash
+          run: |
+              bundle list
+              which bundler || echo "Bundler not in PATH"
+              bundle exec ruby -v

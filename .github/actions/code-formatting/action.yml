@@ -1,34 +1,34 @@
-name: 'Code Formatting'
-description: 'Run code formatting tools (Prettier, Rubocop, ESLint, etc.)'
+name: "Code Formatting"
+description: "Run code formatting tools (Prettier, Rubocop, ESLint, etc.)"
 
 runs:
-  using: 'composite'
-  steps:
-    - name: Run Prettier
-      shell: bash
-      run: |
-        set -e
-        timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
-          echo "Prettier failed or timed out, but continuing..."
-          exit 0
-        }
-        
-    - name: Run Rubocop
-      shell: bash
-      run: bundle exec rubocop -A
-      
-    - name: Run haml-lint
-      shell: bash
-      run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*'
-      
-    - name: Run ESLint
-      shell: bash
-      run: bun eslint . --fix
-      
-    - name: Run Stylelint
-      shell: bash
-      run: bun stylelint '**/*.scss' --fix
-      
-    - name: Run markdownlint
-      shell: bash
-      run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint.json
+    using: "composite"
+    steps:
+        - name: Run Prettier
+          shell: bash
+          run: |
+              set -e
+              timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
+                echo "Prettier failed or timed out, but continuing..."
+                exit 0
+              }
+
+        - name: Run Rubocop
+          shell: bash
+          run: bundle exec rubocop -A
+
+        - name: Run haml-lint
+          shell: bash
+          run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*'
+
+        - name: Run ESLint
+          shell: bash
+          run: bun eslint . --fix
+
+        - name: Run Stylelint
+          shell: bash
+          run: bun stylelint '**/*.scss' --fix
+
+        - name: Run markdownlint
+          shell: bash
+          run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint.json

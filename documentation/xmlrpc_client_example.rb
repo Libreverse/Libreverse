@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'net/http'
+require 'httparty'
 require 'uri'
 require 'builder'
 require 'nokogiri'
@@ -37,23 +37,15 @@ class LibreverseXmlrpcClient
     end
 
     # Make HTTP request
-    uri = URI(@endpoint_url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme == 'https'
+    headers = {
+      'Content-Type' => 'text/xml'
+    }
+    headers['Cookie'] = @session_cookie if @session_cookie
 
-    # Configure SSL verification
-    if uri.scheme == 'https'
-        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      # Optionally set custom CA certificate path if needed
-      # http.ca_file = '/path/to/ca-certificates.crt'
-    end
-
-    request = Net::HTTP::Post.new(uri)
-    request['Content-Type'] = 'text/xml'
-    request['Cookie'] = @session_cookie if @session_cookie
-    request.body = xml_body
-
-    response = http.request(request)
+    response = HTTParty.post(@endpoint_url,
+                             body: xml_body,
+                             headers: headers,
+                             verify: true) # Enable SSL verification
 
     # Parse response
     parse_response(response.body)

@@ -22,8 +22,8 @@
             %p.text-muted.small
               You can sign in using:
             %ul.login-options.text-muted.small
-              %li Your local username: #{Rails.application.config.x.instance_domain ? "username" : "username"}
-              %li Your full federated ID: @username@#{Rails.application.config.x.instance_domain || 'instance.com'}
+              %li Your local username: #{current_instance_domain ? "username" : "username"}
+              %li Your full federated ID: @username@#{current_instance_domain}
               %li Remote federated ID: @username@other-instance.com
 
           .login-footer

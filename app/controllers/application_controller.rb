@@ -115,9 +115,27 @@ class ApplicationController < ActionController::Base
       redirect_to root_path
     end
 
+    # Helper method to get current instance domain
+    def current_instance_domain
+      @current_instance_domain ||= if LibreverseInstance::Application.respond_to?(:instance_domain)
+          LibreverseInstance::Application.instance_domain
+      else
+          # Fallback during early initialization
+          ENV["INSTANCE_DOMAIN"] || case Rails.env
+                                    when "development"
+                                      "localhost:3000"
+                                    when "test"
+                                      "localhost"
+                                    else
+                                      "localhost"
+                                    end
+      end
+    end
+    helper_method :current_instance_domain
+
     # Helper method to get current account's federated identifier
     def current_account_federated_id
-      current_account&.federated_identifier || "@guest@#{Rails.application.config.x.instance_domain || 'localhost'}"
+      current_account&.federated_identifier || "@guest@#{current_instance_domain}"
     end
     helper_method :current_account_federated_id
 

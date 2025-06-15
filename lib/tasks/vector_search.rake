@@ -3,7 +3,7 @@
 namespace :vector_search do
   # Helper method to check if operations should be forced without prompting
   def force_operation?
-    ENV["FORCE"]&.downcase == "yes" || ARGV.include?("--force")
+    ARGV.include?("--force")
   end
 
   # Helper method to get user confirmation or proceed if forced

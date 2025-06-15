@@ -8,13 +8,13 @@ unless Rails.env.test?
   Rails.logger.info "Solid Queue environment check passed, setting up after_initialize"
   Rails.application.config.after_initialize do
     Rails.logger.info "Solid Queue after_initialize callback triggered"
-    Rails.logger.info "PROGRAM_NAME: #{$PROGRAM_NAME}, Rails::Console defined?: #{defined?(Rails::Console)}, SKIP_EMBEDDED_SOLID_QUEUE: #{ENV['SKIP_EMBEDDED_SOLID_QUEUE']}"
+    Rails.logger.info "PROGRAM_NAME: #{$PROGRAM_NAME}, Rails::Console defined?: #{defined?(Rails::Console)}"
 
     # Guard clauses – only start the embedded Solid Queue runners when
     # 1. We are running inside a long-lived web/server process (eg. Puma),
     # 2. The database is reachable **and** the Solid Queue tables exist.
-    Rails.logger.info "Solid Queue guard clause check: Console? #{defined?(Rails::Console)}, PROGRAM_NAME: #{File.basename($PROGRAM_NAME)}, SKIP_EMBEDDED_SOLID_QUEUE: #{ENV['SKIP_EMBEDDED_SOLID_QUEUE']}"
-    next if defined?(Rails::Console) || File.basename($PROGRAM_NAME) == "rake" || ENV["SKIP_EMBEDDED_SOLID_QUEUE"].present?
+    Rails.logger.info "Solid Queue guard clause check: Console? #{defined?(Rails::Console)}, PROGRAM_NAME: #{File.basename($PROGRAM_NAME)}"
+    next if defined?(Rails::Console) || File.basename($PROGRAM_NAME) == "rake"
 
     Rails.logger.info "Solid Queue guard clauses passed, starting bootstrap..."
 

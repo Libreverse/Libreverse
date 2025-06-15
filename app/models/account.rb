@@ -134,6 +134,8 @@ class AccountSequel < Sequel::Model(:accounts)
     Rails.logger.error "Failed to log moderation violation: #{e.message}"
   end
 
+  public
+
   # ==> Federated Username Display Methods
 
   # Returns the full federated identifier (@username@instance or @username@local)
@@ -143,7 +145,7 @@ class AccountSequel < Sequel::Model(:accounts)
       "@#{federated_id}"
     else
       # Local account - use local instance domain
-      instance_domain = Rails.application.config.x.instance_domain || "localhost"
+      instance_domain = LibreverseInstance::Application.instance_domain
       "@#{username}@#{instance_domain}"
     end
   end
@@ -160,7 +162,7 @@ class AccountSequel < Sequel::Model(:accounts)
       federated_id.split("@").last
     else
       # Local instance
-      Rails.application.config.x.instance_domain || "localhost"
+      LibreverseInstance::Application.instance_domain
     end
   end
 
@@ -223,7 +225,7 @@ class Account < ApplicationRecord
   end
 
   def profile_url
-    "https://#{Rails.application.config.x.instance_domain}/users/#{username}"
+    "https://#{LibreverseInstance::Application.instance_domain}/users/#{username}"
   end
 
   # Public method to ensure a federails actor exists for this account
@@ -280,7 +282,7 @@ class Account < ApplicationRecord
       "@#{federated_id}"
     else
       # Local account - use local instance domain
-      instance_domain = Rails.application.config.x.instance_domain || "localhost"
+      instance_domain = LibreverseInstance::Application.instance_domain
       "@#{username}@#{instance_domain}"
     end
   end
@@ -297,7 +299,7 @@ class Account < ApplicationRecord
       federated_id.split("@").last
     else
       # Local instance
-      Rails.application.config.x.instance_domain || "localhost"
+      LibreverseInstance::Application.instance_domain
     end
   end
 

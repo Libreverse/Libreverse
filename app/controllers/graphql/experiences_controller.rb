@@ -79,7 +79,7 @@ module Graphql
         description: params[:description],
         author: params[:author] || current_account.username,
         account_id: current_account.id,
-        federate: params[:federate].nil? || params[:federate]
+        federate: true # User experiences are always federated
       )
 
       if params[:html_content].present?
@@ -105,7 +105,8 @@ module Graphql
       update_params[:title] = params[:title] if params[:title]
       update_params[:description] = params[:description] if params[:description]
       update_params[:author] = params[:author] if params[:author]
-      update_params[:federate] = params[:federate] if params.key?(:federate)
+      # User experiences remain federated regardless of API input
+      update_params[:federate] = true
 
       raise GraphqlRails::ExecutionError, "Failed to update experience: #{experience.errors.full_messages.join(', ')}" unless experience.update(update_params)
 

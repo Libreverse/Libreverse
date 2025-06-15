@@ -58,6 +58,8 @@ class ExperiencesController < ApplicationController
     @experience = Experience.new(experience_params)
     @experience.account_id = current_account.id if current_account
     @experience.author = current_account.username if current_account
+    # User-created experiences are always federated
+    @experience.federate = true
 
     if @experience.save
       redirect_to display_experience_path(@experience), notice: "Experience created successfully."
@@ -76,6 +78,8 @@ class ExperiencesController < ApplicationController
   def update
     attrs = experience_params
     attrs[:author] = current_account.username if current_account
+    # Ensure user experiences remain federated
+    attrs[:federate] = true
     if @experience.update(attrs)
       redirect_to display_experience_path(@experience), notice: "Experience was successfully updated."
     else
@@ -169,7 +173,8 @@ class ExperiencesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def experience_params
-    params.require(:experience).permit(:title, :description, :html_file, :federate)
+    # Remove federate from user params - it's now always true for user experiences
+    params.require(:experience).permit(:title, :description, :html_file)
   end
 
   def require_admin

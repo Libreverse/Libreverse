@@ -2,12 +2,12 @@
 # Disable checks that overlap with RuboCop to leverage RuboCop's autocorrection
 
 exclude_paths:
-  - 'vendor/**/*'
-  - 'node_modules/**/*'
-  - 'tmp/**/*'
-  - 'log/**/*'
-  - 'coverage/**/*'
-  - 'storage/**/*'
+    - "vendor/**/*"
+    - "node_modules/**/*"
+    - "tmp/**/*"
+    - "log/**/*"
+    - "coverage/**/*"
+    - "storage/**/*"
 
 map_flatten_vs_flat_map:
     enabled: false
