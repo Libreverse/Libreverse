@@ -18,12 +18,12 @@ runs:
     - name: Run Brakeman
       if: inputs.tool == 'brakeman'
       shell: bash
-      run: brakeman --quiet --no-summary --no-pager
+      run: bundle exec brakeman --quiet --no-summary --no-pager
       
     - name: Run bundle-audit
       if: inputs.tool == 'bundle-audit'
       shell: bash
-      run: bundle-audit check --update
+      run: bundle exec bundle-audit check --update
       
     - name: Run npm audit (production only)
       if: inputs.tool == 'npm-audit'

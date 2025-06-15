@@ -11,7 +11,7 @@ on:
 jobs:
     # Quality checks that run on all pushes and PRs
     quality-checks:
-        name: 🔍 Quality Checks
+        name: Quality Checks
         runs-on: ubuntu-22.04
         if: always()
         
@@ -30,7 +30,7 @@ jobs:
 
     # Security analysis (runs in parallel)
     security-analysis:
-        name: 🔒 Security Analysis
+        name: ${{ matrix.tool }}
         runs-on: ubuntu-22.04
         if: always()
         strategy:
@@ -54,7 +54,7 @@ jobs:
 
     # Code quality analysis (runs in parallel)
     code-quality:
-        name: 📊 Code Quality
+        name: ${{ matrix.tool }}
         runs-on: ubuntu-22.04
         if: always()
         strategy:
@@ -78,7 +78,7 @@ jobs:
 
     # Testing (runs in parallel)
     testing:
-        name: 🧪 Testing
+        name: ${{ matrix.test-suite }}
         runs-on: ubuntu-22.04
         if: always()
         strategy:
@@ -102,7 +102,7 @@ jobs:
 
     # Build and deployment (only runs on main branch and after quality checks pass)
     build-push:
-        name: 🚀 Build & Deploy
+        name: Build & Deploy
         runs-on: ubuntu-22.04
         needs: [quality-checks, security-analysis, code-quality, testing]
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
