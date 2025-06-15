@@ -7,114 +7,114 @@
   .instance-settings-container{ data: { controller: 'instance-settings' } }
     -# Instance Identity Section
     .bg-white.shadow.rounded-lg.p-6.mb-6
-    %h2.text-xl.font-semibold.mb-4.text-gray-900 Instance Identity
-    %p.text-gray-600.mb-4 Configure basic instance information and contact details.
-
-    .space-y-4
-      .setting-item.py-3.border-b.border-gray-200
-        .setting-info.mb-3
-          %h4.setting-title.text-lg.font-medium.text-gray-900 Admin Email
-          %p.setting-description.text-sm.text-gray-600
-            Primary admin contact email address.
-            %span.text-blue-600 Auto-generated as admin@[domain] in production.
-        .setting-control
-          %input.form-input.w-full{ type: 'email', value: @admin_email, data: { action: 'change->instance-settings#updateAdminEmail' }, placeholder: 'admin@localhost' }
-
-    -# Security Settings Section
-    .bg-white.shadow.rounded-lg.p-6.mb-6
-    %h2.text-xl.font-semibold.mb-4.text-gray-900 Security & Compliance Settings
-    %p.text-gray-600.mb-4 Configure instance-wide security and compliance features.
-
-    .space-y-4
-      .setting-item.flex.justify-between.items-center.py-3.border-b.border-gray-200
-        .setting-info
-          %h4.setting-title.text-lg.font-medium.text-gray-900 Content Automoderation
-          %p.setting-description.text-sm.text-gray-600 Automatically check all user content for inappropriate material before saving. Recommended for public instances.
-        .setting-control
-          %label.toggle-switch
-            %input{ type: 'checkbox', checked: @automoderation_enabled, data: { action: 'change->instance-settings#toggleAutomoderation' } }
-            %span.toggle-slider
-
-      .setting-item.flex.justify-between.items-center.py-3
-        .setting-info
-          %h4.setting-title.text-lg.font-medium.text-gray-900 EEA Privacy Mode
-          %p.setting-description.text-sm.text-gray-600 Enable enhanced privacy protections and consent requirements for European Economic Area compliance.
-        .setting-control
-          %label.toggle-switch
-            %input{ type: 'checkbox', checked: @eea_mode_enabled, data: { action: 'change->instance-settings#toggleEeaMode' } }
-            %span.toggle-slider
-
-    -# Application Configuration Section
-    .bg-white.shadow.rounded-lg.p-6.mb-6
-    %h2.text-xl.font-semibold.mb-4.text-gray-900 Application Configuration
-    %p.text-gray-600.mb-4 Configure core application settings including SSL, logging, and network options.
-
-    .space-y-4
-      .setting-item.flex.justify-between.items-center.py-3.border-b.border-gray-200
-        .setting-info
-          %h4.setting-title.text-lg.font-medium.text-gray-900 Force SSL
-          %p.setting-description.text-sm.text-gray-600
-            Redirect all HTTP requests to HTTPS.
-            %span.text-blue-600 Auto-enabled in production, disabled in development.
-        .setting-control
-          %label.toggle-switch
-            %input{ type: 'checkbox', checked: @force_ssl, data: { action: 'change->instance-settings#toggleForceSsl' } }
-            %span.toggle-slider
-
-      .setting-item.py-3.border-b.border-gray-200
-        .setting-info.mb-3
-          %h4.setting-title.text-lg.font-medium.text-gray-900 Rails Log Level
-          %p.setting-description.text-sm.text-gray-600
-            Set the logging level for the Rails application.
-            %span.text-blue-600 Auto-set to debug (dev), error (test), info (production).
-        .setting-control
-          %select.form-input.w-full{ data: { action: 'change->instance-settings#updateRailsLogLevel' } }
-            - %w[debug info warn error fatal].each do |level|
-              %option{ value: level, selected: level == @rails_log_level }= level.capitalize
-
-      .setting-item.py-3.border-b.border-gray-200
-        .setting-info.mb-3
-          %h4.setting-title.text-lg.font-medium.text-gray-900 Allowed Hosts
-          %p.setting-description.text-sm.text-gray-600 Comma-separated list of allowed hostnames for this application.
-        .setting-control
-          %input.form-input.w-full{ type: 'text', value: @allowed_hosts, data: { action: 'change->instance-settings#updateAllowedHosts' }, placeholder: 'localhost,example.com' }
-
-      .setting-item.py-3
-        .setting-info.mb-3
-          %h4.setting-title.text-lg.font-medium.text-gray-900 CORS Origins
-          %p.setting-description.text-sm.text-gray-600
-            Comma-separated list of allowed CORS origins.
-            %span.text-blue-600 Auto-set to "*" in development, domain-based in production.
-        .setting-control
-          %input.form-input.w-full{ type: 'text', value: @cors_origins, data: { action: 'change->instance-settings#updateCorsOrigins' }, placeholder: Rails.env.development? ? '*' : 'https://yourdomain.com' }
-
-    -# Advanced Settings Section (Collapsible)
-    .bg-white.shadow.rounded-lg.p-6.mb-6
-    %details.advanced-settings
-      %summary.cursor-pointer.text-xl.font-semibold.text-gray-900.mb-4
-        Advanced Settings
-        %span.text-sm.font-normal.text-gray-600.ml-2 (Rarely need adjustment)
-
-      %p.text-gray-600.mb-4 These settings are auto-configured but can be overridden if needed.
+      %h2.text-xl.font-semibold.mb-4.text-gray-900 Instance Identity
+      %p.text-gray-600.mb-4 Configure basic instance information and contact details.
 
       .space-y-4
         .setting-item.py-3.border-b.border-gray-200
+          .setting-info.mb-3
+            %h4.setting-title.text-lg.font-medium.text-gray-900 Admin Email
+            %p.setting-description.text-sm.text-gray-600
+              Primary admin contact email address.
+              %span.text-blue-600 Auto-generated as admin@[domain] in production.
+          .setting-control
+            %input.form-input.w-full{ type: 'email', value: @admin_email, data: { action: 'change->instance-settings#updateAdminEmail' }, placeholder: 'admin@localhost' }
+
+    -# Security Settings Section
+    .bg-white.shadow.rounded-lg.p-6.mb-6
+      %h2.text-xl.font-semibold.mb-4.text-gray-900 Security & Compliance Settings
+      %p.text-gray-600.mb-4 Configure instance-wide security and compliance features.
+
+      .space-y-4
+        .setting-item.flex.justify-between.items-center.py-3.border-b.border-gray-200
           .setting-info
-            %h4.setting-title.text-lg.font-medium.text-gray-900 Disable SSL
-            %p.setting-description.text-sm.text-gray-600 Disable SSL requirements entirely. Only use for development or internal networks.
+            %h4.setting-title.text-lg.font-medium.text-gray-900 Content Automoderation
+            %p.setting-description.text-sm.text-gray-600 Automatically check all user content for inappropriate material before saving. Recommended for public instances.
           .setting-control
             %label.toggle-switch
-              %input{ type: 'checkbox', checked: @no_ssl, data: { action: 'change->instance-settings#toggleNoSsl' } }
+              %input{ type: 'checkbox', checked: @automoderation_enabled, data: { action: 'change->instance-settings#toggleAutomoderation' } }
               %span.toggle-slider
+
+        .setting-item.flex.justify-between.items-center.py-3
+          .setting-info
+            %h4.setting-title.text-lg.font-medium.text-gray-900 EEA Privacy Mode
+            %p.setting-description.text-sm.text-gray-600 Enable enhanced privacy protections and consent requirements for European Economic Area compliance.
+          .setting-control
+            %label.toggle-switch
+              %input{ type: 'checkbox', checked: @eea_mode_enabled, data: { action: 'change->instance-settings#toggleEeaMode' } }
+              %span.toggle-slider
+
+    -# Application Configuration Section
+    .bg-white.shadow.rounded-lg.p-6.mb-6
+      %h2.text-xl.font-semibold.mb-4.text-gray-900 Application Configuration
+      %p.text-gray-600.mb-4 Configure core application settings including SSL, logging, and network options.
+
+      .space-y-4
+        .setting-item.flex.justify-between.items-center.py-3.border-b.border-gray-200
+          .setting-info
+            %h4.setting-title.text-lg.font-medium.text-gray-900 Force SSL
+            %p.setting-description.text-sm.text-gray-600
+              Redirect all HTTP requests to HTTPS.
+              %span.text-blue-600 Auto-enabled in production, disabled in development.
+          .setting-control
+            %label.toggle-switch
+              %input{ type: 'checkbox', checked: @force_ssl, data: { action: 'change->instance-settings#toggleForceSsl' } }
+              %span.toggle-slider
+
+        .setting-item.py-3.border-b.border-gray-200
+          .setting-info.mb-3
+            %h4.setting-title.text-lg.font-medium.text-gray-900 Rails Log Level
+            %p.setting-description.text-sm.text-gray-600
+              Set the logging level for the Rails application.
+              %span.text-blue-600 Auto-set to debug (dev), error (test), info (production).
+          .setting-control
+            %select.form-input.w-full{ data: { action: 'change->instance-settings#updateRailsLogLevel' } }
+              - %w[debug info warn error fatal].each do |level|
+                %option{ value: level, selected: level == @rails_log_level }= level.capitalize
+
+        .setting-item.py-3.border-b.border-gray-200
+          .setting-info.mb-3
+            %h4.setting-title.text-lg.font-medium.text-gray-900 Allowed Hosts
+            %p.setting-description.text-sm.text-gray-600 Comma-separated list of allowed hostnames for this application.
+          .setting-control
+            %input.form-input.w-full{ type: 'text', value: @allowed_hosts, data: { action: 'change->instance-settings#updateAllowedHosts' }, placeholder: 'localhost,example.com' }
 
         .setting-item.py-3
           .setting-info.mb-3
-            %h4.setting-title.text-lg.font-medium.text-gray-900 Application Port
+            %h4.setting-title.text-lg.font-medium.text-gray-900 CORS Origins
             %p.setting-description.text-sm.text-gray-600
-              Port number for the application server.
-              %span.text-blue-600 Fixed at 3000 for consistency across environments.
+              Comma-separated list of allowed CORS origins.
+              %span.text-blue-600 Auto-set to "*" in development, domain-based in production.
           .setting-control
-            %input.form-input.w-full{ type: 'number', value: @port, data: { action: 'change->instance-settings#updatePort' }, placeholder: '3000', min: '1', max: '65535' }
+            %input.form-input.w-full{ type: 'text', value: @cors_origins, data: { action: 'change->instance-settings#updateCorsOrigins' }, placeholder: Rails.env.development? ? '*' : 'https://yourdomain.com' }
+
+    -# Advanced Settings Section (Collapsible)
+    .bg-white.shadow.rounded-lg.p-6.mb-6
+      %details.advanced-settings
+        %summary.cursor-pointer.text-xl.font-semibold.text-gray-900.mb-4
+          Advanced Settings
+          %span.text-sm.font-normal.text-gray-600.ml-2 (Rarely need adjustment)
+
+        %p.text-gray-600.mb-4 These settings are auto-configured but can be overridden if needed.
+
+        .space-y-4
+          .setting-item.py-3.border-b.border-gray-200
+            .setting-info
+              %h4.setting-title.text-lg.font-medium.text-gray-900 Disable SSL
+              %p.setting-description.text-sm.text-gray-600 Disable SSL requirements entirely. Only use for development or internal networks.
+            .setting-control
+              %label.toggle-switch
+                %input{ type: 'checkbox', checked: @no_ssl, data: { action: 'change->instance-settings#toggleNoSsl' } }
+                %span.toggle-slider
+
+          .setting-item.py-3
+            .setting-info.mb-3
+              %h4.setting-title.text-lg.font-medium.text-gray-900 Application Port
+              %p.setting-description.text-sm.text-gray-600
+                Port number for the application server.
+                %span.text-blue-600 Fixed at 3000 for consistency across environments.
+            .setting-control
+              %input.form-input.w-full{ type: 'number', value: @port, data: { action: 'change->instance-settings#updatePort' }, placeholder: '3000', min: '1', max: '65535' }
 
   = link_to "Add New Setting", new_admin_instance_setting_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-6 inline-block"
 

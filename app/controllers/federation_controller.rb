@@ -74,7 +74,7 @@ class FederationController < ApplicationController
 
     # Validate the announcement is from a known Libreverse instance
     source_domain = extract_domain_from_actor(announcement_data["actor"])
-    return head :forbidden unless libreverse_instance?(source_domain)
+    return head :forbidden unless FederationHelper.libreverse_instance?(source_domain)
 
     # Store the announcement for discovery (not the actual content)
     store_federated_announcement(announcement_data, source_domain)
@@ -137,24 +137,7 @@ class FederationController < ApplicationController
   end
 
   def libreverse_instance?(domain)
-    return false unless domain
-
-    url = if URI::DEFAULT_PARSER.make_regexp(%w[http https]).match?(domain)
-      domain
-    else
-      "https://#{domain}/.well-known/libreverse"
-    end
-
-    response = HTTParty.get(url, open_timeout: 3, read_timeout: 3)
-
-    if response.code == 200
-      data = JSON.parse(response.body)
-      data["software"] == "libreverse"
-    else
-      false
-    end
-  rescue StandardError
-    false
+    FederationHelper.libreverse_instance?(domain)
   end
 
   def store_federated_announcement(announcement_data, source_domain)

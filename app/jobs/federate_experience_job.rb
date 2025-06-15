@@ -75,7 +75,7 @@ class FederateExperienceJob < ApplicationJob
                     .where.not(server: nil)
                     .distinct
                     .pluck(:server)
-                    .select { |domain| libreverse_instance?(domain) }
+                    .select { |domain| FederationHelper.libreverse_instance?(domain) }
   end
 
   def announce_to_instance(domain, activity, actor)
@@ -119,17 +119,6 @@ class FederateExperienceJob < ApplicationJob
   end
 
   def libreverse_instance?(domain)
-    url = "https://#{domain}/.well-known/libreverse"
-
-    response = HTTParty.get(url, timeout: 3)
-
-    if response.code == 200
-      data = JSON.parse(response.body)
-      data["software"] == "libreverse"
-    else
-      false
-    end
-  rescue StandardError
-    false
+    FederationHelper.libreverse_instance?(domain)
   end
 end

@@ -97,7 +97,9 @@ module LibreverseInstance
 
     @port = if can_access_database?
       setting = InstanceSetting.find_by(key: "port")
-      setting&.value&.to_i || 3000
+      raw = setting&.value
+ raise ArgumentError, "Invalid port: #{raw.inspect}" if raw.present? && raw !~ /^\d+$/
+ raw.present? ? raw.to_i : 3000
     else
       3000
     end
@@ -142,7 +144,7 @@ module LibreverseInstance
     @cors_origins = if can_access_database?
       setting = InstanceSetting.find_by(key: "cors_origins")
       if setting&.value.present?
-        setting.value.split(",").map(&:strip)
+        setting.value.split(",").map { _1.strip.downcase }.uniq
       else
         fallback_cors_origins
       end
@@ -172,7 +174,7 @@ module LibreverseInstance
 
     @force_ssl = if can_access_database?
       setting = InstanceSetting.find_by(key: "force_ssl")
-      setting&.value == "true"
+      ActiveModel::Type::Boolean.new.cast(setting&.value)
     else
       Rails.env.production?
     end
@@ -187,7 +189,7 @@ module LibreverseInstance
 
     @eea_mode_enabled = if can_access_database?
       setting = InstanceSetting.find_by(key: "eea_mode_enabled")
-      setting&.value == "true"
+      ActiveModel::Type::Boolean.new.cast(setting&.value)
     else
       false
     end
