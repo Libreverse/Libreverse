@@ -53,3 +53,70 @@ import "./config";
 import "./channels";
 import { start } from "@rails/activestorage";
 start();
+
+// Check for cookie clearing instructions on every HTTP response
+// This handles cases where the server detects invalid sessions
+function checkForCookieClearHeaders() {
+    // Create a MutationObserver to watch for new HTTP responses
+    // We'll intercept fetch and XMLHttpRequest to check headers
+
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = function (...fetchArguments) {
+        return originalFetch.apply(this, fetchArguments).then((response) => {
+            checkResponseHeaders(response);
+            return response;
+        });
+    };
+
+    // Also intercept XMLHttpRequest
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (...openArguments) {
+        this.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                checkXHRHeaders(this);
+            }
+        });
+        return originalOpen.apply(this, openArguments);
+    };
+}
+
+function checkResponseHeaders(response) {
+    const clearCookies = response.headers.get("X-Clear-Cookies");
+    const reloadRequired = response.headers.get("X-Reload-Required");
+
+    if (clearCookies === "invalid-session" && reloadRequired === "true") {
+        handleInvalidSession();
+    }
+}
+
+function checkXHRHeaders(xhr) {
+    const clearCookies = xhr.getResponseHeader("X-Clear-Cookies");
+    const reloadRequired = xhr.getResponseHeader("X-Reload-Required");
+
+    if (clearCookies === "invalid-session" && reloadRequired === "true") {
+        handleInvalidSession();
+    }
+}
+
+function handleInvalidSession() {
+    console.log("Invalid session detected, clearing cookies and reloading...");
+
+    // Prevent multiple simultaneous clears
+    if (sessionStorage.getItem("clearing_cookies") === "true") {
+        return;
+    }
+    sessionStorage.setItem("clearing_cookies", "true");
+
+    // Clear all cookies
+    const cookies = document.cookie.split(";");
+    for (const c of cookies) {
+        // eslint-disable-next-line -- Need direct access to clear invalid session cookies
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    }
+
+    // Reload the page
+    globalThis.location.reload();
+}
+
+// Initialize the header checking
+document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);

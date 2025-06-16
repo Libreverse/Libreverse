@@ -21,6 +21,13 @@ module ApplicationCable
 
       # Log successful connection identified via session
       begin
+        # Handle invalid session markers (negative account IDs)
+        if current_account_id&.negative?
+          Rails.logger.info "[ActionCable] Connection established with invalid session marker: #{current_account_id}"
+          # Don't try to look up the account, let the channel handle the cookie clearing
+          return
+        end
+        
         account = AccountSequel.with_pk!(current_account_id)
         account_type = account.guest? ? "guest" : "user"
         Rails.logger.info "[ActionCable] Connection established for \\#{account_type} account_id: \\#{current_account_id}"

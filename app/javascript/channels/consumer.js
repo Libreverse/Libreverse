@@ -8,22 +8,22 @@ const consumer = createConsumer();
 
 // Log all ActionCable messages in development
 if (import.meta.env.MODE === "development") {
+    const originalCreate = consumer.subscriptions.create.bind(consumer.subscriptions);
     consumer.subscriptions.create = function (channelName, config) {
         const originalReceived = config.received;
         config.received = function (data) {
             console.log("ActionCable Received:", channelName, data);
             if (originalReceived) originalReceived.call(this, data);
         };
-        const subscription = createConsumer().subscriptions.create(
-            channelName,
-            config,
-        );
+        const subscription = originalCreate(channelName, config);
         console.log("ActionCable Subscription Created:", channelName);
         return subscription;
     };
+    
+    const originalSend = consumer.send.bind(consumer);
     consumer.send = function (data) {
         console.log("ActionCable Sent:", data);
-        createConsumer().send(data);
+        return originalSend(data);
     };
 }
 
