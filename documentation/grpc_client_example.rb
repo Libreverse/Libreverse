@@ -25,25 +25,21 @@ require "libreverse_services_pb"
 # - More efficient for high-performance use cases
 # - Requires a separate gRPC server to be running
 class LibreverseGrpcClient
-  def initialize(base_url = "localhost:50051", session_id = nil, use_http = false)
+  def initialize(base_url = "localhost:50051", session_id = nil, use_http: false)
     @base_url = base_url
     @session_id = session_id
     @use_http = use_http
 
     if @use_http
       # For HTTP-based gRPC, use the Rails server endpoint
-      if base_url.include?("localhost:3000")
-        @http_endpoint = "http://#{base_url}/api/grpc"
-      else
-        @http_endpoint = "http://localhost:3000/api/grpc"
-      end
+      @http_endpoint = "http://#{base_url}/api/grpc"
     else
       @stub = Libreverse::Grpc::LibreverseService::Stub.new(@base_url, :this_channel_is_insecure)
     end
   end
 
   # Experience methods
-  def get_all_experiences
+  def all_experiences
     request = Libreverse::Grpc::GetAllExperiencesRequest.new
 
     if @use_http
@@ -53,7 +49,7 @@ class LibreverseGrpcClient
     end
   end
 
-  def get_experience(id)
+  def experience(id)
     request = Libreverse::Grpc::GetExperienceRequest.new(id: id)
 
     if @use_http
@@ -123,7 +119,7 @@ class LibreverseGrpcClient
   end
 
   # Preference methods
-  def get_preference(key)
+  def preference(key)
     request = Libreverse::Grpc::GetPreferenceRequest.new(key: key)
 
     if @use_http
@@ -184,7 +180,7 @@ class LibreverseGrpcClient
   def http_call(method, request_data)
       uri = URI(@http_endpoint)
       http = Net::HTTP.new(uri.host, uri.port)
-      
+
       # Only use SSL if the scheme is https
       if uri.scheme == "https"
         http.use_ssl = true
@@ -207,10 +203,16 @@ class LibreverseGrpcClient
         method: method,
         request: request_data
       }.to_json
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.open_timeout = 5
+      http.read_timeout = 10
+...
+      parsed_response = begin
+                          JSON.parse(response.body)
+      rescue StandardError
+                          { "error" => "Invalid JSON response" }
+      end
 
-      response = http.request(request)
-      parsed_response = JSON.parse(response.body)
-      
       # Handle gRPC errors in HTTP responses
       if parsed_response.is_a?(Hash) && parsed_response["error"]
         error_message = parsed_response["error"]
@@ -222,7 +224,7 @@ class LibreverseGrpcClient
           parsed_response["error"] = "Not found"
         end
       end
-      
+
       parsed_response
   rescue StandardError => e
       puts "HTTP Error: #{e.message}"
@@ -234,12 +236,12 @@ end
 if __FILE__ == $PROGRAM_NAME
   puts "=== Testing gRPC Client ==="
   puts "Note: Some operations require authentication. This demo shows both authenticated and unauthenticated calls."
-  
+
   # Example using HTTP-based gRPC (no authentication)
   client = LibreverseGrpcClient.new("localhost:3000", nil, use_http: true)
 
   puts "\n=== Getting all experiences (no auth required) ==="
-  experiences = client.get_all_experiences
+  experiences = client.all_experiences
   puts experiences.inspect
 
   puts "\n=== Attempting to create experience (requires auth) ==="
@@ -255,9 +257,9 @@ if __FILE__ == $PROGRAM_NAME
   puts "\n=== Testing with session ID ==="
   puts "To test authenticated calls, you would need a valid session ID from logging in"
   authenticated_client = LibreverseGrpcClient.new("localhost:3000", "your-session-id-here", use_http: true)
-  
+
   puts "\n=== Getting preferences (requires auth) ==="
-  preference = authenticated_client.get_preference("theme")
+  preference = authenticated_client.preference("theme")
   puts preference.inspect
 
   # Example using native gRPC (requires gRPC server to be running on port 50051)
@@ -265,9 +267,9 @@ if __FILE__ == $PROGRAM_NAME
   grpc_client = LibreverseGrpcClient.new("localhost:50051", nil, use_http: false)
 
   puts "=== Getting all experiences via native gRPC ==="
-  experiences = grpc_client.get_all_experiences
+  experiences = grpc_client.all_experiences
   puts experiences.inspect
-  
+
   puts "\n=== gRPC Client Example Complete ==="
   puts "To use this client with authentication:"
   puts "1. Log in to the application to get a session ID"

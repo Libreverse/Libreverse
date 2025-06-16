@@ -10,8 +10,8 @@ namespace :grpc do
     FileUtils.mkdir_p(output_dir)
 
     # Generate Ruby files from proto
-    system("grpc_tools_ruby_protoc -I #{proto_dir} --ruby_out=#{output_dir} --grpc_out=#{output_dir} #{proto_dir}/libreverse.proto")
-
+    ok = system("grpc_tools_ruby_protoc -I #{proto_dir} --ruby_out=#{output_dir} --grpc_out=#{output_dir} #{proto_dir}/libreverse.proto")
+    abort("protoc failed – see above") unless ok
     puts "gRPC service files generated in #{output_dir}"
   end
 
