@@ -54,6 +54,10 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "zstd-ruby"
 
+# gRPC API
+gem "grpc"
+gem "grpc-tools"
+
 # ActivityPub Federation
 gem "federails"
 gem "federails-moderation"

@@ -22,7 +22,7 @@ class SearchController < ApplicationController
     etag_value = %("#{Digest::MD5.hexdigest(cache_key)}")
 
     # Handle conditional requests before database query
-    if !Rails.env.development? && request.headers["If-None-Match"] == etag_value
+    if !Rails.env.development? && !Rails.env.test? && request.headers["If-None-Match"] == etag_value
       head :not_modified
       return
     end
@@ -85,8 +85,8 @@ class SearchController < ApplicationController
     end
 
     # Handle conditional requests for all search results
-    # Handle conditional requests (skip in development to avoid masking errors)
-    return if Rails.env.development?
+    # Handle conditional requests (skip in development and test to avoid masking errors)
+    return if Rails.env.development? || Rails.env.test?
 
       response.headers["ETag"] = etag_value
       head :not_modified if request.headers["If-None-Match"] == etag_value
@@ -98,8 +98,8 @@ class SearchController < ApplicationController
 
   def set_cache_headers_for_search
     # Cache search results for 2 minutes - balance between freshness and performance
-    # Skip cache headers in development to avoid masking application errors
-    expires_in 2.minutes, public: false unless Rails.env.development?
+    # Skip cache headers in development and test to avoid masking application errors
+    expires_in 2.minutes, public: false unless Rails.env.development? || Rails.env.test?
   end
 
   # Sanitize SQL LIKE wildcards to prevent injection

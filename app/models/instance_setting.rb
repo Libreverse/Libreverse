@@ -45,7 +45,10 @@ class InstanceSetting < ApplicationRecord
 
   # Get a setting value by key
   def self.get(key)
-    value = find_by(key: key)&.value
+    record = find_by(key: key)
+    return nil unless record
+
+    value = record.value
 
     # Ensure we always return a string or nil for consistency
     # This handles cases where encrypted values might deserialize as different types
