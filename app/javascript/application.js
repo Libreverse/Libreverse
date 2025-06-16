@@ -111,7 +111,9 @@ function handleInvalidSession() {
     const cookies = document.cookie.split(";");
     for (const c of cookies) {
         // eslint-disable-next-line -- Need direct access to clear invalid session cookies
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/");
     }
 
     // Reload the page

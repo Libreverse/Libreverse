@@ -76,7 +76,7 @@ Iodine.threads = iodine_threads if current_threads.zero?
 
   # Detect if we're behind a reverse proxy to avoid double-serving static files
   def behind_reverse_proxy?
-    # Note: HTTP proxy headers (X-Forwarded-For, X-Real-IP, etc.) are only available
+    # NOTE: HTTP proxy headers (X-Forwarded-For, X-Real-IP, etc.) are only available
     # in request.env during HTTP requests, not in ENV at boot time. For header-based
     # detection, implement a Rack middleware that checks request.env per request.
 

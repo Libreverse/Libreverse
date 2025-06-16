@@ -99,6 +99,7 @@ module LibreverseInstance
       setting = InstanceSetting.find_by(key: "port")
       raw = setting&.value
  raise ArgumentError, "Invalid port: #{raw.inspect}" if raw.present? && raw !~ /^\d+$/
+
  raw.present? ? raw.to_i : 3000
     else
       3000

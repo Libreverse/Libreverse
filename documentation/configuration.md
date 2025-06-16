@@ -45,7 +45,7 @@ The system follows this priority order:
 LibReverse automatically detects when running behind a reverse proxy on known platforms and adjusts static file serving accordingly:
 
 - **Heroku**: Detected via `DYNO` environment variable
-- **Railway**: Detected via `RAILWAY_ENVIRONMENT` environment variable  
+- **Railway**: Detected via `RAILWAY_ENVIRONMENT` environment variable
 - **Render**: Detected via `RENDER` environment variable
 - **Fly.io**: Detected via `FLY_APP_NAME` environment variable
 

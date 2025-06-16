@@ -8,18 +8,26 @@ const consumer = createConsumer();
 
 // Log all ActionCable messages in development
 if (import.meta.env.MODE === "development") {
-    const originalCreate = consumer.subscriptions.create.bind(consumer.subscriptions);
-    consumer.subscriptions.create = function (channelName, config) {
+    // Store the original create method
+    const originalCreate = consumer.subscriptions.create.bind(
+        consumer.subscriptions,
+    );
+
+    consumer.subscriptions.create = function (...channelSubscriptionArguments) {
+        const [channelName, config = {}] = channelSubscriptionArguments;
         const originalReceived = config.received;
+
         config.received = function (data) {
             console.log("ActionCable Received:", channelName, data);
             if (originalReceived) originalReceived.call(this, data);
         };
-        const subscription = originalCreate(channelName, config);
+
+        channelSubscriptionArguments[1] = config; // replace in the arg list
+        const subscription = originalCreate(...channelSubscriptionArguments);
         console.log("ActionCable Subscription Created:", channelName);
         return subscription;
     };
-    
+
     const originalSend = consumer.send.bind(consumer);
     consumer.send = function (data) {
         console.log("ActionCable Sent:", data);
