@@ -26,9 +26,9 @@ module Admin
       no_ssl
       port
     ]
-    
-    @instance_settings = InstanceSetting.where(key: required_keys).order(:key)
-    settings_hash = InstanceSetting.where(key: required_keys).pluck(:key, :value).to_h
+
+@instance_settings = InstanceSetting.where(key: required_keys).order(:key)
+settings_hash      = @instance_settings.pluck(:key, :value).to_h
 
     # Helper method to get setting with fallback using preloaded hash
     get_setting_with_fallback = lambda do |key, env_var = nil, default = nil|

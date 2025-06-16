@@ -5,13 +5,13 @@ module LibreverseModeration
   module_function
 
   def block_instance(domain, reason = nil)
-    # Create or update blocked domain record
-    begin
+      # Create or update blocked domain record
+
       blocked_domain = BlockedDomain.find_or_initialize_by(domain: domain.to_s.downcase.strip)
       blocked_domain.reason = reason if reason.present?
       blocked_domain.blocked_at = Time.current
       blocked_domain.blocked_by = "system" # Could be enhanced to track which admin blocked it
-      
+
       if blocked_domain.save
         Rails.logger.info "Blocked federation with domain: #{domain} (reason: #{reason})"
         true
@@ -19,28 +19,25 @@ module LibreverseModeration
         Rails.logger.error "Failed to block domain #{domain}: #{blocked_domain.errors.full_messages.join(', ')}"
         false
       end
-    rescue StandardError => e
+  rescue StandardError => e
       Rails.logger.error "Error blocking domain #{domain}: #{e.message}"
       false
-    end
   end
 
   def unblock_instance(domain)
-    begin
       normalized_domain = domain.to_s.downcase.strip
       blocked_domain = BlockedDomain.find_by(domain: normalized_domain)
-      
-      if blocked_domain&.destroy
+
+      if blocked_domain&.destroy && blocked_domain.destroyed?
         Rails.logger.info "Unblocked federation with domain: #{domain}"
         true
       else
         Rails.logger.warn "Attempted to unblock domain that wasn't blocked: #{domain}"
         false
       end
-    rescue StandardError => e
+  rescue StandardError => e
       Rails.logger.error "Error unblocking domain #{domain}: #{e.message}"
       false
-    end
   end
 
   def should_federate_to?(domain)

@@ -14,7 +14,7 @@ const systemNotificationChannel = consumer.subscriptions.create(
 
         received(data) {
             console.log("System notification received:", data);
-            
+
             // Handle different types of system notifications
             if (data.type === "clear_cookies_and_reload") {
                 this.handleClearCookiesAndReload(data);
@@ -24,29 +24,37 @@ const systemNotificationChannel = consumer.subscriptions.create(
         },
 
         handleClearCookiesAndReload(data) {
-            console.log("Clearing cookies and reloading due to invalid session:", data.reason);
-            
+            console.log(
+                "Clearing cookies and reloading due to invalid session:",
+                data.reason,
+            );
+
             // Add a flag to prevent multiple simultaneous clears
-            if (sessionStorage.getItem('clearing_cookies') === 'true') {
+            if (sessionStorage.getItem("clearing_cookies") === "true") {
                 console.log("Cookie clearing already in progress, skipping");
                 return;
             }
-            
-            sessionStorage.setItem('clearing_cookies', 'true');
-            
+
+            sessionStorage.setItem("clearing_cookies", "true");
+
             // Clear all cookies for this domain
             const cookies = document.cookie.split(";");
             for (const c of cookies) {
                 // eslint-disable-next-line -- Need direct access to clear invalid session cookies
-                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                document.cookie = c
+                    .replace(/^ +/, "")
+                    .replace(
+                        /=.*/,
+                        "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/",
+                    );
             }
-            
+
             console.log("Cookies cleared, reloading page...");
-            
+
             // Reload the page to get a fresh session
             globalThis.location.reload();
-        }
-    }
+        },
+    },
 );
 
 export default systemNotificationChannel;
