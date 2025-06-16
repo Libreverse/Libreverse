@@ -17,7 +17,7 @@ module Libreverse
     RATE_LIMIT = 30
 
     # Maximum request size (in bytes)
-    MAX_REQUEST_SIZE = 1.megabyte
+    MAX_REQUEST_SIZE = 1 * 1024 * 1024
 
     # Request timeout (in seconds)
     REQUEST_TIMEOUT = 30
@@ -46,8 +46,12 @@ module Libreverse
             private_key = File.read(ssl_key)
             GRPC::Core::ServerCredentials.new(nil, [ { private_key: private_key, cert_chain: cert_chain } ], false)
           else
-            Rails.logger.warn "SSL certificates not found, using insecure connection"
-            :this_port_is_insecure
+            msg = "gRPC SSL cert/key missing – aborting startup (set GRPC_ALLOW_INSECURE=true to override)"
+            raise msg unless ENV["GRPC_ALLOW_INSECURE"] == "true"
+
+              Rails.logger.error "#{msg} (CONTINUING WITH INSECURE CHANNEL)"
+              :this_port_is_insecure
+
           end
         else
           # In development/test, use insecure connection

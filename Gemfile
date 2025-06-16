@@ -10,6 +10,7 @@ gem "argon2"
 gem "bootsnap"
 gem "gitlab-omniauth-openid-connect"
 gem "graphql_rails"
+gem "grpc"
 gem "haml", "~> 5.2"
 gem "haml-rails"
 gem "httparty"
@@ -54,10 +55,6 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "zstd-ruby"
 
-# gRPC API
-gem "grpc"
-gem "grpc-tools"
-
 # ActivityPub Federation
 gem "federails"
 gem "federails-moderation"
@@ -72,6 +69,7 @@ group :development do
   gem "dockerfile-rails"
   gem "fasterer"
   gem "foreman"
+  gem "grpc-tools"
   gem "haml-lint"
   gem "rubocop"
   gem "rubocop-performance"

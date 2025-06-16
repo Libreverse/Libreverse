@@ -3,6 +3,7 @@ Lazer = "Lazer"
 bck = "bck"
 nd = "nd"
 ue = "ue"
+thr = "thr"
 
 [files]
 extend-exclude = [

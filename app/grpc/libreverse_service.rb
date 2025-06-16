@@ -57,7 +57,8 @@ module Libreverse
       include GrpcSecurity
 
       # Experience management methods
-      def get_all_experiences(_request, _call)
+      def get_all_experiences(_request, call)
+          @request_metadata = call.metadata # <-- critical
           account = authenticated_account
 
           # Get experiences; admins see all, others see only approved ones
@@ -90,18 +91,12 @@ module Libreverse
             ::Experience.approved.find_by(id: experience_id)
           end
 
-          raise "Experience not found or not accessible" unless experience
+          raise GRPC::NotFound, "Experience with ID #{experience_id} not found or not accessible" unless experience
 
           Libreverse::Grpc::ExperienceResponse.new(
             experience: experience_to_grpc(experience),
             success: true,
             message: "Experience retrieved successfully"
-          )
-      rescue StandardError => e
-          Rails.logger.error "gRPC GetExperience error: #{e.message}"
-          Libreverse::Grpc::ExperienceResponse.new(
-            success: false,
-            message: "Failed to retrieve experience: #{e.message}"
           )
       end
 
