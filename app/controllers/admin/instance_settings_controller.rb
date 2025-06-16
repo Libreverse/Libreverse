@@ -14,8 +14,6 @@ module Admin
     before_action :set_instance_setting, only: %i[show edit update destroy]
 
   def index
-    @instance_settings = InstanceSetting.where(key: required_keys).order(:key)
-
     # Preload all required settings in a single query to avoid N+1 queries
     required_keys = %w[
       automoderation_enabled
@@ -28,6 +26,8 @@ module Admin
       no_ssl
       port
     ]
+    
+    @instance_settings = InstanceSetting.where(key: required_keys).order(:key)
     settings_hash = InstanceSetting.where(key: required_keys).pluck(:key, :value).to_h
 
     # Helper method to get setting with fallback using preloaded hash
@@ -45,8 +45,8 @@ module Admin
 
     # Provide current values for toggle switches
     @automoderation_enabled = ActiveModel::Type::Boolean.new.cast(
-   get_setting_with_fallback("automoderation_enabled", nil, "true")
- )
+      get_setting_with_fallback.call("automoderation_enabled", nil, "true")
+    )
     @eea_mode_enabled = get_setting_with_fallback.call("eea_mode_enabled", nil, "true") == "true"
     @force_ssl = get_setting_with_fallback.call("force_ssl", nil, Rails.env.production? ? "true" : "false") == "true"
 
