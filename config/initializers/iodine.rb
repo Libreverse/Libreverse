@@ -41,28 +41,14 @@ if defined?(Iodine)
   # Calculate optimal thread count based on CPU cores and workload
   cpu_cores = hardware_threads
 
-  # Environment-based configuration with intelligent defaults
-  iodine_threads = if ENV["THREADS"]
-    ENV["THREADS"].to_i
-  elsif ENV["RAILS_MAX_THREADS"]
-    ENV["RAILS_MAX_THREADS"].to_i
-  else
-    # For CPU-bound work: cores - 1, for I/O-bound work: cores * 2
-    # Rails apps are typically I/O-bound (database, API calls, etc.)
-    [ cpu_cores * 2, 32 ].min # Cap at 32 threads to prevent overhead
-  end
+  # Auto-determined thread configuration based on CPU cores and workload
+  # For CPU-bound work: cores - 1, for I/O-bound work: cores * 2
+  # Rails apps are typically I/O-bound (database, API calls, etc.)
+  # Subtract 4 threads: 3 for Solid Queue + 1 for gRPC server running in same process
+  iodine_threads = (cpu_cores * 2) - 4
 
-  # Worker process configuration
-  iodine_workers = if ENV["WORKERS"]
-    workers = ENV["WORKERS"].to_i
-    workers.negative? ? [ cpu_cores / workers.abs, 1 ].max : workers
-  elsif ENV["WEB_CONCURRENCY"]
-    ENV["WEB_CONCURRENCY"].to_i
-  else
-    # For production: use multiple workers for better fault isolation
-    # For development: single worker for easier debugging
-    Rails.env.production? ? [ cpu_cores / 2, 1 ].max : 1
-  end
+  # Worker process configuration - locked to single worker
+  iodine_workers = 1 # Always use single worker regardless of environment or CPU cores
 
   # Apply optimized settings only if not already set
   current_threads = Iodine.threads.to_i
@@ -107,9 +93,6 @@ Iodine.threads = iodine_threads if current_threads.zero?
 
   # Memory optimization settings
   if Rails.env.production?
-    # Enable heap fragmentation protection with custom allocator
-    # This is enabled by default but ensuring it's not disabled
-
     # Hot restart configuration for memory management
     # Restart workers every 4 hours to prevent memory bloat
     Iodine.run_every(4 * 60 * 60 * 1000) do
@@ -118,16 +101,6 @@ Iodine.threads = iodine_threads if current_threads.zero?
         Process.kill("SIGUSR1", Process.pid)
       end
     end
-  end
-
-  # Development optimizations
-  if Rails.env.development?
-    # Enable verbose logging for development
-    # Note: This can also be enabled via command line with -v flag
-
-    # Reduce workers and threads for easier debugging
-    Iodine.workers = 1 if Iodine.workers > 1
-    Iodine.threads = [ iodine_threads, 4 ].min # Cap at 4 threads for dev
   end
 
   # Connection and timeout optimizations
@@ -139,29 +112,8 @@ Iodine.threads = iodine_threads if current_threads.zero?
     Iodine::DEFAULT_SETTINGS[:max_headers] ||= 64 # Reduce header limit for WS
   end
 
-  # Logging configuration
-  if Rails.env.development?
-    # This enables optimized HTTP request logging
-    # More efficient than Rails logging middleware for high-traffic apps
-  end
-
   # Security and resource limits
   Iodine::DEFAULT_SETTINGS[:max_body] ||= 2048 # MB (2GB)
-
-  # Performance monitoring hooks
-  if Rails.env.production?
-    # Monitor connection count and performance
-    Iodine.run_every(60_000) do # Every minute
-      if Iodine.master?
-        connection_count = begin
-                             Iodine.connection_count
-        rescue StandardError
-                             0
-        end
-        Rails.logger.info "Iodine Stats - Connections: #{connection_count}, Workers: #{Iodine.workers}, Threads: #{Iodine.threads}"
-      end
-    end
-  end
 
   # Configuration summary for debugging
   static_files_status = if Rails.env.production?

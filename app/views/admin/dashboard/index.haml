@@ -1,31 +1,34 @@
-%div
-  %h1 Admin Dashboard
-
-  %div
-    -# Experiences Management Section
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
     %div
-      %h2 Experiences Management
-      - if @pending_experiences_count && @pending_experiences_count > 0
-        %span
-          = @pending_experiences_count
-          pending
-      - else
-        %span All approved
-      %p Review and approve user-submitted experiences before they go live on the platform.
-      = link_to "Manage Experiecleances", admin_experiences_path
+      %h1 Admin Dashboard
 
-    -# Instance Settings Section
-    %div
-      %h2 Instance Settings
-      %p Configure global settings for your Libreverse instance including appearance, features, and policies.
-      = link_to "Instance Settings", admin_instance_settings_path
+      %div
+        -# Experiences Management Section
+        %div
+          %h2 Experiences Management
+          - if @pending_experiences_count && @pending_experiences_count > 0
+            %span
+              = @pending_experiences_count
+              pending
+          - else
+            %span All approved
 
-    -# Federation Management Section
-    %div
-      %h2 Federation Management
-      %p Manage ActivityPub federation, blocked domains, and cross-instance content sharing.
-      = link_to "Federation Settings", admin_federation_path
+          %p Review and approve user-submitted experiences before they go live on the platform.
+          = link_to "Manage Experiecleances", admin_experiences_path
 
-  %div
-    %p Welcome to the Libreverse Admin Panel
-    %p Use the links above to navigate to different administrative functions. More features will be added as the platform grows.
+        -# Instance Settings Section
+        %div
+          %h2 Instance Settings
+          %p Configure global settings for your Libreverse instance including appearance, features, and policies.
+          = link_to "Instance Settings", admin_instance_settings_path
+
+            -# Federation Management Section
+          %div
+            %h2 Federation Management
+            %p Manage ActivityPub federation, blocked domains, and cross-instance content sharing.
+            = link_to "Federation Settings", admin_federation_path
+
+          %div
+            %p Welcome to the Libreverse Admin Panel
+            %p Use the links above to navigate to different administrative functions. More features will be added as the platform grows.

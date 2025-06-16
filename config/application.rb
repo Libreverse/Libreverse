@@ -23,6 +23,11 @@ require_relative "../lib/middleware/emoji_replacer"
 module LibreverseInstance
   class Application < Rails::Application
     config.autoload_paths << "app/graphql"
+
+    # Exclude gRPC files from autoloading and eager loading to avoid boot issues
+    config.autoload_paths.delete("#{config.root}/app/grpc")
+    config.eager_load_paths.delete("#{config.root}/app/grpc")
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
