@@ -13,7 +13,7 @@ cache_key = "search/reflex/#{role_suffix}/#{query}"
         log_debug "[SearchReflex#perform] Cache miss for query: '#{query}', fetching from database"
 
         scope = current_account&.admin? ? Experience : Experience.approved
-if query.present?
+        if query.present?
           # Determine scope based on user permissions (like SearchController)
 
           # Use vector similarity search with fallback to LIKE search
@@ -24,12 +24,13 @@ if query.present?
             use_vector_search: true
           )
 
-          # Search results are already Experience objects (not hashes)
-          search_results
-else
-          # Same scope logic for empty query
-          scope.order(created_at: :desc).limit(20)
-end
+          # Convert to unified experiences for consistent UI treatment
+          UnifiedExperience.from_search_results(search_results)
+        else
+          # Same scope logic for empty query - convert to unified experiences
+          recent_experiences = scope.order(created_at: :desc).limit(20)
+          UnifiedExperience.from_search_results(recent_experiences)
+        end
       end
 
       log_info "[SearchReflex#perform] Found #{@experiences.size} experiences for query: '#{query}'"

@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   # Mount ActionCable for real-time features
   mount ActionCable.server => "/cable"
 
+  # Mount Action Mailbox for email bot functionality
+  mount ActionMailbox::Engine => "/rails/action_mailbox"
+
   # Authentication routes (/login, /create-account, etc.) are automatically handled by Rodauth
   # See app/misc/rodauth_app.rb and run `rails rodauth:routes` to view all available routes
 

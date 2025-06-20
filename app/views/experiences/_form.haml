@@ -31,6 +31,16 @@
         = experience.html_file.filename
         = t('.replace_file')
 
+  .form-group
+    .form-check
+      = form.check_box :offline_available, class: "form-check-input", id: "experience_offline_available"
+      = form.label :offline_available, class: "form-check-label" do
+        📧 Make available for offline download
+        .form-text.text-muted.mt-1
+          When checked, users can email
+          %code experiences@#{LibreverseInstance.instance_domain}
+          to receive a downloadable ZIP file containing this experience for offline reading.
+
   - if rodauth.logged_in? && current_account&.verified?
     -# Federation is now always enabled for user experiences
     = form.hidden_field :federate, value: true

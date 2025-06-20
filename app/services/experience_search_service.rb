@@ -2,7 +2,7 @@
 
 class ExperienceSearchService
   # Minimum similarity threshold for results
-  DEFAULT_SIMILARITY_THRESHOLD = 0.01
+  DEFAULT_SIMILARITY_THRESHOLD = 0.0
 
   # Maximum number of results to return
   DEFAULT_LIMIT = 100

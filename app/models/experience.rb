@@ -16,6 +16,7 @@ class Experience < ApplicationRecord
     c.attribute(:account_id, type: "ID")
     c.attribute(:html_file?, type: "Boolean!")
     c.attribute(:federate, type: "Boolean!")
+    c.attribute(:offline_available, type: "Boolean!")
     c.attribute(:created_at, type: "String!")
     c.attribute(:updated_at, type: "String!")
   end
@@ -29,6 +30,7 @@ class Experience < ApplicationRecord
   validates :description, length: { maximum: 2000 }
   validates :author, length: { maximum: 255 }
   validates :federate, inclusion: { in: [ true, false ] }
+  validates :offline_available, inclusion: { in: [ true, false ] }
   validates :html_file, presence: true,
                         content_type: "text/html",
                         filename: {
@@ -50,6 +52,12 @@ class Experience < ApplicationRecord
 
   # Add a scope for experiences configured to federate
   scope :federating, -> { where(federate: true) }
+
+  # Add a scope for offline-available experiences
+  scope :offline_available, -> { where(offline_available: true) }
+
+  # Add a scope for online-only experiences
+  scope :online_only, -> { where(offline_available: false) }
 
   # Automatically mark experiences created by admins as approved
   before_validation :auto_approve_for_admin, on: :create

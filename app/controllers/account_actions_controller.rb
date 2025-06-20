@@ -3,6 +3,7 @@
 class AccountActionsController < ApplicationController
   # include ZipKit::RailsStreaming # Removed ZipKit
   require "zip" # Added for rubyzip
+  Zip.default_compression = Zlib::BEST_COMPRESSION
   before_action :require_logged_in
 
   # GET /account/export

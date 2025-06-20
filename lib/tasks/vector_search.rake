@@ -149,7 +149,7 @@ namespace :vector_search do
     puts "=" * 50
 
     begin
-      results = ExperienceSearchService.search(query, limit: 5)
+      results = ExperienceSearchService.search(query, limit: 10)
 
       if results.empty?
         puts "❌ No results found"
@@ -157,14 +157,9 @@ namespace :vector_search do
         puts "✅ Found #{results.length} results:"
         puts
 
-        results.each_with_index do |result, index|
-          experience = result[:experience]
-          similarity = result[:similarity]
-          search_type = result[:search_type]
-
+        results.each_with_index do |experience, index|
           puts "#{index + 1}. #{experience.title}"
           puts "   Author: #{experience.author || 'Unknown'}"
-          puts "   Similarity: #{similarity.round(4)} (#{search_type} search)"
           puts "   Description: #{experience.description&.truncate(100) || 'No description'}"
           puts
         end

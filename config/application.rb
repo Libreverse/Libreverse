@@ -83,6 +83,10 @@ module LibreverseInstance
     # I prefer this. It's just nicer, somehow.
     config.active_record.schema_format = :sql
 
+    # Email bot configuration using Action Mailbox
+    config.action_mailbox.ingress = :imap
+    config.action_mailbox.logger = Rails.logger
+
     # Class method to get instance domain, delegating to module-level method
     def self.instance_domain
       LibreverseInstance.instance_domain
@@ -201,6 +205,60 @@ module LibreverseInstance
     end
   end
 
+  # Email bot configuration methods
+  def self.email_bot_enabled?
+    return @email_bot_enabled if defined?(@email_bot_enabled)
+
+    @email_bot_enabled = if can_access_database?
+      setting = InstanceSetting.find_by(key: "email_bot_enabled")
+      ActiveModel::Type::Boolean.new.cast(setting&.value)
+    else
+      false
+    end
+  end
+
+  def self.email_bot_address
+    return @email_bot_address if defined?(@email_bot_address)
+
+    @email_bot_address = if can_access_database?
+      setting = InstanceSetting.find_by(key: "email_bot_address")
+      setting&.value || "search@#{instance_domain}"
+    else
+      "search@#{instance_domain}"
+    end
+  end
+
+  def self.email_bot_mail_host
+    return @email_bot_mail_host if defined?(@email_bot_mail_host)
+
+    @email_bot_mail_host = if can_access_database?
+      setting = InstanceSetting.find_by(key: "email_bot_mail_host")
+      setting&.value || "mail.#{instance_domain}"
+    else
+      "mail.#{instance_domain}"
+    end
+  end
+
+  def self.email_bot_username
+    return @email_bot_username if defined?(@email_bot_username)
+
+    @email_bot_username = if can_access_database?
+      setting = InstanceSetting.find_by(key: "email_bot_username")
+      setting&.value || email_bot_address
+    else
+      email_bot_address
+    end
+  end
+
+  def self.email_bot_password
+    return @email_bot_password if defined?(@email_bot_password)
+
+    @email_bot_password = if can_access_database?
+      setting = InstanceSetting.find_by(key: "email_bot_password")
+      setting&.value
+    end
+  end
+
   def self.reset_all_cached_config!
     remove_instance_variable(:@port) if defined?(@port)
     remove_instance_variable(:@admin_email) if defined?(@admin_email)
@@ -210,6 +268,13 @@ module LibreverseInstance
     remove_instance_variable(:@allowed_hosts) if defined?(@allowed_hosts)
     remove_instance_variable(:@force_ssl) if defined?(@force_ssl)
     remove_instance_variable(:@eea_mode_enabled) if defined?(@eea_mode_enabled)
+
+    # Email bot configuration cache reset
+    remove_instance_variable(:@email_bot_enabled) if defined?(@email_bot_enabled)
+    remove_instance_variable(:@email_bot_address) if defined?(@email_bot_address)
+    remove_instance_variable(:@email_bot_mail_host) if defined?(@email_bot_mail_host)
+    remove_instance_variable(:@email_bot_username) if defined?(@email_bot_username)
+    remove_instance_variable(:@email_bot_password) if defined?(@email_bot_password)
   end
 
   class << self

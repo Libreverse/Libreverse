@@ -188,7 +188,8 @@ class LibreverseGrpcClient
         # Only disable in specific development/testing scenarios with explicit environment variable
         if ENV["GRPC_CLIENT_SSL_VERIFY"] == "false"
           puts "WARNING: SSL certificate verification disabled for development"
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE # brakeman:ignore SSLVerify
+          # brakeman:ignore SSLVerify
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         else
           # Default to proper SSL verification
           http.verify_mode = OpenSSL::SSL::VERIFY_PEER
