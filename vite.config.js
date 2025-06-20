@@ -22,9 +22,12 @@ export default defineConfig(({ mode }) => {
             cache: !isDevelopment,
             cssCodeSplit: true,
             rollupOptions: {
-                input: "app/javascript/application.js",
+                input: {
+                    application: "app/javascript/application.js",
+                    emails: "app/stylesheets/emails.scss",
+                },
                 output: {
-                    inlineDynamicImports: true,
+                    inlineDynamicImports: false,
                     manualChunks: false,
                     entryFileNames: isDevelopment ? "[name].js" : "[name].js",
                     chunkFileNames: isDevelopment ? "[name].js" : "[name].js",

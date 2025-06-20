@@ -3,15 +3,6 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  # === REMOVED TEMPORARY DEBUGGING ===
-  # config.secret_key_base = "..."
-  # ===================================
-
-  # --- Use CookieStore (Permanent Change) ---
-  # config.session_store :active_record_store,
-  #                      key: "_libreverse_session",
-  #                      expire_after: 2.hours,
-  #                      domain: 'localhost'
   config.session_store :cookie_store,
                        key: "_libreverse_session",
                        expire_after: 2.hours, # Match previous setting
@@ -92,4 +83,15 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
 
   # Use Solid Queue for Active Job
   config.active_job.queue_adapter = :solid_queue
+
+  # Email configuration for development (MailHog)
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "localhost",
+    port: 1025,
+    domain: "localhost"
+  }
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.perform_caching = false
+  config.action_mailer.raise_delivery_errors = true
 end

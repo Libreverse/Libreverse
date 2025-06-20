@@ -1,0 +1,68 @@
+<% content_for :title, "Search Error - #{@instance_domain}" %>
+
+<container>
+    <wrapper class="header">
+        <row>
+            <columns>
+                <spacer size="20"></spacer>
+                <h1 class="text-center">⚠️ Search Error</h1>
+                <spacer size="10"></spacer>
+                <p class="text-center text-gray">Something went wrong with your search</p>
+                <spacer size="20"></spacer>
+            </columns>
+        </row>
+    </wrapper>
+
+    <wrapper>
+        <row>
+            <columns>
+                <callout class="alert">
+                    <h3>❌ Error Details</h3>
+                    <p><%= @error_message %></p>
+                    
+                    <spacer size="15"></spacer>
+                    
+                    <h4>🛠️ What to do next:</h4>
+                    <ul>
+                        <li>Check your search query for typos</li>
+                        <li>Try simpler search terms</li>
+                        <li>Wait a moment and try again</li>
+                        <li>Contact support if the problem persists</li>
+                    </ul>
+                </callout>
+            </columns>
+        </row>
+    </wrapper>
+
+    <wrapper class="secondary">
+        <row>
+            <columns>
+                <spacer size="30"></spacer>
+                <hr>
+                <spacer size="20"></spacer>
+                
+                <h3 class="text-center">🌐 <%= @instance_domain %></h3>
+                <p class="text-center text-gray">Email-based search service</p>
+                
+                <spacer size="15"></spacer>
+                
+                <center>
+                    <button href="<%= root_url %>" class="secondary">
+                        Visit Website
+                    </button>
+                </center>
+                
+                <spacer size="20"></spacer>
+                
+                <p class="text-center">
+                    <small style="color: #888;">
+                        Need help? Contact support at 
+                        <a href="mailto:support@<%= @instance_domain %>">support@<%= @instance_domain %></a>
+                    </small>
+                </p>
+                
+                <spacer size="20"></spacer>
+            </columns>
+        </row>
+    </wrapper>
+</container>

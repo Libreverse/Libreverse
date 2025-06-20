@@ -4,6 +4,9 @@ require "active_support/core_ext/integer/time"
 require "re2"
 
 Rails.application.configure do
+  # Prepare the ingress controller used to receive mail
+  # config.action_mailbox.ingress = :relay
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -95,4 +98,23 @@ Rails.application.configure do
                        expire_after: 2.hours,
                        same_site: :strict # Keep security settings
   # ----------------------------------------
+
+  # Email configuration for production
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_ADDRESS") { "localhost" },
+    port: ENV.fetch("SMTP_PORT") { "587" }.to_i,
+    domain: ENV.fetch("SMTP_DOMAIN") { LibreverseInstance.instance_domain },
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    authentication: ENV.fetch("SMTP_AUTHENTICATION") { "plain" },
+    enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO") { "true" } == "true",
+    openssl_verify_mode: ENV.fetch("SMTP_OPENSSL_VERIFY_MODE") { "peer" }
+  }
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("MAILER_HOST") { LibreverseInstance.instance_domain },
+    protocol: "https"
+  }
+  config.action_mailer.perform_caching = false
+  config.action_mailer.raise_delivery_errors = false
 end

@@ -2,6 +2,7 @@
 
 module ApplicationHelper
   include EmojiHelper # Include the new helper
+  include EmailHelper # Include email CSS inlining helper
   require "base64"
   require "unicode"
   require "cgi"
@@ -234,6 +235,11 @@ module ApplicationHelper
   # --- End SEO Asset Path Helpers ---
 
   # --- Vite Asset Inlining Helpers ---
+  # Email-specific helper to inline Foundation for Emails styles
+  def inline_email_styles
+    inline_vite_stylesheet("~/emails.css")
+  end
+
   # Guard patterns to safely inline assets without prematurely closing their tags
   SCRIPT_CLOSE_REGEX = %r{</script\b}i
   STYLE_CLOSE_REGEX  = %r{</style\b}i

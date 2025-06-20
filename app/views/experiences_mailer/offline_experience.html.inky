@@ -1,0 +1,123 @@
+<% content_for :title, "Offline Experience: #{@experience[:title]}" %>
+
+<container>
+    <wrapper class="header">
+        <row>
+            <columns>
+                <spacer size="20"></spacer>
+                <h1 class="text-center">📄 Offline Experience Delivered!</h1>
+                <spacer size="10"></spacer>
+                <h2 class="text-center">"<%= @experience[:title] %>"</h2>
+                <spacer size="20"></spacer>
+            </columns>
+        </row>
+    </wrapper>
+
+    <wrapper>
+        <row>
+            <columns>
+                <callout class="success">
+                    <h3>✅ Your offline experience ZIP is ready!</h3>
+                    <p>Hello <%= @recipient_name %>,</p>
+                    <p>Attached to this email is a complete ZIP package containing:</p>
+                    
+                    <spacer size="15"></spacer>
+                    
+                    <h4>"<%= @experience[:title] %>"</h4>
+                    <% if @experience[:author] %>
+                        <p class="text-gray">By: <%= @experience[:author] %></p>
+                    <% end %>
+                    
+                    <spacer size="15"></spacer>
+                    
+                    <p><strong>📦 What's in the ZIP file:</strong></p>
+                    <ul>
+                        <li>📄 Complete HTML experience file</li>
+                        <li>📋 README with instructions</li>
+                        <li>🔧 Metadata and technical details</li>
+                    </ul>
+                    
+                    <spacer size="15"></spacer>
+                    
+                    <p><strong>🎯 What you can do with this ZIP:</strong></p>
+                    <ul>
+                        <li>📱 Extract and open in any web browser, even offline</li>
+                        <li>📧 Forward the entire email to share with others</li>
+                        <li>💾 Save to your device for permanent access</li>
+                        <li>☁️ Upload to cloud storage for cross-device access</li>
+                        <li>🖨️ Print the HTML file for physical reading</li>
+                        <li>📁 Archive in your personal knowledge collection</li>
+                    </ul>
+                </callout>
+            </columns>
+        </row>
+
+        <row>
+            <columns>
+                <callout class="secondary">
+                    <h4>💡 Pro Tips for ZIP Files:</h4>
+                    <ul>
+                        <li><strong>Desktop:</strong> Double-click to extract, then open the HTML file</li>
+                        <li><strong>Mobile:</strong> Use a file manager app to extract and view</li>
+                        <li><strong>Sharing:</strong> Forward this entire email - the recipient gets everything!</li>
+                        <li><strong>Organization:</strong> Create a "LibreVerse Experiences" folder for your collection</li>
+                        <li><strong>Backup:</strong> ZIP files are perfect for long-term archival</li>
+                    </ul>
+                </callout>
+            </columns>
+        </row>
+    </wrapper>
+
+    <wrapper class="secondary">
+        <row>
+            <columns>
+                <spacer size="30"></spacer>
+                <hr>
+                <spacer size="20"></spacer>
+                
+                <h3 class="text-center">🌐 <%= @instance_domain %></h3>
+                <p class="text-center text-gray">Offline experiences powered by email</p>
+                
+                <spacer size="20"></spacer>
+                
+                <h4>📧 Get More Experiences:</h4>
+                <p>Send an email to <strong>search@<%= @instance_domain %></strong> to find more experiences, then click "📧 Get Offline" on any result.</p>
+                
+                <spacer size="15"></spacer>
+                
+                <h4>🔗 Alternative Access:</h4>
+                <row>
+                    <columns small="12">
+                        <table class="text-left">
+                            <tr>
+                                <td><strong>🔍 Search:</strong></td>
+                                <td><code>search@<%= @instance_domain %></code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📄 Offline Files:</strong></td>
+                                <td><code>experiences@<%= @instance_domain %></code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>🌐 Web Interface:</strong></td>
+                                <td><a href="<%= root_url %>"><%= @instance_domain %></a></td>
+                            </tr>
+                        </table>
+                    </columns>
+                </row>
+                
+                <spacer size="30"></spacer>
+                
+                <callout class="primary">
+                    <h5 class="text-center">🚀 The Future is Distributed</h5>
+                    <p class="text-center"><small>
+                        LibreVerse believes in making knowledge accessible everywhere, through every interface.
+                        Email works on every device, in every country, across every platform. No apps required,
+                        no accounts needed, no barriers to access.
+                    </small></p>
+                </callout>
+                
+                <spacer size="20"></spacer>
+            </columns>
+        </row>
+    </wrapper>
+</container>

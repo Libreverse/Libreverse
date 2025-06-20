@@ -174,7 +174,7 @@ class ExperiencesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def experience_params
     # Remove federate from user params - it's now always true for user experiences
-    params.require(:experience).permit(:title, :description, :html_file)
+    params.require(:experience).permit(:title, :description, :html_file, :offline_available)
   end
 
   def require_admin

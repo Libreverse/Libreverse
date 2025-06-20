@@ -76,6 +76,11 @@ Rails.application.configure do
   # Use Solid Queue for Active Job (optional, typically not needed)
   # config.active_job.queue_adapter = :solid_queue
 
+  # Email configuration for test environment
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.perform_caching = false
+
   # Configure Vite for test environment
   # config.vite.autoload = false
   # config.vite.dev_server_enabled = false
