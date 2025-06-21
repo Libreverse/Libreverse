@@ -7,7 +7,7 @@
                 <spacer size="20"></spacer>
                 <h1 class="text-center">⚠️ Search Error</h1>
                 <spacer size="10"></spacer>
-                <p class="text-center text-gray">Something went wrong with your search</p>
+                <p class="text-center">Something went wrong with your search</p>
                 <spacer size="20"></spacer>
             </columns>
         </row>
@@ -18,6 +18,7 @@
             <columns>
                 <callout class="alert">
                     <h3>❌ Error Details</h3>
+                    <p>Hello,</p>
                     <p><%= @error_message %></p>
                     
                     <spacer size="15"></spacer>
@@ -25,43 +26,29 @@
                     <h4>🛠️ What to do next:</h4>
                     <ul>
                         <li>Check your search query for typos</li>
-                        <li>Try simpler search terms</li>
+                        <li>Try different search terms</li>
                         <li>Wait a moment and try again</li>
-                        <li>Contact support if the problem persists</li>
                     </ul>
                 </callout>
             </columns>
         </row>
     </wrapper>
 
+    <spacer size="30"></spacer>
+    <hr>
+    <spacer size="20"></spacer>
+
     <wrapper class="secondary">
         <row>
             <columns>
-                <spacer size="30"></spacer>
-                <hr>
-                <spacer size="20"></spacer>
-                
-                <h3 class="text-center">🌐 <%= @instance_domain %></h3>
-                <p class="text-center text-gray">Email-based search service</p>
-                
-                <spacer size="15"></spacer>
-                
-                <center>
-                    <button href="<%= root_url %>" class="secondary">
-                        Visit Website
-                    </button>
-                </center>
-                
-                <spacer size="20"></spacer>
-                
-                <p class="text-center">
-                    <small style="color: #888;">
-                        Need help? Contact support at 
-                        <a href="mailto:support@<%= @instance_domain %>">support@<%= @instance_domain %></a>
-                    </small>
-                </p>
-                
-                <spacer size="20"></spacer>
+                <callout class="primary">
+                    <h5 class="text-center">🚀 The Future is Distributed</h5>
+                    <p class="text-center">
+                        LibreVerse believes in making knowledge accessible everywhere, through every interface.
+                        Email works on every device, in every country, across every platform. No apps required,
+                        no accounts needed, no barriers to access.
+                    </p>
+                </callout>
             </columns>
         </row>
     </wrapper>

@@ -25,7 +25,7 @@
                     
                     <h4>"<%= @experience[:title] %>"</h4>
                     <% if @experience[:author] %>
-                        <p class="text-gray">By: <%= @experience[:author] %></p>
+                        <p><em>By: <%= @experience[:author] %></em></p>
                     <% end %>
                     
                     <spacer size="15"></spacer>
@@ -52,6 +52,10 @@
             </columns>
         </row>
 
+        <spacer size="30"></spacer>
+        <hr>
+        <spacer size="20"></spacer>
+
         <row>
             <columns>
                 <callout class="secondary">
@@ -68,55 +72,21 @@
         </row>
     </wrapper>
 
+    <spacer size="30"></spacer>
+    <hr>
+    <spacer size="20"></spacer>
+
     <wrapper class="secondary">
         <row>
             <columns>
-                <spacer size="30"></spacer>
-                <hr>
-                <spacer size="20"></spacer>
-                
-                <h3 class="text-center">🌐 <%= @instance_domain %></h3>
-                <p class="text-center text-gray">Offline experiences powered by email</p>
-                
-                <spacer size="20"></spacer>
-                
-                <h4>📧 Get More Experiences:</h4>
-                <p>Send an email to <strong>search@<%= @instance_domain %></strong> to find more experiences, then click "📧 Get Offline" on any result.</p>
-                
-                <spacer size="15"></spacer>
-                
-                <h4>🔗 Alternative Access:</h4>
-                <row>
-                    <columns small="12">
-                        <table class="text-left">
-                            <tr>
-                                <td><strong>🔍 Search:</strong></td>
-                                <td><code>search@<%= @instance_domain %></code></td>
-                            </tr>
-                            <tr>
-                                <td><strong>📄 Offline Files:</strong></td>
-                                <td><code>experiences@<%= @instance_domain %></code></td>
-                            </tr>
-                            <tr>
-                                <td><strong>🌐 Web Interface:</strong></td>
-                                <td><a href="<%= root_url %>"><%= @instance_domain %></a></td>
-                            </tr>
-                        </table>
-                    </columns>
-                </row>
-                
-                <spacer size="30"></spacer>
-                
                 <callout class="primary">
                     <h5 class="text-center">🚀 The Future is Distributed</h5>
-                    <p class="text-center"><small>
+                    <p class="text-center">
                         LibreVerse believes in making knowledge accessible everywhere, through every interface.
                         Email works on every device, in every country, across every platform. No apps required,
                         no accounts needed, no barriers to access.
-                    </small></p>
+                    </p>
                 </callout>
-                
-                <spacer size="20"></spacer>
             </columns>
         </row>
     </wrapper>

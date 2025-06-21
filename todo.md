@@ -1,6 +1,6 @@
 # Todo List
 
-1: Add email search bot
+1: make basic multiplayer api and integrate it with the experience SDK
 2: Add telegram search bot
 3: Add x.com search bot
 4: Open gRPC port on libreverse.geor.me

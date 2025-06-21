@@ -34,6 +34,11 @@ class InstanceSetting < ApplicationRecord
     no_ssl
     cors_origins
     port
+    email_bot_enabled
+    email_bot_address
+    email_bot_mail_host
+    email_bot_username
+    email_bot_password
   ].freeze
 
   # Conditional validations based on key
@@ -145,7 +150,7 @@ class InstanceSetting < ApplicationRecord
   end
 
   def boolean_setting?
-    %w[force_ssl no_ssl].include?(key)
+    %w[force_ssl no_ssl email_bot_enabled].include?(key)
   end
 
   def port_setting?

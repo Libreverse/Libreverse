@@ -6,6 +6,8 @@
             <columns>
                 <spacer size="20"></spacer>
                 <h1 class="text-center">❌ Experience Request Error</h1>
+                <spacer size="10"></spacer>
+                <p class="text-center">Unable to process your request</p>
                 <spacer size="20"></spacer>
             </columns>
         </row>
@@ -21,102 +23,37 @@
                     
                     <spacer size="15"></spacer>
                     
-                    <callout class="secondary">
-                        <h4>Error Details:</h4>
-                        <p><%= @error_message %></p>
-                    </callout>
-                </callout>
-            </columns>
-        </row>
-
-        <row>
-            <columns>
-                <callout class="warning">
-                    <h4>💡 How to Request Offline Experiences:</h4>
-                    <ol>
-                        <li><strong>Start with search:</strong> Email <code>search@<%= @instance_domain %></code> with your query</li>
-                        <li><strong>Use the buttons:</strong> Click "📧 Get Offline" in search results</li>
-                        <li><strong>Or email directly:</strong> Send to <code>experiences@<%= @instance_domain %></code> with:
-                            <ul>
-                                <li>Experience title in the subject line</li>
-                                <li>Experience URL in the body (if known)</li>
-                            </ul>
-                        </li>
-                    </ol>
+                    <h4>Error Details:</h4>
+                    <p><%= @error_message %></p>
                     
                     <spacer size="15"></spacer>
                     
-                    <h4>📧 Example Email:</h4>
-                    <callout class="secondary">
-                        <p><strong>To:</strong> experiences@<%= @instance_domain %><br>
-                        <strong>Subject:</strong> Get Experience: Amazing Travel Story<br>
-                        <strong>Body:</strong> Please send me the offline HTML file for "Amazing Travel Story"</p>
-                    </callout>
+                    <h4>🛠️ What to do next:</h4>
+                    <ul>
+                        <li>Check your search query for typos</li>
+                        <li>Try different search terms</li>
+                        <li>Wait a moment and try again</li>
+                    </ul>
                 </callout>
             </columns>
         </row>
     </wrapper>
 
+    <spacer size="30"></spacer>
+    <hr>
+    <spacer size="20"></spacer>
+
     <wrapper class="secondary">
         <row>
             <columns>
-                <spacer size="30"></spacer>
-                <hr>
-                <spacer size="20"></spacer>
-                
-                <h3 class="text-center">🌐 <%= @instance_domain %></h3>
-                <p class="text-center text-gray">We're here to help!</p>
-                
-                <spacer size="20"></spacer>
-                
-                <h4>🔍 Try These Alternatives:</h4>
-                
-                <center>
-                    <button href="mailto:search@<%= @instance_domain %>?subject=Help%20me%20find%20experiences&body=I'm%20looking%20for%20interesting%20experiences%20to%20read%20offline." class="large success">
-                        🔍 Search for Experiences
-                    </button>
-                    
-                    <spacer size="10"></spacer>
-                    
-                    <button href="<%= experiences_url %>" class="large secondary">
-                        🌐 Browse Web Interface
-                    </button>
-                </center>
-                
-                <spacer size="20"></spacer>
-                
-                <h4>📧 LibreVerse Email Services:</h4>
-                <row>
-                    <columns small="12">
-                        <table class="text-left">
-                            <tr>
-                                <td><strong>🔍 Search:</strong></td>
-                                <td><code>search@<%= @instance_domain %></code></td>
-                                <td>Find experiences by keyword</td>
-                            </tr>
-                            <tr>
-                                <td><strong>📄 Offline:</strong></td>
-                                <td><code>experiences@<%= @instance_domain %></code></td>
-                                <td>Get HTML files for offline reading</td>
-                            </tr>
-                            <tr>
-                                <td><strong>🌐 Web:</strong></td>
-                                <td><a href="<%= root_url %>"><%= @instance_domain %></a></td>
-                                <td>Full web interface</td>
-                            </tr>
-                        </table>
-                    </columns>
-                </row>
-                
-                <spacer size="30"></spacer>
-                
-                <p class="text-center">
-                    <small style="color: #888;">
-                        Questions? Reply to this email and we'll help you get the experiences you're looking for.
-                    </small>
-                </p>
-                
-                <spacer size="20"></spacer>
+                <callout class="primary">
+                    <h5 class="text-center">🚀 The Future is Distributed</h5>
+                    <p class="text-center">
+                        LibreVerse believes in making knowledge accessible everywhere, through every interface.
+                        Email works on every device, in every country, across every platform. No apps required,
+                        no accounts needed, no barriers to access.
+                    </p>
+                </callout>
             </columns>
         </row>
     </wrapper>
