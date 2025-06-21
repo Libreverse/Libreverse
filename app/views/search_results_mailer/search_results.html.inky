@@ -5,10 +5,10 @@
         <row>
             <columns>
                 <spacer size="20"></spacer>
-                <h1 class="text-center">🔍 Search Results for "<%= @query %></h1>
+                <h1 class="text-center">🔍 Search Results for "<%= @query %>"</h1>
                 <spacer size="10"></spacer>
                 <% if @results.any? %>
-                    <p class="text-center text-gray">
+                    <p class="text-center">
                         Found <strong><%= @total_results %></strong> result<%= @total_results == 1 ? '' : 's' %>
                         <%= @federated ? ' (including federated instances)' : '' %>
                     </p>
@@ -20,6 +20,14 @@
 
     <wrapper>
         <% if @results.any? %>
+            <row>
+                <columns>
+                    <p>Hello,</p>
+                    <p>Here are your search results:</p>
+                    <spacer size="15"></spacer>
+                </columns>
+            </row>
+            
             <%# Split results into online and offline sections %>
             <% online_results = @results.select { |r| !r[:offline_available] } %>
             <% offline_results = @results.select { |r| r[:offline_available] } %>
@@ -28,7 +36,7 @@
                 <row>
                     <columns>
                         <h3>🌐 Online Experiences (<%= online_results.length %>)</h3>
-                        <p class="text-gray"><small>View directly in your web browser</small></p>
+                        <p><em>View directly in your web browser</em></p>
                         <spacer size="10"></spacer>
                     </columns>
                 </row>
@@ -40,8 +48,8 @@
                                 <h4><%= index + 1 %>. <%= result[:title] %></h4>
                                 
                                 <% if result[:author].present? %>
-                                    <p class="text-gray">
-                                        <strong>👤 Author:</strong> <%= result[:author] %>
+                                    <p>
+                                        <em><strong>👤 Author:</strong> <%= result[:author] %></em>
                                     </p>
                                 <% end %>
                                 
@@ -50,11 +58,9 @@
                                 <% end %>
                                 
                                 <% if result[:url].present? %>
-                                    <center>
-                                        <button href="<%= result[:url] %>" class="large success">
-                                            🌐 View Online Experience
-                                        </button>
-                                    </center>
+                                    <p class="text-center">
+                                        <strong><a href="<%= result[:url] %>">🌐 View Online Experience</a></strong>
+                                    </p>
                                 <% end %>
                             </callout>
                         </columns>
@@ -69,7 +75,6 @@
                 <row>
                     <columns>
                         <h3>📧 Offline-Available Experiences (<%= offline_results.length %>)</h3>
-                        <p class="text-gray"><small>Get downloadable ZIP files for offline reading</small></p>
                         <spacer size="10"></spacer>
                     </columns>
                 </row>
@@ -81,8 +86,8 @@
                                 <h4><%= (online_results.length + index + 1) %>. <%= result[:title] %></h4>
                                 
                                 <% if result[:author].present? %>
-                                    <p class="text-gray">
-                                        <strong>👤 Author:</strong> <%= result[:author] %>
+                                    <p>
+                                        <em><strong>👤 Author:</strong> <%= result[:author] %></em>
                                     </p>
                                 <% end %>
                                 
@@ -91,24 +96,16 @@
                                 <% end %>
                                 
                                 <% if result[:url].present? %>
-                                    <center>
-                                        <row>
-                                            <columns small="6">
-                                                <button href="<%= result[:url] %>" class="large success">
-                                                    🌐 View Online
-                                                </button>
-                                            </columns>
-                                            <columns small="6">
-                                                <button href="mailto:experiences@<%= @instance_domain %>?subject=<%= CGI.escape(result[:title]) %>&body=Please%20send%20me%20the%20offline%20ZIP%20file%20for%20this%20experience." class="large secondary">
-                                                    📧 Get ZIP File
-                                                </button>
-                                            </columns>
-                                        </row>
-                                        <spacer size="8"></spacer>
-                                        <p class="text-center"><small>
-                                            💡 Click "📧 Get ZIP File" to email yourself a downloadable package for offline reading
-                                        </small></p>
-                                    </center>
+                                    <p class="text-center">
+                                        <strong><a href="<%= result[:url] %>">🌐 View Online</a></strong>
+                                    </p>
+                                    <p class="text-center">
+                                        <strong><a href="mailto:experiences@<%= @instance_domain %>?subject=<%= CGI.escape(result[:title]) %>&body=Please%20send%20me%20the%20offline%20ZIP%20file%20for%20this%20experience.">📧 Get ZIP File</a></strong>
+                                    </p>
+                                    <spacer size="8"></spacer>
+                                    <p class="text-center"><em>
+                                        💡 Click "📧 Get ZIP File" to email yourself a downloadable package for offline reading
+                                    </em></p>
                                 <% end %>
                             </callout>
                         </columns>
@@ -119,7 +116,14 @@
         <% else %>
             <row>
                 <columns>
-                    <callout class="warning">
+                    <p>Hello,</p>
+                    <spacer size="15"></spacer>
+                </columns>
+            </row>
+            
+            <row>
+                <columns>
+                    <callout class="alert">
                         <center>
                             <h2>😔 No Results Found</h2>
                             <p>No experiences found for "<strong><%= @query %></strong>"</p>
@@ -135,53 +139,53 @@
     <wrapper class="secondary">
         <row>
             <columns>
-                <center>
-                    <spacer size="30"></spacer>
-                    <hr>
-                    <spacer size="20"></spacer>
-                    
-                    <h1 class="text-center">📋 How to use this email interface:</h1>
-                    
-                    <spacer size="20"></spacer>
-                    
-                    <h4>🔍 How to Search Again:</h4>
-                    <p>Send an email to <strong>search@<%= @instance_domain %></strong> with your query in the subject or body.</p>
-                    
-                    <spacer size="15"></spacer>
-                    
-                    <h4>📱 How to get experiences offline:</h4>
-                    <p>Click any "📧 Get ZIP File" button above to request a downloadable ZIP file for offline reading.</p>
-                    <p>Alternatively, you can email <strong>experiences@<%= @instance_domain %></strong> directly with the title or link of the experience you want in the subject or body. The bot will reply with a ZIP file containing the offline version.</p>
-                    <ul>
-                        <li>To get an offline experience, send an email to <code>experiences@<%= @instance_domain %></code> with the experience title or link.</li>
-                        <li>You can reply to this email or start a new one.</li>
-                        <li>You'll receive a ZIP file with everything you need for offline reading.</li>
-                    </ul>
-                    
-                    <spacer size="15"></spacer>
-                    
+                <spacer size="30"></spacer>
+                <hr>
+                <spacer size="20"></spacer>
+                
+                <h1 class="text-center">📋 How to use this email interface:</h1>
+                
+                <spacer size="20"></spacer>
+                
+                <h4>🔍 How to Search Again:</h4>
+                <p>Send an email to <strong>search@<%= @instance_domain %></strong> with your query in the subject or body.</p>
+                
+                <spacer size="15"></spacer>
+                
+                <h4>📱 How to get experiences offline:</h4>
+                <p>Click any "📧 Get ZIP File" button above to request a downloadable ZIP file for offline reading.</p>
+                <p>Alternatively, you can email <strong>experiences@<%= @instance_domain %></strong> directly with the title or link of the experience you want in the subject or body. The bot will reply with a ZIP file containing the offline version.</p>
+                <ul>
+                    <li>To get an offline experience, send an email to <code>experiences@<%= @instance_domain %></code> with the experience title or link.</li>
+                    <li>You can reply to this email or start a new one.</li>
+                    <li>You'll receive a ZIP file with everything you need for offline reading.</li>
+                </ul>
+                
+                <spacer size="15"></spacer>
+                
+                <p class="text-center">
+                    <em>Want to create your own experiences? 
+                    <a href="<%= experiences_url %>">Get started here</a></em>
+                </p>
+                
+                <spacer size="30"></spacer>
+                <hr>
+                <spacer size="20"></spacer>
+            </columns>
+        </row>
+    </wrapper>
+
+    <wrapper class="secondary">
+        <row>
+            <columns>
+                <callout class="primary">
+                    <h5 class="text-center">🚀 The Future is Distributed</h5>
                     <p class="text-center">
-                        <small style="color: #888;">
-                            Want to create your own experiences? 
-                            <a href="<%= experiences_url %>">Get started here</a>
-                        </small>
+                        LibreVerse believes in making knowledge accessible everywhere, through every interface.
+                        Email works on every device, in every country, across every platform. No apps required,
+                        no accounts needed, no barriers to access.
                     </p>
-                    
-                    <spacer size="30"></spacer>
-                    
-                    <callout class="secondary">
-                        <center>
-                            <p><small>
-                                <strong>LibreVerse Email Services:</strong><br>
-                                📧 <code>search@<%= @instance_domain %></code> - Search for experiences<br>
-                                📄 <code>experiences@<%= @instance_domain %></code> - Get offline HTML/ZIP files<br>
-                                🌐 <a href="<%= root_url %>"><%= @instance_domain %></a> - Web interface
-                            </small></p>
-                        </center>
-                    </callout>
-                    
-                    <spacer size="20"></spacer>
-                </center>
+                </callout>
             </columns>
         </row>
     </wrapper>
