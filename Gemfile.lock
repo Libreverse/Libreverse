@@ -559,7 +559,7 @@ GEM
     sexp_processor (4.17.3)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
-    solid_cable (3.0.8)
+    solid_cable (3.0.10)
       actioncable (>= 7.2)
       activejob (>= 7.2)
       activerecord (>= 7.2)
