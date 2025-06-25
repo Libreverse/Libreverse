@@ -376,6 +376,10 @@ GEM
       validate_url
       webfinger (~> 1.2)
     ostruct (0.6.2)
+    p2p_streams_channel (0.0.3)
+      rails
+      stimulus-rails
+      turbo-rails
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -702,6 +706,7 @@ DEPENDENCIES
   mocha
   nokogiri
   ostruct
+  p2p_streams_channel
   permessage_deflate
   premailer-rails
   rack-attack
