@@ -55,7 +55,6 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 gem "unicode"
 gem "unidecoder"
 gem "view_component"
-gem "vite_plugin_legacy"
 gem "vite_rails"
 gem "voight_kampff"
 gem "zstd-ruby"

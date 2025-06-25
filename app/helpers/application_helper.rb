@@ -303,36 +303,6 @@ module ApplicationHelper
     end
   end
 
-  def inline_vite_legacy_javascript(name_with_prefix, **options)
-    if Rails.env.development? || Rails.env.test?
-      # In development, use standard vite tags
-      vite_legacy_javascript_tag(name_with_prefix)
-    else
-      # In production, inline the content directly
-      manifest_key = name_with_prefix.sub(%r{^~/}, "")
-      legacy_manifest_key = "#{File.basename(manifest_key, '.*')}-legacy#{File.extname(manifest_key)}"
-      content = get_vite_asset_content(manifest_key, type: :javascript, legacy_lookup: true)
-      content ||= get_vite_asset_content(legacy_manifest_key, type: :javascript)
-
-      if content
-        # Legacy scripts must be delivered without type="module" and with the
-        # "nomodule" attribute so that modern browsers skip execution and avoid
-        # errors like "Cannot use 'import.meta' outside a module".
-        options_for_legacy = options.dup
-        options_for_legacy.delete(:type) # Remove any module type
-        options_for_legacy[:nomodule] = true
-
-        # Attach the current request's CSP nonce so that inline scripts are allowed
-        nonce_opt = { nonce: content_security_policy_nonce }
-        safe_content = content.gsub(SCRIPT_CLOSE_REGEX, '<\\/script>')
-        merged_opts = options_for_legacy.merge(nonce_opt) { |_k, old, new| old || new }
-        # rubocop:disable Rails/OutputSafety
-        tag.script(safe_content.html_safe, **merged_opts)
-        # rubocop:enable Rails/OutputSafety
-      end
-    end
-  end
-
   # Inline font helper: Generates a style tag with an embedded @font-face rule.
   # Example usage: inline_vite_font('~/fonts/myfont.woff2', font_family: 'MyFont')
   def inline_vite_font(font_path, **options)
@@ -372,21 +342,8 @@ module ApplicationHelper
 
   # Renamed from inline_vite_asset_content to get_vite_asset_content for clarity
   # Now accepts manifest_key directly.
-  def get_vite_asset_content(manifest_key, type:, legacy_lookup: false)
-    # The `legacy_lookup` is a hint. The actual mechanism in vite_rails/vite_ruby for path_for might vary.
-    # It might be an option to path_for, or it might require a different manifest key.
-    if legacy_lookup
-      # Try with a potential legacy: true option if path_for supports it (speculative)
-      # Or this logic could be expanded if ViteRuby.instance.manifest has a dedicated legacy method.
-      begin
-        manifest_path = ViteRuby.instance.manifest.path_for(manifest_key, type: type, legacy: true)
-      rescue ArgumentError
-        # if legacy: true is not a valid option for path_for
-        manifest_path = ViteRuby.instance.manifest.path_for(manifest_key, type: type)
-      end
-    else
-      manifest_path = ViteRuby.instance.manifest.path_for(manifest_key, type: type)
-    end
+  def get_vite_asset_content(manifest_key, type:)
+    manifest_path = ViteRuby.instance.manifest.path_for(manifest_key, type: type)
 
     return unless manifest_path
 
