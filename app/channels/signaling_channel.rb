@@ -7,7 +7,7 @@ class SignalingChannel < ApplicationCable::Channel
     # Extract parameters from subscription
     @session_id = params[:session_id]
     @peer_id = params[:peer_id]
-    
+
     # Validate required parameters
     unless @session_id.present? && @peer_id.present?
       Rails.logger.warn "[SignalingChannel] Missing required parameters: session_id=#{@session_id}, peer_id=#{@peer_id}"
@@ -17,9 +17,9 @@ class SignalingChannel < ApplicationCable::Channel
 
     # Join the session stream
     stream_from "signaling_session_#{@session_id}"
-    
+
     Rails.logger.info "[SignalingChannel] Peer #{@peer_id} joined session #{@session_id}"
-    
+
     # Notify existing peers about the new participant
     broadcast_to_session(
       type: "Connection",
@@ -31,12 +31,12 @@ class SignalingChannel < ApplicationCable::Channel
 
   def unsubscribed
     return unless @session_id && @peer_id
-    
+
     Rails.logger.info "[SignalingChannel] Peer #{@peer_id} left session #{@session_id}"
-    
+
     # Notify remaining peers about disconnection
     broadcast_to_session(
-      type: "Connection", 
+      type: "Connection",
       session_id: @session_id,
       peer_id: @peer_id,
       state: "PeerDisconnected"
@@ -46,14 +46,14 @@ class SignalingChannel < ApplicationCable::Channel
   # Handle incoming signaling messages from clients
   def receive(data)
     return unless valid_message?(data)
-    
+
     Rails.logger.debug "[SignalingChannel] Received message from #{@peer_id}: #{data['state']}"
-    
+
     # Forward the message to all peers in the session
     broadcast_to_session(data.merge(
-      "peer_id" => @peer_id,
-      "session_id" => @session_id
-    ))
+                           "peer_id" => @peer_id,
+                           "session_id" => @session_id
+                         ))
   end
 
   private
@@ -63,8 +63,8 @@ class SignalingChannel < ApplicationCable::Channel
   end
 
   def valid_message?(data)
-    data.is_a?(Hash) && 
-    data["type"].present? && 
-    data["state"].present?
+    data.is_a?(Hash) &&
+      data["type"].present? &&
+      data["state"].present?
   end
 end

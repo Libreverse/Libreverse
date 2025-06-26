@@ -83,6 +83,13 @@ module EmailHelper
       css_content = get_css_directly_from_manifest(css_entry)
       return inline_css_content(css_content) if css_content.present?
 
+      # Final fallback: try to read CSS file directly from public directory
+      css_file_path = Rails.root.join("public", "assets", css_entry.sub(%r{^~/}, "").sub(/\.scss$/, ".css"))
+      if File.exist?(css_file_path)
+        css_content = File.read(css_file_path)
+        return inline_css_content(css_content) if css_content.present?
+      end
+
       Rails.logger.warn "[EmailHelper] No CSS found for #{css_entry} in production"
       ""
   rescue StandardError => e
@@ -204,12 +211,13 @@ module EmailHelper
     return "" if css_content.blank?
 
     # Clean up the CSS content
-    css_content.strip
-               .gsub(%r{/\*.*?\*/}m, "") # Remove comments
-               .gsub(/\s+/, " ")         # Compress whitespace
-               .gsub(/;\s*}/, "}")       # Clean up semicolons
+    cleaned_css = css_content.strip
+                            .gsub(%r{/\*.*?\*/}m, "") # Remove comments
+                            .gsub(/\s+/, " ")         # Compress whitespace
+                            .gsub(/;\s*}/, "}")       # Clean up semicolons
 
     # Return just the cleaned CSS content (not wrapped in tags)
+    cleaned_css
   end
 
   # Fallback CSS using Foundation for Emails from CDN

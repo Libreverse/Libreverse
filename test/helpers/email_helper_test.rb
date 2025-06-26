@@ -26,9 +26,15 @@ class EmailHelperTest < ActionView::TestCase
   test "inline_email_css works in production" do
     Rails.env = "production"
 
-    # Mock file existence and content
-    File.expects(:exist?).returns(true)
-    File.expects(:read).returns("body { color: blue; }")
+    # Mock ViteRuby manifest to return nil so it falls back to file approach
+    vite_instance = mock('vite_instance')
+    ViteRuby.expects(:instance).returns(vite_instance).at_least_once
+    vite_instance.expects(:manifest).returns(nil).at_least_once
+
+    # Mock file existence and content for the public assets path
+    css_file_path = Rails.root.join("public", "assets", "stylesheets/emails.css")
+    File.expects(:exist?).with(css_file_path).returns(true)
+    File.expects(:read).with(css_file_path).returns("body { color: blue; }")
 
     result = inline_email_css("~/stylesheets/emails.scss")
     assert_includes result, "color: blue"
