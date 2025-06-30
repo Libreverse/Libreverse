@@ -1,4 +1,4 @@
-import { P2pController } from "p2p"
+import { P2pController } from "p2p";
 
 export default class extends P2pController {
     //
@@ -27,16 +27,19 @@ export default class extends P2pController {
 
     // receiving message from the other through the host peer
     p2pReceivedMessage(message) {
-        switch(message["type"]) {
-            case "Data":
+        switch (message["type"]) {
+            case "Data": {
                 // message["data"]: the raw text(or whatever)
-                break
-            case "Data.Connection.State":
+                break;
+            }
+            case "Data.Connection.State": {
                 // message["data"]: the current connection state of other peers
                 // for (let [peer, state] of Object.entries(message["data"])) {}
-                break
-            default:
-                break
+                break;
+            }
+            default: {
+                break;
+            }
         }
     }
 

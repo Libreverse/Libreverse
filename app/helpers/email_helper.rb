@@ -211,13 +211,12 @@ module EmailHelper
     return "" if css_content.blank?
 
     # Clean up the CSS content
-    cleaned_css = css_content.strip
-                            .gsub(%r{/\*.*?\*/}m, "") # Remove comments
-                            .gsub(/\s+/, " ")         # Compress whitespace
-                            .gsub(/;\s*}/, "}")       # Clean up semicolons
+    css_content.strip
+               .gsub(%r{/\*.*?\*/}m, "") # Remove comments
+               .gsub(/\s+/, " ")         # Compress whitespace
+               .gsub(/;\s*}/, "}")       # Clean up semicolons
 
     # Return just the cleaned CSS content (not wrapped in tags)
-    cleaned_css
   end
 
   # Fallback CSS using Foundation for Emails from CDN
