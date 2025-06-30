@@ -136,7 +136,7 @@ export default defineConfig(({ mode }) => {
                     properties: {
                         builtins: true,
                         debug: true,
-                        keep_quoted: "false",
+                        keep_quoted: false,
                         reserved: [],
                     },
                 },
