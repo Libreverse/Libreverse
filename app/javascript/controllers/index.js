@@ -2,49 +2,64 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application";
+import { application } from "./application"
 
-import ApplicationController from "./application_controller";
-application.register("application", ApplicationController);
+import ApplicationController from "./application_controller"
+application.register("application", ApplicationController)
 
-import ConsentController from "./consent_controller";
-application.register("consent", ConsentController);
+import ConsentController from "./consent_controller"
+application.register("consent", ConsentController)
 
-import DismissibleController from "./dismissible_controller";
-application.register("dismissible", DismissibleController);
+import CtaParticlesController from "./cta_particles_controller"
+application.register("cta-particles", CtaParticlesController)
 
-import DrawerController from "./drawer_controller";
-application.register("drawer", DrawerController);
+import DismissibleController from "./dismissible_controller"
+application.register("dismissible", DismissibleController)
 
-import FormAutoSubmitController from "./form_auto_submit_controller";
-application.register("form-auto-submit", FormAutoSubmitController);
+import DrawerController from "./drawer_controller"
+application.register("drawer", DrawerController)
 
-import LanguagePickerController from "./language_picker_controller";
-application.register("language-picker", LanguagePickerController);
+import ExperienceUploadController from "./experience_upload_controller"
+application.register("experience-upload", ExperienceUploadController)
 
-import LocomotiveScrollController from "./locomotive_scroll_controller";
-application.register("locomotive-scroll", LocomotiveScrollController);
+import FormAutoSubmitController from "./form_auto_submit_controller"
+application.register("form-auto-submit", FormAutoSubmitController)
 
-import LinkController from "./link_controller";
-application.register("link", LinkController);
+import InstanceSettingsController from "./instance_settings_controller"
+application.register("instance-settings", InstanceSettingsController)
 
-import NavigationShortcutsController from "./navigation_shortcuts_controller";
-application.register("navigation-shortcuts", NavigationShortcutsController);
+import LanguagePickerController from "./language_picker_controller"
+application.register("language-picker", LanguagePickerController)
 
-import RaindropController from "./raindrop_controller";
-application.register("raindrop", RaindropController);
+import LinkController from "./link_controller"
+application.register("link", LinkController)
 
-import SearchUrlUpdaterController from "./search_url_updater_controller";
-application.register("search-url-updater", SearchUrlUpdaterController);
+import LocomotiveScrollController from "./locomotive_scroll_controller"
+application.register("locomotive-scroll", LocomotiveScrollController)
 
-import SidebarController from "./sidebar_controller";
-application.register("sidebar", SidebarController);
+import MultiplayerExperienceController from "./multiplayer_experience_controller"
+application.register("multiplayer-experience", MultiplayerExperienceController)
 
-import ToastController from "./toast_controller";
-application.register("toast", ToastController);
+import NavigationShortcutsController from "./navigation_shortcuts_controller"
+application.register("navigation-shortcuts", NavigationShortcutsController)
 
-import ParallaxBackgroundController from "./parallax_background_controller";
-application.register("parallax-background", ParallaxBackgroundController);
+import P2pExperienceController from "./p2p_experience_controller"
+application.register("p2p-experience", P2pExperienceController)
 
-import CtaParticlesController from "./cta_particles_controller.coffee";
-application.register("cta-particles", CtaParticlesController);
+import P2pSyncController from "./p2p_sync_controller"
+application.register("p2p-sync", P2pSyncController)
+
+import ParallaxBackgroundController from "./parallax_background_controller"
+application.register("parallax-background", ParallaxBackgroundController)
+
+import RaindropController from "./raindrop_controller"
+application.register("raindrop", RaindropController)
+
+import SearchUrlUpdaterController from "./search_url_updater_controller"
+application.register("search-url-updater", SearchUrlUpdaterController)
+
+import SidebarController from "./sidebar_controller"
+application.register("sidebar", SidebarController)
+
+import ToastController from "./toast_controller"
+application.register("toast", ToastController)

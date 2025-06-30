@@ -1,1 +1,1 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#808080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-right" xmlns="http://www.w3.org/2000/svg"><line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" /></svg>
+<svg fill="none" height="24" stroke="#808080" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m7 17 10-10"/><path d="m7 7h10v10"/></svg>

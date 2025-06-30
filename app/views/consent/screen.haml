@@ -1,6 +1,6 @@
 = render "layouts/leniswrapper" do
   - garage_img = bitmap_image_data_url("images/garage")
-  .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => garage_img['.jpg'], :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
+  .hp-bg{"data-controller" => "raindrop", "data-raindrop-background-url-value" => garage_img['.avif'], :role => "presentation", "data-scroll" => true, "data-scroll-speed" => "-2"}
     %canvas.raindrop-canvas
   .hp-centerify{ "data-controller" => "consent" }
     %header.hp-main{role: "banner"}
