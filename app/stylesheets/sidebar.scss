@@ -1,66 +1,120 @@
 @use "variables";
 
 .sidebar {
-    width: 50px;
+    // Base fixed width (using previous "expanded" sizes)
+    width: 60px;
     height: 80vh;
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border-top: 1px solid variables.$glass-border;
-    border-right: 1px solid variables.$glass-border;
-    border-bottom: 1px solid variables.$glass-border;
-    border-radius: 0 20px 20px 0;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    --sidebar-border-radius: 20px; // Define border radius as a variable
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
     z-index: 5;
-    transition: width 0.3s ease;
     position: fixed;
-    will-change: width;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%); // Vertical centering
     pointer-events: auto;
 
-    &.sidebar-hovered {
-        width: 100px;
-    }
-}
-
-.sidebar-container {
-    width: 50px; // Matches the initial width of .sidebar
-    height: 100vh; // Matches the height of .sidebar
-    position: fixed;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    transition: width 0.3s ease;
-    will-change: width;
-    pointer-events: none;
-
-    &.sidebar-hovered {
-        width: 100px; // Matches the width of .sidebar when hovered
-    }
-
-    @media (width <= 600px) {
-        width: 25px; // Matches the width of .sidebar for small screens
-
-        &.sidebar-hovered {
-            width: 75px; // Matches the width of .sidebar when hovered for small screens
+    // Glass container
+    .glass-container {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0; // Use variable
+        overflow: hidden; // Clip canvas to rounded corners
+        
+        // Ensure canvas respects border radius
+        canvas {
+            border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important; // Use variable and override inline styles
+            // Force clipping with clip-path for WebGL canvas
+            clip-path: inset(0 0 0 0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0) !important; // Use variable and override inline styles
+        }
+        
+        // Proper spacing for glass buttons
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 2px;
+        box-sizing: border-box;
+        
+        // Glass button styling
+        .glass-button {
+            width: auto;
+            height: auto;
+            max-width: none;
+            max-height: none;
+            margin: 4px auto; // Auto margins for horizontal centering
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            .glass-button-text {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                pointer-events: none;
+                width: 100%;
+                height: 100%;
+                position: relative;
+                
+                svg {
+                    width: 28px; // Larger size to nearly fill the button
+                    height: 28px;
+                    flex-shrink: 0;
+                    display: block;
+                    // Don't touch any color properties - let SVG use its original attributes
+                    
+                    // Ensure paths respect the SVG's fill="none" attribute
+                    &[fill="none"] {
+                        fill: none;
+                        
+                        path {
+                            fill: none;
+                        }
+                    }
+                }
+            }
         }
     }
 
+    // Responsive breakpoints - fixed width values (using previous "expanded" sizes)
+    @media (width <= 600px) {
+        width: 40px; // Small screen width (was expanded size)
+        --sidebar-border-radius: 10px; // Update for small screens
+    }
+
+    @media (width >= 601px) and (width <= 1500px) {
+        width: 60px; // Default width (was expanded size)
+    }
+
     @media (width >= 1501px) {
-        width: 100px; // Matches the width of .sidebar for large screens
+        width: 80px; // Large screen width (was expanded size)
     }
 }
 
 .sidebar-contents {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; // Back to space-between for proper distribution
     height: 100%;
-    padding: 0 2px;
+    padding: 8px 2px; // Increased padding for better spacing
     box-sizing: border-box;
 }
 
 .sidebar-icons {
     width: 100%;
     user-select: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; // Space between for glass container buttons
+    flex-grow: 1; // Take up available space
+    min-height: 0; // Allow flex shrinking
 }
 
 .sidebar-link {
@@ -91,29 +145,6 @@
     }
 }
 
-@media (width <= 600px) {
-    .sidebar {
-        width: 25px;
-        border-radius: 0 10px 10px 0;
-    }
-
-    .sidebar.sidebar-hovered {
-        width: 75px;
-    }
-}
-
-@media (width >= 601px) and (width <= 1500px) {
-    .sidebar {
-        width: 50px;
-    }
-}
-
-@media (width >= 1501px) {
-    .sidebar {
-        width: 100px;
-    }
-}
-
 @keyframes sidebar-shake {
     0%,
     100% {
@@ -140,4 +171,11 @@
 
 .sidebar-current {
     filter: brightness(0.75);
+}
+
+.sidebar-disabled {
+  opacity: 0.6;
+  cursor: default !important;
+  filter: grayscale(0.5);
+  // Don't disable pointer-events - we need clicks for shake animation
 }

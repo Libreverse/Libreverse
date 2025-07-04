@@ -1,41 +1,45 @@
--# Determine whether the sidebar should appear expanded on initial render.
-- expanded_on_render = local_assigns.fetch(:expanded, 'f') == 't'
-- sidebar_hovered = sidebar_hovered_bool = local_assigns.fetch(:sidebar_hovered, 'f') == 't' # Assumes sidebar_hovered is 't' or 'f'
+-# Fixed sidebar navigation with liquid glass effects
+- public_links = [{ path: '/', icon: 'home', label: 'homepage' }, { path: '/search', icon: 'search', label: 'search page' }, { path: '/settings', icon: 'settings', label: 'settings page' }]
+- nav_items = public_links.dup
+
+- if rodauth.logged_in? && !rodauth.guest_logged_in?
+  - nav_items.concat([{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }])
+  - nav_items << { path: rodauth.logout_path, icon: 'logout', label: 'Sign out', method: :post }
+- else
+  - nav_items.concat([{ path: rodauth.login_path, icon: 'login', label: 'login page' }, { path: rodauth.create_account_path, icon: 'signup', label: 'sign-up page' }])
+
 
 %nav{id: "sidebar-nav-#{sidebar_id}",
-     class: ["sidebar", ("sidebar-hovered" if expanded_on_render)].compact.join(" "),
+     class: ["sidebar"].compact.join(" "),
      role: "navigation",
-     aria: {expanded: expanded_on_render.to_s, label: "Navigation Sidebar"},
+     aria: {label: "Navigation Sidebar"},
      data: {
        controller: "sidebar",
-       action: "mouseenter->sidebar#mouseEnter mouseleave->sidebar#mouseLeave",
 
-       # Stimulus values (preferred)
-       "expanded-value": expanded_on_render.to_s,
-       "hovered-value": sidebar_hovered_bool.to_s,
+       # Liquid glass configuration
+       "enable-glass-value": true,
+       "tint-opacity-value": 0.12,
+       "glass-type-value": "rounded",
+       
+       # Parallax configuration
+       "parallax-speed-value": 1,
+       "parallax-offset-value": 0,
+       "is-parallax-element-value": false,
+       # Background parallax compensation
+       "sync-with-parallax-value": true,
+       "background-parallax-speed-value": -2,
 
-       # Legacy / CSS helpers (kept for compatibility – can be removed once all
-       # code paths rely exclusively on the `*-value` attributes above)
-       expanded: expanded_on_render.to_s,
-       "hovered": sidebar_hovered_bool.to_s,
-
-       "reflex-root": "#sidebar-nav-#{sidebar_id}",
-       "sidebar-id": sidebar_id,
+       "nav-items": enrich_nav_items_with_svgs(nav_items).to_json
      }}
   .sidebar-contents
     - current_path = request.path
 
     -# Public links – always visible
-    - public_links = [{ path: '/', icon: 'libreverse-logo', label: 'homepage' }, { path: '/search', icon: 'search', label: 'search page' }, { path: '/settings', icon: 'settings', label: 'settings page' }]
     - public_links.each do |item|
       - item_is_current = (current_path == item[:path])
       = link_to item[:path],
                 class: "sidebar-link#{' sidebar-default-cursor' if item_is_current}",
-                aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
-                data: { controller: 'link',
-                        action: 'click->link#click',
-                        'link-is-current-value': item_is_current.to_s,
-                        path: item[:path] } do
+                aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") } do
         = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
 
     / Authentication links
@@ -45,11 +49,7 @@
         - item_is_current = (current_path == item[:path])
         = link_to item[:path],
                   class: "sidebar-link#{' sidebar-default-cursor' if item_is_current}",
-                  aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
-                  data: { controller: 'link',
-                          action: 'click->link#click',
-                          'link-is-current-value': item_is_current.to_s,
-                          path: item[:path] } do
+                  aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") } do
           = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
 
       = button_to rodauth.logout_path,
@@ -63,9 +63,5 @@
         - item_is_current = (current_path == item[:path])
         = link_to item[:path],
                   class: "sidebar-link#{' sidebar-default-cursor' if item_is_current}",
-                  aria: { label: (item_is_current ? "On #{item[:label]}" : (item[:label] == 'sign-up page' ? 'Sign up' : 'Sign in')) },
-                  data: { controller: 'link',
-                          action: 'click->link#click',
-                          'link-is-current-value': item_is_current.to_s,
-                          path: item[:path] } do
+                  aria: { label: (item_is_current ? "On #{item[:label]}" : (item[:label] == 'sign-up page' ? 'Sign up' : 'Sign in')) } do
           = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))

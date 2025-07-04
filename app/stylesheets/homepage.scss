@@ -173,7 +173,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100vh + 30%);
+    height: 100vh;
     z-index: -1;
     overflow: hidden;
     background-color: variables.$background;
@@ -224,6 +224,7 @@
         height: 100%;
         object-fit: cover;
         user-select: none;
+        border-radius: 10px;
     }
 
     img.before {
