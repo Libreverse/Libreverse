@@ -399,11 +399,16 @@ class Container {
       scale: 1,
       useCORS: true,
       allowTaint: true,
-      backgroundColor: null,
+      backgroundColor:  null,
       width: pageWidth,    // Explicitly set full page width
       height: pageHeight,  // Explicitly set full page height
       windowWidth: pageWidth,  // Set window width to page width for full capture
       windowHeight: pageHeight, // Set window height to page height for full capture
+      foreignObjectRendering: false,
+      logging: true,
+      proxy: null, // Use default proxy if needed
+      // waste of time when turbo innerhtml will remove it later anyway
+      removeContainer: false, // Remove container from DOM after capture
       ignoreElements: function (element) {
         // Ignore all glass elements
         return (

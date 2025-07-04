@@ -25,6 +25,9 @@ application.register("experience-upload", ExperienceUploadController)
 import FormAutoSubmitController from "./form_auto_submit_controller"
 application.register("form-auto-submit", FormAutoSubmitController)
 
+import HyperspaceController from "./hyperspace_controller"
+application.register("hyperspace", HyperspaceController)
+
 import InstanceSettingsController from "./instance_settings_controller"
 application.register("instance-settings", InstanceSettingsController)
 

@@ -8,15 +8,16 @@
   Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, sidebar_hovered=#{sidebar_hovered}, expanded=#{expanded}"
 
 %aside{id: "#{sidebar_id}-sidebar",
-       class: "sidebar-container #{'sidebar-hovered' if expanded == 't'}",
-       role: "complementary",
-       data: {
-         # Stimulus values for child controllers (preferred)
-         "expanded-value": (expanded == 't' ? 'true' : 'false'),
-         "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
+    class: "sidebar-container #{'sidebar-hovered' if expanded == 't'}",
+    role: "complementary",
+    data: {
+      # Stimulus values for child controllers (preferred)
+      "expanded-value": (expanded == 't' ? 'true' : 'false'),
+      "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
 
-         # Legacy attributes retained to avoid breaking any direct CSS/JS
-         expanded: (expanded == 't' ? 'true' : 'false'),
-         "hovered": (sidebar_hovered == 't' ? 'true' : 'false'),
-       }}
+      # Legacy attributes retained to avoid breaking any direct CSS/JS
+      expanded: (expanded == 't' ? 'true' : 'false'),
+      "hovered": (sidebar_hovered == 't' ? 'true' : 'false'),
+      "html2canvas-ignore": true,
+    }}
   = render partial: "layouts/sidebar_nav", locals: { sidebar_id: sidebar_id, sidebar_hovered: sidebar_hovered, expanded: expanded, rodauth: rodauth_obj }

@@ -13,27 +13,22 @@
         = image_tag(paper_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
         = image_tag(paper_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
         = image_tag(paper_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
-        %h1= t('homepage.index.case_for_open_source_metaverse')
+        %h1= t('homepage.index.metaverse_article_title')
         %p= t('homepage.index.zuckerberg_rebrand')
-        %p= t('homepage.index.internet_laughing_stock')
-        %p= t('homepage.index.metaverse_backlash_reason')
-        %p= t('homepage.index.metaverse_purpose')
-        %p= t('homepage.index.matrix_question')
-        %p= t('homepage.index.companies_bad_but_grow')
-        %p= t('homepage.index.short_term_appeal')
-        %p= t('homepage.index.gambling_porn_fast_food')
-        %p= t('homepage.index.system_refined')
-        %p= t('homepage.index.metaverse_reward_system')
-        %p= t('homepage.index.meta_matrix_sentence')
-        %p= t('homepage.index.open_source_competitor_need')
-        %p= t('homepage.index.metaverse_inevitable')
-        %p= t('homepage.index.libreverse_cant_let_happen')
+        %p= t('homepage.index.not_one_product')
+        %p= t('homepage.index.sounds_cool')
+        %p= t('homepage.index.know_they_are_bad')
+        %p= t('homepage.index.metaverse_hook')
+        %p= t('homepage.index.meta_charging')
+        %p= t('homepage.index.open_source_rival')
+        %p= t('homepage.index.digital_life_inevitable')
+        %p= t('homepage.index.reclaim_potential')
     .cta-container-container
       .cta-xai-particles{"data-controller" => "cta-particles"}
       .cta-xai-effect
-      .cta-container
+      .cta-container{"data-controller" => "hyperspace"}
         %h2= t('homepage.index.take_control')
         %p= t('homepage.index.help_build_alternative')
         %form{ action: "/create-account", method: "get"}
-          %button.action{ type: "submit" } Create Account
+          %button.action{ type: "submit", "data-hyperspace-target" => "button", "data-action" => "click->hyperspace#toggle" } Create Account
 .cta-xai-particles

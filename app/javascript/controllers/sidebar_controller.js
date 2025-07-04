@@ -104,8 +104,11 @@ export default class extends Controller {
       backgroundParallaxSpeed: this.backgroundParallaxSpeedValue
     }
 
-    // Initialize liquid glass
-    this.glassContainer = renderLiquidGlassSidebarRightRounded(nav, navItems, containerOptions)
+    // Initialize liquid glass with preservation of original HTML
+    this.glassContainer = renderLiquidGlassSidebarRightRounded(nav, navItems, containerOptions, {
+      preserveOriginalHTML: true,
+      originalContent: this.originalNavContent
+    })
     
     console.log('[SidebarController] Liquid glass initialized with', navItems.length, 'items')
 
@@ -135,7 +138,26 @@ export default class extends Controller {
       // Restore original content if we have it
       if (this.originalNavContent && this.element) {
         const nav = this.element.querySelector('nav') || this.element
-        nav.innerHTML = this.originalNavContent
+        
+        // Show original content again
+        const existingContent = nav.querySelector('.sidebar-contents')
+        if (existingContent) {
+          existingContent.style.display = ''
+          existingContent.style.opacity = '1'
+          existingContent.style.transition = ''
+          existingContent.style.position = ''
+          existingContent.style.zIndex = ''
+        }
+        
+        // Remove glass container
+        const glassElement = nav.querySelector('.glass-container')
+        if (glassElement) {
+          glassElement.remove()
+        }
+        
+        // Clean up references
+        delete nav._liquidGlassInstance
+        delete nav._originalHTML
       }
     } catch (error) {
       console.error('[SidebarController] Error cleaning up liquid glass:', error)
