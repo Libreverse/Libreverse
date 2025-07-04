@@ -113,29 +113,30 @@ FOREIGN KEY ("experience_id")
 CREATE UNIQUE INDEX "index_experience_vectors_on_experience_id" ON "experience_vectors" ("experience_id");
 CREATE INDEX "index_experience_vectors_on_vector_hash" ON "experience_vectors" ("vector_hash");
 CREATE INDEX "index_experience_vectors_on_generated_at" ON "experience_vectors" ("generated_at");
-CREATE TABLE IF NOT EXISTS "federails_actors" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "federated_url" varchar, "username" varchar, "server" varchar, "inbox_url" varchar, "outbox_url" varchar, "followers_url" varchar, "followings_url" varchar, "profile_url" varchar, "entity_id" integer, "entity_type" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar DEFAULT NULL, "public_key" text, "private_key" text, "extensions" json DEFAULT NULL, "local" boolean DEFAULT 0 NOT NULL, "actor_type" varchar, "tombstoned_at" datetime(6) DEFAULT NULL);
+CREATE TABLE IF NOT EXISTS "federails_actors" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "federated_url" text, "username" varchar, "server" varchar, "inbox_url" varchar, "outbox_url" varchar, "followers_url" varchar, "followings_url" varchar, "profile_url" varchar, "entity_id" integer, "entity_type" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar NOT NULL, "public_key" text, "private_key" text, "extensions" json DEFAULT NULL, "local" boolean DEFAULT 0 NOT NULL, "actor_type" varchar, "tombstoned_at" datetime(6));
 CREATE UNIQUE INDEX "index_federails_actors_on_federated_url" ON "federails_actors" ("federated_url");
 CREATE UNIQUE INDEX "index_federails_actors_on_entity" ON "federails_actors" ("entity_type", "entity_id");
-CREATE TABLE IF NOT EXISTS "federails_followings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "actor_id" integer NOT NULL, "target_actor_id" integer NOT NULL, "status" integer DEFAULT 0, "federated_url" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar DEFAULT NULL, CONSTRAINT "fk_rails_2e62338faa"
-FOREIGN KEY ("actor_id")
-  REFERENCES "federails_actors" ("id")
-, CONSTRAINT "fk_rails_4a2870c181"
-FOREIGN KEY ("target_actor_id")
-  REFERENCES "federails_actors" ("id")
-);
-CREATE INDEX "index_federails_followings_on_actor_id" ON "federails_followings" ("actor_id");
-CREATE INDEX "index_federails_followings_on_target_actor_id" ON "federails_followings" ("target_actor_id");
-CREATE UNIQUE INDEX "index_federails_followings_on_actor_id_and_target_actor_id" ON "federails_followings" ("actor_id", "target_actor_id");
-CREATE TABLE IF NOT EXISTS "federails_activities" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entity_type" varchar NOT NULL, "entity_id" integer NOT NULL, "action" varchar NOT NULL, "actor_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar DEFAULT NULL, CONSTRAINT "fk_rails_85ef6259df"
+CREATE UNIQUE INDEX "index_federails_actors_on_uuid" ON "federails_actors" ("uuid");
+CREATE TABLE IF NOT EXISTS "federails_activities" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entity_type" varchar NOT NULL, "entity_id" integer NOT NULL, "action" varchar NOT NULL, "actor_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar NOT NULL, CONSTRAINT "fk_rails_85ef6259df"
 FOREIGN KEY ("actor_id")
   REFERENCES "federails_actors" ("id")
 );
 CREATE INDEX "index_federails_activities_on_entity" ON "federails_activities" ("entity_type", "entity_id");
 CREATE INDEX "index_federails_activities_on_actor_id" ON "federails_activities" ("actor_id");
-CREATE UNIQUE INDEX "index_federails_actors_on_uuid" ON "federails_actors" ("uuid");
 CREATE UNIQUE INDEX "index_federails_activities_on_uuid" ON "federails_activities" ("uuid");
+CREATE TABLE IF NOT EXISTS "federails_followings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "actor_id" integer NOT NULL, "target_actor_id" integer NOT NULL, "status" integer DEFAULT 0 NOT NULL, "federated_url" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "uuid" varchar NOT NULL, CONSTRAINT "fk_rails_4a2870c181"
+FOREIGN KEY ("target_actor_id")
+  REFERENCES "federails_actors" ("id")
+, CONSTRAINT "fk_rails_2e62338faa"
+FOREIGN KEY ("actor_id")
+  REFERENCES "federails_actors" ("id")
+);
+CREATE INDEX "index_federails_followings_on_actor_id" ON "federails_followings" ("actor_id");
+CREATE INDEX "index_federails_followings_on_target_actor_id" ON "federails_followings" ("target_actor_id");
+CREATE UNIQUE INDEX "index_federails_followings_on_actor_id_and_target_actor_id" ON "federails_followings" ("actor_id", "target_actor_id");
 CREATE UNIQUE INDEX "index_federails_followings_on_uuid" ON "federails_followings" ("uuid");
-CREATE TABLE IF NOT EXISTS "federails_moderation_reports" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "federated_url" varchar, "federails_actor_id" integer, "content" varchar, "object_type" varchar, "object_id" integer, "resolved_at" datetime(6), "resolution" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_a5cda24d4c"
+CREATE INDEX "index_federails_actors_on_tombstoned_at" ON "federails_actors" ("tombstoned_at");
+CREATE TABLE IF NOT EXISTS "federails_moderation_reports" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "federated_url" varchar, "federails_actor_id" integer, "object_type" varchar, "object_id" integer, "resolved_at" datetime(6), "content" text, "resolution" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_a5cda24d4c"
 FOREIGN KEY ("federails_actor_id")
   REFERENCES "federails_actors" ("id")
 );
@@ -168,13 +169,13 @@ CREATE UNIQUE INDEX "index_oauth_grants_on_oauth_application_id_and_code" ON "oa
 CREATE UNIQUE INDEX "index_oauth_grants_on_token" ON "oauth_grants" ("token");
 CREATE UNIQUE INDEX "index_oauth_grants_on_refresh_token" ON "oauth_grants" ("refresh_token");
 CREATE UNIQUE INDEX "index_oauth_grants_on_user_code" ON "oauth_grants" ("user_code");
-CREATE TABLE IF NOT EXISTS "oauth_pushed_requests" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "oauth_application_id" bigint, "code" varchar NOT NULL, "params" varchar NOT NULL, "expires_in" datetime(6) NOT NULL, "dpop_jkt" varchar, CONSTRAINT "fk_rails_c46eab5056"
+CREATE TABLE IF NOT EXISTS "oauth_pushed_requests" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "oauth_application_id" bigint, "code" varchar NOT NULL, "params" varchar NOT NULL, "expires_in" datetime(6) NOT NULL, "dpop_jkt" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_c46eab5056"
 FOREIGN KEY ("oauth_application_id")
   REFERENCES "oauth_applications" ("id")
 );
 CREATE UNIQUE INDEX "index_oauth_pushed_requests_on_code" ON "oauth_pushed_requests" ("code");
 CREATE UNIQUE INDEX "index_oauth_pushed_requests_on_oauth_application_id_and_code" ON "oauth_pushed_requests" ("oauth_application_id", "code");
-CREATE TABLE IF NOT EXISTS "oauth_saml_settings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "oauth_application_id" bigint, "idp_cert" text, "idp_cert_fingerprint" text, "idp_cert_fingerprint_algorithm" varchar, "check_idp_cert_expiration" boolean, "name_identifier_format" text, "audience" varchar, "issuer" varchar NOT NULL, CONSTRAINT "fk_rails_73255239bb"
+CREATE TABLE IF NOT EXISTS "oauth_saml_settings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "oauth_application_id" bigint, "idp_cert" text, "idp_cert_fingerprint" text, "idp_cert_fingerprint_algorithm" varchar, "check_idp_cert_expiration" boolean, "name_identifier_format" text, "audience" varchar, "issuer" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_73255239bb"
 FOREIGN KEY ("oauth_application_id")
   REFERENCES "oauth_applications" ("id")
 );

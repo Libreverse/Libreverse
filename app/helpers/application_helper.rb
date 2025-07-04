@@ -35,151 +35,6 @@ module ApplicationHelper
               tabindex: "-1")
   end
 
-  def svg_icon_data_url(icon_name)
-    # Validate icon name to prevent path traversal
-    unless icon_name.match?(/\A[a-zA-Z0-9_-]+\z/)
-      Rails.logger.warn "Invalid SVG icon name requested: #{icon_name}"
-      return ""
-    end
-
-    # Define potential directories and find the icon
-    potential_dirs = [ Rails.root.join("app/icons"), Rails.root.join("app/images") ]
-    icon_path = nil
-    potential_dirs.each do |dir|
-      path = dir.join("#{icon_name}.svg")
-      if path.to_s.start_with?(dir.to_s) && File.exist?(path) && File.file?(path)
-        icon_path = path
-        break
-      end
-    end
-
-    unless icon_path
-      Rails.logger.warn "SVG icon not found in checked directories: #{icon_name}"
-      return ""
-    end
-
-    # Read and validate SVG content
-    svg_content = File.read(icon_path)
-
-    # Basic SVG validation
-    unless svg_content.include?("<svg") && svg_content.include?("</svg>")
-      Rails.logger.warn "Invalid SVG content detected for icon: #{icon_name}"
-      return ""
-    end
-
-    # Encode the SVG for a data URL using URL encoding instead of base64
-    # Use ERB::Util.url_encode for proper SVG data URL encoding
-    "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
-  end
-
-  # Generates Base64-encoded data URIs for all available bitmap image versions.
-  # Looks for the image in the source asset directories (e.g., app/images)
-  # and returns a hash of all found versions (AVIF, WebP, PNG, JPG, GIF) for the given base image path.
-  #
-  # @param source_relative_path [String] The path relative to the asset source root (e.g., "images/logo").
-  # @return [Hash{String=>String}] A hash mapping file extension (e.g., ".webp") to the data URI string (e.g., "data:image/webp;base64,...").
-  #   Returns an empty hash if no supported images are found.
-  def bitmap_image_data_url(source_relative_path)
-    # Basic validation for relative path
-    unless source_relative_path.match?(%r{\A[a-zA-Z0-9_./-]+\z}) && !source_relative_path.include?("..")
-      Rails.logger.warn "Invalid characters or path traversal attempt in source relative path: #{source_relative_path}"
-      return {}
-    end
-
-    source_root = Rails.root.join("app")
-    preferred_extensions = %w[.avif .webp .png .jpg .jpeg .gif]
-    results = {}
-
-    preferred_extensions.each do |ext|
-      potential_path = source_root.join("#{source_relative_path}#{ext}").cleanpath
-      begin
-        resolved_path = Pathname.new(File.realpath(potential_path))
-      rescue Errno::ENOENT, Errno::EINVAL
-        next
-      end
-      next unless resolved_path.to_s.start_with?(source_root.to_s) && resolved_path.file?
-
-      mime_type = case ext
-      when ".png" then "image/png"
-      when ".jpg", ".jpeg" then "image/jpeg"
-      when ".gif" then "image/gif"
-      when ".webp" then "image/webp"
-      when ".avif" then "image/avif"
-      else "application/octet-stream"
-      end
-
-      begin
-        image_data = File.binread(resolved_path)
-        encoded_data = Base64.strict_encode64(image_data)
-        results[ext] = "data:#{mime_type};base64,#{encoded_data}"
-      rescue StandardError => e
-        Rails.logger.error "Error reading or encoding bitmap image #{resolved_path}: #{e.message}"
-        next
-      end
-    end
-
-    Rails.logger.warn "No suitable bitmap images found for source path: #{source_relative_path} within #{source_root}" if results.empty?
-    results
-  end
-
-  # Returns a srcset string for all available formats in the bitmap image hash.
-  # Example: bitmap_image_srcset(bitmap_image_data_url('images/foo'))
-  # => "data:image/avif;base64,... type(image/avif), data:image/webp;base64,... type(image/webp), ..."
-  def bitmap_image_srcset(image_hash)
-    return "" unless image_hash.is_a?(Hash)
-
-    preferred = [
-      [ ".avif", "image/avif" ],
-      [ ".webp", "image/webp" ],
-      [ ".png", "image/png" ],
-      [ ".jpg", "image/jpeg" ],
-      [ ".jpeg", "image/jpeg" ],
-      [ ".gif", "image/gif" ]
-    ]
-    preferred.map { |ext, mime| image_hash[ext] && "#{image_hash[ext]} type(#{mime})" }.compact.join(", ")
-  end
-
-  # --- User Preference Helpers ---
-
-  # Gets a user preference value, returning a default if not set or user is nil.
-  def get_user_preference(key, default_value = nil)
-    # Uses the current_account helper defined in ApplicationController
-    current_account ? UserPreference.get(current_account.id, key) || default_value : default_value
-  end
-
-  # Get expanded state of sidebar from user preferences
-  def sidebar_expanded?
-    return "f" unless current_account
-
-    UserPreference.get(current_account.id, :sidebar_expanded) == "t"
-  end
-
-  # Check if the sidebar is currently hovered for the current user
-  def sidebar_hovered?
-    return "f" unless current_account
-
-    # Ensure we check for 't' to match the stored pattern
-    UserPreference.get(current_account.id, "sidebar_hovered") == "t"
-  end
-
-  # Checks if a specific drawer is expanded.
-  def drawer_expanded?(drawer_id = "main")
-    # Construct the key matching the UserPreference ALLOWED_KEYS format
-    key = "drawer_expanded_#{drawer_id}" # Keep as string
-    # Retrieve the preference (stored as 't'/'f' or nil) and check if it's 't'
-    get_user_preference(key, "f") == "t" # Default to 'f' if not set
-  end
-
-  # Checks if a specific tutorial/item is dismissed.
-  # Delegates to the existing helper in ApplicationController for consistency.
-  # (Assumes tutorial_dismissed? helper is available via helper_method)
-  # def item_dismissed?(key)
-  #   tutorial_dismissed?(key)
-  # end
-
-  # --- End User Preference Helpers ---
-
-  # --- Locale Flag Emoji Helper ---
   # Returns the flag emoji for a given locale symbol.
   # Example: :en => 🇺🇸
   def locale_flag_emoji(locale)
@@ -338,6 +193,189 @@ module ApplicationHelper
     # rubocop:enable Rails/OutputSafety
   end
 
+  # Validate icon name to prevent path traversal
+  def svg_icon_content(icon_name)
+    unless icon_name.match?(/\A[a-zA-Z0-9_-]+\z/)
+      Rails.logger.warn "Invalid SVG icon name requested: #{icon_name}"
+      return ""
+    end
+
+    # Define potential directories and find the icon
+    potential_dirs = [ Rails.root.join("app/icons"), Rails.root.join("app/images") ]
+    icon_path = nil
+    potential_dirs.each do |dir|
+      path = dir.join("#{icon_name}.svg")
+      Rails.logger.info "Checking for SVG at: #{path}"
+      if path.to_s.start_with?(dir.to_s) && File.exist?(path) && File.file?(path)
+        icon_path = path
+        Rails.logger.info "Found SVG at: #{icon_path}"
+        break
+      end
+    end
+
+    unless icon_path
+      Rails.logger.warn "SVG icon not found in checked directories: #{icon_name}"
+      return ""
+    end
+
+    # Read and validate SVG content
+    svg_content = File.read(icon_path)
+    Rails.logger.info "Read SVG content for #{icon_name}: #{svg_content.length} characters, preview: #{svg_content[0..100]}"
+
+    # Basic SVG validation
+    unless svg_content.include?("<svg") && svg_content.include?("</svg>")
+      Rails.logger.warn "Invalid SVG content detected for icon: #{icon_name}"
+      return ""
+    end
+
+    # Return raw SVG content (not data URL encoded)
+    svg_content.strip
+  end
+
+  def svg_icon_data_url(icon_name)
+    # Validate icon name to prevent path traversal
+    unless icon_name.match?(/\A[a-zA-Z0-9_-]+\z/)
+      Rails.logger.warn "Invalid SVG icon name requested: #{icon_name}"
+      return ""
+    end
+
+    # Define potential directories and find the icon
+    potential_dirs = [ Rails.root.join("app/icons"), Rails.root.join("app/images") ]
+    icon_path = nil
+    potential_dirs.each do |dir|
+      path = dir.join("#{icon_name}.svg")
+      if path.to_s.start_with?(dir.to_s) && File.exist?(path) && File.file?(path)
+        icon_path = path
+        break
+      end
+    end
+
+    unless icon_path
+      Rails.logger.warn "SVG icon not found in checked directories: #{icon_name}"
+      return ""
+    end
+
+    # Read and validate SVG content
+    svg_content = File.read(icon_path)
+
+    # Basic SVG validation
+    unless svg_content.include?("<svg") && svg_content.include?("</svg>")
+      Rails.logger.warn "Invalid SVG content detected for icon: #{icon_name}"
+      return ""
+    end
+
+    # Encode the SVG for a data URL using URL encoding instead of base64
+    # Use ERB::Util.url_encode for proper SVG data URL encoding
+    "data:image/svg+xml,#{ERB::Util.url_encode(svg_content)}"
+  end
+
+  # Generates Base64-encoded data URIs for all available bitmap image versions.
+  # Looks for the image in the source asset directories (e.g., app/images)
+  # and returns a hash of all found versions (AVIF, WebP, PNG, JPG, GIF) for the given base image path.
+  #
+  # @param source_relative_path [String] The path relative to the asset source root (e.g., "images/logo").
+  # @return [Hash{String=>String}] A hash mapping file extension (e.g., ".webp") to the data URI string (e.g., "data:image/webp;base64,...").
+  #   Returns an empty hash if no supported images are found.
+  def bitmap_image_data_url(source_relative_path)
+    # Basic validation for relative path
+    unless source_relative_path.match?(%r{\A[a-zA-Z0-9_./-]+\z}) && !source_relative_path.include?("..")
+      Rails.logger.warn "Invalid characters or path traversal attempt in source relative path: #{source_relative_path}"
+      return {}
+    end
+
+    source_root = Rails.root.join("app")
+    preferred_extensions = %w[.avif .webp .png .jpg .jpeg .gif]
+    results = {}
+
+    preferred_extensions.each do |ext|
+      potential_path = source_root.join("#{source_relative_path}#{ext}").cleanpath
+      begin
+        resolved_path = Pathname.new(File.realpath(potential_path))
+      rescue Errno::ENOENT, Errno::EINVAL
+        next
+      end
+      next unless resolved_path.to_s.start_with?(source_root.to_s) && resolved_path.file?
+
+      mime_type = case ext
+      when ".png" then "image/png"
+      when ".jpg", ".jpeg" then "image/jpeg"
+      when ".gif" then "image/gif"
+      when ".webp" then "image/webp"
+      when ".avif" then "image/avif"
+      else "application/octet-stream"
+      end
+
+      begin
+        image_data = File.binread(resolved_path)
+        encoded_data = Base64.strict_encode64(image_data)
+        results[ext] = "data:#{mime_type};base64,#{encoded_data}"
+      rescue StandardError => e
+        Rails.logger.error "Error reading or encoding bitmap image #{resolved_path}: #{e.message}"
+        next
+      end
+    end
+
+    Rails.logger.warn "No suitable bitmap images found for source path: #{source_relative_path} within #{source_root}" if results.empty?
+    results
+  end
+
+  # Returns a srcset string for all available formats in the bitmap image hash.
+  # Example: bitmap_image_srcset(bitmap_image_data_url('images/foo'))
+  # => "data:image/avif;base64,... type(image/avif), data:image/webp;base64,... type(image/webp), ..."
+  def bitmap_image_srcset(image_hash)
+    return "" unless image_hash.is_a?(Hash)
+
+    preferred = [
+      [ ".avif", "image/avif" ],
+      [ ".webp", "image/webp" ],
+      [ ".png", "image/png" ],
+      [ ".jpg", "image/jpeg" ],
+      [ ".jpeg", "image/jpeg" ],
+      [ ".gif", "image/gif" ]
+    ]
+    preferred.map { |ext, mime| image_hash[ext] && "#{image_hash[ext]} type(#{mime})" }.compact.join(", ")
+  end
+
+  # --- User Preference Helpers ---
+
+  # Gets a user preference value, returning a default if not set or user is nil.
+  def get_user_preference(key, default_value = nil)
+    # Uses the current_account helper defined in ApplicationController
+    current_account ? UserPreference.get(current_account.id, key) || default_value : default_value
+  end
+
+  # Get expanded state of sidebar from user preferences
+  def sidebar_expanded?
+    return "f" unless current_account
+
+    UserPreference.get(current_account.id, :sidebar_expanded) == "t"
+  end
+
+  # Check if the sidebar is currently hovered for the current user
+  def sidebar_hovered?
+    return "f" unless current_account
+
+    # Ensure we check for 't' to match the stored pattern
+    UserPreference.get(current_account.id, "sidebar_hovered") == "t"
+  end
+
+  # Checks if a specific drawer is expanded.
+  def drawer_expanded?(drawer_id = "main")
+    # Construct the key matching the UserPreference ALLOWED_KEYS format
+    key = "drawer_expanded_#{drawer_id}" # Keep as string
+    # Retrieve the preference (stored as 't'/'f' or nil) and check if it's 't'
+    get_user_preference(key, "f") == "t" # Default to 'f' if not set
+  end
+
+  # Checks if a specific tutorial/item is dismissed.
+  # Delegates to the existing helper in ApplicationController for consistency.
+  # (Assumes tutorial_dismissed? helper is available via helper_method)
+  # def item_dismissed?(key)
+  #   tutorial_dismissed?(key)
+  # end
+
+  # --- End User Preference Helpers ---
+
   private
 
   # Renamed from inline_vite_asset_content to get_vite_asset_content for clarity
@@ -371,4 +409,23 @@ module ApplicationHelper
     nil
   end
   # --- End Vite Asset Inlining Helpers ---
+
+  # Enrich navigation items with SVG content from disk
+  def enrich_nav_items_with_svgs(nav_items)
+    Rails.logger.info "Enriching #{nav_items.length} nav items"
+    enriched = nav_items.map do |item|
+      if item[:icon]
+        svg_content = svg_icon_content(item[:icon])
+        Rails.logger.info "Enriching nav item #{item[:icon]}: SVG content length: #{svg_content.length}"
+        enriched_item = item.merge(svg: svg_content)
+        Rails.logger.info "Enriched item: #{enriched_item.inspect}"
+        enriched_item
+      else
+        Rails.logger.info "Nav item has no icon: #{item.inspect}"
+        item
+      end
+    end
+    Rails.logger.info "Final enriched nav items: #{enriched.to_json}"
+    enriched
+  end
 end

@@ -182,13 +182,20 @@ class Account < ApplicationRecord
   self.table_name = "accounts"
 
   # Include Federails ActorEntity for ActivityPub federation (only in non-test environments)
+  # Also check if the federails_actors table exists to avoid migration issues
   unless Rails.env.test?
-    include Federails::ActorEntity
+    begin
+      if ActiveRecord::Base.connection.table_exists?(:federails_actors)
+        include Federails::ActorEntity
 
-    # Configure field names for federation
-    acts_as_federails_actor username_field: :username,
-                            name_field: :username,
-                            profile_url_method: :profile_url
+        # Configure field names for federation
+        acts_as_federails_actor username_field: :username,
+                                name_field: :username,
+                                profile_url_method: :profile_url
+      end
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
+      # Skip federails setup if database/table doesn't exist (e.g., during migrations)
+    end
   end
 
   # Add ActiveRecord associations
