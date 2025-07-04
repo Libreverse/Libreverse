@@ -1,0 +1,21 @@
+-# Example: Glass Card Component
+-# Usage: Add this anywhere you want a glass card effect
+
+%div{data: {
+       controller: "card",
+       "enable-glass-value": true,
+       "glass-type-value": "rounded",
+       "border-radius-value": 15,
+       "tint-opacity-value": 0.08,
+       "component-type-value": "card",
+       "corner-rounding-value": "all"
+     },
+     class: "glass-component glass-card"}
+  .card-contents
+    %h3= title
+    %p= content
+    - if actions
+      .card-actions
+        - actions.each do |action|
+          = link_to action[:path], class: "card-action-button" do
+            = action[:label]

@@ -6,6 +6,10 @@ import { Button } from "./button.js"
  * @param {HTMLElement} element - The container element to render into.
  * @param {Array<{text: string, path: string, onClick?: function, buttonOptions?: object}>} navItems - Navigation items to render. Each item can have a custom onClick or buttonOptions.
  * @param {Object} [containerOptions] - Optional container options (borderRadius, tintOpacity, etc).
+ * @param {Object} [renderOptions] - Rendering options
+ * @param {boolean} [renderOptions.preserveOriginalHTML] - Whether to keep original HTML visible during load
+ * @param {string} [renderOptions.originalContent] - Original HTML content to restore on cleanup
+ * @param {string} [renderOptions.componentType] - Type of component being rendered
  * 
  * Container Types Available:
  * - Container.createSidebarContainer(options) - For sidebars (no parallax)
@@ -13,7 +17,7 @@ import { Button } from "./button.js"
  * - Container.createFixedContainer(options) - For fixed position elements
  * - new Container(options) - For custom configurations
  */
-export function renderLiquidGlassNav(element, navItems, containerOptions = {}) {
+export function renderLiquidGlassNav(element, navItems, containerOptions = {}, renderOptions = {}) {
   if (!element) throw new Error("No container element provided")
   
   // Prevent multiple initializations of the same element
@@ -23,9 +27,13 @@ export function renderLiquidGlassNav(element, navItems, containerOptions = {}) {
   }
   
   try {
-    // Save the original HTML for fallback or icon extraction
-    const originalHTML = element.innerHTML
-    element.innerHTML = ""
+    // Save the original HTML for fallback or restoration
+    const originalHTML = renderOptions.originalContent || element.innerHTML
+    
+    // If preserveOriginalHTML is true, don't clear content initially
+    if (!renderOptions.preserveOriginalHTML) {
+      element.innerHTML = ""
+    }
     
     const glassContainer = Container.createSidebarContainer({
       type: "rounded",
@@ -39,36 +47,97 @@ export function renderLiquidGlassNav(element, navItems, containerOptions = {}) {
     glassContainer.element.style.width = "100%"
     glassContainer.element.style.height = "100%"
 
+    // If preserving original HTML, position glass container appropriately
+    if (renderOptions.preserveOriginalHTML) {
+      glassContainer.element.style.position = 'absolute'
+      glassContainer.element.style.top = '0'
+      glassContainer.element.style.left = '0'
+      glassContainer.element.style.zIndex = '1'
+      
+      // Make sure existing content is above glass
+      const existingContent = element.querySelector('.sidebar-contents, .nav-contents, .card-contents, .button-contents')
+      if (existingContent) {
+        existingContent.style.position = 'relative'
+        existingContent.style.zIndex = '2'
+      }
+    }
+
     for (const item of navItems) {
-      // Require SVG content to be present
-      if (!item.svg) {
+      // Skip items without SVG for nav components
+      if (!item.svg && (renderOptions.componentType === 'nav' || renderOptions.componentType === 'sidebar')) {
         console.error(`Nav item missing required SVG content:`, item)
-        continue // Skip items without SVG content
+        continue
       }
       
       console.log('Processing nav item:', item.text, 'icon:', item.icon, 'path:', item.path, 'has SVG:', !!item.svg)
       
       const button = new Button({
-        text: "", // Explicitly no text - icons only
+        text: item.text || "", // Use provided text or empty
         size: 18,
         type: "pill",
         onClick: item.onClick || (() => { globalThis.location.href = item.path }),
-        iconHTML: item.svg,
+        iconHTML: item.svg || "",
         ...(item.buttonOptions || {})
       })
       
-      console.log('Created button with text:', button.text, 'iconHTML length:', iconHTML.length)
+      // Add data-path for navigation
+      if (item.path) {
+        button.element.dataset.path = item.path
+      }
+      
+      // If preserving original HTML, hide glass buttons initially
+      if (renderOptions.preserveOriginalHTML) {
+        button.element.style.opacity = '0'
+        button.element.style.pointerEvents = 'none'
+      }
+      
+      console.log('Created button with text:', button.text, 'iconHTML present:', !!item.svg)
       glassContainer.addChild(button)
     }
     
-    element.append(glassContainer.element)
+    if (renderOptions.preserveOriginalHTML) {
+      // Insert glass container at the beginning so it's behind existing content
+      element.insertBefore(glassContainer.element, element.firstChild)
+      
+      // Set up transition after glass effect is ready
+      setTimeout(() => {
+        const existingContent = element.querySelector('.sidebar-contents, .nav-contents, .card-contents, .button-contents')
+        const glassButtons = element.querySelectorAll('.glass-button')
+        
+        // Start transition
+        if (existingContent) {
+          existingContent.style.transition = 'opacity 300ms ease-out'
+          existingContent.style.opacity = '0'
+        }
+        
+        glassButtons.forEach(button => {
+          button.style.transition = 'opacity 300ms ease-in'
+          button.style.opacity = '1'
+          button.style.pointerEvents = 'auto'
+        })
+        
+        // After transition, hide original content completely
+        setTimeout(() => {
+          if (existingContent) {
+            existingContent.style.display = 'none'
+          }
+        }, 300)
+      }, 100) // Small delay to ensure glass effect is ready
+    } else {
+      element.append(glassContainer.element)
+    }
     
     // Store reference on DOM element for cleanup
     element._liquidGlassInstance = glassContainer
+    element._originalHTML = originalHTML
     
     return glassContainer
   } catch (error) {
     console.error('Error rendering liquid glass nav:', error)
+    // If preserveOriginalHTML was true, we don't need to restore since content is still there
+    if (!renderOptions.preserveOriginalHTML) {
+      element.innerHTML = renderOptions.originalContent || originalHTML
+    }
     // Return null on error, controller will handle graceful fallback
     return null
   }
@@ -156,8 +225,11 @@ export function createFixedGlassContainer(element, options = {}) {
  * @param {HTMLElement} element - The container element to render into.
  * @param {Array} navItems - Navigation items to render
  * @param {Object} [containerOptions] - Optional container options
+ * @param {Object} [renderOptions] - Rendering options
+ * @param {boolean} [renderOptions.preserveOriginalHTML] - Whether to keep original HTML visible during load
+ * @param {string} [renderOptions.originalContent] - Original HTML content to restore on cleanup
  */
-export function renderLiquidGlassSidebarRightRounded(element, navItems, containerOptions = {}) {
+export function renderLiquidGlassSidebarRightRounded(element, navItems, containerOptions = {}, renderOptions = {}) {
   if (!element) throw new Error("No container element provided")
   
   // Prevent multiple initializations
@@ -167,9 +239,13 @@ export function renderLiquidGlassSidebarRightRounded(element, navItems, containe
   }
   
   try {
-    // Save the original HTML for fallback or icon extraction
-    const originalHTML = element.innerHTML
-    element.innerHTML = ""
+    // Save the original HTML for fallback or restoration
+    const originalHTML = renderOptions.originalContent || element.innerHTML
+    
+    // If preserveOriginalHTML is true, create glass container without clearing content initially
+    if (!renderOptions.preserveOriginalHTML) {
+      element.innerHTML = ""
+    }
     
     const glassContainer = Container.createSidebarContainerRightRounded({
       type: "rounded",
@@ -183,6 +259,21 @@ export function renderLiquidGlassSidebarRightRounded(element, navItems, containe
     glassContainer.element.style.alignItems = "stretch"
     glassContainer.element.style.width = "100%"
     glassContainer.element.style.height = "100%"
+
+    // If preserving original HTML, position glass container behind existing content
+    if (renderOptions.preserveOriginalHTML) {
+      glassContainer.element.style.position = 'absolute'
+      glassContainer.element.style.top = '0'
+      glassContainer.element.style.left = '0'
+      glassContainer.element.style.zIndex = '1'
+      
+      // Make sure existing content is above glass
+      const existingContent = element.querySelector('.sidebar-contents')
+      if (existingContent) {
+        existingContent.style.position = 'relative'
+        existingContent.style.zIndex = '2'
+      }
+    }
 
     // Add navigation items (same as regular renderLiquidGlassNav)
     for (const item of navItems) {
@@ -205,17 +296,59 @@ export function renderLiquidGlassSidebarRightRounded(element, navItems, containe
       })
       // Add data-path for current-page detection
       button.element.dataset.path = item.path
+      
+      // If preserving original HTML, hide glass buttons initially
+      if (renderOptions.preserveOriginalHTML) {
+        button.element.style.opacity = '0'
+        button.element.style.pointerEvents = 'none'
+      }
+      
       glassContainer.addChild(button)
     }
 
-    element.appendChild(glassContainer.element)
+    if (renderOptions.preserveOriginalHTML) {
+      // Insert glass container at the beginning so it's behind existing content
+      element.insertBefore(glassContainer.element, element.firstChild)
+      
+      // After a short delay, fade in glass buttons and fade out original content
+      setTimeout(() => {
+        const existingContent = element.querySelector('.sidebar-contents')
+        const glassButtons = element.querySelectorAll('.glass-button')
+        
+        // Start transition
+        if (existingContent) {
+          existingContent.style.transition = 'opacity 300ms ease-out'
+          existingContent.style.opacity = '0'
+        }
+        
+        glassButtons.forEach(button => {
+          button.style.transition = 'opacity 300ms ease-in'
+          button.style.opacity = '1'
+          button.style.pointerEvents = 'auto'
+        })
+        
+        // After transition, hide original content completely
+        setTimeout(() => {
+          if (existingContent) {
+            existingContent.style.display = 'none'
+          }
+        }, 300)
+      }, 100) // Small delay to ensure glass effect is ready
+    } else {
+      element.appendChild(glassContainer.element)
+    }
+    
     element._liquidGlassInstance = glassContainer
+    element._originalHTML = originalHTML
     
     return glassContainer
     
   } catch (error) {
     console.error('Error creating liquid glass sidebar:', error)
-    element.innerHTML = originalHTML
+    // If preserveOriginalHTML was true, we don't need to restore since content is still there
+    if (!renderOptions.preserveOriginalHTML) {
+      element.innerHTML = renderOptions.originalContent || originalHTML
+    }
     throw error
   }
 }

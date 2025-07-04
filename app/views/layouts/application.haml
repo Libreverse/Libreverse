@@ -7,8 +7,6 @@
       = vite_javascript_tag "~/javascript/application.js"
       = render "layouts/development_headers"
     - elsif Rails.env.production?
-      / Include polyfills first for older browsers
-      = inline_vite_javascript "polyfills.js"
       / This seems crazy, but it's a quirk of the fact that we use a single entrypoint.
       = inline_vite_stylesheet "~/javascript/application.js"
       = inline_vite_javascript "~/javascript/application.js"
