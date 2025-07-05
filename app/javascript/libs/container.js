@@ -114,6 +114,7 @@ class Container {
     this.webglInitialized = false
     this.children = [] // Child buttons/components
     this.isDestroyed = false
+    this.intersectionObserver = null // For visibility detection
     
     // Bind methods to preserve context
     this._handleResize = this._handleResize.bind(this)
@@ -249,19 +250,8 @@ class Container {
       // Set up resize observer for sidebar responsiveness
       this.setupSidebarResizeObserver()
 
-      // Handle page snapshot
-      if (Container.pageSnapshot && !Container.isDestroying) {
-        // Snapshot already exists, initialize immediately
-        this.initWebGL()
-      } else if (Container.isCapturing) {
-        // Snapshot in progress, add to waiting queue
-        Container.waitingForSnapshot.push(this)
-      } else if (!Container.isDestroying) {
-        // Start snapshot process
-        Container.isCapturing = true
-        Container.waitingForSnapshot.push(this)
-        this.capturePageSnapshot()
-      }
+      // Set up intersection observer to handle visibility
+      this.setupIntersectionObserver()
     } catch (error) {
       console.error('Error initializing liquid glass container:', error)
       // Fall back to basic CSS styling
@@ -373,72 +363,86 @@ class Container {
   }
 
 
-  capturePageSnapshot() {
-    console.log('Capturing page snapshot...')
-    
-    // Get the full page dimensions
-    const pageWidth = Math.max(
-      document.body.scrollWidth,
-      document.body.offsetWidth,
-      document.documentElement.clientWidth,
-      document.documentElement.scrollWidth,
-      document.documentElement.offsetWidth
-    )
-    
-    const pageHeight = Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.clientHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    )
-    
-    console.log(`Capturing full page: ${pageWidth}x${pageHeight}`)
-    
-    html2canvas(document.body, {
-      scale: 1,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor:  null,
-      width: pageWidth,    // Explicitly set full page width
-      height: pageHeight,  // Explicitly set full page height
-      windowWidth: pageWidth,  // Set window width to page width for full capture
-      windowHeight: pageHeight, // Set window height to page height for full capture
-      foreignObjectRendering: false,
-      logging: true,
-      proxy: null, // Use default proxy if needed
-      // waste of time when turbo innerhtml will remove it later anyway
-      removeContainer: false, // Remove container from DOM after capture
-      ignoreElements: function (element) {
-        // Ignore all glass elements
-        return (
-          element.classList.contains('glass-container') ||
-          element.classList.contains('glass-button') ||
-          element.classList.contains('glass-button-text')
-        )
+// ...existing code...
+
+capturePageSnapshot() {
+  console.log('Capturing page snapshot...')
+  
+  // Get the full page dimensions
+  const pageWidth = Math.max(
+    document.body.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.clientWidth,
+    document.documentElement.scrollWidth,
+    document.documentElement.offsetWidth
+  )
+  
+  const pageHeight = Math.max(
+    document.body.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.clientHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.offsetHeight
+  )
+  
+  console.log(`Capturing full page: ${pageWidth}x${pageHeight}`)
+  console.log(`Waiting containers: ${Container.waitingForSnapshot.length}`)
+  
+  html2canvas(document.body, {
+    scale: 1,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: null,
+    width: pageWidth,
+    height: pageHeight,
+    windowWidth: pageWidth,
+    windowHeight: pageHeight,
+    foreignObjectRendering: false,
+    logging: true,
+    proxy: null,
+    removeContainer: false,
+    ignoreElements: function (element) {
+      // Ignore all glass elements
+      return (
+        element.classList.contains('glass-container') ||
+        element.classList.contains('glass-button') ||
+        element.classList.contains('glass-button-text')
+      )
+    }
+  })
+    .then(snapshot => {
+      console.log(`Page snapshot captured: ${snapshot.width}x${snapshot.height}`)
+      
+      // Validate snapshot
+      if (!snapshot || snapshot.width === 0 || snapshot.height === 0) {
+        console.error('Invalid snapshot captured:', snapshot)
+        Container.isCapturing = false
+        Container.waitingForSnapshot = []
+        return
       }
+      
+      Container.pageSnapshot = snapshot
+      Container.isCapturing = false
+
+      // Initialize WebGL for all waiting containers
+      const waitingContainers = Container.waitingForSnapshot.slice()
+      Container.waitingForSnapshot = []
+      
+      console.log(`Initializing WebGL for ${waitingContainers.length} waiting containers`)
+
+      waitingContainers.forEach((container, index) => {
+        if (!container.webglInitialized && !container.isDestroyed) {
+          console.log(`Initializing WebGL for container ${index + 1}/${waitingContainers.length}`)
+          container.initWebGL()
+        }
+      })
     })
-      .then(snapshot => {
-        console.log(`Page snapshot captured: ${snapshot.width}x${snapshot.height}`)
-        Container.pageSnapshot = snapshot
-        Container.isCapturing = false
-
-        // Initialize WebGL for all waiting containers
-        const waitingContainers = Container.waitingForSnapshot.slice()
-        Container.waitingForSnapshot = []
-
-        waitingContainers.forEach(container => {
-          if (!container.webglInitialized) {
-            container.initWebGL()
-          }
-        })
-      })
-      .catch(error => {
-        console.error('html2canvas error:', error)
-        Container.isCapturing = false
-        Container.waitingForSnapshot = []
-      })
-  }
+    .catch(error => {
+      console.error('html2canvas error:', error)
+      Container.isCapturing = false
+      Container.waitingForSnapshot = []
+    })
+}
 
   initWebGL() {
     if (!Container.pageSnapshot || !this.gl || this.isDestroyed) {
@@ -450,6 +454,8 @@ class Container {
       this.setupFallback()
       return
     }
+
+    console.log('Starting WebGL initialization for container')
 
     try {
       const img = new Image()
@@ -944,7 +950,10 @@ class Container {
       imageLoc,
       roundedCornersLoc,
       positionBuffer,
-      texcoordBuffer
+      texcoordBuffer,
+      // Store texture dimensions for later use
+      textureWidth: image.width,
+      textureHeight: image.height
     }
 
     // Set up viewport and attributes
@@ -1037,7 +1046,6 @@ class Container {
     // Start rendering
     this.startRenderLoop()
   }
-// ...existing code...
 
   startRenderLoop() {
     const render = () => {
@@ -1104,7 +1112,9 @@ class Container {
       
       // Debug: Verify texture coordinate mapping
       if (Math.random() < 0.01) {
-        const textureHeight = Container.pageSnapshot?.height || 1
+        // Get the actual texture dimensions from the stored texture size uniform
+        const textureWidth = this.gl_refs.textureWidth || Container.pageSnapshot?.width || 1
+        const textureHeight = this.gl_refs.textureHeight || Container.pageSnapshot?.height || 1
         const viewportHeight = window.innerHeight
         const pageHeight = Math.max(
           document.body.scrollHeight,
@@ -1120,6 +1130,7 @@ class Container {
         console.log('[Container Debug] Texture coordinate check:', {
           scrollY: scrollY,
           containerPageY: pageY,
+          textureWidth: textureWidth,
           textureHeight: textureHeight,
           pageHeight: pageHeight,
           viewportHeight: viewportHeight,
@@ -1178,11 +1189,16 @@ class Container {
     this.render = render
   }
 
-// ...existing code...
   destroy() {
     if (this.isDestroyed) return
     
     this.isDestroyed = true
+    
+    // Disconnect intersection observer
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect()
+      this.intersectionObserver = null
+    }
     
     // Cancel animation loop
     if (this._animationId) {
@@ -1247,6 +1263,54 @@ class Container {
     this.gl = null
     this.canvas = null
     this.element = null
+  }
+
+  setupIntersectionObserver() {
+    if (!this.element) return
+
+    const options = {
+      root: null, // Use the viewport as the root
+      rootMargin: '0px',
+      threshold: 0.01 // Trigger when at least 1% of the element is visible
+    }
+
+    this.intersectionObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Element is visible, proceed with WebGL initialization
+          console.log('Container is visible, initializing WebGL...')
+          this.handleVisibility()
+          // Stop observing once it's visible to avoid re-triggering
+          observer.unobserve(this.element)
+        }
+      })
+    }, options)
+
+    this.intersectionObserver.observe(this.element)
+  }
+
+  handleVisibility() {
+    // Debounced snapshot logic
+    const initAction = () => {
+      if (Container.pageSnapshot && !Container.isDestroying) {
+        this.initWebGL()
+      } else if (Container.isCapturing) {
+        Container.waitingForSnapshot.push(this)
+      } else if (!Container.isDestroying) {
+        Container.isCapturing = true
+        Container.waitingForSnapshot.push(this)
+        
+        // Use requestIdleCallback for smarter scheduling
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => this.capturePageSnapshot(), { timeout: 2000 })
+        } else {
+          setTimeout(() => this.capturePageSnapshot(), 200) // Fallback
+        }
+      }
+    }
+    
+    // A small delay to ensure animations/transitions are complete
+    setTimeout(initAction, 100)
   }
 
   _handleSidebarResize() {

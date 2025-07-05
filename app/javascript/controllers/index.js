@@ -66,3 +66,18 @@ application.register("sidebar", SidebarController)
 
 import ToastController from "./toast_controller"
 application.register("toast", ToastController)
+
+import GlassController from "./glass_controller"
+application.register("glass", GlassController)
+
+import GlassDrawerController from "./glass_drawer_controller"
+application.register("glass-drawer", GlassDrawerController)
+
+import NavController from "./nav_controller"
+application.register("nav", NavController)
+
+import CardController from "./card_controller"
+application.register("card", CardController)
+
+import GlassButtonController from "./glass_button_controller"
+application.register("glass-button", GlassButtonController)

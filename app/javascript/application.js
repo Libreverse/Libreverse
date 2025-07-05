@@ -1,5 +1,9 @@
 import "../stylesheets/application.scss";
 import sxwjs from "@sxwjs/sxwjs";
+import html2canvas from "html2canvas";
+
+// Make html2canvas globally available for liquid glass effects
+globalThis.html2canvas = html2canvas;
 // Custom configuration
 const myConfig = {
     stopColor: "red",
