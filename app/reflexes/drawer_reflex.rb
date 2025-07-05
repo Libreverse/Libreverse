@@ -4,9 +4,9 @@ class DrawerReflex < ApplicationReflex
   include Loggable
 
   # Toggles the drawer expanded state (persists only). Fetches the current state from UserPreference.
-  def toggle
-    # Get the drawer_id from the element dataset, default to 'main'
-    drawer_id = element.dataset[:drawer_id] || "main"
+  def toggle(args = {})
+    # Get the drawer_id from the args or from the element dataset, default to 'main'
+    drawer_id = args["drawer_id"] || args[:drawer_id] || element.dataset[:drawer_id] || "main"
     # Construct the key matching the UserPreference ALLOWED_KEYS format
     key = "drawer_expanded_#{drawer_id}"
 

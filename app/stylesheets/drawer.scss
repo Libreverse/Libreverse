@@ -31,6 +31,44 @@
         width: 90%;
         max-width: 350px;
     }
+
+    &.glass-enabled {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+
+        .drawer-header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .drawer-contents {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .drawer-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: scale(1.05);
+            }
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+    }
 }
 
 .drawer.drawer-expanded {
@@ -65,6 +103,11 @@
     box-sizing: border-box;
     overflow: hidden;
     transition: height 0.3s ease;
+
+    .drawer-content-container,
+    .drawer-content {
+        transition: opacity 300ms ease-out;
+    }
 }
 
 .drawer-expanded .drawer-contents {
@@ -152,4 +195,19 @@
     justify-content: space-between;
     align-items: center;
     padding: 2px;
+}
+
+// Glass transition states
+.drawer.glass-loading {
+    .drawer-content-container,
+    .drawer-content {
+        opacity: 1;
+    }
+}
+
+.drawer.glass-loaded {
+    .drawer-content-container,
+    .drawer-content {
+        opacity: 0.9;
+    }
 }

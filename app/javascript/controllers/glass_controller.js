@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { renderLiquidGlassNav, renderLiquidGlassSidebarRightRounded, validateLiquidGlass } from "../libs/liquid_glass.js"
+import { renderLiquidGlassNav, renderLiquidGlassSidebarRightRounded, renderLiquidGlassDrawer, validateLiquidGlass } from "../libs/liquid_glass.js"
 import { Turbo } from "@hotwired/turbo-rails"
 
 /**
@@ -174,7 +174,9 @@ export default class extends Controller {
     const cornerRounding = this.cornerRoundingValue
 
     // Choose render function based on component type and corner rounding
-    if (componentType === "sidebar" && cornerRounding === "right") {
+    if (componentType === "drawer") {
+      return renderLiquidGlassDrawer(this.element, containerOptions, renderOptions)
+    } else if (componentType === "sidebar" && cornerRounding === "right") {
       return renderLiquidGlassSidebarRightRounded(this.element, navItems, containerOptions, renderOptions)
     } else if (componentType === "nav" || componentType === "sidebar") {
       return renderLiquidGlassNav(this.element, navItems, containerOptions, renderOptions)
