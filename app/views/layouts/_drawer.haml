@@ -1,8 +1,9 @@
-- drawer_id = local_assigns.fetch(:drawer_id, "main")
-- expanded = local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id)
-- enable_glass = local_assigns.fetch(:enable_glass, true)
+:ruby
+  drawer_id = local_assigns.fetch(:drawer_id, "main")
+  expanded = local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id)
+  enable_glass = local_assigns.fetch(:enable_glass, true)
 
-%aside.drawer-container{id: "#{drawer_id}-drawer", 
+%aside.drawer-container{id: "#{drawer_id}-drawer",
                        role: "complementary",
                        data: {
                          controller: "glass-drawer",
@@ -12,7 +13,7 @@
                          "corner-rounding-value": "top",
                          "border-radius-value": 20,
                          "tint-opacity-value": 0.1,
-                         # Drawer-specific configuration  
+                         # Drawer-specific configuration
                          "expanded-value": expanded,
                          "drawer-id-value": drawer_id,
                          "height-value": 60,

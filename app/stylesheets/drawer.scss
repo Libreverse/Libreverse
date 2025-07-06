@@ -2,6 +2,103 @@
 @use "variables";
 
 /* Drawer container styles */
+.drawer-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 60px;
+    display: flex;
+    z-index: 2;
+    transition: height 0.3s;
+    pointer-events: none;
+
+    @media screen and (width <= 450px) {
+        right: auto;
+        justify-content: center;
+    }
+}
+
+.drawer-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+    border-bottom: none !important;
+}
+
+.drawer-contents {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 0;
+    padding: 2px;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: height 0.3s ease;
+
+    .drawer-expanded & {
+        height: calc(600px - 60px);
+    }
+}
+
+.drawer-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    margin-right: 1.15%;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    @media screen and (width <= 450px) {
+        margin-right: 0;
+        position: relative;
+    }
+}
+
+.drawer-content-container {
+    font-family: Hack, Noto-Sans, monospace;
+    font-size: 18px;
+    color: variables.$hp-primary;
+
+    // I don't know why the js is adding inline styles
+    background-image: linear-gradient(
+        135deg,
+        variables.$vulcan,
+        variables.$mirage
+    ) !important;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+    border-radius: 10px;
+    box-shadow: variables.$box-shadow;
+}
+
+.drawer-content {
+    font-family: Hack, Noto-Sans, monospace;
+    font-size: 18px;
+    color: variables.$hp-primary;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+
+    @media screen and (width <= 600px) {
+        font-size: 16px;
+    }
+}
+
+.drawer-contents {
+    .drawer-content-container,
+    .drawer-content {
+        transition: opacity 300ms ease-out;
+    }
+}
+
 .drawer {
     position: fixed;
     right: 0;
@@ -89,70 +186,6 @@
     }
 }
 
-.drawer-container {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 100vw;
-    height: 60px;
-    display: flex;
-    z-index: 2;
-    transition: height 0.3s;
-    pointer-events: none;
-
-    @media screen and (width <= 450px) {
-        right: auto;
-        justify-content: center;
-    }
-}
-
-.drawer-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2px;
-    border-bottom: none !important;
-}
-
-.drawer-contents {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 0;
-    padding: 2px;
-    box-sizing: border-box;
-    overflow: hidden;
-    transition: height 0.3s ease;
-
-    .drawer-content-container,
-    .drawer-content {
-        transition: opacity 300ms ease-out;
-    }
-
-    .drawer-expanded & {
-        height: calc(600px - 60px);
-    }
-}
-
-.drawer-toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    margin-right: 1.15%;
-    background: none;
-    border: none;
-    cursor: pointer;
-
-    @media screen and (width <= 450px) {
-        margin-right: 0;
-        position: relative;
-    }
-}
-
 .drawer-icons {
     width: 100%;
     user-select: none;
@@ -160,37 +193,6 @@
 
     .drawer-expanded & {
         transform: rotate(180deg);
-    }
-}
-
-.drawer-content-container {
-    font-family: Hack, Noto-Sans, monospace;
-    font-size: 18px;
-    color: variables.$hp-primary;
-
-    // I don't know why the js is adding inline styles
-    background-image: linear-gradient(
-        135deg,
-        variables.$vulcan,
-        variables.$mirage
-    ) !important;
-    text-align: left;
-    margin-left: 5%;
-    margin-right: 5%;
-    border-radius: 10px;
-    box-shadow: variables.$box-shadow;
-}
-
-.drawer-content {
-    font-family: Hack, Noto-Sans, monospace;
-    font-size: 18px;
-    color: variables.$hp-primary;
-    text-align: left;
-    margin-left: 5%;
-    margin-right: 5%;
-
-    @media screen and (width <= 600px) {
-        font-size: 16px;
     }
 }
 

@@ -51,7 +51,7 @@ export default class extends ApplicationController
       else
         # Fallback: dispatch a custom event that the drawer can listen to
         drawerElement.dispatchEvent(new CustomEvent('drawer:toggle', {
-          detail: { drawerId: 'main', open: !drawerElement.querySelector('.drawer').classList.contains('drawer-expanded') },
+          detail: { drawerId: 'main', open: not drawerElement.querySelector('.drawer').classList.contains('drawer-expanded') },
           bubbles: true
         }))
     else

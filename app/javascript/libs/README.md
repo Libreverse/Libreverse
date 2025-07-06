@@ -1,10 +1,8 @@
 # 🍎 Liquid Glass JS
 
-<div align="center">
-  
-  **Apple Liquid Glass-inspired glass effects for the web**
-  
-  *A WebGL-powered library bringing sophisticated glass JS components with real-time refraction, blur, and masking*
+## Apple Liquid Glass-inspired glass effects for the web
+
+### A WebGL-powered library bringing sophisticated glass JS components with real-time refraction, blur, and masking
 
 **[🌐 Live Demo](https://dashersw.github.io/liquid-glass-js/)** | **[📚 Documentation](#-api-reference)** | **[🚀 Quick Start](#-quick-start)**
 
@@ -117,7 +115,7 @@ container.updateSizeFromDOM();
 
 Extends `Container` with button-specific functionality.
 
-#### Constructor Options
+#### Button Options
 
 | Option        | Type       | Default     | Description                                      |
 | ------------- | ---------- | ----------- | ------------------------------------------------ |
@@ -274,7 +272,7 @@ The library provides semantic CSS classes:
 
 ### File Structure
 
-```
+```text
 liquid-glass-js/
 ├── container.js      # Core Container class
 ├── button.js         # Button class (extends Container)
@@ -397,10 +395,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
-  
-  **Built with ❤️ for the future of web interfaces**
-  
-  [Demo](https://your-demo-url.com) • [Issues](https://github.com/your-username/liquid-glass-js/issues) • [Discussions](https://github.com/your-username/liquid-glass-js/discussions)
+## Built with ❤️ for the future of web interfaces
 
-</div>
+[Demo](https://your-demo-url.com) • [Issues](https://github.com/your-username/liquid-glass-js/issues) • [Discussions](https://github.com/your-username/liquid-glass-js/discussions)

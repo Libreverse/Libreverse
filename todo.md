@@ -1,8 +1,8 @@
 # Todo List
 
-slow down polling for solid cable and add cautious paralellism
+slow down polling for solid cable and add cautious parallelism
 migrate SR to cable-shared worker
-migrate to debounced for all debouncing needs
+add debounced for debouncing needs
 add stimulus stores to clean up state management
 replace server form validation reflex with formulus
 replace turbo_power for consent form with turbo streams
