@@ -4,25 +4,26 @@ default: &default
     adapter: sqlite3
     pool: 1
     pragmas:
-        analysis_limit: 0           # No change; kept as is
-        auto_vacuum: 'NONE'         # Changed from 'INCREMENTAL' to avoid vacuuming overhead
-        automatic_index: 1          # No change; kept as is
-        busy_timeout: 0             # No change; kept as is
-        cache_size: -200000         # No change; kept as is
-        cache_spill: 1              # No change; kept as is
-        cell_size_check: 0          # Changed from 1 to disable overhead
-        checkpoint_fullfsync: 0     # Changed from 1 to speed up checkpoints
-        foreign_keys: 1             # No change; kept as requested
-        fullfsync: 0                # Changed from 1 to reduce sync overhead (macOS)
-        journal_mode: 'DELETE'     # Changed from 'WAL' to 'DELETE' to disable WAL mode
-        journal_size_limit: -1      # No change; kept as is
-        locking_mode: 'NORMAL'      # No change; kept as is
-        mmap_size: 200000000        # No change; kept as is
-        page_size: 16384            # No change; kept as is
-        secure_delete: 'ON'         # No change; kept as requested
-        synchronous: 2              # Changed from 3 to reduce syncs
-        temp_store: 2               # No change; kept as is
-        optimize: 1048578           # No change; kept as is
+        analysis_limit: 0           # Retained: No query analysis limit, minimal impact on concurrency
+        auto_vacuum: 'NONE'         # Retained: Avoids vacuum locking, supports concurrency
+        automatic_index: 1          # Retained: Supports query performance, aids read concurrency
+        busy_timeout: 5000          # Changed: Set to 5000 ms to handle lock contention for writers
+        cache_size: -200000         # Retained: Large cache for performance, indirectly aids concurrency
+        cache_spill: 1              # Retained: Enables cache spilling, performance optimization
+        cell_size_check: 0          # Retained: Disables overhead, speeds up writes
+        checkpoint_fullfsync: 0     # Retained: Speeds up checkpoints, reduces locking in WAL mode
+        foreign_keys: 1             # Retained: Enforces foreign keys as requested
+        fullfsync: 0                # Retained: Reduces sync overhead (macOS), improves performance
+        journal_mode: 'WAL'         # Changed: Enables WAL for high concurrency (multiple readers, one writer)
+        journal_size_limit: -1      # Retained: Unlimited WAL size, monitor if growth is excessive
+        locking_mode: 'NORMAL'      # Retained: Compatible with WAL, supports concurrency
+        mmap_size: 200000000        # Retained: Large memory mapping for performance
+        page_size: 16384            # Retained: Optimized page size for modern systems
+        secure_delete: 'ON'         # Retained: Secure deletion as requested, minimal concurrency impact
+        synchronous: 1              # Changed: Set to NORMAL for WAL performance and concurrency
+        temp_store: 2               # Retained: Memory-based temp storage, reduces I/O
+        optimize: 1048578           # Retained: Custom optimization, likely for query performance
+        wal_autocheckpoint: 1000    # todo move all the manual database managmement to auto settings
 
 development:
     <<: *default
