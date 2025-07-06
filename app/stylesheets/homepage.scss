@@ -315,6 +315,15 @@
         border-radius: 10px;
         cursor: pointer;
         transition: transform 0.1s ease;
+        border: none;
+
+        &:hover {
+            transform: scale(1.05);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
     }
 }
 

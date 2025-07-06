@@ -16,9 +16,6 @@ application.register("cta-particles", CtaParticlesController)
 import DismissibleController from "./dismissible_controller"
 application.register("dismissible", DismissibleController)
 
-import DrawerController from "./drawer_controller"
-application.register("drawer", DrawerController)
-
 import ExperienceUploadController from "./experience_upload_controller"
 application.register("experience-upload", ExperienceUploadController)
 

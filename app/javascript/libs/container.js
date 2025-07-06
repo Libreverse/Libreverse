@@ -271,6 +271,7 @@ class Container {
     // Create wrapper element with CSS class
     this.element = document.createElement('div')
     this.element.className = 'glass-container'
+    this.element.setAttribute('data-reflex-permanent', '') // Prevent reflex from replacing this
 
     // Add type-specific classes
     if (this.type === 'circle') {
@@ -400,7 +401,7 @@ capturePageSnapshot() {
     foreignObjectRendering: false,
     logging: true,
     proxy: null,
-    removeContainer: false,
+    removeContainer: true,
     ignoreElements: function (element) {
       // Ignore all glass elements
       return (
@@ -1519,6 +1520,22 @@ capturePageSnapshot() {
         Container.isCapturing = false
         Container.waitingForSnapshot = []
       })
+  }
+
+  refresh() {
+    if (this.gl_refs && this.gl_refs.gl && !this.isDestroyed && Container.pageSnapshot) {
+      const gl = this.gl_refs.gl
+      const img = new Image()
+      img.src = Container.pageSnapshot.toDataURL()
+      img.onload = () => {
+        gl.bindTexture(gl.TEXTURE_2D, this.gl_refs.texture)
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img)
+        gl.uniform2f(this.gl_refs.textureSizeLoc, img.width, img.height)
+        if (this.render) {
+          this.render()
+        }
+      }
+    }
   }
 
   _handleResize() {

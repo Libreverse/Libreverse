@@ -1,5 +1,4 @@
 import { Container } from './container.js'
-import html2canvas from 'html2canvas';
 
 class Button extends Container {
   constructor(options = {}) {

@@ -5,7 +5,7 @@
 %aside.drawer-container{id: "#{drawer_id}-drawer", 
                        role: "complementary",
                        data: {
-                         controller: enable_glass ? "glass-drawer" : "drawer",
+                         controller: "glass-drawer",
                          # Glass configuration
                          "enable-glass-value": enable_glass,
                          "component-type-value": "drawer",
@@ -16,13 +16,15 @@
                          "expanded-value": expanded,
                          "drawer-id-value": drawer_id,
                          "height-value": 60,
-                         "expanded-height-value": 600
+                         "expanded-height-value": 600,
+                         "html2canvas-ignore": true,
                        }}
   %div{class: "drawer #{'drawer-expanded' if expanded} #{'glass-enabled' if enable_glass}",
+       "data-glass-drawer-target": "drawer",
        "data-drawer-id": drawer_id,
        "data-expanded": expanded,
        "aria-labelledby": "drawer-title-#{drawer_id}"}
-    .drawer-header
+    .drawer-header{data: {"reflex-permanent": ""}}
       %h2.drawer-title{id: "drawer-title-#{drawer_id}"}
         - if content_for?(:drawer_title)
           = yield(:drawer_title)
@@ -31,18 +33,18 @@
       %button.drawer-toggle{"aria-controls": "drawer-content-#{drawer_id}",
                             "aria-expanded": expanded,
                             "aria-label": "Toggle drawer",
-                            "data-action": enable_glass ? "glass-drawer#toggle" : "drawer#toggle",
+                            "data-action": "glass-drawer#toggle",
                             "data-reflex-root": "##{drawer_id}-drawer, body",
                             type: "button"}
         %img{alt: "Toggle drawer",
              class: "drawer-icons #{'rotated' if expanded}",
-             "data-drawer-target": "icon",
+             "data-glass-drawer-target": "icon",
              decoding: "async",
              draggable: "false",
              fetchpriority: "low",
              loading: "lazy",
              src: svg_icon_data_url("chevron-up")}
-    .drawer-contents{"data-drawer-target": "content",
+    .drawer-contents{"data-glass-drawer-target": "content",
                      id: "drawer-content-#{drawer_id}"}
       .drawer-content-container
         .drawer-content

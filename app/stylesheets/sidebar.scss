@@ -4,9 +4,7 @@
     // Base fixed width (using previous "expanded" sizes)
     width: 60px;
     height: 80vh;
-    border-top: none;
-    border-right: none;
-    border-bottom: none;
+    border-left: none !important;
     --sidebar-border-radius: 20px; // Define border radius as a variable
     border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
     z-index: 5;
@@ -41,6 +39,7 @@
         align-items: center;
         padding: 16px 2px;
         box-sizing: border-box;
+        border-left: none !important;
         
         // Glass button styling
         .glass-button {

@@ -3,25 +3,25 @@
 
 /* Drawer container styles */
 .drawer {
-    display: flex;
     position: fixed;
     right: 0;
     bottom: 0;
-    margin: 0 2.5%;
-    height: 60px; /* Fixed height when collapsed */
+    display: flex;
+    flex-direction: column;
     width: 350px;
+    height: 60px; /* Fixed height when collapsed */
+    margin: 0 2.5%;
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border-top: 1px solid variables.$glass-border;
-    border-left: 1px solid variables.$glass-border;
-    border-right: 1px solid variables.$glass-border;
+    border: 1px solid variables.$glass-border;
+    border-bottom: none;
     border-radius: 20px 20px 0 0;
+    box-shadow: 0 4px 30px variables.$box-shadow;
     overflow: hidden;
     z-index: 3;
     transition: height 0.3s ease;
-    flex-direction: column; // changed from column-reverse
     pointer-events: auto;
+    border-bottom: none !important;
 
     @media screen and (width <= 450px) {
         right: auto;
@@ -30,6 +30,10 @@
         margin: 0;
         width: 90%;
         max-width: 350px;
+    }
+
+    &.drawer-expanded {
+        height: 600px; /* Expanded height */
     }
 
     &.glass-enabled {
@@ -54,9 +58,9 @@
 
         .drawer-toggle {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
             transition: all 0.2s ease;
 
             &:hover {
@@ -69,10 +73,21 @@
             }
         }
     }
-}
 
-.drawer.drawer-expanded {
-    height: 600px; /* Expanded height */
+    // Glass transition states
+    &.glass-loading {
+        .drawer-content-container,
+        .drawer-content {
+            opacity: 1;
+        }
+    }
+
+    &.glass-loaded {
+        .drawer-content-container,
+        .drawer-content {
+            opacity: 0.9;
+        }
+    }
 }
 
 .drawer-container {
@@ -92,7 +107,15 @@
     }
 }
 
-/* Always visible part */
+.drawer-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+    border-bottom: none !important;
+}
+
 .drawer-contents {
     flex-shrink: 0;
     display: flex;
@@ -108,23 +131,22 @@
     .drawer-content {
         transition: opacity 300ms ease-out;
     }
-}
 
-.drawer-expanded .drawer-contents {
-    height: calc(600px - 60px); // Total height minus the fixed 60px
+    .drawer-expanded & {
+        height: calc(600px - 60px);
+    }
 }
 
 .drawer-toggle {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 60px;
-    height: 60px;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    margin-right: 1.15%;
     background: none;
     border: none;
     cursor: pointer;
-    align-items: center;
-    margin-right: 1.15%;
 
     @media screen and (width <= 450px) {
         margin-right: 0;
@@ -136,17 +158,18 @@
     width: 100%;
     user-select: none;
     transition: transform 0.3s ease;
-}
 
-.drawer.drawer-expanded .drawer-icons {
-    transform: rotate(180deg); /* Rotate icon when expanded */
+    .drawer-expanded & {
+        transform: rotate(180deg);
+    }
 }
 
 .drawer-content-container {
     font-family: Hack, Noto-Sans, monospace;
     font-size: 18px;
     color: variables.$hp-primary;
-    background: variables.$vulcan;
+    // I don't know why the js is adding inline styles
+    background-image: linear-gradient(135deg, variables.$vulcan, variables.$mirage) !important;
     text-align: left;
     margin-left: 5%;
     margin-right: 5%;
@@ -163,9 +186,7 @@
     margin-right: 5%;
 
     @media screen and (width <= 600px) {
-        .drawer-content {
-            font-size: 16px;
-        }
+        font-size: 16px;
     }
 }
 
@@ -174,10 +195,8 @@
     font-size: 18px;
     color: variables.$hp-secondary;
     text-decoration: underline;
-}
 
-@media screen and (width <= 600px) {
-    .drawer-link {
+    @media screen and (width <= 600px) {
         font-size: 16px;
     }
 }
@@ -187,27 +206,4 @@
     font-size: 20px;
     color: variables.$sidebar-icon;
     margin-left: 5%;
-}
-
-.drawer-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2px;
-}
-
-// Glass transition states
-.drawer.glass-loading {
-    .drawer-content-container,
-    .drawer-content {
-        opacity: 1;
-    }
-}
-
-.drawer.glass-loaded {
-    .drawer-content-container,
-    .drawer-content {
-        opacity: 0.9;
-    }
 }
