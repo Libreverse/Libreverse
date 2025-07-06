@@ -1,256 +1,297 @@
-import { Container } from './container.js'
+import { Container } from "./container.js";
 
 class Button extends Container {
-  constructor(options = {}) {
-    const text = options.text !== undefined ? options.text : 'Button'
-    const fontSize = parseInt(options.size) || 48
-    const onClick = options.onClick || null
-    const type = options.type || 'rounded' // "rounded", "circle", or "pill"
-    const warp = options.warp !== undefined ? options.warp : false // Center warping disabled by default
-    const tintOpacity = options.tintOpacity !== undefined ? options.tintOpacity : 0.2
-    const iconHTML = options.iconHTML || null
+    constructor(options = {}) {
+        const text = options.text !== undefined ? options.text : "Button";
+        const fontSize = parseInt(options.size) || 48;
+        const onClick = options.onClick || null;
+        const type = options.type || "rounded"; // "rounded", "circle", or "pill"
+        const warp = options.warp !== undefined ? options.warp : false; // Center warping disabled by default
+        const tintOpacity =
+            options.tintOpacity !== undefined ? options.tintOpacity : 0.2;
+        const iconHTML = options.iconHTML || null;
 
-    // Call parent constructor (border radius will be set in setSizeFromText)
-    super({
-      borderRadius: fontSize,
-      type: type,
-      tintOpacity: tintOpacity
-    })
+        // Call parent constructor (border radius will be set in setSizeFromText)
+        super({
+            borderRadius: fontSize,
+            type: type,
+            tintOpacity: tintOpacity,
+        });
 
-    this.text = text
-    this.fontSize = fontSize
-    this.onClick = onClick
-    this.type = type
-    this.warp = warp
-    this.parent = null // Will be set if added to container
-    this.isNestedGlass = false
-    this.iconHTML = iconHTML
-    this.isDestroyed = false
-    this._clickHandler = null
-    this._renderLoopId = null
+        this.text = text;
+        this.fontSize = fontSize;
+        this.onClick = onClick;
+        this.type = type;
+        this.warp = warp;
+        this.parent = null; // Will be set if added to container
+        this.isNestedGlass = false;
+        this.iconHTML = iconHTML;
+        this.isDestroyed = false;
+        this._clickHandler = null;
+        this._renderLoopId = null;
 
-    // Add button-specific styling and content
-    this.element.classList.add('glass-button')
-    this.element.style.position = 'relative'
-    this.element.style.cursor = 'pointer'
-    this.element.style.pointerEvents = 'auto' // Ensure clicks work
-    if (this.type === 'circle') {
-      this.element.classList.add('glass-button-circle')
-    }
-    this.createTextElement()
-    this.setupClickHandler()
-    this.setSizeFromText()
-  }
-
-  setSizeFromText() {
-    let width, height
-
-    // Handle different button types
-    if (this.type === 'circle') {
-      // For circles, use consistent sizing with pill buttons
-      const circleSize = this.fontSize * 2.2 // Match pill button sizing
-      width = circleSize
-      height = circleSize
-      this.borderRadius = circleSize / 2 // 50% for perfect circle
-
-      // Force exact square dimensions for circles
-      this.element.style.width = width + 'px'
-      this.element.style.height = height + 'px'
-      this.element.style.minWidth = width + 'px'
-      this.element.style.minHeight = height + 'px'
-      this.element.style.maxWidth = width + 'px'
-      this.element.style.maxHeight = height + 'px'
-    } else if (this.type === 'pill') {
-      // For pill buttons in sidebar, force perfect circles regardless of content
-      if (!this.text || this.text.trim() === '') {
-        // Icon-only button: force perfect circle
-        const size = Math.ceil(this.fontSize * 2.2) // Slightly larger for better proportions
-        width = size
-        height = size
-        this.borderRadius = size / 2 // Perfect circle
-      } else {
-        const textMetrics = Button.measureText(this.text, this.fontSize)
-        width = Math.ceil(textMetrics.width + this.fontSize * 2)
-        height = Math.ceil(this.fontSize + this.fontSize * 1.2) // Slightly less padding for pills
-        this.borderRadius = height / 2 // Half height for perfect capsule proportions
-      }
-      this.element.style.minWidth = width + 'px'
-      this.element.style.minHeight = height + 'px'
-    } else {
-      // For rounded buttons, calculate dimensions from text
-      if (!this.text || this.text.trim() === '') {
-        // Icon-only button: use reasonable dimensions for sidebar
-        width = Math.ceil(this.fontSize * 1.8) // Reduced from 2.5
-        height = Math.ceil(this.fontSize * 1.8) // Reduced from 2.5
-        this.borderRadius = this.fontSize * 0.5 // Smaller border radius
-      } else {
-        const textMetrics = Button.measureText(this.text, this.fontSize)
-        width = Math.ceil(textMetrics.width + this.fontSize * 2)
-        height = Math.ceil(this.fontSize + this.fontSize * 1.5)
-        this.borderRadius = this.fontSize
-      }
-      this.element.style.minWidth = width + 'px'
-      this.element.style.minHeight = height + 'px'
-    }
-
-    // Apply border radius to element
-    this.element.style.borderRadius = this.borderRadius + 'px'
-
-    // Update canvas border radius to match
-    if (this.canvas) {
-      this.canvas.style.borderRadius = this.borderRadius + 'px'
-    }
-
-    // For circles and pills, set internal dimensions directly to ensure shader gets exact dimensions
-    if (this.type === 'circle') {
-      this.width = width
-      this.height = height
-
-      // Update canvas to exact square dimensions for perfect circle rendering
-      if (this.canvas) {
-        this.canvas.width = width
-        this.canvas.height = height
-        this.canvas.style.width = width + 'px'
-        this.canvas.style.height = height + 'px'
-
-        // Update WebGL viewport if initialized
-        if (this.gl_refs.gl) {
-          this.gl_refs.gl.viewport(0, 0, width, height)
-          this.gl_refs.gl.uniform2f(this.gl_refs.resolutionLoc, width, height)
-          this.gl_refs.gl.uniform1f(this.gl_refs.borderRadiusLoc, this.borderRadius)
+        // Add button-specific styling and content
+        this.element.classList.add("glass-button");
+        this.element.style.position = "relative";
+        this.element.style.cursor = "pointer";
+        this.element.style.pointerEvents = "auto"; // Ensure clicks work
+        if (this.type === "circle") {
+            this.element.classList.add("glass-button-circle");
         }
-      }
-    } else if (this.type === 'pill') {
-      this.width = width
-      this.height = height
+        this.createTextElement();
+        this.setupClickHandler();
+        this.setSizeFromText();
+    }
 
-      // Force exact pill dimensions for perfect capsule rendering
-      this.element.style.width = width + 'px'
-      this.element.style.height = height + 'px'
-      this.element.style.maxWidth = width + 'px'
-      this.element.style.maxHeight = height + 'px'
+    setSizeFromText() {
+        let width, height;
 
-      if (this.canvas) {
-        this.canvas.width = width
-        this.canvas.height = height
-        this.canvas.style.width = width + 'px'
-        this.canvas.style.height = height + 'px'
+        // Handle different button types
+        if (this.type === "circle") {
+            // For circles, use consistent sizing with pill buttons
+            const circleSize = this.fontSize * 2.2; // Match pill button sizing
+            width = circleSize;
+            height = circleSize;
+            this.borderRadius = circleSize / 2; // 50% for perfect circle
 
-        // Update WebGL viewport if initialized
-        if (this.gl_refs.gl) {
-          this.gl_refs.gl.viewport(0, 0, width, height)
-          this.gl_refs.gl.uniform2f(this.gl_refs.resolutionLoc, width, height)
-          this.gl_refs.gl.uniform1f(this.gl_refs.borderRadiusLoc, this.borderRadius)
+            // Force exact square dimensions for circles
+            this.element.style.width = width + "px";
+            this.element.style.height = height + "px";
+            this.element.style.minWidth = width + "px";
+            this.element.style.minHeight = height + "px";
+            this.element.style.maxWidth = width + "px";
+            this.element.style.maxHeight = height + "px";
+        } else if (this.type === "pill") {
+            // For pill buttons in sidebar, force perfect circles regardless of content
+            if (!this.text || this.text.trim() === "") {
+                // Icon-only button: force perfect circle
+                const size = Math.ceil(this.fontSize * 2.2); // Slightly larger for better proportions
+                width = size;
+                height = size;
+                this.borderRadius = size / 2; // Perfect circle
+            } else {
+                const textMetrics = Button.measureText(
+                    this.text,
+                    this.fontSize,
+                );
+                width = Math.ceil(textMetrics.width + this.fontSize * 2);
+                height = Math.ceil(this.fontSize + this.fontSize * 1.2); // Slightly less padding for pills
+                this.borderRadius = height / 2; // Half height for perfect capsule proportions
+            }
+            this.element.style.minWidth = width + "px";
+            this.element.style.minHeight = height + "px";
+        } else {
+            // For rounded buttons, calculate dimensions from text
+            if (!this.text || this.text.trim() === "") {
+                // Icon-only button: use reasonable dimensions for sidebar
+                width = Math.ceil(this.fontSize * 1.8); // Reduced from 2.5
+                height = Math.ceil(this.fontSize * 1.8); // Reduced from 2.5
+                this.borderRadius = this.fontSize * 0.5; // Smaller border radius
+            } else {
+                const textMetrics = Button.measureText(
+                    this.text,
+                    this.fontSize,
+                );
+                width = Math.ceil(textMetrics.width + this.fontSize * 2);
+                height = Math.ceil(this.fontSize + this.fontSize * 1.5);
+                this.borderRadius = this.fontSize;
+            }
+            this.element.style.minWidth = width + "px";
+            this.element.style.minHeight = height + "px";
         }
-      }
-    } else {
-      // Update size from DOM after CSS applies
-      this.updateSizeFromDOM()
-    }
-  }
 
-  setupAsNestedGlass() {
-    if (this.parent && !this.isNestedGlass) {
-      this.isNestedGlass = true
-      // Reinitialize with nested glass shader when parent is ready
-      if (this.webglInitialized) {
-        this.initWebGL()
-      }
-    }
-  }
+        // Apply border radius to element
+        this.element.style.borderRadius = this.borderRadius + "px";
 
-  static measureText(text, fontSize) {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    ctx.font = `${fontSize}px system-ui, -apple-system, sans-serif`
-    return ctx.measureText(text)
-  }
-
-  createTextElement() {
-    console.log('Creating text element with text:', JSON.stringify(this.text), 'iconHTML:', !!this.iconHTML)
-    
-    this.textElement = document.createElement('div')
-    this.textElement.className = 'glass-button-text'
-    this.textElement.style.position = 'relative'
-    this.textElement.style.display = 'flex'
-    this.textElement.style.alignItems = 'center'
-    this.textElement.style.justifyContent = 'center'
-    this.textElement.style.width = '100%'
-    this.textElement.style.height = '100%'
-    this.textElement.style.zIndex = '2' // Above canvas
-    this.textElement.style.pointerEvents = 'none' // Let clicks pass through to button element
-    
-    if (this.iconHTML) {
-      // Insert the SVG icon directly without any modifications
-      const temp = document.createElement('div')
-      temp.innerHTML = this.iconHTML
-      // Move all SVGs (if multiple) to the text element without changing them
-      temp.querySelectorAll('svg').forEach(svg => {
-        this.textElement.appendChild(svg)
-      })
-    }
-    
-    // Only add text if it's not empty
-    if (this.text && this.text.trim() !== '') {
-      console.log('Adding text node:', this.text)
-      this.textElement.appendChild(document.createTextNode(this.text))
-    } else {
-      console.log('Skipping text node - text is empty or whitespace')
-    }
-    
-    this.textElement.style.fontSize = this.fontSize + 'px'
-    this.element.appendChild(this.textElement)
-  }
-
-  setupClickHandler() {
-    if (this.onClick && this.element) {
-      this._clickHandler = e => {
-        e.preventDefault()
-        e.stopPropagation()
-        console.log('Button clicked:', this.text || 'icon-only', 'onClick:', typeof this.onClick)
-        if (typeof this.onClick === 'function') {
-          this.onClick(this.text)
+        // Update canvas border radius to match
+        if (this.canvas) {
+            this.canvas.style.borderRadius = this.borderRadius + "px";
         }
-      }
-      this.element.addEventListener('click', this._clickHandler)
-      this.element.addEventListener('touchstart', this._clickHandler, { passive: false })
-      
-      // Debug: verify click handler is attached
-      console.log('Click handler attached to button:', this.text || 'icon-only', 'element:', this.element)
-    } else {
-      console.warn('No onClick handler provided for button:', this.text || 'icon-only')
+
+        // For circles and pills, set internal dimensions directly to ensure shader gets exact dimensions
+        if (this.type === "circle") {
+            this.width = width;
+            this.height = height;
+
+            // Update canvas to exact square dimensions for perfect circle rendering
+            if (this.canvas) {
+                this.canvas.width = width;
+                this.canvas.height = height;
+                this.canvas.style.width = width + "px";
+                this.canvas.style.height = height + "px";
+
+                // Update WebGL viewport if initialized
+                if (this.gl_refs.gl) {
+                    this.gl_refs.gl.viewport(0, 0, width, height);
+                    this.gl_refs.gl.uniform2f(
+                        this.gl_refs.resolutionLoc,
+                        width,
+                        height,
+                    );
+                    this.gl_refs.gl.uniform1f(
+                        this.gl_refs.borderRadiusLoc,
+                        this.borderRadius,
+                    );
+                }
+            }
+        } else if (this.type === "pill") {
+            this.width = width;
+            this.height = height;
+
+            // Force exact pill dimensions for perfect capsule rendering
+            this.element.style.width = width + "px";
+            this.element.style.height = height + "px";
+            this.element.style.maxWidth = width + "px";
+            this.element.style.maxHeight = height + "px";
+
+            if (this.canvas) {
+                this.canvas.width = width;
+                this.canvas.height = height;
+                this.canvas.style.width = width + "px";
+                this.canvas.style.height = height + "px";
+
+                // Update WebGL viewport if initialized
+                if (this.gl_refs.gl) {
+                    this.gl_refs.gl.viewport(0, 0, width, height);
+                    this.gl_refs.gl.uniform2f(
+                        this.gl_refs.resolutionLoc,
+                        width,
+                        height,
+                    );
+                    this.gl_refs.gl.uniform1f(
+                        this.gl_refs.borderRadiusLoc,
+                        this.borderRadius,
+                    );
+                }
+            }
+        } else {
+            // Update size from DOM after CSS applies
+            this.updateSizeFromDOM();
+        }
     }
-  }
 
-  // Override initWebGL to choose between standalone and nested glass
-  initWebGL() {
-    if (!Container.pageSnapshot || !this.gl) return
-
-    if (this.parent && this.isNestedGlass) {
-      // Use nested glass (parent container's texture)
-      this.initNestedGlass()
-    } else {
-      // Use standalone glass (page snapshot)
-      super.initWebGL()
-    }
-  }
-
-  initNestedGlass() {
-    if (!this.parent.webglInitialized) {
-      // Parent not ready, wait and try again
-      setTimeout(() => this.initNestedGlass(), 100)
-      return
+    setupAsNestedGlass() {
+        if (this.parent && !this.isNestedGlass) {
+            this.isNestedGlass = true;
+            // Reinitialize with nested glass shader when parent is ready
+            if (this.webglInitialized) {
+                this.initWebGL();
+            }
+        }
     }
 
-    // Parent is ready, set up nested glass
-    this.setupDynamicNestedShader()
-    this.webglInitialized = true
-  }
+    static measureText(text, fontSize) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.font = `${fontSize}px system-ui, -apple-system, sans-serif`;
+        return ctx.measureText(text);
+    }
 
-  setupDynamicNestedShader() {
-    const gl = this.gl
+    createTextElement() {
+        console.log(
+            "Creating text element with text:",
+            JSON.stringify(this.text),
+            "iconHTML:",
+            !!this.iconHTML,
+        );
 
-    const vsSource = `
+        this.textElement = document.createElement("div");
+        this.textElement.className = "glass-button-text";
+        this.textElement.style.position = "relative";
+        this.textElement.style.display = "flex";
+        this.textElement.style.alignItems = "center";
+        this.textElement.style.justifyContent = "center";
+        this.textElement.style.width = "100%";
+        this.textElement.style.height = "100%";
+        this.textElement.style.zIndex = "2"; // Above canvas
+        this.textElement.style.pointerEvents = "none"; // Let clicks pass through to button element
+
+        if (this.iconHTML) {
+            // Insert the SVG icon directly without any modifications
+            const temp = document.createElement("div");
+            temp.innerHTML = this.iconHTML;
+            // Move all SVGs (if multiple) to the text element without changing them
+            temp.querySelectorAll("svg").forEach((svg) => {
+                this.textElement.appendChild(svg);
+            });
+        }
+
+        // Only add text if it's not empty
+        if (this.text && this.text.trim() !== "") {
+            console.log("Adding text node:", this.text);
+            this.textElement.appendChild(document.createTextNode(this.text));
+        } else {
+            console.log("Skipping text node - text is empty or whitespace");
+        }
+
+        this.textElement.style.fontSize = this.fontSize + "px";
+        this.element.appendChild(this.textElement);
+    }
+
+    setupClickHandler() {
+        if (this.onClick && this.element) {
+            this._clickHandler = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(
+                    "Button clicked:",
+                    this.text || "icon-only",
+                    "onClick:",
+                    typeof this.onClick,
+                );
+                if (typeof this.onClick === "function") {
+                    this.onClick(this.text);
+                }
+            };
+            this.element.addEventListener("click", this._clickHandler);
+            this.element.addEventListener("touchstart", this._clickHandler, {
+                passive: false,
+            });
+
+            // Debug: verify click handler is attached
+            console.log(
+                "Click handler attached to button:",
+                this.text || "icon-only",
+                "element:",
+                this.element,
+            );
+        } else {
+            console.warn(
+                "No onClick handler provided for button:",
+                this.text || "icon-only",
+            );
+        }
+    }
+
+    // Override initWebGL to choose between standalone and nested glass
+    initWebGL() {
+        if (!Container.pageSnapshot || !this.gl) return;
+
+        if (this.parent && this.isNestedGlass) {
+            // Use nested glass (parent container's texture)
+            this.initNestedGlass();
+        } else {
+            // Use standalone glass (page snapshot)
+            super.initWebGL();
+        }
+    }
+
+    initNestedGlass() {
+        if (!this.parent.webglInitialized) {
+            // Parent not ready, wait and try again
+            setTimeout(() => this.initNestedGlass(), 100);
+            return;
+        }
+
+        // Parent is ready, set up nested glass
+        this.setupDynamicNestedShader();
+        this.webglInitialized = true;
+    }
+
+    setupDynamicNestedShader() {
+        const gl = this.gl;
+
+        const vsSource = `
       attribute vec2 a_position;
       attribute vec2 a_texcoord;
       varying vec2 v_texcoord;
@@ -259,9 +300,9 @@ class Button extends Container {
         gl_Position = vec4(a_position, 0, 1);
         v_texcoord = a_texcoord;
       }
-    `
+    `;
 
-    const fsSource = `
+        const fsSource = `
       precision mediump float;
       uniform sampler2D u_image;
       uniform vec2 u_resolution;
@@ -518,245 +559,325 @@ class Button extends Container {
         
         gl_FragColor = vec4(finalTinted, mask);
       }
-    `
+    `;
 
-    const program = this.createProgram(gl, vsSource, fsSource)
-    if (!program) return
+        const program = this.createProgram(gl, vsSource, fsSource);
+        if (!program) return;
 
-    gl.useProgram(program)
+        gl.useProgram(program);
 
-    // Set up geometry (same as parent)
-    const positionBuffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW)
+        // Set up geometry (same as parent)
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+            gl.STATIC_DRAW,
+        );
 
-    const texcoordBuffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0]), gl.STATIC_DRAW)
+        const texcoordBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0]),
+            gl.STATIC_DRAW,
+        );
 
-    // Get locations
-    const positionLoc = gl.getAttribLocation(program, 'a_position')
-    const texcoordLoc = gl.getAttribLocation(program, 'a_texcoord')
-    const resolutionLoc = gl.getUniformLocation(program, 'u_resolution')
-    const textureSizeLoc = gl.getUniformLocation(program, 'u_textureSize')
-    const blurRadiusLoc = gl.getUniformLocation(program, 'u_blurRadius')
-    const borderRadiusLoc = gl.getUniformLocation(program, 'u_borderRadius')
-    const buttonPositionLoc = gl.getUniformLocation(program, 'u_buttonPosition')
-    const containerPositionLoc = gl.getUniformLocation(program, 'u_containerPosition')
-    const containerSizeLoc = gl.getUniformLocation(program, 'u_containerSize')
-    const warpLoc = gl.getUniformLocation(program, 'u_warp')
-    const edgeIntensityLoc = gl.getUniformLocation(program, 'u_edgeIntensity')
-    const rimIntensityLoc = gl.getUniformLocation(program, 'u_rimIntensity')
-    const baseIntensityLoc = gl.getUniformLocation(program, 'u_baseIntensity')
-    const edgeDistanceLoc = gl.getUniformLocation(program, 'u_edgeDistance')
-    const rimDistanceLoc = gl.getUniformLocation(program, 'u_rimDistance')
-    const baseDistanceLoc = gl.getUniformLocation(program, 'u_baseDistance')
-    const cornerBoostLoc = gl.getUniformLocation(program, 'u_cornerBoost')
-    const rippleEffectLoc = gl.getUniformLocation(program, 'u_rippleEffect')
-    const tintOpacityLoc = gl.getUniformLocation(program, 'u_tintOpacity')
-    const imageLoc = gl.getUniformLocation(program, 'u_image')
+        // Get locations
+        const positionLoc = gl.getAttribLocation(program, "a_position");
+        const texcoordLoc = gl.getAttribLocation(program, "a_texcoord");
+        const resolutionLoc = gl.getUniformLocation(program, "u_resolution");
+        const textureSizeLoc = gl.getUniformLocation(program, "u_textureSize");
+        const blurRadiusLoc = gl.getUniformLocation(program, "u_blurRadius");
+        const borderRadiusLoc = gl.getUniformLocation(
+            program,
+            "u_borderRadius",
+        );
+        const buttonPositionLoc = gl.getUniformLocation(
+            program,
+            "u_buttonPosition",
+        );
+        const containerPositionLoc = gl.getUniformLocation(
+            program,
+            "u_containerPosition",
+        );
+        const containerSizeLoc = gl.getUniformLocation(
+            program,
+            "u_containerSize",
+        );
+        const warpLoc = gl.getUniformLocation(program, "u_warp");
+        const edgeIntensityLoc = gl.getUniformLocation(
+            program,
+            "u_edgeIntensity",
+        );
+        const rimIntensityLoc = gl.getUniformLocation(
+            program,
+            "u_rimIntensity",
+        );
+        const baseIntensityLoc = gl.getUniformLocation(
+            program,
+            "u_baseIntensity",
+        );
+        const edgeDistanceLoc = gl.getUniformLocation(
+            program,
+            "u_edgeDistance",
+        );
+        const rimDistanceLoc = gl.getUniformLocation(program, "u_rimDistance");
+        const baseDistanceLoc = gl.getUniformLocation(
+            program,
+            "u_baseDistance",
+        );
+        const cornerBoostLoc = gl.getUniformLocation(program, "u_cornerBoost");
+        const rippleEffectLoc = gl.getUniformLocation(
+            program,
+            "u_rippleEffect",
+        );
+        const tintOpacityLoc = gl.getUniformLocation(program, "u_tintOpacity");
+        const imageLoc = gl.getUniformLocation(program, "u_image");
 
-    // Create texture that will be updated dynamically from container canvas
-    const texture = gl.createTexture()
-    gl.bindTexture(gl.TEXTURE_2D, texture)
+        // Create texture that will be updated dynamically from container canvas
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    // Initialize with parent container's current canvas size
-    const containerCanvas = this.parent.canvas
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      gl.RGBA,
-      containerCanvas.width,
-      containerCanvas.height,
-      0,
-      gl.RGBA,
-      gl.UNSIGNED_BYTE,
-      null
-    )
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+        // Initialize with parent container's current canvas size
+        const containerCanvas = this.parent.canvas;
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            containerCanvas.width,
+            containerCanvas.height,
+            0,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            null,
+        );
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    // Store references
-    this.gl_refs = {
-      gl,
-      texture,
-      textureSizeLoc,
-      positionLoc,
-      texcoordLoc,
-      resolutionLoc,
-      blurRadiusLoc,
-      borderRadiusLoc,
-      buttonPositionLoc,
-      containerPositionLoc,
-      containerSizeLoc,
-      warpLoc,
-      edgeIntensityLoc,
-      rimIntensityLoc,
-      baseIntensityLoc,
-      edgeDistanceLoc,
-      rimDistanceLoc,
-      baseDistanceLoc,
-      cornerBoostLoc,
-      rippleEffectLoc,
-      tintOpacityLoc,
-      imageLoc,
-      positionBuffer,
-      texcoordBuffer
+        // Store references
+        this.gl_refs = {
+            gl,
+            texture,
+            textureSizeLoc,
+            positionLoc,
+            texcoordLoc,
+            resolutionLoc,
+            blurRadiusLoc,
+            borderRadiusLoc,
+            buttonPositionLoc,
+            containerPositionLoc,
+            containerSizeLoc,
+            warpLoc,
+            edgeIntensityLoc,
+            rimIntensityLoc,
+            baseIntensityLoc,
+            edgeDistanceLoc,
+            rimDistanceLoc,
+            baseDistanceLoc,
+            cornerBoostLoc,
+            rippleEffectLoc,
+            tintOpacityLoc,
+            imageLoc,
+            positionBuffer,
+            texcoordBuffer,
+        };
+
+        // Set up viewport and attributes
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        gl.clearColor(0, 0, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.enableVertexAttribArray(positionLoc);
+        gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+        gl.enableVertexAttribArray(texcoordLoc);
+        gl.vertexAttribPointer(texcoordLoc, 2, gl.FLOAT, false, 0, 0);
+
+        // Set uniforms
+        gl.uniform2f(resolutionLoc, this.canvas.width, this.canvas.height);
+        gl.uniform2f(
+            textureSizeLoc,
+            containerCanvas.width,
+            containerCanvas.height,
+        );
+        gl.uniform1f(blurRadiusLoc, window.glassControls?.blurRadius || 2.0); // Controlled blur for sharpness
+        gl.uniform1f(borderRadiusLoc, this.borderRadius);
+        gl.uniform1f(warpLoc, this.warp ? 1.0 : 0.0);
+        gl.uniform1f(
+            edgeIntensityLoc,
+            window.glassControls?.edgeIntensity || 0.01,
+        );
+        gl.uniform1f(
+            rimIntensityLoc,
+            window.glassControls?.rimIntensity || 0.05,
+        );
+        gl.uniform1f(
+            baseIntensityLoc,
+            window.glassControls?.baseIntensity || 0.01,
+        );
+        gl.uniform1f(
+            edgeDistanceLoc,
+            window.glassControls?.edgeDistance || 0.15,
+        );
+        gl.uniform1f(rimDistanceLoc, window.glassControls?.rimDistance || 0.8);
+        gl.uniform1f(
+            baseDistanceLoc,
+            window.glglassControls?.baseDistance || 0.1,
+        );
+        gl.uniform1f(cornerBoostLoc, window.glassControls?.cornerBoost || 0.02);
+        gl.uniform1f(
+            rippleEffectLoc,
+            window.glassControls?.rippleEffect || 0.1,
+        );
+        gl.uniform1f(tintOpacityLoc, this.tintOpacity);
+
+        // Set positions
+        const buttonPosition = this.getPosition();
+        const containerPosition = this.parent.getPosition();
+        gl.uniform2f(buttonPositionLoc, buttonPosition.x, buttonPosition.y);
+        gl.uniform2f(
+            containerPositionLoc,
+            containerPosition.x,
+            containerPosition.y,
+        );
+        gl.uniform2f(containerSizeLoc, this.parent.width, this.parent.height);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(imageLoc, 0);
+
+        // Start rendering
+        this.startNestedRenderLoop();
     }
 
-    // Set up viewport and attributes
-    gl.viewport(0, 0, this.canvas.width, this.canvas.height)
-    gl.clearColor(0, 0, 0, 0)
+    startNestedRenderLoop() {
+        const render = () => {
+            if (!this.gl_refs.gl || !this.parent || this.isDestroyed) return;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-    gl.enableVertexAttribArray(positionLoc)
-    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0)
+            const gl = this.gl_refs.gl;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer)
-    gl.enableVertexAttribArray(texcoordLoc)
-    gl.vertexAttribPointer(texcoordLoc, 2, gl.FLOAT, false, 0, 0)
+            // UPDATE TEXTURE FROM PARENT CONTAINER'S CURRENT RENDERED OUTPUT
+            const containerCanvas = this.parent.canvas;
+            gl.bindTexture(gl.TEXTURE_2D, this.gl_refs.texture);
+            gl.texSubImage2D(
+                gl.TEXTURE_2D,
+                0,
+                0,
+                0,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                containerCanvas,
+            );
 
-    // Set uniforms
-    gl.uniform2f(resolutionLoc, this.canvas.width, this.canvas.height)
-    gl.uniform2f(textureSizeLoc, containerCanvas.width, containerCanvas.height)
-    gl.uniform1f(blurRadiusLoc, window.glassControls?.blurRadius || 2.0) // Controlled blur for sharpness
-    gl.uniform1f(borderRadiusLoc, this.borderRadius)
-    gl.uniform1f(warpLoc, this.warp ? 1.0 : 0.0)
-    gl.uniform1f(edgeIntensityLoc, window.glassControls?.edgeIntensity || 0.01)
-    gl.uniform1f(rimIntensityLoc, window.glassControls?.rimIntensity || 0.05)
-    gl.uniform1f(baseIntensityLoc, window.glassControls?.baseIntensity || 0.01)
-    gl.uniform1f(edgeDistanceLoc, window.glassControls?.edgeDistance || 0.15)
-    gl.uniform1f(rimDistanceLoc, window.glassControls?.rimDistance || 0.8)
-    gl.uniform1f(baseDistanceLoc, window.glglassControls?.baseDistance || 0.1)
-    gl.uniform1f(cornerBoostLoc, window.glassControls?.cornerBoost || 0.02)
-    gl.uniform1f(rippleEffectLoc, window.glassControls?.rippleEffect || 0.1)
-    gl.uniform1f(tintOpacityLoc, this.tintOpacity)
+            gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Set positions
-    const buttonPosition = this.getPosition()
-    const containerPosition = this.parent.getPosition()
-    gl.uniform2f(buttonPositionLoc, buttonPosition.x, buttonPosition.y)
-    gl.uniform2f(containerPositionLoc, containerPosition.x, containerPosition.y)
-    gl.uniform2f(containerSizeLoc, this.parent.width, this.parent.height)
+            // Update button and container positions (in case layout changed)
+            const buttonPosition = this.getPosition();
+            const containerPosition = this.parent.getPosition();
+            gl.uniform2f(
+                this.gl_refs.buttonPositionLoc,
+                buttonPosition.x,
+                buttonPosition.y,
+            );
+            gl.uniform2f(
+                this.gl_refs.containerPositionLoc,
+                containerPosition.x,
+                containerPosition.y,
+            );
 
-    gl.activeTexture(gl.TEXTURE0)
-    gl.bindTexture(gl.TEXTURE_2D, texture)
-    gl.uniform1i(imageLoc, 0)
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        };
 
-    // Start rendering
-    this.startNestedRenderLoop()
-  }
+        // Render every frame to keep sampling parent's live output
+        const animationLoop = () => {
+            if (this.isDestroyed) return;
+            render();
+            this._renderLoopId = requestAnimationFrame(animationLoop);
+        };
 
-  startNestedRenderLoop() {
-    const render = () => {
-      if (!this.gl_refs.gl || !this.parent || this.isDestroyed) return
+        animationLoop();
 
-      const gl = this.gl_refs.gl
-
-      // UPDATE TEXTURE FROM PARENT CONTAINER'S CURRENT RENDERED OUTPUT
-      const containerCanvas = this.parent.canvas
-      gl.bindTexture(gl.TEXTURE_2D, this.gl_refs.texture)
-      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, containerCanvas)
-
-      gl.clear(gl.COLOR_BUFFER_BIT)
-
-      // Update button and container positions (in case layout changed)
-      const buttonPosition = this.getPosition()
-      const containerPosition = this.parent.getPosition()
-      gl.uniform2f(this.gl_refs.buttonPositionLoc, buttonPosition.x, buttonPosition.y)
-      gl.uniform2f(this.gl_refs.containerPositionLoc, containerPosition.x, containerPosition.y)
-
-      gl.drawArrays(gl.TRIANGLES, 0, 6)
+        // Store render function for external calls
+        this.render = render;
     }
 
-    // Render every frame to keep sampling parent's live output
-    const animationLoop = () => {
-      if (this.isDestroyed) return
-      render()
-      this._renderLoopId = requestAnimationFrame(animationLoop)
+    destroy() {
+        if (this.isDestroyed) return;
+
+        this.isDestroyed = true;
+
+        // Clean up WebGL resources
+        if (this.gl_refs.gl) {
+            const gl = this.gl_refs.gl;
+            if (this.gl_refs.texture) {
+                gl.deleteTexture(this.gl_refs.texture);
+            }
+            if (this.gl_refs.positionBuffer) {
+                gl.deleteBuffer(this.gl_refs.positionBuffer);
+            }
+            if (this.gl_refs.texcoordBuffer) {
+                gl.deleteBuffer(this.gl_refs.texcoordBuffer);
+            }
+        }
+
+        // Remove from parent
+        if (this.parent) {
+            this.parent.removeChild(this);
+        }
+
+        // Remove event listeners
+        if (this.element && this._clickHandler) {
+            this.element.removeEventListener("click", this._clickHandler);
+            this.element.removeEventListener("touchstart", this._clickHandler);
+            this._clickHandler = null;
+        }
+
+        // Cancel any pending render loops
+        if (this._renderLoopId) {
+            cancelAnimationFrame(this._renderLoopId);
+        }
+
+        // Clear references
+        this.gl_refs = {};
+        this.gl = null;
+        this.canvas = null;
+        this.element = null;
+        this.parent = null;
     }
 
-    animationLoop()
+    createProgram(gl, vsSource, fsSource) {
+        const vs = this.compileShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fs = this.compileShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        if (!vs || !fs) return null;
 
-    // Store render function for external calls
-    this.render = render
-  }
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
 
-  destroy() {
-    if (this.isDestroyed) return
-    
-    this.isDestroyed = true
-    
-    // Clean up WebGL resources
-    if (this.gl_refs.gl) {
-      const gl = this.gl_refs.gl
-      if (this.gl_refs.texture) {
-        gl.deleteTexture(this.gl_refs.texture)
-      }
-      if (this.gl_refs.positionBuffer) {
-        gl.deleteBuffer(this.gl_refs.positionBuffer)
-      }
-      if (this.gl_refs.texcoordBuffer) {
-        gl.deleteBuffer(this.gl_refs.texcoordBuffer)
-      }
-    }
-    
-    // Remove from parent
-    if (this.parent) {
-      this.parent.removeChild(this)
-    }
-    
-    // Remove event listeners
-    if (this.element && this._clickHandler) {
-      this.element.removeEventListener('click', this._clickHandler)
-      this.element.removeEventListener('touchstart', this._clickHandler)
-      this._clickHandler = null
-    }
-    
-    // Cancel any pending render loops
-    if (this._renderLoopId) {
-      cancelAnimationFrame(this._renderLoopId)
-    }
-    
-    // Clear references
-    this.gl_refs = {}
-    this.gl = null
-    this.canvas = null
-    this.element = null
-    this.parent = null
-  }
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error("Program link error:", gl.getProgramInfoLog(program));
+            return null;
+        }
 
-  createProgram(gl, vsSource, fsSource) {
-    const vs = this.compileShader(gl, gl.VERTEX_SHADER, vsSource)
-    const fs = this.compileShader(gl, gl.FRAGMENT_SHADER, fsSource)
-    if (!vs || !fs) return null
-
-    const program = gl.createProgram()
-    gl.attachShader(program, vs)
-    gl.attachShader(program, fs)
-    gl.linkProgram(program)
-
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error('Program link error:', gl.getProgramInfoLog(program))
-      return null
+        return program;
     }
 
-    return program
-  }
-
-  compileShader(gl, type, source) {
-    const shader = gl.createShader(type)
-    gl.shaderSource(shader, source)
-    gl.compileShader(shader)
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.error('Shader compile error:', gl.getShaderInfoLog(shader))
-      return null
+    compileShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error("Shader compile error:", gl.getShaderInfoLog(shader));
+            return null;
+        }
+        return shader;
     }
-    return shader
-  }
 }
 
 // Do NOT export Container from this file, only export Button
-export { Button }
+export { Button };

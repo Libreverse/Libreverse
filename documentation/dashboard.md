@@ -49,13 +49,11 @@ The dashboard is organized into sections for optimal usability:
 ## User Flow
 
 1. **Dashboard Entry**:
-
     - Users are directed to the dashboard after login
     - Direct access via the sidebar navigation
     - Available at the `/dashboard` URL path
 
 2. **Content Interaction**:
-
     - View summarized information for quick assessment
     - Click through to detailed views for specific items
     - Filter and sort content as needed

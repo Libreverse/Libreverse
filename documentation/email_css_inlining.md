@@ -17,13 +17,11 @@ The email CSS inlining system provides:
 ### Core Components
 
 1. **EmailHelper** (`app/helpers/email_helper.rb`)
-
     - Primary interface for CSS inlining
     - Environment-aware CSS processing
     - Foundation for Emails integration
 
 2. **ViteCssFetcher** (`app/services/vite_css_fetcher.rb`)
-
     - Fetches CSS from Vite dev server in development
     - Extracts CSS from JavaScript responses
     - Handles network errors gracefully
@@ -79,13 +77,11 @@ end
 ### Development Environment
 
 1. **Vite Dev Server Integration**
-
     - Fetches CSS from `http://localhost:5173`
     - Handles SCSS compilation in real-time
     - Extracts CSS from JavaScript modules
 
 2. **Fallback Mechanisms**
-
     - Falls back to compiled CSS if dev server unavailable
     - Uses Foundation for Emails CDN as final fallback
 
@@ -96,7 +92,6 @@ end
 ### Production Environment
 
 1. **Asset Pipeline Integration**
-
     - Uses precompiled CSS from Vite build
     - Reads from `public/assets/` directory
     - Optimized for performance
@@ -231,17 +226,14 @@ rails console
 ### Common Issues
 
 1. **Vite Dev Server Not Running**
-
     - Start with `bin/vite dev`
     - Check port configuration in `config/vite.json`
 
 2. **CSS Not Loading in Development**
-
     - Verify Vite dev server is accessible at `http://localhost:5173`
     - Check browser network tab for 404s
 
 3. **Missing CSS in Production**
-
     - Run `bin/vite build` to compile assets
     - Verify compiled CSS exists in `public/assets/`
 
@@ -261,19 +253,16 @@ Rails.logger.debug "[EmailHelper] CSS content: #{css_content.length} characters"
 ## Best Practices
 
 1. **Email-Specific Stylesheets**
-
     - Keep email CSS separate from web CSS
     - Use Foundation for Emails framework
     - Test across email clients
 
 2. **Performance Optimization**
-
     - Minimize CSS file size
     - Use efficient selectors
     - Optimize images and assets
 
 3. **Responsive Design**
-
     - Use media queries for responsive emails
     - Test on mobile devices
     - Consider dark mode support

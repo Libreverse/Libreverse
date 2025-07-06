@@ -5,7 +5,9 @@
     width: 60px;
     height: 80vh;
     border-left: none !important;
+
     --sidebar-border-radius: 20px; // Define border radius as a variable
+
     border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
     z-index: 5;
     position: fixed;
@@ -18,20 +20,23 @@
     .glass-container {
         width: 100%;
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0; // Use variable
+        inset: 0;
+        border-radius: 0 var(--sidebar-border-radius)
+            var(--sidebar-border-radius) 0; // Use variable
+
         overflow: hidden; // Clip canvas to rounded corners
-        
+
         // Ensure canvas respects border radius
         canvas {
-            border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important; // Use variable and override inline styles
+            border-radius: 0 var(--sidebar-border-radius)
+                var(--sidebar-border-radius) 0 !important; // Use variable and override inline styles
             // Force clipping with clip-path for WebGL canvas
-            clip-path: inset(0 0 0 0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0) !important; // Use variable and override inline styles
+            clip-path: inset(
+                0 0 0 0 round 0 var(--sidebar-border-radius)
+                    var(--sidebar-border-radius) 0
+            ) !important; // Use variable and override inline styles
         }
-        
+
         // Proper spacing for glass buttons
         display: flex;
         flex-direction: column;
@@ -40,7 +45,7 @@
         padding: 16px 2px;
         box-sizing: border-box;
         border-left: none !important;
-        
+
         // Glass button styling
         .glass-button {
             width: auto;
@@ -52,7 +57,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             .glass-button-text {
                 display: flex;
                 align-items: center;
@@ -61,18 +66,19 @@
                 width: 100%;
                 height: 100%;
                 position: relative;
-                
+
                 svg {
                     width: 28px; // Larger size to nearly fill the button
                     height: 28px;
                     flex-shrink: 0;
                     display: block;
+
                     // Don't touch any color properties - let SVG use its original attributes
-                    
+
                     // Ensure paths respect the SVG's fill="none" attribute
                     &[fill="none"] {
                         fill: none;
-                        
+
                         path {
                             fill: none;
                         }
@@ -85,6 +91,7 @@
     // Responsive breakpoints - fixed width values (using previous "expanded" sizes)
     @media (width <= 600px) {
         width: 40px; // Small screen width (was expanded size)
+
         --sidebar-border-radius: 10px; // Update for small screens
     }
 
@@ -99,79 +106,83 @@
 
 // Native sidebar styling to match glass buttons during loading
 .sidebar-contents {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  padding: 16px 2px; // Match glass container padding
-  box-sizing: border-box;
-  
-  // Style native links to look like glass buttons
-  .sidebar-link, .sidebar-logout-button {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-    max-width: 40px;
-    max-height: 40px;
-    border-radius: 20px;
-    margin: 4px auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-    transition: transform 0.1s ease, opacity 300ms ease-out;
-    text-decoration: none;
-    flex-shrink: 0;
-    
-    // Style the icons to match glass button size
-    img.sidebar-icons {
-      width: 24px;
-      height: 24px;
-      display: block;
-      flex-shrink: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 16px 2px; // Match glass container padding
+    box-sizing: border-box;
+
+    // Style native links to look like glass buttons
+    .sidebar-link,
+    .sidebar-logout-button {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        max-width: 40px;
+        max-height: 40px;
+        border-radius: 20px;
+        margin: 4px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgb(255 255 255 / 10%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgb(255 255 255 / 20%);
+        box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
+        transition:
+            transform 0.1s ease,
+            opacity 300ms ease-out;
+        text-decoration: none;
+        flex-shrink: 0;
+
+        // Style the icons to match glass button size
+        img.sidebar-icons {
+            width: 24px;
+            height: 24px;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        &:active:not(.sidebar-default-cursor) {
+            transform: scale(0.97);
+        }
+
+        // Current page styling
+        &.sidebar-default-cursor {
+            opacity: 0.6;
+            cursor: default;
+            filter: grayscale(0.5);
+        }
     }
-    
-    &:active:not(.sidebar-default-cursor) {
-      transform: scale(0.97);
+
+    // Remove button-specific styles for logout button when styled as glass
+    .sidebar-logout-button {
+        background: rgb(255 255 255 / 10%);
+        border: 1px solid rgb(255 255 255 / 20%);
+        cursor: pointer;
+
+        &:active {
+            transform: scale(0.97);
+        }
     }
-    
-    // Current page styling
-    &.sidebar-default-cursor {
-      opacity: 0.6;
-      cursor: default;
-      filter: grayscale(0.5);
-    }
-  }
-  
-  // Remove button-specific styles for logout button when styled as glass
-  .sidebar-logout-button {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    cursor: pointer;
-    
-    &:active {
-      transform: scale(0.97);
-    }
-  }
 }
 
 .sidebar-icons {
-  width: 24px;
-  height: 24px;
-  user-select: none;
-  display: block;
-  flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    user-select: none;
+    display: block;
+    flex-shrink: 0;
 }
 
 .sidebar-disabled {
-  opacity: 0.6;
-  cursor: default !important;
-  filter: grayscale(0.5);
-  // Don't disable pointer-events - we need clicks for shake animation
+    opacity: 0.6;
+    cursor: default !important;
+    filter: grayscale(0.5);
+
+    // Don't disable pointer-events - we need clicks for shake animation
 }
 
 .sidebar-current {
@@ -179,10 +190,11 @@
 }
 
 .sidebar-disabled {
-  opacity: 0.6;
-  cursor: default !important;
-  filter: grayscale(0.5);
-  // Don't disable pointer-events - we need clicks for shake animation
+    opacity: 0.6;
+    cursor: default !important;
+    filter: grayscale(0.5);
+
+    // Don't disable pointer-events - we need clicks for shake animation
 }
 
 @keyframes sidebar-shake {

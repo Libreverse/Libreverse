@@ -206,11 +206,11 @@ module ApplicationHelper
     potential_dirs.each do |dir|
       path = dir.join("#{icon_name}.svg")
       Rails.logger.info "Checking for SVG at: #{path}"
-      if path.to_s.start_with?(dir.to_s) && File.exist?(path) && File.file?(path)
-        icon_path = path
-        Rails.logger.info "Found SVG at: #{icon_path}"
-        break
-      end
+      next unless path.to_s.start_with?(dir.to_s) && File.exist?(path) && File.file?(path)
+
+      icon_path = path
+      Rails.logger.info "Found SVG at: #{icon_path}"
+      break
     end
 
     unless icon_path
