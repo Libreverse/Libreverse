@@ -105,20 +105,12 @@ export default class extends ApplicationController
     return
 
   setupResizeListener: ->
-    # Debounce resize events to avoid excessive updates
-    debounce = (func, wait) =>
-      timeout = null
-      =>
-        clearTimeout(timeout)
-        timeout = setTimeout(func, wait)
-
-    @handleResize = debounce((=>
+    @handleResize = =>
       @updateRainyDayDimensions()
-    ), 200)
 
-    window.addEventListener 'resize', @handleResize
+    window.addEventListener 'debounced:resize', @handleResize
     @removeResizeListener = =>
-      window.removeEventListener 'resize', @handleResize
+      window.removeEventListener 'debounced:resize', @handleResize
     return
 
   updateRainyDayDimensions: ->

@@ -1,38 +1,25 @@
 import ApplicationController from "./application_controller"
 
 export default class extends ApplicationController
-  @values = {
-    debounceTime: { type: Number, default: 300 }
-  }
 
   connect: ->
     super.connect()
     @inputHandler = @handleInput.bind(@)
-    @searchTimer = null
 
-    @element.addEventListener "input", @inputHandler
+    @element.addEventListener "debounced:input", @inputHandler
 
     @updateURLHandler = @updateURLAfterSearch.bind(@)
     document.addEventListener "stimulus-reflex:after", @updateURLHandler
     return
 
   disconnect: ->
-    @element.removeEventListener "input", @inputHandler
+    @element.removeEventListener "debounced:input", @inputHandler
     document.removeEventListener "stimulus-reflex:after", @updateURLHandler
-
-    if @searchTimer
-      clearTimeout @searchTimer
     return
 
-  # Debounced input handler: Triggers SearchReflex
+  # Input handler: Triggers SearchReflex (now debounced by the library)
   handleInput: ->
-    if @searchTimer
-      clearTimeout @searchTimer
-
-    @searchTimer = setTimeout (=>
-      @stimulate "SearchReflex#perform"
-      return
-    ), @debounceTimeValue
+    @stimulate "SearchReflex#perform"
     return
 
   # Updates the URL after SearchReflex completes successfully
