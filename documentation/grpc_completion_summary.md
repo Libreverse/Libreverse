@@ -40,7 +40,6 @@ The gRPC API for Libreverse has been successfully implemented with the following
 ### **Access Methods:**
 
 1. **Native gRPC Server** (Port 50051)
-
     - High-performance binary protocol
     - HTTP/2 multiplexing
     - Auto-generated clients for multiple languages

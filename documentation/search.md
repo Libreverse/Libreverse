@@ -25,19 +25,16 @@ The search interface includes:
 ## User Flow
 
 1. **Initiating Search**:
-
     - Users can access search via the sidebar navigation
     - The search page presents a clear, focused search interface
     - Direct URL access is available via `/search`
 
 2. **Performing Searches**:
-
     - Enter search terms in the query field
     - Optionally apply filters
     - Submit search or use real-time suggestions
 
 3. **Viewing Results**:
-
     - Results display in a grid or list format
     - Each result shows the experience title, author, and brief description
     - Pagination controls for navigating through multiple pages of results

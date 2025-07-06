@@ -36,27 +36,27 @@
 ```html
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="glass.css" />
-  </head>
-  <body>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="container.js"></script>
-    <script src="button.js"></script>
+    <head>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="glass.css" />
+    </head>
+    <body>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+        <script src="container.js"></script>
+        <script src="button.js"></script>
 
-    <script>
-      // Create a glass button
-      const button = new Button({
-        text: 'Click Me!',
-        size: 32,
-        type: 'rounded',
-        onClick: () => alert('Hello Glass!')
-      })
+        <script>
+            // Create a glass button
+            const button = new Button({
+                text: "Click Me!",
+                size: 32,
+                type: "rounded",
+                onClick: () => alert("Hello Glass!"),
+            });
 
-      document.body.appendChild(button.element)
-    </script>
-  </body>
+            document.body.appendChild(button.element);
+        </script>
+    </body>
 </html>
 ```
 
@@ -65,27 +65,27 @@
 ```javascript
 // Create a glass container
 const container = new Container({
-  borderRadius: 24,
-  type: 'pill',
-  tintOpacity: 0.3
-})
+    borderRadius: 24,
+    type: "pill",
+    tintOpacity: 0.3,
+});
 
 // Add glass buttons to container
 const button1 = new Button({
-  text: 'Action',
-  size: 24,
-  type: 'pill'
-})
+    text: "Action",
+    size: 24,
+    type: "pill",
+});
 
 const button2 = new Button({
-  text: '✓',
-  size: 24,
-  type: 'circle'
-})
+    text: "✓",
+    size: 24,
+    type: "circle",
+});
 
-container.addChild(button1)
-container.addChild(button2)
-document.body.appendChild(container.element)
+container.addChild(button1);
+container.addChild(button2);
+document.body.appendChild(container.element);
 ```
 
 ## 📚 API Reference
@@ -104,13 +104,13 @@ document.body.appendChild(container.element)
 
 ```javascript
 // Add child element (enables nested glass)
-container.addChild(childElement)
+container.addChild(childElement);
 
 // Remove child element
-container.removeChild(childElement)
+container.removeChild(childElement);
 
 // Force size update from DOM
-container.updateSizeFromDOM()
+container.updateSizeFromDOM();
 ```
 
 ### Button Class
@@ -132,15 +132,15 @@ Extends `Container` with button-specific functionality.
 
 ```javascript
 const button = new Button({
-  text: 'Save Changes',
-  size: 28,
-  type: 'pill',
-  tintOpacity: 0.4,
-  warp: true,
-  onClick: text => {
-    console.log(`${text} was clicked!`)
-  }
-})
+    text: "Save Changes",
+    size: 28,
+    type: "pill",
+    tintOpacity: 0.4,
+    warp: true,
+    onClick: (text) => {
+        console.log(`${text} was clicked!`);
+    },
+});
 ```
 
 ## 🎛️ Glass Effect Parameters
@@ -167,22 +167,25 @@ The library provides fine-grained control over glass rendering:
 ```javascript
 // Global glass parameters
 window.glassControls = {
-  edgeIntensity: 0.02,
-  rimIntensity: 0.08,
-  blurRadius: 7.0,
-  tintOpacity: 0.3
-}
+    edgeIntensity: 0.02,
+    rimIntensity: 0.08,
+    blurRadius: 7.0,
+    tintOpacity: 0.3,
+};
 
 // Update all instances
 function updateAllGlassInstances() {
-  Container.instances.forEach(instance => {
-    if (instance.gl_refs && instance.gl_refs.gl) {
-      const gl = instance.gl_refs.gl
-      gl.uniform1f(instance.gl_refs.edgeIntensityLoc, window.glassControls.edgeIntensity)
-      // ... update other uniforms
-      if (instance.render) instance.render()
-    }
-  })
+    Container.instances.forEach((instance) => {
+        if (instance.gl_refs && instance.gl_refs.gl) {
+            const gl = instance.gl_refs.gl;
+            gl.uniform1f(
+                instance.gl_refs.edgeIntensityLoc,
+                window.glassControls.edgeIntensity,
+            );
+            // ... update other uniforms
+            if (instance.render) instance.render();
+        }
+    });
 }
 ```
 
@@ -192,27 +195,27 @@ function updateAllGlassInstances() {
 
 ```javascript
 const rounded = new Button({
-  type: 'rounded',
-  borderRadius: 16 // Custom radius
-})
+    type: "rounded",
+    borderRadius: 16, // Custom radius
+});
 ```
 
 #### Perfect Circle
 
 ```javascript
 const circle = new Button({
-  type: 'circle',
-  size: 32 // Determines circle diameter
-})
+    type: "circle",
+    size: 32, // Determines circle diameter
+});
 ```
 
 #### Pill/Capsule
 
 ```javascript
 const pill = new Button({
-  type: 'pill',
-  text: 'Elongated Button' // Auto-sizing
-})
+    type: "pill",
+    text: "Elongated Button", // Auto-sizing
+});
 ```
 
 ## 🎨 Styling
@@ -224,24 +227,24 @@ The library provides semantic CSS classes:
 ```css
 /* Glass containers */
 .glass-container {
-  /* Base container styles */
+    /* Base container styles */
 }
 .glass-container-circle {
-  /* Circle-specific styles */
+    /* Circle-specific styles */
 }
 .glass-container-pill {
-  /* Pill-specific styles */
+    /* Pill-specific styles */
 }
 
 /* Glass buttons */
 .glass-button {
-  /* Base button styles */
+    /* Base button styles */
 }
 .glass-button-circle {
-  /* Circle button styles */
+    /* Circle button styles */
 }
 .glass-button-text {
-  /* Button text overlay */
+    /* Button text overlay */
 }
 ```
 
@@ -250,12 +253,12 @@ The library provides semantic CSS classes:
 ```css
 /* Dark theme example */
 .glass-button {
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
 }
 
 .glass-button-text {
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 ```
 
@@ -337,39 +340,39 @@ No build step required! The library uses vanilla JavaScript and can be used dire
 
 ```javascript
 const navContainer = new Container({
-  type: 'rounded',
-  borderRadius: 20,
-  tintOpacity: 0.1
-})
+    type: "rounded",
+    borderRadius: 20,
+    tintOpacity: 0.1,
+});
 
-;['Home', 'About', 'Contact'].forEach(text => {
-  const navButton = new Button({
-    text: text,
-    size: 16,
-    type: 'pill',
-    onClick: text => navigate(text)
-  })
-  navContainer.addChild(navButton)
-})
+["Home", "About", "Contact"].forEach((text) => {
+    const navButton = new Button({
+        text: text,
+        size: 16,
+        type: "pill",
+        onClick: (text) => navigate(text),
+    });
+    navContainer.addChild(navButton);
+});
 ```
 
 ### Control Panel
 
 ```javascript
 const controlPanel = new Container({
-  type: 'rounded',
-  borderRadius: 12,
-  tintOpacity: 0.6
-})
+    type: "rounded",
+    borderRadius: 12,
+    tintOpacity: 0.6,
+});
 
 const playButton = new Button({
-  text: '▶',
-  size: 24,
-  type: 'circle',
-  onClick: () => player.play()
-})
+    text: "▶",
+    size: 24,
+    type: "circle",
+    onClick: () => player.play(),
+});
 
-controlPanel.addChild(playButton)
+controlPanel.addChild(playButton);
 ```
 
 ## 🔮 Roadmap

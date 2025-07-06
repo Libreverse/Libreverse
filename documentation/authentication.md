@@ -43,7 +43,6 @@ Libreverse uses the secure Rodauth framework for all authentication and account 
 ## User Flow
 
 1. **Registration**:
-
     - User navigates to registration page
     - Completes form with email and password
     - Receives verification email
@@ -51,7 +50,6 @@ Libreverse uses the secure Rodauth framework for all authentication and account 
     - Account becomes active
 
 2. **Login**:
-
     - User enters email and password
     - If multi-factor is enabled, completes second authentication step
     - System establishes authenticated session

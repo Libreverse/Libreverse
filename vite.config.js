@@ -8,7 +8,6 @@ import * as coffee from "coffeescript";
 import postcssUrl from "postcss-url";
 
 export default defineConfig(({ mode }) => {
-    
     const isDevelopment = mode === "development";
 
     return {
@@ -33,13 +32,13 @@ export default defineConfig(({ mode }) => {
                     inlineDynamicImports: false,
                     compact: true,
                     generatedCode: {
-                         preset: "es2015", // Rollup only supports 'es5' or 'es2015'
-                         arrowFunctions: true,
-                         constBindings: true,
-                         objectShorthand: true,
+                        preset: "es2015", // Rollup only supports 'es5' or 'es2015'
+                        arrowFunctions: true,
+                        constBindings: true,
+                        objectShorthand: true,
                     },
                 },
-    
+
                 external: [],
                 treeshake: {
                     moduleSideEffects: false,
@@ -48,15 +47,11 @@ export default defineConfig(({ mode }) => {
                     unknownGlobalSideEffects: false,
                 },
             },
-            target: [
-                "esnext"
-            ],
+            target: ["esnext"],
             modulePreload: { polyfill: true },
             cssCodeSplit: false,
             assetsInlineLimit: 2147483647,
-            cssTarget: [
-                "esnext"
-            ],
+            cssTarget: ["esnext"],
             sourcemap: false,
             chunkSizeWarningLimit: 2147483647,
             reportCompressedSize: false,
@@ -206,13 +201,19 @@ export default defineConfig(({ mode }) => {
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),
             {
-                name: 'vite-plugin-coffeescript',
+                name: "vite-plugin-coffeescript",
                 transform(code, id) {
-                    if (id.endsWith('.coffee')) {
+                    if (id.endsWith(".coffee")) {
                         try {
-                            const compiled = coffee.compile(code, { filename: id, bare: true });
+                            const compiled = coffee.compile(code, {
+                                filename: id,
+                                bare: true,
+                            });
                             return {
-                                code: typeof compiled === 'string' ? compiled : compiled.js,
+                                code:
+                                    typeof compiled === "string"
+                                        ? compiled
+                                        : compiled.js,
                                 map: undefined,
                             };
                         } catch (error) {
