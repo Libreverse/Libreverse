@@ -1,8 +1,5 @@
 # Todo List
 
-add stimulus stores to clean up state management
-replace server form validation reflex with formulus
-replace turbo_power for consent form with turbo streams
 remove the normaliser from foundation ui and add it in
 add in drawing jquery captcha
 rewrite p2p to use websockets
