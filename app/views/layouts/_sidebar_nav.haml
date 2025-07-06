@@ -2,11 +2,13 @@
 - public_links = [{ path: '/', icon: 'home', label: 'homepage' }, { path: '/search', icon: 'search', label: 'search page' }, { path: '/settings', icon: 'settings', label: 'settings page' }]
 - nav_items = public_links.dup
 
-- if rodauth.logged_in? && !rodauth.guest_logged_in?
-  - nav_items.concat([{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }])
-  - nav_items << { path: rodauth.logout_path, icon: 'logout', label: 'Sign out', method: :post }
-- else
-  - nav_items.concat([{ path: rodauth.login_path, icon: 'login', label: 'login page' }, { path: rodauth.create_account_path, icon: 'signup', label: 'sign-up page' }])
+:ruby
+  if rodauth.logged_in? && !rodauth.guest_logged_in?
+    nav_items.concat([{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }])
+    nav_items << { path: rodauth.logout_path, icon: 'logout', label: 'Sign out', method: :post }
+  else
+    nav_items.concat([{ path: rodauth.login_path, icon: 'login', label: 'login page' }, { path: rodauth.create_account_path, icon: 'signup', label: 'sign-up page' }])
+  end
 
 
 %nav{id: "sidebar-nav-#{sidebar_id}",
@@ -20,7 +22,6 @@
        "enable-glass-value": true,
        "tint-opacity-value": 0.12,
        "glass-type-value": "rounded",
-       
        # Parallax configuration
        "parallax-speed-value": 1,
        "parallax-offset-value": 0,

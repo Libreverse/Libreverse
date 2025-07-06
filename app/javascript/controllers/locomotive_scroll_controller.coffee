@@ -33,17 +33,16 @@ export default class extends Controller
           smooth: true
         }
       })
-      
+
       # Expose globally for glass container integration
       window.locomotiveScroll = @scroll
-      
+
       # Dispatch custom event when scroll updates
       @scroll.on 'scroll', (args) =>
         event = new CustomEvent('locomotive-scroll', {
           detail: args
         })
         document.dispatchEvent(event)
-        
     catch error
       console.error "Failed to initialize LocomotiveScroll:", error
     return

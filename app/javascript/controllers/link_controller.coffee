@@ -7,7 +7,7 @@ export default class extends ApplicationController
 
   click: (event) ->
     event.preventDefault() # Always prevent default navigation
-    
+
     if @isCurrentValue
       # Current page - just show shake animation
       @element.classList.add "sidebar-not-allowed-shake"
@@ -17,7 +17,7 @@ export default class extends ApplicationController
       ), 750
     else
       # Navigate to new page using Turbo
-      path = @element.getAttribute('href') || @data.get('path')
+      path = @element.getAttribute('href') or @data.get('path')
       if path
         Turbo.visit(path)
     return

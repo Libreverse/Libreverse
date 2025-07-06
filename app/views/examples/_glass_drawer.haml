@@ -1,9 +1,9 @@
--# Example: Glass Drawer Component
--# Usage: Replace the existing drawer partial with this enhanced version
+-# Example: Glass Drawer Component - Usage: Replace the existing drawer partial with this enhanced version
 
-- drawer_id = local_assigns.fetch(:drawer_id, "main")
-- expanded = local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id)
-- enable_glass = local_assigns.fetch(:enable_glass, true)
+:ruby
+  drawer_id = local_assigns.fetch(:drawer_id, "main")
+  expanded = local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id)
+  enable_glass = local_assigns.fetch(:enable_glass, true)
 
 %aside.drawer-container{id: "#{drawer_id}-drawer",
                        role: "complementary",
@@ -29,7 +29,7 @@
           - if content_for?(:drawer_title)
             = yield(:drawer_title)
           - else
-            = "Enhanced Glass Drawer"
+            Enhanced Glass Drawer
         %button.drawer-toggle{"aria-controls": "drawer-content-#{drawer_id}",
                               "aria-expanded": expanded,
                               "aria-label": "Toggle drawer",

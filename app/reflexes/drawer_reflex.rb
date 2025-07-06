@@ -6,8 +6,8 @@ class DrawerReflex < ApplicationReflex
   # Persists the drawer's expanded state from the client. Does not render or morph.
   def toggle(args = {})
     # Get drawer_id and the new expanded state directly from the arguments passed by the client.
-    drawer_id = args.fetch("drawer_id", "main")
-    new_expanded = args.fetch("expanded", false)
+    drawer_id = args.fetch("drawer_id") { "main" }
+    new_expanded = args.fetch("expanded") { false }
     key = "drawer_expanded_#{drawer_id}"
 
     Rails.logger.info "[DrawerReflex#toggle] Received state for drawer '#{drawer_id}' -> expanded: #{new_expanded}"
