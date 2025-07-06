@@ -25,16 +25,16 @@ application.register("form-auto-submit", FormAutoSubmitController);
 import HyperspaceController from "./hyperspace_controller";
 application.register("hyperspace", HyperspaceController);
 
-import InstanceSettingsController from "./instance_settings_controller";
+import InstanceSettingsController from "./instance_settings_controller.coffee";
 application.register("instance-settings", InstanceSettingsController);
 
-import LanguagePickerController from "./language_picker_controller";
+import LanguagePickerController from "./language_picker_controller.coffee";
 application.register("language-picker", LanguagePickerController);
 
-import LinkController from "./link_controller";
+import LinkController from "./link_controller.coffee";
 application.register("link", LinkController);
 
-import LocomotiveScrollController from "./locomotive_scroll_controller";
+import LocomotiveScrollController from "./locomotive_scroll_controller.coffee";
 application.register("locomotive-scroll", LocomotiveScrollController);
 
 import MultiplayerExperienceController from "./multiplayer_experience_controller";

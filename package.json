@@ -10,6 +10,7 @@
         "@sxwjs/sxwjs": "^4.0.0",
         "@vitejs/plugin-legacy": "^7.0.0",
         "cable_ready": "5.0.6",
+        "debounced": "^1.0.2",
         "foundation-emails": "^2.4.0",
         "hotkeys-js": "^3.13.14",
         "html2canvas": "^1.4.1",
