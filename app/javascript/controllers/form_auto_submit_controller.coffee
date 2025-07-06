@@ -3,12 +3,8 @@ import ApplicationController from "./application_controller"
 # Connects to data-controller="form-auto-submit"
 export default class extends ApplicationController
   @targets = ["form", "input"]
-  @values = {
-    debounceTime: { type: Number, default: 800 }
-  }
 
   initialize: ->
-    @timer = null
     @isSubmitting = false
     @onFormValidated = @onFormValidated.bind(@)
     return
@@ -34,9 +30,9 @@ export default class extends ApplicationController
         @onFormValidated
       )
 
-    # Monitor input changes
+    # Monitor input changes with debounced events
     @inputTargets.forEach (input) =>
-      input.addEventListener("input", @handleInputChange.bind(@))
+      input.addEventListener("debounced:input", @handleInputChange.bind(@))
     return
 
   disconnect: ->
@@ -46,11 +42,6 @@ export default class extends ApplicationController
         "form:validated",
         @onFormValidated
       )
-
-    # Clear any pending timers
-    if @timer
-      clearTimeout @timer
-      @timer = null
     return
 
   # Create error container if needed
@@ -68,15 +59,9 @@ export default class extends ApplicationController
     return
 
   handleInputChange: ->
-    # Clear any existing timer
-    if @timer
-      clearTimeout @timer
-
-    # Set a new timer for debounced validation
-    @timer = setTimeout(
-      (=> @validateForm()),
-      @debounceTimeValue
-    )
+    return if @isSubmitting
+    # The debounced library handles the timing, so we can validate directly
+    @validateForm()
     return
 
   validateForm: ->

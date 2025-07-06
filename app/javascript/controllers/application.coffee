@@ -8,10 +8,8 @@ app = Application.start()
 # Attach ActionCable consumer so StimulusReflex can share the connection
 app.consumer = consumer
 
-# Optional debug logging for plain Stimulus (separate from StimulusReflex)
-if import.meta.env.MODE is "development"
-  app.debug = true
-  console.log "StimulusJS Debug Mode Enabled"
+# shut stimulus up
+app.debug = false
 
 globalThis.Stimulus = app
 
