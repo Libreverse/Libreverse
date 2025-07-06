@@ -1,11 +1,6 @@
 # This file defines recurring Solid Queue tasks per environment.
 
 shared_tasks: &shared_tasks
-    solid_cable_trim:
-        class: SolidCable::TrimJob
-        queue: default
-        schedule: every hour
-
     cleanup_abandoned_guests:
         class: CleanupAbandonedGuestsJob
         queue: default
@@ -16,25 +11,10 @@ shared_tasks: &shared_tasks
         queue: maintenance
         schedule: "0 3 * * *"
 
-    optimize_database:
-        class: OptimizeDatabaseJob
-        queue: maintenance
-        schedule: "0 0 * * *" # Every day at midnight
-
-    vacuum_database:
-        class: VacuumDatabaseJob
-        queue: maintenance
-        schedule: "0 3 1 * *" # Monthly on the 1st at 3 AM
-
     integrity_check:
         class: IntegrityCheckJob
         queue: maintenance
         schedule: "0 4 1 1,4,7,10 *" # Quarterly on the 1st of Jan, Apr, Jul, Oct at 4 AM
-
-    reindex_database:
-        class: ReindexDatabaseJob
-        queue: maintenance
-        schedule: "0 5 1 1 *" # Annually on Jan 1st at 5 AM
 
 production:
     <<: *shared_tasks
