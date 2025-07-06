@@ -21,6 +21,6 @@ export let options = {
 };
 
 export default function () {
-    http.get("https://libreverse.geor.me"); // Replace with your app's URL
+    http.get("http://localhost:3000"); // Replace with your app's URL
     sleep(0.1); // Minimal delay for realistic pacing
 }

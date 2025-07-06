@@ -5,25 +5,25 @@ default: &default
     pool: 1
     pragmas:
         analysis_limit: 0           # Retained: No query analysis limit, minimal impact on concurrency
-        auto_vacuum: 'NONE'         # Retained: Avoids vacuum locking, supports concurrency
+        auto_vacuum: 'INCREMENTAL'  # Changed: Enable automatic space reclamation without full vacuum locks
         automatic_index: 1          # Retained: Supports query performance, aids read concurrency
         busy_timeout: 5000          # Changed: Set to 5000 ms to handle lock contention for writers
         cache_size: -200000         # Retained: Large cache for performance, indirectly aids concurrency
         cache_spill: 1              # Retained: Enables cache spilling, performance optimization
-        cell_size_check: 0          # Retained: Disables overhead, speeds up writes
-        checkpoint_fullfsync: 0     # Retained: Speeds up checkpoints, reduces locking in WAL mode
+        cell_size_check: 1          # Changed: Enable cell size checking for data integrity
+        checkpoint_fullfsync: 1     # Changed: Enable full fsync for checkpoint integrity
         foreign_keys: 1             # Retained: Enforces foreign keys as requested
-        fullfsync: 0                # Retained: Reduces sync overhead (macOS), improves performance
+        fullfsync: 1                # Changed: Enable full fsync for maximum data integrity on macOS
         journal_mode: 'WAL'         # Changed: Enables WAL for high concurrency (multiple readers, one writer)
         journal_size_limit: -1      # Retained: Unlimited WAL size, monitor if growth is excessive
         locking_mode: 'NORMAL'      # Retained: Compatible with WAL, supports concurrency
         mmap_size: 200000000        # Retained: Large memory mapping for performance
         page_size: 16384            # Retained: Optimized page size for modern systems
         secure_delete: 'ON'         # Retained: Secure deletion as requested, minimal concurrency impact
-        synchronous: 1              # Changed: Set to NORMAL for WAL performance and concurrency
+        synchronous: 3              # Changed: Set to FULL for maximum data integrity and durability
         temp_store: 2               # Retained: Memory-based temp storage, reduces I/O
         optimize: 1048578           # Retained: Custom optimization, likely for query performance
-        wal_autocheckpoint: 1000    # todo move all the manual database managmement to auto settings
+        wal_autocheckpoint: 1000    # Automatic WAL checkpointing enabled
 
 development:
     <<: *default

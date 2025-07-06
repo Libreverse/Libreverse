@@ -1,0 +1,4 @@
+web: IS_LOAD_TEST=true bundle exec iodine
+vite: bin/vite dev
+mailhog: mailhog
+k6: sleep 10 && k6 run scripts/benchmark3.js
