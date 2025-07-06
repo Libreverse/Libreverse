@@ -16,6 +16,7 @@
         "html2canvas": "^1.4.1",
         "locomotive-scroll": "^4.1.4",
         "p2p": "file:vendor/javascript/p2p",
+        "stimulus-store": "^0.0.3",
         "stimulus-use": "^0.52.3",
         "stimulus-vite-helpers": "^3.1.0",
         "stimulus_reflex": "3.5.3",

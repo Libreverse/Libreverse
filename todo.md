@@ -1,6 +1,5 @@
 # Todo List
 
-add debounced for debouncing needs
 add stimulus stores to clean up state management
 replace server form validation reflex with formulus
 replace turbo_power for consent form with turbo streams

@@ -78,3 +78,22 @@ application.register("card", CardController);
 
 import GlassButtonController from "./glass_button_controller";
 application.register("glass-button", GlassButtonController);
+
+// Enhanced controllers with stimulus-store integration
+import EnhancedApplicationController from "./enhanced_application_controller";
+application.register("enhanced-application", EnhancedApplicationController);
+
+import EnhancedGlassController from "./enhanced_glass_controller";
+application.register("enhanced-glass", EnhancedGlassController);
+
+import EnhancedInstanceSettingsController from "./enhanced_instance_settings_controller";
+application.register("enhanced-instance-settings", EnhancedInstanceSettingsController);
+
+import EnhancedP2pSyncController from "./enhanced_p2p_sync_controller";
+application.register("enhanced-p2p-sync", EnhancedP2pSyncController);
+
+import EnhancedToastController from "./enhanced_toast_controller";
+application.register("enhanced-toast", EnhancedToastController);
+
+import EnhancedSearchController from "./enhanced_search_controller";
+application.register("enhanced-search", EnhancedSearchController);

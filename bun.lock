@@ -17,6 +17,7 @@
         "html2canvas": "^1.4.1",
         "locomotive-scroll": "^4.1.4",
         "p2p": "file:vendor/javascript/p2p",
+        "stimulus-store": "^0.0.3",
         "stimulus-use": "^0.52.3",
         "stimulus-vite-helpers": "^3.1.0",
         "stimulus_reflex": "3.5.3",
@@ -1670,6 +1671,8 @@
     "sprintf-js": ["sprintf-js@1.0.3", "", {}, "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="],
 
     "stack-utils": ["stack-utils@2.0.6", "", { "dependencies": { "escape-string-regexp": "^2.0.0" } }, "sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ=="],
+
+    "stimulus-store": ["stimulus-store@0.0.3", "", {}, "sha512-SQGdf2BZpItO0g1jW1vwwA9ZRvlymoQJQe9r8pfTkZ+NsPgkXR5uO8y8Ue+tQDZa8DSAD3RZ1Io2YuDVnBygJQ=="],
 
     "stimulus-use": ["stimulus-use@0.52.3", "", { "peerDependencies": { "@hotwired/stimulus": ">= 3", "hotkeys-js": ">= 3" } }, "sha512-stZ5dID6FUrGCR/ChWUa0FT5Z8iqkzT6lputOAb50eF+Ayg7RzJj4U/HoRlp2NV333QfvoRidru9HLbom4hZVw=="],
 
