@@ -2,6 +2,7 @@ import "../stylesheets/application.scss";
 import sxwjs from "@sxwjs/sxwjs";
 import html2canvas from "html2canvas";
 import debounced from "debounced";
+import "./libs/foundation.js";
 
 // Initialize debounced library with custom options
 debounced.initialize(debounced.defaultEventNames, {

@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => {
         },
         resolve: {
             extensions: [".js", ".json", ".coffee", ".scss"],
+            alias: {
+                "~": "/node_modules/",
+            },
         },
         build: {
             cache: !isDevelopment,
@@ -171,6 +174,10 @@ export default defineConfig(({ mode }) => {
             preprocessorOptions: {
                 scss: {
                     api: "modern-compiler",
+                    includePaths: [
+                        "node_modules",
+                        "./node_modules"
+                    ],
                 },
             },
             postcss: {
