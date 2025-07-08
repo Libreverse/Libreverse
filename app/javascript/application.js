@@ -3,6 +3,7 @@ import sxwjs from "@sxwjs/sxwjs";
 import html2canvas from "html2canvas";
 import debounced from "debounced";
 import "./libs/foundation.js";
+import "./libs/websocket_p2p_frame.coffee";
 
 // Initialize debounced library with custom options
 debounced.initialize(debounced.defaultEventNames, {

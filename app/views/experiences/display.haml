@@ -1,5 +1,147 @@
 -# filepath: /Users/george/Libreverse/app/views/experiences/display.haml
-%iframe.experiencedisplay-iframe{ allow: "pointer-lock",
-                                sandbox: "allow-scripts allow-pointer-lock",
-                                srcdoc: @html_content.to_s,
-                                title: "Experience: #{@experience.title}" }
+- if @is_multiplayer
+  - content_for :title, "#{@experience.title} - Multiplayer"
+
+  %h2= @experience.title
+  %p.lead Multiplayer Session
+  - if @experience.description.present?
+    %p= @experience.description
+
+  .multiplayer-container
+    .multiplayer-status
+      %span.status-indicator.connecting{ id: "status-indicator" }
+        %i.fas.fa-spinner.fa-spin
+        Connecting to peers...
+
+      = p2p_frame_tag(session_id: @session_id,
+                      peer_id: @peer_id,
+                      expires_in: 2.hours,
+                      config: {}) do
+
+        .experience-wrapper{ "data-controller" => "websocket-p2p",
+                           "data-websocket-p2p-session-id-value" => @session_id,
+                           "data-websocket-p2p-peer-id-value" => @peer_id,
+                           "data-websocket-p2p-target" => "status" }
+          %iframe.experiencedisplay-iframe{ allow: "pointer-lock",
+                                          sandbox: "allow-scripts allow-pointer-lock allow-same-origin",
+                                          srcdoc: @html_content.to_s,
+                                          title: "Multiplayer Experience: #{@experience.title}",
+                                          id: "experience-iframe",
+                                          "data-websocket-p2p-target" => "iframe" }
+
+  .multiplayer-controls
+    .peer-list
+      %h4 Connected Peers
+      %ul#peer-list
+        %li
+          %span.peer-id= @peer_id
+          %span.peer-status.host (You)
+
+  .multiplayer-info
+    %p
+      %strong Session ID:
+      %code= @session_id
+    %p
+      %strong Your Peer ID:
+      %code= @peer_id
+    %p.text-muted
+      Share this URL with others to join the multiplayer session:
+      %br
+      %code= display_experience_url(@experience, session: @session_id)
+
+  :css
+    .multiplayer-container {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .multiplayer-status {
+      background: #f8f9fa;
+      padding: 10px 15px;
+      border-bottom: 1px solid #e0e0e0;
+      font-weight: 500;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .status-indicator.connecting { color: #ffc107; }
+    .status-indicator.connected { color: #28a745; }
+    .status-indicator.disconnected { color: #dc3545; }
+
+    .experience-wrapper {
+      position: relative;
+    }
+
+    .experiencedisplay-iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      background: white;
+    }
+
+    .multiplayer-controls {
+      background: #f8f9fa;
+      padding: 15px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .peer-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0 0;
+    }
+
+    .peer-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .peer-list li:last-child {
+      border-bottom: none;
+    }
+
+    .peer-id {
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    .peer-status {
+      font-size: 0.8em;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: #e9ecef;
+    }
+
+    .peer-status.host {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .multiplayer-info {
+      background: #f8f9fa;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .multiplayer-info code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+- else
+  %iframe.experiencedisplay-iframe{ allow: "pointer-lock",
+                                  sandbox: "allow-scripts allow-pointer-lock",
+                                  srcdoc: @html_content.to_s,
+                                  title: "Experience: #{@experience.title}" }
