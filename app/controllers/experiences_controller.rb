@@ -125,6 +125,16 @@ class ExperiencesController < ApplicationController
 
     @html_content = @experience.html_file.download.force_encoding("UTF-8")
 
+    # Auto-enable P2P for experiences that are not offline-available (multiplayer experiences)
+    unless @experience.offline_available
+      @is_multiplayer = true
+      @session_id = params[:session].presence || "exp_#{@experience.id}_#{SecureRandom.hex(8)}"
+      @peer_id = "peer_#{current_account.id}_#{SecureRandom.hex(4)}"
+
+      # Inject WebSocket P2P client library into the experience HTML
+      @html_content = inject_websocket_p2p_client(@html_content)
+    end
+
     # Force browsers to treat the data as a download and prevent MIME sniffing
     response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -250,5 +260,24 @@ class ExperiencesController < ApplicationController
       allowed_domains.include?(parsed_uri.host)
   rescue URI::InvalidURIError
       false
+  end
+
+  # Inject WebSocket P2P client library into experience HTML
+  def inject_websocket_p2p_client(html_content)
+    # Read the P2P client script
+    p2p_client_script = File.read(Rails.root.join("app", "javascript", "libs", "websocket_p2p_client.js"))
+    
+    # Wrap in script tags
+    p2p_script_tag = "<script>#{p2p_client_script}</script>"
+
+    # Inject the script before the closing </head> tag, or before </body> if no </head>
+    if html_content.include?("</head>")
+      html_content.sub("</head>", "#{p2p_script_tag}\n</head>")
+    elsif html_content.include?("</body>")
+      html_content.sub("</body>", "#{p2p_script_tag}\n</body>")
+    else
+      # If no proper HTML structure, append to end
+      html_content + p2p_script_tag
+    end
   end
 end

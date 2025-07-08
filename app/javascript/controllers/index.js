@@ -75,3 +75,6 @@ application.register("sidebar", SidebarController)
 
 import ToastController from "./toast_controller"
 application.register("toast", ToastController)
+
+import WebsocketP2pController from "./websocket_p2p_controller"
+application.register("websocket-p2p", WebsocketP2pController)

@@ -1,6 +1,5 @@
 # Todo List
 
-remove the normaliser from foundation ui and add it in
 add in drawing jquery captcha
 2: Add telegram search bot
 3: Add x.com search bot
