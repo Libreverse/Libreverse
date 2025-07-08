@@ -5,7 +5,6 @@ import {
   navigationStore,
   instanceSettingsStore,
   toastStore,
-  p2pStore,
   experienceStore,
   searchStore
 } from "../stores"
@@ -23,7 +22,6 @@ export class StoreManager {
       navigation: navigationStore,
       instanceSettings: instanceSettingsStore,
       toast: toastStore,
-      p2p: p2pStore,
       experience: experienceStore,
       search: searchStore
     }
@@ -157,11 +155,6 @@ export class ControllerMigrationHelper {
     if (this.controller.hasInstanceSettingsValues) {
       this.migrateInstanceSettingsValues()
     }
-
-    // Migrate P2P values
-    if (this.controller.hasP2PValues) {
-      this.migrateP2PValues()
-    }
   }
 
   migrateGlassValues() {
@@ -221,25 +214,6 @@ export class ControllerMigrationHelper {
 
     if (Object.keys(updates).length > 0) {
       settingsStore.value = { ...settingsStore.value, ...updates }
-    }
-  }
-
-  migrateP2PValues() {
-    const p2pStore = this.storeManager.getStore('p2p')
-    const updates = {}
-
-    if (this.controller.peerId !== undefined) {
-      updates.peerId = this.controller.peerId
-    }
-    if (this.controller.hostPeerId !== undefined) {
-      updates.hostPeerId = this.controller.hostPeerId
-    }
-    if (this.controller.iamHost !== undefined) {
-      updates.isHost = this.controller.iamHost
-    }
-
-    if (Object.keys(updates).length > 0) {
-      p2pStore.value = { ...p2pStore.value, ...updates }
     }
   }
 

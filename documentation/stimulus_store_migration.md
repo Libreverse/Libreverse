@@ -21,9 +21,8 @@ The stimulus-store library provides a lightweight, atomic state management solut
 3. **navigationStore** - Navigation state and current page
 4. **instanceSettingsStore** - Instance configuration settings
 5. **toastStore** - Toast notifications management
-6. **p2pStore** - P2P connection state
-7. **experienceStore** - Experience/content state
-8. **searchStore** - Search and filtering state
+6. **experienceStore** - Experience/content state
+7. **searchStore** - Search and filtering state
 
 ### Store Structure
 
@@ -138,41 +137,6 @@ toggleAutomoderation: (event) ->
 - **Auto-save**: Configurable auto-save functionality
 - **Validation**: Built-in form validation
 - **State tracking**: Know when settings are dirty or loading
-
-### P2P Sync Controller → Enhanced P2P Sync Controller
-
-The enhanced version provides comprehensive connection state management:
-
-#### Before (p2p_sync_controller.coffee):
-```coffeescript
-p2pConnected: ->
-  # Basic connection handling
-```
-
-#### After (enhanced_p2p_sync_controller.coffee):
-```coffeescript
-p2pConnected: ->
-  # Update centralized P2P state
-  @updateP2PState({
-    connectionState: "connected",
-    peerId: @peerId,
-    hostPeerId: @hostPeerId,
-    isHost: @iamHost
-  })
-  
-  # Show user feedback
-  @showToast("Connected to peer successfully!", "success")
-  
-  # Send initial state sync
-  @sendInitialStateSync()
-```
-
-#### Benefits:
-- **Centralized connection state**: All controllers can access P2P status
-- **Auto-reconnection**: Configurable reconnection logic
-- **Message handling**: Enhanced message routing and handling
-- **Connection monitoring**: Heartbeat and connection health tracking
-
 ### Toast Controller → Enhanced Toast Controller
 
 The enhanced version provides centralized toast management:
@@ -415,7 +379,6 @@ See the enhanced controllers in `app/javascript/controllers/` for complete examp
 - `enhanced_application_controller.coffee` - Base controller setup
 - `enhanced_glass_controller.coffee` - Glass effects with stores
 - `enhanced_instance_settings_controller.coffee` - Form state management
-- `enhanced_p2p_sync_controller.coffee` - P2P connection state
 - `enhanced_toast_controller.coffee` - Toast notifications
 - `enhanced_search_controller.coffee` - Search functionality
 

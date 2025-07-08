@@ -7,7 +7,6 @@ import {
   navigationStore,
   instanceSettingsStore,
   toastStore,
-  p2pStore,
   experienceStore,
   searchStore
 } from "../stores"
@@ -24,7 +23,6 @@ export default class extends Controller
     navigationStore,
     instanceSettingsStore,
     toastStore,
-    p2pStore,
     experienceStore,
     searchStore
   ]

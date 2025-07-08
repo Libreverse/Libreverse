@@ -2,7 +2,6 @@
 
 remove the normaliser from foundation ui and add it in
 add in drawing jquery captcha
-rewrite p2p to use websockets
 2: Add telegram search bot
 3: Add x.com search bot
 4: Open gRPC port on libreverse.geor.me
