@@ -17,7 +17,6 @@
         "html2canvas": "^1.4.1",
         "jquery": "^3.7.1",
         "locomotive-scroll": "^4.1.4",
-        "p2p": "file:vendor/javascript/p2p",
         "sassy-lists": "^3.0.1",
         "stimulus-store": "^0.0.3",
         "stimulus-use": "^0.52.3",

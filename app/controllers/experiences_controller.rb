@@ -125,16 +125,6 @@ class ExperiencesController < ApplicationController
 
     @html_content = @experience.html_file.download.force_encoding("UTF-8")
 
-    # Auto-enable P2P for experiences that are not offline-available (multiplayer experiences)
-    unless @experience.offline_available
-      @is_multiplayer = true
-      @session_id = params[:session].presence || "exp_#{@experience.id}_#{SecureRandom.hex(8)}"
-      @peer_id = "peer_#{current_account.id}_#{SecureRandom.hex(4)}"
-
-      # Inject P2P client library into the experience HTML
-      @html_content = inject_p2p_client(@html_content)
-    end
-
     # Force browsers to treat the data as a download and prevent MIME sniffing
     response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -260,111 +250,5 @@ class ExperiencesController < ApplicationController
       allowed_domains.include?(parsed_uri.host)
   rescue URI::InvalidURIError
       false
-  end
-
-  # Inject P2P client library into experience HTML
-  def inject_p2p_client(html_content)
-    # P2P client script that will be injected into the experience iframe
-    p2p_client_script = <<~JAVASCRIPT
-      <script>
-        // P2P Client Library for Libreverse Experiences
-        class LibreverseP2P {
-          constructor() {
-            this.connected = false;
-            this.isHost = false;
-            this.peerId = null;
-            this.participants = {};
-            this.messageHandlers = new Map();
-      #{'      '}
-            // Listen for messages from parent window
-            window.addEventListener('message', (event) => {
-              this.handleParentMessage(event.data);
-            });
-      #{'      '}
-            // Signal that iframe is ready
-            this.sendToParent('iframe-ready', {});
-          }
-      #{'    '}
-          // Send message to parent window (Libreverse app)
-          sendToParent(type, data) {
-            window.parent.postMessage({ type, data }, '*');
-          }
-      #{'    '}
-          // Handle messages from parent window
-          handleParentMessage(message) {
-            switch(message.type) {
-              case 'p2p-init':
-                this.peerId = message.peerId;
-                this.isHost = message.isHost;
-                this.onInit(message);
-                break;
-              case 'p2p-status':
-                this.connected = message.connected;
-                this.onStatusChange(message);
-                break;
-              case 'p2p-message':
-                this.onMessage(message.senderId, message.data);
-                break;
-              case 'p2p-participants':
-                this.participants = message.participants;
-                this.onParticipantsChange(message.participants);
-                break;
-            }
-          }
-      #{'    '}
-          // Send P2P message to all peers
-          send(data) {
-            if (!this.connected) {
-              console.warn('P2P not connected');
-              return false;
-            }
-            this.sendToParent('p2p-send', data);
-            return true;
-          }
-      #{'    '}
-          // Event handlers (can be overridden by experience)
-          onInit(data) {
-            console.log('P2P initialized:', data);
-          }
-      #{'    '}
-          onStatusChange(status) {
-            console.log('P2P status changed:', status);
-          }
-      #{'    '}
-          onMessage(senderId, data) {
-            console.log('P2P message from', senderId, ':', data);
-            // Call registered message handlers
-            this.messageHandlers.forEach(handler => handler(senderId, data));
-          }
-      #{'    '}
-          onParticipantsChange(participants) {
-            console.log('P2P participants changed:', participants);
-          }
-      #{'    '}
-          // Register message handler
-          addMessageHandler(handler) {
-            const id = Symbol();
-            this.messageHandlers.set(id, handler);
-            return () => this.messageHandlers.delete(id); // Return unsubscribe function
-          }
-        }
-      #{'  '}
-        // Make P2P available globally in the experience
-        window.LibreverseP2P = new LibreverseP2P();
-      #{'  '}
-        // Convenient shorthand
-        window.P2P = window.LibreverseP2P;
-      </script>
-    JAVASCRIPT
-
-    # Inject the script before the closing </head> tag, or before </body> if no </head>
-    if html_content.include?("</head>")
-      html_content.sub("</head>", "#{p2p_client_script}\n</head>")
-    elsif html_content.include?("</body>")
-      html_content.sub("</body>", "#{p2p_client_script}\n</body>")
-    else
-      # If no proper HTML structure, append to end
-      html_content + p2p_client_script
-    end
   end
 end

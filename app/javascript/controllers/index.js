@@ -2,98 +2,76 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application";
+import { application } from "./application"
 
-import ApplicationController from "./application_controller";
-application.register("application", ApplicationController);
+import ApplicationController from "./application_controller"
+application.register("application", ApplicationController)
 
-import ConsentController from "./consent_controller";
-application.register("consent", ConsentController);
+import CardController from "./card_controller"
+application.register("card", CardController)
 
-import CtaParticlesController from "./cta_particles_controller";
-application.register("cta-particles", CtaParticlesController);
+import ConsentController from "./consent_controller"
+application.register("consent", ConsentController)
 
-import DismissibleController from "./dismissible_controller";
-application.register("dismissible", DismissibleController);
+import CtaParticlesController from "./cta_particles_controller"
+application.register("cta-particles", CtaParticlesController)
 
-import ExperienceUploadController from "./experience_upload_controller";
-application.register("experience-upload", ExperienceUploadController);
+import DismissibleController from "./dismissible_controller"
+application.register("dismissible", DismissibleController)
 
-import FormAutoSubmitController from "./form_auto_submit_controller";
-application.register("form-auto-submit", FormAutoSubmitController);
+import ExperienceUploadController from "./experience_upload_controller"
+application.register("experience-upload", ExperienceUploadController)
 
-import HyperspaceController from "./hyperspace_controller";
-application.register("hyperspace", HyperspaceController);
+import FormAutoSubmitController from "./form_auto_submit_controller"
+application.register("form-auto-submit", FormAutoSubmitController)
 
-import InstanceSettingsController from "./instance_settings_controller.coffee";
-application.register("instance-settings", InstanceSettingsController);
+import FoundationController from "./foundation_controller"
+application.register("foundation", FoundationController)
 
-import LanguagePickerController from "./language_picker_controller.coffee";
-application.register("language-picker", LanguagePickerController);
+import GlassButtonController from "./glass_button_controller"
+application.register("glass-button", GlassButtonController)
 
-import LinkController from "./link_controller.coffee";
-application.register("link", LinkController);
+import GlassController from "./glass_controller"
+application.register("glass", GlassController)
 
-import LocomotiveScrollController from "./locomotive_scroll_controller.coffee";
-application.register("locomotive-scroll", LocomotiveScrollController);
+import GlassDrawerController from "./glass_drawer_controller"
+application.register("glass-drawer", GlassDrawerController)
 
-import MultiplayerExperienceController from "./multiplayer_experience_controller";
-application.register("multiplayer-experience", MultiplayerExperienceController);
+import HyperspaceController from "./hyperspace_controller"
+application.register("hyperspace", HyperspaceController)
 
-import NavigationShortcutsController from "./navigation_shortcuts_controller";
-application.register("navigation-shortcuts", NavigationShortcutsController);
+import InstanceSettingsController from "./instance_settings_controller"
+application.register("instance-settings", InstanceSettingsController)
 
-import P2pExperienceController from "./p2p_experience_controller";
-application.register("p2p-experience", P2pExperienceController);
+import LanguagePickerController from "./language_picker_controller"
+application.register("language-picker", LanguagePickerController)
 
-import P2pSyncController from "./p2p_sync_controller";
-application.register("p2p-sync", P2pSyncController);
+import LinkController from "./link_controller"
+application.register("link", LinkController)
 
-import ParallaxBackgroundController from "./parallax_background_controller";
-application.register("parallax-background", ParallaxBackgroundController);
+import LocomotiveScrollController from "./locomotive_scroll_controller"
+application.register("locomotive-scroll", LocomotiveScrollController)
 
-import RaindropController from "./raindrop_controller";
-application.register("raindrop", RaindropController);
+import NavController from "./nav_controller"
+application.register("nav", NavController)
 
-import SearchUrlUpdaterController from "./search_url_updater_controller";
-application.register("search-url-updater", SearchUrlUpdaterController);
+import NavigationShortcutsController from "./navigation_shortcuts_controller"
+application.register("navigation-shortcuts", NavigationShortcutsController)
 
-import SidebarController from "./sidebar_controller";
-application.register("sidebar", SidebarController);
+import ParallaxBackgroundController from "./parallax_background_controller"
+application.register("parallax-background", ParallaxBackgroundController)
 
-import ToastController from "./toast_controller";
-application.register("toast", ToastController);
+import RaindropController from "./raindrop_controller"
+application.register("raindrop", RaindropController)
 
-import GlassController from "./glass_controller";
-application.register("glass", GlassController);
+import SearchController from "./search_controller"
+application.register("search", SearchController)
 
-import GlassDrawerController from "./glass_drawer_controller";
-application.register("glass-drawer", GlassDrawerController);
+import SearchUrlUpdaterController from "./search_url_updater_controller"
+application.register("search-url-updater", SearchUrlUpdaterController)
 
-import NavController from "./nav_controller";
-application.register("nav", NavController);
+import SidebarController from "./sidebar_controller"
+application.register("sidebar", SidebarController)
 
-import CardController from "./card_controller";
-application.register("card", CardController);
-
-import GlassButtonController from "./glass_button_controller";
-application.register("glass-button", GlassButtonController);
-
-// Enhanced controllers with stimulus-store integration
-import EnhancedApplicationController from "./enhanced_application_controller";
-application.register("enhanced-application", EnhancedApplicationController);
-
-import EnhancedGlassController from "./enhanced_glass_controller";
-application.register("enhanced-glass", EnhancedGlassController);
-
-import EnhancedInstanceSettingsController from "./enhanced_instance_settings_controller";
-application.register("enhanced-instance-settings", EnhancedInstanceSettingsController);
-
-import EnhancedP2pSyncController from "./enhanced_p2p_sync_controller";
-application.register("enhanced-p2p-sync", EnhancedP2pSyncController);
-
-import EnhancedToastController from "./enhanced_toast_controller";
-application.register("enhanced-toast", EnhancedToastController);
-
-import EnhancedSearchController from "./enhanced_search_controller";
-application.register("enhanced-search", EnhancedSearchController);
+import ToastController from "./toast_controller"
+application.register("toast", ToastController)

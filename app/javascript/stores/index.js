@@ -71,21 +71,6 @@ export const toastStore = createStore({
   }
 })
 
-// P2P connection state store
-export const p2pStore = createStore({
-  name: "p2p",
-  type: Object,
-  initialValue: {
-    isHost: false,
-    peerId: undefined,
-    hostPeerId: undefined,
-    connectionState: "disconnected", // "negotiating", "connecting", "connected", "disconnected", "error"
-    connectedPeers: {},
-    lastMessage: undefined,
-    isEnabled: false
-  }
-})
-
 // Experience/content state store
 export const experienceStore = createStore({
   name: "experience",
@@ -93,10 +78,7 @@ export const experienceStore = createStore({
   initialValue: {
     currentExperience: undefined,
     isLoading: false,
-    uploadProgress: 0,
-    multiplayerMode: false,
-    participants: [],
-    isHost: false
+    uploadProgress: 0
   }
 })
 
