@@ -342,10 +342,28 @@ module LibreverseInstance
       false
     end
 
+    # Auto-detect if we're in a build environment
+    def build_environment?
+      # Common build environment indicators
+      ENV.key?("SECRET_KEY_BASE_DUMMY") ||        # Rails asset precompilation
+        ENV.key?("CI") ||                         # Generic CI environment
+        ENV.key?("GITHUB_ACTIONS") ||             # GitHub Actions
+        ENV.key?("GITLAB_CI") ||                  # GitLab CI
+        ENV.key?("JENKINS_URL") ||                # Jenkins
+        ENV.key?("BUILD_NUMBER") ||               # Generic build number
+        ENV.key?("DOCKER_BUILDKIT") ||            # Docker BuildKit
+        ENV["RAILS_ENV"] == "production" && !can_access_database? # Production build without DB
+    end
+
     # Smart domain detection for federation
     def fallback_instance_domain
       # Try environment variable first
       return ENV["INSTANCE_DOMAIN"] if ENV["INSTANCE_DOMAIN"].present?
+
+      # Auto-detect build environments (Docker, CI/CD, etc.)
+      if build_environment?
+        return "localhost"
+      end
 
       # Environment-specific defaults with auto-detection
       case Rails.env
