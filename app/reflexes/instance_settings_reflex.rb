@@ -23,6 +23,19 @@ class InstanceSettingsReflex < ApplicationReflex
     Rails.logger.info "[Admin] User #{current_account.id} toggled instance EEA mode to #{new_value == 'true' ? 'enabled' : 'disabled'}"
   end
 
+  def toggle_grpc
+    current_value = InstanceSetting.get("grpc_enabled")
+    new_value = current_value == "true" ? "false" : "true"
+
+    InstanceSetting.set("grpc_enabled", new_value, "Enable or disable gRPC server")
+
+    # Clear cached config to use new value
+    LibreverseInstance::Application.reset_all_cached_config!
+
+    # Log the change
+    Rails.logger.info "[Admin] User #{current_account.id} toggled gRPC server to #{new_value == 'true' ? 'enabled' : 'disabled'}"
+  end
+
   def toggle_force_ssl
     current_value = InstanceSetting.get("force_ssl")
     new_value = current_value == "true" ? "false" : "true"
