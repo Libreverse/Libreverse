@@ -2,7 +2,11 @@
 # Uses the enhanced SQLite adapter for better features
 default: &default
     adapter: sqlite3
-    pool: 1
+    pool: <%= 
+      cpu_cores = Etc.nprocessors / 2
+      threads = [[cpu_cores * 2 - 4, 5].max, 20].min
+      threads
+    %>
     pragmas:
         analysis_limit: 0           # Retained: No query analysis limit, minimal impact on concurrency
         auto_vacuum: 'INCREMENTAL'  # Changed: Enable automatic space reclamation without full vacuum locks
