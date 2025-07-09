@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Run static analysis script
+echo "Running static analysis..."
+perl scripts/static.pl
+
+# Check if the script failed
+if [ $? -ne 0 ]; then
+    echo "❌ Static analysis failed. Commit blocked."
+    exit 1
+fi
+
+# Add any changes made by the static analysis script to the commit
+echo "Adding any changes made by static analysis to commit..."
+git add -A
+
+echo "✅ Static analysis passed. Proceeding with commit."
