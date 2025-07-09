@@ -2,79 +2,79 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import ApplicationController from "./application_controller"
-application.register("application", ApplicationController)
+import ApplicationController from "./application_controller";
+application.register("application", ApplicationController);
 
-import CardController from "./card_controller"
-application.register("card", CardController)
+import CardController from "./card_controller";
+application.register("card", CardController);
 
-import ConsentController from "./consent_controller"
-application.register("consent", ConsentController)
+import ConsentController from "./consent_controller";
+application.register("consent", ConsentController);
 
-import CtaParticlesController from "./cta_particles_controller"
-application.register("cta-particles", CtaParticlesController)
+import CtaParticlesController from "./cta_particles_controller";
+application.register("cta-particles", CtaParticlesController);
 
-import DismissibleController from "./dismissible_controller"
-application.register("dismissible", DismissibleController)
+import DismissibleController from "./dismissible_controller";
+application.register("dismissible", DismissibleController);
 
-import ExperienceUploadController from "./experience_upload_controller"
-application.register("experience-upload", ExperienceUploadController)
+import ExperienceUploadController from "./experience_upload_controller";
+application.register("experience-upload", ExperienceUploadController);
 
-import FormAutoSubmitController from "./form_auto_submit_controller"
-application.register("form-auto-submit", FormAutoSubmitController)
+import FormAutoSubmitController from "./form_auto_submit_controller";
+application.register("form-auto-submit", FormAutoSubmitController);
 
-import FoundationController from "./foundation_controller"
-application.register("foundation", FoundationController)
+import FoundationController from "./foundation_controller";
+application.register("foundation", FoundationController);
 
-import GlassButtonController from "./glass_button_controller"
-application.register("glass-button", GlassButtonController)
+import GlassButtonController from "./glass_button_controller";
+application.register("glass-button", GlassButtonController);
 
-import GlassController from "./glass_controller"
-application.register("glass", GlassController)
+import GlassController from "./glass_controller";
+application.register("glass", GlassController);
 
-import GlassDrawerController from "./glass_drawer_controller"
-application.register("glass-drawer", GlassDrawerController)
+import GlassDrawerController from "./glass_drawer_controller";
+application.register("glass-drawer", GlassDrawerController);
 
-import HyperspaceController from "./hyperspace_controller"
-application.register("hyperspace", HyperspaceController)
+import HyperspaceController from "./hyperspace_controller";
+application.register("hyperspace", HyperspaceController);
 
-import InstanceSettingsController from "./instance_settings_controller"
-application.register("instance-settings", InstanceSettingsController)
+import InstanceSettingsController from "./instance_settings_controller";
+application.register("instance-settings", InstanceSettingsController);
 
-import LanguagePickerController from "./language_picker_controller"
-application.register("language-picker", LanguagePickerController)
+import LanguagePickerController from "./language_picker_controller";
+application.register("language-picker", LanguagePickerController);
 
-import LinkController from "./link_controller"
-application.register("link", LinkController)
+import LinkController from "./link_controller";
+application.register("link", LinkController);
 
-import LocomotiveScrollController from "./locomotive_scroll_controller"
-application.register("locomotive-scroll", LocomotiveScrollController)
+import LocomotiveScrollController from "./locomotive_scroll_controller";
+application.register("locomotive-scroll", LocomotiveScrollController);
 
-import NavController from "./nav_controller"
-application.register("nav", NavController)
+import NavController from "./nav_controller";
+application.register("nav", NavController);
 
-import NavigationShortcutsController from "./navigation_shortcuts_controller"
-application.register("navigation-shortcuts", NavigationShortcutsController)
+import NavigationShortcutsController from "./navigation_shortcuts_controller";
+application.register("navigation-shortcuts", NavigationShortcutsController);
 
-import ParallaxBackgroundController from "./parallax_background_controller"
-application.register("parallax-background", ParallaxBackgroundController)
+import ParallaxBackgroundController from "./parallax_background_controller";
+application.register("parallax-background", ParallaxBackgroundController);
 
-import RaindropController from "./raindrop_controller"
-application.register("raindrop", RaindropController)
+import RaindropController from "./raindrop_controller";
+application.register("raindrop", RaindropController);
 
-import SearchController from "./search_controller"
-application.register("search", SearchController)
+import SearchController from "./search_controller";
+application.register("search", SearchController);
 
-import SearchUrlUpdaterController from "./search_url_updater_controller"
-application.register("search-url-updater", SearchUrlUpdaterController)
+import SearchUrlUpdaterController from "./search_url_updater_controller";
+application.register("search-url-updater", SearchUrlUpdaterController);
 
-import SidebarController from "./sidebar_controller"
-application.register("sidebar", SidebarController)
+import SidebarController from "./sidebar_controller";
+application.register("sidebar", SidebarController);
 
-import ToastController from "./toast_controller"
-application.register("toast", ToastController)
+import ToastController from "./toast_controller";
+application.register("toast", ToastController);
 
-import WebsocketP2pController from "./websocket_p2p_controller"
-application.register("websocket-p2p", WebsocketP2pController)
+import WebsocketP2pController from "./websocket_p2p_controller";
+application.register("websocket-p2p", WebsocketP2pController);

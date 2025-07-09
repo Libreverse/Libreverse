@@ -28,10 +28,10 @@ export default class extends GlassController
     console.log "[CardController] Card clicked:", item
 
     # Emit custom event for card interactions
-    @element.dispatchEvent new CustomEvent "card:click", {
+    @element.dispatchEvent(new CustomEvent("card:click", {
       detail: { item },
       bubbles: true,
-    }
+    }))
 
   customPostRenderSetup: ->
     # Card-specific logic
@@ -40,8 +40,8 @@ export default class extends GlassController
     # Add hover effects for cards
     glassButtons = @element.querySelectorAll ".glass-button"
     for button in glassButtons
-      button.addEventListener "mouseenter", ->
+      button.addEventListener "mouseenter", =>
         button.style.transform = "scale(1.02)"
-      
-      button.addEventListener "mouseleave", ->
+
+      button.addEventListener "mouseleave", =>
         button.style.transform = "scale(1)"

@@ -174,10 +174,7 @@ export default defineConfig(({ mode }) => {
             preprocessorOptions: {
                 scss: {
                     api: "modern-compiler",
-                    includePaths: [
-                        "node_modules",
-                        "./node_modules"
-                    ],
+                    includePaths: ["node_modules", "./node_modules"],
                 },
             },
             postcss: {

@@ -54,6 +54,8 @@ export default class extends GlassController
 
   # No special click handling needed for the drawer itself.
   handleNavClick: ->
+    # Default implementation - can be overridden by subclasses
+    console.log "[GlassDrawerController] Navigation click handled"
 
   # This can be simplified or removed if styling is handled by CSS.
   customPostRenderSetup: ->
@@ -206,7 +208,7 @@ export default class extends GlassController
 
     # Dispatch events to notify other parts of the application.
     eventName = if @expandedValue then "drawer:opened" else "drawer:closed"
-    @element.dispatchEvent new CustomEvent eventName, {
+    @element.dispatchEvent(new CustomEvent(eventName, {
       detail: { drawerId: @drawerIdValue },
       bubbles: true,
-    }
+    }))

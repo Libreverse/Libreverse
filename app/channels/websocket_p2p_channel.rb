@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WebsocketP2pChannel < ApplicationCable::Channel
   # WebSocket-based P2P signaling channel
   # Handles peer discovery, connection coordination, and message routing
@@ -5,47 +7,47 @@ class WebsocketP2pChannel < ApplicationCable::Channel
   def subscribed
     @session_id = params[:session_id]
     @peer_id = params[:peer_id]
-    
+
     Rails.logger.info "[WebsocketP2pChannel] Peer #{@peer_id} joining session #{@session_id}"
-    
+
     # Validate parameters
     reject unless @session_id.present? && @peer_id.present?
-    
+
     # Join session room
     stream_from "websocket_p2p_session_#{@session_id}"
-    
+
     # Store peer info in connection
     connection.peer_id = @peer_id
     connection.session_id = @session_id
-    
+
     # Announce peer joining
     broadcast_to_session({
-      type: "peer_joined",
-      peer_id: @peer_id,
-      timestamp: Time.current.to_i
-    })
-    
+                           type: "peer_joined",
+                           peer_id: @peer_id,
+                           timestamp: Time.current.to_i
+                         })
+
     # Send current peers list to new peer
     send_peers_list
   end
 
   def unsubscribed
     return unless @session_id && @peer_id
-    
+
     Rails.logger.info "[WebsocketP2pChannel] Peer #{@peer_id} leaving session #{@session_id}"
-    
+
     # Announce peer leaving
     broadcast_to_session({
-      type: "peer_left",
-      peer_id: @peer_id,
-      timestamp: Time.current.to_i
-    })
+                           type: "peer_left",
+                           peer_id: @peer_id,
+                           timestamp: Time.current.to_i
+                         })
   end
 
   # Handle incoming P2P messages
   def receive(data)
     return unless valid_message?(data)
-    
+
     case data["type"]
     when "message"
       handle_p2p_message(data)
@@ -68,7 +70,7 @@ class WebsocketP2pChannel < ApplicationCable::Channel
       data: data["data"],
       timestamp: Time.current.to_i
     }
-    
+
     if data["to_peer_id"].present?
       # Direct message to specific peer
       broadcast_to_peer(data["to_peer_id"], message)
@@ -81,28 +83,28 @@ class WebsocketP2pChannel < ApplicationCable::Channel
   def handle_heartbeat(_data)
     # Respond with heartbeat ack
     transmit({
-      type: "heartbeat_ack",
-      timestamp: Time.current.to_i
-    })
+               type: "heartbeat_ack",
+               timestamp: Time.current.to_i
+             })
   end
 
   def send_peers_list
-    peers = get_session_peers
-    
+    peers = session_peers
+
     transmit({
-      type: "peers_list",
-      peers: peers,
-      your_peer_id: @peer_id,
-      timestamp: Time.current.to_i
-    })
+               type: "peers_list",
+               peers: peers,
+               your_peer_id: @peer_id,
+               timestamp: Time.current.to_i
+             })
   end
 
-  def get_session_peers
+  def session_peers
     # Get all connections for this session
     connections = ActionCable.server.connections.select do |conn|
       conn.respond_to?(:session_id) && conn.session_id == @session_id
     end
-    
+
     connections.map do |conn|
       {
         peer_id: conn.peer_id,
@@ -113,10 +115,11 @@ class WebsocketP2pChannel < ApplicationCable::Channel
 
   def broadcast_to_session(message, except: nil)
     # Broadcast to all peers in session
-    peers = get_session_peers
-    
+    peers = session_peers
+
     peers.each do |peer|
       next if except && peer[:peer_id] == except
+
       broadcast_to_peer(peer[:peer_id], message)
     end
   end

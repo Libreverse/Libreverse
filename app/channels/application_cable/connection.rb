@@ -4,13 +4,13 @@ module ApplicationCable
   class Connection < ActionCable::Connection::Base
     # Identify the connection by the authenticated account ID found in the session
     identified_by :current_account_id
-    
+
     # P2P connection tracking
     attr_accessor :peer_id, :session_id, :connected_at
 
     def connect
       Rails.logger.debug "[ActionCable] Attempting to establish connection..."
-      
+
       # Store connection timestamp for P2P
       self.connected_at = Time.current
 

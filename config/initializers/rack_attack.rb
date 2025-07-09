@@ -103,7 +103,7 @@ end
 
 # Only insert middleware if not in development or test environment
 # AND if rate limiting is not explicitly disabled
-unless Rails.env.development? || Rails.env.test? || ENV['IS_LOAD_TEST'] == 'true'
+unless Rails.env.development? || Rails.env.test? || ENV["IS_LOAD_TEST"] == "true"
   # Insert Rack::Attack middleware
   middleware = Rails.application.config.middleware
 

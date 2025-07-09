@@ -265,8 +265,8 @@ class ExperiencesController < ApplicationController
   # Inject WebSocket P2P client library into experience HTML
   def inject_websocket_p2p_client(html_content)
     # Read the P2P client script
-    p2p_client_script = File.read(Rails.root.join("app", "javascript", "libs", "websocket_p2p_client.js"))
-    
+    p2p_client_script = File.read(Rails.root.join("app/javascript/libs/websocket_p2p_client.js"))
+
     # Wrap in script tags
     p2p_script_tag = "<script>#{p2p_client_script}</script>"
 

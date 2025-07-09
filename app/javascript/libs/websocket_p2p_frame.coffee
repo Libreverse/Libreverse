@@ -9,21 +9,21 @@ class WebSocketP2PFrame extends HTMLElement
 
   connectedCallback: ->
     console.log "[WebSocketP2PFrame] Connected"
-    
+
     # Get configuration from attributes
-    @sessionId = @getAttribute("session-id") || @getAttribute("session_id")
-    @peerId = @getAttribute("peer-id") || @getAttribute("peer_id")
+    @sessionId = @getAttribute("session-id") or @getAttribute("session_id")
+    @peerId = @getAttribute("peer-id") or @getAttribute("peer_id")
     @config = @parseConfig()
-    
+
     # Set up the controller
     @setupController()
-    
+
     # Watch for iframe changes
     @watchForIframe()
 
   disconnectedCallback: ->
     console.log "[WebSocketP2PFrame] Disconnected"
-    
+
     if @observer
       @observer.disconnect()
 
@@ -32,7 +32,7 @@ class WebSocketP2PFrame extends HTMLElement
     @setAttribute("data-controller", "websocket-p2p")
     @setAttribute("data-websocket-p2p-session-id-value", @sessionId)
     @setAttribute("data-websocket-p2p-peer-id-value", @peerId)
-    
+
     # Set up iframe target
     iframe = @querySelector("iframe")
     if iframe
@@ -40,18 +40,18 @@ class WebSocketP2PFrame extends HTMLElement
 
   watchForIframe: ->
     # Watch for iframe being added/changed
-    @observer = new MutationObserver (mutations) =>
+    @observer = new MutationObserver((mutations) =>
       mutations.forEach (mutation) =>
         mutation.addedNodes.forEach (node) =>
           if node.tagName is "IFRAME"
             node.setAttribute("data-websocket-p2p-target", "iframe")
-    
+    )
     @observer.observe(@, { childList: true, subtree: true })
 
   parseConfig: ->
     configAttr = @getAttribute("config")
     return {} unless configAttr
-    
+
     try
       JSON.parse(configAttr)
     catch error

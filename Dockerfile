@@ -96,7 +96,7 @@ USER 1000:1000
 
 # Deployment options
 ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
-    RUBY_YJIT_ENABLE="1" \
+    RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-stats" \
     PORT=3000
 
 # Entrypoint prepares the database.

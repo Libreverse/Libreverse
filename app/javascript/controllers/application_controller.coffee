@@ -38,7 +38,7 @@ export default class extends Controller
   connect: ->
     # Set up stimulus-store
     useStore(@)
-    
+
     # Set up StimulusReflex
     if typeof StimulusReflex isnt 'undefined' and typeof StimulusReflex.register is 'function'
       StimulusReflex.register(@)
@@ -65,9 +65,9 @@ export default class extends Controller
   initializeTheme: ->
     savedTheme = localStorage.getItem("libreverse-theme")
     systemPrefersDark = globalThis.matchMedia("(prefers-color-scheme: dark)").matches
-    
+
     currentTheme = @themeStoreValue
-    
+
     if savedTheme
       try
         savedThemeData = JSON.parse(savedTheme)
@@ -100,22 +100,22 @@ export default class extends Controller
   # Store change handlers
   themeStoreChanged: (event) ->
     theme = event.detail.value
-    
+
     # Save to localStorage
     localStorage.setItem("libreverse-theme", JSON.stringify(theme))
-    
+
     # Apply theme to document
     @applyTheme(theme)
 
   navigationStoreChanged: (event) ->
     navigation = event.detail.value
-    
+
     # Update page title or meta tags if needed
     @updatePageMeta(navigation)
 
   glassConfigStoreChanged: (event) ->
     glassConfig = event.detail.value
-    
+
     # Trigger glass effect updates across the app
     @updateGlassEffects(glassConfig)
 
@@ -132,9 +132,9 @@ export default class extends Controller
     activeItem = navigation.activeItem
     if activeItem
       # Remove active class from all nav items
-      document.querySelectorAll("[data-nav-item]").forEach (item) ->
+      document.querySelectorAll("[data-nav-item]").forEach (item) =>
         item.classList.remove("active")
-      
+
       # Add active class to current item
       currentItem = document.querySelector("[data-nav-item='#{activeItem}']")
       currentItem?.classList.add("active")
@@ -149,7 +149,7 @@ export default class extends Controller
     document.dispatchEvent(glassUpdateEvent)
 
   # Utility methods for child controllers
-  
+
   # Update theme property
   updateTheme: (updates) ->
     @themeStoreValue = { ...@themeStoreValue, ...updates }
@@ -164,45 +164,45 @@ export default class extends Controller
 
   # Show toast notification
   showToast: (message, type = "info", timeout = null) ->
-    currentToasts = @toastStoreValue || { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
-    
+    currentToasts = @toastStoreValue or { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
+
     # Ensure toasts array exists and set default timeout
     if not currentToasts.toasts
       currentToasts.toasts = []
     if not timeout
-      timeout = currentToasts.defaultTimeout || 5000
-    
+      timeout = currentToasts.defaultTimeout or 5000
+
     newToast = {
-      id: currentToasts.nextId || 1,
+      id: currentToasts.nextId or 1,
       message,
       type,
       timeout,
       timestamp: Date.now()
     }
-    
+
     # Limit number of toasts
     updatedToasts = [...currentToasts.toasts, newToast]
-    maxToasts = currentToasts.maxToasts || 5
+    maxToasts = currentToasts.maxToasts or 5
     if updatedToasts.length > maxToasts
       updatedToasts = updatedToasts.slice(-maxToasts)
-    
+
     @toastStoreValue = {
       ...currentToasts,
       toasts: updatedToasts,
-      nextId: (currentToasts.nextId || 1) + 1
+      nextId: (currentToasts.nextId or 1) + 1
     }
 
   # Remove toast
   removeToast: (toastId) ->
-    currentToasts = @toastStoreValue || { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
-    
+    currentToasts = @toastStoreValue or { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
+
     # Ensure toasts array exists
     if not currentToasts.toasts
       currentToasts.toasts = []
-    
+
     @toastStoreValue = {
       ...currentToasts,
-      toasts: currentToasts.toasts.filter((toast) -> toast.id isnt toastId)
+      toasts: currentToasts.toasts.filter((toast) => toast.id isnt toastId)
     }
 
   # Check if feature is enabled
