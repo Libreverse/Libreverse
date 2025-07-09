@@ -361,9 +361,7 @@ module LibreverseInstance
       return ENV["INSTANCE_DOMAIN"] if ENV["INSTANCE_DOMAIN"].present?
 
       # Auto-detect build environments (Docker, CI/CD, etc.)
-      if build_environment?
-        return "localhost"
-      end
+      return "localhost" if build_environment?
 
       # Environment-specific defaults with auto-detection
       case Rails.env
