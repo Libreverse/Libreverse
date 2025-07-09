@@ -48,13 +48,16 @@ Rails.application.configure do
   # Host Authorization - using centralized configuration
   allowed_hosts = LibreverseInstance::Application.allowed_hosts
 
-  # Always allow localhost and 127.0.0.1
-  %w[localhost 127.0.0.1].each do |local_host|
+  # Always allow localhost and 127.0.0.1 with and without port for healthchecks
+  %w[localhost 127.0.0.1 localhost:3000 127.0.0.1:3000].each do |local_host|
     allowed_hosts << local_host unless allowed_hosts.include?(local_host)
   end
 
-  # Override allowed_hosts with ENV if present
-  allowed_hosts = ENV["ALLOWED_HOSTS"].split(",").map(&:strip) if ENV["ALLOWED_HOSTS"].present?
+  # Add additional hosts from ENV if present (but keep localhost hosts)
+  if ENV["ALLOWED_HOSTS"].present?
+    env_hosts = ENV["ALLOWED_HOSTS"].split(",").map(&:strip)
+    env_hosts.each { |host| allowed_hosts << host unless allowed_hosts.include?(host) }
+  end
 
   config.hosts.clear
   allowed_hosts.each { |host| config.hosts << host }
