@@ -10,12 +10,12 @@ Successfully replaced the server-side form validation reflex (`FormReflex`) with
 
 - **File**: `app/javascript/controllers/form_auto_submit_controller.coffee`
 - **Changes**:
-  - Removed dependency on StimulusReflex (`@stimulate "FormReflex#submit"`)
-  - Added comprehensive client-side validation methods
-  - Implemented real-time field validation with debouncing
-  - Added form-level and field-level error display
-  - Maintained invisible captcha timing validation
-  - Added form submission states and visual feedback
+    - Removed dependency on StimulusReflex (`@stimulate "FormReflex#submit"`)
+    - Added comprehensive client-side validation methods
+    - Implemented real-time field validation with debouncing
+    - Added form-level and field-level error display
+    - Maintained invisible captcha timing validation
+    - Added form submission states and visual feedback
 
 ### 2. Validation Features
 
@@ -46,10 +46,10 @@ Updated the following form views to use the enhanced controller:
 
 - **File**: `app/stylesheets/components/_form_validation.scss`
 - **Features**:
-  - Error styling for form and field validation
-  - Submission state styling with loading indicator
-  - Dark theme support
-  - Responsive design
+    - Error styling for form and field validation
+    - Submission state styling with loading indicator
+    - Dark theme support
+    - Responsive design
 
 ### 6. Removed Files
 
@@ -76,22 +76,22 @@ The controller supports several data attributes for customization:
 ## Usage Example
 
 ```haml
-= form_with url: some_path, method: :post, 
-    data: { 
-      controller: "form-auto-submit", 
+= form_with url: some_path, method: :post,
+    data: {
+      controller: "form-auto-submit",
       form_auto_submit_target: "form",
       form_auto_submit_min_password_length_value: "12",
-      form_auto_submit_debounce_time_value: 800 
+      form_auto_submit_debounce_time_value: 800
     } do |form|
-  
-  = form.text_field :username, 
+
+  = form.text_field :username,
       required: true,
       data: { form_auto_submit_target: "input" }
-  
+
   = form.email_field :email,
-      required: true, 
+      required: true,
       data: { form_auto_submit_target: "input" }
-  
+
   = form.password_field :password,
       required: true,
       data: { form_auto_submit_target: "input" }
@@ -109,10 +109,12 @@ The controller supports several data attributes for customization:
 
 ```html
 <div id="form-errors" class="form-errors" style="display: block;">
-  <div class="form-errors">
-    <h3>Please fix the following errors:</h3>
-    <ul><li>Error message</li></ul>
-  </div>
+    <div class="form-errors">
+        <h3>Please fix the following errors:</h3>
+        <ul>
+            <li>Error message</li>
+        </ul>
+    </div>
 </div>
 ```
 
@@ -120,8 +122,10 @@ The controller supports several data attributes for customization:
 
 ```html
 <div id="form-errors" class="form-errors" style="display: block;">
-  <h3>Please fix the following errors:</h3>
-  <ul><li>Error message</li></ul>
+    <h3>Please fix the following errors:</h3>
+    <ul>
+        <li>Error message</li>
+    </ul>
 </div>
 ```
 

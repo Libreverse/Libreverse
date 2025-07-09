@@ -17,17 +17,17 @@ export default class extends ApplicationController
   connect: ->
     console.log "[WebsocketP2pController] Connected"
     super()
-    
+
     @peers = new Map()
     @messageHandlers = new Map()
     @isConnected = false
     @reconnectAttempts = 0
     @heartbeatTimer = null
     @pendingMessages = []
-    
+
     # Set up iframe message handling
     @setupIframeMessaging()
-    
+
     # Auto-connect if enabled
     if @autoConnectValue and @sessionIdValue and @peerIdValue
       @connectToSession()
@@ -40,11 +40,11 @@ export default class extends ApplicationController
   # Public API methods
   connectToSession: ->
     return if @channel
-    
+
     console.log "[WebsocketP2pController] Connecting to session #{@sessionIdValue} as #{@peerIdValue}"
-    
+
     @updateStatus("connecting")
-    
+
     # Create ActionCable subscription
     @channel = App.cable.subscriptions.create(
       {
@@ -61,12 +61,12 @@ export default class extends ApplicationController
 
   disconnectFromSession: ->
     return unless @channel
-    
+
     console.log "[WebsocketP2pController] Disconnecting from session"
-    
+
     @updateStatus("disconnected")
     @stopHeartbeat()
-    
+
     @channel.unsubscribe()
     @channel = null
     @isConnected = false
@@ -75,10 +75,10 @@ export default class extends ApplicationController
   sendMessage: (data, toPeerId = null) ->
     message = {
       type: "message",
-      data: data,
+      data,
       to_peer_id: toPeerId
     }
-    
+
     if @isConnected
       @channel.send(message)
     else
@@ -88,17 +88,17 @@ export default class extends ApplicationController
   # Iframe communication methods
   setupIframeMessaging: ->
     return unless @hasIframeTarget
-    
+
     # Listen for messages from iframe
     window.addEventListener("message", @handleIframeMessage.bind(@))
 
   handleIframeMessage: (event) ->
     return unless @hasIframeTarget
     return unless event.source is @iframeTarget.contentWindow
-    
+
     message = event.data
     return unless message.type
-    
+
     switch message.type
       when "p2p-send"
         @sendMessage(message.data)
@@ -109,9 +109,9 @@ export default class extends ApplicationController
 
   sendToIframe: (type, data) ->
     return unless @hasIframeTarget
-    
+
     @iframeTarget.contentWindow.postMessage({
-      type: type,
+      type,
       ...data
     }, "*")
 
@@ -123,7 +123,7 @@ export default class extends ApplicationController
       isHost: @isHost(),
       connected: @isConnected
     })
-    
+
     # Send current peers
     @sendPeersToIframe()
 
@@ -133,7 +133,7 @@ export default class extends ApplicationController
         peerId: peer.peer_id,
         connectedAt: peer.connected_at
       }
-    
+
     @sendToIframe("p2p-participants", { participants })
 
   # Channel event handlers
@@ -142,13 +142,13 @@ export default class extends ApplicationController
     @isConnected = true
     @reconnectAttempts = 0
     @updateStatus("connected")
-    
+
     # Start heartbeat
     @startHeartbeat()
-    
+
     # Send queued messages
     @flushPendingMessages()
-    
+
     # Notify iframe
     @sendToIframe("p2p-status", { connected: true })
 
@@ -157,16 +157,16 @@ export default class extends ApplicationController
     @isConnected = false
     @updateStatus("disconnected")
     @stopHeartbeat()
-    
+
     # Attempt reconnection
     @attemptReconnection()
-    
+
     # Notify iframe
     @sendToIframe("p2p-status", { connected: false })
 
   onChannelMessage: (data) ->
     console.log "[WebsocketP2pController] Received:", data
-    
+
     switch data.type
       when "peer_joined"
         @handlePeerJoined(data)
@@ -182,48 +182,48 @@ export default class extends ApplicationController
 
   handlePeerJoined: (data) ->
     return if data.peer_id is @peerIdValue # Ignore self
-    
+
     console.log "[WebsocketP2pController] Peer joined:", data.peer_id
-    
+
     @peers.set(data.peer_id, {
       peer_id: data.peer_id,
       connected_at: data.timestamp
     })
-    
+
     @sendPeersToIframe()
 
   handlePeerLeft: (data) ->
     return if data.peer_id is @peerIdValue # Ignore self
-    
+
     console.log "[WebsocketP2pController] Peer left:", data.peer_id
-    
+
     @peers.delete(data.peer_id)
     @sendPeersToIframe()
 
   handlePeersList: (data) ->
     console.log "[WebsocketP2pController] Received peers list:", data.peers
-    
+
     @peers.clear()
     data.peers.forEach (peer) =>
       return if peer.peer_id is @peerIdValue # Ignore self
       @peers.set(peer.peer_id, peer)
-    
+
     @sendPeersToIframe()
 
   handleP2pMessage: (data) ->
     console.log "[WebsocketP2pController] P2P message from #{data.from_peer_id}:", data.data
-    
+
     # Forward to iframe
     @sendToIframe("p2p-message", {
       senderId: data.from_peer_id,
-      data: data.data,
+      data,
       timestamp: data.timestamp
     })
 
   # Utility methods
   updateStatus: (status) ->
     console.log "[WebsocketP2pController] Status: #{status}"
-    
+
     if @hasStatusTarget
       @statusTarget.textContent = status
       @statusTarget.className = "p2p-status p2p-status-#{status}"
@@ -234,7 +234,7 @@ export default class extends ApplicationController
 
   startHeartbeat: ->
     return if @heartbeatTimer
-    
+
     @heartbeatTimer = setInterval =>
       if @isConnected
         @channel.send({ type: "heartbeat" })
@@ -252,11 +252,11 @@ export default class extends ApplicationController
 
   attemptReconnection: ->
     return if @reconnectAttempts >= @maxReconnectAttemptsValue
-    
-    @reconnectAttempts++
-    
+
+    @reconnectAttempts += 1
+
     console.log "[WebsocketP2pController] Reconnection attempt #{@reconnectAttempts}/#{@maxReconnectAttemptsValue}"
-    
+
     setTimeout =>
       @connectToSession() unless @isConnected
     , @reconnectDelayValue

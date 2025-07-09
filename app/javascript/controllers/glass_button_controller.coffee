@@ -43,29 +43,29 @@ export default class extends GlassController
     if svg then svg.outerHTML else ""
 
   # Override navigation handling for single buttons
-  handleNavClick: (item) ->
+  handleNavClick: (item) =>
     # Single button navigation
     if item.path
       @navigate item
     else
       # Emit custom event for button interactions
-      @element.dispatchEvent new CustomEvent "button:click", {
+      @element.dispatchEvent(new CustomEvent("button:click", {
         detail: { item },
         bubbles: true,
-      }
+      }))
 
-  customPostRenderSetup: ->
+  customPostRenderSetup: =>
     # Button-specific logic
     console.log "[ButtonController] Custom post-render setup"
 
     # Add press effect for buttons
     glassButtons = @element.querySelectorAll ".glass-button"
     for button in glassButtons
-      button.addEventListener "mousedown", ->
+      button.addEventListener "mousedown", =>
         button.style.transform = "scale(0.95)"
-      
-      button.addEventListener "mouseup", ->
+
+      button.addEventListener "mouseup", =>
         button.style.transform = "scale(1)"
-      
-      button.addEventListener "mouseleave", ->
+
+      button.addEventListener "mouseleave", =>
         button.style.transform = "scale(1)"

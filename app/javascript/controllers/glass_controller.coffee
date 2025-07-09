@@ -40,7 +40,7 @@ export default class extends Controller
 
     # Navigation-specific
     navItems: { type: Array, default: [] },
-    
+
     # Enable/disable overrides
     forceEnable: { type: Boolean, default: false },
     forceDisable: { type: Boolean, default: false },
@@ -48,10 +48,10 @@ export default class extends Controller
 
   connect: ->
     console.log "[GlassController] Connected:", @element.className
-    
+
     # Set up stimulus-store
     useStore(@)
-    
+
     @isConnected = true
     @glassContainer = undefined
     @originalContent = undefined
@@ -76,6 +76,7 @@ export default class extends Controller
   disconnect: ->
     console.log "[GlassController] Disconnecting"
     @isConnected = false
+    @cleanupGlassConfigListener()
     @cleanupGlass()
 
   initializeGlass: ->
@@ -251,7 +252,7 @@ export default class extends Controller
     for button in buttons
       if button.dataset.path is path
         button.classList.add "sidebar-not-allowed-shake"
-        setTimeout ->
+        setTimeout =>
           button.classList.remove "sidebar-not-allowed-shake"
         , 750
         break
@@ -319,20 +320,21 @@ export default class extends Controller
   # Method to be overridden by subclasses for custom behavior
   customPostRenderSetup: ->
     # Override this in subclasses for component-specific setup
+    console.log "[GlassController] Custom post-render setup"
 
   # Store integration methods
-  
+
   # Check if glass should be enabled based on global and local settings
   shouldEnableGlass: ->
     # Force disable takes precedence
     return false if @forceDisableValue
-    
+
     # Force enable overrides global setting
     return true if @forceEnableValue
-    
+
     # Check if enabled by data attribute (backwards compatibility)
     return @enableGlassValue if @hasEnableGlassValue
-    
+
     # Check global theme setting
     return @themeStoreValue?.glassEnabled ? true
 
@@ -350,13 +352,13 @@ export default class extends Controller
     return unless @isConnected and @glassContainer
 
     console.log "[GlassController] Updating glass config"
-    
+
     # Get the new config
     newConfig = event.detail.config
-    
+
     # Update the glass config store (this will trigger a re-render)
     @glassConfigStoreValue = { ...@glassConfigStoreValue, ...newConfig }
-    
+
     # Re-initialize glass with new config
     @reinitializeGlass()
 
@@ -368,7 +370,7 @@ export default class extends Controller
   themeStoreChanged: ->
     currentlyEnabled = @glassContainer?
     shouldBeEnabled = @shouldEnableGlass()
-    
+
     if currentlyEnabled and not shouldBeEnabled
       # Disable glass
       @cleanupGlass()
@@ -383,16 +385,9 @@ export default class extends Controller
 
     # Clean up existing glass
     @cleanupGlass()
-    
+
     # Re-initialize with current config
     @initializeGlass()
-
-  # Override disconnect to clean up store listeners
-  disconnect: ->
-    console.log "[GlassController] Disconnecting"
-    @isConnected = false
-    @cleanupGlassConfigListener()
-    @cleanupGlass()
 
   # Value change handlers
   enableGlassValueChanged: ->

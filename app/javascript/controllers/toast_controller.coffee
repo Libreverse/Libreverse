@@ -22,19 +22,19 @@ export default class extends ApplicationController
 
   connect: ->
     console.log "[ToastController] Connected, ID:", @toastIdValue
-    
+
     # Call parent connect (sets up StimulusReflex and stores)
     super()
-    
+
     # Ensure toast store is properly initialized
     @ensureToastStoreInitialized()
-    
+
     # Initialize toast state
     @initializeToast()
-    
+
     # Set up event listeners
     @setupEventListeners()
-    
+
     # Start toast lifecycle
     @startToastLifecycle()
 
@@ -50,27 +50,27 @@ export default class extends ApplicationController
 
   disconnect: ->
     console.log "[ToastController] Disconnecting, ID:", @toastIdValue
-    
+
     # Clean up timers and listeners
     @cleanupToast()
-    
+
     # Remove from store
     @removeFromStore()
-    
+
     # Call parent disconnect
     super()
 
   initializeToast: ->
     # Get or create toast data in store
-    currentToasts = @toastStoreValue || { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
-    
+    currentToasts = @toastStoreValue or { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
+
     # Ensure toasts array exists
     if not currentToasts.toasts
       currentToasts.toasts = []
-    
+
     # Find existing toast or create new one
     existingToast = currentToasts.toasts.find((t) => t.id is @toastIdValue)
-    
+
     if not existingToast
       # Create new toast entry
       newToast = {
@@ -83,12 +83,12 @@ export default class extends ApplicationController
         isPaused: false,
         progress: 0
       }
-      
+
       @toastStoreValue = {
         ...currentToasts,
         toasts: [...currentToasts.toasts, newToast]
       }
-    
+
     # Set up initial styling
     @setupInitialStyling()
 
@@ -96,7 +96,7 @@ export default class extends ApplicationController
     # Set initial opacity and transform for animation
     @element.style.opacity = "0"
     @element.style.transition = "opacity #{@animationDurationValue}ms ease-in-out, transform #{@animationDurationValue}ms ease-in-out"
-    
+
     # Set initial transform based on slide direction
     switch @slideDirectionValue
       when "up"
@@ -107,10 +107,10 @@ export default class extends ApplicationController
         @element.style.transform = "translateX(10px)"
       when "right"
         @element.style.transform = "translateX(-10px)"
-    
+
     # Add type-specific classes
     @element.classList.add("toast-#{@typeValue}")
-    
+
     # Add progress bar if enabled
     if @showProgressValue
       @createProgressBar()
@@ -128,17 +128,17 @@ export default class extends ApplicationController
       transition: width #{@timeoutValue}ms linear;
       width: 0%;
     """
-    
+
     @element.appendChild(@progressBar)
 
   setupEventListeners: ->
     if @pauseOnHoverValue
       @element.addEventListener("mouseenter", @handleMouseEnter.bind(@))
       @element.addEventListener("mouseleave", @handleMouseLeave.bind(@))
-    
+
     # Click to dismiss
     @element.addEventListener("click", @handleClick.bind(@))
-    
+
     # Keyboard support
     @element.addEventListener("keydown", @handleKeydown.bind(@))
 
@@ -147,11 +147,11 @@ export default class extends ApplicationController
     if @dismissTimer
       clearTimeout(@dismissTimer)
       @dismissTimer = undefined
-    
+
     if @progressInterval
       clearInterval(@progressInterval)
       @progressInterval = undefined
-    
+
     # Remove event listeners
     @element.removeEventListener("mouseenter", @handleMouseEnter) if @handleMouseEnter
     @element.removeEventListener("mouseleave", @handleMouseLeave) if @handleMouseLeave
@@ -162,11 +162,11 @@ export default class extends ApplicationController
     # Show toast with animation
     requestAnimationFrame =>
       @showToast()
-      
+
       # Start auto-dismiss timer if timeout is set
       if @timeoutValue > 0
         @startDismissTimer()
-      
+
       # Start progress animation
       if @showProgressValue
         @startProgressAnimation()
@@ -174,11 +174,11 @@ export default class extends ApplicationController
   showToast: ->
     # Update store
     @updateToastInStore({ isVisible: true })
-    
+
     # Animate in
     @element.style.opacity = "1"
     @element.style.transform = "translateY(0) translateX(0)"
-    
+
     # Focus for accessibility
     @element.setAttribute("tabindex", "0")
     @element.focus()
@@ -190,19 +190,20 @@ export default class extends ApplicationController
 
   startProgressAnimation: ->
     return unless @progressBar
-    
+
     # Start progress bar animation
     requestAnimationFrame =>
       @progressBar.style.width = "100%"
-    
+
     # Update progress in store
     @progressStartTime = Date.now()
     @progressInterval = setInterval =>
       elapsed = Date.now() - @progressStartTime
       progress = Math.min(elapsed / @timeoutValue, 1)
-      
-      @updateToastInStore({ progress: progress * 100 })
-      
+      progressPercent = progress * 100
+
+      @updateToastInStore({ progress: progressPercent })
+
       if progress >= 1
         clearInterval(@progressInterval)
     , 50
@@ -225,36 +226,36 @@ export default class extends ApplicationController
   # Toast lifecycle methods
   pauseToast: ->
     return if @isPaused
-    
+
     @isPaused = true
     @updateToastInStore({ isPaused: true })
-    
+
     # Pause timers
     if @dismissTimer
       clearTimeout(@dismissTimer)
       @dismissTimer = undefined
-    
+
     if @progressInterval
       clearInterval(@progressInterval)
       @progressInterval = undefined
-    
+
     # Pause progress bar animation
     if @progressBar
       @progressBar.style.animationPlayState = "paused"
 
   resumeToast: ->
     return unless @isPaused
-    
+
     @isPaused = false
     @updateToastInStore({ isPaused: false })
-    
+
     # Calculate remaining time
     elapsed = Date.now() - @progressStartTime
     remainingTime = Math.max(@timeoutValue - elapsed, 0)
-    
+
     if remainingTime > 0
       @startDismissTimer()
-      
+
       if @showProgressValue and @progressBar
         @progressBar.style.animationPlayState = "running"
 
@@ -273,7 +274,7 @@ export default class extends ApplicationController
 
     # Trigger fade-out animation
     @element.style.opacity = "0"
-    
+
     # Set exit transform based on slide direction
     switch @slideDirectionValue
       when "up"
@@ -293,19 +294,19 @@ export default class extends ApplicationController
   # Store management methods
   updateToastInStore: (updates) ->
     return unless @toastIdValue
-    
-    currentToasts = @toastStoreValue || { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
-    
+
+    currentToasts = @toastStoreValue or { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
+
     # Ensure toasts array exists
     if not currentToasts.toasts
       currentToasts.toasts = []
-    
+
     updatedToasts = currentToasts.toasts.map (toast) =>
       if toast.id is @toastIdValue
         { ...toast, ...updates }
       else
         toast
-    
+
     @toastStoreValue = {
       ...currentToasts,
       toasts: updatedToasts
@@ -313,13 +314,13 @@ export default class extends ApplicationController
 
   removeFromStore: ->
     return unless @toastIdValue
-    
-    currentToasts = @toastStoreValue || { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
-    
+
+    currentToasts = @toastStoreValue or { toasts: [], nextId: 1, defaultTimeout: 5000, maxToasts: 5 }
+
     # Ensure toasts array exists
     if not currentToasts.toasts
       currentToasts.toasts = []
-    
+
     @toastStoreValue = {
       ...currentToasts,
       toasts: currentToasts.toasts.filter((toast) => toast.id isnt @toastIdValue)

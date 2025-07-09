@@ -27,7 +27,7 @@ Same as the previous P2P system - no changes required for existing experiences.
 
 ```html
 <p2p-frame session-id="session_123" peer-id="peer_456">
-  <iframe src="/experience"></iframe>
+    <iframe src="/experience"></iframe>
 </p2p-frame>
 ```
 
@@ -35,9 +35,9 @@ The experience can use the same P2P API:
 
 ```javascript
 // In experience iframe
-P2P.send({ type: "game_move", data: { x: 10, y: 20 } })
+P2P.send({ type: "game_move", data: { x: 10, y: 20 } });
 
 P2P.onMessage = (senderId, data) => {
-  console.log("Received from", senderId, ":", data)
-}
+    console.log("Received from", senderId, ":", data);
+};
 ```

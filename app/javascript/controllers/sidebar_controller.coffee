@@ -54,19 +54,19 @@ export default class extends Controller
     # Get nav items from the data attribute (from Rails template) - REQUIRED
     navItemsData = nav.dataset.navItems
     unless navItemsData
-      throw new Error "nav-items data attribute is required for liquid glass sidebar"
+      throw new Error("nav-items data attribute is required for liquid glass sidebar")
 
     try
-      rawNavItems = JSON.parse navItemsData
+      rawNavItems = JSON.parse(navItemsData)
     catch error
-      throw new Error "Failed to parse nav-items data: #{error.message}"
+      throw new Error("Failed to parse nav-items data: #{error.message}")
 
     console.log "Raw nav items from template:", rawNavItems
 
     # Transform the Rails data structure to match our expected format
     navItems = rawNavItems.map (item) =>
       unless item.icon
-        throw new Error "Nav item missing required icon: #{JSON.stringify(item)}"
+        throw new Error("Nav item missing required icon: #{JSON.stringify(item)}")
 
       {
         text: "", # No text labels - icons only
@@ -195,7 +195,7 @@ export default class extends Controller
         buttonPath = button.dataset.path
         if buttonPath is item.path
           button.classList.add "sidebar-not-allowed-shake"
-          setTimeout ->
+          setTimeout =>
             button.classList.remove "sidebar-not-allowed-shake"
           , 750
           break # Found the button, no need to continue

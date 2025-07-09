@@ -7,23 +7,23 @@ import "./libs/websocket_p2p_frame.coffee";
 
 // Initialize debounced library with custom options
 debounced.initialize(debounced.defaultEventNames, {
-    wait: 300,    // Default wait time in milliseconds
+    wait: 300, // Default wait time in milliseconds
     leading: false, // Don't fire immediately on first event
-    trailing: true  // Fire after waiting period
+    trailing: true, // Fire after waiting period
 });
 
 // Register additional debounced events with different timing for forms
-debounced.register(['input'], {
-    wait: 800,     // Longer wait for form auto-submit
+debounced.register(["input"], {
+    wait: 800, // Longer wait for form auto-submit
     leading: false,
-    trailing: true
+    trailing: true,
 });
 
 // Register resize events with shorter debounce for better UX
-debounced.register(['resize'], {
-    wait: 200,     // Shorter wait for resize events
+debounced.register(["resize"], {
+    wait: 200, // Shorter wait for resize events
     leading: false,
-    trailing: true
+    trailing: true,
 });
 
 // Make html2canvas globally available for liquid glass effects
