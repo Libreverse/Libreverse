@@ -45,17 +45,42 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "https://your-production-domain.com", /https:\/\/your-production-domain.*/ ]
 
-  # SSL Enforcement (using centralized configuration)
-  ssl_enabled = LibreverseInstance::Application.force_ssl?
+  # Host Authorization - using centralized configuration
+  allowed_hosts = LibreverseInstance::Application.allowed_hosts
+
+  # Always allow localhost and 127.0.0.1
+  %w[localhost 127.0.0.1].each do |local_host|
+    allowed_hosts << local_host unless allowed_hosts.include?(local_host)
+  end
+
+  # Override allowed_hosts with ENV if present
+  allowed_hosts = ENV["ALLOWED_HOSTS"].split(",").map(&:strip) if ENV["ALLOWED_HOSTS"].present?
+
+  config.hosts.clear
+  allowed_hosts.each { |host| config.hosts << host }
+
+  # CORS origins (for rack-cors or similar middleware)
+  config.x.cors_origins = ENV["CORS_ORIGINS"] if ENV["CORS_ORIGINS"].present?
+
+  # EEA_MODE flag (for app logic)
+  config.x.eea_mode = ENV["EEA_MODE"] == "true" if ENV["EEA_MODE"].present?
+
+  # SSL Enforcement (using centralized configuration, but allow ENV override)
+  ssl_enabled = if ENV["FORCE_SSL"].present?
+    ENV["FORCE_SSL"] == "true"
+  else
+    LibreverseInstance::Application.force_ssl?
+  end
 
   config.assume_ssl = ssl_enabled
   config.force_ssl  = ssl_enabled
 
-  # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
-
-  # Log level (using centralized configuration)
-  config.log_level = LibreverseInstance::Application.rails_log_level
+  # Log level (using centralized configuration, but allow ENV override)
+  config.log_level = if ENV["RAILS_LOG_LEVEL"].present?
+    ENV["RAILS_LOG_LEVEL"].to_sym
+  else
+    LibreverseInstance::Application.rails_log_level
+  end
 
   # Cache Store Configuration
   config.cache_store = :solid_cache_store
@@ -74,21 +99,6 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
-  # Host Authorization - using centralized configuration
-  allowed_hosts = LibreverseInstance::Application.allowed_hosts
-
-  # Always allow localhost and 127.0.0.1
-  %w[localhost 127.0.0.1].each do |local_host|
-    allowed_hosts << local_host unless allowed_hosts.include?(local_host)
-  end
-
-  # Replace the default array entirely so we don't accumulate duplicates
-  config.hosts.clear
-  allowed_hosts.each { |host| config.hosts << host }
-
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   # --- Use CookieStore (Permanent Change) ---
   config.session_store :cookie_store,
