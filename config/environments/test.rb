@@ -81,6 +81,11 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
   config.action_mailer.perform_caching = false
 
+  # Configure allowed hosts for test environment
+  config.hosts << "www.example.com"
+  config.hosts << "test.host"
+  config.hosts << "localhost"
+
   # Configure Vite for test environment
   # config.vite.autoload = false
   # config.vite.dev_server_enabled = false

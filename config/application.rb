@@ -76,6 +76,9 @@ module LibreverseInstance
       ]
     }
 
+    # Add this to make prod healthcheck pass correctly
+    config.hosts << "localhost:3000"
+
     # I18n configuration
     config.i18n.default_locale = :en
     config.i18n.available_locales = %i[en zh es hi ar pt fr ru de ja]
