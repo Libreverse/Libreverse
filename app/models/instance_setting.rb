@@ -34,6 +34,7 @@ class InstanceSetting < ApplicationRecord
     no_ssl
     cors_origins
     port
+    grpc_enabled
     email_bot_enabled
     email_bot_address
     email_bot_mail_host
@@ -131,7 +132,8 @@ class InstanceSetting < ApplicationRecord
       "force_ssl" => (Rails.env.production? ? "true" : "false"),
       "no_ssl" => "false",
       "cors_origins" => (Rails.env.development? || Rails.env.test? ? "*" : "localhost"),
-      "port" => "3000"
+      "port" => "3000",
+      "grpc_enabled" => "false"
     }
 
     defaults.each do |key, default_value|
@@ -150,7 +152,7 @@ class InstanceSetting < ApplicationRecord
   end
 
   def boolean_setting?
-    %w[force_ssl no_ssl email_bot_enabled].include?(key)
+    %w[force_ssl no_ssl grpc_enabled email_bot_enabled].include?(key)
   end
 
   def port_setting?

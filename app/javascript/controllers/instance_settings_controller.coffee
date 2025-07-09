@@ -64,6 +64,9 @@ export default class extends ApplicationController
     noSslCheckbox = @element.querySelector("[data-action*='toggleNoSsl']")
     formData.noSsl = noSslCheckbox?.checked or false
 
+    grpcCheckbox = @element.querySelector("[data-action*='toggleGrpc']")
+    formData.grpc = grpcCheckbox?.checked or false
+
     # Read text inputs
     railsLogLevelInput = @element.querySelector("[data-action*='updateRailsLogLevel']")
     formData.railsLogLevel = railsLogLevelInput?.value or "info"
@@ -206,6 +209,15 @@ export default class extends ApplicationController
     @markDirty({ noSsl: not currentValue })
 
     @stimulate('InstanceSettings#toggle_no_ssl')
+
+  toggleGrpc: (event) ->
+    event.preventDefault()
+
+    # Optimistically update store
+    currentValue = @instanceSettingsStoreValue.grpc
+    @markDirty({ grpc: not currentValue })
+
+    @stimulate('InstanceSettings#toggle_grpc')
 
   updateRailsLogLevel: (event) ->
     value = event.target.value

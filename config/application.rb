@@ -125,6 +125,10 @@ module LibreverseInstance
       LibreverseInstance.eea_mode_enabled?
     end
 
+    def self.grpc_enabled?
+      LibreverseInstance.grpc_enabled?
+    end
+
     def self.email_bot_enabled?
       LibreverseInstance.email_bot_enabled?
     end
@@ -258,6 +262,17 @@ module LibreverseInstance
     end
   end
 
+  def self.grpc_enabled?
+    return @grpc_enabled if defined?(@grpc_enabled)
+
+    @grpc_enabled = if can_access_database?
+      setting = InstanceSetting.find_by(key: "grpc_enabled")
+      ActiveModel::Type::Boolean.new.cast(setting&.value)
+    else
+      false
+    end
+  end
+
   # Email bot configuration methods
   def self.email_bot_enabled?
     return @email_bot_enabled if defined?(@email_bot_enabled)
@@ -321,6 +336,7 @@ module LibreverseInstance
     remove_instance_variable(:@allowed_hosts) if defined?(@allowed_hosts)
     remove_instance_variable(:@force_ssl) if defined?(@force_ssl)
     remove_instance_variable(:@eea_mode_enabled) if defined?(@eea_mode_enabled)
+    remove_instance_variable(:@grpc_enabled) if defined?(@grpc_enabled)
 
     # Email bot configuration cache reset
     remove_instance_variable(:@email_bot_enabled) if defined?(@email_bot_enabled)

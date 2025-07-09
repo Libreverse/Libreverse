@@ -6,6 +6,12 @@
 Rails.application.configure do
     # Start gRPC server in a background thread after Rails boots
     config.after_initialize do
+        # Check if gRPC is enabled before attempting to start
+        unless LibreverseInstance::Application.grpc_enabled?
+            Rails.logger.info "gRPC server is disabled - skipping startup"
+            next
+        end
+
         Thread.new do
             Thread.current.abort_on_exception = true
             Thread.current.name = "grpc-server" if Thread.current.respond_to?(:name=)

@@ -109,6 +109,17 @@
                                         %input{ type: 'checkbox', checked: @no_ssl, data: { action: 'change->instance-settings#toggleNoSsl' } }
                                         %span.toggle-slider
 
+                            .setting-item.py-3.border-b.border-gray-200
+                                .setting-info
+                                    %h4.setting-title.text-lg.font-medium.text-gray-900 gRPC Server
+                                    %p.setting-description.text-sm.text-gray-600
+                                        Enable the integrated gRPC API server.
+                                        %span.text-orange-600 Disabled by default. Requires SSL certificates in production.
+                                .setting-control
+                                    %label.toggle-switch
+                                        %input{ type: 'checkbox', checked: @grpc_enabled, data: { action: 'change->instance-settings#toggleGrpc' } }
+                                        %span.toggle-slider
+
                             .setting-item.py-3
                                 .setting-info.mb-3
                                     %h4.setting-title.text-lg.font-medium.text-gray-900 Application Port
