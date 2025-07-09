@@ -92,6 +92,59 @@ module LibreverseInstance
       LibreverseInstance.instance_domain
     end
 
+    # Delegate all configuration methods to module-level methods
+    def self.port
+      LibreverseInstance.port
+    end
+
+    def self.admin_email
+      LibreverseInstance.admin_email
+    end
+
+    def self.rails_log_level
+      LibreverseInstance.rails_log_level
+    end
+
+    def self.cors_origins
+      LibreverseInstance.cors_origins
+    end
+
+    def self.allowed_hosts
+      LibreverseInstance.allowed_hosts
+    end
+
+    def self.force_ssl?
+      LibreverseInstance.force_ssl?
+    end
+
+    def self.no_ssl?
+      LibreverseInstance.no_ssl?
+    end
+
+    def self.eea_mode_enabled?
+      LibreverseInstance.eea_mode_enabled?
+    end
+
+    def self.email_bot_enabled?
+      LibreverseInstance.email_bot_enabled?
+    end
+
+    def self.email_bot_address
+      LibreverseInstance.email_bot_address
+    end
+
+    def self.email_bot_mail_host
+      LibreverseInstance.email_bot_mail_host
+    end
+
+    def self.email_bot_username
+      LibreverseInstance.email_bot_username
+    end
+
+    def self.email_bot_password
+      LibreverseInstance.email_bot_password
+    end
+
     # Delegate reset method to module
     def self.reset_all_cached_config!
       LibreverseInstance.reset_all_cached_config!
