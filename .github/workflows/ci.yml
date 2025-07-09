@@ -195,7 +195,7 @@ jobs:
 
             - name: Build Docker image
               run: |
-                  docker build -t quay.io/georgebaskervil/libreverse:alpha .
+                  docker build --build-arg ALLOWED_HOSTS=localhost --build-arg CORS_ORIGINS=localhost --build-arg EEA_MODE=true --build-arg FORCE_SSL=false --build-arg RAILS_LOG_LEVEL=info -t quay.io/georgebaskervil/libreverse:alpha .
 
             - name: Push to Quay.io
               run: |
