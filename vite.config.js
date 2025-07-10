@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
             },
             target: ["esnext"],
             modulePreload: { polyfill: true },
-            cssCodeSplit: false,
+            cssCodeSplit: true,
             assetsInlineLimit: 2147483647,
             cssTarget: ["esnext"],
             sourcemap: false,
