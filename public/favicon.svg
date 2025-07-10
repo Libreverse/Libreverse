@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Define clipping path for rounded corners -->
+    <clipPath id="roundedCorners">
+      <rect x="0" y="0" width="512" height="512" rx="64" ry="64"/>
+    </clipPath>
+  </defs>
+  
+  <!-- White background with rounded corners -->
+  <rect x="0" y="0" width="512" height="512" rx="64" ry="64" fill="white"/>
+  
+  <!-- Icon content clipped to rounded rectangle -->
+  <g clip-path="url(#roundedCorners)">
+    <g transform="translate(256, 256) scale(3.8208955223880596, 3.8208955223880596) translate(-60, -60)" stroke="#808080" stroke-width="7.5" fill="none">
+      <circle cx="60" cy="60" r="56.25"/>
+      <path d="m32.2659 110.055 9.6-103.99968"/>
+      <path d="m118.001 59.1713-82.3997 51.9997"/>
+    </g>
+  </g>
+</svg>

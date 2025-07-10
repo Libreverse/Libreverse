@@ -1,1 +1,8 @@
-<svg fill="none" height="120" viewBox="0 0 120 120" width="120" xmlns="http://www.w3.org/2000/svg"><g stroke="#808080" stroke-width="7.5"><circle cx="60" cy="60" r="56.25"/><path d="m32.2659 110.055 9.6-103.99968"/><path d="m118.001 59.1713-82.3997 51.9997"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(256, 256) scale(3.8, 3.8) translate(-60, -60)" stroke="black" stroke-width="7.5" fill="none">
+    <circle cx="60" cy="60" r="56.25"/>
+    <path d="m32.2659 110.055 9.6-103.99968"/>
+    <path d="m118.001 59.1713-82.3997 51.9997"/>
+  </g>
+</svg>
