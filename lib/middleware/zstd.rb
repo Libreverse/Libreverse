@@ -25,6 +25,7 @@ module Rack
     end
 
     def call(env)
+      response = nil
       status, headers, response = @app.call(env)
       headers ||= {}
 

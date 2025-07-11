@@ -13,6 +13,15 @@ class LibreverseWebSocketP2P {
 
         // Listen for messages from parent window (Libreverse app)
         window.addEventListener("message", (event) => {
+            // Origin check for security - only accept messages from same origin
+            if (event.origin !== window.location.origin) {
+                console.warn(
+                    "WebSocket P2P: Ignored message from untrusted origin:",
+                    event.origin,
+                );
+                return;
+            }
+
             this.handleParentMessage(event.data);
         });
 
@@ -51,7 +60,31 @@ class LibreverseWebSocketP2P {
             case "p2p-participants":
                 this.participants = {};
                 message.participants.forEach((participant) => {
-                    this.participants[participant.peerId] = participant;
+                    // Validate participant data and sanitize peerId
+                    if (
+                        participant &&
+                        typeof participant.peerId === "string" &&
+                        participant.peerId.length > 0
+                    ) {
+                        // Only allow alphanumeric characters and hyphens for peer IDs
+                        const sanitizedPeerId = participant.peerId.replace(
+                            /[^a-zA-Z0-9-]/g,
+                            "",
+                        );
+                        if (sanitizedPeerId.length > 0) {
+                            this.participants[sanitizedPeerId] = {
+                                peerId: sanitizedPeerId,
+                                // Copy other safe properties with validation
+                                ...Object.fromEntries(
+                                    Object.entries(participant).filter(
+                                        ([key, value]) =>
+                                            key !== "peerId" &&
+                                            typeof value === "string",
+                                    ),
+                                ),
+                            };
+                        }
+                    }
                 });
                 this.onParticipantsChange(this.participants);
                 break;

@@ -38,6 +38,18 @@ module FederatedAuthHelper
   end
 
   def register_dynamic_client(registration_endpoint, redirect_uri)
+    # Validate the registration endpoint URL
+    begin
+      parsed_endpoint = URI.parse(registration_endpoint)
+      unless parsed_endpoint.scheme == "https" && !parsed_endpoint.host.nil?
+        Rails.logger.error "Invalid registration endpoint: #{registration_endpoint}"
+        return { error: "Invalid registration endpoint" }
+      end
+    rescue URI::InvalidURIError
+      Rails.logger.error "Malformed registration endpoint URL: #{registration_endpoint}"
+      return { error: "Malformed registration endpoint URL" }
+    end
+
     client_data = {
       client_name: "Libreverse Instance",
       redirect_uris: [ redirect_uri ],

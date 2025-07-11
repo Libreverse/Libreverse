@@ -80,17 +80,17 @@ class ViteDevCssFetcher
     # Basic CSS processing
     processed = css_content.strip
 
-    # Remove source maps
-    processed = processed.gsub(%r{/\*# sourceMappingURL=.*?\*/}, "")
+    # Remove source maps - fixed regex to prevent ReDoS
+    processed = processed.gsub(%r{/\*# sourceMappingURL=[^*]*\*/}, "")
 
-    # Convert any @import statements to comments (since we're inlining)
-    processed = processed.gsub(/@import\s+[^;]+;/, "/* @import removed for email inlining */")
+    # Convert any @import statements to comments (since we're inlining) - fixed regex
+    processed = processed.gsub(/@import[^;]{1,200};/, "/* @import removed for email inlining */")
 
-    # Compress whitespace but keep readability
-    processed.gsub(/\s*\{\s*/, " { ")
-             .gsub(/\s*\}\s*/, " } ")
-             .gsub(/\s*;\s*/, "; ")
-             .gsub(/\s*,\s*/, ", ")
+    # Compress whitespace but keep readability - fixed to prevent ReDoS
+    processed.gsub(/\s+\{/, " {")
+             .gsub(/\}\s+/, "} ")
+             .gsub(/;\s+/, "; ")
+             .gsub(/,\s+/, ", ")
   end
 
   def check_server_status

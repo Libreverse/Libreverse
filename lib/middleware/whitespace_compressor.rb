@@ -6,8 +6,8 @@ require "json"
 class WhitespaceCompressor
   def initialize(app)
     @app = app
-    # Compile RE2 patterns once during initialization
-    @preserve_pattern = %r{(<textarea>[\s\S]*?</textarea>|<pre>[\s\S]*?</pre>|<script>[\s\S]*?</script>|<iframe>[\s\S]*?</iframe>)}
+    # Compile RE2 patterns once during initialization - fixed for ReDoS prevention
+    @preserve_pattern = %r{(<textarea>(?:[^<]|<(?!/textarea>))*</textarea>|<pre>(?:[^<]|<(?!/pre>))*</pre>|<script>(?:[^<]|<(?!/script>))*</script>|<iframe>(?:[^<]|<(?!/iframe>))*</iframe>)}
     @pattern_comments = RE2::Regexp.new('<!--[\s\S]*?-->', log_errors: false)
 
     # HAML whitespace optimization patterns - only used for non-HAML content
@@ -74,8 +74,8 @@ class WhitespaceCompressor
 
   # Minify JSON-LD scripts by parsing and re-serializing JSON content
   def minify_jsonld_scripts(html)
-    # Enhanced pattern to match JSON-LD scripts with various formats
-    html.gsub(%r{<script[^>]*type=["']application/ld\+json["'][^>]*>([\s\S]*?)</script>}i) do
+    # Enhanced pattern to match JSON-LD scripts with various formats - fixed for ReDoS prevention
+    html.gsub(%r{<script[^>]*type=["']application/ld\+json["'][^>]*>((?:[^<]|<(?!/script>))*)</script>}i) do
       full_match = Regexp.last_match(0)
       json_content = Regexp.last_match(1)
       script_opening = full_match[/<script[^>]*>/i]
