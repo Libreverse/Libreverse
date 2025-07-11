@@ -179,6 +179,16 @@ unless (command_exists('typos')) {
     print "  Typos is already installed.\n";
 }
 
+# Install CodeQL CLI automatically
+print "  Installing CodeQL CLI (for security analysis)...\n";
+my $codeql_exit_code = system("scripts/codeql-local.sh", "--install");
+if ($codeql_exit_code == 0) {
+    print "  CodeQL CLI installed successfully.\n";
+} else {
+    print "  Warning: CodeQL CLI installation failed. Security analysis may not work.\n";
+    # Don't fail the entire setup for CodeQL
+}
+
 my @pids;
 my %child_status;
 

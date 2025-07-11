@@ -6,6 +6,7 @@ export default {
         "**/application.scss",
         "**/gems/**",
         "vendor/**",
+        ".codeql/**",
     ],
     rules: {
         "no-empty-source": undefined,

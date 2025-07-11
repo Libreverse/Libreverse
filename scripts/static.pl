@@ -121,7 +121,7 @@ run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
 run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
-run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' --fix --config .markdownlint.json");
+run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint.json");
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
 run_command("bundle-audit", "bundle-audit", "check", "--update");
@@ -136,6 +136,19 @@ run_command("npm audit (production only)", "sh", "-c",
     "exit \$exit_code");
 run_command("Haml Validation", "rake", "haml:check");
 run_command("i18n Validation", "rake", "i18n:validate_keys");
+
+# CodeQL automatic setup and database creation (sequential - ensures setup is ready)
+# TEMPORARILY DISABLED - CodeQL local setup needs fixes
+# print "CodeQL Setup [RUNNING]\n";
+# my $codeql_setup_exit = system("scripts/codeql-local.sh", "--no-summary", "--force-install");
+# if ($codeql_setup_exit == 0) {
+#     print "CodeQL Setup [OK]\n";
+#     push @sequential_status, "[OK]";
+# } else {
+#     print "CodeQL Setup [NOTOK] (Exit Code: " . ($codeql_setup_exit >> 8) . ")\n";
+#     push @sequential_status, "[NOTOK]";
+# }
+# push @sequential_tools, "CodeQL Setup";
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1); # Auto-cleanup
@@ -195,6 +208,7 @@ my $find_output = qx(find . -path ./node_modules -prune -o -name '*.coffee' -pri
 @coffee_files = split /\0/, $find_output;
 
 @parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman");
+# TEMPORARILY DISABLED: "CodeQL Ruby", "CodeQL JavaScript"
 my $num_tools = scalar @parallel_tools;
 
 for my $i (0 .. $num_tools - 1) {
@@ -236,6 +250,11 @@ for my $i (0 .. $num_tools - 1) {
         @cmd = ("bundle", "exec", "rails", "test");
     } elsif ($tool_name eq "Brakeman") {
         @cmd = ("brakeman", "--quiet", "--no-summary", "--no-pager");
+    # TEMPORARILY DISABLED - CodeQL local analysis needs fixes
+    # } elsif ($tool_name eq "CodeQL Ruby") {
+    #     @cmd = ("scripts/codeql-local.sh", "--language", "ruby", "--no-summary", "--no-create-db");
+    # } elsif ($tool_name eq "CodeQL JavaScript") {
+    #     @cmd = ("scripts/codeql-local.sh", "--language", "javascript", "--no-summary", "--no-create-db");
     }
 
     run_in_background($i, $tool_name, @cmd);

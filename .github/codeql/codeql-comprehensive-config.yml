@@ -1,0 +1,74 @@
+name: "CodeQL Comprehensive Configuration"
+# This configuration mirrors the default GitHub CodeQL Action behavior
+# It ensures identical analysis between local runs and CI/CD pipelines
+
+# Language-specific configurations
+languages:
+    - ruby
+    - javascript-typescript
+
+# Default query suites (matches GitHub Actions default)
+# security-and-quality is the standard suite that balances thoroughness with performance
+queries:
+    - uses: security-and-quality
+
+# Path configurations - these mirror GitHub's default exclusions
+paths-ignore:
+    # Dependencies
+    - "node_modules/**"
+    - "vendor/**"
+    - "bower_components/**"
+
+    # Test directories
+    - "test/**"
+    - "tests/**"
+    - "spec/**"
+    - "__tests__/**"
+    - "**/*test*/**"
+
+    # Build artifacts
+    - "build/**"
+    - "dist/**"
+    - "public/assets/**"
+    - "app/assets/builds/**"
+    - "tmp/**"
+
+    # Generated files
+    - "coverage/**"
+    - "*.min.js"
+    - "*.bundle.js"
+    - "db/schema.rb"
+    - "db/structure.sql"
+
+    # Documentation and configuration
+    - "docs/**"
+    - "documentation/**"
+    - "README*"
+    - "*.md"
+    - ".github/**"
+    - "config/locales/**"
+
+    # Logs and runtime files
+    - "log/**"
+    - "logs/**"
+    - "storage/**"
+    - "*.log"
+
+    # CodeQL repository with example files (IMPORTANT!)
+    - ".codeql/**"
+
+# Explicitly include core application paths
+# This ensures we analyze the main codebase
+paths:
+    - "app/**"
+    - "lib/**"
+    - "config/**"
+    - "bin/**"
+    - "*.rb"
+    - "*.js"
+    - "*.ts"
+    - "*.coffee"
+
+# Advanced configuration options
+packs: [] # Additional query packs (none by default)
+disable-default-queries: false # Keep standard queries enabled

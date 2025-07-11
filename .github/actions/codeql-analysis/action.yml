@@ -1,0 +1,37 @@
+name: "CodeQL Security Analysis"
+description: "Run CodeQL security analysis for Ruby and JavaScript/TypeScript"
+
+inputs:
+    language:
+        description: "Language to analyze (ruby, javascript-typescript)"
+        required: true
+    upload-results:
+        description: "Whether to upload results to GitHub Security tab"
+        required: false
+        default: "true"
+
+runs:
+    using: "composite"
+    steps:
+        - name: Initialize CodeQL
+          uses: github/codeql-action/init@v3
+          with:
+              languages: ${{ inputs.language }}
+              build-mode: none
+              config-file: ./.github/codeql/codeql-config.yml
+              queries: +security-and-quality
+
+        - name: Perform CodeQL Analysis
+          uses: github/codeql-action/analyze@v3
+          with:
+              category: "/language:${{ inputs.language }}"
+              upload: ${{ inputs.upload-results }}
+              output: sarif-results
+
+        - name: Upload CodeQL results as artifact
+          if: inputs.upload-results == 'false'
+          uses: actions/upload-artifact@v4
+          with:
+              name: codeql-results-${{ inputs.language }}
+              path: sarif-results
+              retention-days: 30

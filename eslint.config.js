@@ -28,6 +28,7 @@ export default [
             "**/gems/**",
             "**/haml_lint*/**",
             "**/openid_connect*/**",
+            ".codeql/**",
             "**/iodine*/**",
             "log/**",
             "storage/**",

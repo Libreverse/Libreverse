@@ -52,7 +52,7 @@ jobs:
             - name: Run haml-lint
               if: matrix.tool == 'haml-lint'
               shell: bash
-              run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*'
+              run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
 
             - name: Run ESLint
               if: matrix.tool == 'eslint'
@@ -104,21 +104,42 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [brakeman, bundle-audit, npm-audit]
+                tool:
+                    [
+                        brakeman,
+                        bundle-audit,
+                        npm-audit,
+                        codeql-ruby,
+                        codeql-javascript,
+                    ]
 
         steps:
             - name: Check out code
               uses: actions/checkout@v4
 
             - name: Setup Environment
+              if: matrix.tool != 'codeql-ruby' && matrix.tool != 'codeql-javascript'
               uses: ./.github/actions/setup-environment
               env:
                   MATRIX_JOB: security-${{ matrix.tool }}
 
             - name: Run Security Analysis
+              if: matrix.tool != 'codeql-ruby' && matrix.tool != 'codeql-javascript'
               uses: ./.github/actions/security-analysis
               with:
                   tool: ${{ matrix.tool }}
+
+            - name: Run CodeQL Analysis (Ruby)
+              if: matrix.tool == 'codeql-ruby'
+              uses: ./.github/actions/codeql-analysis
+              with:
+                  language: ruby
+
+            - name: Run CodeQL Analysis (JavaScript)
+              if: matrix.tool == 'codeql-javascript'
+              uses: ./.github/actions/codeql-analysis
+              with:
+                  language: javascript-typescript
 
     # Code quality analysis (runs in parallel)
     code-quality:

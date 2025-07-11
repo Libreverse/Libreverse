@@ -8,6 +8,7 @@ exclude_paths:
     - "log/**/*"
     - "coverage/**/*"
     - "storage/**/*"
+    - ".codeql/**/*"
 
 map_flatten_vs_flat_map:
     enabled: false
