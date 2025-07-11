@@ -1,6 +1,7 @@
 export default {
     testEnvironment: "jsdom",
     moduleDirectories: ["node_modules", "<rootDir>"],
+    modulePathIgnorePatterns: ["<rootDir>/.codeql/"],
     transform: {},
     moduleNameMapper: {
         "^@hotwired/(.*)$": "<rootDir>/node_modules/@hotwired/$1",
@@ -17,6 +18,7 @@ export default {
         "!app/javascript/**/*.spec.js",
         "!app/javascript/channels/**/*.js",
         "!node_modules/**",
+        "!.codeql/**",
     ],
     coverageReporters: ["text", "html"],
     coverageDirectory: "coverage",
