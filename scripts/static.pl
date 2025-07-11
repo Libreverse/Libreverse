@@ -138,17 +138,16 @@ run_command("Haml Validation", "rake", "haml:check");
 run_command("i18n Validation", "rake", "i18n:validate_keys");
 
 # CodeQL automatic setup and database creation (sequential - ensures setup is ready)
-# TEMPORARILY DISABLED - CodeQL local setup needs fixes
-# print "CodeQL Setup [RUNNING]\n";
-# my $codeql_setup_exit = system("scripts/codeql-local.sh", "--no-summary", "--force-install");
-# if ($codeql_setup_exit == 0) {
-#     print "CodeQL Setup [OK]\n";
-#     push @sequential_status, "[OK]";
-# } else {
-#     print "CodeQL Setup [NOTOK] (Exit Code: " . ($codeql_setup_exit >> 8) . ")\n";
-#     push @sequential_status, "[NOTOK]";
-# }
-# push @sequential_tools, "CodeQL Setup";
+print "CodeQL Setup [RUNNING]\n";
+my $codeql_setup_exit = system("scripts/codeql-local.sh", "--setup-only");
+if ($codeql_setup_exit == 0) {
+    print "CodeQL Setup [OK]\n";
+    push @sequential_status, "[OK]";
+} else {
+    print "CodeQL Setup [NOTOK] (Exit Code: " . ($codeql_setup_exit >> 8) . ")\n";
+    push @sequential_status, "[NOTOK]";
+}
+push @sequential_tools, "CodeQL Setup";
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1); # Auto-cleanup

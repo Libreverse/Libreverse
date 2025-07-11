@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
         esbuild: {
             target: "esnext",
             keepNames: false,
-            treeShaking: true,
+            treeShaking: false,
             legalComments: "inline",
         },
         resolve: {
@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
 
                 external: [],
                 treeshake: {
-                    moduleSideEffects: false,
+                    moduleSideEffects: true,
                     propertyReadSideEffects: false,
                     tryCatchDeoptimization: false,
                     unknownGlobalSideEffects: false,
