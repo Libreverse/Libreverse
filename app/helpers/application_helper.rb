@@ -131,8 +131,11 @@ module ApplicationHelper
     nonce_opt   = { nonce: content_security_policy_nonce }
     merged_opts = options.merge(nonce_opt) { |_k, old, new| old || new }
 
+    # Sanitize CSS content before marking as safe
+    sanitized_css = ActionController::Base.helpers.sanitize(safe_css, tags: [])
+
     # rubocop:disable Rails/OutputSafety
-    tag.style(safe_css.html_safe, **merged_opts)
+    tag.style(sanitized_css.html_safe, **merged_opts)
     # rubocop:enable Rails/OutputSafety
   end
 
@@ -150,9 +153,16 @@ module ApplicationHelper
         # Attach the current request's CSP nonce so that inline scripts are allowed
         nonce_opt = { nonce: content_security_policy_nonce }
         safe_content = content.gsub(SCRIPT_CLOSE_REGEX, '<\\/script>')
+
+        # Additional sanitization for JavaScript content
+        sanitized_content = ActionController::Base.helpers.sanitize(safe_content,
+                                                                    tags: [],
+                                                                    attributes: [],
+                                                                    remove_contents: true)
+
         merged_opts = { type: "module" }.merge(options).merge(nonce_opt) { |_k, old, new| old || new }
         # rubocop:disable Rails/OutputSafety
-        tag.script(safe_content.html_safe, **merged_opts)
+        tag.script(sanitized_content.html_safe, **merged_opts)
         # rubocop:enable Rails/OutputSafety
       end
     end

@@ -233,7 +233,15 @@ class ExperiencesController < ApplicationController
   def redirect_to_safe_uri(uri)
     # This method exists specifically to satisfy Brakeman's security requirements
     # The URI has been validated by validate_and_sanitize_federated_uri
-    redirect_to uri, allow_other_host: true
+
+    # Additional validation before redirect
+    validated_uri = validate_and_sanitize_federated_uri(uri)
+    if validated_uri.nil?
+      redirect_to experiences_path, alert: "Invalid or unsafe URI for redirection."
+      return
+    end
+
+    redirect_to validated_uri, allow_other_host: true
   end
 
   def valid_federated_uri?(uri)

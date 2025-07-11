@@ -424,7 +424,12 @@ Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
 
     def fetch_public_ip
       require "open-uri"
-      URI.open("https://api.ipify.org").read.strip
+
+      # Use safer URI parsing and opening with timeout
+      uri = URI.parse("https://api.ipify.org")
+      raise "Invalid URI scheme" unless uri.scheme == "https"
+
+      uri.open(read_timeout: 10).read.strip
     rescue StandardError => e
       raise "Could not retrieve public IP: #{e.message}"
     end
@@ -433,8 +438,16 @@ Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
       require "open-uri"
       require "json"
 
+      # Validate IP address format to prevent injection
+      raise "Invalid IP address format" unless ip.match?(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/) || ip.match?(/\A([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\z/)
+
       url = "https://freeapi.robtex.com/ipquery/#{ip}"
-      json = URI.open(url).read
+
+      # Use safer URI parsing and opening
+      uri = URI.parse(url)
+      raise "Invalid URI scheme" unless uri.scheme == "https"
+
+      json = uri.open(read_timeout: 10).read
       data = JSON.parse(json)
 
       if data["status"] == "ok" && data["pas"].is_a?(Array) && !data["pas"].empty?
