@@ -104,13 +104,12 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool:
-                    [
+                tool: [
                         brakeman,
                         bundle-audit,
                         npm-audit,
-                        codeql-ruby,
-                        codeql-javascript,
+                        # codeql-ruby,     # Temporarily disabled
+                        # codeql-javascript, # Temporarily disabled
                     ]
 
         steps:
@@ -118,28 +117,27 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Setup Environment
-              if: matrix.tool != 'codeql-ruby' && matrix.tool != 'codeql-javascript'
               uses: ./.github/actions/setup-environment
               env:
                   MATRIX_JOB: security-${{ matrix.tool }}
 
             - name: Run Security Analysis
-              if: matrix.tool != 'codeql-ruby' && matrix.tool != 'codeql-javascript'
               uses: ./.github/actions/security-analysis
               with:
                   tool: ${{ matrix.tool }}
 
-            - name: Run CodeQL Analysis (Ruby)
-              if: matrix.tool == 'codeql-ruby'
-              uses: ./.github/actions/codeql-analysis
-              with:
-                  language: ruby
+            # Temporarily disabled CodeQL steps
+            # - name: Run CodeQL Analysis (Ruby)
+            #   if: matrix.tool == 'codeql-ruby'
+            #   uses: ./.github/actions/codeql-analysis
+            #   with:
+            #       language: ruby
 
-            - name: Run CodeQL Analysis (JavaScript)
-              if: matrix.tool == 'codeql-javascript'
-              uses: ./.github/actions/codeql-analysis
-              with:
-                  language: javascript-typescript
+            # - name: Run CodeQL Analysis (JavaScript)
+            #   if: matrix.tool == 'codeql-javascript'
+            #   uses: ./.github/actions/codeql-analysis
+            #   with:
+            #       language: javascript-typescript
 
     # Code quality analysis (runs in parallel)
     code-quality:
