@@ -12,6 +12,7 @@ AllCops:
     SuggestExtensions: false
     Exclude:
         - "data/**/*"
+        - ".codeql/**/*"
 
 # Enable key departments
 Bundler:

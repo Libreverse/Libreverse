@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Run static analysis script
-echo "Running static analysis..."
+git add .
 perl scripts/static.pl
 
 # Check if the script failed

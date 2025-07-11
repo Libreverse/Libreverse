@@ -1,0 +1,38 @@
+name: "Libreverse CodeQL Configuration"
+
+# This file configures CodeQL analysis for both local and CI/CD environments
+# It mirrors the default GitHub Actions CodeQL behavior
+
+# Query suites to run - security-and-quality is GitHub's default
+queries:
+    - uses: security-and-quality
+
+# Paths to exclude from analysis (GitHub defaults + project-specific)
+paths-ignore:
+    - "node_modules/**"
+    - "vendor/**"
+    - "test/**"
+    - "spec/**"
+    - "tmp/**"
+    - "coverage/**"
+    - "log/**"
+    - "storage/**"
+    - "public/assets/**"
+    - "db/schema.rb"
+    - "db/structure.sql"
+    - "db/migrate/**"
+    - ".codeql/**" # Exclude CodeQL repository with example files
+
+# Paths to include (project source code)
+paths:
+    - "app/**"
+    - "lib/**"
+    - "config/**"
+    - "bin/**"
+    - "*.rb"
+    - "*.js"
+    - "*.ts"
+    - "*.coffee"
+
+# Disable default queries: false (use GitHub's standard query set)
+disable-default-queries: false

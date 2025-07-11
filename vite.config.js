@@ -77,8 +77,8 @@ export default defineConfig(({ mode }) => {
                     conditionals: true,
                     dead_code: true,
                     directives: true,
-                    drop_console: true,
-                    drop_debugger: true,
+                    drop_console: false, // Changed to retain console outputs
+                    drop_debugger: false, // Changed to retain debugger statements (optional)
                     ecma: 2022,
                     evaluate: true,
                     expression: false,
@@ -98,12 +98,7 @@ export default defineConfig(({ mode }) => {
                     passes: 3,
                     properties: true,
                     pure_getters: "strict",
-                    pure_funcs: [
-                        "console.log",
-                        "console.info",
-                        "console.debug",
-                        "console.trace",
-                    ],
+                    pure_funcs: [], // Removed console methods to preserve them
                     reduce_vars: true,
                     reduce_funcs: true,
                     sequences: true,

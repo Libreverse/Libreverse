@@ -19,7 +19,7 @@ runs:
 
         - name: Run haml-lint
           shell: bash
-          run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*'
+          run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
 
         - name: Run ESLint
           shell: bash

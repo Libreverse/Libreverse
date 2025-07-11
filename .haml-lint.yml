@@ -8,6 +8,7 @@ exclude:
     - "**/vendor/**/*"
     - "**/vendor/**/*.haml"
     - "**/vendor/**/*.html.haml"
+    - ".codeql/**/*"
 
 linters:
     LineLength:

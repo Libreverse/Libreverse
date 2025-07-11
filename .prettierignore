@@ -11,3 +11,4 @@ coverage/**
 **/haml_lint*/**
 **/openid_connect*/**
 **/iodine*/**
+.codeql/**
