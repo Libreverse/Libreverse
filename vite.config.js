@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
 
     return {
         esbuild: {
-            target: "esnext",
+            target: "es5", // Changed from esnext to es5
             keepNames: false,
             treeShaking: false,
             legalComments: "inline",
@@ -35,10 +35,10 @@ export default defineConfig(({ mode }) => {
                     inlineDynamicImports: false,
                     compact: true,
                     generatedCode: {
-                        preset: "es2015", // Keep as es2015 for compatibility
-                        arrowFunctions: false, // Disable arrow functions for es2015 compatibility
-                        constBindings: true,
-                        objectShorthand: true,
+                        preset: "es5", // Changed from es2015 to es5 for better compatibility
+                        arrowFunctions: false,
+                        constBindings: false, // Changed to false for es5 compatibility
+                        objectShorthand: false, // Changed to false for es5 compatibility
                     },
                 },
 
@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
                     unknownGlobalSideEffects: false,
                 },
             },
-            target: ["esnext"],
+            target: ["es5"], // Changed from esnext to es5
             modulePreload: { polyfill: true },
             cssCodeSplit: true,
             assetsInlineLimit: 2147483647,
@@ -64,6 +64,7 @@ export default defineConfig(({ mode }) => {
                     bare_returns: false,
                     html5_comments: false,
                     shebang: false,
+                    ecma: 5, // Changed from undefined to 5
                 },
                 compress: {
                     defaults: true,
@@ -79,7 +80,7 @@ export default defineConfig(({ mode }) => {
                     directives: true,
                     drop_console: false, // Changed to retain console outputs
                     drop_debugger: false, // Changed to retain debugger statements (optional)
-                    ecma: 2015, // Changed to match generatedCode preset
+                    ecma: 5, // Changed from 2015 to 5
                     evaluate: true,
                     expression: false,
                     global_defs: {},
@@ -132,7 +133,7 @@ export default defineConfig(({ mode }) => {
                     beautify: false,
                     braces: false,
                     comments: "some",
-                    ecma: 2015,
+                    ecma: 5, // Changed from 2015 to 5
                     indent_level: 0,
                     inline_script: true,
                     keep_numbers: false,
