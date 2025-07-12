@@ -35,8 +35,8 @@ export default defineConfig(({ mode }) => {
                     inlineDynamicImports: false,
                     compact: true,
                     generatedCode: {
-                        preset: "es2015", // Rollup only supports 'es5' or 'es2015'
-                        arrowFunctions: true,
+                        preset: "es2015", // Keep as es2015 for compatibility
+                        arrowFunctions: false, // Disable arrow functions for es2015 compatibility
                         constBindings: true,
                         objectShorthand: true,
                     },
@@ -79,7 +79,7 @@ export default defineConfig(({ mode }) => {
                     directives: true,
                     drop_console: false, // Changed to retain console outputs
                     drop_debugger: false, // Changed to retain debugger statements (optional)
-                    ecma: 2022,
+                    ecma: 2015, // Changed to match generatedCode preset
                     evaluate: true,
                     expression: false,
                     global_defs: {},
@@ -132,7 +132,7 @@ export default defineConfig(({ mode }) => {
                     beautify: false,
                     braces: false,
                     comments: "some",
-                    ecma: 2022,
+                    ecma: 2015,
                     indent_level: 0,
                     inline_script: true,
                     keep_numbers: false,
@@ -200,20 +200,21 @@ export default defineConfig(({ mode }) => {
                         try {
                             const compiled = coffee.compile(code, {
                                 filename: id,
-                                bare: true,
+                                bare: false, // Changed to false for better compatibility
+                                sourceMap: false, // Explicitly disable source maps for now
                             });
                             return {
                                 code:
                                     typeof compiled === "string"
                                         ? compiled
                                         : compiled.js,
-                                map: undefined,
+                                map: null, // Changed to null instead of undefined
                             };
                         } catch (error) {
                             throw error;
                         }
                     }
-                    return undefined;
+                    return null; // Changed to null instead of undefined
                 },
             },
             stimulusHMR(),
