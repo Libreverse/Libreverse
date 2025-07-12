@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
 
     return {
         esbuild: {
-            target: "es5", // Changed from esnext to es5
+            target: "es2020", // Modern target
             keepNames: false,
             treeShaking: false,
             legalComments: "inline",
@@ -35,13 +35,12 @@ export default defineConfig(({ mode }) => {
                     inlineDynamicImports: false,
                     compact: true,
                     generatedCode: {
-                        preset: "es5", // Changed from es2015 to es5 for better compatibility
-                        arrowFunctions: false,
-                        constBindings: false, // Changed to false for es5 compatibility
-                        objectShorthand: false, // Changed to false for es5 compatibility
+                        preset: "es2015", // Modern output
+                        arrowFunctions: true,
+                        constBindings: true,
+                        objectShorthand: true,
                     },
                 },
-
                 external: [],
                 treeshake: {
                     moduleSideEffects: true,
@@ -50,7 +49,7 @@ export default defineConfig(({ mode }) => {
                     unknownGlobalSideEffects: false,
                 },
             },
-            target: ["es5"], // Changed from esnext to es5
+            target: ["es2020", "edge88", "firefox78", "chrome87", "safari14"], // Modern browsers
             modulePreload: { polyfill: true },
             cssCodeSplit: true,
             assetsInlineLimit: 2147483647,
@@ -64,11 +63,11 @@ export default defineConfig(({ mode }) => {
                     bare_returns: false,
                     html5_comments: false,
                     shebang: false,
-                    ecma: 5, // Changed from undefined to 5
+                    ecma: 2020, // Modern parsing
                 },
                 compress: {
                     defaults: true,
-                    arrows: false,
+                    arrows: true, // Keep arrow functions
                     arguments: true,
                     booleans: true,
                     booleans_as_integers: false,
@@ -78,9 +77,9 @@ export default defineConfig(({ mode }) => {
                     conditionals: true,
                     dead_code: true,
                     directives: true,
-                    drop_console: false, // Changed to retain console outputs
-                    drop_debugger: false, // Changed to retain debugger statements (optional)
-                    ecma: 5, // Changed from 2015 to 5
+                    drop_console: false,
+                    drop_debugger: false,
+                    ecma: 2020, // Modern compression
                     evaluate: true,
                     expression: false,
                     global_defs: {},
@@ -99,7 +98,7 @@ export default defineConfig(({ mode }) => {
                     passes: 3,
                     properties: true,
                     pure_getters: "strict",
-                    pure_funcs: [], // Removed console methods to preserve them
+                    pure_funcs: [],
                     reduce_vars: true,
                     reduce_funcs: true,
                     sequences: true,
@@ -109,7 +108,7 @@ export default defineConfig(({ mode }) => {
                     top_retain: null,
                     typeofs: true,
                     unsafe: false,
-                    unsafe_arrows: false,
+                    unsafe_arrows: true, // Allow arrow function optimizations
                     unsafe_comps: false,
                     unsafe_Function: false,
                     unsafe_math: false,
@@ -126,14 +125,14 @@ export default defineConfig(({ mode }) => {
                     keep_fnames: false,
                     reserved: [],
                     toplevel: false,
-                    safari10: true,
+                    safari10: false, // No need for Safari 10 workarounds
                 },
                 format: {
                     ascii_only: false,
                     beautify: false,
                     braces: false,
                     comments: "some",
-                    ecma: 5, // Changed from 2015 to 5
+                    ecma: 2020, // Modern output format
                     indent_level: 0,
                     inline_script: true,
                     keep_numbers: false,
@@ -141,10 +140,10 @@ export default defineConfig(({ mode }) => {
                     max_line_len: 0,
                     quote_keys: false,
                     preserve_annotations: false,
-                    safari10: true,
+                    safari10: false, // No Safari 10 workarounds
                     semicolons: true,
                     shebang: false,
-                    webkit: true,
+                    webkit: false, // No need for webkit workarounds
                     wrap_iife: false,
                     wrap_func_args: false,
                 },
@@ -201,21 +200,21 @@ export default defineConfig(({ mode }) => {
                         try {
                             const compiled = coffee.compile(code, {
                                 filename: id,
-                                bare: false, // Changed to false for better compatibility
-                                sourceMap: false, // Explicitly disable source maps for now
+                                bare: true, // Back to true for cleaner output
+                                sourceMap: false,
                             });
                             return {
                                 code:
                                     typeof compiled === "string"
                                         ? compiled
                                         : compiled.js,
-                                map: null, // Changed to null instead of undefined
+                                map: null,
                             };
                         } catch (error) {
                             throw error;
                         }
                     }
-                    return null; // Changed to null instead of undefined
+                    return null;
                 },
             },
             stimulusHMR(),
