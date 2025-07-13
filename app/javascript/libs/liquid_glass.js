@@ -1,16 +1,72 @@
 import { Container } from "./container.js";
 import { Button } from "./button.js";
 import html2canvas from "html2canvas";
+import { glassRenderManager } from "./glass_render_manager.js";
+import { optimizedWebGLContextManager } from "./optimized_webgl_manager.js";
+import { glassConfigManager } from "./glass_config_manager.js";
 
 // Global initialization tracking to prevent multiple simultaneous initializations across all functions
 const initializationTracker = new WeakSet();
 
-// Global WebGL debugging and monitoring
+// Optimized instance cache for better memory management
+const instanceCache = new Map();
+
+// Performance monitoring
+const PerformanceMonitor = {
+    renderCount: 0,
+    averageRenderTime: 0,
+    lastRenderTime: 0,
+    slowRenderThreshold: 16.67, // 60fps threshold
+
+    recordRender(duration) {
+        this.renderCount++;
+        this.averageRenderTime = (this.averageRenderTime + duration) / 2;
+        this.lastRenderTime = duration;
+
+        if (duration > this.slowRenderThreshold) {
+            console.warn(
+                `[PerformanceMonitor] Slow render detected: ${duration.toFixed(2)}ms`,
+            );
+        }
+    },
+
+    getStats() {
+        return {
+            totalRenders: this.renderCount,
+            averageRenderTime: this.averageRenderTime.toFixed(2),
+            lastRenderTime: this.lastRenderTime.toFixed(2),
+            webglStats: optimizedWebGLContextManager.getStats(),
+            configStats: glassConfigManager.getStats(),
+        };
+    },
+};
+
+// Legacy compatibility wrapper for WebGLContextManager
+const WebGLContextManager = {
+    get contexts() {
+        return optimizedWebGLContextManager.contexts;
+    },
+
+    getContext(element) {
+        return optimizedWebGLContextManager.getContext(element);
+    },
+
+    cleanup() {
+        return optimizedWebGLContextManager.cleanup();
+    },
+
+    releaseContext(element) {
+        return optimizedWebGLContextManager.releaseContext(element);
+    },
+};
+
+// Backward compatibility WebGL debugger
 const WebGLDebugger = {
     contextLossCount: 0,
     contextCreateCount: 0,
 
     monitorCanvas(canvas, identifier = "unknown") {
+        // Enhanced monitoring with performance tracking
         if (!canvas) return;
 
         canvas.addEventListener("webglcontextlost", (event) => {
@@ -18,7 +74,7 @@ const WebGLDebugger = {
             console.error(`WebGL Debug - Context lost (${identifier}):`, {
                 lossCount: this.contextLossCount,
                 canvasSize: `${canvas.width}x${canvas.height}`,
-                totalContexts: WebGLContextManager.contexts.size,
+                totalContexts: optimizedWebGLContextManager.contexts.size,
                 event: event.type,
             });
             event.preventDefault();
@@ -27,7 +83,7 @@ const WebGLDebugger = {
         canvas.addEventListener("webglcontextrestored", (event) => {
             console.log(`WebGL Debug - Context restored (${identifier}):`, {
                 canvasSize: `${canvas.width}x${canvas.height}`,
-                totalContexts: WebGLContextManager.contexts.size,
+                totalContexts: optimizedWebGLContextManager.contexts.size,
                 event: event.type,
             });
         });
@@ -38,80 +94,8 @@ const WebGLDebugger = {
         console.log(`WebGL Debug - Context created (${identifier}):`, {
             createCount: this.contextCreateCount,
             canvasSize: `${canvas.width}x${canvas.height}`,
-            totalContexts: WebGLContextManager.contexts.size,
+            totalContexts: optimizedWebGLContextManager.contexts.size,
         });
-    },
-};
-
-// WebGL context management to prevent context exhaustion
-const WebGLContextManager = {
-    contexts: new Map(),
-    maxContexts: 8, // Conservative limit to prevent browser issues
-
-    getContext(element) {
-        const existingContext = this.contexts.get(element);
-        if (existingContext && !existingContext.isContextLost()) {
-            return existingContext;
-        }
-
-        // Clean up lost contexts
-        this.cleanup();
-
-        // If we're at the limit, reuse oldest context
-        if (this.contexts.size >= this.maxContexts) {
-            const oldestElement = this.contexts.keys().next().value;
-            this.contexts.delete(oldestElement);
-        }
-
-        // Create new context
-        const canvas = document.createElement("canvas");
-        const gl =
-            canvas.getContext("webgl", { preserveDrawingBuffer: true }) ||
-            canvas.getContext("experimental-webgl", {
-                preserveDrawingBuffer: true,
-            });
-
-        if (gl) {
-            this.contexts.set(element, gl);
-            console.log(
-                `WebGL context created (${this.contexts.size}/${this.maxContexts})`,
-            );
-
-            // Enhanced WebGL debugging
-            if (this.contexts.size > 4) {
-                console.warn(
-                    `WebGL Debug - High context count detected: ${this.contexts.size}`,
-                );
-            }
-        } else {
-            console.error("WebGL Debug - Failed to create WebGL context:", {
-                webglSupported: !!window.WebGLRenderingContext,
-                contextCount: this.contexts.size,
-                canvasSupported: !!window.HTMLCanvasElement,
-                maxContexts: this.maxContexts,
-            });
-        }
-
-        return gl;
-    },
-
-    cleanup() {
-        for (const [element, context] of this.contexts.entries()) {
-            if (context.isContextLost() || !element.isConnected) {
-                this.contexts.delete(element);
-            }
-        }
-    },
-
-    releaseContext(element) {
-        const context = this.contexts.get(element);
-        if (context) {
-            const loseContextExt = context.getExtension("WEBGL_lose_context");
-            if (loseContextExt) {
-                loseContextExt.loseContext();
-            }
-            this.contexts.delete(element);
-        }
     },
 };
 
@@ -131,7 +115,7 @@ const WebGLContextManager = {
  * - Container.createFixedContainer(options) - For fixed position elements
  * - new Container(options) - For custom configurations
  */
-export function renderLiquidGlassNav(
+export async function renderLiquidGlassNav(
     element,
     navItems,
     containerOptions = {},
@@ -156,7 +140,7 @@ export function renderLiquidGlassNav(
             element.innerHTML = "";
         }
 
-        const glassContainer = Container.createSidebarContainer({
+        const glassContainer = await Container.createSidebarContainer({
             type: "rounded",
             borderRadius: 0,
             tintOpacity: 0.12,
@@ -291,11 +275,21 @@ export function renderLiquidGlassNav(
 }
 
 /**
- * Validate that liquid glass can be initialized safely
+ * Optimized validation with caching for better performance
  * @param {HTMLElement} element - Element to test
  * @returns {boolean} - Whether initialization would succeed
  */
 export function validateLiquidGlass(element) {
+    // Cache validation results to avoid repeated expensive checks
+    const cacheKey = element.tagName + element.className;
+    if (instanceCache.has(cacheKey)) {
+        const cached = instanceCache.get(cacheKey);
+        if (Date.now() - cached.timestamp < 5000) {
+            // 5 second cache
+            return cached.valid;
+        }
+    }
+
     try {
         // Check basic requirements
         if (!element || !element.isConnected) {
@@ -305,38 +299,29 @@ export function validateLiquidGlass(element) {
             return false;
         }
 
-        // Use WebGL context manager for testing
-        const gl = WebGLContextManager.getContext(element);
-        if (!gl) {
+        // Quick WebGL support check
+        if (!window.WebGLRenderingContext) {
             console.error(
                 "Liquid glass validation failed: WebGL not supported",
             );
-            console.error("Browser WebGL support details:", {
-                userAgent: navigator.userAgent,
-                webglSupported: !!window.WebGLRenderingContext,
-                webgl2Supported: !!window.WebGL2RenderingContext,
-                canvasSupported: !!window.HTMLCanvasElement,
-            });
             return false;
         }
 
-        // Single context test instead of multiple
+        // Use optimized context manager for testing
+        const gl = optimizedWebGLContextManager.getContext(element);
+        if (!gl) {
+            console.error(
+                "Liquid glass validation failed: WebGL context creation failed",
+            );
+            return false;
+        }
+
+        // Quick context health check
         if (gl.isContextLost()) {
             console.error(
                 "Liquid glass validation failed: WebGL context is lost",
             );
             return false;
-        }
-
-        // Check for critical WebGL extensions
-        const criticalExtensions = ["OES_texture_float"];
-        const availableExtensions = gl.getSupportedExtensions();
-        const missingCritical = criticalExtensions.filter(
-            (ext) => !availableExtensions.includes(ext),
-        );
-
-        if (missingCritical.length > 0) {
-            console.warn("Critical WebGL extensions missing:", missingCritical);
         }
 
         // Check html2canvas availability
@@ -347,31 +332,23 @@ export function validateLiquidGlass(element) {
             return false;
         }
 
-        console.log("Liquid glass validation successful:", {
-            webglContextsActive: WebGLContextManager.contexts.size,
-            webglExtensions: availableExtensions?.length || 0,
-            maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
-            renderer: gl.getParameter(gl.RENDERER),
-            webglVersion: gl.getParameter(gl.VERSION),
-            webglVendor: gl.getParameter(gl.VENDOR),
-            maxViewportDims: gl.getParameter(gl.MAX_VIEWPORT_DIMS),
-            maxRenderBufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
-            contextAttributes: gl.getContextAttributes(),
+        // Cache the result
+        instanceCache.set(cacheKey, {
+            valid: true,
+            timestamp: Date.now(),
         });
 
-        // Additional WebGL context monitoring
-        console.log("WebGL Debug - Browser WebGL capabilities:", {
-            webglSupported: !!window.WebGLRenderingContext,
-            webgl2Supported: !!window.WebGL2RenderingContext,
-            maxWebGLContexts: "unknown", // Browser-dependent
-            currentContextCount: WebGLContextManager.contexts.size,
-            userAgent: navigator.userAgent.substring(0, 100) + "...",
-        });
-
+        console.log("Liquid glass validation successful");
         return true;
     } catch (error) {
-        console.error("Liquid glass validation failed with exception:", error);
-        console.error("Stack trace:", error.stack);
+        console.error("Liquid glass validation failed with error:", error);
+
+        // Cache the failure
+        instanceCache.set(cacheKey, {
+            valid: false,
+            timestamp: Date.now(),
+        });
+
         return false;
     }
 }
@@ -433,7 +410,7 @@ export function createFixedGlassContainer(element, options = {}) {
  * @param {boolean} [renderOptions.preserveOriginalHTML] - Whether to keep original HTML visible during load
  * @param {string} [renderOptions.originalContent] - Original HTML content to restore on cleanup
  */
-export function renderLiquidGlassSidebarRightRounded(
+export async function renderLiquidGlassSidebarRightRounded(
     element,
     navItems,
     containerOptions = {},
@@ -458,12 +435,13 @@ export function renderLiquidGlassSidebarRightRounded(
             element.innerHTML = "";
         }
 
-        const glassContainer = Container.createSidebarContainerRightRounded({
-            type: "rounded",
-            borderRadius: 0,
-            tintOpacity: 0.12,
-            ...containerOptions,
-        });
+        const glassContainer =
+            await Container.createSidebarContainerRightRounded({
+                type: "rounded",
+                borderRadius: 0,
+                tintOpacity: 0.12,
+                ...containerOptions,
+            });
 
         // Same setup as regular sidebar...
         glassContainer.element.style.flexDirection = "column";
@@ -578,7 +556,7 @@ export function renderLiquidGlassSidebarRightRounded(
  * @param {boolean} [renderOptions.expanded] - Whether drawer is expanded
  * @param {string} [renderOptions.cornerRounding] - Corner rounding style
  */
-export function renderLiquidGlassDrawer(
+export async function renderLiquidGlassDrawer(
     element,
     containerOptions = {},
     renderOptions = {},
@@ -647,7 +625,7 @@ export function renderLiquidGlassDrawer(
             ...containerOptions,
         });
 
-        const glassContainer = Container.createSidebarContainer({
+        const glassContainer = await Container.createSidebarContainer({
             type: "rounded",
             borderRadius: containerOptions.borderRadius || 20,
             tintOpacity: containerOptions.tintOpacity || 0.1,
@@ -673,9 +651,9 @@ export function renderLiquidGlassDrawer(
                 console.log("WebGL Debug - Canvas found in new container:", {
                     canvasWidth: canvas.width,
                     canvasHeight: canvas.height,
-                    hasWebGLContext: !!(
-                        canvas.getContext("webgl") ||
-                        canvas.getContext("experimental-webgl")
+                    hasWebGLContext: !!optimizedWebGLContextManager.getContext(
+                        canvas.parentElement,
+                        canvas,
                     ),
                 });
 
@@ -944,10 +922,11 @@ export function renderLiquidGlassDrawer(
                 canvas.style.left = "0";
                 canvas.style.zIndex = "0"; // Behind content
 
-                // Force WebGL context to redraw with proper dimensions
-                const context =
-                    canvas.getContext("webgl") ||
-                    canvas.getContext("experimental-webgl");
+                // Get WebGL context through optimized manager
+                const context = optimizedWebGLContextManager.getContext(
+                    element,
+                    canvas,
+                );
                 if (context) {
                     console.log("WebGL context acquired successfully:", {
                         contextType: context.constructor.name,
@@ -1305,4 +1284,155 @@ function getBorderRadiusForCorners(radius, cornerRounding = "top") {
             return `${radius}px ${radius}px 0 0`;
         }
     }
+}
+
+/**
+ * Performance monitoring and debugging utilities
+ */
+export function getGlassPerformanceStats() {
+    return PerformanceMonitor.getStats();
+}
+
+/**
+ * Enable debug mode for glass components
+ */
+export function enableGlassDebugMode() {
+    Container.enableDebug();
+    console.log(
+        "[LiquidGlass] Debug mode enabled - performance monitoring active",
+    );
+}
+
+/**
+ * Disable debug mode for better performance
+ */
+export function disableGlassDebugMode() {
+    Container.disableDebug();
+    console.log("[LiquidGlass] Debug mode disabled");
+}
+
+/**
+ * Global cleanup function for all glass components
+ */
+export function cleanupAllGlassComponents() {
+    console.log("[LiquidGlass] Starting global cleanup...");
+
+    // Stop the render manager
+    glassRenderManager.destroy();
+
+    // Clean up WebGL contexts
+    optimizedWebGLContextManager.destroy();
+
+    // Clean up config manager
+    glassConfigManager.destroy();
+
+    // Clear instance cache
+    instanceCache.clear();
+
+    // Clean up tracked initializations
+    // Note: WeakSet doesn't have a clear method, but it will be garbage collected
+
+    console.log("[LiquidGlass] Global cleanup complete");
+}
+
+/**
+ * Optimize existing glass components by updating their render strategy
+ */
+export function optimizeExistingGlassComponents() {
+    console.log("[LiquidGlass] Optimizing existing components...");
+
+    let optimizedCount = 0;
+
+    // Find all elements with glass components
+    const glassElements = document.querySelectorAll(
+        '[data-glass-active="true"]',
+    );
+
+    glassElements.forEach((element) => {
+        try {
+            // Register with optimized render manager if not already registered
+            const instance = element._liquidGlassInstance;
+            if (instance && !glassRenderManager.instances.has(instance)) {
+                // Add render manager integration
+                instance.needsRender = true;
+                instance.renderFrame = function () {
+                    if (this.render && !this.isDestroyed) {
+                        const start = performance.now();
+                        this.render();
+                        const duration = performance.now() - start;
+                        PerformanceMonitor.recordRender(duration);
+                    }
+                };
+
+                glassRenderManager.register(instance);
+                optimizedCount++;
+            }
+        } catch (error) {
+            console.warn("[LiquidGlass] Failed to optimize component:", error);
+        }
+    });
+
+    console.log(
+        `[LiquidGlass] Optimized ${optimizedCount} existing components`,
+    );
+    return optimizedCount;
+}
+
+/**
+ * Batch update multiple glass components efficiently
+ */
+export function batchUpdateGlassComponents(updates) {
+    glassConfigManager.scheduleBatchUpdate(updates);
+}
+
+/**
+ * Monitor glass performance and provide recommendations
+ */
+export function analyzeGlassPerformance() {
+    const stats = getGlassPerformanceStats();
+    const recommendations = [];
+
+    if (stats.averageRenderTime > 16.67) {
+        recommendations.push(
+            "Consider reducing tint opacity or border radius for better performance",
+        );
+    }
+
+    if (stats.webglStats.activeContexts > 4) {
+        recommendations.push(
+            "Too many active WebGL contexts - consider reducing concurrent glass effects",
+        );
+    }
+
+    if (stats.configStats.pendingUpdates > 5) {
+        recommendations.push(
+            "Many pending config updates - batch updates may improve performance",
+        );
+    }
+
+    return {
+        stats,
+        recommendations,
+        healthScore: Math.max(
+            0,
+            100 -
+                stats.averageRenderTime * 2 -
+                stats.webglStats.activeContexts * 5,
+        ),
+    };
+}
+
+// Auto-optimize existing components when this module loads
+if (typeof window !== "undefined") {
+    // Wait for DOM to be ready
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(optimizeExistingGlassComponents, 1000);
+        });
+    } else {
+        setTimeout(optimizeExistingGlassComponents, 1000);
+    }
+
+    // Clean up on page unload
+    window.addEventListener("beforeunload", cleanupAllGlassComponents);
 }
