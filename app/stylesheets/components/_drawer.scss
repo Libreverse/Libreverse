@@ -10,9 +10,6 @@
     margin: 0 2.5%;
     height: 60px; /* Fixed height when collapsed */
     width: 350px;
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
     border-top: 1px solid variables.$glass-border;
     border-left: 1px solid variables.$glass-border;
     border-right: 1px solid variables.$glass-border;
@@ -24,6 +21,24 @@
         margin 0.3s ease-in-out;
     overflow: hidden;
     contain: layout paint;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+    }
 }
 
 /* Expanded drawer state */

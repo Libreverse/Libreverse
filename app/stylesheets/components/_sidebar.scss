@@ -3,16 +3,26 @@
 .sidebar {
     width: 50px;
     height: 80vh;
+    border-radius: 0 20px 20px 0;
+    z-index: 5;
+    transition: width 0.3s;
+    position: fixed;
+
+    // Default fallback styles (always applied)
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
     border-top: 1px solid variables.$glass-border;
     border-right: 1px solid variables.$glass-border;
     border-bottom: 1px solid variables.$glass-border;
-    border-radius: 0 20px 20px 0;
-    z-index: 5;
-    transition: width 0.3s;
-    position: fixed;
+
+    // Hide fallback styles when liquid glass is active (sidebar controller sets this)
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 
     &.sidebar-hovered {
         width: 100px;

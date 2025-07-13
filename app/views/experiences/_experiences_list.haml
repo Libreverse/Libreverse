@@ -1,5 +1,11 @@
 - experiences.each do |experience|
-  .sp-experience
+  .sp-experience{"data-controller" => "glass",
+                 "data-glass-enable-glass-value" => true,
+                 "data-glass-component-type-value" => "card",
+                 "data-glass-glass-type-value" => "rounded",
+                 "data-glass-border-radius-value" => 5,
+                 "data-glass-tint-opacity-value" => 0.1,
+                 "data-html2canvas-ignore" => "true"}
     = link_to display_experience_path(experience), class: "experience-link" do
       %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
         %h3{itemprop: "name"}= sanitize experience.title

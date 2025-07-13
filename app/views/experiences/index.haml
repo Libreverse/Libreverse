@@ -9,7 +9,15 @@
         %p.header-description= t('experiences.index.subtitle')
       - if rodauth.logged_in? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
-          .dashboard-section#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial", "data-dismissible-target" => "container"}
+          .dashboard-section#experiences-tutorial{"data-controller" => "glass",
+                                                 "data-glass-enable-glass-value" => true,
+                                                 "data-glass-component-type-value" => "card",
+                                                 "data-glass-glass-type-value" => "rounded",
+                                                 "data-glass-border-radius-value" => 5,
+                                                 "data-glass-tint-opacity-value" => 0.1,
+                                                 "data-html2canvas-ignore" => "true",
+                                                 "data-dismissible-key-value" => "experiences-tutorial",
+                                                 "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
                 %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
@@ -18,7 +26,13 @@
       - if @experiences.any?
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
-      %section.experience-form-container.mt-5#create-experience
+      %section.experience-form-container.mt-5#create-experience{"data-controller" => "glass",
+                                                             "data-glass-enable-glass-value" => true,
+                                                             "data-glass-component-type-value" => "card",
+                                                             "data-glass-glass-type-value" => "rounded",
+                                                             "data-glass-border-radius-value" => 5,
+                                                             "data-glass-tint-opacity-value" => 0.1,
+                                                             "data-html2canvas-ignore" => "true"}
         %h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
         %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
         = render "form", experience: @experience

@@ -77,26 +77,57 @@
     flex-grow: 1;
 }
 
-.sp-search-bar-input {
+.sp-search-bar-container {
+    // Glass effects now handled by liquid glass system
+    border-radius: 5px;
+    margin-left: 10%;
+    margin-right: 10%;
+    position: relative;
+    flex-grow: 1;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
     border: 1px solid variables.$glass-border;
-    color: variables.$sp-primary;
-    font-family: Hack, Noto-Sans, monospace;
-    flex-grow: 1;
-    padding: 10px;
-    font-size: 18px;
-    border-radius: 5px;
-    text-align: left;
-    margin-left: 10%;
-    margin-right: 10%;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 }
 
-.sp-search-bar-input:focus {
+.sp-search-bar-input {
+    // Input styling without glass effects
+    color: variables.$sp-primary;
+    font-family: Hack, Noto-Sans, monospace;
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    text-align: left;
+    background: transparent;
     outline: none;
-    border-color: variables.$sp-primary;
-    box-shadow: 0 0 5px rgb(0 0 0 / 30%);
+
+    &::placeholder {
+        color: rgb(255 255 255 / 50%);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: variables.$sp-primary;
+        box-shadow: 0 0 5px rgb(0 0 0 / 30%);
+    }
 }
 
 @media screen and (width <= 600px) {
@@ -124,23 +155,45 @@
 }
 
 .sp-experience {
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
+    // Glass effects now handled by liquid glass system
     border-radius: 5px;
     padding: 0;
     text-align: center;
     min-height: 50px;
+    position: relative;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Fallback styles when liquid glass is not available
+    // Default fallback styles (always applied)
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border: 1px solid variables.$glass-border;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 
     // Federated experience styling
     &.federated-experience {
         border-color: rgb(100 200 255 / 40%);
-        background: linear-gradient(
-            135deg,
-            rgb(100 200 255 / 15%) 0%,
-            variables.$glass 60%
-        );
+
+        &:not([data-glass-active="true"]) {
+            background: linear-gradient(
+                135deg,
+                rgb(100 200 255 / 15%) 0%,
+                variables.$glass 60%
+            );
+        }
 
         .federated-badge {
             display: inline-block;
@@ -162,11 +215,6 @@
             color: rgb(100 200 255 / 80%);
             font-weight: 500;
         }
-    }
-
-    // Local experience styling
-    &.local-experience {
-        // Keep existing styling as default
     }
 }
 
@@ -227,10 +275,6 @@
     @include modified-lesser-sp-aligner-tutorial;
 
     position: relative;
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
     border-radius: 5px;
     padding: 1.5rem;
     border-left: 4px solid variables.$sp-primary;
@@ -239,6 +283,30 @@
         max-height 0.5s ease,
         margin-bottom 0.5s ease;
     overflow: hidden;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Fallback styles when liquid glass is not available
+    // Default fallback styles (always applied)
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px variables.$box-shadow;
+    border: 1px solid variables.$glass-border;
+
+    // Hide fallback styles when liquid glass is active (keep colored border)
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border-left: 4px solid variables.$sp-primary; // Keep colored border
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+    }
 
     &.dismissed {
         opacity: 0;

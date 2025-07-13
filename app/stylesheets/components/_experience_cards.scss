@@ -19,8 +19,6 @@
 }
 
 %experience-card-base {
-    @include glass-effect;
-
     border-radius: 5px;
     padding: 1.5rem;
     transition:
@@ -31,6 +29,23 @@
     overflow: hidden;
     font-family: Hack, Noto-Sans, monospace;
     color: variables.$white-90;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 
     &::before {
         content: "";
@@ -45,6 +60,7 @@
             color.adjust(variables.$sp-primary, $lightness: 15%)
         );
         opacity: 0.8;
+        z-index: 2;
     }
 
     &:hover {

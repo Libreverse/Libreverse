@@ -43,13 +43,29 @@
 }
 
 %administrative-card-hoverless {
-    @include glass-effect;
-
     border-radius: 5px;
     overflow: hidden;
     transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
+    position: relative;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 }
 
 %administrative-header {
@@ -85,12 +101,31 @@
 }
 
 %administrative-welcome-section {
-    @include glass-effect;
-
     border-radius: 5px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border-left: 4px solid variables.$dashboard-primary;
+    position: relative;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border-left: 4px solid variables.$dashboard-primary; // Keep colored border
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+    }
 
     h2 {
         font-family: Hack, Noto-Sans, monospace;
@@ -103,12 +138,28 @@
 }
 
 %administrative-info-card {
-    @include glass-effect;
-
     border-radius: 5px;
     margin-bottom: 1rem;
     transition: all 0.2s ease;
     overflow: hidden;
+    position: relative;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 
     &:last-child {
         margin-bottom: 0;
@@ -143,11 +194,30 @@
     align-items: center;
     padding: 0.75rem 1rem;
     border-radius: 5px;
-
-    @include glass-effect;
-
     margin-bottom: 0.5rem;
     border-left: 3px solid variables.$dashboard-primary;
+    position: relative;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border-left: 3px solid variables.$dashboard-primary; // Keep colored border
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+    }
+
     color: variables.$white-80;
 
     i {
@@ -264,11 +334,27 @@
 }
 
 %administrative-experience-form-container {
-    @include glass-effect;
-
     border-radius: 5px;
     padding: 2rem;
     margin-top: 2rem;
+    position: relative;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 }
 
 %administrative-experience-form-heading {
@@ -544,13 +630,30 @@
 // Dashboard section containers
 %administrative-section {
     position: relative;
-
-    @include glass-effect;
-
     border-radius: 5px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border-left: 4px solid variables.$dashboard-primary;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active (keep colored border)
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border-left: 4px solid variables.$dashboard-primary; // Keep colored border
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+    }
 
     .section-dismiss {
         // Nested class

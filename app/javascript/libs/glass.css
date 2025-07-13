@@ -15,6 +15,26 @@
         transform-origin: left center;
         will-change: transform;
     }
+
+    /* Ensure content appears above glass canvas */
+    > *:not(canvas) {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Default fallback styles (always applied) */
+    background: rgb(255 255 255 / 10%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(255 255 255 / 20%);
+    box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
+
+    /* Hide fallback styles when liquid glass is active */
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+    }
 }
 
 .glass-container-circle {
@@ -91,16 +111,21 @@
 }
 
 /* Fallback styles when WebGL is not available */
-.glass-container:not([style*="--webgl-ready"]) {
-    background: rgb(255 255 255 / 10%);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgb(255 255 255 / 20%);
-}
 
-.glass-button:not([style*="--webgl-ready"]) {
+/* Default fallback styles (always applied) */
+.glass-button:not([data-glass-active="true"]) {
     background: rgb(255 255 255 / 15%);
     backdrop-filter: blur(8px);
-    border: 1px solid rgb(255 255 255 / 30%);
+    border: 1px solid rgb(255 255 255 / 25%);
+    box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
+}
+
+/* Hide fallback styles when liquid glass is active */
+.glass-button[data-glass-active="true"] {
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
 }
 
 /* Responsive Design */
@@ -150,6 +175,7 @@
     0% {
         transform: translate(-50%, -50%) rotate(0deg);
     }
+
     100% {
         transform: translate(-50%, -50%) rotate(360deg);
     }

@@ -108,6 +108,9 @@ export default class extends Controller
 
     console.log "[SidebarController] Liquid glass initialized with", navItems.length, "items"
 
+    # Mark element as having active glass effect
+    @element.setAttribute("data-glass-active", "true")
+
     # After rendering, mark the current page button as disabled but keep pointer events
     currentPath = globalThis.location.pathname
     buttons = @element.querySelectorAll ".glass-button"
@@ -124,6 +127,9 @@ export default class extends Controller
 
   cleanupLiquidGlass: ->
     try
+      # Remove glass active marker
+      @element.removeAttribute("data-glass-active") if @element
+
       if @glassContainer and typeof @glassContainer.destroy is "function"
         @glassContainer.destroy()
 

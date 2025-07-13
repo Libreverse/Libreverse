@@ -11,11 +11,7 @@
 }
 
 .toast {
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
     border-radius: 0.25rem;
-    border: 1px solid variables.$glass-border;
-    box-shadow: 0 4px 30px variables.$box-shadow;
     color: variables.$white-90;
     display: flex;
     flex-direction: column;
@@ -32,6 +28,26 @@
     pointer-events: auto;
     font-family: Hack, Noto-Sans, monospace;
     will-change: transform, opacity;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    border: 1px solid variables.$glass-border;
+    box-shadow: 0 4px 30px variables.$box-shadow;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 }
 
 .toast.show {
