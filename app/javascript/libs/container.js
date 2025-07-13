@@ -1,6 +1,7 @@
 import html2canvas from "html2canvas";
 import { glassRenderManager } from "./glass_render_manager.js";
 import { optimizedWebGLContextManager } from "./optimized_webgl_manager.js";
+import { webglContextMonitor } from "./webgl_context_monitor.js";
 
 class Container {
     static instances = [];
@@ -18,9 +19,14 @@ class Container {
     static maxCacheAge = 5000; // 5 second cache for snapshots
 
     // Instance creation throttling to prevent WebGL context exhaustion
-    static maxConcurrentInstances = 16; // Match our WebGL context limit
+    static maxConcurrentInstances = 8; // Further reduced from 12
     static creationQueue = [];
     static isProcessingQueue = false;
+
+    // Advanced context management
+    static activeRenderingInstances = new Set(); // Track which instances are actively rendering
+    static backgroundInstances = new Set(); // Track background/low-priority instances
+    static maxActiveRenderingInstances = 6; // Reduced from 8
 
     // Debug helper function
     static enableDebug() {
@@ -1326,13 +1332,63 @@ class Container {
             activeInstances: Container.instances.length,
             maxInstances: Container.maxConcurrentInstances,
             queuedCreations: Container.creationQueue.length,
+            activeRenderingInstances: Container.activeRenderingInstances.size,
+            backgroundInstances: Container.backgroundInstances.size,
+            maxActiveRendering: Container.maxActiveRenderingInstances,
             webglStats: optimizedWebGLContextManager.getStats(),
+            monitoringStats: webglContextMonitor
+                ? webglContextMonitor.getMonitoringStats()
+                : null,
         };
+    }
+
+    // Visibility-based optimization methods
+    static updateInstancePriority(instance, isVisible) {
+        if (isVisible) {
+            Container.backgroundInstances.delete(instance);
+            if (
+                Container.activeRenderingInstances.size <
+                Container.maxActiveRenderingInstances
+            ) {
+                Container.activeRenderingInstances.add(instance);
+                instance.isActivelyRendering = true;
+            } else {
+                // Demote an existing instance to make room
+                const instanceToBackground = Container.activeRenderingInstances
+                    .values()
+                    .next().value;
+                if (instanceToBackground) {
+                    Container.activeRenderingInstances.delete(
+                        instanceToBackground,
+                    );
+                    Container.backgroundInstances.add(instanceToBackground);
+                    instanceToBackground.isActivelyRendering = false;
+                }
+                Container.activeRenderingInstances.add(instance);
+                instance.isActivelyRendering = true;
+            }
+        } else {
+            Container.activeRenderingInstances.delete(instance);
+            Container.backgroundInstances.add(instance);
+            instance.isActivelyRendering = false;
+        }
+    }
+
+    // Check if container should actively render based on priority
+    shouldActivelyRender() {
+        return this.isActivelyRendering !== false;
     }
 
     startRenderLoop() {
         const render = () => {
             if (!this.gl_refs.gl || this.isDestroyed) return;
+
+            // Only actively render if this instance has priority
+            if (!this.shouldActivelyRender()) {
+                // Reduce render frequency for background instances
+                setTimeout(() => requestAnimationFrame(render), 100);
+                return;
+            }
 
             const gl = this.gl_refs.gl;
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -1596,21 +1652,24 @@ class Container {
 
         const options = {
             root: null, // Use the viewport as the root
-            rootMargin: "0px",
-            threshold: 0.01, // Trigger when at least 1% of the element is visible
+            rootMargin: "100px", // Larger margin for earlier detection
+            threshold: [0, 0.01, 0.1], // Multiple thresholds for better detection
         };
 
         this.intersectionObserver = new IntersectionObserver(
             (entries, observer) => {
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        // Element is visible, proceed with WebGL initialization
+                    const isVisible = entry.isIntersecting;
+
+                    // Update rendering priority based on visibility
+                    Container.updateInstancePriority(this, isVisible);
+
+                    if (isVisible && !this.webglInitialized) {
+                        // Element is visible, proceed with WebGL initialization immediately
                         console.log(
                             "Container is visible, initializing WebGL...",
                         );
                         this.handleVisibility();
-                        // Stop observing once it's visible to avoid re-triggering
-                        observer.unobserve(this.element);
                     }
                 });
             },
@@ -1618,6 +1677,19 @@ class Container {
         );
 
         this.intersectionObserver.observe(this.element);
+
+        // Also trigger immediate visibility check for elements already visible
+        setTimeout(() => {
+            const rect = this.element.getBoundingClientRect();
+            const isCurrentlyVisible =
+                rect.top < window.innerHeight && rect.bottom > 0;
+            if (isCurrentlyVisible && !this.webglInitialized) {
+                console.log(
+                    "Container already visible, initializing WebGL immediately...",
+                );
+                this.handleVisibility();
+            }
+        }, 100);
     }
 
     handleVisibility() {

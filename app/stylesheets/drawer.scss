@@ -25,7 +25,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 2px;
-    border-bottom: none !important;
+    border-bottom: none;
 }
 
 .drawer-content-container {
@@ -38,7 +38,7 @@
         135deg,
         variables.$vulcan,
         variables.$mirage
-    ) !important;
+    );
     text-align: left;
     margin-left: 5%;
     margin-right: 5%;
@@ -108,14 +108,13 @@
     margin: 0 2.5%;
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
-    border: 1px solid variables.$glass-border;
     border-radius: 20px 20px 0 0;
     box-shadow: 0 4px 30px variables.$box-shadow;
     overflow: hidden;
     z-index: 3;
     transition: height 0.3s ease;
     pointer-events: auto;
-    border-bottom: none !important;
+    border-bottom: none;
 
     @media screen and (width <= 450px) {
         right: auto;
@@ -133,14 +132,12 @@
     &.glass-enabled {
         background: rgb(255 255 255 / 10%);
         backdrop-filter: blur(15px);
-        border: 1px solid rgb(255 255 255 / 20%);
         box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
         transition: all 0.3s ease;
 
         .drawer-header {
             background: rgb(255 255 255 / 5%);
             backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgb(255 255 255 / 10%);
             transition: all 0.3s ease;
         }
 
@@ -153,7 +150,6 @@
         .drawer-toggle {
             background: rgb(255 255 255 / 10%);
             backdrop-filter: blur(10px);
-            border: 1px solid rgb(255 255 255 / 20%);
             border-radius: 50%;
             transition: all 0.2s ease;
 

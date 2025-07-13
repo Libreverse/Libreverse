@@ -5,9 +5,8 @@
 .drawer {
     display: flex;
     position: fixed;
-    right: 0;
+    right: 35px;
     bottom: 0;
-    margin: 0 2.5%;
     height: 60px; /* Fixed height when collapsed */
     width: 350px;
     border-top: 1px solid variables.$glass-border;
@@ -18,7 +17,7 @@
     transition:
         height 0.3s ease-in-out,
         width 0.3s ease-in-out,
-        margin 0.3s ease-in-out;
+        right 0.3s ease-in-out;
     overflow: hidden;
     contain: layout paint;
 
@@ -28,24 +27,15 @@
         z-index: 2;
     }
 
-    // Default fallback styles (always applied)
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-
-    // Hide fallback styles when liquid glass is active
-    &[data-glass-active="true"] {
-        background: transparent;
-        backdrop-filter: none;
-        box-shadow: none;
-    }
+    // Always transparent - let glass-container handle fallback
+    background: transparent;
 }
 
 /* Expanded drawer state */
 .drawer.expanded {
     height: 450px;
     width: 95%;
-    margin: 0 2.5%;
+    right: 2.5%;
 }
 
 /* Drawer container for actions (bar at the top) */

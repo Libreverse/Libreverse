@@ -35,6 +35,9 @@ export default class extends GlassController
     document.addEventListener "keydown", @boundHandleKeydown
     document.addEventListener "drawer:toggle", @boundDrawerEventHandler
 
+    # Listen for fallback events
+    @element.addEventListener "glass:fallbackActivated", @handleFallbackActivated.bind(@)
+
     # Store initial state to prevent unwanted resets
     @_initialExpanded = @expandedValue
 
@@ -42,6 +45,18 @@ export default class extends GlassController
     # Defer UI update until the next frame to ensure targets are available.
     requestAnimationFrame =>
       @updateUI()
+
+  handleFallbackActivated: (event) ->
+    console.log "[GlassDrawerController] Glass fallback activated, ensuring drawer visibility"
+
+    # Ensure drawer is visible and functional in fallback mode
+    @element.style.opacity = "1"
+    @element.style.visibility = "visible"
+
+    # Apply emergency styling if needed
+    if @element.classList.contains('glass-fallback')
+      @element.style.background = "rgba(0, 0, 0, 0.9)"
+      @element.style.border = "1px solid rgba(255, 255, 255, 0.1)"
 
   disconnect: ->
     document.removeEventListener "keydown", @boundHandleKeydown

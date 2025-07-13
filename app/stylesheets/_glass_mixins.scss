@@ -10,7 +10,6 @@
 ) {
     background: $background;
     backdrop-filter: blur($blur);
-    border: 1px solid $border;
     box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
 }
 
@@ -142,7 +141,6 @@
     .drawer-header {
         background: rgb(255 255 255 / 5%);
         backdrop-filter: blur(5px);
-        border-bottom: 1px solid rgb(255 255 255 / 10%);
         transition: all 0.3s ease;
     }
 
@@ -195,7 +193,7 @@
 // Disabled state mixin
 @mixin glass-disabled() {
     opacity: 0.6;
-    cursor: default !important;
+    cursor: default;
     filter: grayscale(0.5);
 
     &.shake {
@@ -370,7 +368,6 @@
     .drawer-content {
         background: rgb(255 255 255 / 5%);
         backdrop-filter: blur(10px);
-        border: 1px solid rgb(255 255 255 / 10%);
         border-radius: 10px;
         transition:
             opacity 300ms ease-out,
@@ -382,7 +379,6 @@
     .drawer-header {
         background: rgb(255 255 255 / 8%);
         backdrop-filter: blur(8px);
-        border-bottom: 1px solid rgb(255 255 255 / 15%);
         padding: 12px 16px;
 
         .drawer-title {
