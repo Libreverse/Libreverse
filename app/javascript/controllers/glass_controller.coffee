@@ -6,7 +6,10 @@ import {
   renderLiquidGlassSidebarRightRounded,
   renderLiquidGlassDrawer,
   validateLiquidGlass,
+  getGlassPerformanceStats,
+  batchUpdateGlassComponents,
 } from "../libs/liquid_glass.js"
+import { glassConfigManager } from "../libs/glass_config_manager.js"
 import { Turbo } from "@hotwired/turbo-rails"
 
 ###
@@ -77,6 +80,10 @@ export default class extends Controller
     console.log "[GlassController] Disconnecting"
     @isConnected = false
     @cleanupGlassConfigListener()
+
+    # Cancel any pending config updates
+    glassConfigManager.cleanup(@element)
+
     @cleanupGlass()
 
   initializeGlass: ->
@@ -96,19 +103,20 @@ export default class extends Controller
       renderOptions = @getRenderOptions()
 
       # Choose appropriate render function based on component type
-      @glassContainer = @renderGlassComponent(
-        navItems,
-        containerOptions,
-        renderOptions,
-      )
+      @renderGlassComponent(navItems, containerOptions, renderOptions)
+        .then (glassContainer) =>
+          @glassContainer = glassContainer
 
-      # Apply post-render customizations
-      @postRenderSetup()
+          # Apply post-render customizations
+          @postRenderSetup()
 
-      # Mark element as having active glass effect
-      @element.setAttribute("data-glass-active", "true")
+          # Mark element as having active glass effect
+          @element.setAttribute("data-glass-active", "true")
 
-      console.log "[GlassController] Glass initialized successfully"
+          console.log "[GlassController] Glass initialized successfully"
+        .catch (error) =>
+          console.error "[GlassController] Error initializing glass:", error
+          @setupFallback()
     catch error
       console.error "[GlassController] Error initializing glass:", error
       @setupFallback()
@@ -386,26 +394,33 @@ export default class extends Controller
   reinitializeGlass: ->
     return unless @shouldEnableGlass()
 
-    # Clean up existing glass
-    @cleanupGlass()
+    # Use debounced config manager for better performance
+    glassConfigManager.scheduleUpdate(@element, =>
+      # Clean up existing glass
+      @cleanupGlass()
+      # Re-initialize with current config
+      @initializeGlass()
+    )
 
-    # Re-initialize with current config
-    @initializeGlass()
-
-  # Value change handlers
+  # Value change handlers - now use debounced updates
   enableGlassValueChanged: ->
     return unless @isConnected
 
-    if @enableGlassValue and not @glassContainer
-      @initializeGlass()
-    else if not @enableGlassValue and @glassContainer
-      @cleanupGlass()
+    glassConfigManager.scheduleUpdate(@element, =>
+      if @enableGlassValue and not @glassContainer
+        @initializeGlass()
+      else if not @enableGlassValue and @glassContainer
+        @cleanupGlass()
+    )
 
-  # Refresh glass when configuration changes
+  # Optimized refresh glass with debouncing
   refreshGlass: ->
     return unless @isConnected and @glassContainer
-    @cleanupGlass()
-    @initializeGlass()
+
+    glassConfigManager.scheduleUpdate(@element, =>
+      @cleanupGlass()
+      @initializeGlass()
+    )
 
   borderRadiusValueChanged: ->
     @refreshGlass()
@@ -415,3 +430,7 @@ export default class extends Controller
 
   glassTypeValueChanged: ->
     @refreshGlass()
+
+  # Performance monitoring method
+  getPerformanceStats: ->
+    getGlassPerformanceStats()

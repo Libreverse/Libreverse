@@ -4,6 +4,8 @@ bck = "bck"
 nd = "nd"
 ue = "ue"
 thr = "thr"
+lod = "lod"
+LOD = "LOD"
 
 [files]
 extend-exclude = [

@@ -1,4 +1,6 @@
 import html2canvas from "html2canvas";
+import { glassRenderManager } from "./glass_render_manager.js";
+import { optimizedWebGLContextManager } from "./optimized_webgl_manager.js";
 
 class Container {
     static instances = [];
@@ -8,8 +10,17 @@ class Container {
     static resizeTimeout = null;
     static isDestroying = false;
     static lastCaptureTime = 0;
-    static captureDebounceDelay = 1000; // 1 second minimum between captures
+    static captureDebounceDelay = 2000; // Increased from 1 second to 2 seconds for better performance
     static debugMode = false; // Global debug flag
+
+    // Performance optimization: reduce frequent snapshot captures
+    static snapshotCache = new Map();
+    static maxCacheAge = 5000; // 5 second cache for snapshots
+
+    // Instance creation throttling to prevent WebGL context exhaustion
+    static maxConcurrentInstances = 16; // Match our WebGL context limit
+    static creationQueue = [];
+    static isProcessingQueue = false;
 
     // Debug helper function
     static enableDebug() {
@@ -33,7 +44,7 @@ class Container {
 
     // Helper methods for creating containers with common parallax configurations
     static createSidebarContainer(options = {}) {
-        return new Container({
+        return Container.createContainer({
             ...options,
             parallaxSpeed: 1.0, // Sidebar typically doesn't have parallax
             isParallaxElement: false,
@@ -52,7 +63,7 @@ class Container {
 
     // Helper for sidebar with custom corner rounding (no left corners rounded)
     static createSidebarContainerRightRounded(options = {}) {
-        return new Container({
+        return Container.createContainer({
             ...options,
             parallaxSpeed: 1.0,
             isParallaxElement: false,
@@ -76,7 +87,7 @@ class Container {
     }
 
     static createParallaxContainer(parallaxSpeed = 0.5, options = {}) {
-        return new Container({
+        return Container.createContainer({
             ...options,
             parallaxSpeed: parallaxSpeed,
             isParallaxElement: true,
@@ -90,7 +101,7 @@ class Container {
     }
 
     static createFixedContainer(options = {}) {
-        return new Container({
+        return Container.createContainer({
             ...options,
             parallaxSpeed: 1.0,
             isParallaxElement: false,
@@ -400,11 +411,12 @@ class Container {
     }
 
     setupCanvas() {
-        this.gl = this.canvas.getContext("webgl", {
-            preserveDrawingBuffer: true,
-            alpha: true,
-            premultipliedAlpha: false,
-        });
+        // Use optimized WebGL context manager instead of direct canvas.getContext
+        this.gl = optimizedWebGLContextManager.getContext(
+            this.element,
+            this.canvas,
+        );
+
         if (!this.gl) {
             console.error(
                 "WebGL not supported, falling back to CSS glass effect",
@@ -413,11 +425,13 @@ class Container {
             return false;
         }
 
-        // Enable alpha blending for glass effect
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+        // Enable alpha blending for glass effect (these may already be set by the manager)
+        if (!this.gl.getParameter(this.gl.BLEND)) {
+            this.gl.enable(this.gl.BLEND);
+            this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+        }
 
-        console.log("WebGL context created successfully");
+        console.log("WebGL context acquired through optimized manager");
         return true;
     }
 
@@ -450,8 +464,6 @@ class Container {
 
         return { x, y };
     }
-
-    // ...existing code...
 
     capturePageSnapshot() {
         console.log("Capturing page snapshot...");
@@ -1241,7 +1253,10 @@ class Container {
 
         const pageHeight = Math.max(
             document.body.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.clientHeight,
             document.documentElement.scrollHeight,
+            document.documentElement.offsetHeight,
         );
         const viewportHeight = window.innerHeight;
         gl.uniform1f(pageHeightLoc, pageHeight);
@@ -1253,6 +1268,66 @@ class Container {
 
         // Start rendering
         this.startRenderLoop();
+    }
+
+    // Static method to create containers with intelligent queuing
+    static createContainer(options = {}) {
+        return new Promise((resolve, reject) => {
+            // If we're under the limit, create immediately
+            if (Container.instances.length < Container.maxConcurrentInstances) {
+                try {
+                    const container = new Container(options);
+                    resolve(container);
+                } catch (error) {
+                    reject(error);
+                }
+                return;
+            }
+
+            // Otherwise, add to queue
+            Container.creationQueue.push({ options, resolve, reject });
+            Container.processCreationQueue();
+        });
+    }
+
+    // Process the creation queue when instances become available
+    static processCreationQueue() {
+        if (
+            Container.isProcessingQueue ||
+            Container.creationQueue.length === 0
+        ) {
+            return;
+        }
+
+        Container.isProcessingQueue = true;
+
+        // Process queue items until we hit the limit or run out of items
+        while (
+            Container.creationQueue.length > 0 &&
+            Container.instances.length < Container.maxConcurrentInstances
+        ) {
+            const { options, resolve, reject } =
+                Container.creationQueue.shift();
+
+            try {
+                const container = new Container(options);
+                resolve(container);
+            } catch (error) {
+                reject(error);
+            }
+        }
+
+        Container.isProcessingQueue = false;
+    }
+
+    // Get stats about Container usage
+    static getStats() {
+        return {
+            activeInstances: Container.instances.length,
+            maxInstances: Container.maxConcurrentInstances,
+            queuedCreations: Container.creationQueue.length,
+            webglStats: optimizedWebGLContextManager.getStats(),
+        };
     }
 
     startRenderLoop() {
@@ -1371,24 +1446,25 @@ class Container {
         // Initial render
         render();
 
-        // Set up continuous rendering for glass effect
-        const animationLoop = () => {
+        // Register with optimized render manager instead of individual animation loop
+        this.needsRender = true;
+        this.renderFrame = () => {
             if (this.isDestroyed) return;
             render();
-            this._animationId = requestAnimationFrame(animationLoop);
         };
 
-        // Start the animation loop
-        animationLoop();
+        // Register with global render manager for optimized rendering
+        glassRenderManager.register(this);
 
         // Enhanced scroll handling for Locomotive Scroll
         const scrollHandler = () => {
             if (!this.isDestroyed) {
-                render();
+                this.needsRender = true;
+                glassRenderManager.markDirty();
             }
         };
 
-        // Native scroll event (fallback)
+        // Optimized scroll event handling - reduced frequency
         window.addEventListener("scroll", scrollHandler, { passive: true });
 
         // Locomotive Scroll events - try multiple approaches
@@ -1397,6 +1473,9 @@ class Container {
                 window.locomotiveScroll.on("scroll", scrollHandler);
             }
         }
+
+        // Store scroll handler for cleanup
+        this._scrollHandler = scrollHandler;
 
         // Also listen for locomotive scroll events on document
         document.addEventListener("locomotive-scroll", scrollHandler, {
@@ -1416,15 +1495,29 @@ class Container {
 
         this.isDestroyed = true;
 
+        // Unregister from optimized render manager
+        glassRenderManager.unregister(this);
+
         // Disconnect intersection observer
         if (this.intersectionObserver) {
             this.intersectionObserver.disconnect();
             this.intersectionObserver = null;
         }
 
-        // Cancel animation loop
+        // Cancel animation loop (legacy compatibility)
         if (this._animationId) {
             cancelAnimationFrame(this._animationId);
+        }
+
+        // Clean up scroll handlers
+        if (this._scrollHandler) {
+            window.removeEventListener("scroll", this._scrollHandler);
+            if (
+                window.locomotiveScroll &&
+                typeof window.locomotiveScroll.off === "function"
+            ) {
+                window.locomotiveScroll.off("scroll", this._scrollHandler);
+            }
         }
 
         // Clean up resize observer
@@ -1443,9 +1536,12 @@ class Container {
         const index = Container.instances.indexOf(this);
         if (index > -1) {
             Container.instances.splice(index, 1);
+
+            // Process creation queue now that we have space
+            Container.processCreationQueue();
         }
 
-        // Clean up WebGL resources
+        // Clean up WebGL resources through optimized manager
         if (this.gl_refs.gl) {
             const gl = this.gl_refs.gl;
             if (this.gl_refs.texture) {
@@ -1457,6 +1553,11 @@ class Container {
             if (this.gl_refs.texcoordBuffer) {
                 gl.deleteBuffer(this.gl_refs.texcoordBuffer);
             }
+        }
+
+        // Release WebGL context through optimized manager
+        if (this.element) {
+            optimizedWebGLContextManager.releaseContext(this.element);
         }
 
         // Remove event listeners
@@ -1569,11 +1670,11 @@ class Container {
             this.resizeObserver = new ResizeObserver((entries) => {
                 for (const entry of entries) {
                     if (entry.target === this.element) {
-                        // Debounce resize handling
+                        // Optimized debounce resize handling - increased delay for better performance
                         clearTimeout(this.resizeTimeout);
                         this.resizeTimeout = setTimeout(() => {
                             this._handleSidebarResize();
-                        }, 50);
+                        }, 150); // Increased from 50ms to 150ms
                     }
                 }
             });
