@@ -51,8 +51,6 @@
 }
 
 .c-scrollbar_thumb {
-    @include glass-effect;
-
     position: absolute;
     top: 0;
     right: 0;
@@ -62,6 +60,17 @@
     margin: 2px;
     cursor: grab;
     transition: opacity 0.3s;
+
+    // Default fallback styles (always applied)
+    @include glass-effect;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 }
 
 .has-scroll-dragging .c-scrollbar_thumb {

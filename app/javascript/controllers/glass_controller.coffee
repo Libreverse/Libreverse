@@ -105,6 +105,9 @@ export default class extends Controller
       # Apply post-render customizations
       @postRenderSetup()
 
+      # Mark element as having active glass effect
+      @element.setAttribute("data-glass-active", "true")
+
       console.log "[GlassController] Glass initialized successfully"
     catch error
       console.error "[GlassController] Error initializing glass:", error
@@ -311,11 +314,11 @@ export default class extends Controller
     delete @element._originalHTML
 
   setupFallback: ->
-    # Basic CSS glass effect fallback
-    if @element
-      @element.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
-      @element.style.backdropFilter = "blur(10px)"
-      @element.style.border = "1px solid rgba(255, 255, 255, 0.2)"
+    # Remove glass active marker to show CSS fallback styles
+    @element.removeAttribute("data-glass-active") if @element
+
+    # Note: CSS fallback styles are applied automatically when data-glass-active is not present
+    console.log "[GlassController] Using CSS fallback"
 
   # Method to be overridden by subclasses for custom behavior
   customPostRenderSetup: ->

@@ -8,7 +8,14 @@
 
       .instance-settings-container{ data: { controller: 'instance-settings' } }
         -# Instance Identity Section
-                .bg-white.shadow.rounded-lg.p-6.mb-6
+                .info-card{"data-controller" => "glass",
+                          "data-glass-enable-glass-value" => true,
+                          "data-glass-component-type-value" => "card",
+                          "data-glass-glass-type-value" => "rounded",
+                          "data-glass-border-radius-value" => 5,
+                          "data-glass-tint-opacity-value" => 0.1,
+                          "data-html2canvas-ignore" => "true",
+                          class: "mb-6"}
                     %h2.text-xl.font-semibold.mb-4.text-gray-900 Instance Identity
                     %p.text-gray-600.mb-4 Configure basic instance information and contact details.
 
@@ -23,7 +30,14 @@
                                 %input.form-input.w-full{ type: 'email', value: @admin_email, data: { action: 'change->instance-settings#updateAdminEmail' }, placeholder: 'admin@localhost' }
 
                 -# Security Settings Section
-                .bg-white.shadow.rounded-lg.p-6.mb-6
+                .info-card{"data-controller" => "glass",
+                          "data-glass-enable-glass-value" => true,
+                          "data-glass-component-type-value" => "card",
+                          "data-glass-glass-type-value" => "rounded",
+                          "data-glass-border-radius-value" => 5,
+                          "data-glass-tint-opacity-value" => 0.1,
+                          "data-html2canvas-ignore" => "true",
+                          class: "mb-6"}
                     %h2.text-xl.font-semibold.mb-4.text-gray-900 Security & Compliance Settings
                     %p.text-gray-600.mb-4 Configure instance-wide security and compliance features.
 
@@ -47,7 +61,14 @@
                                     %span.toggle-slider
 
                 -# Application Configuration Section
-                .bg-white.shadow.rounded-lg.p-6.mb-6
+                .info-card{"data-controller" => "glass",
+                          "data-glass-enable-glass-value" => true,
+                          "data-glass-component-type-value" => "card",
+                          "data-glass-glass-type-value" => "rounded",
+                          "data-glass-border-radius-value" => 5,
+                          "data-glass-tint-opacity-value" => 0.1,
+                          "data-html2canvas-ignore" => "true",
+                          class: "mb-6"}
                     %h2.text-xl.font-semibold.mb-4.text-gray-900 Application Configuration
                     %p.text-gray-600.mb-4 Configure core application settings including SSL, logging, and network options.
 
@@ -91,7 +112,14 @@
                                 %input.form-input.w-full{ type: 'text', value: @cors_origins, data: { action: 'change->instance-settings#updateCorsOrigins' }, placeholder: Rails.env.development? ? '*' : 'https://yourdomain.com' }
 
                 -# Advanced Settings Section (Collapsible)
-                .bg-white.shadow.rounded-lg.p-6.mb-6
+                .info-card{"data-controller" => "glass",
+                          "data-glass-enable-glass-value" => true,
+                          "data-glass-component-type-value" => "card",
+                          "data-glass-glass-type-value" => "rounded",
+                          "data-glass-border-radius-value" => 5,
+                          "data-glass-tint-opacity-value" => 0.1,
+                          "data-html2canvas-ignore" => "true",
+                          class: "mb-6"}
                     %details.advanced-settings
                         %summary.cursor-pointer.text-xl.font-semibold.text-gray-900.mb-4
                             Advanced Settings
@@ -132,7 +160,14 @@
             = link_to "Add New Setting", new_admin_instance_setting_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-6 inline-block"
 
             - if @instance_settings.any?
-                .bg-white.shadow.rounded-lg.overflow-hidden
+                .info-card{"data-controller" => "glass",
+                          "data-glass-enable-glass-value" => true,
+                          "data-glass-component-type-value" => "card",
+                          "data-glass-glass-type-value" => "rounded",
+                          "data-glass-border-radius-value" => 5,
+                          "data-glass-tint-opacity-value" => 0.1,
+                          "data-html2canvas-ignore" => "true",
+                          class: "overflow-hidden"}
                     %table.min-w-full.divide-y.divide-gray-200
                         %thead.bg-gray-50
                             %tr

@@ -12,14 +12,27 @@
           \#{@account.federated_identifier}
       - if rodauth.logged_in? && !tutorial_dismissed?("dashboard-tutorial")
         %div{"data-controller" => "dismissible"}
-          .dashboard-section#dashboard-tutorial{"data-dismissible-key-value" => "dashboard-tutorial", "data-dismissible-target" => "container"}
+          .dashboard-section#dashboard-tutorial{"data-controller" => "glass",
+                                               "data-glass-enable-glass-value" => true,
+                                               "data-glass-component-type-value" => "card",
+                                               "data-glass-glass-type-value" => "rounded",
+                                               "data-glass-border-radius-value" => 5,
+                                               "data-glass-tint-opacity-value" => 0.1,
+                                               "data-html2canvas-ignore" => "true",
+                                               "data-dismissible-key-value" => "dashboard-tutorial",
+                                               "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
                 %img.feather.feather-x{:alt => "Close", "aria-hidden" => "true", :height => "16", :src => svg_icon_data_url("x").to_s, :width => "16"}/
             %h2.section-heading= t('dashboard.index.tutorial_heading')
             %p.section-description= t('dashboard.index.tutorial_description')
-      %h3.section-title= t('dashboard.index.account_information_title')
-      .info-card
+      .info-card{"data-controller" => "glass",
+                 "data-glass-enable-glass-value" => true,
+                 "data-glass-component-type-value" => "card",
+                 "data-glass-glass-type-value" => "rounded",
+                 "data-glass-border-radius-value" => 5,
+                 "data-glass-tint-opacity-value" => 0.1,
+                 "data-html2canvas-ignore" => "true"}
         .info-grid
           .info-item
             .info-label FEDERATED ID
@@ -40,7 +53,13 @@
             .info-label PASSWORD STRENGTH
             .info-value= @password_strength[:level].capitalize
       %h3.section-title= t('dashboard.index.account_actions_title')
-      .info-card
+      .info-card{"data-controller" => "glass",
+                 "data-glass-enable-glass-value" => true,
+                 "data-glass-component-type-value" => "card",
+                 "data-glass-glass-type-value" => "rounded",
+                 "data-glass-border-radius-value" => 5,
+                 "data-glass-tint-opacity-value" => 0.1,
+                 "data-html2canvas-ignore" => "true"}
         .info-grid
           .info-item
             .info-label PASSWORD
@@ -63,7 +82,13 @@
               = button_to rodauth.logout_path, method: :post, class: "info-button" do
                 = t('dashboard.index.sign_out')
       %h3.section-title= t('dashboard.index.compliance_options_title')
-      .info-card
+      .info-card{"data-controller" => "glass",
+                 "data-glass-enable-glass-value" => true,
+                 "data-glass-component-type-value" => "card",
+                 "data-glass-glass-type-value" => "rounded",
+                 "data-glass-border-radius-value" => 5,
+                 "data-glass-tint-opacity-value" => 0.1,
+                 "data-html2canvas-ignore" => "true"}
         .info-grid
           .info-item
             .info-label PRIVACY POLICY
@@ -90,4 +115,3 @@
             .info-value
               = button_to account_destroy_path, method: :delete, class: "info-button", data: { turbo_confirm: "Are you sure? This cannot be undone." } do
                 = t('dashboard.index.delete_account')
-          .info-item

@@ -5,18 +5,34 @@
     width: 100%;
     max-width: 420px;
     padding: 2.5rem;
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow:
-        0 4px 30px variables.$box-shadow,
-        0 0 30px rgba(variables.$login-primary, 0.1);
-    border: 1px solid variables.$glass-border;
     border-radius: 5px;
     overflow: hidden;
     margin-top: 150px;
     margin-left: 60px;
     margin-right: 60px;
     transition: margin 0.3s;
+
+    // Ensure content appears above glass canvas
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    // Default fallback styles (always applied)
+    background-color: variables.$glass;
+    backdrop-filter: blur(10px);
+    box-shadow:
+        0 4px 30px variables.$box-shadow,
+        0 0 30px rgba(variables.$login-primary, 0.1);
+    border: 1px solid variables.$glass-border;
+
+    // Hide fallback styles when liquid glass is active
+    &[data-glass-active="true"] {
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+    }
 
     @media screen and (width <= 600px) {
         margin-left: 40px;

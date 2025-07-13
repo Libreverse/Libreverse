@@ -9,7 +9,15 @@
         %p.header-description
           = t('settings.index.description')
         %h3.section-title= t('settings.index.language')
-        .language-picker-board{ data: { controller: 'language-picker' } }
+        .language-picker-board{ data: {
+                                  controller: 'language-picker glass',
+                                  "glass-enable-glass-value": true,
+                                  "glass-component-type-value": "card",
+                                  "glass-glass-type-value": "rounded",
+                                  "glass-border-radius-value": 5,
+                                  "glass-tint-opacity-value": 0.1,
+                                  "html2canvas-ignore": "true"
+                                } }
           - I18n.available_locales.each do |locale|
             - flag = locale_flag_emoji(locale)
             - is_current = I18n.locale == locale
