@@ -27,12 +27,12 @@ class GlassRenderManager {
         this.batchSize = 8; // Render instances in batches
         this.currentBatch = 0;
 
-        // LOD (Level of Detail) system
+        // LOD (Level of Detail) system - more conservative for context management
         this.lodEnabled = true;
         this.qualityLevels = {
-            high: { maxInstances: 20, tintOpacityMultiplier: 1.0 },
-            medium: { maxInstances: 35, tintOpacityMultiplier: 0.8 },
-            low: { maxInstances: 50, tintOpacityMultiplier: 0.6 },
+            high: { maxInstances: 8, tintOpacityMultiplier: 1.0 }, // Reduced from 20
+            medium: { maxInstances: 16, tintOpacityMultiplier: 0.8 }, // Reduced from 35
+            low: { maxInstances: 24, tintOpacityMultiplier: 0.6 }, // Reduced from 50
         };
         this.currentQuality = "high";
 

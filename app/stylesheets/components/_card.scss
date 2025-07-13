@@ -1,11 +1,11 @@
 @use "../variables";
+@use "text_effects";
 
 .glass-card {
     position: relative;
     width: 100%;
     max-width: 420px;
     padding: 2.5rem;
-    border-radius: 5px;
     overflow: hidden;
     margin-top: 150px;
     margin-left: 60px;
@@ -24,7 +24,7 @@
     box-shadow:
         0 4px 30px variables.$box-shadow,
         0 0 30px rgba(variables.$login-primary, 0.1);
-    border: 1px solid variables.$glass-border;
+    border-radius: 15px;
 
     // Hide fallback styles when liquid glass is active
     &[data-glass-active="true"] {
@@ -49,8 +49,8 @@
         font-weight: 700;
         margin-bottom: 0.5rem;
         color: variables.$login-primary;
-        text-shadow: 0 0 10px rgba(variables.$login-primary, 0.5);
-        animation: text-glow 3s ease-in-out infinite alternate;
+
+        @extend %text-glow-primary;
     }
 
     p {
@@ -74,15 +74,5 @@
             color: variables.$hp-secondary;
             text-decoration: underline;
         }
-    }
-}
-
-@keyframes text-glow {
-    0% {
-        text-shadow: 0 0 10px rgba(variables.$login-primary, 0.3);
-    }
-
-    100% {
-        text-shadow: 0 0 15px rgba(variables.$login-primary, 0.6);
     }
 }

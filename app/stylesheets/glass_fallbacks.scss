@@ -1,0 +1,699 @@
+/* Glass Effect Fallback Styles */
+
+/* Base fallback for all glass components when WebGL fails */
+.glass-fallback {
+    background: rgb(255 255 255 / 10%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgb(0 0 0 / 10%);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Dark mode fallback */
+[data-theme="dark"] .glass-fallback {
+    background: rgb(0 0 0 / 30%);
+    box-shadow: 0 4px 30px rgb(0 0 0 / 30%);
+    border-radius: 15px;
+}
+
+/* Sidebar specific fallbacks */
+.sidebar-nav.glass-fallback,
+nav.glass-fallback,
+[data-controller*="sidebar"].glass-fallback nav,
+[data-controller*="sidebar"].glass-fallback {
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 10%) 0%,
+        rgb(255 255 255 / 5%) 100%
+    );
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Navigation fallback styles - ordered by specificity */
+
+/* Base nav fallback (lowest specificity first) */
+nav.glass-fallback .nav-item {
+    background: rgb(255 255 255 / 5%);
+    border-radius: 8px;
+    margin: 4px 0;
+    padding: 12px;
+    transition: all 0.2s ease;
+    opacity: 1;
+    visibility: visible;
+    color: rgb(255 255 255 / 90%);
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar-nav.glass-fallback .nav-item {
+    background: rgb(255 255 255 / 5%);
+    border-radius: 8px;
+    margin: 4px 0;
+    padding: 12px;
+    transition: all 0.2s ease;
+    opacity: 1;
+    visibility: visible;
+    color: rgb(255 255 255 / 90%);
+    text-decoration: none;
+    display: block;
+}
+
+[data-controller*="sidebar"].glass-fallback .nav-item,
+[data-controller*="sidebar"].glass-fallback a,
+[data-controller*="sidebar"].glass-fallback button {
+    background: rgb(255 255 255 / 5%);
+    border-radius: 8px;
+    margin: 4px 0;
+    padding: 12px;
+    transition: all 0.2s ease;
+    opacity: 1;
+    visibility: visible;
+    color: rgb(255 255 255 / 90%);
+    text-decoration: none;
+    display: block;
+}
+
+/* Hover states - ordered by specificity */
+nav.glass-fallback .nav-item:hover {
+    background: rgb(255 255 255 / 15%);
+    transform: translateX(4px);
+    color: rgb(255 255 255 / 100%);
+}
+
+.sidebar-nav.glass-fallback .nav-item:hover {
+    background: rgb(255 255 255 / 15%);
+    transform: translateX(4px);
+    color: rgb(255 255 255 / 100%);
+}
+
+[data-controller*="sidebar"].glass-fallback .nav-item:hover,
+[data-controller*="sidebar"].glass-fallback a:hover,
+[data-controller*="sidebar"].glass-fallback button:hover {
+    background: rgb(255 255 255 / 15%);
+    transform: translateX(4px);
+    color: rgb(255 255 255 / 100%);
+}
+
+/* Active states - ordered by specificity */
+nav.glass-fallback .nav-item.active {
+    background: rgb(255 255 255 / 20%);
+    border-left: 3px solid rgb(255 255 255 / 50%);
+}
+
+.sidebar-nav.glass-fallback .nav-item.active {
+    background: rgb(255 255 255 / 20%);
+    border-left: 3px solid rgb(255 255 255 / 50%);
+}
+
+[data-controller*="sidebar"].glass-fallback .nav-item.active,
+[data-controller*="sidebar"].glass-fallback a.active,
+[data-controller*="sidebar"].glass-fallback button.active {
+    background: rgb(255 255 255 / 20%);
+    border-left: 3px solid rgb(255 255 255 / 50%);
+}
+
+/* Button fallbacks */
+.glass-button.glass-fallback {
+    background: rgb(255 255 255 / 10%);
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.glass-button.glass-fallback:hover {
+    background: rgb(255 255 255 / 20%);
+    transform: scale(1.05);
+}
+
+.glass-button.glass-fallback:active {
+    transform: scale(0.95);
+}
+
+/* Drawer fallbacks */
+.drawer-container.glass-fallback {
+    background: linear-gradient(
+        to bottom,
+        rgb(0 0 0 / 80%) 0%,
+        rgb(0 0 0 / 90%) 100%
+    );
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 30px rgb(0 0 0 / 30%);
+}
+
+/* Search bar fallbacks */
+.search-bar-container.glass-fallback {
+    background: rgb(255 255 255 / 8%);
+    border-radius: 25px;
+}
+
+.search-bar-container.glass-fallback input {
+    background: transparent;
+    color: rgb(255 255 255 / 90%);
+}
+
+.search-bar-container.glass-fallback input::placeholder {
+    color: rgb(255 255 255 / 50%);
+}
+
+/* Experience card fallbacks */
+.experience-card.glass-fallback {
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 10%) 0%,
+        rgb(255 255 255 / 5%) 100%
+    );
+    border-radius: 16px;
+    padding: 20px;
+}
+
+/* Fallback indicator */
+.glass-fallback::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background: rgb(255 165 0 / 70%);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    z-index: 1000;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.7;
+    }
+}
+
+/* Hide original glass containers when fallback is active */
+.glass-fallback .glass-container {
+    display: none;
+}
+
+/* Ensure text remains visible in fallback mode */
+.glass-fallback * {
+    color: rgb(255 255 255 / 90%);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+}
+
+.glass-fallback a {
+    color: rgb(255 255 255 / 80%);
+    text-decoration: none;
+}
+
+[data-controller*="sidebar"].glass-fallback a {
+    color: rgb(255 255 255 / 80%);
+    text-decoration: none;
+}
+
+.glass-fallback a:hover {
+    color: rgb(255 255 255 / 100%);
+}
+
+[data-controller*="sidebar"].glass-fallback a:hover {
+    color: rgb(255 255 255 / 100%);
+}
+
+/* Loading state for retry attempts */
+.glass-fallback.glass-retrying::after {
+    content: "Retrying glass effect...";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: rgb(255 165 0 / 80%);
+    white-space: nowrap;
+}
+
+/* Success state when glass effect loads */
+.glass-success {
+    transition: opacity 0.5s ease;
+}
+
+/* Responsive fallbacks */
+@media (width <= 768px) {
+    .sidebar-nav.glass-fallback {
+        padding: 12px;
+        margin: 4px;
+    }
+
+    .sidebar-nav.glass-fallback .nav-item {
+        padding: 10px;
+        margin: 2px 0;
+    }
+}
+
+/* Print media fallbacks */
+@media print {
+    .glass-fallback {
+        background: white;
+        border-radius: 8px;
+        box-shadow: none;
+        backdrop-filter: none;
+    }
+}
+
+/* Enhanced Sidebar-Specific Fallback Styles */
+
+/* Sidebar container fallback - matches the exact glass appearance */
+.sidebar.glass-fallback {
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 12%) 0%,
+        rgb(255 255 255 / 8%) 50%,
+        rgb(255 255 255 / 6%) 100%
+    );
+    backdrop-filter: blur(15px) saturate(1.8);
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    box-shadow:
+        0 8px 32px rgb(0 0 0 / 15%),
+        inset 0 1px 0 rgb(255 255 255 / 10%),
+        inset 0 -1px 0 rgb(255 255 255 / 5%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle glass texture overlay for enhanced realism */
+.sidebar.glass-fallback::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgb(255 255 255 / 10%) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 70% 80%,
+            rgb(255 255 255 / 5%) 0%,
+            transparent 50%
+        );
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Sidebar contents container fallback */
+.sidebar.glass-fallback .sidebar-contents {
+    position: relative;
+    z-index: 2;
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 16px 2px;
+    box-sizing: border-box;
+}
+
+/* Enhanced sidebar link fallback styles - matches glass buttons exactly */
+.sidebar.glass-fallback .sidebar-link,
+.sidebar.glass-fallback .sidebar-logout-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    border-radius: 20px;
+    margin: 4px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Enhanced glass-like appearance */
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 15%) 0%,
+        rgb(255 255 255 / 10%) 50%,
+        rgb(255 255 255 / 8%) 100%
+    );
+    backdrop-filter: blur(10px) saturate(1.5);
+    box-shadow:
+        0 4px 20px rgb(0 0 0 / 10%),
+        inset 0 1px 0 rgb(255 255 255 / 15%),
+        inset 0 -1px 0 rgb(255 255 255 / 5%);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Current page / disabled state fallback */
+.sidebar.glass-fallback .sidebar-link.sidebar-default-cursor,
+.sidebar.glass-fallback .sidebar-logout-button.sidebar-default-cursor {
+    opacity: 0.6;
+    cursor: default;
+    filter: grayscale(0.5);
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 8%) 0%,
+        rgb(255 255 255 / 5%) 100%
+    );
+    border-color: rgb(255 255 255 / 10%);
+}
+
+/* Shake animation for current page clicks */
+.sidebar.glass-fallback .sidebar-not-allowed-shake {
+    animation: enhanced-sidebar-shake 0.75s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes enhanced-sidebar-shake {
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: rotate(2deg) scale(1.02);
+    }
+
+    75% {
+        transform: rotate(-2deg) scale(1.02);
+    }
+}
+
+/* Icon styling within fallback buttons */
+.sidebar.glass-fallback .sidebar-icons {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 20%));
+    transition: filter 0.15s ease;
+}
+
+.sidebar.glass-fallback .sidebar-link:hover .sidebar-icons,
+.sidebar.glass-fallback .sidebar-logout-button:hover .sidebar-icons {
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 30%));
+}
+
+/* Dark mode enhancements for sidebar fallback */
+[data-theme="dark"] .sidebar.glass-fallback {
+    background: linear-gradient(
+        135deg,
+        rgb(0 0 0 / 40%) 0%,
+        rgb(0 0 0 / 30%) 50%,
+        rgb(0 0 0 / 25%) 100%
+    );
+    border-color: rgb(255 255 255 / 12%);
+    box-shadow:
+        0 8px 32px rgb(0 0 0 / 25%),
+        inset 0 1px 0 rgb(255 255 255 / 8%),
+        inset 0 -1px 0 rgb(255 255 255 / 3%);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .sidebar.glass-fallback {
+        background: rgb(0 0 0 / 80%);
+        border: 2px solid white;
+        backdrop-filter: none;
+    }
+
+    .sidebar.glass-fallback .sidebar-link,
+    .sidebar.glass-fallback .sidebar-logout-button {
+        background: rgb(255 255 255 / 90%);
+        border: 2px solid black;
+        color: black;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar.glass-fallback,
+    .sidebar.glass-fallback .sidebar-link,
+    .sidebar.glass-fallback .sidebar-logout-button {
+        transition: none;
+        animation: none;
+    }
+
+    .sidebar.glass-fallback .sidebar-link:hover,
+    .sidebar.glass-fallback .sidebar-logout-button:hover {
+        transform: none;
+    }
+}
+
+/* Mobile responsiveness for sidebar fallback */
+@media (width <= 768px) {
+    .sidebar.glass-fallback {
+        width: 50px;
+    }
+}
+
+@media (width >= 1501px) {
+    .sidebar.glass-fallback {
+        width: 80px;
+    }
+}
+
+/* Loading state for glass retry attempts */
+.sidebar.glass-fallback.glass-retrying {
+    position: relative;
+}
+
+.sidebar.glass-fallback.glass-retrying::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgb(255 255 255 / 30%);
+    border-top: 2px solid rgb(255 255 255 / 80%);
+    border-radius: 50%;
+    animation: glass-retry-spin 1s linear infinite;
+    z-index: 10;
+}
+
+@keyframes glass-retry-spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Progressive Enhancement Base Styles - Works without JavaScript */
+
+/* Default sidebar styling that works without any JavaScript */
+.sidebar:not([data-glass-active], .glass-fallback) {
+    /* Provide immediate good default styling */
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 8%) 0%,
+        rgb(255 255 255 / 5%) 50%,
+        rgb(255 255 255 / 3%) 100%
+    );
+    backdrop-filter: blur(8px);
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    box-shadow:
+        0 4px 20px rgb(0 0 0 / 10%),
+        inset 0 1px 0 rgb(255 255 255 / 8%);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Default sidebar contents styling */
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-contents {
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 16px 2px;
+    box-sizing: border-box;
+}
+
+/* Default sidebar link styling - higher specificity, comes first */
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-link,
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-logout-button,
+.sidebar.glass-fallback .sidebar-link,
+.sidebar.glass-fallback .sidebar-logout-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    margin: 4px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 10%) 0%,
+        rgb(255 255 255 / 6%) 100%
+    );
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow:
+        0 2px 10px rgb(0 0 0 / 8%),
+        inset 0 1px 0 rgb(255 255 255 / 10%);
+    transition: all 0.15s ease;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+/* Default hover states - higher specificity, comes first */
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-link:hover,
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-logout-button:hover,
+.sidebar.glass-fallback .sidebar-link:hover,
+.sidebar.glass-fallback .sidebar-logout-button:hover {
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 15%) 0%,
+        rgb(255 255 255 / 10%) 100%
+    );
+    border-color: rgb(255 255 255 / 25%);
+    transform: scale(1.02);
+    box-shadow:
+        0 4px 15px rgb(0 0 0 / 12%),
+        inset 0 1px 0 rgb(255 255 255 / 15%);
+}
+
+/* Default active states - higher specificity, comes first */
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-link:active,
+.sidebar:not([data-glass-active], .glass-fallback)
+    .sidebar-logout-button:active,
+.sidebar.glass-fallback .sidebar-link:active:not(.sidebar-default-cursor),
+.sidebar.glass-fallback
+    .sidebar-logout-button:active:not(.sidebar-default-cursor) {
+    transform: scale(0.98);
+}
+
+/* Default disabled states */
+.sidebar:not([data-glass-active], .glass-fallback)
+    .sidebar-link.sidebar-default-cursor,
+.sidebar:not([data-glass-active], .glass-fallback)
+    .sidebar-logout-button.sidebar-default-cursor {
+    opacity: 0.6;
+    cursor: default;
+    filter: grayscale(0.5);
+}
+
+/* Default icon styling - higher specificity, comes first */
+.sidebar:not([data-glass-active], .glass-fallback) .sidebar-icons,
+.sidebar.glass-fallback .sidebar-link:hover .sidebar-icons {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 20%));
+}
+
+/* Loading state - shown while JavaScript initializes */
+.sidebar[data-glass-loading="true"] {
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 6%) 0%,
+        rgb(255 255 255 / 3%) 100%
+    );
+    transition: background 0.3s ease;
+}
+
+.sidebar[data-glass-loading="true"]::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgb(255 255 255 / 30%);
+    border-top: 2px solid rgb(255 255 255 / 80%);
+    border-radius: 50%;
+    animation: glass-loading-spin 1s linear infinite;
+    z-index: 10;
+}
+
+@keyframes glass-loading-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dark mode support for default styling */
+[data-theme="dark"] .sidebar:not([data-glass-active], .glass-fallback) {
+    background: linear-gradient(
+        135deg,
+        rgb(0 0 0 / 30%) 0%,
+        rgb(0 0 0 / 20%) 100%
+    );
+    border-color: rgb(255 255 255 / 8%);
+}
+
+[data-theme="dark"]
+    .sidebar:not([data-glass-active], .glass-fallback)
+    .sidebar-link,
+[data-theme="dark"]
+    .sidebar:not([data-glass-active], .glass-fallback)
+    .sidebar-logout-button,
+[data-theme="dark"] .sidebar.glass-fallback .sidebar-link,
+[data-theme="dark"] .sidebar.glass-fallback .sidebar-logout-button {
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 6%) 0%,
+        rgb(255 255 255 / 3%) 100%
+    );
+    border-color: rgb(255 255 255 / 10%);
+}
+
+/* Fallback when backdrop-filter is not supported */
+@supports not (backdrop-filter: blur(8px)) {
+    .sidebar:not([data-glass-active], .glass-fallback) {
+        background: rgb(0 0 0 / 70%);
+        border-color: rgb(255 255 255 / 20%);
+    }
+
+    .sidebar:not([data-glass-active], .glass-fallback) .sidebar-link,
+    .sidebar:not([data-glass-active], .glass-fallback) .sidebar-logout-button {
+        background: rgb(255 255 255 / 15%);
+        border-color: rgb(255 255 255 / 30%);
+    }
+}
+
+/* High contrast mode support for default styling */
+@media (prefers-contrast: high) {
+    .sidebar:not([data-glass-active], .glass-fallback) {
+        background: rgb(0 0 0 / 90%);
+        border: 2px solid white;
+    }
+
+    .sidebar:not([data-glass-active], .glass-fallback) .sidebar-link,
+    .sidebar:not([data-glass-active], .glass-fallback) .sidebar-logout-button {
+        background: rgb(255 255 255 / 90%);
+        border: 2px solid black;
+        color: black;
+    }
+}

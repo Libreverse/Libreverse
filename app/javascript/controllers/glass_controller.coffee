@@ -62,6 +62,12 @@ export default class extends Controller
     # Listen for global glass config updates
     @setupGlassConfigListener()
 
+    # Register with fallback monitor
+    @registerWithFallbackMonitor()
+
+    # Listen for canvas failure events from liquid glass
+    @setupCanvasFailureListener()
+
     # Validate glass can be initialized
     unless @shouldEnableGlass()
       console.warn "[GlassController] Glass disabled, using CSS fallback"
@@ -76,6 +82,27 @@ export default class extends Controller
     if @enableGlassValue
       @initializeGlass()
 
+  setupCanvasFailureListener: ->
+    # Listen for canvas failure events dispatched by liquid glass
+    @element.addEventListener 'glass:fallbackActivated', (event) =>
+      console.warn "[GlassController] Canvas failure detected:", event.detail.error
+      @setupFallback() unless @fallbackActive
+
+    # Listen for WebGL context loss events
+    @element.addEventListener 'webglcontextlost', (event) =>
+      console.warn "[GlassController] WebGL context lost"
+      event.preventDefault()
+      @setupFallback() unless @fallbackActive
+
+  registerWithFallbackMonitor: ->
+    if window.glassFallbackMonitor
+      # Add observer to monitor fallback triggers
+      @fallbackObserver = (reason) =>
+        console.warn "[GlassController] Global fallback triggered: #{reason}"
+        @setupFallback() unless @fallbackActive
+
+      window.glassFallbackMonitor.addObserver(@fallbackObserver)
+
   disconnect: ->
     console.log "[GlassController] Disconnecting"
     @isConnected = false
@@ -84,7 +111,13 @@ export default class extends Controller
     # Cancel any pending config updates
     glassConfigManager.cleanup(@element)
 
+    # Unregister from fallback monitor
+    if window.glassFallbackMonitor and @fallbackObserver
+      window.glassFallbackMonitor.removeObserver(@fallbackObserver)
+
+    # Clean up both glass and fallback states
     @cleanupGlass()
+    @cleanupFallback()
 
   initializeGlass: ->
     return unless @enableGlassValue
@@ -105,15 +138,21 @@ export default class extends Controller
       # Choose appropriate render function based on component type
       @renderGlassComponent(navItems, containerOptions, renderOptions)
         .then (glassContainer) =>
-          @glassContainer = glassContainer
+          if glassContainer and glassContainer.element
+            @glassContainer = glassContainer
 
-          # Apply post-render customizations
-          @postRenderSetup()
+            # Glass loaded successfully - activate glass mode
+            @element.setAttribute("data-glass-active", "true")
+            @element.removeAttribute("data-glass-loading")
+            @element.classList.remove("glass-fallback")
 
-          # Mark element as having active glass effect
-          @element.setAttribute("data-glass-active", "true")
+            # Apply post-render customizations
+            @postRenderSetup()
 
-          console.log "[GlassController] Glass initialized successfully"
+            console.log "[GlassController] Glass initialized successfully"
+          else
+            console.warn "[GlassController] Glass container creation failed, activating fallback"
+            @setupFallback()
         .catch (error) =>
           console.error "[GlassController] Error initializing glass:", error
           @setupFallback()
@@ -322,11 +361,130 @@ export default class extends Controller
     delete @element._originalHTML
 
   setupFallback: ->
-    # Remove glass active marker to show CSS fallback styles
-    @element.removeAttribute("data-glass-active") if @element
+    return unless @element
 
-    # Note: CSS fallback styles are applied automatically when data-glass-active is not present
-    console.log "[GlassController] Using CSS fallback"
+    # Set fallback state - keeps default styling but with enhanced effects
+    @element.setAttribute("data-glass-loading", "false")
+    @element.removeAttribute("data-glass-active")
+
+    # Add fallback class for enhanced CSS styling
+    @element.classList.add("glass-fallback")
+
+    # Enhanced fallback for sidebar specifically
+    if @componentTypeValue is "sidebar"
+      @setupSidebarFallback()
+    else
+      @setupGenericFallback()
+
+    # Add retry button if not already present
+    @addRetryButton() unless @element.querySelector('.glass-retry-button')
+
+    # Track fallback state
+    @fallbackActive = true
+
+    console.log "[GlassController] Enhanced CSS fallback activated for #{@componentTypeValue}"
+
+  setupSidebarFallback: ->
+    # Ensure sidebar contents are properly visible
+    sidebarContents = @element.querySelector('.sidebar-contents')
+    if sidebarContents
+      sidebarContents.style.opacity = "1"
+      sidebarContents.style.visibility = "visible"
+      sidebarContents.style.zIndex = "2"
+      sidebarContents.style.position = "relative"
+
+    # Hide any glass containers that might be present
+    glassContainers = @element.querySelectorAll('.glass-container')
+    glassContainers.forEach (container) =>
+      container.style.display = "none"
+
+    # Ensure proper sidebar styling
+    @element.style.opacity = "1"
+    @element.style.visibility = "visible"
+
+    # Add enhanced visual feedback
+    @addSidebarFallbackIndicator()
+
+  setupGenericFallback: ->
+    # Basic fallback for non-sidebar components
+    @element.style.opacity = "1"
+    @element.style.visibility = "visible"
+
+    # Hide glass containers
+    glassContainers = @element.querySelectorAll('.glass-container')
+    glassContainers.forEach (container) =>
+      container.style.display = "none"
+
+  addSidebarFallbackIndicator: ->
+    return if @element.querySelector('.sidebar-fallback-indicator')
+
+    indicator = document.createElement('div')
+    indicator.className = 'sidebar-fallback-indicator'
+    indicator.style.cssText = '''
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 165, 0, 0.8);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      z-index: 1000;
+    '''
+
+    @element.appendChild(indicator)
+
+  retryGlassEffect: ->
+    return unless @fallbackActive
+
+    console.log "[GlassController] Retrying glass effect..."
+
+    # Add retrying state
+    @element.classList.add("glass-retrying")
+
+    # Remove retry button temporarily
+    retryButton = @element.querySelector('.glass-retry-button')
+    retryButton?.remove()
+
+    # Force cleanup of any existing WebGL contexts
+    if window.optimizedWebGLContextManager
+      window.optimizedWebGLContextManager.aggressiveCleanup()
+
+    # Clear fallback state
+    @fallbackActive = false
+    @element.classList.remove("glass-fallback")
+
+    # Set loading state
+    @element.setAttribute("data-glass-loading", "true")
+
+    # Wait a moment then retry
+    setTimeout =>
+      @element.classList.remove("glass-retrying")
+
+      # Attempt to reinitialize glass
+      try
+        @initializeGlass()
+      catch error
+        console.error "[GlassController] Retry failed:", error
+        # Restore fallback if retry fails
+        @setupFallback()
+    , 1500
+
+  cleanupFallback: ->
+    return unless @element
+
+    # Remove fallback classes and indicators
+    @element.classList.remove("glass-fallback", "glass-retrying")
+    @element.removeAttribute("data-glass-loading")
+
+    # Remove fallback indicators
+    indicator = @element.querySelector('.sidebar-fallback-indicator')
+    indicator?.remove()
+
+    retryButton = @element.querySelector('.glass-retry-button')
+    retryButton?.remove()
+
+    @fallbackActive = false
 
   # Method to be overridden by subclasses for custom behavior
   customPostRenderSetup: ->

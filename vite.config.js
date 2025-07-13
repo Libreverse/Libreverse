@@ -95,7 +95,7 @@ export default defineConfig(({ mode }) => {
                     keep_infinity: false,
                     loops: true,
                     negate_iife: true,
-                    passes: 3,
+                    passes: 10,
                     properties: true,
                     pure_getters: "strict",
                     pure_funcs: [

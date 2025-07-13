@@ -7,7 +7,7 @@
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
+    border-radius: 15px;
 }
 
 // Define experience style placeholders for reuse
@@ -126,7 +126,6 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 0;
     margin-top: 1.5rem;
-    border-top: 1px solid variables.$glass-border;
 
     .experience-action-left {
         appearance: none;
@@ -149,7 +148,6 @@
             background-color 0.2s ease;
         box-sizing: border-box;
         width: 100%;
-        border-right: 0.5px solid variables.$glass-border;
 
         &:hover {
             color: variables.$white-90;
@@ -193,7 +191,6 @@
             background-color 0.2s ease;
         box-sizing: border-box;
         width: 100%;
-        border-left: 0.5px solid variables.$glass-border;
 
         &:hover {
             color: variables.$white-90;
@@ -279,5 +276,4 @@
     font-size: 0.85rem;
     margin-top: 0.75rem;
     padding-top: 0.75rem;
-    border-top: 1px solid variables.$glass-border;
 }

@@ -1,10 +1,12 @@
 // Optimized WebGL Context Manager with pooling and better resource management
+import { webglContextMonitor } from "./webgl_context_monitor.js";
+
 class OptimizedWebGLContextManager {
     constructor() {
         this.contexts = new Map();
         this.contextPool = [];
-        this.maxContexts = 16; // Increased for scalability - can support many more glass effects
-        this.maxPoolSize = 8; // Increased pool size for better reuse
+        this.maxContexts = 8; // Further reduced from 12 for stability
+        this.maxPoolSize = 4; // Reduced pool size
         this.contextLossCount = 0;
         this.contextCreateCount = 0;
 
@@ -12,10 +14,36 @@ class OptimizedWebGLContextManager {
         this.sharedCanvas = null;
         this.sharedTextures = new Map();
         this.texturePool = [];
-        this.maxTexturePoolSize = 20;
+        this.maxTexturePoolSize = 10;
+
+        // More aggressive cleanup settings
+        this.lastCleanupTime = 0;
+        this.cleanupInterval = 3000; // Clean up every 3 seconds (was 5)
     }
 
     getContext(element, canvasElement = null) {
+        // Aggressive cleanup and early limit checking
+        const now = Date.now();
+        if (now - this.lastCleanupTime > this.cleanupInterval) {
+            this.aggressiveCleanup();
+            this.lastCleanupTime = now;
+        }
+
+        // Early rejection if we're at capacity and element doesn't have context
+        if (
+            this.contexts.size >= this.maxContexts &&
+            !this.contexts.has(element)
+        ) {
+            console.warn(
+                `[OptimizedWebGL] Context limit reached (${this.contexts.size}/${this.maxContexts}), rejecting new context request`,
+            );
+
+            // Notify any listeners about the context limit
+            this.notifyContextLimitReached();
+
+            return null;
+        }
+
         // First check if we have an existing context for this element
         const existingContext = this.contexts.get(element);
         if (existingContext && !existingContext.isContextLost()) {
@@ -72,8 +100,21 @@ class OptimizedWebGLContextManager {
             canvas.getContext("experimental-webgl", contextOptions);
 
         if (gl) {
+            // Double-check we're not exceeding limits
+            if (this.contexts.size >= this.maxContexts) {
+                console.error(
+                    `[OptimizedWebGL] Context creation would exceed limit (${this.contexts.size}/${this.maxContexts}), forcing cleanup`,
+                );
+                this.forceReleaseOldestContexts(2);
+            }
+
             this.contexts.set(element, gl);
             this.contextCreateCount++;
+
+            // Notify monitor of context creation
+            if (webglContextMonitor) {
+                webglContextMonitor.recordContextCreation();
+            }
 
             // Set up context loss handling
             this.setupContextLossHandling(canvas, gl);
@@ -131,6 +172,8 @@ class OptimizedWebGLContextManager {
     }
 
     cleanup() {
+        const before = this.contexts.size;
+
         // Remove lost contexts and disconnected elements
         for (const [element, context] of this.contexts.entries()) {
             if (context.isContextLost() || !element.isConnected) {
@@ -142,8 +185,83 @@ class OptimizedWebGLContextManager {
         this.contextPool = this.contextPool.filter(
             (context) => !context.isContextLost(),
         );
+
+        const after = this.contexts.size;
+        if (before !== after) {
+            console.log(
+                `[OptimizedWebGL] Cleaned up ${before - after} contexts`,
+            );
+        }
     }
 
+    // More aggressive cleanup to prevent context overload
+    aggressiveCleanup() {
+        console.log("[OptimizedWebGL] Running aggressive cleanup...");
+
+        // Remove contexts for disconnected elements
+        const elementsToRemove = [];
+        for (const [element, context] of this.contexts.entries()) {
+            if (!element.isConnected || context.isContextLost()) {
+                elementsToRemove.push(element);
+            }
+        }
+
+        elementsToRemove.forEach((element) => {
+            this.contexts.delete(element);
+        });
+
+        // Clear lost contexts from pool
+        this.contextPool = this.contextPool.filter(
+            (context) => !context.isContextLost(),
+        );
+
+        // If still over limit, force release oldest contexts
+        if (this.contexts.size > this.maxContexts * 0.8) {
+            const excess = Math.ceil(
+                this.contexts.size - this.maxContexts * 0.7,
+            );
+            this.forceReleaseOldestContexts(excess);
+        }
+
+        console.log(
+            `[OptimizedWebGL] Cleanup complete. Active contexts: ${this.contexts.size}/${this.maxContexts}`,
+        );
+    }
+
+    // Force release the oldest contexts
+    forceReleaseOldestContexts(count) {
+        const contextEntries = Array.from(this.contexts.entries());
+        const toRelease = contextEntries.slice(0, count);
+
+        toRelease.forEach(([element, context]) => {
+            console.log(
+                "[OptimizedWebGL] Force releasing context for element:",
+                element.className,
+            );
+            this.releaseContext(element);
+        });
+    }
+
+    // Notify listeners when context limit is reached
+    notifyContextLimitReached() {
+        const event = new CustomEvent("webgl:contextLimitReached", {
+            detail: {
+                activeContexts: this.contexts.size,
+                maxContexts: this.maxContexts,
+                pooledContexts: this.contextPool.length,
+            },
+        });
+
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(event);
+        }
+
+        console.warn(
+            "[OptimizedWebGL] Context limit reached, dispatching fallback event",
+        );
+    }
+
+    // Enhanced stats with failure tracking
     getStats() {
         return {
             activeContexts: this.contexts.size,

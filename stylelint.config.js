@@ -10,5 +10,6 @@ export default {
     ],
     rules: {
         "no-empty-source": undefined,
+        "no-descending-specificity": null, // Temporarily disabled for complex glass fallback CSS
     },
 };

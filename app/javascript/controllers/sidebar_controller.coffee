@@ -33,12 +33,37 @@ export default class extends Controller
   connect: ->
     console.log "[SidebarController] connected"
 
+    # Listen for fallback events on the sidebar
+    @element.addEventListener "glass:fallbackActivated", @handleSidebarFallback.bind(@)
+
     # Initialize liquid glass effect if enabled
     # Use setTimeout to avoid conflicts during startup
     setTimeout =>
       if @enableGlassValue and not @glassContainer
         @initializeLiquidGlass()
     , 100
+
+  handleSidebarFallback: ->
+    console.log "[SidebarController] Sidebar glass fallback activated"
+
+    # Ensure sidebar navigation remains visible and functional
+    nav = @element.querySelector("nav") or @element
+    if nav
+      nav.style.opacity = "1"
+      nav.style.visibility = "visible"
+
+      # Apply emergency navigation styling
+      nav.style.background = "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)"
+      nav.style.borderRadius = "12px"
+      nav.style.padding = "16px"
+      nav.style.margin = "8px"
+
+      # Ensure nav items are visible
+      navItems = nav.querySelectorAll('.nav-item, a, button')
+      navItems.forEach (item) =>
+        item.style.color = "rgba(255, 255, 255, 0.9)"
+        item.style.opacity = "1"
+        item.style.visibility = "visible"
 
   disconnect: ->
     # Clean up liquid glass resources

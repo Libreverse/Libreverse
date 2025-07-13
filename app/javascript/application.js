@@ -1,4 +1,7 @@
 import "../stylesheets/application.scss";
+import "./libs/webgl_fallback_system.js"; // Add fallback system
+import "./libs/critical_element_fallback.js"; // Add critical element fallback
+import "./libs/glass_fallback_monitor.js"; // Enhanced glass fallback monitoring
 import html2canvas from "html2canvas";
 import debounced from "debounced";
 import "./libs/foundation.js";

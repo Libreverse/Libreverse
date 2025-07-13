@@ -1,4 +1,5 @@
 @use "variables";
+@use "components/text_effects";
 @use "sass:color";
 
 .sp-main {
@@ -13,6 +14,12 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
+
+    // Apply text glow to headings
+    h1,
+    span {
+        @extend %text-glow-primary;
+    }
 }
 
 .sp-main h1.large,
@@ -79,7 +86,6 @@
 
 .sp-search-bar-container {
     // Glass effects now handled by liquid glass system
-    border-radius: 5px;
     margin-left: 10%;
     margin-right: 10%;
     position: relative;
@@ -95,7 +101,7 @@
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
+    border-radius: 12px;
 
     // Hide fallback styles when liquid glass is active
     &[data-glass-active="true"] {
@@ -156,7 +162,6 @@
 
 .sp-experience {
     // Glass effects now handled by liquid glass system
-    border-radius: 5px;
     padding: 0;
     text-align: center;
     min-height: 50px;
@@ -173,7 +178,7 @@
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
+    border-radius: 15px;
 
     // Hide fallback styles when liquid glass is active
     &[data-glass-active="true"] {
@@ -275,7 +280,6 @@
     @include modified-lesser-sp-aligner-tutorial;
 
     position: relative;
-    border-radius: 5px;
     padding: 1.5rem;
     border-left: 4px solid variables.$sp-primary;
     transition:
@@ -295,7 +299,7 @@
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
-    border: 1px solid variables.$glass-border;
+    border-radius: 12px;
 
     // Hide fallback styles when liquid glass is active (keep colored border)
     &[data-glass-active="true"] {

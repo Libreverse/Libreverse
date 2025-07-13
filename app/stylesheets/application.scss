@@ -4,6 +4,7 @@
 @use "normalise.scss/normalise";
 @use "globals";
 @use "turbo";
+@use "glass_fallbacks"; // Add glass fallback styles
 @use "components/_toast";
 @use "homepage";
 @use "search";

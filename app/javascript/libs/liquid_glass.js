@@ -131,20 +131,84 @@ export async function renderLiquidGlassNav(
         return element._liquidGlassInstance;
     }
 
+    let glassContainer = null;
+    const originalHTML = renderOptions.originalContent || element.innerHTML;
+
     try {
         // Save the original HTML for fallback or restoration
-        const originalHTML = renderOptions.originalContent || element.innerHTML;
 
         // If preserveOriginalHTML is true, don't clear content initially
         if (!renderOptions.preserveOriginalHTML) {
             element.innerHTML = "";
         }
 
-        const glassContainer = await Container.createSidebarContainer({
-            type: "rounded",
-            borderRadius: 0,
-            tintOpacity: 0.12,
-            ...containerOptions,
+        // Enhanced container creation with explicit error handling
+        try {
+            glassContainer = await Container.createSidebarContainer({
+                type: "rounded",
+                borderRadius: 0,
+                tintOpacity: 0.12,
+                ...containerOptions,
+            });
+        } catch (containerError) {
+            console.error(
+                "[LiquidGlass] Container creation failed:",
+                containerError,
+            );
+            throw new Error(
+                `Glass container creation failed: ${containerError.message}`,
+            );
+        }
+
+        // Enhanced validation of container creation
+        if (!glassContainer) {
+            console.warn("[LiquidGlass] Container creation returned null");
+            throw new Error("Glass container creation returned null");
+        }
+
+        if (!glassContainer.element) {
+            console.warn("[LiquidGlass] Container element is null");
+            throw new Error("Glass container element is null");
+        }
+
+        // Check if the container has a valid canvas
+        const canvas = glassContainer.element.querySelector("canvas");
+        if (!canvas) {
+            console.warn("[LiquidGlass] Container has no canvas element");
+            throw new Error("Glass container has no canvas element");
+        }
+
+        // Test canvas context
+        const canvasContext =
+            canvas.getContext("webgl2") ||
+            canvas.getContext("webgl") ||
+            canvas.getContext("experimental-webgl");
+
+        if (!canvasContext) {
+            console.warn("[LiquidGlass] Canvas context creation failed");
+            throw new Error("Canvas WebGL context creation failed");
+        }
+
+        if (canvasContext.isContextLost()) {
+            console.warn("[LiquidGlass] Canvas context is lost");
+            throw new Error("Canvas WebGL context is lost");
+        }
+
+        // Set up context loss monitoring
+        canvas.addEventListener("webglcontextlost", (event) => {
+            console.warn("[LiquidGlass] WebGL context lost for nav element");
+            event.preventDefault();
+            // Trigger fallback mode
+            if (element && typeof window.glassFallbackMonitor !== "undefined") {
+                window.glassFallbackMonitor.triggerGlobalFallback(
+                    "WebGL context lost during runtime",
+                );
+            }
+        });
+
+        canvas.addEventListener("webglcontextrestored", (event) => {
+            console.log("[LiquidGlass] WebGL context restored for nav element");
+            // Could potentially retry glass effect here
         });
 
         glassContainer.element.style.flexDirection = "column";
@@ -191,18 +255,50 @@ export async function renderLiquidGlassNav(
                 !!item.svg,
             );
 
-            const button = new Button({
-                text: item.text || "", // Use provided text or empty
-                size: 18,
-                type: "pill",
-                onClick:
-                    item.onClick ||
-                    (() => {
-                        globalThis.location.href = item.path;
-                    }),
-                iconHTML: item.svg || "",
-                ...(item.buttonOptions || {}),
-            });
+            let button;
+            try {
+                button = new Button({
+                    text: item.text || "", // Use provided text or empty
+                    size: 18,
+                    type: "pill",
+                    onClick:
+                        item.onClick ||
+                        (() => {
+                            globalThis.location.href = item.path;
+                        }),
+                    iconHTML: item.svg || "",
+                    ...(item.buttonOptions || {}),
+                });
+            } catch (buttonError) {
+                console.error(
+                    "[LiquidGlass] Button creation failed:",
+                    buttonError,
+                );
+                // Skip this button and continue with others
+                continue;
+            }
+
+            // Validate button was created successfully
+            if (!button || !button.element) {
+                console.warn(
+                    "[LiquidGlass] Button creation returned null for item:",
+                    item.text,
+                );
+                continue;
+            }
+
+            // Check if button has a canvas
+            const buttonCanvas = button.element.querySelector("canvas");
+            if (buttonCanvas) {
+                // Set up context loss monitoring for button
+                buttonCanvas.addEventListener("webglcontextlost", (event) => {
+                    console.warn(
+                        "[LiquidGlass] WebGL context lost for button:",
+                        item.text,
+                    );
+                    event.preventDefault();
+                });
+            }
 
             // Add data-path for navigation
             if (item.path) {
@@ -265,10 +361,21 @@ export async function renderLiquidGlassNav(
         return glassContainer;
     } catch (error) {
         console.error("Error rendering liquid glass nav:", error);
-        // If preserveOriginalHTML was true, we don't need to restore since content is still there
+
+        // Restore original content for fallback
         if (!renderOptions.preserveOriginalHTML) {
             element.innerHTML = renderOptions.originalContent || originalHTML;
         }
+
+        // Add fallback class immediately
+        element.classList.add("glass-fallback");
+
+        // Dispatch fallback event for controllers to handle
+        const fallbackEvent = new CustomEvent("glass:fallbackActivated", {
+            detail: { error: error.message, element: element },
+        });
+        element.dispatchEvent(fallbackEvent);
+
         // Return null on error, controller will handle graceful fallback
         return null;
     }
@@ -299,27 +406,100 @@ export function validateLiquidGlass(element) {
             return false;
         }
 
-        // Quick WebGL support check
-        if (!window.WebGLRenderingContext) {
+        // Enhanced WebGL support check
+        if (!window.WebGLRenderingContext && !window.WebGL2RenderingContext) {
             console.error(
                 "Liquid glass validation failed: WebGL not supported",
             );
             return false;
         }
 
-        // Use optimized context manager for testing
-        const gl = optimizedWebGLContextManager.getContext(element);
-        if (!gl) {
+        // Test canvas creation capability
+        const testCanvas = document.createElement("canvas");
+        testCanvas.width = 32;
+        testCanvas.height = 32;
+
+        let gl = null;
+        const contextOptions = {
+            alpha: true,
+            premultipliedAlpha: false,
+            preserveDrawingBuffer: false,
+            antialias: false,
+            failIfMajorPerformanceCaveat: true, // Fail on software rendering
+        };
+
+        try {
+            gl =
+                testCanvas.getContext("webgl2", contextOptions) ||
+                testCanvas.getContext("webgl", contextOptions) ||
+                testCanvas.getContext("experimental-webgl", contextOptions);
+        } catch (canvasError) {
             console.error(
-                "Liquid glass validation failed: WebGL context creation failed",
+                "Liquid glass validation failed: Canvas context creation threw error:",
+                canvasError,
             );
             return false;
         }
 
-        // Quick context health check
+        if (!gl) {
+            console.error(
+                "Liquid glass validation failed: WebGL context creation failed - canvas returned null",
+            );
+            return false;
+        }
+
+        // Enhanced context health check
         if (gl.isContextLost()) {
             console.error(
-                "Liquid glass validation failed: WebGL context is lost",
+                "Liquid glass validation failed: WebGL context is lost immediately after creation",
+            );
+            return false;
+        }
+
+        // Test basic WebGL functionality
+        try {
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            if (!vertexShader) {
+                console.error(
+                    "Liquid glass validation failed: Cannot create vertex shader",
+                );
+                return false;
+            }
+            gl.deleteShader(vertexShader);
+
+            // Test texture creation
+            const texture = gl.createTexture();
+            if (!texture) {
+                console.error(
+                    "Liquid glass validation failed: Cannot create texture",
+                );
+                return false;
+            }
+            gl.deleteTexture(texture);
+
+            // Test framebuffer creation
+            const framebuffer = gl.createFramebuffer();
+            if (!framebuffer) {
+                console.error(
+                    "Liquid glass validation failed: Cannot create framebuffer",
+                );
+                return false;
+            }
+            gl.deleteFramebuffer(framebuffer);
+        } catch (webglError) {
+            console.error(
+                "Liquid glass validation failed: WebGL functionality test failed:",
+                webglError,
+            );
+            return false;
+        }
+
+        // Check maximum texture size
+        const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        if (maxTextureSize < 512) {
+            console.error(
+                "Liquid glass validation failed: Maximum texture size too small:",
+                maxTextureSize,
             );
             return false;
         }
@@ -328,6 +508,40 @@ export function validateLiquidGlass(element) {
         if (!html2canvas) {
             console.error(
                 "Liquid glass validation failed: html2canvas not available",
+            );
+            return false;
+        }
+
+        // Test html2canvas basic functionality
+        try {
+            const testDiv = document.createElement("div");
+            testDiv.style.width = "10px";
+            testDiv.style.height = "10px";
+            testDiv.style.background = "red";
+            testDiv.style.position = "absolute";
+            testDiv.style.top = "-1000px";
+            document.body.appendChild(testDiv);
+
+            // Quick html2canvas test (don't await, just check if it starts)
+            const canvasPromise = html2canvas(testDiv, {
+                width: 10,
+                height: 10,
+                logging: false,
+                useCORS: true,
+            });
+
+            document.body.removeChild(testDiv);
+
+            if (!canvasPromise || typeof canvasPromise.then !== "function") {
+                console.error(
+                    "Liquid glass validation failed: html2canvas not functioning properly",
+                );
+                return false;
+            }
+        } catch (html2canvasError) {
+            console.error(
+                "Liquid glass validation failed: html2canvas test failed:",
+                html2canvasError,
             );
             return false;
         }

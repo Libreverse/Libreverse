@@ -1,0 +1,55 @@
+@use "../variables";
+
+// Text Glow Effect
+// Provides a pulsing glow animation for text elements
+@mixin text-glow(
+    $color: variables.$login-primary,
+    $intensity: 0.5,
+    $duration: 3s
+) {
+    text-shadow: 0 0 10px rgba($color, $intensity);
+    animation: text-glow-#{unique-id()} $duration ease-in-out infinite alternate;
+
+    @keyframes text-glow-#{unique-id()} {
+        0% {
+            text-shadow: 0 0 10px rgba($color, $intensity * 60%);
+        }
+
+        100% {
+            text-shadow: 0 0 15px rgba($color, $intensity * 120%);
+        }
+    }
+}
+
+// Placeholder selector for basic text glow
+%text-glow {
+    @include text-glow;
+}
+
+// Specific text glow variants
+%text-glow-primary {
+    @include text-glow(variables.$login-primary, 0.5, 3s);
+}
+
+%text-glow-secondary {
+    @include text-glow(variables.$hp-secondary, 0.5, 3s);
+}
+
+%text-glow-subtle {
+    @include text-glow(variables.$login-primary, 0.3, 4s);
+}
+
+%text-glow-intense {
+    @include text-glow(variables.$login-primary, 0.7, 2s);
+}
+
+// Static keyframes definition (for backward compatibility)
+@keyframes text-glow {
+    0% {
+        text-shadow: 0 0 10px rgba(variables.$login-primary, 0.3);
+    }
+
+    100% {
+        text-shadow: 0 0 15px rgba(variables.$login-primary, 0.6);
+    }
+}

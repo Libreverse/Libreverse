@@ -4,7 +4,6 @@
     // Base fixed width (using previous "expanded" sizes)
     width: 60px;
     height: 80vh;
-    border-left: none !important;
 
     --sidebar-border-radius: 20px; // Define border radius as a variable
 
@@ -15,6 +14,27 @@
     left: 0;
     transform: translateY(-50%); // Vertical centering
     pointer-events: auto;
+
+    // Default glass-like styling that works without JavaScript
+    // This ensures the sidebar is always visible and attractive
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 12%) 0%,
+        rgb(255 255 255 / 8%) 50%,
+        rgb(255 255 255 / 6%) 100%
+    );
+    backdrop-filter: blur(15px) saturate(1.8);
+    border-top: 1px solid rgb(255 255 255 / 18%);
+    border-right: 1px solid rgb(255 255 255 / 18%);
+    border-bottom: 1px solid rgb(255 255 255 / 18%);
+    border-left: none;
+    box-shadow:
+        0 8px 32px rgb(0 0 0 / 15%),
+        inset 0 1px 0 rgb(255 255 255 / 10%),
+        inset 0 -1px 0 rgb(255 255 255 / 5%);
+    opacity: 1;
+    visibility: visible;
+    overflow: hidden;
 
     // Glass container
     .glass-container {
@@ -29,12 +49,12 @@
         // Ensure canvas respects border radius
         canvas {
             border-radius: 0 var(--sidebar-border-radius)
-                var(--sidebar-border-radius) 0 !important; // Use variable and override inline styles
+                var(--sidebar-border-radius) 0; // Use variable and override inline styles
             // Force clipping with clip-path for WebGL canvas
             clip-path: inset(
                 0 0 0 0 round 0 var(--sidebar-border-radius)
                     var(--sidebar-border-radius) 0
-            ) !important; // Use variable and override inline styles
+            ); // Use variable and override inline styles
         }
 
         // Proper spacing for glass buttons
@@ -44,7 +64,7 @@
         align-items: center;
         padding: 16px 2px;
         box-sizing: border-box;
-        border-left: none !important;
+        border-left: none;
 
         // Glass button styling
         .glass-button {
@@ -102,9 +122,85 @@
     @media (width >= 1501px) {
         width: 80px; // Large screen width (was expanded size)
     }
+
+    // Improved transition for when glass fails to load
+    transition:
+        background 0.3s ease,
+        border 0.3s ease,
+        box-shadow 0.3s ease;
+
+    // Ensure fallback state is handled gracefully
+    &:not([data-glass-active], .glass-fallback) {
+        // Temporary loading state before fallback activates
+        background: rgb(255 255 255 / 5%);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgb(255 255 255 / 10%);
+    }
+
+    // Enhanced state management for glass loading
+    &[data-glass-loading="true"] {
+        .sidebar-contents {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+    }
+
+    // When explicitly in fallback mode (JS detected glass failure)
+    &.glass-fallback {
+        // Use the enhanced fallback styles defined in glass_fallbacks.scss
+        // This overrides the default styling with more sophisticated effects
+        .sidebar-contents {
+            opacity: 1;
+            visibility: visible;
+            z-index: 2;
+        }
+
+        // Hide any glass container that might still be present
+        .glass-container {
+            display: none;
+        }
+    }
+
+    // Dark mode support for default styling
+    [data-theme="dark"] & {
+        background: linear-gradient(
+            135deg,
+            rgb(0 0 0 / 40%) 0%,
+            rgb(0 0 0 / 30%) 50%,
+            rgb(0 0 0 / 25%) 100%
+        );
+        border-color: rgb(255 255 255 / 12%);
+        box-shadow:
+            0 8px 32px rgb(0 0 0 / 25%),
+            inset 0 1px 0 rgb(255 255 255 / 8%),
+            inset 0 -1px 0 rgb(255 255 255 / 3%);
+    }
+
+    // High contrast mode support
+    @media (prefers-contrast: high) {
+        background: rgb(0 0 0 / 80%);
+        border: 2px solid white;
+        backdrop-filter: none;
+    }
+
+    // Reduced motion support
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+
+        .sidebar-link,
+        .sidebar-logout-button {
+            transition: none;
+
+            &:hover {
+                transform: none;
+            }
+        }
+    }
 }
 
-// Native sidebar styling to match glass buttons during loading
+// Native sidebar styling - provides excellent default appearance
+// This works perfectly without JavaScript and gets enhanced when glass loads
+.sidebar[data-glass-loading="true"] .sidebar-contents,
 .sidebar-contents {
     display: flex;
     flex-direction: column;
@@ -112,8 +208,10 @@
     height: 100%;
     padding: 16px 2px; // Match glass container padding
     box-sizing: border-box;
+    position: relative;
+    z-index: 2;
 
-    // Style native links to look like glass buttons
+    // Style native links to look like glass buttons by default
     .sidebar-link,
     .sidebar-logout-button {
         width: 40px;
@@ -127,15 +225,25 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgb(255 255 255 / 10%);
-        backdrop-filter: blur(10px);
+
+        // Beautiful glass-like default styling
+        background: linear-gradient(
+            135deg,
+            rgb(255 255 255 / 15%) 0%,
+            rgb(255 255 255 / 10%) 50%,
+            rgb(255 255 255 / 8%) 100%
+        );
+        backdrop-filter: blur(10px) saturate(1.5);
         border: 1px solid rgb(255 255 255 / 20%);
-        box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
-        transition:
-            transform 0.1s ease,
-            opacity 300ms ease-out;
+        box-shadow:
+            0 4px 20px rgb(0 0 0 / 10%),
+            inset 0 1px 0 rgb(255 255 255 / 15%),
+            inset 0 -1px 0 rgb(255 255 255 / 5%);
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
         flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
 
         // Style the icons to match glass button size
         img.sidebar-icons {
@@ -143,10 +251,8 @@
             height: 24px;
             display: block;
             flex-shrink: 0;
-        }
-
-        &:active:not(.sidebar-default-cursor) {
-            transform: scale(0.97);
+            filter: drop-shadow(0 1px 2px rgb(0 0 0 / 20%));
+            transition: filter 0.15s ease;
         }
 
         // Current page styling
@@ -154,6 +260,72 @@
             opacity: 0.6;
             cursor: default;
             filter: grayscale(0.5);
+        }
+
+        // Hover effects that work without JavaScript
+        &:hover {
+            background: linear-gradient(
+                135deg,
+                rgb(255 255 255 / 22%) 0%,
+                rgb(255 255 255 / 18%) 50%,
+                rgb(255 255 255 / 15%) 100%
+            );
+            border-color: rgb(255 255 255 / 30%);
+            box-shadow:
+                0 6px 25px rgb(0 0 0 / 15%),
+                inset 0 1px 0 rgb(255 255 255 / 20%),
+                inset 0 -1px 0 rgb(255 255 255 / 8%);
+            transform: scale(1.05) translateY(-1px);
+        }
+
+        &:hover img.sidebar-icons {
+            filter: drop-shadow(0 2px 4px rgb(0 0 0 / 30%));
+        }
+
+        &:active:not(.sidebar-default-cursor) {
+            transform: scale(0.97);
+            box-shadow:
+                0 2px 10px rgb(0 0 0 / 20%),
+                inset 0 1px 0 rgb(255 255 255 / 10%);
+            transition: all 0.1s ease;
+        }
+    }
+
+    // Dark mode support for sidebar contents
+    [data-theme="dark"] & {
+        .sidebar-link,
+        .sidebar-logout-button {
+            background: linear-gradient(
+                135deg,
+                rgb(255 255 255 / 8%) 0%,
+                rgb(255 255 255 / 5%) 50%,
+                rgb(255 255 255 / 3%) 100%
+            );
+            border-color: rgb(255 255 255 / 15%);
+
+            &:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgb(255 255 255 / 12%) 0%,
+                    rgb(255 255 255 / 8%) 50%,
+                    rgb(255 255 255 / 6%) 100%
+                );
+                border-color: rgb(255 255 255 / 20%);
+            }
+        }
+    }
+
+    // High contrast mode for sidebar contents
+    @media (prefers-contrast: high) {
+        .sidebar-link,
+        .sidebar-logout-button {
+            background: rgb(255 255 255 / 90%);
+            border: 2px solid black;
+            color: black;
+
+            img.sidebar-icons {
+                filter: invert(1);
+            }
         }
     }
 }
@@ -168,7 +340,7 @@
 
 .sidebar-disabled {
     opacity: 0.6;
-    cursor: default !important;
+    cursor: default;
     filter: grayscale(0.5);
 
     // Don't disable pointer-events - we need clicks for shake animation
