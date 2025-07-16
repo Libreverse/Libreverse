@@ -1,8 +1,6 @@
 # Todo List
 
-finish cleaned up liquid glass
 add coffeescript prettier and eslint
-inline favicons
 add decentranland and hyperfy integration
 2: Add telegram search bot
 3: Add x.com search bot
