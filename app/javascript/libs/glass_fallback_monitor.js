@@ -8,7 +8,7 @@ class GlassFallbackMonitor {
         this.webglHealthy = true;
         this.contextLossCount = 0;
         this.maxContextLoss = 3;
-        this.monitoringInterval = null;
+        this.monitoringInterval = undefined;
         this.observers = new Set();
 
         this.init();
@@ -55,7 +55,7 @@ class GlassFallbackMonitor {
             event.preventDefault();
         });
 
-        canvas.addEventListener("webglcontextrestored", (event) => {
+        canvas.addEventListener("webglcontextrestored", () => {
             console.log("[GlassFallbackMonitor] WebGL context restored");
             this.webglHealthy = true;
         });
@@ -113,13 +113,13 @@ class GlassFallbackMonitor {
     startMonitoring() {
         this.monitoringInterval = setInterval(() => {
             this.checkSystemHealth();
-        }, 10000); // Check every 10 seconds
+        }, 10_000); // Check every 10 seconds
     }
 
     pauseMonitoring() {
         if (this.monitoringInterval) {
             clearInterval(this.monitoringInterval);
-            this.monitoringInterval = null;
+            this.monitoringInterval = undefined;
         }
     }
 
@@ -167,7 +167,7 @@ class GlassFallbackMonitor {
             '[data-controller*="glass"]:not(.glass-fallback)',
         );
 
-        glassElements.forEach((element) => {
+        for (const element of glassElements) {
             const controller = this.getControllerInstance(element);
             if (controller && typeof controller.setupFallback === "function") {
                 controller.setupFallback();
@@ -175,7 +175,7 @@ class GlassFallbackMonitor {
                 // Manual fallback for elements without accessible controller
                 this.manualFallback(element);
             }
-        });
+        }
 
         // Notify observers
         this.notifyObservers(reason);
@@ -188,30 +188,30 @@ class GlassFallbackMonitor {
         }
 
         // Alternative method to get controller
-        if (window.Stimulus && window.Stimulus.application) {
+        if (globalThis.Stimulus && globalThis.Stimulus.application) {
             const controllers =
-                window.Stimulus.application.getControllerForElementAndIdentifier(
+                globalThis.Stimulus.application.getControllerForElementAndIdentifier(
                     element,
                     "glass",
                 );
             return controllers;
         }
 
-        return null;
+        return;
     }
 
     manualFallback(element) {
         // Apply manual fallback styles
         element.classList.add("glass-fallback");
-        element.removeAttribute("data-glass-active");
+        delete element.dataset.glassActive;
         element.style.opacity = "1";
         element.style.visibility = "visible";
 
         // Hide glass containers
         const glassContainers = element.querySelectorAll(".glass-container");
-        glassContainers.forEach((container) => {
+        for (const container of glassContainers) {
             container.style.display = "none";
-        });
+        }
     }
 
     addObserver(callback) {
@@ -223,13 +223,13 @@ class GlassFallbackMonitor {
     }
 
     notifyObservers(reason) {
-        this.observers.forEach((callback) => {
+        for (const callback of this.observers) {
             try {
                 callback(reason);
             } catch (error) {
                 console.error("[GlassFallbackMonitor] Observer error:", error);
             }
-        });
+        }
     }
 
     destroy() {
@@ -240,16 +240,16 @@ class GlassFallbackMonitor {
 
 // Initialize the monitor when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-    if (!window.glassFallbackMonitor) {
-        window.glassFallbackMonitor = new GlassFallbackMonitor();
+    if (!globalThis.glassFallbackMonitor) {
+        globalThis.glassFallbackMonitor = new GlassFallbackMonitor();
         console.log("[GlassFallbackMonitor] Initialized");
     }
 });
 
 // Clean up on page unload
 window.addEventListener("beforeunload", () => {
-    if (window.glassFallbackMonitor) {
-        window.glassFallbackMonitor.destroy();
+    if (globalThis.glassFallbackMonitor) {
+        globalThis.glassFallbackMonitor.destroy();
     }
 });
 

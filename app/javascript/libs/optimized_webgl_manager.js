@@ -11,7 +11,7 @@ class OptimizedWebGLContextManager {
         this.contextCreateCount = 0;
 
         // Shared resources for efficiency
-        this.sharedCanvas = null;
+        this.sharedCanvas = undefined;
         this.sharedTextures = new Map();
         this.texturePool = [];
         this.maxTexturePoolSize = 10;
@@ -21,7 +21,7 @@ class OptimizedWebGLContextManager {
         this.cleanupInterval = 3000; // Clean up every 3 seconds (was 5)
     }
 
-    getContext(element, canvasElement = null) {
+    getContext(element, canvasElement) {
         // Aggressive cleanup and early limit checking
         const now = Date.now();
         if (now - this.lastCleanupTime > this.cleanupInterval) {
@@ -41,7 +41,7 @@ class OptimizedWebGLContextManager {
             // Notify any listeners about the context limit
             this.notifyContextLimitReached();
 
-            return null;
+            return;
         }
 
         // First check if we have an existing context for this element
@@ -129,10 +129,10 @@ class OptimizedWebGLContextManager {
         }
 
         console.error("[OptimizedWebGL] Failed to create WebGL context");
-        return null;
+        return;
     }
 
-    setupContextLossHandling(canvas, gl) {
+    setupContextLossHandling(canvas) {
         canvas.addEventListener("webglcontextlost", (event) => {
             this.contextLossCount++;
             console.warn(
@@ -162,10 +162,10 @@ class OptimizedWebGLContextManager {
                 );
             } else {
                 // Force lose the context if we can't pool it
-                const loseContextExt =
+                const loseContextExtension =
                     context.getExtension("WEBGL_lose_context");
-                if (loseContextExt) {
-                    loseContextExt.loseContext();
+                if (loseContextExtension) {
+                    loseContextExtension.loseContext();
                 }
             }
         }
@@ -206,9 +206,9 @@ class OptimizedWebGLContextManager {
             }
         }
 
-        elementsToRemove.forEach((element) => {
+        for (const element of elementsToRemove) {
             this.contexts.delete(element);
-        });
+        }
 
         // Clear lost contexts from pool
         this.contextPool = this.contextPool.filter(
@@ -230,16 +230,16 @@ class OptimizedWebGLContextManager {
 
     // Force release the oldest contexts
     forceReleaseOldestContexts(count) {
-        const contextEntries = Array.from(this.contexts.entries());
+        const contextEntries = [...this.contexts.entries()];
         const toRelease = contextEntries.slice(0, count);
 
-        toRelease.forEach(([element, context]) => {
+        for (const [element] of toRelease) {
             console.log(
                 "[OptimizedWebGL] Force releasing context for element:",
                 element.className,
             );
             this.releaseContext(element);
-        });
+        }
     }
 
     // Notify listeners when context limit is reached
@@ -252,8 +252,8 @@ class OptimizedWebGLContextManager {
             },
         });
 
-        if (typeof window !== "undefined") {
-            window.dispatchEvent(event);
+        if (typeof globalThis !== "undefined") {
+            globalThis.dispatchEvent(event);
         }
 
         console.warn(
@@ -278,17 +278,19 @@ class OptimizedWebGLContextManager {
     destroy() {
         // Force lose all contexts
         for (const context of this.contexts.values()) {
-            const loseContextExt = context.getExtension("WEBGL_lose_context");
-            if (loseContextExt) {
-                loseContextExt.loseContext();
+            const loseContextExtension =
+                context.getExtension("WEBGL_lose_context");
+            if (loseContextExtension) {
+                loseContextExtension.loseContext();
             }
         }
 
         // Clean up pool
         for (const context of this.contextPool) {
-            const loseContextExt = context.getExtension("WEBGL_lose_context");
-            if (loseContextExt) {
-                loseContextExt.loseContext();
+            const loseContextExtension =
+                context.getExtension("WEBGL_lose_context");
+            if (loseContextExtension) {
+                loseContextExtension.loseContext();
             }
         }
 
@@ -309,11 +311,17 @@ class OptimizedWebGLContextManager {
     clearContextState(gl) {
         // Clear WebGL state to prepare context for reuse
         try {
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind program
             gl.useProgram(null);
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind array buffer
             gl.bindBuffer(gl.ARRAY_BUFFER, null);
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind element array buffer
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind texture
             gl.bindTexture(gl.TEXTURE_2D, null);
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind framebuffer
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind renderbuffer
             gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
             // Clear any remaining state
@@ -345,8 +353,6 @@ class OptimizedWebGLContextManager {
 
     // Texture pool management for better performance with many instances
     getPooledTexture(gl, width, height) {
-        const key = `${width}x${height}`;
-
         if (this.texturePool.length > 0) {
             const texture = this.texturePool.pop();
             return texture;
@@ -364,6 +370,7 @@ class OptimizedWebGLContextManager {
             0,
             gl.RGBA,
             gl.UNSIGNED_BYTE,
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null for empty texture data
             null,
         );
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);

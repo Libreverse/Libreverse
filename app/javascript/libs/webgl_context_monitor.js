@@ -1,5 +1,7 @@
 // WebGL Context Monitor - Emergency management for context overloading
 import { optimizedWebGLContextManager } from "./optimized_webgl_manager.js";
+import { Container } from "./container.js";
+import { glassRenderManager } from "./glass_render_manager.js";
 
 class WebGLContextMonitor {
     constructor() {
@@ -33,7 +35,7 @@ class WebGLContextMonitor {
     stopMonitoring() {
         if (this.monitorInterval) {
             clearInterval(this.monitorInterval);
-            this.monitorInterval = null;
+            this.monitorInterval = undefined;
         }
         this.isMonitoring = false;
     }
@@ -43,7 +45,7 @@ class WebGLContextMonitor {
         let containerStats;
         try {
             containerStats = Container.getStats();
-        } catch (e) {
+        } catch {
             // Container might not be loaded yet
             containerStats = { activeInstances: 0, maxInstances: 12 };
         }
@@ -74,7 +76,7 @@ class WebGLContextMonitor {
         }
     }
 
-    handleCriticalSituation(stats, containerStats) {
+    handleCriticalSituation(stats) {
         if (this.emergencyCleanupActive) return;
 
         console.error(
@@ -97,7 +99,7 @@ class WebGLContextMonitor {
         this.activateEmergencyPause();
 
         // Step 3: Force background instances to release contexts
-        const backgroundInstances = Array.from(Container.backgroundInstances);
+        const backgroundInstances = [...Container.backgroundInstances];
         const toRelease = backgroundInstances.slice(
             0,
             Math.ceil(backgroundInstances.length * 0.5),
@@ -134,7 +136,7 @@ class WebGLContextMonitor {
         }
     }
 
-    handleWarningSituation(stats, containerStats) {
+    handleWarningSituation(stats) {
         console.warn(
             `[WebGLMonitor] WARNING: ${stats.activeContexts} active contexts approaching limit`,
         );
@@ -143,7 +145,7 @@ class WebGLContextMonitor {
         optimizedWebGLContextManager.aggressiveCleanup();
 
         // Reduce quality levels temporarily
-        if (window.glassRenderManager) {
+        if (globalThis.glassRenderManager) {
             const currentQuality = glassRenderManager.currentQuality;
             if (currentQuality === "high") {
                 glassRenderManager.adjustQualityLevel("medium");
@@ -154,7 +156,7 @@ class WebGLContextMonitor {
                     ) {
                         glassRenderManager.adjustQualityLevel("high");
                     }
-                }, 10000);
+                }, 10_000);
             }
         }
     }
@@ -176,10 +178,10 @@ class WebGLContextMonitor {
         // Temporarily increase container creation queue processing delay
         const originalProcessing = Container.processCreationQueue;
         Container.processCreationQueue = () => {
-            if (!this.emergencyPauseActive) {
-                originalProcessing.call(Container);
-            } else {
+            if (this.emergencyPauseActive) {
                 console.log("[WebGLMonitor] Creation paused due to emergency");
+            } else {
+                originalProcessing.call(Container);
             }
         };
 
@@ -214,7 +216,7 @@ class WebGLContextMonitor {
 export const webglContextMonitor = new WebGLContextMonitor();
 
 // Auto-start monitoring with better error handling
-if (typeof window !== "undefined") {
+if (typeof globalThis !== "undefined") {
     // Wait for modules to be loaded
     setTimeout(() => {
         try {

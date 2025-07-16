@@ -2,14 +2,14 @@ import { Container } from "./container.js";
 
 class Button extends Container {
     constructor(options = {}) {
-        const text = options.text !== undefined ? options.text : "Button";
-        const fontSize = parseInt(options.size) || 48;
-        const onClick = options.onClick || null;
+        const text = options.text === undefined ? "Button" : options.text;
+        const fontSize = Number.parseInt(options.size) || 48;
+        const onClick = options.onClick || undefined;
         const type = options.type || "rounded"; // "rounded", "circle", or "pill"
-        const warp = options.warp !== undefined ? options.warp : false; // Center warping disabled by default
+        const warp = options.warp === undefined ? false : options.warp; // Center warping disabled by default
         const tintOpacity =
-            options.tintOpacity !== undefined ? options.tintOpacity : 0.2;
-        const iconHTML = options.iconHTML || null;
+            options.tintOpacity === undefined ? 0.2 : options.tintOpacity;
+        const iconHTML = options.iconHTML || undefined;
 
         // Call parent constructor (border radius will be set in setSizeFromText)
         super({
@@ -23,12 +23,12 @@ class Button extends Container {
         this.onClick = onClick;
         this.type = type;
         this.warp = warp;
-        this.parent = null; // Will be set if added to container
+        this.parent = undefined; // Will be set if added to container
         this.isNestedGlass = false;
         this.iconHTML = iconHTML;
         this.isDestroyed = false;
-        this._clickHandler = null;
-        this._renderLoopId = null;
+        this._clickHandler = undefined;
+        this._renderLoopId = undefined;
 
         // Add button-specific styling and content
         this.element.classList.add("glass-button");
@@ -182,9 +182,9 @@ class Button extends Container {
 
     static measureText(text, fontSize) {
         const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        ctx.font = `${fontSize}px system-ui, -apple-system, sans-serif`;
-        return ctx.measureText(text);
+        const context = canvas.getContext("2d");
+        context.font = `${fontSize}px system-ui, -apple-system, sans-serif`;
+        return context.measureText(text);
     }
 
     createTextElement() {
@@ -208,31 +208,31 @@ class Button extends Container {
 
         if (this.iconHTML) {
             // Insert the SVG icon directly without any modifications
-            const temp = document.createElement("div");
-            temp.innerHTML = this.iconHTML;
+            const temporary = document.createElement("div");
+            temporary.innerHTML = this.iconHTML;
             // Move all SVGs (if multiple) to the text element without changing them
-            temp.querySelectorAll("svg").forEach((svg) => {
-                this.textElement.appendChild(svg);
-            });
+            for (const svg of temporary.querySelectorAll("svg")) {
+                this.textElement.append(svg);
+            }
         }
 
         // Only add text if it's not empty
         if (this.text && this.text.trim() !== "") {
             console.log("Adding text node:", this.text);
-            this.textElement.appendChild(document.createTextNode(this.text));
+            this.textElement.append(document.createTextNode(this.text));
         } else {
             console.log("Skipping text node - text is empty or whitespace");
         }
 
         this.textElement.style.fontSize = this.fontSize + "px";
-        this.element.appendChild(this.textElement);
+        this.element.append(this.textElement);
     }
 
     setupClickHandler() {
         if (this.onClick && this.element) {
-            this._clickHandler = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+            this._clickHandler = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
                 console.log(
                     "Button clicked:",
                     this.text || "icon-only",
@@ -650,6 +650,7 @@ class Button extends Container {
             0,
             gl.RGBA,
             gl.UNSIGNED_BYTE,
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null for empty texture data
             null,
         );
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -704,34 +705,40 @@ class Button extends Container {
             containerCanvas.width,
             containerCanvas.height,
         );
-        gl.uniform1f(blurRadiusLoc, window.glassControls?.blurRadius || 2.0); // Controlled blur for sharpness
+        gl.uniform1f(blurRadiusLoc, globalThis.glassControls?.blurRadius || 2); // Controlled blur for sharpness
         gl.uniform1f(borderRadiusLoc, this.borderRadius);
-        gl.uniform1f(warpLoc, this.warp ? 1.0 : 0.0);
+        gl.uniform1f(warpLoc, this.warp ? 1 : 0);
         gl.uniform1f(
             edgeIntensityLoc,
-            window.glassControls?.edgeIntensity || 0.01,
+            globalThis.glassControls?.edgeIntensity || 0.01,
         );
         gl.uniform1f(
             rimIntensityLoc,
-            window.glassControls?.rimIntensity || 0.05,
+            globalThis.glassControls?.rimIntensity || 0.05,
         );
         gl.uniform1f(
             baseIntensityLoc,
-            window.glassControls?.baseIntensity || 0.01,
+            globalThis.glassControls?.baseIntensity || 0.01,
         );
         gl.uniform1f(
             edgeDistanceLoc,
-            window.glassControls?.edgeDistance || 0.15,
+            globalThis.glassControls?.edgeDistance || 0.15,
         );
-        gl.uniform1f(rimDistanceLoc, window.glassControls?.rimDistance || 0.8);
+        gl.uniform1f(
+            rimDistanceLoc,
+            globalThis.glassControls?.rimDistance || 0.8,
+        );
         gl.uniform1f(
             baseDistanceLoc,
-            window.glglassControls?.baseDistance || 0.1,
+            globalThis.glglassControls?.baseDistance || 0.1,
         );
-        gl.uniform1f(cornerBoostLoc, window.glassControls?.cornerBoost || 0.02);
+        gl.uniform1f(
+            cornerBoostLoc,
+            globalThis.glassControls?.cornerBoost || 0.02,
+        );
         gl.uniform1f(
             rippleEffectLoc,
-            window.glassControls?.rippleEffect || 0.1,
+            globalThis.glassControls?.rippleEffect || 0.1,
         );
         gl.uniform1f(tintOpacityLoc, this.tintOpacity);
 
@@ -826,14 +833,14 @@ class Button extends Container {
 
         // Remove from parent
         if (this.parent) {
-            this.parent.removeChild(this);
+            this.remove();
         }
 
         // Remove event listeners
         if (this.element && this._clickHandler) {
             this.element.removeEventListener("click", this._clickHandler);
             this.element.removeEventListener("touchstart", this._clickHandler);
-            this._clickHandler = null;
+            this._clickHandler = undefined;
         }
 
         // Cancel any pending render loops
@@ -843,16 +850,16 @@ class Button extends Container {
 
         // Clear references
         this.gl_refs = {};
-        this.gl = null;
-        this.canvas = null;
-        this.element = null;
-        this.parent = null;
+        this.gl = undefined;
+        this.canvas = undefined;
+        this.element = undefined;
+        this.parent = undefined;
     }
 
     createProgram(gl, vsSource, fsSource) {
         const vs = this.compileShader(gl, gl.VERTEX_SHADER, vsSource);
         const fs = this.compileShader(gl, gl.FRAGMENT_SHADER, fsSource);
-        if (!vs || !fs) return null;
+        if (!vs || !fs) return;
 
         const program = gl.createProgram();
         gl.attachShader(program, vs);
@@ -861,7 +868,7 @@ class Button extends Container {
 
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error("Program link error:", gl.getProgramInfoLog(program));
-            return null;
+            return;
         }
 
         return program;
@@ -873,7 +880,7 @@ class Button extends Container {
         gl.compileShader(shader);
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
             console.error("Shader compile error:", gl.getShaderInfoLog(shader));
-            return null;
+            return;
         }
         return shader;
     }

@@ -1,11 +1,13 @@
 // WebGL Context Dashboard
 import { optimizedWebGLContextManager } from "./optimized_webgl_manager.js";
+import { Container } from "./container.js";
+import { glassRenderManager } from "./glass_render_manager.js";
 
 class WebGLDashboard {
     constructor() {
         this.isVisible = false;
-        this.updateInterval = null;
-        this.dashboard = null;
+        this.updateInterval = undefined;
+        this.dashboard = undefined;
     }
 
     show() {
@@ -21,7 +23,7 @@ class WebGLDashboard {
 
         if (this.dashboard) {
             this.dashboard.remove();
-            this.dashboard = null;
+            this.dashboard = undefined;
         }
         this.stopUpdating();
         this.isVisible = false;
@@ -55,9 +57,9 @@ class WebGLDashboard {
     `;
 
         // Close button
-        const closeBtn = document.createElement("button");
-        closeBtn.innerHTML = "×";
-        closeBtn.style.cssText = `
+        const closeButton = document.createElement("button");
+        closeButton.innerHTML = "×";
+        closeButton.style.cssText = `
       position: absolute;
       top: 5px;
       right: 10px;
@@ -67,20 +69,20 @@ class WebGLDashboard {
       font-size: 18px;
       cursor: pointer;
     `;
-        closeBtn.onclick = () => this.hide();
-        this.dashboard.appendChild(closeBtn);
+        closeButton.addEventListener("click", () => this.hide());
+        this.dashboard.append(closeButton);
 
         // Title
         const title = document.createElement("h3");
         title.innerHTML = "WebGL Context Monitor";
         title.style.cssText = "margin: 0 0 10px 0; color: #00ff88;";
-        this.dashboard.appendChild(title);
+        this.dashboard.append(title);
 
         // Stats container
         this.statsContainer = document.createElement("div");
-        this.dashboard.appendChild(this.statsContainer);
+        this.dashboard.append(this.statsContainer);
 
-        document.body.appendChild(this.dashboard);
+        document.body.append(this.dashboard);
     }
 
     startUpdating() {
@@ -93,7 +95,7 @@ class WebGLDashboard {
     stopUpdating() {
         if (this.updateInterval) {
             clearInterval(this.updateInterval);
-            this.updateInterval = null;
+            this.updateInterval = undefined;
         }
     }
 
@@ -148,7 +150,7 @@ class WebGLDashboard {
                 ? `
           <div style="margin-bottom: 15px;">
             <div style="color: ${monitorStats.emergencyCleanupActive || monitorStats.emergencyPauseActive ? "#ff4444" : "#00ff88"};">
-              Monitor Status: ${monitorStats.emergencyCleanupActive ? "🚨 EMERGENCY" : monitorStats.emergencyPauseActive ? "⏸️ PAUSED" : "✅ NORMAL"}
+              Monitor Status: ${monitorStats.emergencyCleanupActive ? "🚨 EMERGENCY" : (monitorStats.emergencyPauseActive ? "⏸️ PAUSED" : "✅ NORMAL")}
             </div>
             <div style="font-size: 10px; color: #888;">
               Creation Rate: ${monitorStats.contextCreationRate}/s | Thresholds: ${monitorStats.warningThreshold}/${monitorStats.criticalThreshold}
@@ -190,9 +192,9 @@ class WebGLDashboard {
         actionsDiv.style.cssText =
             "margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;";
 
-        const cleanupBtn = document.createElement("button");
-        cleanupBtn.innerHTML = "Force Cleanup";
-        cleanupBtn.style.cssText = `
+        const cleanupButton = document.createElement("button");
+        cleanupButton.innerHTML = "Force Cleanup";
+        cleanupButton.style.cssText = `
       background: #ff4444;
       color: white;
       border: none;
@@ -202,27 +204,27 @@ class WebGLDashboard {
       margin-right: 10px;
       font-size: 10px;
     `;
-        cleanupBtn.onclick = () => {
+        cleanupButton.addEventListener("click", () => {
             optimizedWebGLContextManager.aggressiveCleanup();
             console.log("[Dashboard] Force cleanup triggered");
-        };
+        });
 
-        const releaseBtn = document.createElement("button");
-        releaseBtn.innerHTML = "Release 3 Oldest";
-        releaseBtn.style.cssText = cleanupBtn.style.cssText;
-        releaseBtn.onclick = () => {
+        const releaseButton = document.createElement("button");
+        releaseButton.innerHTML = "Release 3 Oldest";
+        releaseButton.style.cssText = cleanupButton.style.cssText;
+        releaseButton.addEventListener("click", () => {
             optimizedWebGLContextManager.forceReleaseOldestContexts(3);
             console.log("[Dashboard] Force release triggered");
-        };
+        });
 
-        actionsDiv.appendChild(cleanupBtn);
-        actionsDiv.appendChild(releaseBtn);
-        this.statsContainer.appendChild(actionsDiv);
+        actionsDiv.append(cleanupButton);
+        actionsDiv.append(releaseButton);
+        this.statsContainer.append(actionsDiv);
     }
 }
 
 // Global dashboard instance
-window.webglDashboard = new WebGLDashboard();
+globalThis.webglDashboard = new WebGLDashboard();
 
 // Console shortcuts
 console.log(
@@ -238,10 +240,10 @@ console.log("%cwebglDashboard.toggle() - Toggle dashboard", "color: #88aaff;");
 console.log("%cContainer.getStats() - Get detailed stats", "color: #88aaff;");
 
 // Keyboard shortcut
-document.addEventListener("keydown", (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === "W") {
-        e.preventDefault();
-        window.webglDashboard.toggle();
+document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey && event.shiftKey && event.key === "W") {
+        event.preventDefault();
+        globalThis.webglDashboard.toggle();
     }
 });
 

@@ -5,10 +5,10 @@ import { webglContextMonitor } from "./webgl_context_monitor.js";
 
 class Container {
     static instances = [];
-    static pageSnapshot = null;
+    static pageSnapshot = undefined;
     static isCapturing = false;
     static waitingForSnapshot = [];
-    static resizeTimeout = null;
+    static resizeTimeout = undefined;
     static isDestroying = false;
     static lastCaptureTime = 0;
     static captureDebounceDelay = 2000; // Increased from 1 second to 2 seconds for better performance
@@ -33,14 +33,14 @@ class Container {
         Container.debugMode = true;
         console.log("[Container] Debug mode enabled");
         // Force recompile of all shaders with debug flag
-        Container.instances.forEach((instance) => {
+        for (const instance of Container.instances) {
             if (instance.webglInitialized) {
                 console.log(
                     "[Container] Recompiling shader with debug for instance",
                 );
                 // We would need to recompile shaders here, but for now just log
             }
-        });
+        }
     }
 
     static disableDebug() {
@@ -52,18 +52,18 @@ class Container {
     static createSidebarContainer(options = {}) {
         return Container.createContainer({
             ...options,
-            parallaxSpeed: 1.0, // Sidebar typically doesn't have parallax
+            parallaxSpeed: 1, // Sidebar typically doesn't have parallax
             isParallaxElement: false,
             type: "rounded",
             // Sidebar should sync with parallax backgrounds for proper transparency illusion
             syncWithParallax:
-                options.syncWithParallax !== undefined
-                    ? options.syncWithParallax
-                    : true,
+                options.syncWithParallax === undefined
+                    ? true
+                    : options.syncWithParallax,
             backgroundParallaxSpeed:
-                options.backgroundParallaxSpeed !== undefined
-                    ? options.backgroundParallaxSpeed
-                    : -2, // Standard parallax speed in your app
+                options.backgroundParallaxSpeed === undefined
+                    ? -2
+                    : options.backgroundParallaxSpeed, // Standard parallax speed in your app
         });
     }
 
@@ -71,17 +71,17 @@ class Container {
     static createSidebarContainerRightRounded(options = {}) {
         return Container.createContainer({
             ...options,
-            parallaxSpeed: 1.0,
+            parallaxSpeed: 1,
             isParallaxElement: false,
             type: "rounded",
             syncWithParallax:
-                options.syncWithParallax !== undefined
-                    ? options.syncWithParallax
-                    : true,
+                options.syncWithParallax === undefined
+                    ? true
+                    : options.syncWithParallax,
             backgroundParallaxSpeed:
-                options.backgroundParallaxSpeed !== undefined
-                    ? options.backgroundParallaxSpeed
-                    : -2,
+                options.backgroundParallaxSpeed === undefined
+                    ? -2
+                    : options.backgroundParallaxSpeed,
             // Only round right corners (for sidebars attached to left edge)
             roundedCorners: {
                 topLeft: false,
@@ -99,27 +99,27 @@ class Container {
             isParallaxElement: true,
             // Parallax elements typically don't need background compensation
             syncWithParallax:
-                options.syncWithParallax !== undefined
-                    ? options.syncWithParallax
-                    : false,
-            backgroundParallaxSpeed: 1.0,
+                options.syncWithParallax === undefined
+                    ? false
+                    : options.syncWithParallax,
+            backgroundParallaxSpeed: 1,
         });
     }
 
     static createFixedContainer(options = {}) {
         return Container.createContainer({
             ...options,
-            parallaxSpeed: 1.0,
+            parallaxSpeed: 1,
             isParallaxElement: false,
             // Fixed elements should sync with parallax backgrounds
             syncWithParallax:
-                options.syncWithParallax !== undefined
-                    ? options.syncWithParallax
-                    : true,
+                options.syncWithParallax === undefined
+                    ? true
+                    : options.syncWithParallax,
             backgroundParallaxSpeed:
-                options.backgroundParallaxSpeed !== undefined
-                    ? options.backgroundParallaxSpeed
-                    : -2, // Standard parallax speed
+                options.backgroundParallaxSpeed === undefined
+                    ? -2
+                    : options.backgroundParallaxSpeed, // Standard parallax speed
         });
     }
 
@@ -129,7 +129,7 @@ class Container {
         this.borderRadius = options.borderRadius || 48;
         this.type = options.type || "rounded"; // "rounded", "circle", or "pill"
         this.tintOpacity =
-            options.tintOpacity !== undefined ? options.tintOpacity : 0.2;
+            options.tintOpacity === undefined ? 0.2 : options.tintOpacity;
 
         // Selective corner rounding - which corners should be rounded
         this.roundedCorners = options.roundedCorners || {
@@ -141,28 +141,28 @@ class Container {
 
         // Parallax configuration
         this.parallaxSpeed =
-            options.parallaxSpeed !== undefined ? options.parallaxSpeed : 1.0; // 1.0 = normal scroll, 0.5 = half speed, 2.0 = double speed
+            options.parallaxSpeed === undefined ? 1 : options.parallaxSpeed; // 1.0 = normal scroll, 0.5 = half speed, 2.0 = double speed
         this.parallaxOffset = options.parallaxOffset || 0; // Additional offset for parallax elements
         this.isParallaxElement = options.isParallaxElement || false; // Whether this container itself has parallax
 
         // Background parallax compensation - how to adjust texture sampling for parallax backgrounds
         this.backgroundParallaxSpeed =
-            options.backgroundParallaxSpeed !== undefined
-                ? options.backgroundParallaxSpeed
-                : 1.0; // Speed of background elements behind this container
+            options.backgroundParallaxSpeed === undefined
+                ? 1
+                : options.backgroundParallaxSpeed; // Speed of background elements behind this container
         this.syncWithParallax =
-            options.syncWithParallax !== undefined
-                ? options.syncWithParallax
-                : false; // Whether to sync texture sampling with parallax
+            options.syncWithParallax === undefined
+                ? false
+                : options.syncWithParallax; // Whether to sync texture sampling with parallax
 
-        this.canvas = null;
-        this.element = null;
-        this.gl = null;
+        this.canvas = undefined;
+        this.element = undefined;
+        this.gl = undefined;
         this.gl_refs = {};
         this.webglInitialized = false;
         this.children = []; // Child buttons/components
         this.isDestroyed = false;
-        this.intersectionObserver = null; // For visibility detection
+        this.intersectionObserver = undefined; // For visibility detection
 
         // Bind methods to preserve context
         this._handleResize = this._handleResize.bind(this);
@@ -182,7 +182,7 @@ class Container {
 
         // Add child's element to container
         if (child.element && this.element) {
-            this.element.appendChild(child.element);
+            this.element.append(child.element);
         }
 
         // If child has setupAsNestedGlass, set up nested glass (duck typing to avoid circular import)
@@ -198,12 +198,12 @@ class Container {
 
     removeChild(child) {
         const index = this.children.indexOf(child);
-        if (index > -1) {
+        if (index !== -1) {
             this.children.splice(index, 1);
-            child.parent = null;
+            child.parent = undefined;
 
             if (child.element && this.element.contains(child.element)) {
-                this.element.removeChild(child.element);
+                child.element.remove();
             }
 
             // Update container size after removing child
@@ -238,11 +238,11 @@ class Container {
                 // Force exact square dimensions
                 this.element.style.width = size + "px";
                 this.element.style.height = size + "px";
-                this.element.style.borderRadius = this.borderRadius + "px";
+                // REMOVED: this.element.style.borderRadius = this.borderRadius + "px";
             } else if (this.type === "pill") {
                 // For pills, border radius is half the height
                 this.borderRadius = newHeight / 2;
-                this.element.style.borderRadius = this.borderRadius + "px";
+                // REMOVED: this.element.style.borderRadius = this.borderRadius + "px";
             }
 
             if (newWidth !== this.width || newHeight !== this.height) {
@@ -254,7 +254,7 @@ class Container {
                 this.canvas.height = newHeight;
                 this.canvas.style.width = newWidth + "px";
                 this.canvas.style.height = newHeight + "px";
-                this.canvas.style.borderRadius = this.borderRadius + "px";
+                // REMOVED: this.canvas.style.borderRadius = this.borderRadius + "px";
 
                 // Update WebGL viewport if initialized
                 if (this.gl_refs.gl) {
@@ -291,6 +291,7 @@ class Container {
                             0,
                             gl.RGBA,
                             gl.UNSIGNED_BYTE,
+                            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null for empty texture data
                             null,
                         );
 
@@ -353,7 +354,7 @@ class Container {
         // Create wrapper element with CSS class
         this.element = document.createElement("div");
         this.element.className = "glass-container";
-        this.element.setAttribute("data-reflex-permanent", ""); // Prevent reflex from replacing this
+        this.element.dataset.reflexPermanent = ""; // Prevent reflex from replacing this
 
         // Add type-specific classes
         if (this.type === "circle") {
@@ -369,41 +370,16 @@ class Container {
             !this.roundedCorners.bottomLeft ||
             !this.roundedCorners.bottomRight
         ) {
-            const topLeft = this.roundedCorners.topLeft ? this.borderRadius : 0;
-            const topRight = this.roundedCorners.topRight
-                ? this.borderRadius
-                : 0;
-            const bottomRight = this.roundedCorners.bottomRight
-                ? this.borderRadius
-                : 0;
-            const bottomLeft = this.roundedCorners.bottomLeft
-                ? this.borderRadius
-                : 0;
-            this.element.style.borderRadius = `${topLeft}px ${topRight}px ${bottomRight}px ${bottomLeft}px`;
+            // REMOVED: Variables for border radius calculation were here but unused
+            // REMOVED: this.element.style.borderRadius = `${topLeft}px ${topRight}px ${bottomRight}px ${bottomLeft}px`;
         }
 
         // Create canvas (will be sized after DOM layout)
         this.canvas = document.createElement("canvas");
 
         // Apply selective corner rounding to canvas CSS
-        if (
-            !this.roundedCorners.topLeft ||
-            !this.roundedCorners.topRight ||
-            !this.roundedCorners.bottomLeft ||
-            !this.roundedCorners.bottomRight
-        ) {
-            const topLeft = this.roundedCorners.topLeft ? this.borderRadius : 0;
-            const topRight = this.roundedCorners.topRight
-                ? this.borderRadius
-                : 0;
-            const bottomRight = this.roundedCorners.bottomRight
-                ? this.borderRadius
-                : 0;
-            const bottomLeft = this.roundedCorners.bottomLeft
-                ? this.borderRadius
-                : 0;
-            this.canvas.style.borderRadius = `${topLeft}px ${topRight}px ${bottomRight}px ${bottomLeft}px`;
-        }
+        // REMOVED: All inline border radius styling - let CSS handle it
+
         this.canvas.style.position = "absolute";
         this.canvas.style.top = "0";
         this.canvas.style.left = "0";
@@ -413,7 +389,7 @@ class Container {
         this.canvas.style.zIndex = "1"; // Canvas in front of background, behind content
         this.canvas.style.pointerEvents = "none"; // Allow clicks to pass through
 
-        this.element.appendChild(this.canvas);
+        this.element.append(this.canvas);
     }
 
     setupCanvas() {
@@ -448,12 +424,12 @@ class Container {
         let y = rect.top + rect.height / 2;
 
         // Apply parallax correction if this container has parallax effects
-        if (this.isParallaxElement && this.parallaxSpeed !== 1.0) {
+        if (this.isParallaxElement && this.parallaxSpeed !== 1) {
             const currentScrollY =
                 window.pageYOffset || document.documentElement.scrollTop || 0;
 
             // Calculate how much this element has moved due to parallax
-            const parallaxDelta = currentScrollY * (1.0 - this.parallaxSpeed);
+            const parallaxDelta = currentScrollY * (1 - this.parallaxSpeed);
             y += parallaxDelta + this.parallaxOffset;
 
             if (Container.debugMode) {
@@ -500,14 +476,14 @@ class Container {
             scale: 1,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: null,
+            backgroundColor: undefined,
             width: pageWidth,
             height: pageHeight,
             windowWidth: pageWidth,
             windowHeight: pageHeight,
             foreignObjectRendering: false,
             logging: true,
-            proxy: null,
+            proxy: undefined,
             removeContainer: true,
             ignoreElements: function (element) {
                 // Ignore all glass elements
@@ -539,21 +515,21 @@ class Container {
                 Container.isCapturing = false;
 
                 // Initialize WebGL for all waiting containers
-                const waitingContainers = Container.waitingForSnapshot.slice();
+                const waitingContainers = [...Container.waitingForSnapshot];
                 Container.waitingForSnapshot = [];
 
                 console.log(
                     `Initializing WebGL for ${waitingContainers.length} waiting containers`,
                 );
 
-                waitingContainers.forEach((container, index) => {
+                for (const [index, container] of waitingContainers.entries()) {
                     if (!container.webglInitialized && !container.isDestroyed) {
                         console.log(
                             `Initializing WebGL for container ${index + 1}/${waitingContainers.length}`,
                         );
                         container.initWebGL();
                     }
-                });
+                }
             })
             .catch((error) => {
                 console.error("html2canvas error:", error);
@@ -578,7 +554,7 @@ class Container {
         try {
             const img = new Image();
             img.src = Container.pageSnapshot.toDataURL();
-            img.onload = () => {
+            img.addEventListener("load", () => {
                 try {
                     console.log(
                         "Setting up WebGL shader for container:",
@@ -595,11 +571,11 @@ class Container {
                     console.error("Error setting up WebGL shader:", error);
                     this.setupFallback();
                 }
-            };
-            img.onerror = () => {
+            });
+            img.addEventListener("error", () => {
                 console.error("Error loading snapshot image");
                 this.setupFallback();
-            };
+            });
         } catch (error) {
             console.error("Error initializing WebGL:", error);
             this.setupFallback();
@@ -1049,7 +1025,7 @@ class Container {
         console.log("[Container Debug] Texture creation:", {
             imageWidth: image.width,
             imageHeight: image.height,
-            imageSrc: image.src.substring(0, 100) + "...", // First 100 chars of data URL
+            imageSrc: image.src.slice(0, 100) + "...", // First 100 chars of data URL
             textureCreated: !!texture,
             glError: gl.getError(),
         });
@@ -1117,6 +1093,7 @@ class Container {
                 );
             }
 
+            // eslint-disable-next-line unicorn/no-null -- WebGL API requires null to unbind framebuffer
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             gl.deleteFramebuffer(framebuffer);
         } catch (error) {
@@ -1199,44 +1176,50 @@ class Container {
             tintOpacity: this.tintOpacity,
         });
 
-        gl.uniform1f(blurRadiusLoc, window.glassControls?.blurRadius || 5.0);
+        gl.uniform1f(blurRadiusLoc, globalThis.glassControls?.blurRadius || 5);
         gl.uniform1f(borderRadiusLoc, this.borderRadius);
-        gl.uniform1f(warpLoc, this.warp ? 1.0 : 0.0);
+        gl.uniform1f(warpLoc, this.warp ? 1 : 0);
         gl.uniform1f(
             edgeIntensityLoc,
-            window.glassControls?.edgeIntensity || 0.01,
+            globalThis.glassControls?.edgeIntensity || 0.01,
         );
         gl.uniform1f(
             rimIntensityLoc,
-            window.glassControls?.rimIntensity || 0.05,
+            globalThis.glassControls?.rimIntensity || 0.05,
         );
         gl.uniform1f(
             baseIntensityLoc,
-            window.glassControls?.baseIntensity || 0.01,
+            globalThis.glassControls?.baseIntensity || 0.01,
         );
         gl.uniform1f(
             edgeDistanceLoc,
-            window.glassControls?.edgeDistance || 0.15,
+            globalThis.glassControls?.edgeDistance || 0.15,
         );
-        gl.uniform1f(rimDistanceLoc, window.glassControls?.rimDistance || 0.8);
+        gl.uniform1f(
+            rimDistanceLoc,
+            globalThis.glassControls?.rimDistance || 0.8,
+        );
         gl.uniform1f(
             baseDistanceLoc,
-            window.glassControls?.baseDistance || 0.1,
+            globalThis.glassControls?.baseDistance || 0.1,
         );
-        gl.uniform1f(cornerBoostLoc, window.glassControls?.cornerBoost || 0.02);
+        gl.uniform1f(
+            cornerBoostLoc,
+            globalThis.glassControls?.cornerBoost || 0.02,
+        );
         gl.uniform1f(
             rippleEffectLoc,
-            window.glassControls?.rippleEffect || 0.1,
+            globalThis.glassControls?.rippleEffect || 0.1,
         );
         gl.uniform1f(tintOpacityLoc, this.tintOpacity);
 
         // Set rounded corners uniform
         gl.uniform4f(
             roundedCornersLoc,
-            this.roundedCorners.topLeft ? 1.0 : 0.0,
-            this.roundedCorners.topRight ? 1.0 : 0.0,
-            this.roundedCorners.bottomLeft ? 1.0 : 0.0,
-            this.roundedCorners.bottomRight ? 1.0 : 0.0,
+            this.roundedCorners.topLeft ? 1 : 0,
+            this.roundedCorners.topRight ? 1 : 0,
+            this.roundedCorners.bottomLeft ? 1 : 0,
+            this.roundedCorners.bottomRight ? 1 : 0,
         );
 
         // Set initial position (will be updated in render loop)
@@ -1338,7 +1321,7 @@ class Container {
             webglStats: optimizedWebGLContextManager.getStats(),
             monitoringStats: webglContextMonitor
                 ? webglContextMonitor.getMonitoringStats()
-                : null,
+                : undefined,
         };
     }
 
@@ -1395,9 +1378,13 @@ class Container {
 
             // Update scroll position - compatible with Locomotive Scroll
             let scrollY = 0;
-            if (window.locomotiveScroll && window.locomotiveScroll.scroll) {
+            if (
+                globalThis.locomotiveScroll &&
+                globalThis.locomotiveScroll.scroll
+            ) {
                 // Locomotive Scroll instance
-                scrollY = window.locomotiveScroll.scroll.instance.scroll.y || 0;
+                scrollY =
+                    globalThis.locomotiveScroll.scroll.instance.scroll.y || 0;
             } else if (window.pageYOffset !== undefined) {
                 // Fallback to native scroll
                 scrollY =
@@ -1420,10 +1407,10 @@ class Container {
             // only affect WHERE the container is rendered, not WHAT part of the page it shows.
 
             // If this container itself has parallax (moves at different speed than scroll)
-            if (this.isParallaxElement && this.parallaxSpeed !== 1.0) {
+            if (this.isParallaxElement && this.parallaxSpeed !== 1) {
                 // The container's actual position in the page is different from where it appears
                 // We need to reverse the parallax calculation to find the true page position
-                const parallaxOffset = scrollY * (1.0 - this.parallaxSpeed);
+                const parallaxOffset = scrollY * (1 - this.parallaxSpeed);
                 // Remove the parallax offset to get the original page position
                 pageY = position.y + scrollY - parallaxOffset;
 
@@ -1445,7 +1432,7 @@ class Container {
             // It should only be used if we want the glass to "stick" to a parallax background
             // This is a visual effect decision, not a coordinate mapping issue
 
-            if (this.syncWithParallax && this.backgroundParallaxSpeed !== 1.0) {
+            if (this.syncWithParallax && this.backgroundParallaxSpeed !== 1) {
                 // This is for visual effect only - making the glass appear to be part of
                 // a parallax background layer. It should NOT change the basic coordinate mapping.
                 // Commenting this out for now as it's likely causing the issue
@@ -1524,10 +1511,11 @@ class Container {
         window.addEventListener("scroll", scrollHandler, { passive: true });
 
         // Locomotive Scroll events - try multiple approaches
-        if (window.locomotiveScroll) {
-            if (typeof window.locomotiveScroll.on === "function") {
-                window.locomotiveScroll.on("scroll", scrollHandler);
-            }
+        if (
+            globalThis.locomotiveScroll &&
+            typeof globalThis.locomotiveScroll.on === "function"
+        ) {
+            globalThis.locomotiveScroll.on("scroll", scrollHandler);
         }
 
         // Store scroll handler for cleanup
@@ -1540,7 +1528,7 @@ class Container {
 
         // Store handlers for cleanup
         this._scrollHandler = scrollHandler;
-        this._hasLocomotiveScroll = !!window.locomotiveScroll;
+        this._hasLocomotiveScroll = !!globalThis.locomotiveScroll;
 
         // Store render function for external calls
         this.render = render;
@@ -1557,7 +1545,7 @@ class Container {
         // Disconnect intersection observer
         if (this.intersectionObserver) {
             this.intersectionObserver.disconnect();
-            this.intersectionObserver = null;
+            this.intersectionObserver = undefined;
         }
 
         // Cancel animation loop (legacy compatibility)
@@ -1569,28 +1557,28 @@ class Container {
         if (this._scrollHandler) {
             window.removeEventListener("scroll", this._scrollHandler);
             if (
-                window.locomotiveScroll &&
-                typeof window.locomotiveScroll.off === "function"
+                globalThis.locomotiveScroll &&
+                typeof globalThis.locomotiveScroll.off === "function"
             ) {
-                window.locomotiveScroll.off("scroll", this._scrollHandler);
+                globalThis.locomotiveScroll.off("scroll", this._scrollHandler);
             }
         }
 
         // Clean up resize observer
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
-            this.resizeObserver = null;
+            this.resizeObserver = undefined;
         }
 
         // Clean up resize timeout
         if (this.resizeTimeout) {
             clearTimeout(this.resizeTimeout);
-            this.resizeTimeout = null;
+            this.resizeTimeout = undefined;
         }
 
         // Remove from instances array
         const index = Container.instances.indexOf(this);
-        if (index > -1) {
+        if (index !== -1) {
             Container.instances.splice(index, 1);
 
             // Process creation queue now that we have space
@@ -1625,10 +1613,12 @@ class Container {
             );
 
             // Clean up Locomotive Scroll listeners
-            if (this._hasLocomotiveScroll && window.locomotiveScroll) {
-                if (typeof window.locomotiveScroll.off === "function") {
-                    window.locomotiveScroll.off("scroll", this._scrollHandler);
-                }
+            if (
+                this._hasLocomotiveScroll &&
+                globalThis.locomotiveScroll &&
+                typeof globalThis.locomotiveScroll.off === "function"
+            ) {
+                globalThis.locomotiveScroll.off("scroll", this._scrollHandler);
             }
         }
 
@@ -1642,39 +1632,34 @@ class Container {
 
         // Clear references
         this.gl_refs = {};
-        this.gl = null;
-        this.canvas = null;
-        this.element = null;
+        this.gl = undefined;
+        this.canvas = undefined;
+        this.element = undefined;
     }
 
     setupIntersectionObserver() {
         if (!this.element) return;
 
         const options = {
-            root: null, // Use the viewport as the root
+            root: undefined, // Use the viewport as the root
             rootMargin: "100px", // Larger margin for earlier detection
             threshold: [0, 0.01, 0.1], // Multiple thresholds for better detection
         };
 
-        this.intersectionObserver = new IntersectionObserver(
-            (entries, observer) => {
-                entries.forEach((entry) => {
-                    const isVisible = entry.isIntersecting;
+        this.intersectionObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                const isVisible = entry.isIntersecting;
 
-                    // Update rendering priority based on visibility
-                    Container.updateInstancePriority(this, isVisible);
+                // Update rendering priority based on visibility
+                Container.updateInstancePriority(this, isVisible);
 
-                    if (isVisible && !this.webglInitialized) {
-                        // Element is visible, proceed with WebGL initialization immediately
-                        console.log(
-                            "Container is visible, initializing WebGL...",
-                        );
-                        this.handleVisibility();
-                    }
-                });
-            },
-            options,
-        );
+                if (isVisible && !this.webglInitialized) {
+                    // Element is visible, proceed with WebGL initialization immediately
+                    console.log("Container is visible, initializing WebGL...");
+                    this.handleVisibility();
+                }
+            }
+        }, options);
 
         this.intersectionObserver.observe(this.element);
 
@@ -1704,7 +1689,7 @@ class Container {
                 Container.waitingForSnapshot.push(this);
 
                 // Use requestIdleCallback for smarter scheduling
-                if ("requestIdleCallback" in window) {
+                if ("requestIdleCallback" in globalThis) {
                     requestIdleCallback(() => this.capturePageSnapshot(), {
                         timeout: 2000,
                     });
@@ -1774,8 +1759,8 @@ class Container {
     static isDevelopmentMode() {
         return (
             import.meta.hot ||
-            window.__vite_is_modern_browser ||
-            process.env.NODE_ENV === "development"
+            globalThis.__vite_is_modern_browser ||
+            import.meta.env?.DEV
         );
     }
 
@@ -1805,7 +1790,7 @@ class Container {
     static _handleTurboLoad() {
         // Reset state after Turbo navigation
         Container.isDestroying = false;
-        Container.pageSnapshot = null;
+        Container.pageSnapshot = undefined;
         Container.isCapturing = false;
         Container.waitingForSnapshot = [];
     }
@@ -1825,9 +1810,9 @@ class Container {
         Container.lastCaptureTime = now;
 
         // Reset snapshot state
-        Container.pageSnapshot = null;
+        Container.pageSnapshot = undefined;
         Container.isCapturing = true;
-        Container.waitingForSnapshot = Container.instances.slice(); // All instances need update
+        Container.waitingForSnapshot = [...Container.instances]; // All instances need update
 
         // Get full page dimensions for recapture
         const pageHeight = Math.max(
@@ -1850,7 +1835,7 @@ class Container {
             scale: 1,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: null,
+            backgroundColor: undefined,
             width: pageWidth,
             height: pageHeight,
             // Don't force scroll position - capture from current position
@@ -1875,7 +1860,7 @@ class Container {
                 // Create new image and update all glass instances
                 const img = new Image();
                 img.src = snapshot.toDataURL();
-                img.onload = () => {
+                img.addEventListener("load", () => {
                     for (const instance of Container.instances) {
                         if (
                             instance.gl_refs &&
@@ -1934,6 +1919,7 @@ class Container {
                                     0,
                                     gl.RGBA,
                                     gl.UNSIGNED_BYTE,
+                                    // eslint-disable-next-line unicorn/no-null -- WebGL API requires null for empty texture data
                                     null,
                                 );
 
@@ -1964,7 +1950,7 @@ class Container {
                             }
                         }
                     }
-                };
+                });
 
                 // Clear waiting queue
                 Container.waitingForSnapshot = [];
@@ -1986,7 +1972,7 @@ class Container {
             const gl = this.gl_refs.gl;
             const img = new Image();
             img.src = Container.pageSnapshot.toDataURL();
-            img.onload = () => {
+            img.addEventListener("load", () => {
                 gl.bindTexture(gl.TEXTURE_2D, this.gl_refs.texture);
                 gl.texImage2D(
                     gl.TEXTURE_2D,
@@ -2004,7 +1990,7 @@ class Container {
                 if (this.render) {
                     this.render();
                 }
-            };
+            });
         }
     }
 
@@ -2021,7 +2007,7 @@ class Container {
     createProgram(gl, vsSource, fsSource) {
         const vs = this.compileShader(gl, gl.VERTEX_SHADER, vsSource);
         const fs = this.compileShader(gl, gl.FRAGMENT_SHADER, fsSource);
-        if (!vs || !fs) return null;
+        if (!vs || !fs) return;
 
         const program = gl.createProgram();
         gl.attachShader(program, vs);
@@ -2030,7 +2016,7 @@ class Container {
 
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error("Program link error:", gl.getProgramInfoLog(program));
-            return null;
+            return;
         }
 
         return program;
@@ -2042,7 +2028,7 @@ class Container {
         gl.compileShader(shader);
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
             console.error("Shader compile error:", gl.getShaderInfoLog(shader));
-            return null;
+            return;
         }
         return shader;
     }

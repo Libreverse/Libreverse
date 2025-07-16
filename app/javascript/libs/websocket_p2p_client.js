@@ -5,8 +5,8 @@ class LibreverseWebSocketP2P {
     constructor() {
         this.connected = false;
         this.isHost = false;
-        this.peerId = null;
-        this.sessionId = null;
+        this.peerId = undefined;
+        this.sessionId = undefined;
         this.participants = {};
         this.messageHandlers = new Map();
         this.status = "disconnected";
@@ -14,7 +14,7 @@ class LibreverseWebSocketP2P {
         // Listen for messages from parent window (Libreverse app)
         window.addEventListener("message", (event) => {
             // Origin check for security - only accept messages from same origin
-            if (event.origin !== window.location.origin) {
+            if (event.origin !== globalThis.location.origin) {
                 console.warn(
                     "WebSocket P2P: Ignored message from untrusted origin:",
                     event.origin,
@@ -39,27 +39,30 @@ class LibreverseWebSocketP2P {
         if (!message || !message.type) return;
 
         switch (message.type) {
-            case "p2p-init":
+            case "p2p-init": {
                 this.peerId = message.peerId;
                 this.sessionId = message.sessionId;
                 this.isHost = message.isHost;
                 this.connected = message.connected;
                 this.onInit(message);
                 break;
+            }
 
-            case "p2p-status":
+            case "p2p-status": {
                 this.connected = message.connected;
                 this.status = message.connected ? "connected" : "disconnected";
                 this.onStatusChange(message);
                 break;
+            }
 
-            case "p2p-message":
+            case "p2p-message": {
                 this.onMessage(message.senderId, message.data);
                 break;
+            }
 
-            case "p2p-participants":
+            case "p2p-participants": {
                 this.participants = {};
-                message.participants.forEach((participant) => {
+                for (const participant of message.participants) {
                     // Validate participant data and sanitize peerId
                     if (
                         participant &&
@@ -67,7 +70,7 @@ class LibreverseWebSocketP2P {
                         participant.peerId.length > 0
                     ) {
                         // Only allow alphanumeric characters and hyphens for peer IDs
-                        const sanitizedPeerId = participant.peerId.replace(
+                        const sanitizedPeerId = participant.peerId.replaceAll(
                             /[^a-zA-Z0-9-]/g,
                             "",
                         );
@@ -85,9 +88,10 @@ class LibreverseWebSocketP2P {
                             };
                         }
                     }
-                });
+                }
                 this.onParticipantsChange(this.participants);
                 break;
+            }
         }
     }
 
@@ -146,13 +150,13 @@ class LibreverseWebSocketP2P {
         console.log("WebSocket P2P message from", senderId, ":", data);
 
         // Call registered message handlers
-        this.messageHandlers.forEach((handler) => {
+        for (const handler of this.messageHandlers) {
             try {
                 handler(senderId, data);
             } catch (error) {
                 console.error("Error in P2P message handler:", error);
             }
-        });
+        }
     }
 
     onParticipantsChange(participants) {
@@ -162,7 +166,7 @@ class LibreverseWebSocketP2P {
     // Register message handler
     addMessageHandler(handler) {
         if (typeof handler !== "function") {
-            throw new Error("Message handler must be a function");
+            throw new TypeError("Message handler must be a function");
         }
 
         const id = Symbol();
@@ -178,7 +182,7 @@ class LibreverseWebSocketP2P {
     }
 
     // Backwards compatibility: support old callback style
-    set onMessage(callback) {
+    set onMessageCallback(callback) {
         if (typeof callback === "function") {
             this.clearMessageHandlers();
             this.addMessageHandler(callback);
@@ -187,20 +191,15 @@ class LibreverseWebSocketP2P {
 }
 
 // Create global instance for backward compatibility
-if (typeof window !== "undefined") {
+if (typeof globalThis !== "undefined") {
     // Make P2P available globally in the experience
-    window.LibreverseP2P = new LibreverseWebSocketP2P();
+    globalThis.LibreverseP2P = new LibreverseWebSocketP2P();
 
     // Convenient shorthand
-    window.P2P = window.LibreverseP2P;
+    globalThis.P2P = globalThis.LibreverseP2P;
 
     // Also expose the class for advanced usage
-    window.LibreverseWebSocketP2P = LibreverseWebSocketP2P;
-}
-
-// Export for module usage
-if (typeof module !== "undefined" && module.exports) {
-    module.exports = LibreverseWebSocketP2P;
+    globalThis.LibreverseWebSocketP2P = LibreverseWebSocketP2P;
 }
 
 export default LibreverseWebSocketP2P;

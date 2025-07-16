@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/no-this-assignment, unicorn/no-null, unicorn/no-array-for-each, unicorn/no-array-method-this-argument, unicorn/no-for-loop, no-redeclare, unicorn/prefer-number-properties, unicorn/no-new-array, unicorn/prefer-query-selector -- Third-party rainyday.js library with legacy patterns */
+
 /*
 GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
@@ -353,11 +355,11 @@ function RainyDay(options) {
 
     var source =
         typeof options.image === "string"
-            ? document.getElementById(options.image)
+            ? document.querySelector(`#${options.image}`)
             : options.image;
 
     if (source.tagName.toLowerCase() === "img") {
-        this.imgSource = null;
+        this.imgSource = undefined;
         this.img = source;
         this.initialize(options);
     } else {

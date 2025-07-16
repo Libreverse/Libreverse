@@ -4,7 +4,6 @@
   = render "layouts/navigationshortcutswrapper" do
     - brasserie_img = bitmap_image_data_url("images/brasserie")
     .sp-bg{role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": brasserie_img['.avif'], scroll: true, "scroll-speed": "-2"}}
-      %iframe.raindrop-iframe{allowtransparency: "true", "data-raindrop-target": "iframe", scrolling: "no", title: "Background Effect Container"}
     .sp-centerify
       %header.sp-main{role: "banner"}
         %h1.large= t('search.index.title')

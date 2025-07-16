@@ -4,19 +4,23 @@ class GlassConfigManager {
         this.pendingUpdates = new Map();
         this.updateTimers = new Map();
         this.defaultDebounceTime = 300; // 300ms debounce for config changes
-        this.batchUpdateTimer = null;
+        this.batchUpdateTimer = undefined;
         this.batchSize = 5; // Maximum updates to process in one batch
     }
 
     // Schedule a debounced update for a glass component
-    scheduleUpdate(element, updateFn, debounceTime = this.defaultDebounceTime) {
+    scheduleUpdate(
+        element,
+        updateFunction,
+        debounceTime = this.defaultDebounceTime,
+    ) {
         // Clear existing timer
         if (this.updateTimers.has(element)) {
             clearTimeout(this.updateTimers.get(element));
         }
 
         // Store the update function
-        this.pendingUpdates.set(element, updateFn);
+        this.pendingUpdates.set(element, updateFunction);
 
         // Set new timer
         const timer = setTimeout(() => {
@@ -28,10 +32,10 @@ class GlassConfigManager {
 
     // Process a single update
     processUpdate(element) {
-        const updateFn = this.pendingUpdates.get(element);
-        if (updateFn) {
+        const updateFunction = this.pendingUpdates.get(element);
+        if (updateFunction) {
             try {
-                updateFn();
+                updateFunction();
             } catch (error) {
                 console.error(
                     "[GlassConfigManager] Error processing update:",
@@ -52,9 +56,9 @@ class GlassConfigManager {
         }
 
         // Add updates to pending
-        updates.forEach(({ element, updateFn, debounceTime }) => {
+        for (const { element, updateFn } of updates) {
             this.pendingUpdates.set(element, updateFn);
-        });
+        }
 
         // Process batch after debounce
         this.batchUpdateTimer = setTimeout(() => {
@@ -64,12 +68,12 @@ class GlassConfigManager {
 
     // Process updates in batches to avoid overwhelming the browser
     processBatch() {
-        const updates = Array.from(this.pendingUpdates.entries());
+        const updates = [...this.pendingUpdates.entries()];
         const batches = [];
 
         // Split into batches
-        for (let i = 0; i < updates.length; i += this.batchSize) {
-            batches.push(updates.slice(i, i + this.batchSize));
+        for (let index = 0; index < updates.length; index += this.batchSize) {
+            batches.push(updates.slice(index, index + this.batchSize));
         }
 
         // Process batches with RAF to avoid blocking
@@ -78,16 +82,16 @@ class GlassConfigManager {
             if (batchIndex < batches.length) {
                 const batch = batches[batchIndex];
 
-                batch.forEach(([element, updateFn]) => {
+                for (const [, updateFunction] of batch) {
                     try {
-                        updateFn();
+                        updateFunction();
                     } catch (error) {
                         console.error(
                             "[GlassConfigManager] Error in batch update:",
                             error,
                         );
                     }
-                });
+                }
 
                 batchIndex++;
                 requestAnimationFrame(processNextBatch);

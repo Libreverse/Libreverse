@@ -1,17 +1,15 @@
 import GlassController from "./glass_controller"
 import StimulusReflex from "stimulus_reflex"
+import { enhanceWithGlass } from "../libs/simplified_glass.js"
 
 ###
 Drawer Controller - extends GlassController for drawer/modal components
-Manages the state of a drawer, with optimistic UI updates and backend state synchronization.
+Uses simplified glass integration with minimal DOM manipulation
 ###
 export default class extends GlassController
   @values = {
     ...GlassController.values,
     componentType: { type: String, default: "drawer" },
-    cornerRounding: { type: String, default: "top" },
-    borderRadius: { type: Number, default: 20 },
-    tintOpacity: { type: Number, default: 0.1 },
     expanded: { type: Boolean, default: false },
     drawerId: { type: String, default: "main" },
     height: { type: Number, default: 60 },
@@ -21,82 +19,94 @@ export default class extends GlassController
   @targets = ["drawer", "overlay", "content", "icon"]
 
   connect: ->
-    super()
-    console.log "[GlassDrawerController] Connected", {
-      element: @element,
-      expanded: @expandedValue,
-    }
+    console.log "[GlassDrawerController] Connected to drawer"
 
-    # Register with StimulusReflex to enable `this.stimulate`
-    StimulusReflex.register @
+    # Register with StimulusReflex
+    StimulusReflex.register(@)
 
-    @boundHandleKeydown = @handleKeydown.bind @
-    @boundDrawerEventHandler = @handleDrawerEvent.bind @
-    document.addEventListener "keydown", @boundHandleKeydown
-    document.addEventListener "drawer:toggle", @boundDrawerEventHandler
+    # Set up event listeners
+    @setupEventListeners()
 
-    # Listen for fallback events
-    @element.addEventListener "glass:fallbackActivated", @handleFallbackActivated.bind(@)
-
-    # Store initial state to prevent unwanted resets
+    # Store initial state
     @_initialExpanded = @expandedValue
 
-    # Initial UI setup based on the starting `expandedValue`
-    # Defer UI update until the next frame to ensure targets are available.
+    # Call parent connect which will handle glass enhancement
+    super()
+
+    # Initial UI setup
     requestAnimationFrame =>
       @updateUI()
 
-  handleFallbackActivated: (event) ->
-    console.log "[GlassDrawerController] Glass fallback activated, ensuring drawer visibility"
+  setupEventListeners: ->
+    @boundHandleKeydown = @handleKeydown.bind(@)
+    @boundDrawerEventHandler = @handleDrawerEvent.bind(@)
 
-    # Ensure drawer is visible and functional in fallback mode
-    @element.style.opacity = "1"
-    @element.style.visibility = "visible"
-
-    # Apply emergency styling if needed
-    if @element.classList.contains('glass-fallback')
-      @element.style.background = "rgba(0, 0, 0, 0.9)"
-      @element.style.border = "1px solid rgba(255, 255, 255, 0.1)"
+    document.addEventListener("keydown", @boundHandleKeydown)
+    document.addEventListener("drawer:toggle", @boundDrawerEventHandler)
 
   disconnect: ->
-    document.removeEventListener "keydown", @boundHandleKeydown
-    document.removeEventListener "drawer:toggle", @boundDrawerEventHandler
+    document.removeEventListener("keydown", @boundHandleKeydown)
+    document.removeEventListener("drawer:toggle", @boundDrawerEventHandler)
     super()
 
-  # Drawers do not have navigation items.
-  getNavItems: ->
-    []
+  # Override glass enhancement to work with drawer structure
+  enhanceElement: ->
+    # Find the actual drawer element
+    drawerElement = @element.querySelector(".drawer") or @element
 
-  # No special click handling needed for the drawer itself.
-  handleNavClick: ->
-    # Default implementation - can be overridden by subclasses
-    console.log "[GlassDrawerController] Navigation click handled"
+    # Apply glass enhancement to the drawer element
+    options = {
+      componentType: @componentTypeValue,
+      borderRadius: @borderRadiusValue,
+      tintOpacity: @tintOpacityValue,
+      cornerRounding: @cornerRoundingValue
+    }
 
-  # This can be simplified or removed if styling is handled by CSS.
+    enhanceWithGlass(drawerElement, options)
+      .then (result) =>
+        if result
+          console.log "[GlassDrawerController] Glass enhancement successful"
+          @element.classList.add("glass-enhanced")
+          @element.dataset.glassActive = "true"
+          @customPostRenderSetup()
+        else
+          console.log "[GlassDrawerController] Glass enhancement failed, using fallback"
+          @setupFallback()
+      .catch (error) =>
+        console.error "[GlassDrawerController] Glass enhancement error:", error
+        @setupFallback()
+
+  # Custom post-render setup for drawer
   customPostRenderSetup: ->
-    console.log "[GlassDrawerController] Custom post-render setup"
-    # Ensure glass initialization doesn't change the drawer state
-    # Preserve the current expanded state
-    currentExpanded = @expandedValue
+    console.log "[GlassDrawerController] Custom post-render setup for drawer"
 
-    # After glass setup, restore the state if it was changed
-    requestAnimationFrame =>
-      if @expandedValue isnt currentExpanded
-        console.log "[GlassDrawerController] Restoring expanded state after glass setup:", currentExpanded
-        @expandedValue = currentExpanded
+    # Ensure drawer styling is preserved
+    @element.classList.add("drawer-enhanced")
 
-  # StimulusReflex lifecycle callbacks
-  beforeReflex: ->
-    # Called before reflex actions - no special handling needed
-    console.log "[GlassDrawerController] Before reflex - UI already updated"
+    # Apply drawer-specific styling
+    @setupDrawerStyling()
 
-  afterReflex: (element, reflex) ->
-    console.log "[GlassDrawerController] After reflex:", reflex
-    # Server acknowledgment received - no UI changes needed as they were already applied optimistically
+  setupDrawerStyling: ->
+    drawerElement = @element.querySelector(".drawer")
+    return unless drawerElement
 
-  reflexError: (element, reflex, error) ->
-    console.error "[GlassDrawerController] Reflex error:", error
-    # On error, we could potentially revert the UI state here if needed
+    # Ensure drawer background is transparent to show glass effect
+    drawerElement.style.background = "transparent"
+    drawerElement.style.backdropFilter = "none"
+
+    # Apply subtle overlay styling to content areas
+    @applyContentStyling()
+
+  applyContentStyling: ->
+    # Add subtle styling to header and content areas
+    header = @element.querySelector(".drawer-header")
+    if header
+      header.style.background = "rgba(255, 255, 255, 0.05)"
+      header.style.borderBottom = "1px solid rgba(255, 255, 255, 0.1)"
+
+    content = @element.querySelector(".drawer-content-container")
+    if content
+      content.style.background = "rgba(255, 255, 255, 0.02)"
 
   # --- Drawer Actions ---
 

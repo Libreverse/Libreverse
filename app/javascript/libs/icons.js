@@ -44,11 +44,11 @@ const ICON_MAP = {
 /**
  * Get SVG content for an icon name
  * @param {string} iconName - The name of the icon
- * @returns {string|null} - SVG content or null if not found
+ * @returns {string|undefined} - SVG content or undefined if not found
  */
 export function getSVGIcon(iconName) {
     if (!iconName || typeof iconName !== "string") {
-        return null;
+        return;
     }
 
     const svg = ICON_MAP[iconName.toLowerCase()];
@@ -58,7 +58,7 @@ export function getSVGIcon(iconName) {
     }
 
     console.warn("No SVG icon found for:", iconName);
-    return null;
+    return;
 }
 
 /**

@@ -22,7 +22,7 @@ document.addEventListener("turbo:load", function () {
 // Foundation utilities
 export const FoundationUtils = {
     // Initialize specific Foundation components
-    initComponent: function (component, selector = null) {
+    initComponent: function (component, selector) {
         const elements = selector ? $(selector) : $("[data-" + component + "]");
         elements.each(function () {
             new Foundation[component]($(this));
@@ -30,7 +30,7 @@ export const FoundationUtils = {
     },
 
     // Destroy and reinitialize a component
-    reinitComponent: function (component, selector = null) {
+    reinitComponent: function (component, selector) {
         const elements = selector ? $(selector) : $("[data-" + component + "]");
         elements.each(function () {
             const $element = $(this);
@@ -107,7 +107,7 @@ export const FoundationUtils = {
     },
 
     // Sticky elements
-    updateSticky: function (selector = null) {
+    updateSticky: function (selector) {
         const elements = selector ? $(selector) : $("[data-sticky]");
         elements.each(function () {
             const instance = $(this).data("zfPlugin");
