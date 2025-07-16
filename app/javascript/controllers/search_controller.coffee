@@ -1,10 +1,12 @@
-import ApplicationController from "./application_controller"
-import { useStore } from "stimulus-store"
-import { searchStore, navigationStore } from "../stores"
+ApplicationController = require './application_controller'
+{ useStore } = require 'stimulus-store'
+{ searchStore, navigationStore } = require '../stores'
 
+###
 # Search Controller with stimulus-store integration
 # Manages search functionality with centralized state and URL updates
-export default class extends ApplicationController
+###
+class DefaultExport extends ApplicationController
   @stores = [searchStore, navigationStore]
 
   @targets = ["input", "results", "filters", "pagination", "loading"]
@@ -147,7 +149,7 @@ export default class extends ApplicationController
     @paginationTarget.addEventListener "click", (event) =>
       if event.target.matches("a[data-page], button[data-page]")
         event.preventDefault()
-        page = parseInt(event.target.dataset.page)
+        page = Number.parseInt(event.target.dataset.page)
         @goToPage(page) if page
 
   loadInitialSearch: ->
@@ -211,7 +213,7 @@ export default class extends ApplicationController
       filters: { filters },
       pagination: {
         ...@searchStoreValue.pagination,
-        currentPage: 1  # Reset to first page when filters change
+        currentPage: 1 # Reset to first page when filters change
       }
     }
 
@@ -337,3 +339,5 @@ export default class extends ApplicationController
 
   getCurrentSearch: ->
     @searchStoreValue
+
+module.exports = DefaultExport

@@ -1,10 +1,12 @@
-import ApplicationController from "./application_controller"
-import { toastStore } from "../stores"
+ApplicationController = require './application_controller'
+{ toastStore } = require '../stores'
 
+###
 # Toast Controller with stimulus-store integration
 # This controller is attached directly to individual toast elements.
 # It handles auto-hiding, manual dismissal, and centralized toast management.
-export default class extends ApplicationController
+###
+class DefaultExport extends ApplicationController
   @stores = [toastStore]
 
   @values = {
@@ -325,3 +327,5 @@ export default class extends ApplicationController
       ...currentToasts,
       toasts: currentToasts.toasts.filter((toast) => toast.id isnt @toastIdValue)
     }
+
+module.exports = DefaultExport

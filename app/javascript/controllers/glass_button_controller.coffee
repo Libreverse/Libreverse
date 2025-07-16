@@ -1,9 +1,9 @@
-import GlassController from "./glass_controller"
+GlassController = require './glass_controller'
 
 ###
-Button Controller - extends GlassController for standalone button components
+# Button Controller - extends GlassController for standalone button components
 ###
-export default class extends GlassController
+class DefaultExport extends GlassController
   @values = {
     ...GlassController.values,
     # Override defaults for buttons
@@ -69,3 +69,5 @@ export default class extends GlassController
 
       button.addEventListener "mouseleave", =>
         button.style.transform = "scale(1)"
+
+module.exports = DefaultExport

@@ -1,7 +1,6 @@
-import ApplicationController from './application_controller'
-import StimulusReflex from 'stimulus_reflex'
-
-export default class LanguagePickerController extends ApplicationController
+ApplicationController = require './application_controller'
+StimulusReflex = require 'stimulus_reflex'
+class LanguagePickerController extends ApplicationController
   connect: ->
     StimulusReflex.register(@)
 
@@ -9,3 +8,5 @@ export default class LanguagePickerController extends ApplicationController
     event.preventDefault()
     locale = event.currentTarget.dataset.locale
     @stimulate('LanguagePickerReflex#select', locale)
+
+module.exports = LanguagePickerController

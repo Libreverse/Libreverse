@@ -1,12 +1,12 @@
-import GlassController from "./glass_controller"
-import StimulusReflex from "stimulus_reflex"
-import { enhanceWithGlass } from "../libs/simplified_glass.js"
+GlassController = require './glass_controller'
+StimulusReflex = require 'stimulus_reflex'
+{ enhanceWithGlass } = require '../libs/simplified_glass.js'
 
 ###
-Drawer Controller - extends GlassController for drawer/modal components
-Uses simplified glass integration with minimal DOM manipulation
+# Drawer Controller - extends GlassController for drawer/modal components
+# Uses simplified glass integration with minimal DOM manipulation
 ###
-export default class extends GlassController
+class DefaultExport extends GlassController
   @values = {
     ...GlassController.values,
     componentType: { type: String, default: "drawer" },
@@ -111,8 +111,8 @@ export default class extends GlassController
   # --- Drawer Actions ---
 
   ###
-  Toggles the drawer state immediately on the client-side.
-  Server state is updated asynchronously for persistence only.
+  # Toggles the drawer state immediately on the client-side.
+  # Server state is updated asynchronously for persistence only.
   ###
   toggle: (event) ->
     event?.preventDefault()
@@ -120,8 +120,10 @@ export default class extends GlassController
     # Immediate UI update - no waiting for server
     @expandedValue = not @expandedValue
 
+    ###
     # Fire-and-forget server update for persistence
     # Use setTimeout to ensure this doesn't block the UI update
+    ###
     setTimeout =>
       @stimulate "DrawerReflex#toggle", {
         drawer_id: @drawerIdValue,
@@ -130,7 +132,7 @@ export default class extends GlassController
     , 0
 
   ###
-  Opens the drawer immediately if it is not already open.
+  # Opens the drawer immediately if it is not already open.
   ###
   open: ->
     return if @expandedValue
@@ -147,7 +149,7 @@ export default class extends GlassController
     , 0
 
   ###
-  Closes the drawer immediately if it is not already closed.
+  # Closes the drawer immediately if it is not already closed.
   ###
   close: ->
     return unless @expandedValue
@@ -180,7 +182,7 @@ export default class extends GlassController
   # --- UI Update Methods ---
 
   ###
-  Centralized method to update all UI components based on the current state.
+  # Centralized method to update all UI components based on the current state.
   ###
   updateUI: ->
     @updateDrawerHeight()
@@ -188,7 +190,7 @@ export default class extends GlassController
     @updateToggleIcon()
 
   ###
-  Smoothly transitions the drawer's height.
+  # Smoothly transitions the drawer's height.
   ###
   updateDrawerHeight: ->
     return unless @hasDrawerTarget and @hasContentTarget
@@ -208,14 +210,14 @@ export default class extends GlassController
       @refreshGlass()
 
   ###
-  Updates ARIA attributes for accessibility.
+  # Updates ARIA attributes for accessibility.
   ###
   updateAriaExpanded: ->
     if @hasDrawerTarget
       @drawerTarget.setAttribute "aria-expanded", @expandedValue.toString()
 
   ###
-  Rotates the toggle icon to indicate state.
+  # Rotates the toggle icon to indicate state.
   ###
   updateToggleIcon: ->
     if @hasIconTarget
@@ -224,8 +226,8 @@ export default class extends GlassController
   # --- Value Change Callbacks ---
 
   ###
-  This is the primary driver of UI changes. It is called automatically by Stimulus
-  whenever `this.expandedValue` is changed.
+  # This is the primary driver of UI changes. It is called automatically by Stimulus
+  # whenever `this.expandedValue` is changed.
   ###
   expandedValueChanged: ->
     console.log "[GlassDrawerController] Expanded state changed to: #{@expandedValue}"
@@ -237,3 +239,5 @@ export default class extends GlassController
       detail: { drawerId: @drawerIdValue },
       bubbles: true,
     }))
+
+module.exports = DefaultExport

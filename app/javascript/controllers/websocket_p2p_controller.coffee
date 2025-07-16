@@ -1,8 +1,10 @@
-import ApplicationController from "./application_controller"
+ApplicationController = require './application_controller'
 
+###
 # WebSocket P2P Controller
 # Manages P2P connections using pure WebSockets via ActionCable
-export default class extends ApplicationController
+###
+class DefaultExport extends ApplicationController
   @values = {
     sessionId: { type: String, default: "" },
     peerId: { type: String, default: "" },
@@ -271,3 +273,5 @@ export default class extends ApplicationController
     if @channel
       @disconnectFromSession()
       @connectToSession() if @peerIdValue
+
+module.exports = DefaultExport

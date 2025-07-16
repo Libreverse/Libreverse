@@ -1,9 +1,11 @@
-import { Controller } from "@hotwired/stimulus"
-import GlassController from "./glass_controller"
+{ Controller } = require '@hotwired/stimulus'
+GlassController = require './glass_controller'
 
+###
 # SidebarController - extends GlassController for sidebar navigation
 # Glass effect applied only to sidebar background, buttons use CSS
-export default class extends GlassController
+###
+class DefaultExport extends GlassController
   # Define values that can be fed via data attributes
   @values = {
     ...GlassController.values,
@@ -38,3 +40,5 @@ export default class extends GlassController
   refresh: ->
     console.log "[SidebarController] Refresh action triggered"
     super()
+
+module.exports = DefaultExport

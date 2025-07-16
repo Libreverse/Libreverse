@@ -1,19 +1,19 @@
-import ApplicationController from "./application_controller"
+ApplicationController = require './application_controller'
 
 ###*
- * Controls dismissible elements (like banners, tutorials).
- * Hides the element immediately on click and triggers a reflex to persist the state.
+# * Controls dismissible elements (like banners, tutorials).
+# * Hides the element immediately on click and triggers a reflex to persist the state.
 ###
-export default class extends ApplicationController
+class DefaultExport extends ApplicationController
   @values = { key: String }
 
   connect: ->
     super.connect()
-    return
+
 
   ###*
-   * Hides the element controlled by this controller and triggers the reflex.
-   * @param {Event} event - The click event.
+  # * Hides the element controlled by this controller and triggers the reflex.
+  # * @param {Event} event - The click event.
   ###
   dismiss: (event) ->
     event.preventDefault()
@@ -32,6 +32,8 @@ export default class extends ApplicationController
 
     setTimeout =>
       element.parentNode.removeChild element
-      return
+
     , 350
-    return
+
+
+module.exports = DefaultExport

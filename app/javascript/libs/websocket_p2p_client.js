@@ -71,7 +71,7 @@ class LibreverseWebSocketP2P {
                     ) {
                         // Only allow alphanumeric characters and hyphens for peer IDs
                         const sanitizedPeerId = participant.peerId.replaceAll(
-                            /[^a-zA-Z0-9-]/g,
+                            /[^\dA-Za-z-]/g,
                             "",
                         );
                         if (sanitizedPeerId.length > 0) {

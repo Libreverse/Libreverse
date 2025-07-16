@@ -1,21 +1,22 @@
-import { Controller } from "@hotwired/stimulus"
-import { useStore } from "stimulus-store"
-import StimulusReflex from "stimulus_reflex"
-import {
-  themeStore,
+{ Controller } = require '@hotwired/stimulus'
+{ useStore } = require 'stimulus-store'
+StimulusReflex = require 'stimulus_reflex'
+{ themeStore,
   glassConfigStore,
   navigationStore,
   instanceSettingsStore,
   toastStore,
   experienceStore,
   searchStore
-} from "../stores"
+ } = require '../stores'
 
+###
 # Enhanced Application Controller with stimulus-store integration
 # This is the Stimulus ApplicationController that all other controllers inherit from.
 # It sets up global state management and provides common functionality.
+###
 
-export default class extends Controller
+class DefaultExport extends Controller
   # Define all the stores that will be available to this controller and its children
   @stores = [
     themeStore,
@@ -204,3 +205,5 @@ export default class extends Controller
   # Get current glass configuration
   getCurrentGlassConfig: ->
     @glassConfigStoreValue
+
+module.exports = DefaultExport

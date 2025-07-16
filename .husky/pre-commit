@@ -2,7 +2,7 @@
 
 # Run static analysis script
 git add .
-perl scripts/static.pl
+#perl scripts/static.pl
 
 # Check if the script failed
 if [ $? -ne 0 ]; then

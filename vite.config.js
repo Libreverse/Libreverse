@@ -52,10 +52,10 @@ export default defineConfig(({ mode }) => {
             target: ["es2020", "edge88", "firefox78", "chrome87", "safari14"], // Modern browsers
             modulePreload: { polyfill: true },
             cssCodeSplit: true,
-            assetsInlineLimit: 2147483647,
+            assetsInlineLimit: 2_147_483_647,
             cssTarget: ["esnext"],
             sourcemap: false,
-            chunkSizeWarningLimit: 2147483647,
+            chunkSizeWarningLimit: 2_147_483_647,
             reportCompressedSize: false,
             minify: "terser",
             terserOptions: {
@@ -190,7 +190,7 @@ export default defineConfig(({ mode }) => {
             },
             postcss: {
                 plugins: [
-                    postcssUrl({ url: "inline", maxSize: 2147483647 }),
+                    postcssUrl({ url: "inline", maxSize: 2_147_483_647 }),
                     postcssInlineRtl(),
                     cssnano({
                         preset: [

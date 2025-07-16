@@ -1,19 +1,19 @@
-import { Controller } from "@hotwired/stimulus"
-import { useStore } from "stimulus-store"
-import { themeStore, glassConfigStore, navigationStore } from "../stores"
-import { enhanceWithGlass, removeGlassEnhancement, hasGlassEnhancement } from "../libs/simplified_glass.js"
-import { validateLiquidGlass } from "../libs/liquid_glass.js"
+{ Controller } = require '@hotwired/stimulus'
+{ useStore } = require 'stimulus-store'
+{ themeStore, glassConfigStore, navigationStore } = require '../stores'
+{ enhanceWithGlass, removeGlassEnhancement, hasGlassEnhancement } = require '../libs/simplified_glass.js'
+{ validateLiquidGlass } = require '../libs/liquid_glass.js'
 
 ###
-Glass Controller with simplified integration - Works with existing HTML structure
-Minimizes DOM manipulation by enhancing existing elements instead of recreating them
-
-Usage:
-1. Add data-controller="glass" to any element
-2. Configure with data-glass-*-value attributes
-3. Element will be enhanced with glass effects while preserving existing HTML structure
+# Glass Controller with simplified integration - Works with existing HTML structure
+# Minimizes DOM manipulation by enhancing existing elements instead of recreating them
+#
+# Usage:
+# 1. Add data-controller="glass" to any element
+# 2. Configure with data-glass-*-value attributes
+# 3. Element will be enhanced with glass effects while preserving existing HTML structure
 ###
-export default class extends Controller
+class DefaultExport extends Controller
   @stores = [themeStore, glassConfigStore, navigationStore]
 
   @values = {
@@ -199,3 +199,5 @@ export default class extends Controller
   disable: ->
     console.log "[GlassController] Disable triggered"
     @enableGlassValue = false
+
+module.exports = DefaultExport

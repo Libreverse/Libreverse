@@ -1,7 +1,6 @@
-import { Controller } from "@hotwired/stimulus"
-import LocomotiveScroll from "locomotive-scroll"
-
-export default class extends Controller
+{ Controller } = require '@hotwired/stimulus'
+LocomotiveScroll = require 'locomotive-scroll'
+class DefaultExport extends Controller
   connect: ->
     @scroll = undefined
     @boundDestroyIfNeeded = @destroyIfNeeded.bind(@)
@@ -10,12 +9,12 @@ export default class extends Controller
     @handleTurboRender = @handleTurboRender.bind(@)
     @setupEventListeners()
     @init()
-    return
+
 
   disconnect: ->
     @destroy()
     @removeEventListeners()
-    return
+
 
   init: ->
     try
@@ -45,7 +44,7 @@ export default class extends Controller
         document.dispatchEvent(event)
     catch error
       console.error "Failed to initialize LocomotiveScroll:", error
-    return
+
 
   destroy: ->
     if @scroll?
@@ -53,29 +52,29 @@ export default class extends Controller
       @scroll = undefined
       # Clean up global reference
       window.locomotiveScroll = undefined
-    return
+
 
   resume: ->
     if @scroll?
       @scroll.update()
-    return
+
 
   destroyIfNeeded: (event) =>
     if @scroll? and (not event or event.target.controller isnt "Turbo.FrameController")
       @destroy()
-    return
+
 
   handleTurboLoad: =>
     if @scroll?
       @resume()
     else
       @init()
-    return
+
 
   handleTurboRender: =>
     unless @scroll?
       @init()
-    return
+
 
   setupEventListeners: ->
     document.addEventListener "turbo:load", @handleTurboLoad
@@ -83,7 +82,7 @@ export default class extends Controller
     document.addEventListener "turbo:before-render", @boundDestroyIfNeeded
     document.addEventListener "turbo:render", @handleTurboRender
     window.addEventListener "beforeunload", @boundDestroy
-    return
+
 
   removeEventListeners: ->
     document.removeEventListener "turbo:load", @handleTurboLoad
@@ -91,4 +90,6 @@ export default class extends Controller
     document.removeEventListener "turbo:before-render", @boundDestroyIfNeeded
     document.removeEventListener "turbo:render", @handleTurboRender
     window.removeEventListener "beforeunload", @boundDestroy
-    return
+
+
+module.exports = DefaultExport

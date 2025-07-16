@@ -1,7 +1,6 @@
-import ApplicationController from './application_controller'
-
+ApplicationController = require './application_controller'
 # Generates randomized floating particles for the CTA xAI effect
-export default class extends ApplicationController
+class DefaultExport extends ApplicationController
   connect: ->
     @particles = []
     num_particles = 18
@@ -29,3 +28,5 @@ export default class extends ApplicationController
     for particle in @particles
       particle.remove()
     @particles = []
+
+module.exports = DefaultExport

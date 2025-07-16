@@ -1,7 +1,6 @@
-import { Application } from "@hotwired/stimulus"
-import consumer from "../channels/consumer"
-import StimulusReflex from "stimulus_reflex"
-
+{ Application  } = require '@hotwired/stimulus'
+consumer = require '../channels/consumer'
+StimulusReflex = require 'stimulus_reflex'
 # Start the Stimulus application
 app = Application.start()
 
@@ -13,4 +12,4 @@ app.debug = false
 
 globalThis.Stimulus = app
 
-export { app as application }
+module.exports = { app as application  }

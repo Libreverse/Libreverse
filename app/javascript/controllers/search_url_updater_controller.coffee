@@ -1,7 +1,5 @@
-import ApplicationController from "./application_controller"
-
-export default class extends ApplicationController
-
+ApplicationController = require './application_controller'
+class DefaultExport extends ApplicationController
   connect: ->
     super.connect()
     @inputHandler = @handleInput.bind(@)
@@ -10,17 +8,17 @@ export default class extends ApplicationController
 
     @updateURLHandler = @updateURLAfterSearch.bind(@)
     document.addEventListener "stimulus-reflex:after", @updateURLHandler
-    return
+
 
   disconnect: ->
     @element.removeEventListener "debounced:input", @inputHandler
     document.removeEventListener "stimulus-reflex:after", @updateURLHandler
-    return
+
 
   # Input handler: Triggers SearchReflex (now debounced by the library)
   handleInput: ->
     @stimulate "SearchReflex#perform"
-    return
+
 
   # Updates the URL after SearchReflex completes successfully
   updateURLAfterSearch: (event) ->
@@ -37,8 +35,10 @@ export default class extends ApplicationController
       else
         params.delete "query"
 
-      newUrl = currentUrl.pathname + "?" + params.toString()
+      newUrl = "#{currentUrl.pathname}?#{params.toString()}"
       # Only replace state if the URL actually changed
       if window.location.search isnt params.toString()
         window.history.replaceState { path: newUrl }, "", newUrl
-    return
+
+
+module.exports = DefaultExport

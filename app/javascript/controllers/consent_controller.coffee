@@ -1,9 +1,8 @@
-import * as Turbo from "@hotwired/turbo"
-import ApplicationController from "./application_controller"
-import { get, post } from "@rails/request.js"
-
+Turbo = require '@hotwired/turbo'
+ApplicationController = require './application_controller'
+{ get, post } = require '@rails/request.js'
 # ConsentController: handles UX and triggers ConsentReflex
-export default class extends ApplicationController
+class DefaultExport extends ApplicationController
   @targets = ["checkbox", "form"]
 
   accept: (event) ->
@@ -56,3 +55,5 @@ export default class extends ApplicationController
       data.invisible_captcha_timestamp = timestampField.value
 
     data
+
+module.exports = DefaultExport

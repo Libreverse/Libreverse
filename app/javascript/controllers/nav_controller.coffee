@@ -1,9 +1,9 @@
-import GlassController from "./glass_controller"
+GlassController = require './glass_controller'
 
 ###
-Navigation Controller - extends GlassController for navigation bars
+# Navigation Controller - extends GlassController for navigation bars
 ###
-export default class extends GlassController
+class DefaultExport extends GlassController
   @values = {
     ...GlassController.values,
     # Override defaults for navigation
@@ -20,3 +20,5 @@ export default class extends GlassController
   customPostRenderSetup: ->
     # Navigation-specific logic can go here
     console.log "[NavController] Custom post-render setup"
+
+module.exports = DefaultExport

@@ -1,6 +1,7 @@
-import ApplicationController from "./application_controller"
-import { setupLocomotiveScrollParallax } from "./parallax_utils.coffee"
+ApplicationController = require './application_controller'
+{ setupLocomotiveScrollParallax } = require './parallax_utils.coffee'
 
+###
 # ParallaxBackgroundController
 # Adds a subtle parallax translate effect to the element it is
 # attached to, synchronising with the global LocomotiveScroll instance.
@@ -14,22 +15,27 @@ import { setupLocomotiveScrollParallax } from "./parallax_utils.coffee"
 #
 # The `data-scroll-speed` attribute mirrors LocomotiveScroll's API and
 # indicates how fast the element moves relative to the scroll.
-export default class extends ApplicationController
+###
+class DefaultExport extends ApplicationController
   @values =
     speed: { type: Number, default: -2 }
 
   connect: ->
     super.connect()
     @removeLocomotiveScrollParallax = setupLocomotiveScrollParallax(@element, @speedValue, @)
-    return
+
 
   disconnect: ->
     super.disconnect()
     @removeLocomotiveScrollParallax?()
-    return
 
+
+  ###
   # ------------------------------------------------------------------
   # Private helpers
   # ------------------------------------------------------------------
+  ###
 
   # Remove the setupLocomotiveScrollParallax method entirely
+
+module.exports = DefaultExport

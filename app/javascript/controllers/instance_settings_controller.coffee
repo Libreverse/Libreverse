@@ -1,10 +1,12 @@
-import ApplicationController from "./application_controller"
-import { useStore } from "stimulus-store"
-import { instanceSettingsStore, toastStore } from "../stores"
+ApplicationController = require './application_controller'
+{ useStore } = require 'stimulus-store'
+{ instanceSettingsStore, toastStore } = require '../stores'
 
+###
 # Instance Settings Controller with stimulus-store integration
 # Manages instance configuration with centralized state and optimistic updates
-export default class extends ApplicationController
+###
+class DefaultExport extends ApplicationController
   @stores = [instanceSettingsStore, toastStore]
 
   @values = {
@@ -78,7 +80,7 @@ export default class extends ApplicationController
     formData.corsOrigins = corsOriginsInput?.value or ""
 
     portInput = @element.querySelector("[data-action*='updatePort']")
-    formData.port = parseInt(portInput?.value, 10) or 3000
+    formData.port = Number.parseInt(portInput?.value, 10) or 3000
 
     adminEmailInput = @element.querySelector("[data-action*='updateAdminEmail']")
     formData.adminEmail = adminEmailInput?.value or ""
@@ -247,7 +249,7 @@ export default class extends ApplicationController
     value = event.target.value
 
     # Update store
-    @markDirty({ port: parseInt(value, 10) or 3000 })
+    @markDirty({ port: Number.parseInt(value, 10) or 3000 })
 
     @stimulate('InstanceSettings#update_port', value)
 
@@ -258,3 +260,5 @@ export default class extends ApplicationController
     @markDirty({ adminEmail: value })
 
     @stimulate('InstanceSettings#update_admin_email', value)
+
+module.exports = DefaultExport

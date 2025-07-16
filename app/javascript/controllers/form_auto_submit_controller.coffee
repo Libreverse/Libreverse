@@ -1,7 +1,6 @@
-import ApplicationController from "./application_controller"
-
+ApplicationController = require './application_controller'
 # Connects to data-controller="form-auto-submit"
-export default class extends ApplicationController
+class DefaultExport extends ApplicationController
   @targets = ["form", "input"]
   @values = {
     debounceTime: { type: Number, default: 800 },
@@ -16,7 +15,7 @@ export default class extends ApplicationController
     @boundHandleFormSubmit = @handleFormSubmit.bind(@)
     @boundHandleInputChange = @handleInputChange.bind(@)
     @boundHandleInputBlur = @handleInputBlur.bind(@)
-    return
+
 
   connect: ->
     super.connect()
@@ -42,7 +41,7 @@ export default class extends ApplicationController
       input.addEventListener("blur", @boundHandleInputBlur)
 
     console.log("FormAutoSubmitController connected with", @inputTargets.length, "input targets")
-    return
+
 
   disconnect: ->
     # Clean up event listeners and timers
@@ -58,7 +57,7 @@ export default class extends ApplicationController
       input.removeEventListener("blur", @boundHandleInputBlur)
 
     super.disconnect()
-    return
+
 
   # Create error container if needed
   ensureErrorContainer: ->
@@ -72,7 +71,7 @@ export default class extends ApplicationController
           errorDiv,
           @formTarget
         )
-    return
+
 
   handleInputChange: ->
     return if @isSubmitting
@@ -86,7 +85,6 @@ export default class extends ApplicationController
       @validateForm()
     , @debounceTimeValue
 
-    return
 
   handleInputBlur: (event) ->
     return if @isSubmitting
@@ -96,7 +94,7 @@ export default class extends ApplicationController
       clearTimeout(@debounceTimer)
 
     @validateField(event.target)
-    return
+
 
   handleFormSubmit: (event) ->
     console.log("Form submit handler called", { event })
@@ -130,7 +128,6 @@ export default class extends ApplicationController
       @formTarget.classList.remove('submitting')
     , 1000
 
-    return
 
   validateForm: ->
     return if @isSubmitting
@@ -168,7 +165,6 @@ export default class extends ApplicationController
       , 1000
     , 100
 
-    return
 
   validateField: (field) ->
     return unless field
@@ -195,7 +191,7 @@ export default class extends ApplicationController
     # Validate all input fields
     @inputTargets.forEach (input) =>
       fieldValid = @validateSingleField(input)
-      isValid = isValid and fieldValid
+      isValid and= fieldValid
 
     return isValid
 
@@ -250,7 +246,7 @@ export default class extends ApplicationController
         if value.trim().length < 2 or value.trim().length > 50
           @addFieldError(field, "Username must be between 2 and 50 characters")
           return false
-        if /\s/.test(value.trim())
+        if (/\s/).test(value.trim())
           @addFieldError(field, "Username cannot contain spaces")
           return false
     return true
@@ -299,7 +295,6 @@ export default class extends ApplicationController
     field.setAttribute('aria-describedby', errorId)
     field.setAttribute('aria-invalid', 'true')
 
-    return
 
   hideFieldError: (field) ->
     # Remove error classes
@@ -318,7 +313,6 @@ export default class extends ApplicationController
     field.removeAttribute('aria-describedby')
     field.removeAttribute('aria-invalid')
 
-    return
 
   showFormErrors: ->
     errorContainer = document.getElementById('form-errors')
@@ -339,7 +333,6 @@ export default class extends ApplicationController
       # Scroll to errors
       errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
-    return
 
   clearAllErrors: ->
     # Clear form-level errors
@@ -352,13 +345,15 @@ export default class extends ApplicationController
     @inputTargets.forEach (field) =>
       @hideFieldError(field)
 
-    return
 
   # Legacy method for backward compatibility
   onFormValidated: ->
+
+    ###
     # This method can be removed as we're no longer using StimulusReflex
     # But keeping it for any existing code that might reference it
-    return
+    ###
+
 
   # Check if form has invisible captcha fields
   hasInvisibleCaptcha: ->
@@ -378,7 +373,7 @@ export default class extends ApplicationController
     timestampField = @formTarget.querySelector('input[name="invisible_captcha_timestamp"]')
     return true unless timestampField?.value
 
-    timestamp = parseInt(timestampField.value, 10)
+    timestamp = Number.parseInt(timestampField.value, 10)
     return true if isNaN(timestamp)
 
     currentTime = Math.floor(Date.now() / 1000)
@@ -388,3 +383,5 @@ export default class extends ApplicationController
     minThreshold = @data.get("minTimestamp") or 2
 
     return timeDiff >= minThreshold
+
+module.exports = DefaultExport

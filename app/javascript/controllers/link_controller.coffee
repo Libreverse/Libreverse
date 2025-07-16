@@ -1,8 +1,6 @@
-import ApplicationController from "./application_controller"
-import { Turbo } from "@hotwired/turbo-rails"
-
-export default class extends ApplicationController
-
+ApplicationController = require './application_controller'
+{ Turbo } = require '@hotwired/turbo-rails'
+class DefaultExport extends ApplicationController
   @values = { isCurrent: Boolean }
 
   click: (event) ->
@@ -13,11 +11,13 @@ export default class extends ApplicationController
       @element.classList.add "sidebar-not-allowed-shake"
       setTimeout (=>
         @element.classList.remove "sidebar-not-allowed-shake"
-        return
+
       ), 750
     else
       # Navigate to new page using Turbo
       path = @element.getAttribute('href') or @data.get('path')
       if path
         Turbo.visit(path)
-    return
+
+
+module.exports = DefaultExport

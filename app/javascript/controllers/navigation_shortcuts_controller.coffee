@@ -1,8 +1,7 @@
-import ApplicationController from "./application_controller"
-import { useHotkeys } from "stimulus-use/hotkeys"
-import { visit } from "@hotwired/turbo"
-
-export default class extends ApplicationController
+ApplicationController = require './application_controller'
+{ useHotkeys } = require 'stimulus-use/hotkeys'
+{ visit } = require '@hotwired/turbo'
+class DefaultExport extends ApplicationController
   @targets = []
 
   connect: ->
@@ -25,19 +24,19 @@ export default class extends ApplicationController
         not event.ctrlKey and
         not event.altKey
     }
-    return
+
 
   goHome: (event) ->
     event.preventDefault()
     if globalThis.location.pathname isnt "/"
       visit "/"
-    return
+
 
   goSearch: (event) ->
     event.preventDefault()
     if globalThis.location.pathname isnt "/search"
       visit "/search"
-    return
+
 
   openDrawer: (event) ->
     event.preventDefault()
@@ -56,4 +55,6 @@ export default class extends ApplicationController
         }))
     else
       console.warn("Could not find main drawer element")
-    return
+
+
+module.exports = DefaultExport

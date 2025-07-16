@@ -10,14 +10,14 @@
 #
 # The 'rainydayOptions' value can be set to any RainyDay.js options (see library docs).
 ###
-import ApplicationController from "./application_controller"
+ApplicationController = require './application_controller'
 import "../libs/rainyday.js"
-import { setupLocomotiveScrollParallax } from "./parallax_utils.coffee"
+{ setupLocomotiveScrollParallax } = require './parallax_utils.coffee'
 
 ###*
- * Manages an iframe containing the RaindropFX effect to isolate its context.
+# * Manages an iframe containing the RaindropFX effect to isolate its context.
 ###
-export default class extends ApplicationController
+class DefaultExport extends ApplicationController
   @values =
     backgroundUrl: String
     rainydayOptions: { type: Object, default: {} }
@@ -27,7 +27,7 @@ export default class extends ApplicationController
     @setupRainyDay()
     @setupParallax()
     @setupResizeListener()
-    return
+
 
   disconnect: ->
     super.disconnect()
@@ -35,7 +35,7 @@ export default class extends ApplicationController
     @rainyday = null
     @removeParallax?()
     @removeResizeListener?()
-    return
+
 
   setupRainyDay: ->
     unless @hasBackgroundUrlValue
@@ -96,13 +96,13 @@ export default class extends ApplicationController
       rate = 1
       speed = 25
       @rainyday.rain([[min, base, rate]], speed)
-    return
+
 
   setupParallax: ->
     return unless @element.hasAttribute?('data-scroll')
-    speed = parseFloat(@element.getAttribute('data-scroll-speed') or '-2')
+    speed = Number.parseFloat(@element.getAttribute('data-scroll-speed') or '-2')
     @removeParallax = setupLocomotiveScrollParallax(@element, speed, @)
-    return
+
 
   setupResizeListener: ->
     @handleResize = =>
@@ -111,7 +111,7 @@ export default class extends ApplicationController
     window.addEventListener 'debounced:resize', @handleResize
     @removeResizeListener = =>
       window.removeEventListener 'debounced:resize', @handleResize
-    return
+
 
   updateRainyDayDimensions: ->
     return unless @rainyday?
@@ -119,4 +119,6 @@ export default class extends ApplicationController
     @rainyday.destroy()
     @rainyday = null
     @setupRainyDay()
-    return
+
+
+module.exports = DefaultExport

@@ -1,7 +1,6 @@
-# experience_upload_controller.coffee
-import ApplicationController from './application_controller'
-
-export default class extends ApplicationController
+# Experience_upload_controller.coffee
+ApplicationController = require './application_controller'
+class DefaultExport extends ApplicationController
   @targets = ['error']
 
   connect: ->
@@ -11,7 +10,7 @@ export default class extends ApplicationController
 
   disconnect: ->
     # No need to remove event listeners as they're handled by Stimulus
-    return
+
 
   handleChange: (event) ->
     # Clear any previous errors when a file is selected
@@ -59,3 +58,5 @@ export default class extends ApplicationController
     if @hasErrorTarget
       @errorTarget.textContent = msg
       @errorTarget.style.display = 'block'
+
+module.exports = DefaultExport

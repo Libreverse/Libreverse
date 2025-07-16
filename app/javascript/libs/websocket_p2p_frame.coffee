@@ -1,5 +1,7 @@
+###
 # WebSocket P2P Frame Custom Element
 # Provides backwards compatible p2p-frame element with WebSocket implementation
+###
 
 class WebSocketP2PFrame extends HTMLElement
   constructor: ->
