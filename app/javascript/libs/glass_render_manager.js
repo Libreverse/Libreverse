@@ -1,4 +1,6 @@
 // Global Glass Render Manager - Optimized for high scalability with many concurrent glass effects
+import { Container } from "./container.js";
+
 class GlassRenderManager {
     constructor() {
         this.instances = new Set();
@@ -20,7 +22,7 @@ class GlassRenderManager {
         this.performanceMode = "auto"; // 'auto', 'performance', 'quality'
 
         // Viewport-based optimization
-        this.viewportObserver = null;
+        this.viewportObserver = undefined;
         this.viewportBuffer = 100; // px buffer around viewport
 
         // Instance batching for performance
@@ -30,7 +32,7 @@ class GlassRenderManager {
         // LOD (Level of Detail) system - more conservative for context management
         this.lodEnabled = true;
         this.qualityLevels = {
-            high: { maxInstances: 8, tintOpacityMultiplier: 1.0 }, // Reduced from 20
+            high: { maxInstances: 8, tintOpacityMultiplier: 1 }, // Reduced from 20
             medium: { maxInstances: 16, tintOpacityMultiplier: 0.8 }, // Reduced from 35
             low: { maxInstances: 24, tintOpacityMultiplier: 0.6 }, // Reduced from 50
         };
@@ -61,10 +63,11 @@ class GlassRenderManager {
         });
 
         // Locomotive Scroll integration with throttling
-        if (window.locomotiveScroll) {
-            if (typeof window.locomotiveScroll.on === "function") {
-                window.locomotiveScroll.on("scroll", throttledScrollHandler);
-            }
+        if (
+            globalThis.locomotiveScroll &&
+            typeof globalThis.locomotiveScroll.on === "function"
+        ) {
+            globalThis.locomotiveScroll.on("scroll", throttledScrollHandler);
         }
 
         // Store references for cleanup
@@ -76,7 +79,7 @@ class GlassRenderManager {
         if (typeof IntersectionObserver !== "undefined") {
             this.viewportObserver = new IntersectionObserver(
                 (entries) => {
-                    entries.forEach((entry) => {
+                    for (const entry of entries) {
                         const instance = entry.target._glassInstance;
                         if (instance) {
                             if (entry.isIntersecting) {
@@ -87,7 +90,7 @@ class GlassRenderManager {
                                 instance.isVisible = false;
                             }
                         }
-                    });
+                    }
                 },
                 {
                     rootMargin: `${this.viewportBuffer}px`,
@@ -165,7 +168,7 @@ class GlassRenderManager {
         this.resizeTimeout = setTimeout(() => {
             this.markDirty();
             // Force page snapshot recapture on resize
-            Container.pageSnapshot = null;
+            Container.pageSnapshot = undefined;
         }, 200);
     }
 
@@ -183,10 +186,8 @@ class GlassRenderManager {
 
             // Prioritize visible instances for rendering
             const instancesToRender = this.lodEnabled
-                ? Array.from(this.visibleInstances)
-                : Array.from(this.instances);
-
-            let renderedCount = 0;
+                ? [...this.visibleInstances]
+                : [...this.instances];
 
             // Batch rendering for better performance with many instances
             const batchSize = Math.min(
@@ -200,15 +201,15 @@ class GlassRenderManager {
             );
 
             // Render current batch
-            for (let i = startIndex; i < endIndex; i++) {
-                const instance = instancesToRender[i];
+            for (let index = startIndex; index < endIndex; index++) {
+                const instance = instancesToRender[index];
                 if (instance && (instance.needsRender || this.isDirty)) {
                     try {
                         // Apply LOD optimizations
                         this.applyLODOptimizations(instance);
                         instance.renderFrame();
                         instance.needsRender = false;
-                        renderedCount++;
+                        // renderedCount was here but unused
                     } catch (error) {
                         console.warn(
                             "[GlassRenderManager] Error rendering instance:",
@@ -225,11 +226,11 @@ class GlassRenderManager {
 
             // Also render any non-visible instances that urgently need updates (less frequently)
             if (this.lodEnabled && this.currentBatch === 0) {
-                const nonVisibleInstances = Array.from(this.instances).filter(
-                    (i) => !i.isVisible,
+                const nonVisibleInstances = [...this.instances].filter(
+                    (index) => !index.isVisible,
                 );
                 const urgentNonVisible = nonVisibleInstances.filter(
-                    (i) => i.needsRender && i.priority === "high",
+                    (index) => index.needsRender && index.priority === "high",
                 );
 
                 for (const instance of urgentNonVisible.slice(0, 2)) {
@@ -238,7 +239,7 @@ class GlassRenderManager {
                         this.applyLODOptimizations(instance);
                         instance.renderFrame();
                         instance.needsRender = false;
-                        renderedCount++;
+                        // renderedCount was here but unused
                     } catch (error) {
                         console.warn(
                             "[GlassRenderManager] Error rendering non-visible instance:",
@@ -317,9 +318,9 @@ class GlassRenderManager {
             this.currentQuality = newQuality;
 
             // Apply quality changes to all instances
-            this.instances.forEach((instance) => {
+            for (const instance of this.instances) {
                 this.applyLODOptimizations(instance);
-            });
+            }
         }
     }
 
@@ -371,22 +372,24 @@ class GlassRenderManager {
         this.performanceMode = mode;
 
         switch (mode) {
-            case "performance":
+            case "performance": {
                 this.targetFPS = 30;
                 this.batchSize = 4;
                 this.lodEnabled = true;
                 break;
-            case "quality":
+            }
+            case "quality": {
                 this.targetFPS = 60;
                 this.batchSize = 12;
                 this.lodEnabled = false;
                 break;
-            case "auto":
-            default:
+            }
+            default: {
                 this.targetFPS = 60;
                 this.batchSize = 8;
                 this.lodEnabled = true;
                 break;
+            }
         }
 
         this.frameDuration = 1000 / this.targetFPS;
@@ -423,7 +426,7 @@ class GlassRenderManager {
         // Clean up viewport observer
         if (this.viewportObserver) {
             this.viewportObserver.disconnect();
-            this.viewportObserver = null;
+            this.viewportObserver = undefined;
         }
 
         // Clean up event listeners
@@ -431,10 +434,13 @@ class GlassRenderManager {
         window.removeEventListener("resize", this.resizeHandler);
 
         if (
-            window.locomotiveScroll &&
-            typeof window.locomotiveScroll.off === "function"
+            globalThis.locomotiveScroll &&
+            typeof globalThis.locomotiveScroll.off === "function"
         ) {
-            window.locomotiveScroll.off("scroll", this._throttledScrollHandler);
+            globalThis.locomotiveScroll.off(
+                "scroll",
+                this._throttledScrollHandler,
+            );
         }
 
         // Clear all instances

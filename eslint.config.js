@@ -23,7 +23,6 @@ export default [
             "**.config.js",
             "public/**",
             "app//libs/**",
-            "app/javascript/libs/**",
             "coverage/**",
             "**/gems/**",
             "**/haml_lint*/**",

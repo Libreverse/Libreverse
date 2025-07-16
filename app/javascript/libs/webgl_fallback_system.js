@@ -11,7 +11,7 @@ class WebGLFallbackSystem {
 
     setupEventListeners() {
         // Listen for WebGL context limit events
-        window.addEventListener("webgl:contextLimitReached", (event) => {
+        globalThis.addEventListener("webgl:contextLimitReached", (event) => {
             console.warn(
                 "[WebGLFallback] Context limit reached, activating global fallback mode",
             );
@@ -120,15 +120,15 @@ class WebGLFallbackSystem {
       }
     `;
 
-        document.head.appendChild(style);
-        document.body.appendChild(notification);
+        document.head.append(style);
+        document.body.append(notification);
 
         // Auto-hide after 10 seconds
         setTimeout(() => {
             if (notification.parentElement) {
                 notification.remove();
             }
-        }, 10000);
+        }, 10_000);
     }
 
     scheduleRetry() {
@@ -139,7 +139,7 @@ class WebGLFallbackSystem {
             return;
         }
 
-        const delay = Math.min(5000 * Math.pow(2, this.retryAttempts), 30000); // Exponential backoff, max 30s
+        const delay = Math.min(5000 * Math.pow(2, this.retryAttempts), 30_000); // Exponential backoff, max 30s
 
         setTimeout(() => {
             this.retryAll();
@@ -156,15 +156,15 @@ class WebGLFallbackSystem {
         );
 
         // Force cleanup of WebGL contexts
-        if (window.optimizedWebGLContextManager) {
-            window.optimizedWebGLContextManager.aggressiveCleanup();
+        if (globalThis.optimizedWebGLContextManager) {
+            globalThis.optimizedWebGLContextManager.aggressiveCleanup();
         }
 
         // Wait for cleanup to complete
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Check if we have available contexts now
-        const stats = window.optimizedWebGLContextManager?.getStats();
+        const stats = globalThis.optimizedWebGLContextManager?.getStats();
         if (!stats || stats.activeContexts >= stats.maxContexts * 0.8) {
             console.log(
                 "[WebGLFallback] Still at context limit after cleanup, scheduling next retry",
@@ -215,15 +215,15 @@ class WebGLFallbackSystem {
         // Remove successful elements from fallback set
         const elementsToRemove = [];
         for (const element of this.fallbackElements) {
-            if (element.hasAttribute("data-glass-active")) {
+            if (Object.hasOwn(element.dataset, "glassActive")) {
                 elementsToRemove.push(element);
             }
         }
 
-        elementsToRemove.forEach((element) => {
+        for (const element of elementsToRemove) {
             this.fallbackElements.delete(element);
             element.classList.remove("glass-fallback");
-        });
+        }
 
         // Reset retry counter on successful recovery
         if (this.fallbackElements.size === 0) {
@@ -239,9 +239,9 @@ class WebGLFallbackSystem {
         document.body.classList.remove("webgl-global-fallback");
 
         // Remove fallback from all elements
-        this.fallbackElements.forEach((element) => {
+        for (const element of this.fallbackElements) {
             element.classList.remove("glass-fallback");
-        });
+        }
         this.fallbackElements.clear();
 
         // Remove notification
@@ -264,8 +264,8 @@ class WebGLFallbackSystem {
 }
 
 // Create global instance
-window.webglFallbackSystem = new WebGLFallbackSystem();
+globalThis.webglFallbackSystem = new WebGLFallbackSystem();
 
 // Export for module usage
 export { WebGLFallbackSystem };
-export default window.webglFallbackSystem;
+export default globalThis.webglFallbackSystem;

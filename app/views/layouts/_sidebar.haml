@@ -7,17 +7,73 @@
   rodauth_obj = local_assigns.fetch(:rodauth, rodauth)
   Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, sidebar_hovered=#{sidebar_hovered}, expanded=#{expanded}"
 
-%aside{id: "#{sidebar_id}-sidebar",
-    class: "sidebar-container #{'sidebar-hovered' if expanded == 't'}",
-    role: "complementary",
-    data: {
-      # Stimulus values for child controllers (preferred)
-      "expanded-value": (expanded == 't' ? 'true' : 'false'),
-      "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
+  # Navigation items setup
+  public_links = [{ path: '/', icon: 'home', label: 'homepage' }, { path: '/search', icon: 'search', label: 'search page' }, { path: '/settings', icon: 'settings', label: 'settings page' }]
+  nav_items = public_links.dup
 
-      # Legacy attributes retained to avoid breaking any direct CSS/JS
-      expanded: (expanded == 't' ? 'true' : 'false'),
-      "hovered": (sidebar_hovered == 't' ? 'true' : 'false'),
-      "html2canvas-ignore": true,
-    }}
-  = render partial: "layouts/sidebar_nav", locals: { sidebar_id: sidebar_id, sidebar_hovered: sidebar_hovered, expanded: expanded, rodauth: rodauth_obj }
+  if rodauth_obj.logged_in? && !rodauth_obj.guest_logged_in?
+    nav_items.concat([{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }])
+    nav_items << { path: rodauth_obj.logout_path, icon: 'logout', label: 'Sign out', method: :post }
+  else
+    nav_items.concat([{ path: rodauth_obj.login_path, icon: 'login', label: 'login page' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page' }])
+  end
+
+%nav{id: "#{sidebar_id}-sidebar",
+     class: ["sidebar", "glass-component", "#{'sidebar-hovered' if expanded == 't'}"].compact.join(" "),
+     role: "navigation",
+     aria: {label: "Navigation Sidebar"},
+     style: "--glass-border-radius: #{local_assigns[:border_radius] || 12}px",
+     data: {
+       controller: "sidebar",
+       # Stimulus values for child controllers (preferred)
+       "expanded-value": (expanded == 't' ? 'true' : 'false'),
+       "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
+       # Legacy attributes retained to avoid breaking any direct CSS/JS
+       expanded: (expanded == 't' ? 'true' : 'false'),
+       "hovered": (sidebar_hovered == 't' ? 'true' : 'false'),
+       "html2canvas-ignore": true,
+       # Glass configuration
+       "enable-glass-value": true,
+       "component-type-value": "sidebar",
+       "border-radius-value": local_assigns[:border_radius] || 12,
+       "tint-opacity-value": local_assigns[:tint_opacity] || 0.12,
+       "corner-rounding-value": "right"
+     }}
+
+  - current_path = request.path
+
+  -# Public links – always visible
+  - public_links.each do |item|
+    - item_is_current = (current_path == item[:path])
+    = link_to item[:path],
+              class: "sidebar-link#{' sidebar-current' if item_is_current}",
+              aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
+              data: { "sidebar-item": item[:icon] } do
+      = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
+
+  -# Authentication-specific links
+  - if rodauth_obj.logged_in? && !rodauth_obj.guest_logged_in?
+    - auth_links = [{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }]
+    - auth_links.each do |item|
+      - item_is_current = (current_path == item[:path])
+      = link_to item[:path],
+                class: "sidebar-link#{' sidebar-current' if item_is_current}",
+                aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
+                data: { "sidebar-item": item[:icon] } do
+        = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
+
+    = button_to rodauth_obj.logout_path,
+                method: :post,
+                class: 'sidebar-link sidebar-logout-button',
+                aria: { label: 'Sign out' },
+                data: { "sidebar-item": "logout" } do
+      = sidebar_icon(svg_icon_data_url('logout'))
+  - else
+    - guest_links = [{ path: rodauth_obj.login_path, icon: 'login', label: 'login page' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page' }]
+    - guest_links.each do |item|
+      - item_is_current = (current_path == item[:path])
+      = link_to item[:path],
+                class: "sidebar-link#{' sidebar-current' if item_is_current}",
+                aria: { label: (item_is_current ? "On #{item[:label]}" : (item[:label] == 'sign-up page' ? 'Sign up' : 'Sign in')) },
+                data: { "sidebar-item": item[:icon] } do
+        = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))

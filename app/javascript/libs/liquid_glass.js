@@ -131,7 +131,7 @@ export async function renderLiquidGlassNav(
         return element._liquidGlassInstance;
     }
 
-    let glassContainer = null;
+    let glassContainer;
     const originalHTML = renderOptions.originalContent || element.innerHTML;
 
     try {
@@ -199,14 +199,14 @@ export async function renderLiquidGlassNav(
             console.warn("[LiquidGlass] WebGL context lost for nav element");
             event.preventDefault();
             // Trigger fallback mode
-            if (element && typeof window.glassFallbackMonitor !== "undefined") {
-                window.glassFallbackMonitor.triggerGlobalFallback(
+            if (element && globalThis.glassFallbackMonitor !== undefined) {
+                globalThis.glassFallbackMonitor.triggerGlobalFallback(
                     "WebGL context lost during runtime",
                 );
             }
         });
 
-        canvas.addEventListener("webglcontextrestored", (event) => {
+        canvas.addEventListener("webglcontextrestored", () => {
             console.log("[LiquidGlass] WebGL context restored for nav element");
             // Could potentially retry glass effect here
         });
@@ -267,7 +267,7 @@ export async function renderLiquidGlassNav(
                             globalThis.location.href = item.path;
                         }),
                     iconHTML: item.svg || "",
-                    ...(item.buttonOptions || {}),
+                    ...item.buttonOptions,
                 });
             } catch (buttonError) {
                 console.error(
@@ -337,11 +337,11 @@ export async function renderLiquidGlassNav(
                     existingContent.style.opacity = "0";
                 }
 
-                glassButtons.forEach((button) => {
+                for (const button of glassButtons) {
                     button.style.transition = "opacity 300ms ease-in";
                     button.style.opacity = "1";
                     button.style.pointerEvents = "auto";
-                });
+                }
 
                 // After transition, hide original content completely
                 setTimeout(() => {
@@ -376,8 +376,8 @@ export async function renderLiquidGlassNav(
         });
         element.dispatchEvent(fallbackEvent);
 
-        // Return null on error, controller will handle graceful fallback
-        return null;
+        // Return on error, controller will handle graceful fallback
+        return;
     }
 }
 
@@ -407,7 +407,10 @@ export function validateLiquidGlass(element) {
         }
 
         // Enhanced WebGL support check
-        if (!window.WebGLRenderingContext && !window.WebGL2RenderingContext) {
+        if (
+            !globalThis.WebGLRenderingContext &&
+            !globalThis.WebGL2RenderingContext
+        ) {
             console.error(
                 "Liquid glass validation failed: WebGL not supported",
             );
@@ -419,7 +422,7 @@ export function validateLiquidGlass(element) {
         testCanvas.width = 32;
         testCanvas.height = 32;
 
-        let gl = null;
+        let gl;
         const contextOptions = {
             alpha: true,
             premultipliedAlpha: false,
@@ -520,7 +523,7 @@ export function validateLiquidGlass(element) {
             testDiv.style.background = "red";
             testDiv.style.position = "absolute";
             testDiv.style.top = "-1000px";
-            document.body.appendChild(testDiv);
+            document.body.append(testDiv);
 
             // Quick html2canvas test (don't await, just check if it starts)
             const canvasPromise = html2canvas(testDiv, {
@@ -530,7 +533,7 @@ export function validateLiquidGlass(element) {
                 useCORS: true,
             });
 
-            document.body.removeChild(testDiv);
+            testDiv.remove();
 
             if (!canvasPromise || typeof canvasPromise.then !== "function") {
                 console.error(
@@ -588,7 +591,7 @@ export function createParallaxGlassContainer(
     });
 
     element.innerHTML = "";
-    element.appendChild(glassContainer.element);
+    element.append(glassContainer.element);
 
     return glassContainer;
 }
@@ -610,7 +613,7 @@ export function createFixedGlassContainer(element, options = {}) {
     });
 
     element.innerHTML = "";
-    element.appendChild(glassContainer.element);
+    element.append(glassContainer.element);
 
     return glassContainer;
 }
@@ -640,10 +643,10 @@ export async function renderLiquidGlassSidebarRightRounded(
         return element._liquidGlassInstance;
     }
 
-    try {
-        // Save the original HTML for fallback or restoration
-        const originalHTML = renderOptions.originalContent || element.innerHTML;
+    // Save the original HTML for fallback or restoration
+    const originalHTML = renderOptions.originalContent || element.innerHTML;
 
+    try {
         // If preserveOriginalHTML is true, create glass container without clearing content initially
         if (!renderOptions.preserveOriginalHTML) {
             element.innerHTML = "";
@@ -699,7 +702,7 @@ export async function renderLiquidGlassSidebarRightRounded(
                 path: item.path,
                 label: item.label,
                 method: item.method,
-                ...(item.buttonOptions || {}),
+                ...item.buttonOptions,
             });
             // Add data-path for current-page detection
             button.element.dataset.path = item.path;
@@ -729,11 +732,11 @@ export async function renderLiquidGlassSidebarRightRounded(
                     existingContent.style.opacity = "0";
                 }
 
-                glassButtons.forEach((button) => {
+                for (const button of glassButtons) {
                     button.style.transition = "opacity 300ms ease-in";
                     button.style.opacity = "1";
                     button.style.pointerEvents = "auto";
-                });
+                }
 
                 // After transition, hide original content completely
                 setTimeout(() => {
@@ -743,7 +746,7 @@ export async function renderLiquidGlassSidebarRightRounded(
                 }, 300);
             }, 100); // Small delay to ensure glass effect is ready
         } else {
-            element.appendChild(glassContainer.element);
+            element.append(glassContainer.element);
         }
 
         element._liquidGlassInstance = glassContainer;
@@ -790,7 +793,7 @@ export async function renderLiquidGlassDrawer(
         console.warn(
             "Liquid glass already initializing globally on this element, skipping",
         );
-        return null;
+        return;
     }
     initializationTracker.add(element);
 
@@ -800,7 +803,7 @@ export async function renderLiquidGlassDrawer(
             "Liquid glass already initializing on this element, skipping",
         );
         initializationTracker.delete(element);
-        return null;
+        return;
     }
     element._liquidGlassInitializing = true;
 
@@ -814,10 +817,10 @@ export async function renderLiquidGlassDrawer(
         );
     }
 
-    try {
-        // Save the original HTML for fallback or restoration
-        const originalHTML = renderOptions.originalContent || element.innerHTML;
+    // Save the original HTML for fallback or restoration
+    const originalHTML = renderOptions.originalContent || element.innerHTML;
 
+    try {
         // Find the actual drawer element (the one with .drawer class)
         const drawerElement = element.querySelector(".drawer") || element;
 
@@ -825,10 +828,8 @@ export async function renderLiquidGlassDrawer(
         // Instead, we'll create a wrapper for the glass effect that doesn't interfere with layout
 
         // If preserveOriginalHTML is true, don't clear content initially
-        if (!renderOptions.preserveOriginalHTML) {
-            if (drawerElement) {
-                drawerElement.innerHTML = "";
-            }
+        if (!renderOptions.preserveOriginalHTML && drawerElement) {
+            drawerElement.innerHTML = "";
         }
 
         // Create container with drawer-specific options - create a proper container like sidebar does
@@ -853,7 +854,7 @@ export async function renderLiquidGlassDrawer(
                 containerExists: !!glassContainer,
                 hasElement: !!glassContainer?.element,
                 webglContextsActive: WebGLContextManager.contexts.size,
-                webglSupported: !!window.WebGLRenderingContext,
+                webglSupported: !!globalThis.WebGLRenderingContext,
                 timestamp: Date.now(),
             },
         );
@@ -955,7 +956,7 @@ export async function renderLiquidGlassDrawer(
         glassContainer.addChild(invisibleButton);
 
         // Create a reference holder for the container to prevent garbage collection
-        const containerRef = {
+        const containerReference = {
             container: glassContainer,
             element: glassContainer.element,
             isInitializing: true,
@@ -963,7 +964,7 @@ export async function renderLiquidGlassDrawer(
 
         // Store the container reference on the DOM element to prevent GC
         if (glassContainer.element) {
-            glassContainer.element._liquidGlassContainer = containerRef;
+            glassContainer.element._liquidGlassContainer = containerReference;
         }
 
         // DON'T schedule canvas setup yet - wait until after DOM insertion
@@ -1067,7 +1068,7 @@ export async function renderLiquidGlassDrawer(
                 drawerElement.style.backgroundColor = "transparent";
             }, 200); // Longer delay to ensure WebGL is fully ready
         } else if (drawerElement) {
-            drawerElement.appendChild(glassContainer.element);
+            drawerElement.append(glassContainer.element);
 
             // WebGL Debug - Check state immediately after DOM insertion (non-preserve path)
             console.log(
@@ -1103,7 +1104,7 @@ export async function renderLiquidGlassDrawer(
                     containerIsNull: !container,
                     elementIsNull: !container?.element,
                     containerKeys: container ? Object.keys(container) : "N/A",
-                    stackTrace: new Error().stack,
+                    stackTrace: new Error("Stack trace for debugging").stack,
                 });
                 return;
             }
@@ -1115,7 +1116,7 @@ export async function renderLiquidGlassDrawer(
                 canvasTagName: canvas?.tagName,
                 canvasParent: canvas?.parentNode?.tagName,
                 containerHTML:
-                    container.element.innerHTML.substring(0, 200) + "...",
+                    container.element.innerHTML.slice(0, 200) + "...",
             });
 
             if (canvas) {
@@ -1201,8 +1202,8 @@ export async function renderLiquidGlassDrawer(
 
             setTimeout(() => {
                 // Use the reference holder to get the container
-                let currentContainer = containerRef.container;
-                let currentElement = containerRef.element;
+                let currentContainer = containerReference.container;
+                let currentElement = containerReference.element;
 
                 // If the container was destroyed but element still exists, recreate the container wrapper
                 if (
@@ -1248,7 +1249,7 @@ export async function renderLiquidGlassDrawer(
                         currentContainer.element.querySelector("canvas");
                     if (canvas) {
                         setupCanvas(currentContainer);
-                        containerRef.isInitializing = false;
+                        containerReference.isInitializing = false;
                     } else if (attempt < maxAttempts) {
                         console.warn(
                             `No canvas found on attempt ${attempt}, retrying...`,
@@ -1256,7 +1257,7 @@ export async function renderLiquidGlassDrawer(
                         retryCanvasSetup(attempt + 1, maxAttempts);
                     } else {
                         console.warn("No canvas found after all retries");
-                        containerRef.isInitializing = false;
+                        containerReference.isInitializing = false;
                     }
                 }
                 // If element was destroyed and we haven't exceeded max attempts, try again
@@ -1274,7 +1275,7 @@ export async function renderLiquidGlassDrawer(
                     console.warn(
                         "Glass effect will still work but canvas styling will be skipped",
                     );
-                    containerRef.isInitializing = false;
+                    containerReference.isInitializing = false;
                 }
             }, 300 * attempt); // Increase delay with each attempt
         };
@@ -1289,7 +1290,7 @@ export async function renderLiquidGlassDrawer(
                 // Check for ANY active container in the DOM, not just the original reference
                 const activeContainers =
                     element.querySelectorAll(".glass-container");
-                let activeContainer = null;
+                let activeContainer;
 
                 // Find the container with a canvas (the main drawer container)
                 for (const container of activeContainers) {
@@ -1324,9 +1325,9 @@ export async function renderLiquidGlassDrawer(
                         activeContainer &&
                         activeContainer._liquidGlassContainer
                     ) {
-                        containerRef.container =
+                        containerReference.container =
                             activeContainer._liquidGlassContainer.container;
-                        containerRef.element = activeContainer;
+                        containerReference.element = activeContainer;
                     }
 
                     callback();
@@ -1343,7 +1344,7 @@ export async function renderLiquidGlassDrawer(
             // Check for any active container in the DOM
             const activeContainers =
                 element.querySelectorAll(".glass-container");
-            let activeContainer = null;
+            let activeContainer;
 
             // Find the container with a canvas (the main drawer container)
             for (const container of activeContainers) {
@@ -1387,7 +1388,7 @@ export async function renderLiquidGlassDrawer(
         const cleanup = () => {
             WebGLContextManager.releaseContext(element);
             if (element._liquidGlassInstance) {
-                element._liquidGlassInstance = null;
+                element._liquidGlassInstance = undefined;
             }
             element._liquidGlassInitializing = false;
             initializationTracker.delete(element);
@@ -1395,9 +1396,9 @@ export async function renderLiquidGlassDrawer(
 
         // Clean up when element is removed from DOM
         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
+            for (const mutation of mutations) {
                 if (mutation.type === "childList") {
-                    mutation.removedNodes.forEach((node) => {
+                    for (const node of mutation.removedNodes) {
                         if (
                             node === element ||
                             (node.contains && node.contains(element))
@@ -1405,9 +1406,9 @@ export async function renderLiquidGlassDrawer(
                             cleanup();
                             observer.disconnect();
                         }
-                    });
+                    }
                 }
-            });
+            }
         });
 
         if (element.parentNode) {
@@ -1428,50 +1429,6 @@ export async function renderLiquidGlassDrawer(
         }
         throw error;
     }
-}
-
-/**
- * Get rounded corners configuration for drawer
- */
-function getDrawerRoundedCorners(cornerRounding = "top") {
-    const corners = {
-        topLeft: false,
-        topRight: false,
-        bottomLeft: false,
-        bottomRight: false,
-    };
-
-    switch (cornerRounding) {
-        case "top": {
-            corners.topLeft = true;
-            corners.topRight = true;
-            break;
-        }
-        case "bottom": {
-            corners.bottomLeft = true;
-            corners.bottomRight = true;
-            break;
-        }
-        case "left": {
-            corners.topLeft = true;
-            corners.bottomLeft = true;
-            break;
-        }
-        case "right": {
-            corners.topRight = true;
-            corners.bottomRight = true;
-            break;
-        }
-        case "all": {
-            corners.topLeft = true;
-            corners.topRight = true;
-            corners.bottomLeft = true;
-            corners.bottomRight = true;
-            break;
-        }
-    }
-
-    return corners;
 }
 
 /**
@@ -1562,7 +1519,7 @@ export function optimizeExistingGlassComponents() {
         '[data-glass-active="true"]',
     );
 
-    glassElements.forEach((element) => {
+    for (const element of glassElements) {
         try {
             // Register with optimized render manager if not already registered
             const instance = element._liquidGlassInstance;
@@ -1584,7 +1541,7 @@ export function optimizeExistingGlassComponents() {
         } catch (error) {
             console.warn("[LiquidGlass] Failed to optimize component:", error);
         }
-    });
+    }
 
     console.log(
         `[LiquidGlass] Optimized ${optimizedCount} existing components`,
@@ -1637,7 +1594,7 @@ export function analyzeGlassPerformance() {
 }
 
 // Auto-optimize existing components when this module loads
-if (typeof window !== "undefined") {
+if (typeof globalThis !== "undefined") {
     // Wait for DOM to be ready
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => {

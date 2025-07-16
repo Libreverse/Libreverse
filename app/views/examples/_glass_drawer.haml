@@ -1,52 +1,64 @@
--# Example: Glass Drawer Component - Usage: Replace the existing drawer partial with this enhanced version
+-# Glass drawer component with simplified liquid glass integration
+  This template works with existing HTML structure and minimal DOM manipulation
 
 :ruby
   drawer_id = local_assigns.fetch(:drawer_id, "main")
   expanded = local_assigns.key?(:expanded) ? expanded : drawer_expanded?(drawer_id)
-  enable_glass = local_assigns.fetch(:enable_glass, true)
+  border_radius = local_assigns.fetch(:border_radius, 20)
+  tint_opacity = local_assigns.fetch(:tint_opacity, 0.1)
 
-%aside.drawer-container{id: "#{drawer_id}-drawer",
-                       role: "complementary",
-                       data: {
-                         controller: "glass-drawer",
-                         # Glass configuration
-                         "enable-glass-value": true,
-                         "component-type-value": "drawer",
-                         "corner-rounding-value": "top",
-                         "border-radius-value": 20,
-                         "tint-opacity-value": 0.1,
-                         # Drawer configuration
-                         "expanded-value": expanded,
-                         "drawer-id-value": drawer_id,
-                         "height-value": 60,
-                         "expanded-height-value": 600
-                       },
-                       class: "glass-component glass-drawer"}
-  .drawer{class: "#{'drawer-expanded' if expanded}"}
+%aside.drawer-container.glass-component{id: "#{drawer_id}-drawer",
+                                       role: "complementary",
+                                       style: "--glass-border-radius: #{border_radius}px",
+                                       data: {
+                                         controller: "glass-drawer",
+                                         # Glass configuration
+                                         "enable-glass-value": true,
+                                         "component-type-value": "drawer",
+                                         "border-radius-value": border_radius,
+                                         "tint-opacity-value": tint_opacity,
+                                         "corner-rounding-value": "top",
+                                         # Drawer configuration
+                                         "expanded-value": expanded,
+                                         "drawer-id-value": drawer_id,
+                                         "height-value": 60,
+                                         "expanded-height-value": 600
+                                       }}
+  .drawer{class: "#{'drawer-expanded' if expanded}",
+          data: { "glass-drawer-target": "drawer" }}
     .drawer-contents
-      .drawer-header
+      .drawer-header{data: { "glass-drawer-target": "content" }}
         %h2.drawer-title{id: "drawer-title-#{drawer_id}"}
           - if content_for?(:drawer_title)
             = yield(:drawer_title)
           - else
-            Enhanced Glass Drawer
+            Glass Drawer
         %button.drawer-toggle{"aria-controls": "drawer-content-#{drawer_id}",
                               "aria-expanded": expanded,
                               "aria-label": "Toggle drawer",
                               "data-action": "glass-drawer#toggle",
+                              "data-glass-drawer-target": "icon",
                               type: "button"}
           = raw svg_icon_data_url("chevron-up")
-      .drawer-contents{id: "drawer-content-#{drawer_id}"}
-        .drawer-content-container
-          .drawer-content
-            - if content_for?(:drawer)
-              = yield(:drawer)
-            - else
-              %p This is an enhanced glass drawer with beautiful liquid glass effects!
-              %p Features:
-              %ul
+
+      .drawer-content-container{id: "drawer-content-#{drawer_id}"}
+        .drawer-content
+          - if content_for?(:drawer)
+            = yield(:drawer)
+          - else
+            .drawer-default-content
+              %p This is a glass drawer with beautiful liquid glass effects!
+              %p.drawer-features Features:
+              %ul.drawer-feature-list
                 %li Smooth glass background with blur effects
                 %li Preserves original HTML during loading
                 %li Enhanced hover and interaction effects
                 %li Responsive design
                 %li Keyboard navigation (ESC to close)
+                %li Minimal DOM manipulation
+
+              .drawer-actions
+                %button.glass-button{type: "button", data: { action: "glass-drawer#close" }}
+                  Close Drawer
+                %button.glass-button{type: "button", data: { action: "glass-drawer#refresh" }}
+                  Refresh Glass Effect

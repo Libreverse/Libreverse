@@ -28,17 +28,17 @@ class CriticalElementFallback {
     }
 
     scanAndActivateFallbacks() {
-        this.criticalSelectors.forEach((selector) => {
+        for (const selector of this.criticalSelectors) {
             const elements = document.querySelectorAll(selector);
-            elements.forEach((element) => {
+            for (const element of elements) {
                 this.ensureElementVisibility(element);
-            });
-        });
+            }
+        }
     }
 
     ensureElementVisibility(element) {
         // Check if element is invisible or has no glass effect
-        const hasGlassActive = element.hasAttribute("data-glass-active");
+        const hasGlassActive = Object.hasOwn(element.dataset, "glassActive");
         const isVisible = this.isElementVisible(element);
 
         if (!hasGlassActive && !isVisible) {
@@ -51,7 +51,7 @@ class CriticalElementFallback {
     }
 
     isElementVisible(element) {
-        const style = window.getComputedStyle(element);
+        const style = globalThis.getComputedStyle(element);
         const rect = element.getBoundingClientRect();
 
         return (
@@ -103,7 +103,7 @@ class CriticalElementFallback {
 
         // Style navigation items
         const navItems = element.querySelectorAll("a, button, .nav-item");
-        navItems.forEach((item) => {
+        for (const item of navItems) {
             Object.assign(item.style, {
                 color: "rgba(255, 255, 255, 0.9)",
                 opacity: "1",
@@ -113,7 +113,7 @@ class CriticalElementFallback {
                 borderRadius: "6px",
                 transition: "all 0.2s ease",
             });
-        });
+        }
     }
 
     applyDrawerEmergencyStyle(element) {
@@ -129,10 +129,10 @@ class CriticalElementFallback {
     setupMutationObserver() {
         // Watch for new elements being added
         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
                     if (node.nodeType === Node.ELEMENT_NODE) {
-                        this.criticalSelectors.forEach((selector) => {
+                        for (const selector of this.criticalSelectors) {
                             if (node.matches?.(selector)) {
                                 setTimeout(() => {
                                     this.ensureElementVisibility(node);
@@ -141,15 +141,16 @@ class CriticalElementFallback {
 
                             // Check children too
                             const children = node.querySelectorAll?.(selector);
-                            children?.forEach((child) => {
-                                setTimeout(() => {
-                                    this.ensureElementVisibility(child);
-                                }, 100);
-                            });
-                        });
+                            if (children)
+                                for (const child of children) {
+                                    setTimeout(() => {
+                                        this.ensureElementVisibility(child);
+                                    }, 100);
+                                }
+                        }
                     }
-                });
-            });
+                }
+            }
         });
 
         observer.observe(document.body, {
@@ -160,8 +161,8 @@ class CriticalElementFallback {
 }
 
 // Initialize immediately
-if (typeof window !== "undefined") {
-    window.criticalElementFallback = new CriticalElementFallback();
+if (typeof globalThis !== "undefined") {
+    globalThis.criticalElementFallback = new CriticalElementFallback();
 }
 
 export default CriticalElementFallback;
