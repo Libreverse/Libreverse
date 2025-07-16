@@ -16,14 +16,21 @@
     = seo_config("name")
 %link{href: seo_config("url").to_s, rel: "canonical"}/
 %link{href: seo_config("homepage").to_s, rel: "home"}/
-%link{href: seo_config_with_assets("shortcut_icon").to_s, rel: "shortcut icon", type: "image/x-icon"}/
-%link{href: seo_config_with_assets("apple_touch_icon").to_s, rel: "apple-touch-icon", type: "image/x-icon"}/
-%link{color: seo_config("mask_icon_color").to_s, href: seo_config_with_assets("mask_icon").to_s, rel: "mask-icon", sizes: "any"}/
+- if (shortcut_icon_data = inline_favicon(seo_config_with_assets("shortcut_icon")))
+  %link{href: shortcut_icon_data, rel: "shortcut icon", type: "image/x-icon"}/
+- if (apple_touch_icon_data = inline_favicon(seo_config_with_assets("apple_touch_icon")))
+  %link{href: apple_touch_icon_data, rel: "apple-touch-icon", type: "image/x-icon"}/
+- if (mask_icon_data = inline_favicon(seo_config_with_assets("mask_icon")))
+  %link{color: seo_config("mask_icon_color").to_s, href: mask_icon_data, rel: "mask-icon", sizes: "any"}/
 / Additional favicon formats for better cross-browser support
-%link{href: "/favicon-16x16.png", rel: "icon", sizes: "16x16", type: "image/png"}/
-%link{href: "/favicon-32x32.png", rel: "icon", sizes: "32x32", type: "image/png"}/
-%link{href: "/favicon-96x96.png", rel: "icon", sizes: "96x96", type: "image/png"}/
-%link{href: "/apple-touch-icon.png", rel: "apple-touch-icon", sizes: "180x180"}/
+- if (favicon_16_data = inline_favicon("/favicon-16x16.png"))
+  %link{href: favicon_16_data, rel: "icon", sizes: "16x16", type: "image/png"}/
+- if (favicon_32_data = inline_favicon("/favicon-32x32.png"))
+  %link{href: favicon_32_data, rel: "icon", sizes: "32x32", type: "image/png"}/
+- if (favicon_96_data = inline_favicon("/favicon-96x96.png"))
+  %link{href: favicon_96_data, rel: "icon", sizes: "96x96", type: "image/png"}/
+- if (apple_touch_180_data = inline_favicon("/apple-touch-icon.png"))
+  %link{href: apple_touch_180_data, rel: "apple-touch-icon", sizes: "180x180"}/
 %link{href: "/site.webmanifest", rel: "manifest"}/
 %link{href: "/manifest.json", rel: "manifest"}/
 %meta{content: "/browserconfig.xml", name: "msapplication-config"}/

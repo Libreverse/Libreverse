@@ -188,7 +188,7 @@ module ApplicationHelper
     css = <<~CSS
       @font-face {
         font-family: '#{font_family}';
-        src: url(\"#{data_uri}\") format(\"#{ext.delete('.')}\");
+        src: url("#{data_uri}") format("#{ext.delete('.')}");
         font-weight: normal;
         font-style: normal;
       }
@@ -435,4 +435,92 @@ module ApplicationHelper
     Rails.logger.info "Final enriched nav items: #{enriched.to_json}"
     enriched
   end
+
+  # --- Favicon Inlining Helpers ---
+
+  # Inlines a favicon as a data URI
+  def inline_favicon(path)
+    return nil if path.blank?
+
+    # Get the actual file path
+    file_path = favicon_file_path(path)
+    return nil unless file_path && File.exist?(file_path)
+
+    # Read the file content
+    content = File.read(file_path)
+
+    # Determine MIME type based on file extension
+    mime_type = favicon_mime_type(file_path)
+
+    # Encode as base64 data URI
+    "data:#{mime_type};base64,#{Base64.strict_encode64(content)}"
+  rescue StandardError => e
+    Rails.logger.warn "Failed to inline favicon #{path}: #{e.message}"
+    nil
+  end
+
+  # Resolves favicon path to actual file system path
+  def favicon_file_path(path)
+    return unless path.is_a?(String)
+
+      if path.start_with?("@")
+        # For @ prefixed assets, look in images directory
+        asset_path = "images/#{path.sub('@', '')}"
+        vite_asset_path_to_file(asset_path)
+      elsif path.start_with?("~/")
+        # For ~/ prefixed assets, use vite asset path
+        vite_asset_path_to_file(path)
+      elsif path.start_with?("/")
+        # For absolute paths, check public directory
+        Rails.root.join("public#{path}")
+      else
+        # For relative paths, assume public directory
+        Rails.root.join("public", path)
+      end
+  end
+
+  # Converts vite asset path to file system path
+  def vite_asset_path_to_file(asset_path)
+    if Rails.env.development?
+      # In development, assets are in app/images
+      if asset_path.start_with?("images/")
+        Rails.root.join("app", asset_path)
+      else
+        Rails.root.join("app", "images", asset_path)
+      end
+    else
+      # In production, use vite manifest to find compiled assets
+      begin
+        manifest_path = Rails.root.join("public/vite/manifest.json")
+        if File.exist?(manifest_path)
+          manifest = JSON.parse(File.read(manifest_path))
+          entry = manifest[asset_path]
+          Rails.root.join("public", "vite", entry["file"]) if entry && entry["file"]
+        end
+      rescue StandardError => e
+        Rails.logger.warn "Failed to resolve vite asset path #{asset_path}: #{e.message}"
+        nil
+      end
+    end
+  end
+
+  # Determines MIME type for favicon files
+  def favicon_mime_type(file_path)
+    case File.extname(file_path).downcase
+    when ".ico"
+      "image/x-icon"
+    when ".png"
+      "image/png"
+    when ".svg"
+      "image/svg+xml"
+    when ".jpg", ".jpeg"
+      "image/jpeg"
+    when ".gif"
+      "image/gif"
+    else
+      "application/octet-stream"
+    end
+  end
+
+  # --- End Favicon Inlining Helpers ---
 end
