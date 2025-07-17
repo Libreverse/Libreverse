@@ -6,6 +6,7 @@ import html2canvas from "html2canvas";
 import debounced from "debounced";
 import "./libs/foundation.js";
 import "./libs/websocket_p2p_frame.coffee";
+import "what-input";
 
 // Initialize debounced library with custom options
 debounced.initialize(debounced.defaultEventNames, {

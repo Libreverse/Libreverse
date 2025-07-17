@@ -29,6 +29,56 @@
 
     // Always transparent - let glass-container handle fallback
     background: transparent;
+
+    // Glass container (pure background layer - same pattern as sidebar)
+    .glass-container {
+        // Position as background layer only
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; // Behind all content
+        pointer-events: none; // Never intercept interactions
+        display: none; // Hidden by default
+
+        // FORCE correct border radius - top rounded, bottom flat (higher specificity)
+        border-radius: 20px 20px 0 0 !important;
+        overflow: hidden;
+
+        canvas {
+            // Canvas fills the container exactly
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            // FORCE same border radius on canvas - top rounded, bottom flat (higher specificity)
+            border-radius: 20px 20px 0 0 !important;
+            pointer-events: none;
+            z-index: -1;
+        }
+    }
+
+    // Show glass container when glass is active (pure background only)
+    &[data-glass-active="true"] .glass-container {
+        display: block; // Simple block display
+        // Everything else uses inheritance and defaults
+
+        // Extra specificity for drawer glass containers
+        border-radius: 20px 20px 0 0 !important;
+
+        canvas {
+            border-radius: 20px 20px 0 0 !important;
+        }
+    }
+
+    // Even more specific targeting for the glass-enabled drawer
+    &.glass-enabled .glass-container canvas,
+    &.glass-active .glass-container canvas,
+    &.glass-enhanced .glass-container canvas {
+        border-radius: 20px 20px 0 0 !important;
+    }
 }
 
 /* Expanded drawer state */
