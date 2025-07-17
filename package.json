@@ -8,7 +8,7 @@
         "@rails/activestorage": "^8.0.200",
         "@rails/request.js": "^0.0.12",
         "@sxwjs/sxwjs": "^4.0.0",
-        "@vitejs/plugin-legacy": "^7.0.0",
+        "@vitejs/plugin-legacy": "^7.0.1",
         "cable_ready": "5.0.6",
         "debounced": "^1.0.2",
         "foundation-emails": "^2.4.0",
@@ -23,7 +23,8 @@
         "stimulus-vite-helpers": "^3.1.0",
         "stimulus_reflex": "3.5.3",
         "turbo_power": "^0.7.1",
-        "vite-plugin-legacy-swc": "^1.2.3"
+        "vite-plugin-legacy-swc": "^1.2.3",
+        "what-input": "^5.2.12"
     },
     "devDependencies": {
         "@coffeelint/cli": "^5.2.11",

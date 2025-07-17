@@ -92,6 +92,31 @@ class Container {
         });
     }
 
+    // Helper for drawer with top-only corner rounding (no bottom corners rounded)
+    static createDrawerContainerTopRounded(options = {}) {
+        return Container.createContainer({
+            ...options,
+            parallaxSpeed: 1,
+            isParallaxElement: false,
+            type: "rounded",
+            syncWithParallax:
+                options.syncWithParallax === undefined
+                    ? true
+                    : options.syncWithParallax,
+            backgroundParallaxSpeed:
+                options.backgroundParallaxSpeed === undefined
+                    ? -2
+                    : options.backgroundParallaxSpeed,
+            // Only round top corners (for drawers attached to bottom edge)
+            roundedCorners: {
+                topLeft: true,
+                topRight: true,
+                bottomLeft: false,
+                bottomRight: false,
+            },
+        });
+    }
+
     static createParallaxContainer(parallaxSpeed = 0.5, options = {}) {
         return Container.createContainer({
             ...options,

@@ -840,9 +840,9 @@ export async function renderLiquidGlassDrawer(
             ...containerOptions,
         });
 
-        const glassContainer = await Container.createSidebarContainer({
+        const glassContainer = await Container.createDrawerContainerTopRounded({
             type: "rounded",
-            borderRadius: containerOptions.borderRadius || 20,
+            borderRadius: 0, // Let CSS handle border-radius like sidebar does
             tintOpacity: containerOptions.tintOpacity || 0.1,
             ...containerOptions,
         });
@@ -923,12 +923,8 @@ export async function renderLiquidGlassDrawer(
         glassContainer.element.style.zIndex = "0"; // Behind content
         glassContainer.element.style.pointerEvents = "none"; // Don't interfere with drawer interactions
 
-        // Apply drawer-specific border radius directly to the container
-        const borderRadius = getBorderRadiusForCorners(
-            containerOptions.borderRadius || 20,
-            renderOptions.cornerRounding || "top",
-        );
-        glassContainer.element.style.borderRadius = borderRadius;
+        // DON'T apply border-radius here - let CSS handle it like sidebar does
+        // The .glass-container CSS rule will force the correct top-only border-radius
 
         // Create a single invisible button to ensure WebGL canvas coverage
         // Instead of multiple buttons which create too many WebGL contexts
@@ -994,6 +990,9 @@ export async function renderLiquidGlassDrawer(
                 glassContainer.element,
                 drawerElement.firstChild,
             );
+
+            // Set data-glass-active attribute like sidebar does
+            drawerElement.dataset.glassActive = "true";
 
             // WebGL Debug - Check state immediately after DOM insertion
             console.log("WebGL Debug - Container inserted into DOM:", {
@@ -1070,6 +1069,9 @@ export async function renderLiquidGlassDrawer(
         } else if (drawerElement) {
             drawerElement.append(glassContainer.element);
 
+            // Set data-glass-active attribute like sidebar does
+            drawerElement.dataset.glassActive = "true";
+
             // WebGL Debug - Check state immediately after DOM insertion (non-preserve path)
             console.log(
                 "WebGL Debug - Container appended to DOM (non-preserve):",
@@ -1125,17 +1127,23 @@ export async function renderLiquidGlassDrawer(
                     canvasHeight: canvas.height,
                     clientWidth: canvas.clientWidth,
                     clientHeight: canvas.clientHeight,
-                    borderRadius: borderRadius,
                 });
 
-                // Ensure canvas matches drawer dimensions and corner rounding
-                canvas.style.borderRadius = borderRadius;
+                // Ensure canvas matches drawer dimensions and force border-radius
                 canvas.style.width = "100%";
                 canvas.style.height = "100%";
                 canvas.style.position = "absolute";
                 canvas.style.top = "0";
                 canvas.style.left = "0";
                 canvas.style.zIndex = "0"; // Behind content
+
+                // Force drawer-specific border radius with maximum specificity
+                canvas.style.borderRadius = "20px 20px 0 0";
+                canvas.style.setProperty(
+                    "border-radius",
+                    "20px 20px 0 0",
+                    "important",
+                );
 
                 // Get WebGL context through optimized manager
                 const context = optimizedWebGLContextManager.getContext(
@@ -1428,32 +1436,6 @@ export async function renderLiquidGlassDrawer(
             element.innerHTML = renderOptions.originalContent || originalHTML;
         }
         throw error;
-    }
-}
-
-/**
- * Get CSS border-radius string for drawer corners
- */
-function getBorderRadiusForCorners(radius, cornerRounding = "top") {
-    switch (cornerRounding) {
-        case "top": {
-            return `${radius}px ${radius}px 0 0`;
-        }
-        case "bottom": {
-            return `0 0 ${radius}px ${radius}px`;
-        }
-        case "left": {
-            return `${radius}px 0 0 ${radius}px`;
-        }
-        case "right": {
-            return `0 ${radius}px ${radius}px 0`;
-        }
-        case "all": {
-            return `${radius}px`;
-        }
-        default: {
-            return `${radius}px ${radius}px 0 0`;
-        }
     }
 }
 

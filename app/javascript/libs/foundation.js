@@ -12,11 +12,25 @@ globalThis.jQuery = $;
 document.addEventListener("DOMContentLoaded", function () {
     Foundation.addToJquery($);
     $(document).foundation();
+
+    // Explicitly initialize off-canvas if it exists
+    const offCanvas = $("#sidebarOffCanvas");
+    if (offCanvas.length > 0) {
+        console.log("Initializing off-canvas:", offCanvas);
+        new Foundation.OffCanvas(offCanvas);
+    }
 });
 
 // Re-initialize Foundation on Turbo navigation
 document.addEventListener("turbo:load", function () {
     $(document).foundation();
+
+    // Explicitly initialize off-canvas if it exists
+    const offCanvas = $("#sidebarOffCanvas");
+    if (offCanvas.length > 0) {
+        console.log("Re-initializing off-canvas:", offCanvas);
+        new Foundation.OffCanvas(offCanvas);
+    }
 });
 
 // Foundation utilities

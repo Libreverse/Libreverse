@@ -1,7 +1,7 @@
 # Todo List
 
-add coffeescript prettier and eslint
 add decentranland and hyperfy integration
+add advanced anti-bot
 2: Add telegram search bot
 3: Add x.com search bot
 4: Open gRPC port on libreverse.geor.me

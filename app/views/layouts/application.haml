@@ -1,6 +1,6 @@
 !!!
 - rtl_locales = %w[ar]
-%html{ dir: (rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr'), lang: I18n.locale.to_s }
+%html.no-js{dir: (rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr'), lang: I18n.locale.to_s}
   %head
     - if Rails.env.development?
       = vite_stylesheet_tag "~/stylesheets/application.scss"
@@ -19,8 +19,43 @@
         .noscript-message__content
           %h1.noscript-message__heading= t('layouts.application.noscript_heading')
           %p.noscript-message__text= t('layouts.application.noscript_message')
-    = render "layouts/flash_messages"
-    #toast-container
-    %main.content-wrapper
-      = yield
-    = render partial: "layouts/drawer" if page_with_drawer?
+
+    .off-canvas-wrapper
+      .off-canvas-wrapper-inner{"data-off-canvas-wrapper" => ""}
+        -# Off-canvas menu for additional options
+        .off-canvas.position-left{"id" => "sidebar-off-canvas",
+                                  "data-off-canvas" => "",
+                                  "data-transition" => "push"}
+
+          -# Close button
+          %button.close-button{"aria-label" => "Close menu",
+                               "type" => "button",
+                               "data-close" => ""}
+            %span{"aria-hidden" => "true"} &times;
+
+          -# Menu
+          %ul.vertical.menu
+            %li
+              = link_to "Privacy Policy", privacy_policy_path
+            %li
+              = link_to "Cookie Policy", cookie_policy_path
+            %li
+              = link_to "Terms of Service", terms_path
+            - if rodauth.logged_in?
+              %li
+                = link_to "Account Export", "/account-export"
+              %li
+                = link_to "Delete Account", "/close-account"
+            %li
+              = link_to "Help & Support", "/help"
+            %li
+              = link_to "About Libreverse", "/about"
+            %li
+              = link_to "GitHub Repository", "https://github.com/Libreverse/Libreverse", target: "_blank", rel: "noopener"
+
+        .off-canvas-content{"data-off-canvas-content" => ""}
+          = render "layouts/flash_messages"
+          #toast-container
+          %main.content-wrapper
+            = yield
+          = render partial: "layouts/drawer" if page_with_drawer?

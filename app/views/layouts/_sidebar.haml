@@ -77,3 +77,9 @@
                 aria: { label: (item_is_current ? "On #{item[:label]}" : (item[:label] == 'sign-up page' ? 'Sign up' : 'Sign in')) },
                 data: { "sidebar-item": item[:icon] } do
         = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
+
+  -# More menu button at the bottom
+  %button.sidebar-link.sidebar-more-button{"aria-label" => "More options",
+                                          "data-toggle" => "sidebarOffCanvas",
+                                          "data-sidebar-item" => "more"}
+    = sidebar_icon(svg_icon_data_url('more-vertical'))
