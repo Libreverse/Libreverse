@@ -1,6 +1,9 @@
 /**
  * Enhanced Glass Fallback Monitor
  * Monitors WebGL health and proactively activates fallback when needed
+ *
+ * TEMPORARY CHANGE: Low FPS fallback is currently disabled via disableFpsMonitoring flag.
+ * To re-enable: Set disableFpsMonitoring = false in constructor or call enableGlassFpsMonitoring() in console.
  */
 
 class GlassFallbackMonitor {
@@ -10,6 +13,9 @@ class GlassFallbackMonitor {
         this.maxContextLoss = 3;
         this.monitoringInterval = undefined;
         this.observers = new Set();
+
+        // Temporary flag to disable low FPS fallback
+        this.disableFpsMonitoring = true; // Set to true to disable FPS fallback
 
         this.init();
     }
@@ -62,6 +68,12 @@ class GlassFallbackMonitor {
     }
 
     setupPerformanceMonitoring() {
+        // Skip performance monitoring if disabled
+        if (this.disableFpsMonitoring) {
+            console.log("[GlassFallbackMonitor] FPS monitoring disabled");
+            return;
+        }
+
         // Monitor frame rate and performance
         let frameCount = 0;
         let lastTime = performance.now();
@@ -236,13 +248,41 @@ class GlassFallbackMonitor {
         this.pauseMonitoring();
         this.observers.clear();
     }
+
+    // Methods to control FPS monitoring
+    enableFpsMonitoring() {
+        this.disableFpsMonitoring = false;
+        console.log("[GlassFallbackMonitor] FPS monitoring enabled");
+        // Restart performance monitoring if needed
+        this.setupPerformanceMonitoring();
+    }
+
+    disableFpsMonitoringTemporarily() {
+        this.disableFpsMonitoring = true;
+        console.log("[GlassFallbackMonitor] FPS monitoring disabled");
+    }
 }
 
 // Initialize the monitor when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
     if (!globalThis.glassFallbackMonitor) {
         globalThis.glassFallbackMonitor = new GlassFallbackMonitor();
-        console.log("[GlassFallbackMonitor] Initialized");
+        console.log(
+            "[GlassFallbackMonitor] Initialized (FPS monitoring disabled)",
+        );
+
+        // Add global helper functions for easy console control
+        globalThis.enableGlassFpsMonitoring = () => {
+            globalThis.glassFallbackMonitor.enableFpsMonitoring();
+        };
+
+        globalThis.disableGlassFpsMonitoring = () => {
+            globalThis.glassFallbackMonitor.disableFpsMonitoringTemporarily();
+        };
+
+        console.log(
+            "[GlassFallbackMonitor] Console helpers available: enableGlassFpsMonitoring(), disableGlassFpsMonitoring()",
+        );
     }
 });
 
