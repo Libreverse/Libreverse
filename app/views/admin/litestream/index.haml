@@ -1,0 +1,77 @@
+- content_for :title, "Litestream Database Replication"
+
+%div{"data-controller" => "admin-litestream"}
+  %h1 Litestream Database Replication
+
+  %h2 Replication Status
+  %div
+    %div
+      %div
+        = @litestream_configured ? "✓" : "✗"
+      %div
+        %h3 Configuration
+        %p= @litestream_configured ? "Properly configured" : "Missing environment variables"
+
+    %div
+      %div
+        = @litestream_running ? "●" : "○"
+      %div
+        %h3 Process Status
+        %p= @litestream_running ? "Running" : "Not running"
+
+    %div
+      %div 📊
+      %div
+        %h3 Databases
+        %p #{@databases.length} configured
+
+  - if @missing_env_vars.any?
+    %div
+      %h3 Missing Environment Variables
+      %p The following required environment variables are not set:
+      %ul
+        - @missing_env_vars.each do |var|
+          %li= var
+      %p Litestream replication will not start without these variables.
+
+  %div
+    %h2 Configured Databases
+    - if @databases.any?
+      %div
+        - @databases.each do |database|
+          %div
+            %div
+              %div
+                %h3= File.basename(database["path"])
+                %p= database["path"]
+              %div
+                %span= database["replicas"]
+
+            %div
+              %button{"data-action" => "click->admin-litestream#showGenerations", "data-database" => database["path"]}
+                View Generations
+              %button{"data-action" => "click->admin-litestream#showSnapshots", "data-database" => database["path"]}
+                View Snapshots
+              %button{"data-action" => "click->admin-litestream#verifyDatabase", "data-database" => database["path"]}
+                Verify Backup
+    - else
+      %div
+        %p No databases configured for replication.
+        %p Check your Litestream configuration file.
+
+  %div
+    %h2 Actions
+    %div
+      = link_to "View Full Dashboard", "/admin/litestream/dashboard", target: "_blank"
+      %button{"data-action" => "click->admin-litestream#refreshStatus"}
+        Refresh Status
+
+#details-modal
+  %div
+    %div
+      #modal-title Modal Title
+      %button{"data-action" => "click->admin-litestream#closeModal"} ✕
+    %div
+      #modal-content Loading...
+    %div
+      %button{"data-action" => "click->admin-litestream#closeModal"} Close
