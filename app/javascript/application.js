@@ -8,6 +8,60 @@ import "./libs/foundation.js";
 import "./libs/websocket_p2p_frame.coffee";
 import "what-input";
 
+// GDPR-Compliant Error Tracking Setup
+import * as Sentry from "@sentry/browser";
+
+// Initialize Sentry with GDPR-compliant configuration
+Sentry.init({
+    // GlitchTip DSN (public, safe to hardcode)
+    dsn: "https://dff68bb3ecd94f9faa29a454704040e8@app.glitchtip.com/12078",
+
+    environment: import.meta.env.MODE || "development",
+
+    // Only enable in production
+    enabled: import.meta.env.MODE === "production",
+
+    // GDPR Compliance: Remove all personal data before sending
+    beforeSend(event) {
+        // Remove user data completely
+        delete event.user;
+
+        // Remove request data that may contain personal information
+        if (event.request) {
+            delete event.request.headers;
+            delete event.request.cookies;
+            delete event.request.data;
+        }
+
+        // Anonymize stack traces - keep only filename, remove full paths
+        if (event.exception?.values) {
+            for (const exception of event.exception.values) {
+                if (exception.stacktrace?.frames) {
+                    for (const frame of exception.stacktrace.frames) {
+                        // Keep only filename, remove server paths
+                        if (frame.filename) {
+                            frame.filename = frame.filename.split("/").pop();
+                        }
+                        // Remove local variables that might contain personal data
+                        delete frame.vars;
+                    }
+                }
+            }
+        }
+
+        return event;
+    },
+
+    // Disable performance monitoring to reduce data collection
+    tracesSampleRate: 0,
+
+    // Minimal breadcrumbs collection
+    maxBreadcrumbs: 5,
+
+    // Disable console capture and other automatic data collection
+    captureConsole: false,
+});
+
 // Add Foundation debugging in development
 if (import.meta.env.MODE === "development") {
     // Simple Foundation status checker

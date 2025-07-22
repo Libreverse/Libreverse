@@ -287,6 +287,10 @@ Style/FrozenStringLiteralComment:
     Enabled: true
     Description: "Enforces frozen string literal comments for performance."
 
+Style/GlobalVars:
+    Enabled: false
+    Description: "Disables global variable checks to allow their use."
+
 Style/HashSyntax:
     Enabled: true
     EnforcedShorthandSyntax: either

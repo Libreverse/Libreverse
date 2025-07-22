@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Runs Solid Queue dispatcher, worker, and scheduler in-process to avoid SQLite contention.
-# See: https://github.com/basecamp/solid_queue/issues/xxx for rationale.
+# Spawns Solid Queue as a separate process to avoid SQLite contention.
+require "English"
 Rails.logger.info "Solid Queue initializer loading (Rails.env: #{Rails.env})"
 
 unless Rails.env.test?
@@ -10,104 +10,92 @@ unless Rails.env.test?
     Rails.logger.info "Solid Queue after_initialize callback triggered"
     Rails.logger.info "PROGRAM_NAME: #{$PROGRAM_NAME}, Rails::Console defined?: #{defined?(Rails::Console)}"
 
-    # Guard clauses – only start the embedded Solid Queue runners when
-    # 1. We are running inside a long-lived web/server process (eg. Puma),
-    # 2. The database is reachable **and** the Solid Queue tables exist.
+    # Guard clauses – only start Solid Queue when running the web server
+    # and ensure we only start once (not in every forked worker)
     Rails.logger.info "Solid Queue guard clause check: Console? #{defined?(Rails::Console)}, PROGRAM_NAME: #{File.basename($PROGRAM_NAME)}"
     next if Rails.const_defined?(:Console) ||
             %w[rake runner].include?(File.basename($PROGRAM_NAME))
 
-    Rails.logger.info "Solid Queue guard clauses passed, starting bootstrap..."
+    # Additional check for worker processes - skip if we're likely in a forked worker
+    # Most servers set environment variables or have other indicators for worker processes
+    if Process.pid != $PROCESS_ID
+      Rails.logger.info "Skipping Solid Queue startup - appears to be in worker process"
+      next
+    end
 
-      require "concurrent"
+    Rails.logger.info "Solid Queue guard clauses passed, spawning separate process..."
 
-      # Thread-safe flag to ensure bootstrapping runs only once
-      @bootstrap_started ||= Concurrent::AtomicBoolean.new(false)
+    require "concurrent"
 
-      # Atomically check and set - exit early if bootstrap was already started
-      next if @bootstrap_started.make_true
+    # Use a global variable for the flag to ensure it's unique across the entire process
+    # Also check if another process already started Solid Queue by checking for running processes
+    $solid_queue_process_started ||= Concurrent::AtomicBoolean.new(false)
 
-      # Start immediately in a background thread
-      dispatcher = worker = scheduler = nil
-      dispatcher_thread = worker_thread = scheduler_thread = nil
+    # Atomically check and set - exit early if process was already started
+    if $solid_queue_process_started.true?
+      Rails.logger.info "Solid Queue already started in this process, skipping"
+      next
+    end
 
-      bootstrap_thread = Thread.new do
-        Thread.current.name = "solid_queue_bootstrap"
-
-        begin
-          Rails.logger.info "Solid Queue bootstrap thread started"
-          sleep 2 # Give Rails time to fully initialize
-          Rails.logger.info "Solid Queue starting components..."
-
-          # Dispatcher
-          dispatcher = SolidQueue::Dispatcher.new(
-            polling_interval: 5,
-            batch_size: 500,
-            concurrency_maintenance_interval: 600
-          )
-        dispatcher_thread = Thread.new do
-          Thread.current.name = "solid_queue_dispatcher"
-          Rails.logger.info "Starting Solid Queue dispatcher in-process"
-          begin
-            dispatcher.start
-          rescue StandardError => e
-            Rails.logger.error "Solid Queue Dispatcher Error: #{e.message}"
-            Rails.logger.error e.backtrace.join("\n")
-            sleep 5
-            retry
-          end
-        end
-
-        # Worker
-        worker = SolidQueue::Worker.new(
-          queues: [ "*" ],
-          threads: 1, # Single thread to avoid concurrency issues
-          polling_interval: 2
-        )
-        worker_thread = Thread.new do
-          Thread.current.name = "solid_queue_worker"
-          Rails.logger.info "Starting Solid Queue worker in-process"
-          begin
-            worker.start
-          rescue StandardError => e
-            Rails.logger.error "Solid Queue Worker Error: #{e.message}"
-            Rails.logger.error e.backtrace.join("\n")
-            sleep 5
-            retry
-          end
-        end
-
-        # Scheduler
-        scheduler = SolidQueue::Scheduler.new(
-          polling_interval: 10,
-          recurring_tasks: [] # or your recurring tasks array
-        )
-        scheduler_thread = Thread.new do
-          Thread.current.name = "solid_queue_scheduler"
-          Rails.logger.info "Starting Solid Queue scheduler in-process"
-          begin
-            scheduler.start
-          rescue StandardError => e
-            Rails.logger.error "Solid Queue Scheduler Error: #{e.message}"
-            Rails.logger.error e.backtrace.join("\n")
-            sleep 5
-            retry
-          end
-        end
-        rescue StandardError => e
-          Rails.logger.error "Solid Queue Bootstrap Error: #{e.message}"
-          Rails.logger.error e.backtrace.join("\n")
-        end
+    # Check if Solid Queue is already running by looking for existing processes
+    begin
+      existing_pids = `pgrep -f "solid_queue:start"`.strip.split("\n").map(&:to_i)
+      if existing_pids.any?
+        Rails.logger.info "Solid Queue already running (PIDs: #{existing_pids.join(', ')}), skipping startup"
+        next
       end
+    rescue StandardError => e
+      Rails.logger.warn "Could not check for existing Solid Queue processes: #{e.message}"
+    end
 
+    $solid_queue_process_started.make_true
+
+    # Spawn Solid Queue as a separate process
+    begin
+      solid_queue_pid = Process.spawn(
+        { "RAILS_ENV" => Rails.env.to_s },
+        "bundle", "exec", "rake", "solid_queue:start",
+        chdir: Rails.root.to_s,
+        out: :err # Redirect stdout to stderr so logs appear in the same stream
+      )
+
+      Rails.logger.info "Solid Queue process started with PID: #{solid_queue_pid}"
+
+      # Store PID for cleanup
+      $solid_queue_pid = solid_queue_pid
+
+      # Set up cleanup on exit
       at_exit do
-        Rails.logger.info "Shutting down Solid Queue components..."
-        dispatcher&.stop
-        worker&.stop
-        scheduler&.stop
-        [ bootstrap_thread, dispatcher_thread, worker_thread, scheduler_thread ].each do |thread|
-          thread&.join(5)
+        if $solid_queue_pid
+          Rails.logger.info "Shutting down Solid Queue process (PID: #{$solid_queue_pid})..."
+          begin
+            Process.kill("TERM", $solid_queue_pid)
+            # Give it time to shutdown gracefully
+            Timeout.timeout(10) do
+              Process.wait($solid_queue_pid)
+            end
+            Rails.logger.info "Solid Queue process shutdown complete"
+          rescue Errno::ESRCH
+            # Process already dead
+            Rails.logger.info "Solid Queue process already terminated"
+          rescue Timeout::Error
+            Rails.logger.warn "Solid Queue process didn't shutdown gracefully, forcing kill"
+            begin
+              Process.kill("KILL", $solid_queue_pid)
+            rescue StandardError
+              nil
+            end
+          rescue StandardError => e
+            Rails.logger.error "Error shutting down Solid Queue process: #{e.message}"
+          end
         end
       end
+
+      # Detach the process so we don't wait for it
+      Process.detach(solid_queue_pid)
+    rescue StandardError => e
+      Rails.logger.error "Failed to start Solid Queue process: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+    end
   end
 end

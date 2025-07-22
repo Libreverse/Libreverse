@@ -383,6 +383,39 @@ module ApplicationHelper
 
   # --- End User Preference Helpers ---
 
+  # --- Umami Analytics Inlining Helpers ---
+
+  # Inlines the Umami analytics script directly into the document
+  # This maintains consistency with the site's existing inline mechanisms
+  # and provides better privacy by avoiding external script requests
+  def inline_umami_script
+    return unless Rails.env.production?
+
+    begin
+      # Fetch the Umami script from cache or internal proxy
+      script_content = fetch_umami_script_content
+      return if script_content.blank?
+
+      # Return the script wrapped in a script tag with proper attributes
+      content_tag(:script,
+                  # rubocop:disable Rails/OutputSafety
+                  script_content.html_safe,
+                  # rubocop:enable Rails/OutputSafety
+                  {
+                    type: "text/javascript",
+                    'data-website-id': "f46b6f42-9743-4ef0-9e1f-b16833b02897",
+                    async: true,
+                    defer: true
+                  })
+    rescue StandardError => e
+      # Log error but don't break page rendering
+      Rails.logger.error "Failed to inline Umami script: #{e.message}"
+      nil
+    end
+  end
+
+  # --- End Umami Analytics Inlining Helpers ---
+
   private
 
   # Renamed from inline_vite_asset_content to get_vite_asset_content for clarity
@@ -523,4 +556,39 @@ module ApplicationHelper
   end
 
   # --- End Favicon Inlining Helpers ---
+
+  def fetch_umami_script_content
+    # Use Rails cache to avoid fetching the script on every request
+    Rails.cache.fetch("umami_script_content", expires_in: 24.hours) do
+      fetch_umami_script_from_source
+    end
+  end
+
+  def fetch_umami_script_from_source
+    # Use the internal proxy endpoint instead of external URL
+    # This maintains consistency with the site's proxy architecture
+    uri = URI("#{request.base_url}/umami/script.js")
+
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+      http.read_timeout = 10 # 10 second timeout
+      http.open_timeout = 5  # 5 second connection timeout
+
+      request_obj = Net::HTTP::Get.new(uri)
+      request_obj["User-Agent"] = "LibreverseInliner/1.0"
+
+      response = http.request(request_obj)
+
+      if response.code.to_i == 200
+        response.body
+      else
+        Rails.logger.error "Failed to fetch Umami script: HTTP #{response.code}"
+        nil
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.error "Error fetching Umami script: #{e.message}"
+    nil
+  end
+
+  # --- End Umami Analytics Inlining Helpers ---
 end

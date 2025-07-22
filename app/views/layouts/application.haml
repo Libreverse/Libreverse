@@ -13,6 +13,14 @@
     = render "layouts/meta_tags"
     = csrf_meta_tags
     = vite_client_tag
+
+    -# DNS optimization for analytics (production only)
+    - if Rails.env.production?
+      %link{rel: "dns-prefetch", href: "//cloud.umami.is"}
+      %link{rel: "preconnect", href: "https://cloud.umami.is"}
+
+      -# Privacy-focused Umami analytics (inlined for consistency with site architecture)
+      = inline_umami_script
   %body
     %noscript
       .noscript-message

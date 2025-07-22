@@ -556,6 +556,12 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sentry-rails (5.26.0)
+      railties (>= 5.0)
+      sentry-ruby (~> 5.26.0)
+    sentry-ruby (5.26.0)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
     sequel (5.94.0)
       bigdecimal
     sequel-activerecord_connection (2.0.0)
@@ -725,6 +731,8 @@ DEPENDENCIES
   rubocop-rails
   rubyzip
   selenium-webdriver
+  sentry-rails
+  sentry-ruby
   sequel-activerecord_connection
   sitemap_generator
   solid_cable
