@@ -7,15 +7,27 @@
   rodauth_obj = local_assigns.fetch(:rodauth, rodauth)
   Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, sidebar_hovered=#{sidebar_hovered}, expanded=#{expanded}"
 
-  # Navigation items setup
-  public_links = [{ path: '/', icon: 'home', label: 'homepage' }, { path: '/search', icon: 'search', label: 'search page' }, { path: '/settings', icon: 'settings', label: 'settings page' }]
+  # Navigation items setup with popover content
+  public_links = [
+    { path: '/', icon: 'home', label: 'homepage', popover: 'Navigate to the homepage and browse featured experiences' },
+    { path: '/search', icon: 'search', label: 'search page', popover: 'Search for experiences by name, tag, or creator' },
+    { path: '/settings', icon: 'settings', label: 'settings page', popover: 'Configure your account preferences and privacy settings' }
+  ]
   nav_items = public_links.dup
 
   if rodauth_obj.logged_in? && !rodauth_obj.guest_logged_in?
-    nav_items.concat([{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }])
-    nav_items << { path: rodauth_obj.logout_path, icon: 'logout', label: 'Sign out', method: :post }
+    auth_items = [
+      { path: dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' },
+      { path: experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }
+    ]
+    nav_items.concat(auth_items)
+    nav_items << { path: rodauth_obj.logout_path, icon: 'logout', label: 'Sign out', method: :post, popover: 'Sign out of your current session' }
   else
-    nav_items.concat([{ path: rodauth_obj.login_path, icon: 'login', label: 'login page' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page' }])
+    guest_items = [
+      { path: rodauth_obj.login_path, icon: 'login', label: 'login page', popover: 'Sign in to your account to access full features' },
+      { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page', popover: 'Create a new account to start building experiences' }
+    ]
+    nav_items.concat(guest_items)
   end
 
 %nav{id: "#{sidebar_id}-sidebar",
@@ -24,7 +36,7 @@
      aria: {label: "Navigation Sidebar"},
      style: "--glass-border-radius: #{local_assigns[:border_radius] || 12}px",
      data: {
-       controller: "sidebar",
+       controller: "sidebar sidebar-popover",
        # Stimulus values for child controllers (preferred)
        "expanded-value": (expanded == 't' ? 'true' : 'false'),
        "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
@@ -37,49 +49,56 @@
        "component-type-value": "sidebar",
        "border-radius-value": local_assigns[:border_radius] || 12,
        "tint-opacity-value": local_assigns[:tint_opacity] || 0.12,
-       "corner-rounding-value": "right"
+       "corner-rounding-value": "right",
+       # Popover configuration
+       "sidebar-popover-delay-value": 800,
+       "sidebar-popover-position-value": "right",
+       "sidebar-popover-alignment-value": "center"
      }}
 
   - current_path = request.path
-
   -# Public links – always visible
   - public_links.each do |item|
     - item_is_current = (current_path == item[:path])
     = link_to item[:path],
               class: "sidebar-link#{' sidebar-current' if item_is_current}",
               aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
-              data: { "sidebar-item": item[:icon] } do
+              data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover] } do
       = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
 
   -# Authentication-specific links
   - if rodauth_obj.logged_in? && !rodauth_obj.guest_logged_in?
-    - auth_links = [{ path: dashboard_path, icon: 'dashboard', label: 'dashboard' }, { path: experiences_path, icon: 'experiences', label: 'experiences page' }]
+    - auth_links = [{ path: dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' }, { path: experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }]
     - auth_links.each do |item|
       - item_is_current = (current_path == item[:path])
       = link_to item[:path],
                 class: "sidebar-link#{' sidebar-current' if item_is_current}",
                 aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
-                data: { "sidebar-item": item[:icon] } do
+                data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover] } do
         = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
 
     = button_to rodauth_obj.logout_path,
                 method: :post,
                 class: 'sidebar-link sidebar-logout-button',
                 aria: { label: 'Sign out' },
-                data: { "sidebar-item": "logout" } do
+                data: { "sidebar-item": "logout", "sidebar-popover-target": "item", "popover-content": "Sign out of your current session" } do
       = sidebar_icon(svg_icon_data_url('logout'))
   - else
-    - guest_links = [{ path: rodauth_obj.login_path, icon: 'login', label: 'login page' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page' }]
+    - guest_links = [{ path: rodauth_obj.login_path, icon: 'login', label: 'login page', popover: 'Sign in to your account to access full features' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page', popover: 'Create a new account to start building experiences' }]
     - guest_links.each do |item|
       - item_is_current = (current_path == item[:path])
       = link_to item[:path],
                 class: "sidebar-link#{' sidebar-current' if item_is_current}",
                 aria: { label: (item_is_current ? "On #{item[:label]}" : (item[:label] == 'sign-up page' ? 'Sign up' : 'Sign in')) },
-                data: { "sidebar-item": item[:icon] } do
+                data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover] } do
         = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
 
   -# More menu button at the bottom
   %button.sidebar-link.sidebar-more-button{"aria-label" => "More options",
-                                          "data-toggle" => "sidebarOffCanvas",
-                                          "data-sidebar-item" => "more"}
+                                          "data-controller" => "off-canvas",
+                                          "data-off-canvas-target-id-value" => "sidebar-off-canvas",
+                                          "data-action" => "click->off-canvas#toggle",
+                                          "data-sidebar-item" => "more",
+                                          "data-sidebar-popover-target" => "item",
+                                          "data-popover-content" => "Access additional options like privacy policy and about page"}
     = sidebar_icon(svg_icon_data_url('more-vertical'))

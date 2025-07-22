@@ -1,42 +1,31 @@
 // Foundation for Sites JavaScript Integration
-// This file initializes Foundation components and provides utilities
+// This file provides utilities for Foundation components managed by Stimulus controllers
 
 import { Foundation } from "foundation-sites";
 import $ from "jquery";
 
-// Make jQuery available globally for Foundation
-globalThis.$ = $;
-globalThis.jQuery = $;
+// Make jQuery available for Foundation components only when needed
+// Don't pollute global scope - Stimulus controllers will handle jQuery setup
+let foundationJQueryInitialized = false;
 
-// Initialize Foundation
-document.addEventListener("DOMContentLoaded", function () {
-    Foundation.addToJquery($);
-    $(document).foundation();
-
-    // Explicitly initialize off-canvas if it exists
-    const offCanvas = $("#sidebarOffCanvas");
-    if (offCanvas.length > 0) {
-        console.log("Initializing off-canvas:", offCanvas);
-        new Foundation.OffCanvas(offCanvas);
+function ensureJQueryForFoundation() {
+    if (!foundationJQueryInitialized) {
+        Foundation.addToJquery($);
+        foundationJQueryInitialized = true;
     }
-});
-
-// Re-initialize Foundation on Turbo navigation
-document.addEventListener("turbo:load", function () {
-    $(document).foundation();
-
-    // Explicitly initialize off-canvas if it exists
-    const offCanvas = $("#sidebarOffCanvas");
-    if (offCanvas.length > 0) {
-        console.log("Re-initializing off-canvas:", offCanvas);
-        new Foundation.OffCanvas(offCanvas);
-    }
-});
+    return $;
+}
 
 // Foundation utilities
 export const FoundationUtils = {
+    // Ensure jQuery is set up for Foundation before using any component
+    initializeFoundation() {
+        return ensureJQueryForFoundation();
+    },
+
     // Initialize specific Foundation components
     initComponent: function (component, selector) {
+        const $ = ensureJQueryForFoundation();
         const elements = selector ? $(selector) : $("[data-" + component + "]");
         elements.each(function () {
             new Foundation[component]($(this));
@@ -45,6 +34,7 @@ export const FoundationUtils = {
 
     // Destroy and reinitialize a component
     reinitComponent: function (component, selector) {
+        const $ = ensureJQueryForFoundation();
         const elements = selector ? $(selector) : $("[data-" + component + "]");
         elements.each(function () {
             const $element = $(this);
@@ -58,70 +48,84 @@ export const FoundationUtils = {
 
     // Show/hide reveal modal
     toggleReveal: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("toggle");
     },
 
     // Open reveal modal
     openReveal: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("open");
     },
 
     // Close reveal modal
     closeReveal: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("close");
     },
 
     // Toggle off-canvas
     toggleOffCanvas: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("toggle");
     },
 
     // Open off-canvas
     openOffCanvas: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("open");
     },
 
     // Close off-canvas
     closeOffCanvas: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("close");
     },
 
     // Show/hide dropdown
     toggleDropdown: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("toggle");
     },
 
     // Programmatically trigger tooltips
     showTooltip: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("show");
     },
 
     // Hide tooltip
     hideTooltip: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("hide");
     },
 
     // Orbit slider controls
     orbitNext: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("next");
     },
 
     orbitPrev: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("previous");
     },
 
     // Tabs
     selectTab: function (selector, targetTab) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("selectTab", targetTab);
     },
 
     // Accordion
     toggleAccordion: function (selector) {
+        const $ = ensureJQueryForFoundation();
         $(selector).foundation("toggle");
     },
 
     // Sticky elements
     updateSticky: function (selector) {
+        const $ = ensureJQueryForFoundation();
         const elements = selector ? $(selector) : $("[data-sticky]");
         elements.each(function () {
             const instance = $(this).data("zfPlugin");
@@ -133,12 +137,10 @@ export const FoundationUtils = {
 
     // Utility to get Foundation plugin instance
     getPlugin: function (selector) {
+        const $ = ensureJQueryForFoundation();
         return $(selector).data("zfPlugin");
     },
 };
-
-// Make Foundation utilities available globally
-globalThis.FoundationUtils = FoundationUtils;
 
 // Export for module usage
 export default FoundationUtils;

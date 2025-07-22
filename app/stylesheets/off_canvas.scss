@@ -6,7 +6,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px;
+    width: 320px; // Increased from 250px
     height: 100vh;
     z-index: 1001;
     transition: transform 0.3s ease;
@@ -55,7 +55,7 @@
 // Push transition: Foundation adds is-transition-push to the off-canvas element
 // When off-canvas opens, push the content
 .off-canvas.is-transition-push.is-open ~ .off-canvas-content {
-    transform: translateX(250px);
+    transform: translateX(320px); // Updated to match new width
 }
 
 // Only provide visual styling for our specific off-canvas
@@ -96,7 +96,7 @@
     }
 
     .menu {
-        padding: 60px 0 20px;
+        padding: 60px 0 160px; // Increased bottom padding for card spacing
         margin: 0;
         list-style: none;
         background: transparent;
@@ -147,6 +147,62 @@
                 &:focus {
                     outline: 2px solid variables.$hp-primary;
                     outline-offset: 2px;
+                }
+            }
+        }
+    }
+
+    // Attribution section styling within off-canvas
+    .off-canvas-attribution {
+        padding: 20px;
+        margin: 16px;
+        background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+        border: 1px solid rgb(255 255 255 / 12%);
+        border-radius: 12px;
+        box-shadow:
+            0 4px 16px rgb(0 0 0 / 35%),
+            inset 0 1px 0 rgb(255 255 255 / 8%);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        .off-canvas-attribution-title {
+            font-family: Hack, "Noto Sans", monospace;
+            font-size: 18px;
+            color: rgb(255 255 255 / 90%);
+            margin: 0 0 16px;
+            font-weight: 600;
+        }
+
+        .off-canvas-attribution-content {
+            font-family: Hack, "Noto Sans", monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgb(255 255 255 / 75%);
+
+            p {
+                margin: 0 0 12px;
+            }
+
+            ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+
+                li {
+                    margin-bottom: 8px;
+                }
+            }
+
+            .off-canvas-attribution-link {
+                color: variables.$hp-primary;
+                text-decoration: underline;
+                transition: color 0.2s ease;
+
+                &:hover {
+                    color: variables.$dashboard-primary;
+                    opacity: 0.9;
                 }
             }
         }

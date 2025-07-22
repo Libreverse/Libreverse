@@ -1,0 +1,17 @@
+{
+    "config": {
+        "MD007": false,
+        "MD013": false,
+    },
+    "fix": true,
+    "gitignore": true,
+    "ignores": [
+        "node_modules/",
+        "vendor/",
+        "tmp/",
+        "log/",
+        "coverage/",
+        ".codeql/",
+        ".github/",
+    ],
+}

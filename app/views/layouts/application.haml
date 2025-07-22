@@ -30,7 +30,7 @@
           -# Close button
           %button.close-button{"aria-label" => "Close menu",
                                "type" => "button",
-                               "data-close" => ""}
+                               "data-action" => "click->off-canvas#close"}
             %span{"aria-hidden" => "true"} &times;
 
           -# Menu
@@ -40,22 +40,31 @@
             %li
               = link_to "Cookie Policy", cookie_policy_path
             %li
-              = link_to "Terms of Service", terms_path
-            - if rodauth.logged_in?
-              %li
-                = link_to "Account Export", "/account-export"
-              %li
-                = link_to "Delete Account", "/close-account"
-            %li
-              = link_to "Help & Support", "/help"
-            %li
               = link_to "About Libreverse", "/about"
             %li
               = link_to "GitHub Repository", "https://github.com/Libreverse/Libreverse", target: "_blank", rel: "noopener"
+
+          -# Attribution section
+          .off-canvas-attribution{role: "complementary",
+                                  "aria-labelledby": "off-canvas-attribution-title"}
+            %h5.off-canvas-attribution-title{id: "off-canvas-attribution-title"}
+              = t('layouts.drawer.attribution')
+            .off-canvas-attribution-content
+              %p= t('layouts.default_drawer.intro_html').html_safe
+              %ul
+                %li
+                  %a.off-canvas-attribution-link{href: "https://github.com/twitter/twemoji?tab=readme-ov-file"}= t('layouts.default_drawer.libreverse_twemoji')
+                  = t('layouts.default_drawer.modified_from')
+                  %a.off-canvas-attribution-link{href: "https://github.com/twitter/twemoji?tab=readme-ov-file"} Twemoji
+                  = t('layouts.default_drawer.by')
+                  %a.off-canvas-attribution-link{href: "https://x.com"} X Corp
+                  = t('layouts.default_drawer.licensed_under')
+                  %a.off-canvas-attribution-link{href: "https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS"} CC-BY-4.0
 
         .off-canvas-content{"data-off-canvas-content" => ""}
           = render "layouts/flash_messages"
           #toast-container
           %main.content-wrapper
             = yield
+          = render "layouts/site_footer"
           = render partial: "layouts/drawer" if page_with_drawer?

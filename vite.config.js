@@ -14,17 +14,14 @@ export default defineConfig(({ mode }) => {
         esbuild: {
             target: "es2020", // Modern target
             keepNames: false,
-            treeShaking: false,
-            legalComments: "inline",
+            treeShaking: isDevelopment ? false : true, // Disable tree shaking in development for faster builds
+            legalComments: isDevelopment ? "none" : "inline", // Skip legal comments in development
         },
         resolve: {
             extensions: [".js", ".json", ".coffee", ".scss"],
-            alias: {
-                "~": "/node_modules/",
-            },
         },
         build: {
-            cache: !isDevelopment,
+            cache: isDevelopment, // Enable cache in development for faster rebuilds
             rollupOptions: {
                 input: {
                     application: "app/javascript/application.js",
@@ -172,14 +169,14 @@ export default defineConfig(({ mode }) => {
             },
         },
         server: {
-            hmr: { overlay: false },
+            hmr: { overlay: true }, // Enable error overlay in development
             headers: isDevelopment
                 ? {
                       "Cache-Control":
                           "no-store, no-cache, must-revalidate, max-age=0",
                   }
                 : {},
-            fs: { strict: true },
+            fs: { strict: false }, // More lenient file system access for development
         },
         css: {
             preprocessorOptions: {
