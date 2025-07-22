@@ -1,10 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 import { FoundationUtils } from "../libs/foundation.js";
 import { Foundation } from "foundation-sites";
-import $ from "jquery";
 
 // Foundation Stimulus Controller
-// Connects Foundation components to Stimulus
+// Connects Foundation components to Stimulus with proper Turbo integration
 export default class extends Controller {
     static targets = [
         "reveal",
@@ -22,10 +21,18 @@ export default class extends Controller {
     };
 
     connect() {
+        // Initialize Foundation's jQuery integration
+        FoundationUtils.initializeFoundation();
+
         // Initialize the specific Foundation component
         if (this.hasComponentValue) {
             this.initializeComponent();
         }
+
+        // Listen for Turbo events to reinitialize components
+        this.handleTurboLoad = this.handleTurboLoad.bind(this);
+        document.addEventListener("turbo:load", this.handleTurboLoad);
+        document.addEventListener("turbo:render", this.handleTurboLoad);
     }
 
     disconnect() {
@@ -33,11 +40,28 @@ export default class extends Controller {
         if (this.foundationInstance) {
             this.foundationInstance.destroy();
         }
+
+        // Remove Turbo event listeners
+        document.removeEventListener("turbo:load", this.handleTurboLoad);
+        document.removeEventListener("turbo:render", this.handleTurboLoad);
+    }
+
+    handleTurboLoad() {
+        // Reinitialize Foundation component after Turbo navigation
+        if (this.hasComponentValue) {
+            this.initializeComponent();
+        }
     }
 
     initializeComponent() {
         const componentName = this.componentValue;
         const options = this.hasOptionsValue ? this.optionsValue : {};
+        const $ = FoundationUtils.initializeFoundation();
+
+        // Destroy existing instance if it exists
+        if (this.foundationInstance) {
+            this.foundationInstance.destroy();
+        }
 
         // Initialize the Foundation component
         const FoundationComponent = Foundation[componentName];

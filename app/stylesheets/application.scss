@@ -12,6 +12,7 @@
 @use "createaccount";
 @use "changepassword";
 @use "sidebar";
+@use "sidebar_popover";
 @use "off_canvas";
 @use "experiencedisplay";
 @use "experiences";
@@ -25,6 +26,7 @@
 @use "consent";
 @use "settings";
 @use "fonts";
+@use "site_footer";
 @use "../javascript/libs/glass.css";
 
 html,

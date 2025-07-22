@@ -61,6 +61,9 @@ application.register("nav", NavController);
 import NavigationShortcutsController from "./navigation_shortcuts_controller";
 application.register("navigation-shortcuts", NavigationShortcutsController);
 
+import OffCanvasController from "./off_canvas_controller";
+application.register("off-canvas", OffCanvasController);
+
 import ParallaxBackgroundController from "./parallax_background_controller";
 application.register("parallax-background", ParallaxBackgroundController);
 
@@ -75,6 +78,9 @@ application.register("search-url-updater", SearchUrlUpdaterController);
 
 import SidebarController from "./sidebar_controller";
 application.register("sidebar", SidebarController);
+
+import SidebarPopoverController from "./sidebar_popover_controller";
+application.register("sidebar-popover", SidebarPopoverController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);

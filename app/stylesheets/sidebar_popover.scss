@@ -1,0 +1,206 @@
+@use "variables";
+
+// Sidebar popover styling
+// Extends Foundation tooltips with custom styling to match the sidebar design
+.sidebar-popover {
+    // Base styling
+    background: linear-gradient(
+        135deg,
+        variables.$vulcan 0%,
+        variables.$mirage 100%
+    );
+    color: rgb(255 255 255 / 90%);
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: Hack, "Noto Sans", monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    max-width: 280px;
+    z-index: 1050; // Above sidebar elements
+    box-shadow:
+        0 8px 32px rgb(0 0 0 / 40%),
+        0 4px 16px rgb(0 0 0 / 20%),
+        inset 0 1px 0 rgb(255 255 255 / 12%);
+    backdrop-filter: blur(20px) saturate(1.4);
+
+    // Animation
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0.95);
+    opacity: 0;
+
+    // When visible
+    &.is-active {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    // Content styling
+    .tooltip-content {
+        margin: 0;
+        text-align: left;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    // Arrow styling for different positions
+    &.right::before,
+    &.right::after {
+        left: -8px;
+        border-right-color: rgb(255 255 255 / 20%);
+    }
+
+    &.right::after {
+        left: -7px;
+        border-right-color: variables.$vulcan;
+    }
+
+    &.left::before,
+    &.left::after {
+        right: -8px;
+        border-left-color: rgb(255 255 255 / 20%);
+    }
+
+    &.left::after {
+        right: -7px;
+        border-left-color: variables.$vulcan;
+    }
+
+    &.top::before,
+    &.top::after {
+        bottom: -8px;
+        border-top-color: rgb(255 255 255 / 20%);
+    }
+
+    &.top::after {
+        bottom: -7px;
+        border-top-color: variables.$vulcan;
+    }
+
+    &.bottom::before,
+    &.bottom::after {
+        top: -8px;
+        border-bottom-color: rgb(255 255 255 / 20%);
+    }
+
+    &.bottom::after {
+        top: -7px;
+        border-bottom-color: variables.$vulcan;
+    }
+
+    // Enhanced visual design
+    &::before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        z-index: -2;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 7px solid transparent;
+        z-index: -1;
+    }
+
+    // Hover state
+    &:hover {
+        box-shadow:
+            0 12px 40px rgb(0 0 0 / 50%),
+            0 6px 20px rgb(0 0 0 / 25%),
+            inset 0 1px 0 rgb(255 255 255 / 15%);
+    }
+
+    // High contrast mode support
+    @media (prefers-contrast: high) {
+        background: rgb(0 0 0 / 95%);
+        border: 2px solid white;
+        color: white;
+        backdrop-filter: none;
+    }
+
+    // Reduced motion support
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+
+        &.is-active {
+            transform: none;
+        }
+    }
+
+    // Mobile responsiveness
+    @media (width <= 600px) {
+        font-size: 13px;
+        padding: 10px 14px;
+        max-width: 240px;
+    }
+
+    // Accessibility improvements
+    // Ensure text is selectable for screen readers
+    user-select: text;
+
+    // Add focus indicators
+    &:focus,
+    &:focus-visible {
+        outline: 2px solid variables.$hp-primary;
+        outline-offset: 2px;
+    }
+}
+
+// Foundation tooltip overrides for sidebar popovers
+.tooltip.sidebar-popover {
+    // Override Foundation's default tooltip styling
+    background: transparent !important;
+    border: none !important;
+    color: inherit !important;
+
+    // Ensure proper positioning
+    pointer-events: none;
+    user-select: none;
+
+    // Remove Foundation's default arrow
+    &::before,
+    &::after {
+        display: none !important;
+    }
+}
+
+// Sidebar item hover state when popover is showing
+.sidebar-link,
+.sidebar-logout-button {
+    &[aria-describedby] {
+        // Slightly highlight the item when popover is active
+        background: linear-gradient(
+            135deg,
+            rgb(255 255 255 / 15%) 0%,
+            rgb(255 255 255 / 10%) 50%,
+            rgb(255 255 255 / 8%) 100%
+        ) !important;
+        transform: scale(1.02) !important;
+        border-color: rgb(255 255 255 / 25%) !important;
+
+        // Add a subtle glow
+        box-shadow:
+            0 6px 24px rgb(0 0 0 / 15%),
+            inset 0 1px 0 rgb(255 255 255 / 15%),
+            inset 0 -1px 0 rgb(255 255 255 / 8%),
+            0 0 0 1px rgb(255 255 255 / 10%) !important;
+    }
+}
+
+// Dark theme adjustments (if needed)
+@media (prefers-color-scheme: dark) {
+    .sidebar-popover {
+        // Already designed for dark theme, but add any specific adjustments here
+        border-color: rgb(255 255 255 / 25%);
+
+        &::before {
+            border-color: rgb(255 255 255 / 25%);
+        }
+    }
+}

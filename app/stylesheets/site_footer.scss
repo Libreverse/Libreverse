@@ -1,0 +1,23 @@
+@use "variables";
+
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    padding: 8px 16px;
+    text-align: right; // Align content to the right
+    pointer-events: none; // Allow clicks to pass through
+
+    .attribution-text {
+        font-family: Hack, Noto-Sans, monospace;
+        font-size: 0.75rem;
+        color: variables.$white-40; // Gray text
+        margin: 0;
+        opacity: 0.7;
+        pointer-events: auto; // Re-enable pointer events for the text itself
+        width: 110px; // Constrain to 50px width
+        margin-left: auto; // Push the box to the right
+    }
+}

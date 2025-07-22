@@ -121,7 +121,7 @@ run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
 run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
-run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint.json");
+run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc");
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
 run_command("bundle-audit", "bundle-audit", "check", "--update");
