@@ -1,0 +1,26 @@
+# Litestream Configuration for LibReverse
+# This configuration uses environment variables set by the Rails initializer
+# For more details, see: https://litestream.io/reference/config/
+
+dbs:
+    # Production database replication
+    - path: /data/production.sqlite3
+      replicas:
+          - type: s3
+            bucket: $LITESTREAM_REPLICA_BUCKET
+            path: production.sqlite3
+            access-key-id: $LITESTREAM_ACCESS_KEY_ID
+            secret-access-key: $LITESTREAM_SECRET_ACCESS_KEY
+            region: $LITESTREAM_REPLICA_REGION
+            endpoint: $LITESTREAM_REPLICA_ENDPOINT
+
+    # Development database replication (optional, for testing)
+    - path: db/libreverse_development.sqlite3
+      replicas:
+          - type: s3
+            bucket: $LITESTREAM_REPLICA_BUCKET
+            path: development.sqlite3
+            access-key-id: $LITESTREAM_ACCESS_KEY_ID
+            secret-access-key: $LITESTREAM_SECRET_ACCESS_KEY
+            region: $LITESTREAM_REPLICA_REGION
+            endpoint: $LITESTREAM_REPLICA_ENDPOINT

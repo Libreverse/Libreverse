@@ -82,6 +82,16 @@ Rails.application.routes.draw do
     delete "federation/unblock_domain/:domain", to: "federation#unblock_domain", as: :unblock_domain
     post "federation/generate_actors", to: "federation#generate_actors"
     get "federation/federated_experiences", to: "federation#federated_experiences"
+
+    # Litestream management
+    get "litestream", to: "litestream#index", as: "litestream_overview"
+    get "litestream/databases", to: "litestream#databases"
+    get "litestream/generations", to: "litestream#generations"
+    get "litestream/snapshots", to: "litestream#snapshots"
+    post "litestream/verify", to: "litestream#verify"
+
+    # Mount Litestream dashboard (requires authentication)
+    mount Litestream::Engine, at: "/litestream/dashboard"
   end
 
   get ".well-known/security.txt", to: "well_known#security_txt", format: false
