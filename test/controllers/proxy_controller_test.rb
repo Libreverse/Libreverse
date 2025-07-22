@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "net/http"
 
 class ProxyControllerTest < ActionDispatch::IntegrationTest
   test "should proxy umami script in production" do
     # Mock Rails environment to be production
     Rails.env.stubs(:production?).returns(true)
 
-    # Mock the HTTP request to Umami
+    # Mock the HTTParty request to Umami
     mock_response = mock
     mock_response.stubs(:body).returns("console.log('umami script');")
     mock_response.stubs(:code).returns(200)
 
-    Net::HTTP.any_instance.stubs(:request).returns(mock_response)
+    HTTParty.stubs(:get).returns(mock_response)
 
     get "/umami/script.js"
 
@@ -42,7 +41,7 @@ class ProxyControllerTest < ActionDispatch::IntegrationTest
     Rails.env.stubs(:production?).returns(true)
 
     # Mock network error
-    Net::HTTP.any_instance.stubs(:request).raises(StandardError.new("Network error"))
+    HTTParty.stubs(:get).raises(StandardError.new("Network error"))
 
     get "/umami/script.js"
     assert_response :not_found
@@ -52,7 +51,7 @@ class ProxyControllerTest < ActionDispatch::IntegrationTest
     Rails.env.stubs(:production?).returns(true)
 
     # Mock timeout error
-    Net::HTTP.any_instance.stubs(:request).raises(Timeout::Error.new("Timeout"))
+    HTTParty.stubs(:get).raises(Timeout::Error.new("Timeout"))
 
     get "/umami/script.js"
     assert_response :not_found
@@ -65,7 +64,7 @@ class ProxyControllerTest < ActionDispatch::IntegrationTest
     mock_response.stubs(:body).returns("console.log('test');")
     mock_response.stubs(:code).returns(200)
 
-    Net::HTTP.any_instance.stubs(:request).returns(mock_response)
+    HTTParty.stubs(:get).returns(mock_response)
 
     get "/umami/script.js"
 

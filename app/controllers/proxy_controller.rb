@@ -36,16 +36,11 @@ class ProxyController < ApplicationController
   private
 
   def fetch_umami_script
-    uri = URI("https://cloud.umami.is/script.js")
-
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-      http.read_timeout = 10 # 10 second timeout
-      http.open_timeout = 5  # 5 second connection timeout
-
-      request = Net::HTTP::Get.new(uri)
-      request["User-Agent"] = "LibreverseProxy/1.0"
-
-      http.request(request)
-    end
+    HTTParty.get("https://cloud.umami.is/script.js",
+                 timeout: 10,
+                 open_timeout: 5,
+                 headers: {
+                   "User-Agent" => "LibreverseProxy/1.0"
+                 })
   end
 end

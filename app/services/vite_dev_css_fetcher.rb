@@ -20,7 +20,7 @@ class ViteDevCssFetcher
     Rails.logger.debug "[ViteDevCssFetcher] Fetching CSS from: #{url}"
 
     response = fetch_with_timeout(url)
-    if response.is_a?(Net::HTTPSuccess)
+    if response.code >= 200 && response.code < 300
       process_css_response(response.body)
     else
       Rails.logger.warn "[ViteDevCssFetcher] Failed to fetch CSS: #{response&.code}"
@@ -59,19 +59,13 @@ class ViteDevCssFetcher
   end
 
   def fetch_with_timeout(url)
-    require "net/http"
-    require "uri"
-
-    uri = URI(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.read_timeout = @timeout
-    http.open_timeout = @timeout
-
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request["Accept"] = "text/css"
-    request["User-Agent"] = "LibreVerse-Email-Inliner"
-
-    http.request(request)
+    HTTParty.get(url,
+                 timeout: @timeout,
+                 open_timeout: @timeout,
+                 headers: {
+                   "Accept" => "text/css",
+                   "User-Agent" => "LibreVerse-Email-Inliner"
+                 })
   end
 
   def process_css_response(css_content)
@@ -94,15 +88,12 @@ class ViteDevCssFetcher
   end
 
   def check_server_status
-      http = Net::HTTP.new(ViteRuby.config.host, ViteRuby.config.port)
-      http.read_timeout = 2
-      http.open_timeout = 2
-
-      request = Net::HTTP::Get.new("/")
-      response = http.request(request)
+      response = HTTParty.get("http://#{ViteRuby.config.host}:#{ViteRuby.config.port}/",
+                              timeout: 2,
+                              open_timeout: 2)
 
       # Vite dev server should respond with some form of success
-      response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+      response.code >= 200 && response.code < 400
   rescue StandardError => e
       Rails.logger.debug "[ViteDevCssFetcher] Dev server check failed: #{e.message}"
       false
