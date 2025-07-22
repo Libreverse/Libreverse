@@ -76,6 +76,7 @@ group :development do
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
+  gem "spring"
   gem "web-console"
 end
 
