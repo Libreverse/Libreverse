@@ -110,19 +110,14 @@ module EmailHelper
 
   # Fetch CSS from Vite development server
   def fetch_css_from_dev_server(css_url)
-    require "net/http"
-    require "uri"
+    response = HTTParty.get(css_url,
+                            timeout: 5,
+                            open_timeout: 5,
+                            headers: {
+                              "Accept" => "text/css"
+                            })
 
-    uri = URI(css_url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.read_timeout = 5
-    http.open_timeout = 5
-
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request["Accept"] = "text/css"
-
-    response = http.request(request)
-    return response.body if response.code == "200"
+    return response.body if response.code == 200
 
     Rails.logger.warn "[EmailHelper] Failed to fetch CSS from dev server: #{response.code}"
     nil

@@ -13,9 +13,9 @@ class ViteCssFetcher
 
       Rails.logger.debug "[ViteCssFetcher] Fetching CSS from: #{vite_url}"
 
-      response = Net::HTTP.get_response(URI(vite_url))
+      response = HTTParty.get(vite_url)
 
-      if response.code == "200"
+      if response.code == 200
         extract_css_from_response(response.body)
       else
         Rails.logger.warn "[ViteCssFetcher] Failed to fetch CSS: HTTP #{response.code}"

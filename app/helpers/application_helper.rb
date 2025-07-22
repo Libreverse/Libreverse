@@ -567,23 +567,20 @@ module ApplicationHelper
   def fetch_umami_script_from_source
     # Use the internal proxy endpoint instead of external URL
     # This maintains consistency with the site's proxy architecture
-    uri = URI("#{request.base_url}/umami/script.js")
+    uri = "#{request.base_url}/umami/script.js"
 
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
-      http.read_timeout = 10 # 10 second timeout
-      http.open_timeout = 5  # 5 second connection timeout
+    response = HTTParty.get(uri,
+                            timeout: 10,
+                            open_timeout: 5,
+                            headers: {
+                              "User-Agent" => "LibreverseInliner/1.0"
+                            })
 
-      request_obj = Net::HTTP::Get.new(uri)
-      request_obj["User-Agent"] = "LibreverseInliner/1.0"
-
-      response = http.request(request_obj)
-
-      if response.code.to_i == 200
-        response.body
-      else
-        Rails.logger.error "Failed to fetch Umami script: HTTP #{response.code}"
-        nil
-      end
+    if response.code == 200
+      response.body
+    else
+      Rails.logger.error "Failed to fetch Umami script: HTTP #{response.code}"
+      nil
     end
   rescue StandardError => e
     Rails.logger.error "Error fetching Umami script: #{e.message}"
