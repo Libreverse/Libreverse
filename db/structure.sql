@@ -194,7 +194,18 @@ CREATE UNIQUE INDEX "index_action_mailbox_inbound_emails_uniqueness" ON "action_
 CREATE TABLE IF NOT EXISTS "active_hashcash_stamps" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "version" varchar NOT NULL, "bits" integer NOT NULL, "date" date NOT NULL, "resource" varchar NOT NULL, "ext" varchar NOT NULL, "rand" varchar NOT NULL, "counter" varchar NOT NULL, "request_path" varchar, "ip_address" varchar, "context" json, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
 CREATE INDEX "index_active_hashcash_stamps_on_ip_address_and_created_at" ON "active_hashcash_stamps" ("ip_address", "created_at") WHERE ip_address IS NOT NULL;
 CREATE UNIQUE INDEX "index_active_hashcash_stamps_unique" ON "active_hashcash_stamps" ("counter", "rand", "date", "resource", "bits", "version", "ext");
+CREATE TABLE IF NOT EXISTS "indexed_contents" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "source_platform" varchar NOT NULL, "external_id" varchar NOT NULL, "content_type" varchar NOT NULL, "title" varchar, "description" text, "author" varchar, "metadata" text, "coordinates" text, "last_indexed_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE UNIQUE INDEX "index_indexed_contents_on_source_platform_and_external_id" ON "indexed_contents" ("source_platform", "external_id");
+CREATE INDEX "index_indexed_contents_on_content_type" ON "indexed_contents" ("content_type");
+CREATE INDEX "index_indexed_contents_on_last_indexed_at" ON "indexed_contents" ("last_indexed_at");
+CREATE INDEX "index_indexed_contents_on_source_platform" ON "indexed_contents" ("source_platform");
+CREATE TABLE IF NOT EXISTS "indexing_runs" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "indexer_class" varchar NOT NULL, "status" integer DEFAULT 0 NOT NULL, "configuration" text, "items_processed" integer DEFAULT 0, "items_failed" integer DEFAULT 0, "started_at" datetime(6), "completed_at" datetime(6), "error_message" text, "error_details" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE INDEX "index_indexing_runs_on_indexer_class" ON "indexing_runs" ("indexer_class");
+CREATE INDEX "index_indexing_runs_on_status" ON "indexing_runs" ("status");
+CREATE INDEX "index_indexing_runs_on_started_at" ON "indexing_runs" ("started_at");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250723180119'),
+('20250723180105'),
 ('20250722224142'),
 ('20250617190409'),
 ('20250617182526'),

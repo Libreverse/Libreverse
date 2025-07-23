@@ -1,0 +1,105 @@
+# Indexer Configuration
+# This file configures the various content indexers available in the system
+# Each indexer can be enabled/disabled and configured independently
+
+indexers:
+    decentraland:
+        enabled: true
+        rate_limit: 10 # requests per second
+        batch_size: 50 # items per batch
+        cache_duration: 3600 # seconds
+        api_endpoints:
+            # Using Catalyst Network Content Service for scene data
+            catalyst_content: "https://peer.decentraland.org/content"
+            ipfs_gateway: "https://ipfs.io"
+        schedule: "0 */6 * * *" # cron format - every 6 hours
+        max_items: 10 # Start small for testing, increase later
+        timeout: 30 # seconds per API request
+
+    sandbox:
+        enabled: true
+        rate_limit: 5 # OpenSea has stricter limits
+        batch_size: 20
+        cache_duration: 3600
+        api_endpoints:
+            subgraph: "https://api.thegraph.com/subgraphs/name/thesandboxgame/sandbox"
+            opensea: "https://api.opensea.io/api/v1"
+        schedule: "0 */8 * * *" # every 8 hours
+        max_items: 500
+        timeout: 30
+
+    roblox:
+        enabled: false # Disabled by default - requires API key
+        rate_limit: 20
+        batch_size: 100
+        cache_duration: 1800 # 30 minutes
+        api_endpoints:
+            games: "https://apis.roblox.com/games/v1/games"
+        schedule: "0 */4 * * *" # every 4 hours
+        max_items: 2000
+        timeout: 15
+        api_key: "" # Set in environment or override
+
+    axie_infinity:
+        enabled: true
+        rate_limit: 15
+        batch_size: 50
+        cache_duration: 3600
+        api_endpoints:
+            marketplace: "https://axieinfinity.com/api/v1/marketplace/axies"
+        schedule: "0 */12 * * *" # every 12 hours
+        max_items: 1000
+        timeout: 30
+
+    illuvium:
+        enabled: false # API may be in beta
+        rate_limit: 10
+        batch_size: 30
+        cache_duration: 3600
+        api_endpoints:
+            marketplace: "https://guide.illvm.com/api/marketplace/illuvials"
+        schedule: "0 */24 * * *" # daily
+        max_items: 500
+        timeout: 30
+
+# Global settings that apply to all indexers
+global:
+    default_timeout: 30 # seconds
+    max_retries: 3 # number of retry attempts
+    retry_delay: 5 # seconds between retries
+    log_level: "info" # debug, info, warn, error
+    enable_caching: true
+    cache_backend: "memory" # memory, redis (if available)
+
+# Environment-specific overrides
+development:
+    global:
+        log_level: "debug"
+    indexers:
+        decentraland:
+            max_items: 10 # Limit items in development
+            schedule: null # Disable scheduling in development
+        sandbox:
+            max_items: 5
+            schedule: null
+
+test:
+    global:
+        log_level: "error"
+    indexers:
+        decentraland:
+            enabled: false # Disable all indexers in test
+        sandbox:
+            enabled: false
+        roblox:
+            enabled: false
+        axie_infinity:
+            enabled: false
+        illuvium:
+            enabled: false
+
+production:
+    global:
+        log_level: "info"
+        max_retries: 5
+        cache_backend: "redis" # Use Redis in production if available
