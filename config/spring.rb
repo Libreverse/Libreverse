@@ -20,4 +20,4 @@ end
 
 # Set quiet mode to reduce noise during development
 # Can be overridden by setting SPRING_QUIET environment variable
-Spring.quiet = false
+Spring.quiet = true

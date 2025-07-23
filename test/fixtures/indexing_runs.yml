@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+    indexer_class: MyString
+    status: 1
+    configuration: MyText
+    items_processed: 1
+    items_failed: 1
+    started_at: 2025-07-23 19:01:19
+    completed_at: 2025-07-23 19:01:19
+    error_message: MyText
+    error_details: MyText
+
+two:
+    indexer_class: MyString
+    status: 1
+    configuration: MyText
+    items_processed: 1
+    items_failed: 1
+    started_at: 2025-07-23 19:01:19
+    completed_at: 2025-07-23 19:01:19
+    error_message: MyText
+    error_details: MyText

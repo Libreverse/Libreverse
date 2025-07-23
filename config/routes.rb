@@ -58,6 +58,12 @@ Rails.application.routes.draw do
 
   # ===== Admin Namespace =====
   namespace :admin do
+    resources :indexing_runs, only: %i[index show]
+    resources :indexers, only: %i[index show] do
+      member do
+        post :run # Allow triggering indexer runs
+      end
+    end
     # Dashboard
     resources :dashboard, only: [ :index ]
     root to: "dashboard#index"
