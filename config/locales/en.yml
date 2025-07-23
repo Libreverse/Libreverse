@@ -11,6 +11,15 @@ en:
             spinner_validation_failed: "Spam detected: invalid submission token"
             general_spam: "Your submission appears to be spam. Please try again."
 
+    # ActiveHashcash translations
+    active_hashcash:
+        waiting_label: "Computing security token..."
+        submit_filter: "Filter"
+
+    # Spam protection translations
+    spam_protection:
+        hashcash_failed: "Security validation failed. Please ensure JavaScript is enabled and try again."
+
     # Flash message types for better UX
     flash:
         spam_detected: "Your submission appears to be spam. Please try again."

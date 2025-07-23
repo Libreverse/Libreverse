@@ -3,11 +3,14 @@
 require "digest"
 
 class ExperiencesController < ApplicationController
+  include EnhancedSpamProtection
+
   # invisible_captcha is configured in SpamDetection concern
   invisible_captcha only: %i[create update],
                     timestamp_threshold: 3 # Stricter timing for experience submissions
 
   before_action :require_authentication
+  before_action :check_enhanced_spam_protection, only: %i[create update]
   before_action :set_experience, only: %i[show edit update destroy display approve]
   before_action :check_ownership, only: %i[edit update destroy]
   before_action :require_admin, only: %i[approve]

@@ -40,7 +40,6 @@ const systemNotificationChannel = consumer.subscriptions.create(
             // Clear all cookies for this domain
             const cookies = document.cookie.split(";");
             for (const c of cookies) {
-                // eslint-disable-next-line -- Need direct access to clear invalid session cookies
                 document.cookie = c
                     .replace(/^ +/, "")
                     .replace(

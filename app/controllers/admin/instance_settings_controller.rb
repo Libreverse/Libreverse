@@ -2,6 +2,8 @@
 
 module Admin
   class InstanceSettingsController < ApplicationController
+    include EnhancedSpamProtection
+
     # Enhanced spam protection for admin settings
     invisible_captcha only: %i[create update],
                       honeypot: nil, # Use random honeypot
@@ -11,6 +13,7 @@ module Admin
                       timestamp_enabled: true
 
     before_action :require_admin
+    before_action :check_enhanced_spam_protection, only: %i[create update]
     before_action :set_instance_setting, only: %i[show edit update destroy]
 
   def index

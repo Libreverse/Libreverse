@@ -51,6 +51,7 @@ export default [
             "unicorn/filename-case": "off",
             "unicorn/no-anonymous-default-export": "off",
             "unicorn/no-empty-file": "off",
+            "unicorn/no-document-cookie": "off",
         },
     },
     // Updated Jest test configuration

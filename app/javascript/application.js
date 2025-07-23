@@ -2,11 +2,13 @@ import "../stylesheets/application.scss";
 import "./libs/webgl_fallback_system.js"; // Add fallback system
 import "./libs/critical_element_fallback.js"; // Add critical element fallback
 import "./libs/glass_fallback_monitor.js"; // Enhanced glass fallback monitoring
+import "./libs/hashcash.js"; // ActiveHashcash proof-of-work for bot protection
 import html2canvas from "html2canvas";
 import debounced from "debounced";
 import "./libs/foundation.js";
 import "./libs/websocket_p2p_frame.coffee";
 import "what-input";
+import { load } from "@fingerprintjs/botd";
 
 // GDPR-Compliant Error Tracking Setup
 import * as Sentry from "@sentry/browser";
@@ -61,6 +63,32 @@ Sentry.init({
     // Disable console capture and other automatic data collection
     captureConsole: false,
 });
+
+const BOTD_COOKIE = "botd";
+const BOTD_TTL_MIN = 60; // Cookie lifetime
+
+(function setBotdCookie() {
+    if (document.cookie.includes(`${BOTD_COOKIE}=`)) return; // already set
+
+    // Load BotD and run detection
+    load()
+        .then((agent) => agent.detect())
+        .then(({ bot }) => {
+            const expires = new Date(
+                Date.now() + BOTD_TTL_MIN * 60_000,
+            ).toUTCString();
+            document.cookie = [
+                `${BOTD_COOKIE}=${bot ? 1 : 0}`,
+                `expires=${expires}`,
+                "path=/",
+                "SameSite=Lax", // add 'Secure' if your site is HTTPS-only
+            ].join("; ");
+        })
+        .catch((error) => {
+            /* Detection failed – leave cookie unset so the backend can flag it */
+            console.error("[BotD] detection error:", error);
+        });
+})();
 
 // Add Foundation debugging in development
 if (import.meta.env.MODE === "development") {
@@ -187,7 +215,6 @@ function handleInvalidSession() {
     // Clear all cookies
     const cookies = document.cookie.split(";");
     for (const c of cookies) {
-        // eslint-disable-next-line -- Need direct access to clear invalid session cookies
         document.cookie = c
             .replace(/^ +/, "")
             .replace(/=.*/, "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/");

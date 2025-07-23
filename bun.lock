@@ -4,6 +4,7 @@
     "": {
       "name": "libreverse",
       "dependencies": {
+        "@fingerprintjs/botd": "^1.9.1",
         "@hotwired/stimulus": "^3.2.2",
         "@hotwired/turbo-rails": "^8.0.16",
         "@rails/activestorage": "^8.0.200",
@@ -465,6 +466,8 @@
     "@eslint/object-schema": ["@eslint/object-schema@2.1.6", "", {}, "sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA=="],
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.3.1", "", { "dependencies": { "@eslint/core": "^0.14.0", "levn": "^0.4.1" } }, "sha512-0J+zgWxHN+xXONWIyPWKFMgVuJoZuGiIFu8yxk7RJjxkzpGmyja5wRFqZIVtjDVOQpV+Rw0iOAjYPE2eQyjr0w=="],
+
+    "@fingerprintjs/botd": ["@fingerprintjs/botd@1.9.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-7kv3Yolsx9E56i+L1hCEcupH5yqcI5cmVktxy6B0K7rimaH5qDXwsiA5FL+fkxeUny7XQKn7p13HvK7ofDZB3g=="],
 
     "@hotwired/stimulus": ["@hotwired/stimulus@3.2.2", "", {}, "sha512-eGeIqNOQpXoPAIP7tC1+1Yc1yl1xnwYqg+3mzqxyrbE5pg5YFBZcA6YoTiByJB6DKAEsiWtl6tjTJS4IYtbB7A=="],
 

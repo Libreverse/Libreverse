@@ -62,6 +62,9 @@ Rails.application.routes.draw do
     resources :dashboard, only: [ :index ]
     root to: "dashboard#index"
 
+    # ActiveHashcash monitoring dashboard - admin only
+    mount ActiveHashcash::Engine, at: "hashcash"
+
     resources :experiences, only: [ :index ] do
       member do
         patch :approve # Route for PATCH /admin/experiences/:id/approve

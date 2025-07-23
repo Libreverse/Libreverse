@@ -1,8 +1,7 @@
 # Todo List
 
-add spring preloader to boost dev startup times
-add decentranland and hyperfy integration
 add advanced anti-bot with botd and activehash
+add decentranland and hyperfy integration
 2: Add telegram search bot
 3: Add x.com search bot
 4: Open gRPC port on libreverse.geor.me

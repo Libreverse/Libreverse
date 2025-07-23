@@ -3,6 +3,7 @@
 
 = form_with model: [:admin, instance_setting], local: true, class: "space-y-6" do |form|
   = invisible_captcha # Use random honeypot with I18n messages
+  = hashcash_hidden_field_tag # ActiveHashcash proof-of-work for bot protection
   - if instance_setting.errors.any?
     .bg-red-50.border.border-red-200.rounded-md.p-4
       %h4.text-red-800.font-medium= pluralize(instance_setting.errors.count, "error") + " prohibited this setting from being saved:"
