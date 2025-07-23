@@ -209,6 +209,20 @@ export default defineConfig(({ mode }) => {
         define: {
             global: "globalThis",
         },
+        optimizeDeps: {
+            // Force inclusion of dependencies that might not be detected
+            include: [
+                "html2canvas",
+                "debounced",
+                "@hotwired/turbo",
+                "@hotwired/stimulus",
+                "foundation-sites",
+                "what-input",
+                "@fingerprintjs/botd",
+            ],
+            // Force reoptimization in development
+            force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
+        },
         plugins: [
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),

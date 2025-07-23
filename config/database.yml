@@ -11,7 +11,7 @@ default: &default
         analysis_limit: 0           # Retained: No query analysis limit, minimal perf impact
         auto_vacuum: 'INCREMENTAL'  # Retained: Incremental vacuum for space reclamation
         automatic_index: 1          # Retained: Auto-indexing for query speed
-        busy_timeout: 10000         # Changed: Increased to 10s for better lock handling
+        busy_timeout: 5000          # Changed: Increased to 5s for better lock handling
         cache_size: -200000         # Retained: 200MB cache size for performance
         cache_spill: 1              # Retained: Enables cache spilling for perf
         cell_size_check: 0          # Changed: Disabled for faster writes
