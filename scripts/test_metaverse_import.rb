@@ -9,12 +9,12 @@ begin
   # Check what indexed content we have
   indexed_count = IndexedContent.where(source_platform: 'decentraland').count
   puts "📊 Found #{indexed_count} indexed Decentraland scenes"
-  
-  if indexed_count == 0
+
+  if indexed_count.zero?
     puts "❌ No indexed content found. Run the Decentraland indexer first."
     exit 1
   end
-  
+
   # Show sample indexed content
   sample_content = IndexedContent.where(source_platform: 'decentraland').first
   puts ''
@@ -23,31 +23,31 @@ begin
   puts "   Title: #{sample_content.title}"
   puts "   Platform: #{sample_content.source_platform}"
   puts "   External ID: #{sample_content.external_id[0..20]}..."
-  
+
   # Check existing experiences before import
   existing_metaverse_experiences = Experience.indexed_metaverse.count
   puts ''
   puts "📈 Existing metaverse experiences: #{existing_metaverse_experiences}"
-  
+
   # Import indexed content as experiences
   puts ''
   puts "🔄 Starting import process..."
-  
+
   results = MetaverseExperienceImportService.bulk_import(
     IndexedContent.where(source_platform: 'decentraland')
   )
-  
+
   puts ''
   puts "✅ Import completed!"
   puts "   Created: #{results[:created]} experiences"
   puts "   Updated: #{results[:updated]} experiences"
   puts "   Errors: #{results[:errors].size}"
-  
+
   # Show errors if any
   results[:errors].each do |error|
     puts "   ❌ Error with indexed_content #{error[:indexed_content_id]}: #{error[:error]}"
   end
-  
+
   # Show sample created experiences
   puts ''
   puts "📋 Sample created experiences:"
@@ -61,7 +61,7 @@ begin
     puts "     Coordinates: #{exp.coordinates}"
     puts "     Author: #{exp.author}"
   end
-  
+
   # Summary statistics
   puts ''
   puts "📊 Final Statistics:"
@@ -70,7 +70,6 @@ begin
   puts "   Indexed Metaverse: #{Experience.indexed_metaverse.count}"
   puts "   Federatable: #{Experience.federatable.count}"
   puts "   Decentraland: #{Experience.decentraland.count}"
-  
 rescue StandardError => e
   puts "❌ FAILED: #{e.message}"
   puts "   #{e.backtrace.first}"

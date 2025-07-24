@@ -198,7 +198,7 @@ class BaseIndexer
         save_indexed_content(normalized_data)
         update_progress(1)
     rescue StandardError => e
-        handle_item_error(item, e)
+        handle_item_error(e, item)
     end
   end
 
@@ -234,7 +234,7 @@ class BaseIndexer
   def handle_item_error(error, item = nil)
     @indexing_run.update!(items_failed: @indexing_run.items_failed + 1)
     error_details = handle_api_error(error, { item: item.to_s })
-    log_error "Failed to process item #{item.inspect}: #{error.message}", error_details
+    log_error "Failed to process item #{item.inspect}: #{error.class.name} - #{error.message}", error_details
   end
 
   # Methods that subclasses should override for data extraction

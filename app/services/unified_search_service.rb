@@ -27,7 +27,7 @@ class UnifiedSearchService
       results.concat(local_results)
 
       # Search metaverse content if enabled
-      if include_metaverse && metaverse_limit > 0
+      if include_metaverse && metaverse_limit.positive?
         metaverse_results = search_metaverse_content(query, limit: metaverse_limit)
         results.concat(metaverse_results)
       end
@@ -53,7 +53,7 @@ class UnifiedSearchService
     # Search by platform
     def search_by_platform(platform, query: nil, limit: DEFAULT_LIMIT)
       scope = IndexedContent.where(source_platform: platform)
-      
+
       if query.present?
         scope = scope.where(
           "title LIKE ? OR description LIKE ? OR author LIKE ?",
@@ -69,16 +69,16 @@ class UnifiedSearchService
     # Get popular content from each platform
     def featured_metaverse_content(limit_per_platform: 5)
       results = []
-      
+
       # Get content from each platform
       platforms = IndexedContent.distinct.pluck(:source_platform)
-      
+
       platforms.each do |platform|
         platform_content = IndexedContent
-          .where(source_platform: platform)
-          .order(created_at: :desc)
-          .limit(limit_per_platform)
-        
+                           .where(source_platform: platform)
+                           .order(created_at: :desc)
+                           .limit(limit_per_platform)
+
         results.concat(platform_content.to_a)
       end
 
@@ -87,19 +87,19 @@ class UnifiedSearchService
 
     private
 
-    def sort_unified_results(results, query)
+    def sort_unified_results(results, _query)
       # Sort by a combination of relevance and recency
       # Local experiences get slight priority, then by created_at desc
       results.sort_by do |item|
         # Prioritize local content, then by recency
         priority = case item
-                  when Experience then 0
-                  when IndexedContent then 1
-                  else 2
-                  end
-        
+        when Experience then 0
+        when IndexedContent then 1
+        else 2
+        end
+
         # Use negative timestamp for descending order
-        [priority, -(item.created_at&.to_i || 0)]
+        [ priority, -item.created_at.to_i ]
       end
     end
 
