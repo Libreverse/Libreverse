@@ -10,6 +10,15 @@ class ScheduledIndexingJob < ApplicationJob
   def perform(force_run: false)
     Rails.logger.info "Starting ScheduledIndexingJob"
 
+    # Prevent overlapping runs - check if any indexing is currently running
+    unless force_run
+      running_jobs = IndexingRun.where(status: :running)
+      if running_jobs.exists?
+        Rails.logger.info "Skipping ScheduledIndexingJob - indexing already in progress (#{running_jobs.count} running jobs)"
+        return
+      end
+    end
+
     # Load indexer configuration
     config = load_indexer_config
     return unless config
