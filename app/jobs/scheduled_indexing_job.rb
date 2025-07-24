@@ -111,8 +111,8 @@ class ScheduledIndexingJob < ApplicationJob
     # "0 */8 * * *" -> 8 hours
     # etc.
 
-    if schedule =~ %r{0 \*/(\d+) \* \* \*}
+    return unless schedule =~ %r{0 \*/(\d+) \* \* \*}
+
       ::Regexp.last_match(1).to_i
-    end
   end
 end

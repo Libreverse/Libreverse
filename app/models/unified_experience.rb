@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
-# Unified interface for both local and federated experiences
+# Unified interface for both local and federated   def generate_metaverse_url(indexed_content)
+    case indexed_content.source_platform
+    when "decentraland"
+      generate_decentraland_url(indexed_content)
+    end
+  endes
 # This allows us to treat them the same in search results and UI
 class UnifiedExperience
   attr_reader :id, :title, :description, :author, :created_at, :updated_at,
-              :source_type, :source_domain, :experience_url, :activitypub_uri
+              :source_type, :source_domain, :experience_url, :activitypub_uri,
+              :metaverse_platform
 
   def initialize(source)
     case source
@@ -20,6 +26,7 @@ class UnifiedExperience
       @source_domain = safe_instance_domain
       @experience_url = nil # Will use regular display path
       @activitypub_uri = nil
+      @metaverse_platform = nil
       @source_object = source
     when FederatedAnnouncement
       # Federated experience announcement
@@ -33,6 +40,21 @@ class UnifiedExperience
       @source_domain = source.source_domain
       @experience_url = source.experience_url
       @activitypub_uri = source.activitypub_uri
+      @metaverse_platform = nil
+      @source_object = source
+    when IndexedContent
+      # Metaverse content
+      @id = "metaverse_#{source.id}"
+      @title = source.title
+      @description = source.description
+      @author = source.author
+      @created_at = source.created_at
+      @updated_at = source.updated_at
+      @source_type = :metaverse
+      @source_domain = source.source_platform
+      @experience_url = generate_metaverse_url(source)
+      @activitypub_uri = nil
+      @metaverse_platform = source.source_platform
       @source_object = source
     else
       raise ArgumentError, "Unknown source type: #{source.class}"
@@ -61,6 +83,27 @@ class UnifiedExperience
     ENV["INSTANCE_DOMAIN"] || "localhost"
   end
 
+  def generate_metaverse_url(indexed_content)
+    case indexed_content.source_platform
+    when "decentraland"
+      generate_decentraland_url(indexed_content)
+    else
+      # Generic fallback
+      nil
+    end
+  end
+
+  def generate_decentraland_url(indexed_content)
+    return nil if indexed_content.coordinates.blank?
+
+    coords = indexed_content.coordinates
+    if coords["x"].present? && coords["y"].present?
+      "https://play.decentraland.org/?position=#{coords['x']},#{coords['y']}"
+    else
+      "https://play.decentraland.org/"
+    end
+  end
+
   public
 
   # For compatibility with existing views and paths
@@ -74,6 +117,16 @@ class UnifiedExperience
 
   def federated?
     @source_type == :federated
+  end
+
+  def metaverse?
+    @source_type == :metaverse
+  end
+
+  def coordinates
+    return nil unless metaverse? && @source_object.coordinates.present?
+
+    @source_object.coordinates
   end
 
   # For use in routes/path helpers
