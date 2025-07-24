@@ -5,28 +5,30 @@
 indexers:
     decentraland:
         enabled: true
-        rate_limit: 10 # requests per second
-        batch_size: 50 # items per batch
+        rate_limit: 5 # More conservative - 5 requests per second
+        batch_size: 25 # Smaller batches
         cache_duration: 3600 # seconds
         api_endpoints:
             # Using Catalyst Network Content Service for scene data
             catalyst_content: "https://peer.decentraland.org/content"
             ipfs_gateway: "https://ipfs.io"
-        schedule: "0 */6 * * *" # cron format - every 6 hours
-        max_items: 10 # Start small for testing, increase later
-        timeout: 30 # seconds per API request
+        schedule: "0 */12 * * *" # cron format - every 12 hours
+        max_items: 50 # Reasonable limit to prevent long-running jobs
+        timeout: 45 # Longer timeout per API request
+        batch_delay: 2 # Seconds to wait between batches
 
     sandbox:
         enabled: true
-        rate_limit: 5 # OpenSea has stricter limits
-        batch_size: 20
+        rate_limit: 3 # More conservative for OpenSea
+        batch_size: 15 # Smaller batches
         cache_duration: 3600
         api_endpoints:
             subgraph: "https://api.thegraph.com/subgraphs/name/thesandboxgame/sandbox"
             opensea: "https://api.opensea.io/api/v1"
-        schedule: "0 */8 * * *" # every 8 hours
-        max_items: 500
-        timeout: 30
+        schedule: "0 */12 * * *" # every 12 hours (aligned with decentraland)
+        max_items: 100 # Reasonable limit
+        timeout: 45
+        batch_delay: 3 # Longer delay for stricter APIs
 
     roblox:
         enabled: false # Disabled by default - requires API key

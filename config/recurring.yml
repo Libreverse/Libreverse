@@ -16,6 +16,11 @@ shared_tasks: &shared_tasks
         queue: maintenance
         schedule: "0 4 1 1,4,7,10 *" # Quarterly on the 1st of Jan, Apr, Jul, Oct at 4 AM
 
+    metaverse_indexing:
+        class: ScheduledIndexingJob
+        queue: default
+        schedule: "0 */12 * * *" # Every 12 hours (more conservative)
+
 production:
     <<: *shared_tasks
 
