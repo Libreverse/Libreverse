@@ -3,34 +3,55 @@
 module Admin
   # Controller for managing Litestream replication within the Admin namespace
   class LitestreamController < BaseController
-    before_action :check_litestream_configured
+    before_action :set_litestream_status
 
     # GET /admin/litestream
     def index
       # Get Litestream databases and status information
       @databases = begin
-                     Litestream::Commands.databases
+                     if @litestream_configured && @litestream_enabled
+                       Litestream::Commands.databases
+                     else
+                       []
+                     end
       rescue StandardError
                      []
       end
-      @litestream_configured = litestream_configured?
-      @required_env_vars = %w[LITESTREAM_REPLICA_BUCKET LITESTREAM_ACCESS_KEY_ID LITESTREAM_SECRET_ACCESS_KEY]
-      @missing_env_vars = @required_env_vars.select { |var| ENV[var].blank? }
       @litestream_running = litestream_process_running?
+    end
+
+    # POST /admin/litestream/enable
+    def enable
+      InstanceSetting.set("litestream_enabled", "true")
+      flash[:notice] = "Litestream has been enabled. Please restart the application for changes to take effect."
+      redirect_to admin_litestream_overview_path
+    end
+
+    # POST /admin/litestream/disable
+    def disable
+      InstanceSetting.set("litestream_enabled", "false")
+      flash[:notice] = "Litestream has been disabled. Please restart the application for changes to take effect."
+      redirect_to admin_litestream_overview_path
     end
 
     # GET /admin/litestream/databases
     def databases
-      @databases = begin
-                     Litestream::Commands.databases
-      rescue StandardError
-                     []
+      if @litestream_configured && @litestream_enabled
+        @databases = begin
+                       Litestream::Commands.databases
+        rescue StandardError
+                       []
+        end
+        render json: @databases
+      else
+        render json: { error: "Litestream is not enabled or configured" }, status: :service_unavailable
       end
-      render json: @databases
     end
 
     # GET /admin/litestream/generations
     def generations
+      return render_litestream_unavailable unless @litestream_configured && @litestream_enabled
+
       database_path = params[:database]
       if database_path.present?
         @generations = begin
@@ -46,6 +67,8 @@ module Admin
 
     # GET /admin/litestream/snapshots
     def snapshots
+      return render_litestream_unavailable unless @litestream_configured && @litestream_enabled
+
       database_path = params[:database]
       if database_path.present?
         @snapshots = begin
@@ -61,6 +84,8 @@ module Admin
 
     # POST /admin/litestream/verify
     def verify
+      return render_litestream_unavailable unless @litestream_configured && @litestream_enabled
+
       database_path = params[:database]
       if database_path.present?
         begin
@@ -77,6 +102,17 @@ module Admin
     end
 
     private
+
+    def set_litestream_status
+      @required_env_vars = %w[LITESTREAM_REPLICA_BUCKET LITESTREAM_ACCESS_KEY_ID LITESTREAM_SECRET_ACCESS_KEY]
+      @missing_env_vars = @required_env_vars.select { |var| ENV[var].blank? }
+      @litestream_configured = @missing_env_vars.empty?
+      @litestream_enabled = InstanceSetting.get("litestream_enabled") == "true"
+    end
+
+    def render_litestream_unavailable
+      render json: { error: "Litestream is not enabled or configured" }, status: :service_unavailable
+    end
 
     def check_litestream_configured
       return if litestream_configured?

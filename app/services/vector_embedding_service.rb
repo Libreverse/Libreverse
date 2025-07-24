@@ -10,20 +10,18 @@ class VectorEmbeddingService
     # Generate embedding for given text fields
     # For now, this uses a simple TF-IDF approach but can be upgraded to use proper embeddings
     def generate_embedding(title, description, author)
-      begin
         # Combine all text fields
-        combined_text = [title, description, author].compact.join(" ")
-        
+        combined_text = [ title, description, author ].compact.join(" ")
+
         # Fallback to simple approach if combined text is empty
         return fallback_embedding if combined_text.strip.empty?
 
         # Use the existing vectorization service for now
         # This creates a basic embedding based on TF-IDF
         create_text_embedding(combined_text)
-      rescue StandardError => e
+    rescue StandardError => e
         Rails.logger.error "[VectorEmbeddingService] Failed to generate embedding: #{e.message}"
         raise EmbeddingError, "Failed to generate embedding: #{e.message}"
-      end
     end
 
     # Generate embedding specifically for IndexedContent
@@ -41,20 +39,20 @@ class VectorEmbeddingService
     def create_text_embedding(text)
       # Preprocess the text
       terms = TextPreprocessingService.preprocess(text)
-      
+
       # Create a vocabulary from common terms
       vocabulary = get_base_vocabulary
-      
+
       # Calculate term frequencies
       term_frequencies = calculate_term_frequencies(terms)
-      
+
       # Generate a fixed-size vector
       vector = vocabulary.map do |term|
         freq = term_frequencies[term] || 0.0
         # Apply some basic TF-IDF-like transformation
-        freq > 0 ? Math.log(1 + freq) : 0.0
+        freq.positive? ? Math.log(1 + freq) : 0.0
       end
-      
+
       # Pad or truncate to desired dimensions
       adjust_vector_size(vector)
     end
@@ -108,11 +106,11 @@ class VectorEmbeddingService
     def extract_content_terms
       all_text = IndexedContent.limit(100).pluck(:title, :description).flatten.compact.join(" ")
       terms = TextPreprocessingService.preprocess(all_text)
-      
+
       # Get most frequent terms
       term_counts = Hash.new(0)
       terms.each { |term| term_counts[term] += 1 }
-      
+
       term_counts.sort_by { |_, count| -count }
                  .first(100)
                  .map(&:first)

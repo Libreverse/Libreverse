@@ -94,6 +94,8 @@ Rails.application.routes.draw do
 
     # Litestream management
     get "litestream", to: "litestream#index", as: "litestream_overview"
+    post "litestream/enable", to: "litestream#enable"
+    post "litestream/disable", to: "litestream#disable"
     get "litestream/databases", to: "litestream#databases"
     get "litestream/generations", to: "litestream#generations"
     get "litestream/snapshots", to: "litestream#snapshots"

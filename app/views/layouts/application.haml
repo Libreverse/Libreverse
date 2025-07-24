@@ -51,6 +51,9 @@
               = link_to "About Libreverse", "/about"
             %li
               = link_to "GitHub Repository", "https://github.com/Libreverse/Libreverse", target: "_blank", rel: "noopener"
+            - if rodauth.logged_in? && current_account&.admin?
+              %li
+                = link_to "Admin Panel", admin_root_path
 
           -# Attribution section
           .off-canvas-attribution{role: "complementary",
