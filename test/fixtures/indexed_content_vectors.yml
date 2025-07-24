@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+    indexed_content: one
+    vector_hash: MyString
+    generated_at: 2025-07-24 02:01:31
+
+two:
+    indexed_content: two
+    vector_hash: MyString
+    generated_at: 2025-07-24 02:01:31

@@ -9,7 +9,34 @@ class ExperienceSearchService
 
   class << self
     # Main search method that handles both vector and fallback search
-    def search(query, scope: nil, limit: DEFAULT_LIMIT, use_vector_search: true)
+    def search(query, scope: nil, limit: DEFAULT_LIMIT, use_vector_search: true, include_metaverse: true)
+      query = query.to_s.strip
+      return [] if query.blank?
+
+      scope ||= Experience.approved
+
+      # Split the limit between experiences and metaverse content
+      metaverse_limit = include_metaverse ? (limit * 0.3).to_i : 0
+      experience_limit = limit - metaverse_limit
+
+      results = []
+
+      # Search local experiences
+      experience_results = search_experiences(query, scope: scope, limit: experience_limit, use_vector_search: use_vector_search)
+      results.concat(experience_results)
+
+      # Search metaverse content if enabled
+      if include_metaverse && metaverse_limit.positive?
+        metaverse_results = search_metaverse_content(query, limit: metaverse_limit, use_vector_search: use_vector_search)
+        results.concat(metaverse_results)
+      end
+
+      # Sort combined results by relevance
+      results.sort_by { |item| -(item.is_a?(Experience) ? 1 : 0) } # Prioritize local experiences slightly
+    end
+
+    # Search only experiences
+    def search_experiences(query, scope: nil, limit: DEFAULT_LIMIT, use_vector_search: true)
       query = query.to_s.strip
       return [] if query.blank?
 
@@ -105,6 +132,60 @@ class ExperienceSearchService
       end
     end
 
+    # Search metaverse content (IndexedContent)
+    def search_metaverse_content(query, limit: DEFAULT_LIMIT, use_vector_search: true)
+      # Try vector search first if available
+      if use_vector_search && metaverse_vectors_available?
+        begin
+          vector_results = metaverse_vector_search(query, limit: limit)
+          return vector_results unless vector_results.empty?
+        rescue StandardError => e
+          Rails.logger.warn "[ExperienceSearchService] Metaverse vector search failed: #{e.message}, falling back to LIKE search"
+        end
+      end
+
+      # Fall back to LIKE search
+      metaverse_like_search(query, limit: limit)
+    end
+
+    # Vector search for metaverse content
+    def metaverse_vector_search(query, limit: DEFAULT_LIMIT)
+        # Generate query vector
+        query_vector = VectorizationService.vectorize_query(query)
+
+        # Find similar indexed content vectors
+        indexed_content_vectors = IndexedContentVector.includes(:indexed_content)
+
+        results = indexed_content_vectors.map do |vector|
+          similarity = vector.cosine_similarity(query_vector)
+          next if similarity < DEFAULT_SIMILARITY_THRESHOLD
+
+          {
+            content: vector.indexed_content,
+            similarity: similarity,
+            search_type: :vector
+          }
+        end.compact
+
+        # Sort by similarity and limit results
+        results.sort_by { |r| -r[:similarity] }.first(limit).map { |r| r[:content] }
+    rescue StandardError => e
+        Rails.logger.error "[ExperienceSearchService] Metaverse vector search error: #{e.message}"
+        []
+    end
+
+    # LIKE search for metaverse content
+    def metaverse_like_search(query, limit: DEFAULT_LIMIT)
+      sanitized_query = ActiveRecord::Base.sanitize_sql_like(query)
+
+      IndexedContent.where(
+        "title LIKE ? OR description LIKE ? OR author LIKE ?",
+        "%#{sanitized_query}%",
+        "%#{sanitized_query}%",
+        "%#{sanitized_query}%"
+      ).order(created_at: :desc).limit(limit)
+    end
+
     # Check if vector search is available
     def vectors_available?
       return false unless ExperienceVector.exists?
@@ -116,6 +197,11 @@ class ExperienceSearchService
         Rails.logger.warn "Error checking vocabulary availability: #{e.message}"
         false
       end
+    end
+
+    # Check if metaverse vectors are available
+    def metaverse_vectors_available?
+      IndexedContentVector.exists?
     end
 
     # Get search suggestions based on query

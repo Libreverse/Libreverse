@@ -203,7 +203,16 @@ CREATE TABLE IF NOT EXISTS "indexing_runs" ("id" integer PRIMARY KEY AUTOINCREME
 CREATE INDEX "index_indexing_runs_on_indexer_class" ON "indexing_runs" ("indexer_class");
 CREATE INDEX "index_indexing_runs_on_status" ON "indexing_runs" ("status");
 CREATE INDEX "index_indexing_runs_on_started_at" ON "indexing_runs" ("started_at");
+CREATE TABLE IF NOT EXISTS "indexed_content_vectors" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "indexed_content_id" integer NOT NULL, "vector_hash" varchar NOT NULL, "generated_at" datetime(6) NOT NULL, "content_hash" text NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "vector_data" text, CONSTRAINT "fk_rails_c0de21107e"
+FOREIGN KEY ("indexed_content_id")
+  REFERENCES "indexed_contents" ("id")
+);
+CREATE UNIQUE INDEX "index_indexed_content_vectors_on_indexed_content_id" ON "indexed_content_vectors" ("indexed_content_id");
+CREATE INDEX "index_indexed_content_vectors_on_vector_hash" ON "indexed_content_vectors" ("vector_hash");
+CREATE INDEX "index_indexed_content_vectors_on_generated_at" ON "indexed_content_vectors" ("generated_at");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250724010255'),
+('20250724010131'),
 ('20250723180119'),
 ('20250723180105'),
 ('20250722224142'),
