@@ -1,14 +1,25 @@
 # frozen_string_literal: true
 
 # Litestream Configuration for LibReverse
-# This integrates Litestream with the centralized configuration system
-# and requires specific environment variables to be set for security.
+# This integrates Litestream with the centralized configuration system.
+# Litestream is now optional and can be enabled/disabled through admin settings.
+
+# Check if Litestream is enabled in settings (defaults to false for new installations)
+def litestream_enabled?
+  # Check if we have instance settings configured
+  return false unless defined?(InstanceSetting)
+  
+  begin
+    InstanceSetting.get("litestream_enabled") == "true"
+  rescue
+    # If settings aren't available yet (during migrations, etc.), default to false
+    false
+  end
+end
 
 Rails.application.configure do
-  # Require environment variables for Litestream configuration
-  # Unlike other parts of this app, Litestream requires explicit ENV vars for security
 
-  # Check for required environment variables
+  # Check for environment variables for Litestream configuration
   required_env_vars = %w[
     LITESTREAM_REPLICA_BUCKET
     LITESTREAM_ACCESS_KEY_ID
@@ -17,15 +28,8 @@ Rails.application.configure do
 
   missing_vars = required_env_vars.select { |var| ENV[var].blank? }
 
-  if missing_vars.any? && Rails.env.production?
-    Rails.logger.fatal "CRITICAL: Litestream is required for production durability but missing environment variables: #{missing_vars.join(', ')}"
-    raise "Production deployment failed: Litestream requires the following environment variables for database durability: #{missing_vars.join(', ')}"
-  elsif missing_vars.any?
-    Rails.logger.warn "Missing Litestream environment variables (#{missing_vars.join(', ')}). Litestream will be disabled."
-  end
-
-  # Configure Litestream only if all required environment variables are present
-  if missing_vars.empty?
+  # Only configure Litestream if it's enabled in settings AND all environment variables are present
+  if litestream_enabled? && missing_vars.empty?
     # Replica configuration using required environment variables
     config.litestream.replica_bucket = ENV["LITESTREAM_REPLICA_BUCKET"]
     config.litestream.replica_key_id = ENV["LITESTREAM_ACCESS_KEY_ID"]
@@ -44,9 +48,13 @@ Rails.application.configure do
       config.litestream.password = Rails.application.credentials.dig(:litestream, :password)
     end
 
-    Rails.logger.info "Litestream configured with bucket: #{ENV['LITESTREAM_REPLICA_BUCKET']}"
+    Rails.logger.info "Litestream configured and enabled with bucket: #{ENV['LITESTREAM_REPLICA_BUCKET']}"
   else
-    Rails.logger.info "Litestream disabled due to missing environment variables"
+    if !litestream_enabled?
+      Rails.logger.info "Litestream disabled via admin settings"
+    elsif missing_vars.any?
+      Rails.logger.warn "Litestream enabled in settings but missing environment variables: #{missing_vars.join(', ')}"
+    end
   end
 
   # Configure the default Litestream config path

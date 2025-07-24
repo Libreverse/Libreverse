@@ -50,9 +50,7 @@ module ErrorHandler
 
   def handle_api_error(error, context = {})
     # Handle the case where error is already a Hash (legacy support)
-    if error.is_a?(Hash)
-      return error
-    end
+    return error if error.is_a?(Hash)
 
     case error
     when Net::OpenTimeout, Net::ReadTimeout, Timeout::Error

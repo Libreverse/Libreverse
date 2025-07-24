@@ -40,6 +40,7 @@ class InstanceSetting < ApplicationRecord
     email_bot_mail_host
     email_bot_username
     email_bot_password
+    litestream_enabled
   ].freeze
 
   # Conditional validations based on key
@@ -152,7 +153,7 @@ class InstanceSetting < ApplicationRecord
   end
 
   def boolean_setting?
-    %w[force_ssl no_ssl grpc_enabled email_bot_enabled].include?(key)
+    %w[force_ssl no_ssl grpc_enabled email_bot_enabled litestream_enabled].include?(key)
   end
 
   def port_setting?

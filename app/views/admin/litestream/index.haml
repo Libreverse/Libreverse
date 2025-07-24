@@ -3,29 +3,57 @@
 %div{"data-controller" => "admin-litestream"}
   %h1 Litestream Database Replication
 
-  %h2 Replication Status
+  %h2 Configuration
   %div
     %div
       %div
-        = @litestream_configured ? "✓" : "✗"
+        = @litestream_enabled ? "✓" : "✗"
       %div
-        %h3 Configuration
-        %p= @litestream_configured ? "Properly configured" : "Missing environment variables"
+        %h3 Status
+        %p= @litestream_enabled ? "Enabled" : "Disabled"
+        
+    - if @litestream_enabled
+      %div
+        %div
+          = @litestream_configured ? "✓" : "✗"
+        %div
+          %h3 Environment Variables
+          %p= @litestream_configured ? "All required variables set" : "Missing environment variables"
+    
+    - unless @litestream_enabled
+      %div
+        %p Litestream provides automated database backups to cloud storage for data durability.
+        - if @litestream_configured
+          = form_with url: "/admin/litestream/enable", method: :post, local: true do |form|
+            = form.submit "Enable Litestream", class: "button primary"
+        - else
+          %p
+            To enable Litestream, first set the required environment variables:
+            %strong LITESTREAM_REPLICA_BUCKET, LITESTREAM_ACCESS_KEY_ID, LITESTREAM_SECRET_ACCESS_KEY
+    
+    - if @litestream_enabled
+      %div
+        = form_with url: "/admin/litestream/disable", method: :post, local: true do |form|
+          = form.submit "Disable Litestream", class: "button secondary", 
+            data: { confirm: "Are you sure you want to disable Litestream? This will stop automated database backups." }
 
+  - if @litestream_enabled && @litestream_configured
+    %h2 Replication Status
     %div
       %div
-        = @litestream_running ? "●" : "○"
-      %div
-        %h3 Process Status
-        %p= @litestream_running ? "Running" : "Not running"
+        %div
+          = @litestream_running ? "●" : "○"
+        %div
+          %h3 Process Status
+          %p= @litestream_running ? "Running" : "Not running"
 
-    %div
-      %div 📊
       %div
-        %h3 Databases
-        %p #{@databases.length} configured
+        %div 📊
+        %div
+          %h3 Databases
+          %p #{@databases.length} configured
 
-  - if @missing_env_vars.any?
+  - if @litestream_enabled && @missing_env_vars.any?
     %div
       %h3 Missing Environment Variables
       %p The following required environment variables are not set:
