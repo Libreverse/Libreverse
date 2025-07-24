@@ -49,6 +49,11 @@ module ErrorHandler
   end
 
   def handle_api_error(error, context = {})
+    # Handle the case where error is already a Hash (legacy support)
+    if error.is_a?(Hash)
+      return error
+    end
+
     case error
     when Net::OpenTimeout, Net::ReadTimeout, Timeout::Error
       log_error "Request timeout: #{error.message}", context

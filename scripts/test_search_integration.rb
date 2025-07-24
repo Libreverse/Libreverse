@@ -14,7 +14,7 @@ indexed_content = IndexedContent.create!(
   author: 'TestUser',
   content_type: 'scene',
   coordinates: { x: 100, y: 50 },
-  metadata: { 
+  metadata: {
     scene_type: 'gallery',
     interactive: true
   },

@@ -15,7 +15,7 @@ class IndexerJob < ApplicationJob
 
     # Set up timeout protection
     start_time = Time.current
-    
+
     # Load the indexer class
     indexer_class = indexer_class_name.constantize
     indexer = indexer_class.new(options)

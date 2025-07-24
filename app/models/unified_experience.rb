@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-# Unified interface for both local and federated   def generate_metaverse_url(indexed_content)
-    case indexed_content.source_platform
-    when "decentraland"
-      generate_decentraland_url(indexed_content)
-    end
-  endes
+# Unified interface for both local and federated experiences
 # This allows us to treat them the same in search results and UI
 class UnifiedExperience
   attr_reader :id, :title, :description, :author, :created_at, :updated_at,
@@ -133,6 +128,8 @@ class UnifiedExperience
   def display_path
     if local?
       Rails.application.routes.url_helpers.display_experience_path(@source_object)
+    elsif metaverse?
+      @experience_url # Direct link to metaverse experience
     else
       @experience_url # Direct link to federated experience
     end

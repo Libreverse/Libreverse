@@ -12,7 +12,7 @@ class IndexedContent < ApplicationRecord
   validates :source_platform, presence: true
   validates :external_id, presence: true
   validates :content_type, presence: true
-  validates :source_platform, :external_id, uniqueness: { scope: :source_platform }
+  validates :external_id, uniqueness: { scope: :source_platform }
 
   # Scopes
   scope :by_platform, ->(platform) { where(source_platform: platform) }

@@ -52,12 +52,6 @@ FOREIGN KEY ("blob_id")
   REFERENCES "active_storage_blobs" ("id")
 );
 CREATE UNIQUE INDEX "index_active_storage_variant_records_uniqueness" ON "active_storage_variant_records" ("blob_id", "variation_digest");
-CREATE TABLE IF NOT EXISTS "experiences" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "title" varchar, "description" text, "author" varchar, "account_id" integer NOT NULL, "approved" boolean DEFAULT 0 NOT NULL, "federate" boolean DEFAULT 1 NOT NULL, "federated_blocked" boolean DEFAULT 0 NOT NULL, "offline_available" boolean DEFAULT 0 NOT NULL, CONSTRAINT "fk_rails_3898738ded"
-FOREIGN KEY ("account_id")
-  REFERENCES "accounts" ("id")
-);
-CREATE INDEX "index_experiences_on_account_id" ON "experiences" ("account_id");
-CREATE INDEX "index_experiences_on_account_id_and_created_at" ON "experiences" ("account_id", "created_at");
 CREATE TABLE IF NOT EXISTS "solid_queue_ready_executions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "job_id" bigint NOT NULL, "queue_name" varchar NOT NULL, "priority" integer DEFAULT 0 NOT NULL, "created_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_81fcbd66af"
 FOREIGN KEY ("job_id")
   REFERENCES "solid_queue_jobs" ("id")
@@ -81,7 +75,6 @@ CREATE TABLE IF NOT EXISTS "solid_queue_semaphores" ("id" integer PRIMARY KEY AU
 CREATE INDEX "index_solid_queue_semaphores_on_expires_at" ON "solid_queue_semaphores" ("expires_at");
 CREATE INDEX "index_solid_queue_semaphores_on_key_and_value" ON "solid_queue_semaphores" ("key", "value");
 CREATE UNIQUE INDEX "index_solid_queue_semaphores_on_key" ON "solid_queue_semaphores" ("key");
-CREATE INDEX "index_experiences_on_approved" ON "experiences" ("approved");
 CREATE TABLE IF NOT EXISTS "accounts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "status" integer DEFAULT 1 NOT NULL, "username" text NOT NULL, "password_hash" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "password_changed_at" datetime(6), "guest" boolean DEFAULT 0, "admin" boolean DEFAULT 0 NOT NULL, "federated_id" varchar, "provider" varchar, "provider_uid" varchar, CONSTRAINT accounts_password_hash_format CHECK ((password_hash IS NULL OR password_hash LIKE '$argon2id$%' OR password_hash LIKE '$argon2i$%' OR password_hash LIKE '$argon2d$%')));
 CREATE UNIQUE INDEX "index_accounts_on_username" ON "accounts" ("username");
 CREATE INDEX "index_accounts_on_admin" ON "accounts" ("admin");
@@ -210,9 +203,24 @@ FOREIGN KEY ("indexed_content_id")
 CREATE UNIQUE INDEX "index_indexed_content_vectors_on_indexed_content_id" ON "indexed_content_vectors" ("indexed_content_id");
 CREATE INDEX "index_indexed_content_vectors_on_vector_hash" ON "indexed_content_vectors" ("vector_hash");
 CREATE INDEX "index_indexed_content_vectors_on_generated_at" ON "indexed_content_vectors" ("generated_at");
+CREATE TABLE IF NOT EXISTS "experiences" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "title" varchar, "description" text, "author" varchar, "account_id" integer NOT NULL, "approved" boolean DEFAULT 0 NOT NULL, "federate" boolean DEFAULT 1 NOT NULL, "federated_blocked" boolean DEFAULT 0 NOT NULL, "offline_available" boolean DEFAULT 0 NOT NULL, "source_type" varchar DEFAULT 'user_created' NOT NULL, "indexed_content_id" integer, "metaverse_platform" varchar, "metaverse_coordinates" text, "metaverse_metadata" text, CONSTRAINT "fk_rails_3898738ded"
+FOREIGN KEY ("account_id")
+  REFERENCES "accounts" ("id")
+, CONSTRAINT "fk_rails_1c00bb2e1b"
+FOREIGN KEY ("indexed_content_id")
+  REFERENCES "indexed_contents" ("id")
+);
+CREATE INDEX "index_experiences_on_account_id" ON "experiences" ("account_id");
+CREATE INDEX "index_experiences_on_account_id_and_created_at" ON "experiences" ("account_id", "created_at");
+CREATE INDEX "index_experiences_on_approved" ON "experiences" ("approved");
+CREATE INDEX "index_experiences_on_indexed_content_id" ON "experiences" ("indexed_content_id");
+CREATE INDEX "index_experiences_on_source_type" ON "experiences" ("source_type");
+CREATE INDEX "index_experiences_on_metaverse_platform" ON "experiences" ("metaverse_platform");
+CREATE INDEX "index_experiences_on_source_type_and_metaverse_platform" ON "experiences" ("source_type", "metaverse_platform");
 INSERT INTO "schema_migrations" (version) VALUES
 ('20250724010255'),
 ('20250724010131'),
+('20250724002442'),
 ('20250723180119'),
 ('20250723180105'),
 ('20250722224142'),

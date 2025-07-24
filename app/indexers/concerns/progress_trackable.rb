@@ -94,6 +94,10 @@ module ProgressTrackable
     log_info "Total items to process: #{count}"
   end
 
+  def set_total_items(count)
+    self.total_items = count
+  end
+
   def log_progress_summary
     return unless @indexing_run
 
