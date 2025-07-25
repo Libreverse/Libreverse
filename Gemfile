@@ -11,6 +11,7 @@ gem "argon2"
 gem "bootsnap"
 gem "federails"
 gem "federails-moderation"
+gem "foreman"
 gem "gitlab-omniauth-openid-connect"
 gem "graphql_rails"
 gem "grpc"
@@ -71,7 +72,6 @@ group :development do
   gem "bundle-audit"
   gem "dockerfile-rails"
   gem "fasterer"
-  gem "foreman"
   gem "grpc-tools"
   gem "haml-lint"
   gem "rubocop"
@@ -86,5 +86,3 @@ group :test do
   gem "mocha"
   gem "selenium-webdriver"
 end
-
-gem "litestream", "~> 0.14.0"

@@ -97,49 +97,6 @@ if defined?(Iodine)
     # Security and resource limits
     Iodine::DEFAULT_SETTINGS[:max_body] ||= 2048 # MB (2GB)
 
-    # Dynamically enable YJIT so that we don't end up wasting time compiling boot code
-    # Use a module to encapsulate the YJIT setup tracking
-    module YjitSetup
-        @setup_done = false
-
-        def self.setup_done?
-            @setup_done
-        end
-
-        def self.mark_setup_done!
-            @setup_done = true
-        end
-    end
-
-    Iodine.on_state(:after_fork) do
-        next if YjitSetup.setup_done?
-
-        YjitSetup.mark_setup_done!
-
-        if defined?(RubyVM::YJIT)
-            # Check if YJIT is already enabled to avoid repeated enable attempts
-            if RubyVM::YJIT.enabled?
-                Rails.logger.info "YJIT already enabled in worker #{Process.pid}"
-            elsif RubyVM::YJIT.enable
-                Rails.logger.info "YJIT enabled in worker #{Process.pid}"
-            else
-                Rails.logger.warn "Failed to enable YJIT in worker #{Process.pid} (may already be enabled or unavailable)"
-            end
-
-            # Log YJIT stats if available (only once per process)
-            if RubyVM::YJIT.enabled?
-                stats = RubyVM::YJIT.runtime_stats if RubyVM::YJIT.runtime_stats
-                if stats
-                    Rails.logger.info "YJIT stats: code_region_size=#{(stats[:code_region_size].to_f / 1_048_576).round(2)} MiB, " \
-                             "yjit_alloc_size=#{(stats[:yjit_alloc_size].to_f / 1_048_576).round(2)} MiB, " \
-                             "code_gc_count=#{stats[:code_gc_count]}, ratio_in_yjit=#{stats[:ratio_in_yjit]}"
-                end
-            end
-        else
-            Rails.logger.warn "YJIT not available in worker #{Process.pid}"
-        end
-    end
-
     # Configuration summary
     static_files_status = if Rails.env.production?
         behind_reverse_proxy? ? "disabled (proxy auto-detected)" : "enabled (no proxy detected)"
