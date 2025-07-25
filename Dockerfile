@@ -15,11 +15,18 @@ WORKDIR /rails
 RUN gem update --system --no-document \
     && gem install -N bundler
 
-# Install base packages
+# Install base packages including nginx
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq \
-    && apt-get install --no-install-recommends -y curl sqlite3
+    && apt-get install --no-install-recommends -y \
+        curl \
+        sqlite3 \
+        nginx \
+        dirmngr \
+        gnupg \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set production environment
 ENV BUNDLE_DEPLOYMENT="1" \
@@ -30,11 +37,17 @@ ENV BUNDLE_DEPLOYMENT="1" \
 # Throw-away build stages to reduce size of final image
 FROM base AS prebuild
 
-# Install packages needed to build gems
+# Install packages needed to build gems and Passenger
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq \
-    && apt-get install --no-install-recommends -y build-essential libffi-dev libyaml-dev pkg-config unzip
+    && apt-get install --no-install-recommends -y \
+        build-essential \
+        libffi-dev \
+        libyaml-dev \
+        pkg-config \
+        unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM prebuild AS bun
 
@@ -51,7 +64,7 @@ RUN --mount=type=cache,id=bld-bun-cache,target=/root/.bun \
 
 FROM prebuild AS build
 
-# Install application gems
+# Install application gems (including passenger)
 COPY Gemfile Gemfile.lock ./
 RUN --mount=type=cache,id=bld-gem-cache,sharing=locked,target=/srv/vendor \
     bundle config set app_config .bundle \
@@ -86,12 +99,29 @@ FROM base
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
-# Run and own only the runtime files as a non-root user for security
+# Copy nginx configuration
+COPY config/nginx.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default \
+    && rm -f /etc/nginx/sites-enabled/default.conf
+
+# Create passenger configuration for nginx
+RUN bundle exec passenger-config about ruby-command | head -1 | sed 's/.*: //' > /tmp/passenger_ruby_path \
+    && bundle exec passenger-config --root > /tmp/passenger_root \
+    && echo "passenger_root $(cat /tmp/passenger_root);" > /etc/nginx/conf.d/passenger.conf \
+    && echo "passenger_ruby $(cat /tmp/passenger_ruby_path);" >> /etc/nginx/conf.d/passenger.conf \
+    && rm /tmp/passenger_ruby_path /tmp/passenger_root
+
+# Set up users and directories
 RUN groupadd --system --gid 1000 rails \
     && useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash \
-    && mkdir /data \
-    && chown -R 1000:1000 db log storage tmp /data
-USER 1000:1000
+    && mkdir -p /data /var/log/nginx /var/lib/nginx /run/nginx \
+    && chown -R 1000:1000 db log storage tmp /data \
+    && chown -R www-data:www-data /var/log/nginx /var/lib/nginx /run/nginx \
+    && chmod 755 /var/log/nginx /var/lib/nginx
+
+# Copy and set up startup script
+COPY config/docker-entrypoint-passenger.sh /usr/local/bin/docker-entrypoint-passenger.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint-passenger.sh
 
 # Deployment options
 ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
@@ -100,7 +130,7 @@ ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start both web server and workers using foreman and the Procfile
-EXPOSE 3000
+# Start nginx with passenger and background jobs
+EXPOSE 80 443
 VOLUME /data
-CMD ["bundle", "exec", "foreman", "start"]
+CMD ["/usr/local/bin/docker-entrypoint-passenger.sh"]
