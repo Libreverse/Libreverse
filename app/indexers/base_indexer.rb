@@ -25,7 +25,7 @@ class BaseIndexer
 
     begin
       items = with_retry { fetch_items }
-      set_total_items(items.size)
+      total_items(items.size)
       log_info "Found #{items.size} items to process"
 
       process_items_in_batches(items)
@@ -177,8 +177,8 @@ class BaseIndexer
   end
 
   def process_items_in_batches(items)
-    batch_size = config.fetch("batch_size", 50)
-    max_items = config.fetch("max_items", nil)
+    batch_size = config.fetch("batch_size") { 50 }
+    max_items = config.fetch("max_items") { nil }
 
     # Limit items if max_items is set
     items = items.first(max_items) if max_items

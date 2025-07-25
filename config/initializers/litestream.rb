@@ -8,17 +8,16 @@
 def litestream_enabled?
   # Check if we have instance settings configured
   return false unless defined?(InstanceSetting)
-  
+
   begin
     InstanceSetting.get("litestream_enabled") == "true"
-  rescue
+  rescue StandardError
     # If settings aren't available yet (during migrations, etc.), default to false
     false
   end
 end
 
 Rails.application.configure do
-
   # Check for environment variables for Litestream configuration
   required_env_vars = %w[
     LITESTREAM_REPLICA_BUCKET
@@ -49,12 +48,10 @@ Rails.application.configure do
     end
 
     Rails.logger.info "Litestream configured and enabled with bucket: #{ENV['LITESTREAM_REPLICA_BUCKET']}"
-  else
-    if !litestream_enabled?
-      Rails.logger.info "Litestream disabled via admin settings"
-    elsif missing_vars.any?
+  elsif !litestream_enabled?
+    Rails.logger.info "Litestream disabled via admin settings"
+  elsif missing_vars.any?
       Rails.logger.warn "Litestream enabled in settings but missing environment variables: #{missing_vars.join(', ')}"
-    end
   end
 
   # Configure the default Litestream config path

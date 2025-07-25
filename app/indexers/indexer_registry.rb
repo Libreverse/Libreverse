@@ -21,7 +21,7 @@ class IndexerRegistry
     # Check if an indexer is enabled
     def indexer_enabled?(indexer_class)
       config = indexer_config(indexer_class)
-      config.fetch("enabled", false)
+      config.fetch("enabled") { false }
     end
 
     # Get configuration for an indexer

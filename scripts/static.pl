@@ -118,6 +118,7 @@ push @sequential_status, $prettier_status;
 
 # Run other sequential commands
 run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
+run_command("HAML Whitespace Cleanup", "sh", "-c", "find . -name '*.haml' -not -path './node_modules/*' -not -path './.git/*' -exec sed -i '' 's/[[:space:]]*\$//' {} +");
 run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");

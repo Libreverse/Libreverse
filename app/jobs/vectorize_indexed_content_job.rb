@@ -32,12 +32,24 @@ class VectorizeIndexedContentJob < ApplicationJob
         indexed_content.author
       )
 
+      # Ensure we have valid vector data
+      if vector_data.blank? || !vector_data.is_a?(Array)
+        Rails.logger.error "[VectorizeIndexedContentJob] Invalid vector data generated for indexed_content #{indexed_content_id}"
+        return
+      end
+
       # Calculate content hash for change detection
       content_hash = IndexedContentVector.generate_content_hash(
         indexed_content.title,
         indexed_content.description,
         indexed_content.author
       )
+
+      # Ensure content_hash is not nil
+      if content_hash.blank?
+        Rails.logger.error "[VectorizeIndexedContentJob] Failed to generate content hash for indexed_content #{indexed_content_id}"
+        return
+      end
 
       # Generate vector hash from the actual vector data
       vector_hash = Digest::MD5.hexdigest(vector_data.to_json)

@@ -128,69 +128,75 @@ module TestLogCapture
   def self.finish_capture_for_test(test_instance, test_name)
     return unless @original_logger
 
-    # Restore original verbose setting
-    $VERBOSE = @original_verbose if @original_verbose
+    # Add safety check to prevent NoMethodError on nil arrays
+    begin
+      # Restore original verbose setting
+      $VERBOSE = @original_verbose if @original_verbose
 
-    # Restore original STDOUT/STDERR
-    if @original_stdout && @original_stderr
-      $stdout = @original_stdout
-      $stderr = @original_stderr
-      @original_stdout = nil
-      @original_stderr = nil
-      @stdout_buffer = nil
-      @stderr_buffer = nil
-    end
-
-    # Restore original logger/log device
-    if @capture_enabled
-      if @original_logdev && @original_logger.respond_to?(:instance_variable_get)
-        # Restore the original log device and level
-        underlying_logger = @original_logger
-        underlying_logger = @original_logger.instance_variable_get(:@logger) if @original_logger.is_a?(ActiveSupport::TaggedLogging)
-
-        underlying_logger.instance_variable_set(:@logdev, @original_logdev)
-        underlying_logger.level = @original_level if @original_level
-
-        @original_logdev = nil
-        @original_level = nil
-      else
-        # Fallback: restore the original logger reference
-        Rails.logger = @original_logger
+      # Restore original STDOUT/STDERR
+      if @original_stdout && @original_stderr
+        $stdout = @original_stdout
+        $stderr = @original_stderr
+        @original_stdout = nil
+        @original_stderr = nil
+        @stdout_buffer = nil
+        @stderr_buffer = nil
       end
-    end
 
-    # Check if test passed by examining the test instance
-    test_passed = true
-    if test_instance.respond_to?(:passed?) && !test_instance.passed?
-      test_passed = false
-    elsif test_instance.respond_to?(:failure) && test_instance.failure
-      test_passed = false
-    elsif test_instance.respond_to?(:failures) && test_instance.failures.any?
-      test_passed = false
-    end
+      # Restore original logger/log device
+      if @capture_enabled
+        if @original_logdev && @original_logger.respond_to?(:instance_variable_get)
+          # Restore the original log device and level
+          underlying_logger = @original_logger
+          underlying_logger = @original_logger.instance_variable_get(:@logger) if @original_logger.is_a?(ActiveSupport::TaggedLogging)
 
-    # Only output captured logs if the test failed
-    if !test_passed && @current_test_logs && @capture_enabled
-      captured_logs = @current_test_logs.string
-      if captured_logs.present?
-        # Restore stdout first so we can output the logs
-        original_stdout = $stdout
-        $stdout = @original_stdout if @original_stdout
+          underlying_logger.instance_variable_set(:@logdev, @original_logdev)
+          underlying_logger.level = @original_level if @original_level
 
-        puts "\n#{'=' * 80}"
-        puts "LOGS FOR FAILED TEST: #{test_name}"
-        puts "=" * 80
-        puts captured_logs
-        puts "#{'=' * 80}\n"
-
-        # Restore the buffer if needed
-        $stdout = original_stdout unless @original_stdout
+          @original_logdev = nil
+          @original_level = nil
+        else
+          # Fallback: restore the original logger reference
+          Rails.logger = @original_logger
+        end
       end
-    end
 
-    # Clean up
-    @current_test_logs = nil
-    @original_verbose = nil
+      # Check if test passed by examining the test instance
+      test_passed = true
+      if test_instance.respond_to?(:passed?) && !test_instance.passed?
+        test_passed = false
+      elsif test_instance.respond_to?(:failure) && test_instance.failure
+        test_passed = false
+      elsif test_instance.respond_to?(:failures) && test_instance.failures.any?
+        test_passed = false
+      end
+
+      # Only output captured logs if the test failed
+      if !test_passed && @current_test_logs && @capture_enabled
+        captured_logs = @current_test_logs.string
+        if captured_logs.present?
+          # Restore stdout first so we can output the logs
+          original_stdout = $stdout
+          $stdout = @original_stdout if @original_stdout
+
+          puts "\n#{'=' * 80}"
+          puts "LOGS FOR FAILED TEST: #{test_name}"
+          puts "=" * 80
+          puts captured_logs
+          puts "#{'=' * 80}\n"
+
+          # Restore the buffer if needed
+          $stdout = original_stdout unless @original_stdout
+        end
+      end
+
+      # Clean up
+      @current_test_logs = nil
+      @original_verbose = nil
+    rescue StandardError => e
+      # Log any cleanup errors
+      puts "Warning: TestLogCapture cleanup error (#{e.class}: #{e.message}), continuing..."
+    end
   end
 end
 
@@ -215,12 +221,66 @@ module ActiveSupport
 
     # Finish log capture after each test
     teardown do
-      test_name = "#{self.class.name}##{method_name}"
-      TestLogCapture.finish_capture_for_test(self, test_name)
-      TestLogCapture.disable_capture
+        test_name = "#{self.class.name}##{method_name}"
+        TestLogCapture.finish_capture_for_test(self, test_name) if TestLogCapture.respond_to?(:finish_capture_for_test)
+        TestLogCapture.disable_capture if TestLogCapture.respond_to?(:disable_capture)
+    rescue StandardError => e
+        puts "Warning: Test teardown error (#{e.class}: #{e.message}), continuing..."
     end
 
     # Add more helper methods to be used by all tests here...
+
+    # Mock asset path helpers for tests to avoid Vite dependency issues
+    def self.mock_asset_helpers
+      ApplicationHelper.class_eval do
+        def seo_asset_path(path)
+          # Return a mock path for tests to avoid Vite errors
+          if path.is_a?(String)
+            if path.start_with?("@")
+              "/test-assets/#{path.sub('@', '')}"
+            elsif path.start_with?("~/")
+              "/test-assets/#{path.sub('~/', '')}"
+            else
+              path
+            end
+          else
+            path
+          end
+        end
+
+        def seo_config_with_assets(key)
+          # Return mock config for tests
+          config = begin
+                     Rails.application.config.x.seo_config[key.to_s]
+          rescue StandardError
+                     {}
+          end
+          if config.is_a?(Hash)
+            config.transform_values { |v| v.is_a?(String) ? seo_asset_path(v) : v }
+          else
+            config
+          end
+        end
+      end
+
+      # Mock emoji renderer to avoid Vite asset issues
+      return unless defined?(Emoji::Renderer)
+
+        Emoji::Renderer.class_eval do
+          def self.build_img_tag(emoji)
+            %(<span class="emoji-test">#{emoji}</span>)
+          end
+
+          def self.replace(text)
+            text.to_s.gsub(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/) do |emoji|
+              %(<span class="emoji-test">#{emoji}</span>)
+            end
+          end
+        end
+    end
+
+    # Call the mock setup
+    mock_asset_helpers
 
     # Helper method to disable fixtures for tests that don't need them
     def self.no_fixtures

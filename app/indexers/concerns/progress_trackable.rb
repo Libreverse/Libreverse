@@ -8,7 +8,7 @@ module ProgressTrackable
 
   def log_level
     @log_level ||= begin
-      level_str = global_config.fetch("log_level", "info").to_s.upcase
+      level_str = global_config.fetch("log_level") { "info" }.to_s.upcase
       Logger.const_get(level_str)
     rescue NameError
       Logger::INFO
@@ -94,7 +94,7 @@ module ProgressTrackable
     log_info "Total items to process: #{count}"
   end
 
-  def set_total_items(count)
+  def total_items(count)
     self.total_items = count
   end
 

@@ -3,7 +3,6 @@
 .row
   .col-md-8
     %h2 Available Indexers
-    
     - if @indexers.any?
       .table-responsive
         %table.table.table-striped
@@ -45,17 +44,15 @@
                     %span.text-muted -
                 %td
                   - if indexer_info[:exists] && indexer_info[:enabled]
-                    = link_to 'Run Now', run_admin_indexer_path(platform_name), 
+                    = link_to 'Run Now', run_admin_indexer_path(platform_name),
                               method: :post, class: 'btn btn-sm btn-primary',
                               confirm: "Are you sure you want to run the #{platform_name} indexer?"
                   = link_to 'View', admin_indexer_path(platform_name), class: 'btn btn-sm btn-outline-secondary'
     - else
       .alert.alert-info
         No indexers configured. Check config/indexers.yml
-        
   .col-md-4
     %h2 System Status
-    
     .card
       .card-header
         %h5 Recent Activity
@@ -71,11 +68,10 @@
                 %small.text-muted= time_ago_in_words(run.started_at) + ' ago'
         - else
           %p.text-muted No recent activity
-          
     .card.mt-3
       .card-header
         %h5 Quick Actions
       .card-body
         = link_to 'View All Runs', admin_indexing_runs_path, class: 'btn btn-outline-primary btn-sm'
-        = link_to 'Run All Enabled', '#', class: 'btn btn-outline-success btn-sm ms-2', 
+        = link_to 'Run All Enabled', '#', class: 'btn btn-outline-success btn-sm ms-2',
                   onclick: "alert('Feature coming soon!')"

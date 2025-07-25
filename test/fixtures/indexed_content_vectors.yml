@@ -2,10 +2,14 @@
 
 one:
     indexed_content: one
-    vector_hash: MyString
+    vector_hash: test_vector_hash_one
+    content_hash: <%= Digest::MD5.hexdigest("Test Virtual Gallery|A beautiful virtual art gallery in the metaverse|artist123") %>
+    vector_data: "[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]"
     generated_at: 2025-07-24 02:01:31
 
 two:
     indexed_content: two
-    vector_hash: MyString
+    vector_hash: test_vector_hash_two
+    content_hash: <%= Digest::MD5.hexdigest("Virtual Concert Hall|Interactive music venue for live performances|musician456") %>
+    vector_data: "[0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1]"
     generated_at: 2025-07-24 02:01:31

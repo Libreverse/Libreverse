@@ -31,7 +31,8 @@ begin
       results = ExperienceSearchService.search(query, include_metaverse: true, limit: 10)
 
       puts "  Found #{results.length} results:"
-      results.each_with_index do |item, i|
+      i = 0
+      results.each do |item|
         case item
         when Experience
           puts "    #{i + 1}. [LOCAL] #{item.title} by #{item.author}"
@@ -40,6 +41,7 @@ begin
         else
           puts "    #{i + 1}. [UNKNOWN] #{item.class}: #{item.try(:title) || item.inspect}"
         end
+        i += 1
       end
     end
   else

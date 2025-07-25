@@ -10,7 +10,7 @@ module Metaverse
       # Use the Catalyst Content Service API to fetch scenes
       cached_request(%w[catalyst scenes]) do
         scenes = []
-        max_items = config.fetch("max_items", 10)
+        max_items = config.fetch("max_items") { 10 }
 
         # Get scenes by fetching a range of coordinates
         # Start from Genesis Plaza area and expand outward

@@ -51,7 +51,8 @@ begin
   # Show sample created experiences
   puts ''
   puts "📋 Sample created experiences:"
-  Experience.indexed_metaverse.limit(3).each_with_index do |exp, i|
+  i = 0
+  Experience.indexed_metaverse.limit(3).each do |exp|
     puts ''
     puts "   Experience #{i + 1}:"
     puts "     Title: #{exp.title}"
@@ -60,6 +61,7 @@ begin
     puts "     Federates: #{exp.should_federate?}"
     puts "     Coordinates: #{exp.coordinates}"
     puts "     Author: #{exp.author}"
+    i += 1
   end
 
   # Summary statistics

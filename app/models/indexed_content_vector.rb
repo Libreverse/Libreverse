@@ -23,7 +23,9 @@ class IndexedContentVector < ApplicationRecord
 
   # Generate a hash of the source content for change detection
   def self.generate_content_hash(title, description, author)
-    content = [ title, description, author ].compact.join("|")
+    # Ensure we have at least some content to hash
+    content_parts = [ title, description, author ].compact.map(&:to_s).reject(&:empty?)
+    content = content_parts.any? ? content_parts.join("|") : "empty_content"
     Digest::MD5.hexdigest(content)
   end
 

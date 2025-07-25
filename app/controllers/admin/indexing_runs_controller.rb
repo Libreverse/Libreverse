@@ -5,7 +5,7 @@ module Admin
   before_action :ensure_admin_access
 
   def index
-    @indexing_runs = IndexingRun.recent.includes
+    @indexing_runs = IndexingRun.recent
     @runs_by_status = IndexingRun.group(:status).count
     @recent_runs = @indexing_runs.limit(50)
   end

@@ -1,23 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-    source_platform: MyString
-    external_id: MyString
-    content_type: MyString
-    title: MyString
-    description: MyText
-    author: MyString
-    metadata: MyText
-    coordinates: MyText
+    source_platform: decentraland
+    external_id: scene_001
+    content_type: scene
+    title: Test Virtual Gallery
+    description: A beautiful virtual art gallery in the metaverse
+    author: artist123
+    metadata: '{"coordinates": {"x": 0, "y": 0}, "pointers": ["0,0"]}'
+    coordinates: '{"x": 0, "y": 0}'
     last_indexed_at: 2025-07-23 19:01:05
 
 two:
-    source_platform: MyString
-    external_id: MyString
-    content_type: MyString
-    title: MyString
-    description: MyText
-    author: MyString
-    metadata: MyText
-    coordinates: MyText
+    source_platform: decentraland
+    external_id: scene_002
+    content_type: scene
+    title: Virtual Concert Hall
+    description: Interactive music venue for live performances
+    author: musician456
+    metadata: '{"coordinates": {"x": 1, "y": 0}, "pointers": ["1,0"]}'
+    coordinates: '{"x": 1, "y": 0}'
     last_indexed_at: 2025-07-23 19:01:05
