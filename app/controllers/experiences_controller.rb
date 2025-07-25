@@ -14,7 +14,6 @@ class ExperiencesController < ApplicationController
   before_action :set_experience, only: %i[show edit update destroy display approve]
   before_action :check_ownership, only: %i[edit update destroy]
   before_action :require_admin, only: %i[approve]
-  before_action :set_cache_headers_for_index, only: [ :index ]
 
   # GET /experiences
   def index
@@ -197,13 +196,6 @@ class ExperiencesController < ApplicationController
       return false
     end
     true
-  end
-
-  def set_cache_headers_for_index
-    # Cache experiences index for 5 minutes for authenticated users
-    # Content changes when experiences are added/updated/approved
-    # Skip cache headers in development to avoid masking application errors
-    expires_in 5.minutes, public: false unless Rails.env.development?
   end
 
   def validate_and_sanitize_federated_uri(uri)

@@ -6,9 +6,17 @@ class WellKnownController < ApplicationController
 
   # Serve /.well-known/security.txt
   def security_txt
-    # Cache for 1 day since security contact info doesn't change frequently
-    # Skip cache headers in development to avoid masking application errors
-    expires_in 1.day, public: true unless Rails.env.development?
+    # Enhanced cache headers for security.txt - public content with must-revalidate
+    set_cache_headers(
+      duration: 1.day,
+      public: true,
+      must_revalidate: true,
+      vary: "Accept-Encoding"
+    )
+
+    # Set Last-Modified based on instance settings updates
+    last_modified_time = InstanceSetting.maximum(:updated_at) || 1.day.ago
+    return if check_last_modified(last_modified_time)
 
     # Get dynamic instance settings with fallbacks
     contacts = build_contact_list
@@ -29,9 +37,17 @@ class WellKnownController < ApplicationController
 
   # Serve /.well-known/privacy.txt
   def privacy_txt
-    # Cache for 1 day since privacy policy info doesn't change frequently
-    # Skip cache headers in development to avoid masking application errors
-    expires_in 1.day, public: true unless Rails.env.development?
+    # Enhanced cache headers for privacy.txt - public content with must-revalidate
+    set_cache_headers(
+      duration: 1.day,
+      public: true,
+      must_revalidate: true,
+      vary: "Accept-Encoding"
+    )
+
+    # Set Last-Modified based on instance settings updates
+    last_modified_time = InstanceSetting.maximum(:updated_at) || 1.day.ago
+    return if check_last_modified(last_modified_time)
 
     instance_name = InstanceSetting.get_with_fallback("instance_name", nil, "Libreverse Instance")
     policy_url = InstanceSetting.get_with_fallback("privacy_policy_url", nil, "/privacy")

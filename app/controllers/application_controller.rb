@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
     include Loggable
     include SpamDetection
     include WebsocketP2pHelper
+    include EnhancedCaching
     helper_method :current_account
 
     # Protection from CSRF
@@ -19,6 +20,7 @@ class ApplicationController < ActionController::Base
     before_action :log_request_info
     after_action :log_response_info
     after_action :set_compliance_headers, if: -> { EEAMode.enabled? }
+    after_action :apply_automatic_caching
     before_action :set_current_ip
     before_action :set_locale
 
@@ -262,4 +264,137 @@ class ApplicationController < ActionController::Base
       # Could also send to monitoring service here
       # SpamMonitoringService.record_attempt(log_data) if defined?(SpamMonitoringService)
     end
+
+  # Intelligent automatic caching based on response characteristics
+  def apply_automatic_caching
+    return if Rails.env.development? || Rails.env.test?
+    return if response.headers["Cache-Control"].present? # Skip if already set
+    return if skip_automatic_caching? # Skip if controller opted out
+    return unless Rails.application.config.automatic_caching.enabled
+
+    # Check for paths that should never be cached
+    if Rails.application.config.automatic_caching.no_cache_patterns.any? { |pattern| request.path.match?(pattern) }
+      set_no_cache_headers
+      log_caching_decision("no-cache", "matches no-cache pattern") if should_log_decisions?
+      return
+    end
+
+    # Determine response characteristics
+    response_size = estimate_response_size
+    is_authenticated = current_account.present?
+    is_get_request = request.get?
+    has_sensitive_data = sensitive_response_data?
+
+    # Apply caching strategy based on characteristics
+    if !is_get_request
+      # Don't cache non-GET requests
+      set_no_cache_headers
+      log_caching_decision("no-cache", "non-GET request") if should_log_decisions?
+
+    elsif has_sensitive_data
+      # Sensitive data - minimal caching
+      duration = Rails.application.config.automatic_caching.durations.sensitive
+      set_cache_headers(
+        duration: duration,
+        public: false,
+        must_revalidate: true
+      )
+      log_caching_decision("sensitive", "#{duration} private") if should_log_decisions?
+
+    elsif response_size <= Rails.application.config.automatic_caching.turbocache_max_size && !is_authenticated
+      # Small public responses - perfect for turbocache
+      duration = Rails.application.config.automatic_caching.durations.turbocache
+      set_turbocache_headers(duration: duration, must_revalidate: true)
+      # Also set longer browser cache as fallback
+      response.headers["Cache-Control"] += ", stale-while-revalidate=300"
+      log_caching_decision("turbocache", "#{duration} public + 5min stale") if should_log_decisions?
+
+    elsif response_size <= Rails.application.config.automatic_caching.turbocache_max_size && is_authenticated
+      # Small private responses - short cache
+      duration = Rails.application.config.automatic_caching.durations.small_private
+      set_cache_headers(
+        duration: duration,
+        public: false,
+        must_revalidate: true
+      )
+      log_caching_decision("small-private", "#{duration} private") if should_log_decisions?
+
+    elsif response_size > Rails.application.config.automatic_caching.large_response_min_size
+      # Large responses (likely 1MB+ HTML) - optimized for large content
+      duration = if is_authenticated
+  Rails.application.config.automatic_caching.durations.large_authenticated
+      else
+  Rails.application.config.automatic_caching.durations.large_public
+      end
+
+      set_large_response_cache_headers(
+        duration: duration,
+        public: !is_authenticated,
+        respect_existing_compression: true
+      )
+      log_caching_decision("large", "#{duration} #{is_authenticated ? 'private' : 'public'}") if should_log_decisions?
+
+    else
+      # Medium responses - standard caching
+      duration = if is_authenticated
+  Rails.application.config.automatic_caching.durations.medium_authenticated
+      else
+  Rails.application.config.automatic_caching.durations.medium_public
+      end
+
+      set_cache_headers(
+        duration: duration,
+        public: !is_authenticated,
+        must_revalidate: true,
+        stale_while_revalidate: 30.seconds
+      )
+      log_caching_decision("medium", "#{duration} #{is_authenticated ? 'private' : 'public'}") if should_log_decisions?
+    end
+  end
+
+  # Estimate response size for caching decisions
+  def estimate_response_size
+    body = response.body
+    return 0 unless body
+
+    # If body is a string, get its size
+    return body.bytesize if body.respond_to?(:bytesize)
+
+    # If body responds to join (like ActionView output), join and measure
+    return body.join.bytesize if body.respond_to?(:join)
+
+    # Default estimate for unknown body types
+    1024 # 1KB default
+  end
+
+  # Check if response contains sensitive data that shouldn't be cached long
+  def sensitive_response_data?
+    # Check configured sensitive patterns
+    Rails.application.config.automatic_caching.sensitive_patterns.any? do |pattern|
+      request.path.match?(pattern)
+    end ||
+
+      # Check for user-specific content indicators
+      params[:user_id].present? || params[:account_id].present? ||
+
+      # Check response headers for sensitive content indicators
+      (response.headers["Content-Type"]&.include?("application/json") && current_account)
+  end
+
+  # Set no-cache headers for sensitive or non-cacheable content
+  def set_no_cache_headers
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+  end
+
+  # Check if caching decisions should be logged
+  def should_log_decisions?
+    Rails.application.config.automatic_caching.log_decisions
+  end
+
+  # Log caching decisions for debugging
+  def log_caching_decision(strategy, details)
+    Rails.logger.info "[AutoCache] #{request.method} #{request.path} -> #{strategy} (#{details})"
+  end
 end
