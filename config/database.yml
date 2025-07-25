@@ -8,26 +8,26 @@ default: &default
       threads
     %>
     pragmas:
-        analysis_limit: 0           # Retained: No query analysis limit, minimal perf impact
-        auto_vacuum: 'INCREMENTAL'  # Retained: Incremental vacuum for space reclamation
-        automatic_index: 1          # Retained: Auto-indexing for query speed
-        busy_timeout: 5000          # Changed: Increased to 5s for better lock handling
-        cache_size: -200000         # Retained: 200MB cache size for performance
-        cache_spill: 1              # Retained: Enables cache spilling for perf
-        cell_size_check: 0          # Changed: Disabled for faster writes
-        checkpoint_fullfsync: 0     # Changed: Disabled, Litestream handles durability
-        foreign_keys: 1             # Retained: Enforce foreign keys as requested
-        fullfsync: 0                # Changed: Disabled, Litestream covers durability
-        journal_mode: 'WAL'         # Retained: WAL for high concurrency
-        journal_size_limit: 5242880 # Changed: Set 5MB limit to control WAL growth
-        locking_mode: 'NORMAL'      # Retained: Compatible with WAL
-        mmap_size: 200000000        # Retained: 200MB for mmap, balances memory usage
-        page_size: 16384            # Retained: Optimized for modern systems
-        secure_delete: 'ON'         # Retained: Secure deletion as requested
-        synchronous: 0              # Changed: Set to OFF, Litestream ensures durability
-        temp_store: 2               # Retained: Memory-based temp storage
-        optimize: 1048578           # Retained: Custom optimization for queries
-        wal_autocheckpoint: 500     # Changed: Reduced to 500 pages for frequent checkpoints
+        analysis_limit: 0           # Retained: No query analysis limit, minimal impact on concurrency
+        auto_vacuum: 'INCREMENTAL'  # Changed: Enable automatic space reclamation without full vacuum locks
+        automatic_index: 1          # Retained: Supports query performance, aids read concurrency
+        busy_timeout: 5000          # Changed: Set to 5000 ms to handle lock contention for writers
+        cache_size: -200000         # Retained: Large cache for performance, indirectly aids concurrency
+        cache_spill: 1              # Retained: Enables cache spilling, performance optimization
+        cell_size_check: 1          # Changed: Enable cell size checking for data integrity
+        checkpoint_fullfsync: 1     # Changed: Enable full fsync for checkpoint integrity
+        foreign_keys: 1             # Retained: Enforces foreign keys as requested
+        fullfsync: 1                # Changed: Enable full fsync for maximum data integrity on macOS
+        journal_mode: 'WAL'         # Changed: Enables WAL for high concurrency (multiple readers, one writer)
+        journal_size_limit: 5242880 # Retained: Set 5MB limit to control WAL growth
+        locking_mode: 'NORMAL'      # Retained: Compatible with WAL, supports concurrency
+        mmap_size: 200000000        # Retained: Large memory mapping for performance
+        page_size: 16384            # Retained: Optimized page size for modern systems
+        secure_delete: 'ON'         # Retained: Secure deletion as requested, minimal concurrency impact
+        synchronous: 3              # Changed: Set to FULL for maximum data integrity and durability
+        temp_store: 2               # Retained: Memory-based temp storage, reduces I/O
+        optimize: 1048578           # Retained: Custom optimization, likely for query performance
+        wal_autocheckpoint: 500     # Retained: Frequent checkpoints to control WAL growth
 
 development:
     <<: *default
