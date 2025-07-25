@@ -492,6 +492,53 @@ module ApplicationHelper
     nil
   end
 
+  # Inlines a manifest file (JSON/XML) with favicon references converted to data URIs
+  def inline_manifest(path)
+    return nil if path.blank?
+
+    # Look for manifest files in app/manifests directory
+    filename = File.basename(path)
+    file_path = Rails.root.join("app/manifests", filename)
+    return nil unless File.exist?(file_path)
+
+    content = File.read(file_path)
+
+    case File.extname(path).downcase
+    when ".json", ".webmanifest"
+      # Parse JSON and update icon src paths to data URIs
+      begin
+        manifest_data = JSON.parse(content)
+        manifest_data["icons"]&.each do |icon|
+            if icon["src"]&.start_with?("/")
+              icon_data = inline_favicon(icon["src"])
+              icon["src"] = icon_data if icon_data
+            end
+        end
+        updated_content = JSON.pretty_generate(manifest_data)
+        "data:application/manifest+json;base64,#{Base64.strict_encode64(updated_content)}"
+      rescue JSON::ParserError => e
+        Rails.logger.warn "Failed to parse manifest JSON #{path}: #{e.message}"
+        nil
+      end
+    when ".xml"
+      # For XML, update src attributes to use data URIs but return as inline content (not base64)
+      # This is more efficient than base64 encoding XML
+      updated_content = content.gsub(%r{src="(/[^"]+)"}) do |match|
+        favicon_path = ::Regexp.last_match(1)
+        icon_data = inline_favicon(favicon_path)
+        icon_data ? "src=\"#{icon_data}\"" : match
+      end
+      # Return as data URI with charset for proper XML handling
+      "data:application/xml;charset=utf-8,#{ERB::Util.url_encode(updated_content)}"
+    else
+      Rails.logger.warn "Unsupported manifest file type: #{path}"
+      nil
+    end
+  rescue StandardError => e
+    Rails.logger.warn "Failed to inline manifest #{path}: #{e.message}"
+    nil
+  end
+
   # Resolves favicon path to actual file system path
   def favicon_file_path(path)
     return unless path.is_a?(String)
@@ -550,6 +597,10 @@ module ApplicationHelper
       "image/jpeg"
     when ".gif"
       "image/gif"
+    when ".webp"
+      "image/webp"
+    when ".avif"
+      "image/avif"
     else
       "application/octet-stream"
     end
