@@ -11,12 +11,12 @@ module RateLimitable
   private
 
   def initialize_rate_limiter
-    rate_limit = config.fetch("rate_limit", 10) # Default 10 requests per second
+    rate_limit = config.fetch("rate_limit") { 10 } # Default 10 requests per second
     @rate_limiter = RateLimiter.new(rate_limit)
   end
 
   def rate_limited?
-    config.fetch("rate_limit", 0).positive?
+    config.fetch("rate_limit") { 0 }.positive?
   end
 
   def wait_for_rate_limit
@@ -28,7 +28,7 @@ module RateLimitable
 
   def sleep_between_batches
     # Additional delay between batches to be extra respectful
-    batch_delay = config.fetch("batch_delay", 1.0)
+    batch_delay = config.fetch("batch_delay") { 1.0 }
     sleep(batch_delay) if batch_delay.positive?
   end
 

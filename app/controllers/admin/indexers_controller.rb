@@ -6,7 +6,7 @@ module Admin
 
   def index
     @indexers = available_indexers
-    @indexing_runs = IndexingRun.recent.limit(10).includes(:run)
+    @indexing_runs = IndexingRun.recent.limit(10)
   end
 
   def show

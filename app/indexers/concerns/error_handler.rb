@@ -7,8 +7,8 @@ module ErrorHandler
   private
 
   def with_retry(max_retries: nil, delay: nil)
-    max_retries ||= global_config.fetch("max_retries", 3)
-    delay ||= global_config.fetch("retry_delay", 5)
+    max_retries ||= global_config.fetch("max_retries") { 3 }
+    delay ||= global_config.fetch("retry_delay") { 5 }
 
     attempt = 0
 
@@ -73,7 +73,7 @@ module ErrorHandler
   end
 
   def timeout_for_request
-    config.fetch("timeout", global_config.fetch("default_timeout", 30))
+    config.fetch("timeout") { global_config.fetch("default_timeout") { 30 } }
   end
 
   def global_config

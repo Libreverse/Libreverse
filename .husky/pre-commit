@@ -14,4 +14,7 @@ fi
 echo "Adding any changes made by static analysis to commit..."
 git add -A
 
+echo "Ensuring test database is prepared..."
+bin/rails db:schema:load RAILS_ENV=test
+
 echo "✅ Static analysis passed. Proceeding with commit."

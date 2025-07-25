@@ -82,9 +82,6 @@ class UnifiedExperience
     case indexed_content.source_platform
     when "decentraland"
       generate_decentraland_url(indexed_content)
-    else
-      # Generic fallback
-      nil
     end
   end
 

@@ -2,7 +2,7 @@
 
 ## Other Tasks
 
-1: ✅ Make litestream optional but recommended.
+1: Move to phusion passenger + nginx to leverage turbocaching
 2: Add telegram search bot
 3: Add x.com search bot
 4: Open gRPC port on libreverse.geor.me

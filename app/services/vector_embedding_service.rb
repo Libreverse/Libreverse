@@ -41,7 +41,7 @@ class VectorEmbeddingService
       terms = TextPreprocessingService.preprocess(text)
 
       # Create a vocabulary from common terms
-      vocabulary = get_base_vocabulary
+      vocabulary = base_vocabulary
 
       # Calculate term frequencies
       term_frequencies = calculate_term_frequencies(terms)
@@ -72,7 +72,7 @@ class VectorEmbeddingService
     end
 
     # Get base vocabulary for embedding generation
-    def get_base_vocabulary
+    def base_vocabulary
       Rails.cache.fetch("embedding_vocabulary", expires_in: 24.hours) do
         create_base_vocabulary
       end

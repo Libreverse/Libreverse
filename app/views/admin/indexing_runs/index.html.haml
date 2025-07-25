@@ -3,7 +3,7 @@
 .row
   .col-md-8
     %h2 Recent Runs
-    
+
     - if @recent_runs.any?
       .table-responsive
         %table.table.table-striped
@@ -33,19 +33,19 @@
                     %span.text-danger (#{run.items_failed} failed)
                 %td
                   - if run.items_processed > 0
-                    = "#{run.success_rate}%"
+                    #{run.success_rate}%
                   - else
                     %span.text-muted N/A
                 %td
                   = link_to 'View', admin_indexing_run_path(run), class: 'btn btn-sm btn-outline-primary'
     - else
       .alert.alert-info
-        No indexing runs found. 
+        No indexing runs found.
         = link_to 'Go to Indexers', admin_indexers_path, class: 'btn btn-primary btn-sm ms-2'
-        
+
   .col-md-4
     %h2 Statistics
-    
+
     .card
       .card-header
         %h5 Run Status Summary
@@ -58,7 +58,7 @@
                 = count
         - else
           %p.text-muted No runs recorded yet
-          
+
     .card.mt-3
       .card-header
         %h5 Quick Actions

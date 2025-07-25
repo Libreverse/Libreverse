@@ -8,11 +8,11 @@ module Cacheable
 
   def cache_enabled?
     global_config = Rails.application.config_for(:indexers)["global"] || {}
-    global_config.fetch("enable_caching", true) && config.fetch("cache_duration", 0).positive?
+    global_config.fetch("enable_caching") { true } && config.fetch("cache_duration") { 0 }.positive?
   end
 
   def cache_duration
-    config.fetch("cache_duration", 3600) # Default 1 hour
+    config.fetch("cache_duration") { 3600 } # Default 1 hour
   end
 
   def cache_key(key_parts)

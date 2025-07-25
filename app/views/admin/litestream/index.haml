@@ -11,7 +11,7 @@
       %div
         %h3 Status
         %p= @litestream_enabled ? "Enabled" : "Disabled"
-        
+
     - if @litestream_enabled
       %div
         %div
@@ -19,7 +19,7 @@
         %div
           %h3 Environment Variables
           %p= @litestream_configured ? "All required variables set" : "Missing environment variables"
-    
+
     - unless @litestream_enabled
       %div
         %p Litestream provides automated database backups to cloud storage for data durability.
@@ -30,11 +30,11 @@
           %p
             To enable Litestream, first set the required environment variables:
             %strong LITESTREAM_REPLICA_BUCKET, LITESTREAM_ACCESS_KEY_ID, LITESTREAM_SECRET_ACCESS_KEY
-    
+
     - if @litestream_enabled
       %div
         = form_with url: "/admin/litestream/disable", method: :post, local: true do |form|
-          = form.submit "Disable Litestream", class: "button secondary", 
+          = form.submit "Disable Litestream", class: "button secondary",
             data: { confirm: "Are you sure you want to disable Litestream? This will stop automated database backups." }
 
   - if @litestream_enabled && @litestream_configured
