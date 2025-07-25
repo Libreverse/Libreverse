@@ -1,4 +1,4 @@
-web: IS_LOAD_TEST=true bundle exec iodine -p 3000
+web: IS_LOAD_TEST=true bundle exec passenger start -p 3000 --environment development
 vite: bin/vite dev
 jobs: bundle exec bin/jobs
 mailhog: mailhog

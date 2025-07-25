@@ -40,21 +40,6 @@ module LibreverseInstance
     # For some reason I don't really understand, it only works if defined here.
     # I would put it in an initializer, but it causes content encoding issues.
 
-    # Strange as it may seem this is the order that gets the html minifier
-    # to run before the deflater and brotli because middlewares are,
-    # unintuitively, run as a stack from the bottom up.
-    config.middleware.use Rack::Deflater,
-                          sync: false
-
-    config.middleware.use Rack::Brotli,
-                          quality: 11,
-                          deflater: {
-                            lgwin: 22,
-                            lgblock: 0,
-                            mode: :text
-                          },
-                          sync: false
-
     # Zstandard compression middleware
     config.middleware.use Rack::Zstd,
                           window_log: 27,
