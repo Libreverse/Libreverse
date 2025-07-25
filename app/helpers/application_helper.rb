@@ -416,6 +416,81 @@ module ApplicationHelper
 
   # --- End Umami Analytics Inlining Helpers ---
 
+  # --- Enhanced Caching Helpers ---
+
+  # Fragment cache helper with enhanced cache key generation
+  # Usage: <%= cache_fragment("experience_#{experience.id}", experience, current_account) do %>
+  def cache_fragment(key_prefix, *cache_dependencies, expires_in: 1.hour, &block)
+    return capture(&block) if Rails.env.development?
+
+    cache_key = generate_enhanced_cache_key(key_prefix, *cache_dependencies)
+    Rails.cache.fetch(cache_key, expires_in: expires_in) do
+      capture(&block)
+    end
+  end
+
+  # Generate cache key with automatic dependency resolution
+  def generate_enhanced_cache_key(*parts)
+    key_parts = []
+
+    parts.each do |part|
+      case part
+      when ActiveRecord::Base
+        # For models, include class name, id, and updated_at
+        key_parts << "#{part.class.name.underscore}/#{part.id}/#{part.updated_at.to_i}"
+      when String, Symbol, Numeric
+        key_parts << part.to_s
+      when Array
+        key_parts << part.map { |p| generate_enhanced_cache_key(p) }.join("/")
+      when Hash
+        key_parts << part.sort.to_h.to_s
+      when NilClass
+        # Skip nil values
+        next
+      else
+        # For other objects, use their string representation
+        key_parts << part.to_s
+      end
+    end
+
+    # Add locale and format for internationalized caching
+    key_parts << I18n.locale.to_s
+    key_parts << request.format.to_s if respond_to?(:request) && request
+
+    key_parts.compact.join("/")
+  end
+
+  # Cache collection helper for rendering lists efficiently
+  # Usage: <%= cache_collection(@experiences, "experience_list") do |experience| %>
+  def cache_collection(collection, key_prefix, expires_in: 30.minutes, &block)
+    return collection.map(&block) if Rails.env.development?
+
+    results = collection.map do |item|
+      cache_key = generate_enhanced_cache_key(key_prefix, item)
+      Rails.cache.fetch(cache_key, expires_in: expires_in) do
+        capture(item, &block)
+      end
+    end
+    safe_join(results)
+  end
+
+  # Cache invalidation helper for views
+  def invalidate_fragment_cache(key_prefix, *cache_dependencies)
+    cache_key = generate_enhanced_cache_key(key_prefix, *cache_dependencies)
+    Rails.cache.delete(cache_key)
+  end
+
+  # Conditional cache helper - only caches if condition is met
+  def cache_if(condition, key_prefix, *cache_dependencies, expires_in: 1.hour, &block)
+    if condition && !Rails.env.development?
+      cache_fragment(key_prefix, *cache_dependencies, expires_in: expires_in, &block)
+    else
+      capture(&block)
+    end
+  end
+
+  # --- End Enhanced Caching Helpers ---
+
   private
 
   # Renamed from inline_vite_asset_content to get_vite_asset_content for clarity

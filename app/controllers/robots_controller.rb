@@ -6,9 +6,21 @@ class RobotsController < ApplicationController
 
   # Serve /robots.txt
   def show
-    # Set cache headers - robots.txt changes infrequently
-    # Skip cache headers in development to avoid masking application errors
-    expires_in 1.day, public: true unless Rails.env.development?
+    # Turbocache-optimized headers for robots.txt
+    set_turbocache_headers(duration: 2.seconds, must_revalidate: true)
+
+    # Also set longer browser cache as fallback
+    cache_control = response.headers["Cache-Control"]
+    if cache_control.present?
+      response.headers["Cache-Control"] += ", stale-while-revalidate=3600"
+    else
+      # In test/development environment, set basic cache headers
+      response.headers["Cache-Control"] = "public, max-age=2, stale-while-revalidate=3600"
+    end
+
+    # Set Last-Modified header based on instance settings
+    last_modified_time = InstanceSetting.maximum(:updated_at) || 1.day.ago
+    check_last_modified(last_modified_time)
 
     content = if no_bots_mode_enabled?
       # Disallow all bots when no_bots_mode is enabled

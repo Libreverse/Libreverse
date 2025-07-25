@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "digest"
-
 class DashboardController < ApplicationController
-  before_action :set_cache_headers_for_dashboard
-
   def index
     @account = current_account
     @account_created_at = @account.created_at.strftime("%B %d, %Y")
@@ -14,27 +10,22 @@ class DashboardController < ApplicationController
     # Calculate password strength level
     @password_strength = { level: calculate_strength_level }
 
-    # Generate ETag for dashboard based on account info and last login
+    # Enhanced caching with Last-Modified and better ETags
     last_login_timestamp = session[:last_login_at] || 0
-    cache_key = "dashboard/#{@account.id}/#{@account.updated_at.to_i}/#{last_login_timestamp}"
-    etag = Digest::MD5.hexdigest(cache_key)
+    content_fingerprint = "#{last_login_timestamp}/#{calculate_strength_level}"
 
-    # Handle conditional requests - dashboard content is mostly static per user
-    # Handle conditional requests (skip in development to avoid masking errors)
-    return if Rails.env.development?
+    # Use enhanced caching with both ETag and Last-Modified
+    nil if fresh_when_enhanced(
+      etag_content: content_fingerprint,
+      last_modified: [ @account.updated_at, Time.zone.at(last_login_timestamp) ].max,
+      public: false,
+      weak_etag: true
+    )
 
-      nil unless stale?(etag: etag, public: false)
-
-    # Content has changed or no ETag in request, proceed with rendering
+    # Content has changed or no cache headers match, proceed with rendering
   end
 
   private
-
-  def set_cache_headers_for_dashboard
-    # Cache dashboard for 10 minutes since it's mostly static user info
-    # Skip cache headers in development to avoid masking application errors
-    expires_in 10.minutes, public: false unless Rails.env.development?
-  end
 
   def time_since_joining(created_at)
     days = (Time.zone.now - created_at).to_i / 1.day
