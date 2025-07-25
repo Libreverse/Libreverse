@@ -1,3 +1,4 @@
-web: bundle exec iodine
+web: bundle exec iodine -p 3000
 vite: bin/vite dev
+jobs: bundle exec bin/jobs
 mailhog: mailhog

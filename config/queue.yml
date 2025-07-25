@@ -1,15 +1,33 @@
-# Solid Queue now runs in-process via config/initializers/solid_queue_in_process.rb
-# No external dispatcher/worker/scheduler processes are configured here.
-default: &default
-  dispatchers: []
-  workers: []
-  scheduler: {}
+# Solid Queue Configuration
+# Configure dispatchers, workers, and schedulers for different environments
 
 development:
-  <<: *default
+  dispatchers:
+    - polling_interval: 1
+      batch_size: 500
+  workers:
+    - queues: "*"
+      threads: 1
+  scheduler:
+    recurring_schedule_file: config/recurring.yml
 
 test:
-  <<: *default
+  dispatchers:
+    - polling_interval: 1
+      batch_size: 500
+  workers:
+    - queues: "*"
+      threads: 1
+  scheduler:
+    recurring_schedule_file: config/recurring.yml
 
 production:
-  <<: *default
+  dispatchers:
+    - polling_interval: 1
+      batch_size: 500
+  workers:
+    - queues: "*"
+      threads: 3
+      processes: 2
+  scheduler:
+    recurring_schedule_file: config/recurring.yml

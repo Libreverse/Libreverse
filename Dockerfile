@@ -95,13 +95,12 @@ USER 1000:1000
 
 # Deployment options
 ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
-    RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-stats" \
-    PORT=3000
+    RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-stats"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start the server by default, this can be overwritten at runtime
+# Start both web server and workers using foreman and the Procfile
 EXPOSE 3000
 VOLUME /data
-CMD ["bundle", "exec", "iodine", "-www", "./public"]
+CMD ["bundle", "exec", "foreman", "start"]

@@ -2,6 +2,7 @@
 
 # Run static analysis script
 git add .
+bin/rails db:schema:load RAILS_ENV=test
 perl scripts/static.pl
 
 # Check if the script failed
@@ -13,8 +14,5 @@ fi
 # Add any changes made by the static analysis script to the commit
 echo "Adding any changes made by static analysis to commit..."
 git add -A
-
-echo "Ensuring test database is prepared..."
-bin/rails db:schema:load RAILS_ENV=test
 
 echo "✅ Static analysis passed. Proceeding with commit."
