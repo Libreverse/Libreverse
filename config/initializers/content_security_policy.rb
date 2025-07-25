@@ -8,6 +8,7 @@ Rails.application.configure do
     policy.font_src    :self, :https, :data
     policy.img_src     :self, :https, :data, :blob
     policy.object_src  :none
+    policy.manifest_src :self, :data # Allow inlined manifests as data URIs
 
     # ---- Dynamic script/style directives ----
     script_sources = %i[self https unsafe_inline data blob]
