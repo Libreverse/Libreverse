@@ -42,7 +42,7 @@
           %code experiences@#{LibreverseInstance.instance_domain}
           to receive a downloadable ZIP file containing this experience for offline reading.
 
-  - if rodauth.logged_in? && current_account&.verified?
+  - if authenticated_user? && current_account&.verified?
     -# Federation is now always enabled for user experiences
     = form.hidden_field :federate, value: true
 

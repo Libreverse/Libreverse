@@ -6,17 +6,19 @@ module Admin
   class BaseController < ApplicationController
     layout "admin" # Optional: Use a specific layout for admin pages
 
+    # Use CanCanCan authorization
+    authorize_resource class: false
     before_action :authenticate_admin!
 
     private
 
     # Verifies that the current user is logged in and is an administrator.
-    # Redirects to the root path with an alert if not authorized.
-    # Assumes `rodauth.logged_in?` checks authentication and `current_account.admin?` checks authorization.
+    # Uses the new role-based authentication system
     def authenticate_admin!
-      return if rodauth.logged_in? && current_account&.admin?
+      return if authenticated_user? && current_account&.admin?
 
-        redirect_to root_path, alert: "You are not authorized to access this page."
+        flash[:alert] = "You must be an admin to access this page."
+        redirect_to root_path
     end
   end
 end
