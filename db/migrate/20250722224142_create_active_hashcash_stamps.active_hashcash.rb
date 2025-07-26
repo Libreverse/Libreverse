@@ -30,6 +30,7 @@ class CreateActiveHashcashStamps < ActiveRecord::Migration[5.2]
       t.timestamps
     end
     add_index :active_hashcash_stamps, %i[ip_address created_at], where: "ip_address IS NOT NULL"
-    add_index :active_hashcash_stamps, %i[counter rand date resource bits version ext], name: "index_active_hashcash_stamps_unique", unique: true
+    # Reduced index to fit TiDB/MySQL key length limits - counter + rand + date should be sufficient for uniqueness
+    add_index :active_hashcash_stamps, %i[counter rand date resource], name: "index_active_hashcash_stamps_unique", unique: true
   end
 end

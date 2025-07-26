@@ -13,13 +13,6 @@ require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
 
-# Configuration for the application, engines, and railties goes here.
-#
-# These settings can be overridden in specific environments using the files
-# in config/environments, which are processed later.
-
-# config.time_zone = "Central Time (US & Canada)"
-
 module LibreverseInstance
   class Application < Rails::Application
     config.autoload_paths << "app/graphql"

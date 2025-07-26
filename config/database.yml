@@ -1,59 +1,71 @@
-# SQLite configuration for Libreverse
-# Uses the enhanced SQLite adapter for better features
+# TiDB configuration for Libreverse
+# TiDB is MySQL-compatible distributed database
 default: &default
-    adapter: sqlite3
+    adapter: trilogy
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
     pool: <%= 
       cpu_cores = Etc.nprocessors / 2
       threads = [[cpu_cores * 2 - 4, 5].max, 20].min
       threads
     %>
-    pragmas:
-        analysis_limit: 0           # Retained: No query analysis limit, minimal impact on concurrency
-        auto_vacuum: 'INCREMENTAL'  # Changed: Enable automatic space reclamation without full vacuum locks
-        automatic_index: 1          # Retained: Supports query performance, aids read concurrency
-        busy_timeout: 5000          # Changed: Set to 5000 ms to handle lock contention for writers
-        cache_size: -200000         # Retained: Large cache for performance, indirectly aids concurrency
-        cache_spill: 1              # Retained: Enables cache spilling, performance optimization
-        cell_size_check: 1          # Changed: Enable cell size checking for data integrity
-        checkpoint_fullfsync: 1     # Changed: Enable full fsync for checkpoint integrity
-        foreign_keys: 1             # Retained: Enforces foreign keys as requested
-        fullfsync: 1                # Changed: Enable full fsync for maximum data integrity on macOS
-        journal_mode: 'WAL'         # Changed: Enables WAL for high concurrency (multiple readers, one writer)
-        journal_size_limit: 5242880 # Retained: Set 5MB limit to control WAL growth
-        locking_mode: 'NORMAL'      # Retained: Compatible with WAL, supports concurrency
-        mmap_size: 200000000        # Retained: Large memory mapping for performance
-        page_size: 16384            # Retained: Optimized page size for modern systems
-        secure_delete: 'ON'         # Retained: Secure deletion as requested, minimal concurrency impact
-        synchronous: 3              # Changed: Set to FULL for maximum data integrity and durability
-        temp_store: 2               # Retained: Memory-based temp storage, reduces I/O
-        optimize: 1048578           # Retained: Custom optimization, likely for query performance
-        wal_autocheckpoint: 500     # Retained: Frequent checkpoints to control WAL growth
+    # TiDB-friendly connection settings
+    reconnect: true
+    connect_timeout: 10
+    read_timeout: 30
+    write_timeout: 30
+    checkout_timeout: 5
+    # TiDB works well with these MySQL variables
+    variables:
+        sql_mode: 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
+        # TiDB handles distributed transactions well
+        transaction_isolation: 'READ-COMMITTED'
 
 development:
     <<: *default
-    database: db/libreverse_development.sqlite3
+    database: libreverse_development
+    username: root
+    password: 
+    host: 127.0.0.1
+    port: 4000
 
 test:
     <<: *default
-    database: db/libreverse_test.sqlite3
+    database: libreverse_test
+    username: root
+    password: 
+    host: 127.0.0.1
+    port: 4000
 
 production:
     primary:
         <<: *default
-        adapter: sqlite3
-        database: &production_db "/data/production.sqlite3"
+        database: libreverse_production
+        username: main
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: localhost
+        port: 4000
     queue:
         <<: *default
-        adapter: sqlite3
-        database: *production_db
+        database: libreverse_production
+        username: main
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: localhost
+        port: 4000
         migrations_paths: db/queue_migrate
     cache:
         <<: *default
-        adapter: sqlite3
-        database: *production_db
+        database: libreverse_production
+        username: main
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: localhost
+        port: 4000
         migrations_paths: db/cache_migrate
     cable:
         <<: *default
-        adapter: sqlite3
-        database: *production_db
+        database: libreverse_production
+        username: main
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: localhost
+        port: 4000
         migrations_paths: db/cable_migrate

@@ -7,6 +7,14 @@
 module EncryptionHelper
   def self.column?(model_class, column_name)
     return false unless model_class.respond_to?(:table_exists?)
+
+    # Check if database exists before checking table existence
+    begin
+      model_class.connection.current_database
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
+      return false
+    end
+
     return false unless model_class.table_exists?
 
     begin

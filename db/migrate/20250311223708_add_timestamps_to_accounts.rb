@@ -7,8 +7,8 @@ class AddTimestampsToAccounts < ActiveRecord::Migration[8.0]
       dir.up do
         execute <<-SQL
           UPDATE accounts#{' '}
-          SET created_at = CASE WHEN password_changed_at IS NOT NULL THEN password_changed_at ELSE datetime('now') END,
-              updated_at = datetime('now')
+          SET created_at = CASE WHEN password_changed_at IS NOT NULL THEN password_changed_at ELSE NOW() END,
+              updated_at = NOW()
           WHERE created_at IS NULL;
         SQL
       end

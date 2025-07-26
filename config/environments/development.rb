@@ -84,6 +84,10 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # Use Solid Queue for Active Job
   config.active_job.queue_adapter = :solid_queue
 
+  # Configure Solid Queue for TiDB compatibility
+  config.solid_queue.connects_to = { database: { writing: :primary } }
+  config.solid_queue.use_skip_locked = false
+
   # Email configuration for development (MailHog)
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
