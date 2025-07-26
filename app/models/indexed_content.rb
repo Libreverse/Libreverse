@@ -4,7 +4,7 @@ class IndexedContent < ApplicationRecord
   # Associations
   has_one :indexed_content_vector, dependent: :destroy
 
-  # JSON serialization for SQLite compatibility
+  # JSON serialization for TiDB compatibility (MySQL-compatible distributed database)
   serialize :metadata, coder: JSON
   serialize :coordinates, coder: JSON
 

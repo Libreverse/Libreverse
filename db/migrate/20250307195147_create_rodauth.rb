@@ -2,12 +2,12 @@
 
 class CreateRodauth < ActiveRecord::Migration[8.0]
   def change
-    # SQLite doesn't support citext extension - using regular text instead
+    # TiDB/MySQL compatibility - using string with length limit instead of text for indexed columns
     # Case insensitivity can be handled at the application level
 
     create_table :accounts do |t|
       t.integer :status, null: false, default: 1
-      t.text :username, null: false
+      t.string :username, null: false, limit: 255
       t.index :username, unique: true
       t.string :password_hash
       t.timestamps
@@ -19,7 +19,7 @@ class CreateRodauth < ActiveRecord::Migration[8.0]
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
       t.datetime :deadline, null: false
-      t.datetime :email_last_sent, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :email_last_sent, null: false
     end
 
     # Used by the account verification feature
@@ -27,8 +27,8 @@ class CreateRodauth < ActiveRecord::Migration[8.0]
       t.bigint :id, primary_key: true
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
-      t.datetime :requested_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
-      t.datetime :email_last_sent, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :requested_at, null: false
+      t.datetime :email_last_sent, null: false
     end
 
     # Used by the verify login change feature
