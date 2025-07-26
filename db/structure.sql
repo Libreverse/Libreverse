@@ -57,6 +57,23 @@ CREATE TABLE `account_remember_keys` (
   CONSTRAINT `fk_rails_9b2f6d8501` FOREIGN KEY (`id`) REFERENCES `accounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `account_roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `account_roles` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account_id` bigint NOT NULL,
+  `role_id` bigint NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
+  KEY `index_account_roles_on_account_id` (`account_id`),
+  KEY `index_account_roles_on_role_id` (`role_id`),
+  UNIQUE KEY `index_account_roles_on_account_id_and_role_id` (`account_id`,`role_id`),
+  CONSTRAINT `fk_rails_a85be4ccfd` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`),
+  CONSTRAINT `fk_rails_f48937287f` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `account_verification_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -90,7 +107,18 @@ CREATE TABLE `accounts` (
   KEY `index_accounts_on_admin` (`admin`),
   KEY `index_accounts_on_federated_id` (`federated_id`),
   UNIQUE KEY `index_accounts_on_provider_and_provider_uid` (`provider`,`provider_uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=30001;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=90001;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `accounts_roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `accounts_roles` (
+  `account_id` bigint DEFAULT NULL,
+  `role_id` bigint DEFAULT NULL,
+  KEY `index_accounts_roles_on_account_id` (`account_id`),
+  KEY `index_accounts_roles_on_role_id` (`role_id`),
+  KEY `index_accounts_roles_on_account_id_and_role_id` (`account_id`,`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `action_mailbox_inbound_emails`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -314,7 +342,7 @@ CREATE TABLE `federails_actors` (
   UNIQUE KEY `index_federails_actors_on_entity` (`entity_type`,`entity_id`),
   UNIQUE KEY `index_federails_actors_on_uuid` (`uuid`),
   KEY `index_federails_actors_on_tombstoned_at` (`tombstoned_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=30001;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `federails_followings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -632,6 +660,22 @@ CREATE TABLE `oauth_saml_settings` (
   CONSTRAINT `fk_rails_73255239bb` FOREIGN KEY (`oauth_application_id`) REFERENCES `oauth_applications` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roles` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `resource_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `resource_id` bigint DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
+  KEY `index_roles_on_resource` (`resource_type`,`resource_id`),
+  KEY `index_roles_on_name` (`name`),
+  KEY `index_roles_on_name_and_resource_type_and_resource_id` (`name`,`resource_type`,`resource_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=30001;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `schema_migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -669,7 +713,7 @@ CREATE TABLE `solid_cache_entries` (
   KEY `index_solid_cache_entries_on_byte_size` (`byte_size`),
   KEY `index_solid_cache_entries_on_key_hash_and_byte_size` (`key_hash`,`byte_size`),
   UNIQUE KEY `index_solid_cache_entries_on_key_hash` (`key_hash`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=60001;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `solid_queue_blocked_executions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -762,7 +806,7 @@ CREATE TABLE `solid_queue_processes` (
   KEY `index_solid_queue_processes_on_last_heartbeat_at` (`last_heartbeat_at`),
   UNIQUE KEY `index_solid_queue_processes_on_name_and_supervisor_id` (`name`,`supervisor_id`),
   KEY `index_solid_queue_processes_on_supervisor_id` (`supervisor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=60001;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `solid_queue_ready_executions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -814,7 +858,7 @@ CREATE TABLE `solid_queue_recurring_tasks` (
   PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,
   UNIQUE KEY `index_solid_queue_recurring_tasks_on_key` (`key`),
   KEY `index_solid_queue_recurring_tasks_on_static` (`static`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=60001;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `solid_queue_scheduled_executions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -876,6 +920,9 @@ CREATE TABLE `user_preferences` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO `schema_migrations` (version) VALUES
+('20250726180000'),
+('20250726173703'),
+('20250726173313'),
 ('20250726123059'),
 ('20250724010255'),
 ('20250724010131'),

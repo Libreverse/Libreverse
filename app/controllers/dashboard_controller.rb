@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class DashboardController < ApplicationController
+  # Require authentication but allow both guests and regular users
+  before_action :require_authentication
+
   def index
     @account = current_account
     @account_created_at = @account.created_at.strftime("%B %d, %Y")

@@ -7,7 +7,7 @@
       .dashboard-header-section
         %h1.display-heading= t('experiences.index.title')
         %p.header-description= t('experiences.index.subtitle')
-      - if rodauth.logged_in? && !tutorial_dismissed?("experiences-tutorial")
+      - if user_signed_in? && !guest_user? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
           .dashboard-section#experiences-tutorial{"data-controller" => "glass",
                                                  "data-glass-enable-glass-value" => true,
@@ -26,13 +26,49 @@
       - if @experiences.any?
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
-      %section.experience-form-container.mt-5#create-experience{"data-controller" => "glass",
-                                                             "data-glass-enable-glass-value" => true,
-                                                             "data-glass-component-type-value" => "card",
-                                                             "data-glass-glass-type-value" => "rounded",
-                                                             "data-glass-border-radius-value" => 5,
-                                                             "data-glass-tint-opacity-value" => 0.1,
-                                                             "data-html2canvas-ignore" => "true"}
-        %h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
-        %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
-        = render "form", experience: @experience
+      - if guest_user?
+        .alert.alert-info.mb-0
+          %h4.alert-heading
+            %i.fas.fa-info-circle.me-2
+            Guest Account Limitation
+          %p.mb-3
+            You're browsing with a guest account. While you can view content and adjust basic settings,
+            some features are limited.
+          %p.mb-3
+            %strong Available to you:
+            %br
+            • View and browse all public content
+            %br
+            • Access settings (language, preferences)
+            %br
+            • Browse experiences and discussions
+          %p.mb-3
+            %strong Upgrade to unlock:
+            %br
+            • Create and share experiences
+            %br
+            • Export your data
+            %br
+            • Full account management features
+          .mt-3
+            = link_to "Upgrade to Full Account", "/create-account", class: "btn btn-primary me-2"
+      - else
+        %section.experience-form-container.mt-5#create-experience{"data-controller" => "glass",
+                                                               "data-glass-enable-glass-value" => true,
+                                                               "data-glass-component-type-value" => "card",
+                                                               "data-glass-glass-type-value" => "rounded",
+                                                               "data-glass-border-radius-value" => 5,
+                                                               "data-glass-tint-opacity-value" => 0.1,
+                                                               "data-html2canvas-ignore" => "true"}
+          - if authenticated_user?
+            %h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
+            %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
+            = render "form", experience: @experience
+          - else
+            %h2.experiences-experience-form-heading Join Our Community
+            .alert.alert-secondary.mb-4
+              %h4.alert-heading Share Your Voice
+              %p Create an account to share your experiences, stories, and insights with our community.
+              .mt-3
+                = link_to "Sign Up", "/create-account", class: "btn btn-primary me-2"
+                = link_to "Log In", "/login", class: "btn btn-outline-primary"

@@ -4,7 +4,9 @@ class AccountActionsController < ApplicationController
   # include ZipKit::RailsStreaming # Removed ZipKit
   require "zip" # Added for rubyzip
   Zip.default_compression = Zlib::BEST_COMPRESSION
-  before_action :require_logged_in
+
+  # Use new authentication - require authenticated users (no guests)
+  before_action :require_authenticated_user
 
   # GET /account/export
   def export
@@ -60,10 +62,6 @@ class AccountActionsController < ApplicationController
   end
 
   private
-
-  def require_logged_in
-    redirect_to rodauth.login_path unless current_account
-  end
 
   def account_json
     # Only export non-sensitive account data

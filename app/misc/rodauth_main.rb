@@ -451,10 +451,24 @@ class RodauthMain < Rodauth::Rails::Auth
         password_changed_at: Time.zone.now
       )
 
-      # --- Assign first non-guest account as admin --- Start
+      # === ROLE ASSIGNMENT ===
+      # Assign appropriate role based on guest status
       account_info = db.from(accounts_table).where(id: account_id).first
       is_guest = account_info && account_info[:guest] == true
 
+      # Use ActiveRecord model to assign roles via Rolify
+      ar_account = Account.find_by(id: account_id)
+      if ar_account
+        if is_guest
+          ar_account.add_role(:guest) unless ar_account.has_role?(:guest)
+          Rails.logger.debug "[Rodauth][after_create_account] Assigned guest role to account ID: #{account_id}"
+        else
+          ar_account.add_role(:user) unless ar_account.has_role?(:user)
+          Rails.logger.debug "[Rodauth][after_create_account] Assigned user role to account ID: #{account_id}"
+        end
+      end
+
+      # --- Assign first non-guest account as admin --- Start
       if is_guest
         Rails.logger.debug "[Rodauth][after_create_account] Account ID: #{account_id} is a guest. Skipping admin check."
       else

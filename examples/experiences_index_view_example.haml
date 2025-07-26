@@ -1,0 +1,61 @@
+<!-- Example: Updated Experience Index View -->
+<!-- This shows how to use the new authentication system in views -->
+
+.content
+  %h1 Experiences
+
+  - if authenticated_user?
+    <!-- Full users can create experiences -->
+    .user-actions
+      = link_to "Share Your Experience", new_experience_path, class: "btn btn-primary"
+
+  - elsif guest_user?
+    <!-- Guest users see upgrade prompt -->
+    .guest-notice.alert.alert-info
+      %h4 Want to share your experience?
+      %p Guest accounts can view experiences but cannot create them.
+      = link_to "Upgrade to Full Account", upgrade_account_path, class: "btn btn-success"
+
+  - else
+    <!-- Anonymous users see login/signup -->
+    .anonymous-notice.alert.alert-secondary
+      %h4 Join our community!
+      %p
+        = link_to "Sign up", signup_path, class: "btn btn-primary"
+        or
+        = link_to "log in", login_path, class: "btn btn-outline-primary"
+        to share your experiences.
+
+  .experiences-list
+    - @experiences.each do |experience|
+      .experience-card
+        %h3= experience.title
+        %p= truncate(experience.description, length: 200)
+
+        .experience-meta
+          %small
+            by #{experience.account.display_username}
+            %time= time_ago_in_words(experience.created_at)
+
+        .experience-actions
+          = link_to "View", experience_path(experience), class: "btn btn-sm btn-outline-primary"
+
+          <!-- Only show edit/delete to owners and admins -->
+          - if can? :update, experience
+            = link_to "Edit", edit_experience_path(experience), class: "btn btn-sm btn-outline-secondary"
+          - if can? :destroy, experience
+            = link_to "Delete", experience_path(experience), method: :delete,
+                      data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger"
+
+          <!-- Admin-only approve button -->
+          - if can? :approve, experience
+            - unless experience.approved?
+              = link_to "Approve", approve_experience_path(experience), method: :patch,
+                        class: "btn btn-sm btn-success"
+
+  - if @experiences.empty?
+    .empty-state
+      %h3 No experiences yet
+      %p Be the first to share your experience!
+      - if authenticated_user?
+        = link_to "Share Experience", new_experience_path, class: "btn btn-primary"

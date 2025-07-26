@@ -175,10 +175,36 @@ class AccountSequel < Sequel::Model(:accounts)
   def local?
     !federated?
   end
+
+  # Role-based authentication helpers (matching ActiveRecord Account model)
+  def authenticated_user?
+    !guest?
+  end
+
+  def effective_user?
+    # For AccountSequel, check if not guest and exists in database
+    !guest? && !new?
+  end
+
+  # Add has_role? method for Sequel model to work with Rolify
+  def role?(role_name)
+    # For AccountSequel, we can check roles directly through the database
+    # This avoids the circular dependency issue
+    return false if new?
+
+    # Check if account has the specified role
+    Role.joins(:accounts).where(
+      accounts: { id: id },
+      roles: { name: role_name.to_s, resource_type: nil, resource_id: nil }
+    ).exists?
+  end
 end
 
 # ActiveRecord bridge for associations
 class Account < ApplicationRecord
+  has_many :account_roles, dependent: :destroy
+  has_many :roles, through: :account_roles
+  rolify
   self.table_name = "accounts"
 
   # Include Federails ActorEntity for ActivityPub federation (only in non-test environments)
@@ -206,6 +232,10 @@ class Account < ApplicationRecord
   # Content moderation validations
   validate :username_moderation
 
+  # Callbacks for role assignment
+  after_create :assign_default_role
+  after_update :assign_default_role, if: :saved_change_to_guest?
+
   # Add any AR-specific logic or validations here if needed
 
   # Status helpers (matching Sequel model)
@@ -229,6 +259,26 @@ class Account < ApplicationRecord
   # Determines if the account is an admin
   def admin?
     admin == true
+  end
+
+  # Role-based authentication helpers
+  def authenticated_user?
+    !guest?
+  end
+
+  def effective_user?
+    authenticated_user? && !guest?
+  end
+
+  # Assign appropriate role based on guest status
+  def assign_default_role
+    if guest?
+      add_role(:guest) unless has_role?(:guest)
+    else
+      add_role(:user) unless has_role?(:user)
+      # Remove guest role if account is no longer a guest
+      remove_role(:guest) if has_role?(:guest)
+    end
   end
 
   def profile_url

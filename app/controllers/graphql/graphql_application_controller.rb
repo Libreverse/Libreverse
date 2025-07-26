@@ -10,7 +10,7 @@ module Graphql
     end
 
     def require_authentication
-      return true if current_account && !current_account.guest?
+      return true if current_account&.effective_user?
 
       raise GraphQL::ExecutionError, "Authentication required"
     end

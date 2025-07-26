@@ -7,7 +7,11 @@ class ApplicationController < ActionController::Base
     include SpamDetection
     include WebsocketP2pHelper
     include EnhancedCaching
-    helper_method :current_account
+
+    # CanCanCan integration
+    include CanCan::ControllerAdditions
+
+    helper_method :current_account, :current_ability, :user_signed_in?, :authenticated_user?, :guest_user?, :can_create_content?
 
     # Protection from CSRF
     protect_from_forgery with: :exception
@@ -141,6 +145,43 @@ class ApplicationController < ActionController::Base
 
       flash[:alert] = "You must be an admin to perform that action."
       redirect_to root_path
+    end
+
+    # CanCanCan integration - override current_ability to use Account model
+    def current_ability
+      @current_ability ||= Ability.new(current_account)
+    end
+
+    # Enhanced authentication helpers for role-based access control
+    def user_signed_in?
+      current_account.present?
+    end
+
+    def authenticated_user?
+      current_account.present? && current_account.effective_user?
+    end
+
+    def guest_user?
+      current_account.present? && current_account.guest?
+    end
+
+    def require_authenticated_user
+      return if authenticated_user?
+
+        flash[:alert] = "You must be a registered user to access this page."
+        redirect_to "/login"
+    end
+
+    def require_non_guest
+      return unless guest_user?
+
+        flash[:alert] = "This feature is not available for guest accounts."
+        redirect_to root_path
+    end
+
+    # Content creation permissions helper
+    def can_create_content?
+      authenticated_user? && can?(:create, Experience)
     end
 
     # Helper method to get current instance domain
