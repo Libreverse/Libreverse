@@ -176,7 +176,8 @@ GEM
       rake
     fiber-storage (1.0.1)
     fiddle (1.1.8)
-    foreman (0.89.1)
+    foreman (0.90.0)
+      thor (~> 1.4)
     foundation_emails (2.2.1.0)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
