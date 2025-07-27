@@ -193,7 +193,7 @@ export default defineConfig(({ mode }) => {
                         preset: [
                             "advanced",
                             {
-                                autoprefixer: false,
+                                autoprefixer: true,
                                 discardComments: {
                                     removeAllButCopyright: true,
                                 },
