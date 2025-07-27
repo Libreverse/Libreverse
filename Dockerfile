@@ -22,7 +22,6 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     && apt-get install --no-install-recommends -y \
         curl \
         sqlite3 \
-        nginx \
         dirmngr \
         gnupg \
         ca-certificates \
@@ -99,18 +98,6 @@ FROM base
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
-# Copy nginx configuration
-COPY config/nginx.conf /etc/nginx/sites-available/default
-RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default \
-    && rm -f /etc/nginx/sites-enabled/default.conf
-
-# Create passenger configuration for nginx
-RUN bundle exec passenger-config about ruby-command | head -1 | sed 's/.*: //' > /tmp/passenger_ruby_path \
-    && bundle exec passenger-config --root > /tmp/passenger_root \
-    && echo "passenger_root $(cat /tmp/passenger_root);" > /etc/nginx/conf.d/passenger.conf \
-    && echo "passenger_ruby $(cat /tmp/passenger_ruby_path);" >> /etc/nginx/conf.d/passenger.conf \
-    && rm /tmp/passenger_ruby_path /tmp/passenger_root
-
 # Set up users and directories
 RUN groupadd --system --gid 1000 rails \
     && useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash \
@@ -125,12 +112,9 @@ RUN chmod +x /usr/local/bin/docker-entrypoint-passenger.sh
 
 # Deployment options
 ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
-    RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-stats"
+    RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
-
-# Start nginx with passenger and background jobs
-EXPOSE 80 443
-VOLUME /data
-CMD ["/usr/local/bin/docker-entrypoint-passenger.sh"]
+EXPOSE 3000
+CMD ["bundle", "exec", "foreman", "start"]

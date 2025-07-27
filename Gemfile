@@ -87,3 +87,5 @@ group :test do
   gem "mocha"
   gem "selenium-webdriver"
 end
+
+gem "rack-attack", "~> 6.7"
