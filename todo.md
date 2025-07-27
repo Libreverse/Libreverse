@@ -2,8 +2,8 @@
 
 ## Other Tasks
 
-1: Move as much functionality like zstd to nginx modules
-2: Fix login weirdness
+1: Add extra indexers for the sandbox
+2: Move as much functionality like zstd to nginx modules and add stuff like http/3
 3: Add telegram search bot
 4: Add x.com search bot
 5: Open gRPC port on libreverse.geor.me

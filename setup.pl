@@ -106,15 +106,9 @@ unless (command_exists('typos')) {
     # Set up installation paths and script based on OS
     my ($install_dir, $install_script, $script_extension);
     
-    if ($is_windows) {
-        $install_dir = "$ENV{USERPROFILE}\\.cargo\\bin";
-        $script_extension = ".ps1";
-        $install_script = "$ENV{TEMP}\\gh-install.ps1";
-    } else {
-        $install_dir = "$ENV{HOME}/.cargo/bin";
-        $script_extension = ".sh";
-        $install_script = "/tmp/gh-install.sh";
-    }
+    $install_dir = "$ENV{HOME}/.cargo/bin";
+    $script_extension = ".sh";
+    $install_script = "/tmp/gh-install.sh";
     
     # Create installation directory if it doesn't exist
     unless (-d $install_dir) {

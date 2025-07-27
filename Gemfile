@@ -56,7 +56,7 @@ gem "tilt"
 gem "trilogy"
 gem "turbo_power"
 gem "turbo-rails"
-gem "tzinfo-data", platforms: %i[windows jruby]
+gem "tzinfo-data", platforms: %i[jruby]
 gem "unicode"
 gem "unidecoder"
 gem "view_component"
@@ -65,7 +65,7 @@ gem "voight_kampff"
 gem "zstd-ruby"
 
 group :development, :test do
-  gem "debug", platforms: %i[mri windows]
+  gem "debug", platforms: %i[mri]
 end
 
 group :development do
