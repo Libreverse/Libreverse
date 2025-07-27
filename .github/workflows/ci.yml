@@ -75,7 +75,7 @@ jobs:
             - name: Run markdownlint
               if: matrix.tool == 'markdownlint'
               shell: bash
-              run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint.json
+              run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
 
     # Validation tools (runs in parallel)
     validation:
@@ -185,6 +185,16 @@ jobs:
         if: always()
         permissions:
             contents: read
+        services:
+            tidb:
+                image: pingcap/tidb:latest
+                ports:
+                    - 4000:4000
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -P 4000 -u root"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=10
         strategy:
             fail-fast: false
             matrix:
