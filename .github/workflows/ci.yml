@@ -185,16 +185,6 @@ jobs:
         if: always()
         permissions:
             contents: read
-        services:
-            tidb:
-                image: pingcap/tidb:latest
-                ports:
-                    - 4000:4000
-                options: >-
-                    --health-cmd="mysqladmin ping -h 127.0.0.1 -P 4000 -u root"
-                    --health-interval=10s
-                    --health-timeout=5s
-                    --health-retries=10
         strategy:
             fail-fast: false
             matrix:
