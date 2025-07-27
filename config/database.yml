@@ -41,31 +41,31 @@ production:
     primary:
         <<: *default
         database: libreverse_production
-        username: main
+        username: <%= ENV["TIDB_USERNAME"] || "main" %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: localhost
-        port: 4000
+        host: <%= ENV["TIDB_HOST"] || "localhost" %>
+        port: <%= ENV["TIDB_PORT"] || 4000 %>
     queue:
         <<: *default
         database: libreverse_production
-        username: main
+        username: <%= ENV["TIDB_USERNAME"] || "main" %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: localhost
-        port: 4000
+        host: <%= ENV["TIDB_HOST"] || "localhost" %>
+        port: <%= ENV["TIDB_PORT"] || 4000 %>
         migrations_paths: db/queue_migrate
     cache:
         <<: *default
         database: libreverse_production
-        username: main
+        username: <%= ENV["TIDB_USERNAME"] || "main" %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: localhost
-        port: 4000
+        host: <%= ENV["TIDB_HOST"] || "localhost" %>
+        port: <%= ENV["TIDB_PORT"] || 4000 %>
         migrations_paths: db/cache_migrate
     cable:
         <<: *default
         database: libreverse_production
-        username: main
+        username: <%= ENV["TIDB_USERNAME"] || "main" %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: localhost
-        port: 4000
+        host: <%= ENV["TIDB_HOST"] || "localhost" %>
+        port: <%= ENV["TIDB_PORT"] || 4000 %>
         migrations_paths: db/cable_migrate
