@@ -45,6 +45,7 @@ test:
     port: 4000
     ssl_mode: VERIFY_IDENTITY
     sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+    protected_environment: false
 
 production:
     primary:
