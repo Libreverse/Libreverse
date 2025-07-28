@@ -25,6 +25,7 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
         dirmngr \
         gnupg \
         ca-certificates \
+        libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set production environment
@@ -46,6 +47,7 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
         libyaml-dev \
         pkg-config \
         unzip \
+        libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 FROM prebuild AS bun
@@ -111,8 +113,7 @@ COPY config/docker-entrypoint-passenger.sh /usr/local/bin/docker-entrypoint-pass
 RUN chmod +x /usr/local/bin/docker-entrypoint-passenger.sh
 
 # Deployment options
-ENV DATABASE_URL="sqlite3:///data/production.sqlite3" \
-    RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20"
+ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

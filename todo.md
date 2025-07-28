@@ -3,7 +3,7 @@
 ## Other Tasks
 
 1: Add extra indexers for the sandbox
-2: Move as much functionality like zstd to nginx modules and add stuff like http/3
+2: add apache and mod_http3
 3: Add telegram search bot
 4: Add x.com search bot
 5: Open gRPC port on libreverse.geor.me
