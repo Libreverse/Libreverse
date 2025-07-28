@@ -2,16 +2,22 @@
 
 class MakeAccountIdNotNullOnExperiences < ActiveRecord::Migration[8.0]
   def up
-    guest = Account.find_or_create_by!(guest: true) do |a|
-      a.username = "guest"
-      a.password_hash = SecureRandom.hex(16)
+    # Find or create a guest account without triggering callbacks or role assignment
+    guest = Account.unscoped.where(guest: true).first
+    unless guest
+      now = Time.now.utc.strftime("%Y-%m-%d %H:%M:%S")
+      Account.connection.execute <<~SQL
+        INSERT INTO accounts (username, password_hash, guest, created_at, updated_at, status)
+        VALUES ('guest', '#{SecureRandom.hex(16)}', TRUE, '#{now}', '#{now}', 1)
+      SQL
+      guest = Account.unscoped.where(guest: true).first
     end
 
-    # fasterer:disable ForEach
+    # rubocop:disable Rails/SkipsModelValidations
     Experience.where(account_id: nil).find_each do |exp|
-      exp.update!(account_id: guest.id)
+      exp.update_column(:account_id, guest.id)
     end
-    # fasterer:enable ForEach
+    # rubocop:enable Rails/SkipsModelValidations
 
     change_column_null :experiences, :account_id, false
   end
