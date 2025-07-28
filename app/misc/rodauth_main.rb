@@ -114,7 +114,7 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # ==> General
     # Initialize Sequel and have it reuse Active Record's database connection.
-    db Sequel.connect(adapter: :trilogy, test: false, extensions: :activerecord_connection, keep_reference: false)
+    db Sequel.connect(adapter: (ENV["RAILS_ENV"] == "test" ? :mysql2 : :trilogy), test: false, extensions: :activerecord_connection, keep_reference: false)
     # Avoid DB query that checks accounts table schema at boot time.
     convert_token_id_to_integer? { Account.columns_hash["id"].type == :integer }
 

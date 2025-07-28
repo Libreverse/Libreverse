@@ -3,5 +3,7 @@
 require "sequel"
 require "sequel/extensions/activerecord_connection"
 
+adapter = Rails.env.test? ? :mysql2 : :trilogy
+
 # Use the same TiDB connection as ActiveRecord
-DB = Sequel.connect(adapter: :trilogy, test: false, extensions: :activerecord_connection)
+DB = Sequel.connect(adapter: adapter, test: false, extensions: :activerecord_connection)
