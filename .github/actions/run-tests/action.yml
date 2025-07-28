@@ -19,9 +19,6 @@ runs:
           shell: bash
           run: |
               echo "Setting up test database..."
-              RAILS_ENV=test bundle exec rails db:create
               RAILS_ENV=test bundle exec rails db:test:prepare
-              RAILS_ENV=test bundle exec rails db:schema:load
-              RAILS_ENV=test bundle exec rails db:environment:set
               echo "Running Rails tests..."
               bundle exec rails test
