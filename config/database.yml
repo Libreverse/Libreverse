@@ -30,7 +30,14 @@ development:
     port: 4000
 
 test:
-    <<: *default
+    adapter: mysql2
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+    reconnect: true
+    connect_timeout: 10
+    read_timeout: 30
+    write_timeout: 30
+    checkout_timeout: 5
     database: libreverse_test
     username: <%= ENV["TIDB_USERNAME"] %>
     password: <%= ENV["TIDB_PASSWORD"] %>

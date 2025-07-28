@@ -340,6 +340,7 @@ GEM
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
     mutex_m (0.3.0)
+    mysql2 (0.5.6)
     net-http (0.6.0)
       uri
     net-imap (0.5.9)
@@ -723,6 +724,7 @@ DEPENDENCIES
   jbuilder
   lockbox
   mocha
+  mysql2
   nokogiri
   ostruct
   passenger (>= 6.0.20)
