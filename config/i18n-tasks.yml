@@ -1,0 +1,21 @@
+base_locale: en
+locales: [en, ar, de, es, fr, hi, ja, pt, ru, zh]
+
+ignore:
+    - "app/images/**/*"
+    - "app/assets/images/**/*"
+    - "public/**/*"
+
+search:
+    paths:
+        - "app"
+        - "config/locales"
+    prism: "rails"
+    only:
+        - "**/*.rb"
+        - "**/*.erb"
+        - "**/*.haml"
+        - "**/*.slim"
+        - "**/*.coffee"
+        - "**/*.js"
+        - "**/*.vue"

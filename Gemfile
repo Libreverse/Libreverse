@@ -76,6 +76,7 @@ group :development do
   gem "fasterer"
   gem "grpc-tools"
   gem "haml-lint"
+  gem "i18n-tasks"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
