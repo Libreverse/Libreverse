@@ -26,6 +26,7 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
         gnupg \
         ca-certificates \
         libssl-dev \
+        procps \
     && rm -rf /var/lib/apt/lists/*
 
 # Set production environment
