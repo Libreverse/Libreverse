@@ -1,9 +1,11 @@
 #!/bin/sh
 
-# Run static analysis script
-git add .
+# Prepare the test database
 bin/rails db:test:prepare
 bin/rails db:schema:load RAILS_ENV=test
+
+# Run static analysis script
+git add .
 perl scripts/static.pl
 
 # Check if the script failed
