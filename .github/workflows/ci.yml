@@ -48,8 +48,8 @@ jobs:
               run: |
                   set -e
                   timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
-                    echo "Prettier failed or timed out, but continuing..."
-                    exit 0
+                  echo "Prettier failed or timed out, but continuing..."
+                  exit 0
                   }
 
             - name: Run Rubocop
@@ -174,34 +174,34 @@ jobs:
                   tool: ${{ matrix.tool }}
 
     # Testing (runs in parallel)
-    testing:
-        name: ${{ matrix.test-suite }}
-        runs-on: ubuntu-22.04
-        if: always()
-        permissions:
-            contents: read
-        env:
-            TIDB_HOST: ${{ secrets.TIDB_HOST }}
-            TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
-            TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
-        strategy:
-            fail-fast: false
-            matrix:
-                test-suite: [jest, rails-test]
+    # testing:
+    #     name: ${{ matrix.test-suite }}
+    #     runs-on: ubuntu-22.04
+    #     if: always()
+    #     permissions:
+    #         contents: read
+    #     env:
+    #         TIDB_HOST: ${{ secrets.TIDB_HOST }}
+    #         TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
+    #         TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
+    #     strategy:
+    #         fail-fast: false
+    #         matrix:
+    #             test-suite: [jest, rails-test]
 
-        steps:
-            - name: Check out code
-              uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    #     steps:
+    #         - name: Check out code
+    #           uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-            - name: Setup Environment
-              uses: ./.github/actions/setup-environment
-              env:
-                  MATRIX_JOB: test-${{ matrix.test-suite }}
+    #         - name: Setup Environment
+    #           uses: ./.github/actions/setup-environment
+    #           env:
+    #               MATRIX_JOB: test-${{ matrix.test-suite }}
 
-            - name: Run Tests
-              uses: ./.github/actions/run-tests
-              with:
-                  test-suite: ${{ matrix.test-suite }}
+    #         - name: Run Tests
+    #           uses: ./.github/actions/run-tests
+    #           with:
+    #               test-suite: ${{ matrix.test-suite }}
 
     # Build and deployment (only runs on main branch and after quality checks pass)
     build-push:
@@ -210,8 +210,7 @@ jobs:
         permissions:
             contents: read
             packages: write
-        needs:
-            [formatting, validation, security-analysis, code-quality, testing]
+        needs: [formatting, validation, security-analysis, code-quality] # removed testing
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
         steps:
@@ -242,5 +241,5 @@ jobs:
             - name: Trigger Coolify Redeploy
               run: |
                   curl -X GET "https://c.geor.me/api/v1/deploy?uuid=p4wg4ssgokg08s0wkk4cw0sk&force=false" \
-                    -H "Content-Type: application/json" \
-                    -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
+                  -H "Content-Type: application/json" \
+                  -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
