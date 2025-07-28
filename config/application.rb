@@ -30,9 +30,6 @@ module LibreverseInstance
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks middleware haml_lint])
 
-    # For some reason I don't really understand, it only works if defined here.
-    # I would put it in an initializer, but it causes content encoding issues.
-
     # Zstandard compression middleware
     config.middleware.use Rack::Zstd,
                           window_log: 27,
@@ -63,7 +60,7 @@ module LibreverseInstance
     config.i18n.available_locales = %i[en zh es hi ar pt fr ru de ja]
 
     # I prefer this. It's just nicer, somehow.
-    config.active_record.schema_format = :sql
+    config.active_record.schema_format = :ruby
 
     # Email bot configuration using Action Mailbox
     config.action_mailbox.ingress = :imap

@@ -86,8 +86,8 @@ end
 group :test do
   gem "capybara"
   gem "mocha"
-  gem "selenium-webdriver"
   gem "mysql2"
+  gem "selenium-webdriver"
 end
 
 gem "rack-attack", "~> 6.7"
