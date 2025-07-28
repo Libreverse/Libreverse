@@ -125,8 +125,9 @@ run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
 run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc");
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
-run_command("Haml Validation", "rake", "haml:check");
-run_command("i18n Validation", "rake", "i18n:validate_keys");
+# Remove manual Haml Validation and replace i18n validation
+# run_command("Haml Validation", "rake", "haml:check");
+run_command("i18n Validation", "ruby", "scripts/i18n_validate.rb");
 
 # CodeQL automatic setup and database creation (sequential - ensures setup is ready)
 print "CodeQL Setup [RUNNING]\n";

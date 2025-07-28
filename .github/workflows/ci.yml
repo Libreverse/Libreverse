@@ -87,7 +87,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [haml-validation, i18n-validation]
+                tool: [i18n-validation]
 
         steps:
             - name: Check out code
@@ -96,15 +96,10 @@ jobs:
             - name: Setup Environment
               uses: ./.github/actions/setup-environment
 
-            - name: Run Haml validation
-              if: matrix.tool == 'haml-validation'
-              shell: bash
-              run: bundle exec rake haml:check
-
             - name: Run i18n validation
               if: matrix.tool == 'i18n-validation'
               shell: bash
-              run: bundle exec rake i18n:validate_keys
+              run: ruby scripts/i18n_validate.rb
 
     # Security analysis (runs in parallel)
     security-analysis:

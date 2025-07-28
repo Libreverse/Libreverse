@@ -1,140 +1,166 @@
+---
 ja:
-    hello: "こんにちは、世界"
-    policies:
-        privacy_policy: "プライバシーポリシー"
-        cookie_policy: "クッキーポリシー"
-        view_privacy_policy: "プライバシーポリシーを表示"
-        view_cookie_policy: "クッキーポリシーを表示"
-        cookies:
-            title: "クッキーポリシー"
-            intro_html: 'Libreverseは、セッションのセキュリティのために厳密に必要なクッキー ("_libreverse_session") と、ログインを30日間維持するオプションの「私を覚えている」クッキー ("remember_*") を使用します。'
-            manage_cookies: "ブラウザの設定を通じてクッキーを管理できます。ただし、厳密に必要なクッキーを無効にすると、サイトが正常に機能しなくなります。"
-            adjust_preferences_html: "同意の設定は、%{consent_link}を訪れることでいつでも調整できます。"
-            consent_page: "同意ページ"
-        privacy:
-            note_label: "注："
-            machine_readable: "機械可読の"
-            endpoint_available_at: "エンドポイントは"
-            compliance_discovery: "コンプライアンスと自動発見のために利用可能です。"
-            data_storage_description: "Libreverseは、サービスの運営に必要なデータのみを保存します：アカウントの認証情報、オプションの設定、およびあなたがアップロードしたコンテンツ（「体験」）。私たちはあなたのデータを販売することはありませんし、第三者のトラッカーや分析を使用しません。"
-            lawful_basis_description: "あなたのデータは、契約（サービスを提供するため）および、該当する場合、同意（オプションのクッキー）に基づいて処理されます。"
-            rights_tools_info: "アカウントダッシュボードには、該当する場合にあなたの権利を行使するためのツールが提供されています。"
-    consent:
-        screen:
-            title: "Libreverseへようこそ"
-            access_message_html: "アプリにアクセスするには、私たちの%{privacy_policy_link}と%{cookie_policy_link}に同意する必要があります。"
-            remember_info_html: "私たちはまた、あなたのログインを30日間保存するためのオプションの「私を覚えている」クッキーを使用しています。"
-            english_only_notice: "これらのポリシーは、リソースの制約により英語で提供されています。将来の翻訳が計画されています。"
-            remember_opt_in_label: "セッション間でログインを維持するために必要な非必須クッキーを有効にする（技術的にはオプションですが、強く推奨されます）"
-            agree_and_continue: "同意して続行"
-            decline: "拒否"
-    dashboard:
-        index:
-            title: "ダッシュボード"
-            welcome: "ようこそ、"
-            tutorial_heading: "あなたのアカウント"
-            tutorial_description: "あなたはアカウントダッシュボードにログインしています。ここからアカウント設定を管理してください。"
-            account_information_title: "アカウント情報"
-            account_actions_title: "アカウントアクション"
-            compliance_options_title: "コンプライアンスオプション"
-            change_password: "パスワードを変更"
-            edit_profile: "プロフィールを編集"
-            account_settings: "アカウント設定"
-            sign_out: "サインアウト"
-            review_consent: "同意を確認"
-            export_data: "データをエクスポート"
-            delete_account: "アカウントを削除"
-    experiences:
-        experiences_list:
-            by: "作成者"
-            created_at: "作成日時："
-            awaiting_approval: "承認待ち"
-            approve: "承認"
-            edit_details: "詳細を編集"
-            delete: "削除"
-        form:
-            errors_prohibited: "この体験の保存を妨げました："
-            rich_description_help: "詳細な説明は、他の人があなたの体験をより良く理解するのに役立ちます。"
-            upload_single_html_help: "あなたの体験のための単一のHTMLファイルをアップロードしてください。"
-            current_file: "現在のファイル："
-            replace_file: "（新しいファイルをアップロードして置き換える）"
-        edit:
-            title: "体験を編集"
-            subtitle: "体験に変更を加える"
-            refining: '"%{title}"を洗練する'
-            instructions: "以下の体験に変更を加え、準備ができたら保存してください。"
-            view_current_experience: "現在の体験を見る"
-            back_to_experiences: "体験に戻る"
-            created_and_updated_html: "この体験は%{created_date}に作成され、最後に%{updated_ago}前に更新されました。"
-        index:
-            title: "私の体験"
-            subtitle: "体験を作成および管理"
-            tutorial_heading: "あなたのクリエイティブコレクション"
-            tutorial_description: "体験を管理し、Libreverseコミュニティと共有するために新しいものを作成してください。"
-            create_new_heading: "新しい体験を作成"
-        new:
-            title: "新しい体験"
-            back: "戻る"
-        show:
-            title: "体験の詳細"
-            subtitle: "体験の詳細を表示"
-            last_updated: "最終更新："
-            find_similar: "類似の体験を見つける"
-    homepage:
-        index:
-            brand: "Libreverse"
-            libre_word: "リブレ"
-            verse_word: "バース"
-            tagline: "オープンソースソフトウェアと悪の兆ドル企業との終わりのない戦い"
-            article_excerpt: "2021年10月28日、マーク・ザッカーバーグは、オンラインのメタバースを作成する努力の一環としてFacebookをMeta Platformsにリブランドした後、インターネットの笑いものになりました。3年後、メタバースが現実により近づくにつれて、インターネットがマーク・ザッカーバーグの笑いものになりつつあるように見えます。"
-            read_full_article: "続きを読む"
-            read_full_article_aria: "メタバースの原則に関する全文を読む"
-            search_prompt: "このリンクをクリックして体験を検索してください。自由なデジタル世界があなたを待っています。"
-            search_link: "Libreverseに入る"
-            search_link_aria: "Libreverseの体験を検索"
-            article_written_by: "Libreverseの作成者によって書かれた記事"
-    layouts:
-        drawer:
-            attribution: "帰属"
-        default_drawer:
-            intro_html: "Libreverseでは、オープンライセンスの下でのプロジェクトを愛し、Libreverseを可能にしたプロジェクトにクレジットを与えたいと思っています。現在、これは帰属がライセンスの要件であるプロジェクトのみを含みますが、将来的に拡大する計画があります。"
-            libreverse_twemoji: "Libreverse-Twemoji"
-            modified_from: "から変更された"
-            by: "によって"
-            licensed_under: "の下でライセンスされています"
-        application:
-            alpha_notice_html: "⚠️👨‍🔧 これはLibreverseのv1アルファリリースです。悪いコード、クラッシュ、パフォーマンスの問題、ダウンタイムを予想してください。👨‍🔧⚠️"
-            noscript_heading: "JavaScriptが必要です"
-            noscript_message: "このアプリケーションは正しく機能するためにJavaScriptを必要とします。ブラウザの設定でJavaScriptを有効にして、ページを更新してください。"
-    rodauth:
-        create_account:
-            footer_have_account: "すでにアカウントをお持ちですか？"
-            sign_in: "サインイン"
-        login:
-            footer_no_account: "アカウントをお持ちではありませんか？"
-            sign_up: "サインアップ"
-        multi_phase_login:
-            footer_need_help: "ヘルプが必要ですか？"
-            return_to_login: "ログインに戻る"
-    search:
-        index:
-            title: "体験を検索"
-            search_word: "検索"
-            experiences_word: "体験"
-            tutorial_heading: "検索ガイド"
-            tutorial_description: "キーワードを入力してLibreverseの体験を見つけます。入力すると結果が表示されます。"
-            search_placeholder: "体験を検索"
-            input_aria_label: "体験を検索"
-    terms:
-        index:
-            intro: "Libreverseは、個人的で非営利のオープンソースプロジェクトです。このプラットフォームを使用することで、以下のことに同意します："
-            risk_clause: "自己責任で使用してください。パフォーマンスや可用性に関する保証は提供しません。"
-            bullet_two: "アカウントを悪用したり、違法なコンテンツをアップロードしたりしないこと。"
-            bullet_three: "オープンソースライセンスを尊重すること（たとえば、Libreverse-TwemojiのCC-BY-4.0など）。"
-            governing_law: "準拠法：英国"
-            title: "Libreverse利用規約"
-    settings:
-        index:
-            title: "設定"
-            description: "設定を管理します。"
-            language: "言語"
+  consent:
+    screen:
+      access_message_html: アプリにアクセスするには、私たちの%{privacy_policy_link}と%{cookie_policy_link}に同意する必要があります。
+      agree_and_continue: 同意して続行
+      decline: 拒否
+      english_only_notice: これらのポリシーは、リソースの制約により英語で提供されています。将来の翻訳が計画されています。
+      intro: 'Welcome to Libreverse! A few things before we get started:'
+      remember_info_html: 私たちはまた、あなたのログインを30日間保存するためのオプションの「私を覚えている」クッキーを使用しています。
+      remember_opt_in_label: セッション間でログインを維持するために必要な非必須クッキーを有効にする（技術的にはオプションですが、強く推奨されます）
+  dashboard:
+    index:
+      account_actions_title: アカウントアクション
+      account_settings: アカウント設定
+      change_password: パスワードを変更
+      compliance_options_title: コンプライアンスオプション
+      delete_account: アカウントを削除
+      edit_profile: プロフィールを編集
+      export_data: データをエクスポート
+      review_consent: 同意を確認
+      sign_out: サインアウト
+      title: ダッシュボード
+      tutorial_description: あなたはアカウントダッシュボードにログインしています。ここからアカウント設定を管理してください。
+      tutorial_heading: あなたのアカウント
+      welcome: ようこそ、
+  experiences:
+    edit:
+      back_to_experiences: 体験に戻る
+      created_and_updated_html: この体験は%{created_date}に作成され、最後に%{updated_ago}前に更新されました。
+      instructions: 以下の体験に変更を加え、準備ができたら保存してください。
+      refining: '"%{title}"を洗練する'
+      subtitle: 体験に変更を加える
+      title: 体験を編集
+      view_current_experience: 現在の体験を見る
+    experiences_list:
+      approve: 承認
+      awaiting_approval: 承認待ち
+      by: 作成者
+      created_at: 作成日時：
+      delete: 削除
+      edit_details: 詳細を編集
+    form:
+      current_file: 現在のファイル：
+      errors_prohibited: この体験の保存を妨げました：
+      replace_file: "（新しいファイルをアップロードして置き換える）"
+      rich_description_help: 詳細な説明は、他の人があなたの体験をより良く理解するのに役立ちます。
+      upload_single_html_help: あなたの体験のための単一のHTMLファイルをアップロードしてください。
+    index:
+      create_new_heading: 新しい体験を作成
+      subtitle: 体験を作成および管理
+      title: 私の体験
+      tutorial_description: 体験を管理し、Libreverseコミュニティと共有するために新しいものを作成してください。
+      tutorial_heading: あなたのクリエイティブコレクション
+    new:
+      back: 戻る
+      title: 新しい体験
+    show:
+      find_similar: 類似の体験を見つける
+      last_updated: 最終更新：
+      subtitle: 体験の詳細を表示
+      title: 体験の詳細
+  flash:
+    content_flagged: Your submission contains content that appears to be spam.
+    please_try_again: Please try again in a moment.
+    suspicious_activity: Suspicious activity detected. Please try again later.
+    too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  homepage:
+    index:
+      brand: Libreverse
+      digital_life_inevitable: A digital life may be inevitable, but it shouldn’t
+        enslave us.
+      help_build_alternative: Help us build an open, ethical alternative to Meta's
+        metaverse
+      know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
+      libre_word: リブレ
+      meta_charging: Meta’s charging toward this future, but we can’t let one company
+        own it.
+      metaverse_article_title: The case for an open-source metaverse.
+      metaverse_hook: The Metaverse could hook us with a fake paradise, and we might
+        not unplug.
+      not_one_product: It’s not one product; it’s a shift to a fully online existence.
+      open_source_rival: An open-source rival like Libreverse is vital, letting others
+        build competing Metaverses without starting from scratch.
+      reclaim_potential: Let’s reclaim the Metaverse’s potential—before it’s just
+        Meta’s world.
+      sounds_cool: Sounds cool, but it risks becoming a Matrix-style trap, hijacking
+        our brains like social media, gambling, or junk food do.
+      take_control: Take control
+      verse_word: バース
+      zuckerberg_rebrand: Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
+        digital world for work, play, and life—is taking shape.
+  invisible_captcha:
+    spam_detection:
+      general_spam: Your submission appears to be spam. Please try again.
+      honeypot_triggered: 'Spam detected: hidden field was filled'
+    timestamp_error_message: Form submitted too quickly. Please wait a moment and
+      try again.
+  layouts:
+    application:
+      noscript_heading: JavaScriptが必要です
+      noscript_message: このアプリケーションは正しく機能するためにJavaScriptを必要とします。ブラウザの設定でJavaScriptを有効にして、ページを更新してください。
+    default_drawer:
+      by: によって
+      intro_html: Libreverseでは、オープンライセンスの下でのプロジェクトを愛し、Libreverseを可能にしたプロジェクトにクレジットを与えたいと思っています。現在、これは帰属がライセンスの要件であるプロジェクトのみを含みますが、将来的に拡大する計画があります。
+      libreverse_twemoji: Libreverse-Twemoji
+      licensed_under: の下でライセンスされています
+      modified_from: から変更された
+    drawer:
+      attribution: 帰属
+  policies:
+    cookie_policy: クッキーポリシー
+    cookies:
+      adjust_preferences_html: 同意の設定は、%{consent_link}を訪れることでいつでも調整できます。
+      consent_page: 同意ページ
+      intro_html: Libreverseは、セッションのセキュリティのために厳密に必要なクッキー ("_libreverse_session") と、ログインを30日間維持するオプションの「私を覚えている」クッキー
+        ("remember_*") を使用します。
+      manage_cookies: ブラウザの設定を通じてクッキーを管理できます。ただし、厳密に必要なクッキーを無効にすると、サイトが正常に機能しなくなります。
+      title: クッキーポリシー
+    privacy:
+      compliance_discovery: コンプライアンスと自動発見のために利用可能です。
+      data_storage_description: Libreverseは、サービスの運営に必要なデータのみを保存します：アカウントの認証情報、オプションの設定、およびあなたがアップロードしたコンテンツ（「体験」）。私たちはあなたのデータを販売することはありませんし、第三者のトラッカーや分析を使用しません。
+      endpoint_available_at: エンドポイントは
+      lawful_basis_description: あなたのデータは、契約（サービスを提供するため）および、該当する場合、同意（オプションのクッキー）に基づいて処理されます。
+      machine_readable: 機械可読の
+      note_label: 注：
+      rights_tools_info: アカウントダッシュボードには、該当する場合にあなたの権利を行使するためのツールが提供されています。
+    privacy_policy: プライバシーポリシー
+    view_cookie_policy: クッキーポリシーを表示
+    view_privacy_policy: プライバシーポリシーを表示
+  rodauth:
+    create_account:
+      footer_have_account: すでにアカウントをお持ちですか？
+      sign_in: サインイン
+    login:
+      footer_no_account: アカウントをお持ちではありませんか？
+      sign_up: サインアップ
+    multi_phase_login:
+      footer_need_help: ヘルプが必要ですか？
+      return_to_login: ログインに戻る
+  search:
+    federated_experience_description: This experience is hosted on %{domain} and will
+      open in a new tab
+    from_instance: From %{domain}
+    index:
+      experiences_word: 体験
+      input_aria_label: 体験を検索
+      search_placeholder: 体験を検索
+      search_word: 検索
+      title: 体験を検索
+      tutorial_description: キーワードを入力してLibreverseの体験を見つけます。入力すると結果が表示されます。
+      tutorial_heading: 検索ガイド
+  settings:
+    index:
+      description: 設定を管理します。
+      language: 言語
+      title: 設定
+  spam_protection:
+    bot_detected: Automated behavior detected. Please try again.
+    hashcash_failed: Security validation failed. Please ensure JavaScript is enabled
+      and try again.
+  terms:
+    index:
+      intro: Libreverseは、個人的で非営利のオープンソースプロジェクトです。このプラットフォームを使用することで、以下のことに同意します：
+      risk_clause: 自己責任で使用してください。パフォーマンスや可用性に関する保証は提供しません。
+      title: Libreverse利用規約
