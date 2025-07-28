@@ -72,7 +72,6 @@ end
 
 group :development do
   gem "brakeman"
-  gem "dockerfile-rails"
   gem "fasterer"
   gem "grpc-tools"
   gem "haml-lint"
