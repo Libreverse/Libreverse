@@ -4,6 +4,7 @@
 
 Add extra indexers for the sandbox and other metaverses
 add nginx to phusion passenger to get http/3
+add synk
 integrate the rodauth complex multi-db account features
 deploy without master_key being pre-set
 deploy with ssl without a reverse proxy

@@ -127,8 +127,6 @@ GEM
     debug (1.11.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
-    dockerfile-rails (1.7.10)
-      rails (>= 3.0.0)
     dotenv (3.1.8)
     dotenv-rails (3.1.8)
       dotenv (= 3.1.8)
@@ -716,7 +714,6 @@ DEPENDENCIES
   cancancan
   capybara
   debug
-  dockerfile-rails
   dotenv-rails
   fasterer
   federails
