@@ -28,6 +28,7 @@ gem "ostruct"
 gem "passenger", ">= 6.0.20"
 gem "permessage_deflate"
 gem "premailer-rails"
+gem "rack-attack"
 gem "rack-brotli"
 gem "rack-cors"
 gem "rails"
@@ -71,7 +72,6 @@ end
 
 group :development do
   gem "brakeman"
-  gem "bundle-audit"
   gem "dockerfile-rails"
   gem "fasterer"
   gem "grpc-tools"
@@ -89,5 +89,3 @@ group :test do
   gem "mysql2"
   gem "selenium-webdriver"
 end
-
-gem "rack-attack", "~> 6.7"

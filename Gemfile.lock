@@ -100,11 +100,6 @@ GEM
       racc
     brotli (0.7.0)
     builder (3.3.0)
-    bundle-audit (0.1.0)
-      bundler-audit
-    bundler-audit (0.9.2)
-      bundler (>= 1.2.0, < 3)
-      thor (~> 1.0)
     cable_ready (5.0.6)
       actionpack (>= 5.2)
       actionview (>= 5.2)
@@ -700,7 +695,6 @@ DEPENDENCIES
   argon2
   bootsnap
   brakeman
-  bundle-audit
   cancancan
   capybara
   debug
@@ -730,7 +724,7 @@ DEPENDENCIES
   passenger (>= 6.0.20)
   permessage_deflate
   premailer-rails
-  rack-attack (~> 6.7)
+  rack-attack
   rack-brotli
   rack-cors
   rails
