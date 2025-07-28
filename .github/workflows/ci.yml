@@ -185,6 +185,10 @@ jobs:
         if: always()
         permissions:
             contents: read
+        env:
+            TIDB_HOST: ${{ secrets.TIDB_HOST }}
+            TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
+            TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
         strategy:
             fail-fast: false
             matrix:

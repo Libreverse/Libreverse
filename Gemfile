@@ -66,6 +66,7 @@ gem "zstd-ruby"
 
 group :development, :test do
   gem "debug", platforms: %i[mri]
+  gem "dotenv-rails"
 end
 
 group :development do

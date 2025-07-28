@@ -32,40 +32,50 @@ development:
 test:
     <<: *default
     database: libreverse_test
-    username: root
-    password: 
-    host: 127.0.0.1
+    username: <%= ENV["TIDB_USERNAME"] %>
+    password: <%= ENV["TIDB_PASSWORD"] %>
+    host: <%= ENV["TIDB_HOST"] %>
     port: 4000
+    ssl_mode: VERIFY_IDENTITY
+    sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
 
 production:
     primary:
         <<: *default
         database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] || "main" %>
+        username: <%= ENV["TIDB_USERNAME"] %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] || "localhost" %>
-        port: <%= ENV["TIDB_PORT"] || 4000 %>
+        host: <%= ENV["TIDB_HOST"] %>
+        port: 4000
+        ssl_mode: VERIFY_IDENTITY
+        sslca: /etc/ssl/certs/ca-certificates.crt
     queue:
         <<: *default
         database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] || "main" %>
+        username: <%= ENV["TIDB_USERNAME"] %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] || "localhost" %>
-        port: <%= ENV["TIDB_PORT"] || 4000 %>
+        host: <%= ENV["TIDB_HOST"] %>
+        port: 4000
+        ssl_mode: VERIFY_IDENTITY
+        sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/queue_migrate
     cache:
         <<: *default
         database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] || "main" %>
+        username: <%= ENV["TIDB_USERNAME"] %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] || "localhost" %>
-        port: <%= ENV["TIDB_PORT"] || 4000 %>
+        host: <%= ENV["TIDB_HOST"] %>
+        port: 4000
+        ssl_mode: VERIFY_IDENTITY
+        sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/cache_migrate
     cable:
         <<: *default
         database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] || "main" %>
+        username: <%= ENV["TIDB_USERNAME"] %>
         password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] || "localhost" %>
-        port: <%= ENV["TIDB_PORT"] || 4000 %>
+        host: <%= ENV["TIDB_HOST"] %>
+        port: 4000
+        ssl_mode: VERIFY_IDENTITY
+        sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/cable_migrate
