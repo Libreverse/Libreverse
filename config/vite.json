@@ -5,7 +5,8 @@
             "~/images/**/*",
             "~/emoji/**/*",
             "~/fonts/**/*",
-            "~/icons/**/*"
+            "~/icons/**/*",
+            "~/static/**/*"
         ]
     },
     "development": {
