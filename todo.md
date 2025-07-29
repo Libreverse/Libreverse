@@ -3,8 +3,12 @@
 ## Other Tasks
 
 Add extra indexers for the sandbox and other metaverses
-add nginx to phusion passenger to get http/3
+fix css compilation issues by moving to regular cssnano
+drop the pre-commit hook becausae the tests take 20 mins
+strip out old drawer and sidebar code
 add synk
+reintegrate zipkit for streaming downloads and look into streaming uploads too
+make indexers autostart if they don't already
 integrate the rodauth complex multi-db account features
 deploy without master_key being pre-set
 deploy with ssl without a reverse proxy

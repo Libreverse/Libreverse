@@ -59,10 +59,13 @@ module ApplicationHelper
   def seo_asset_path(path)
     if path.is_a?(String)
       if path.start_with?("@")
-        # For @ prefixed assets (e.g., @libreverse-logo.svg), look in images directory
+        # For @ prefixed assets, look in images directory (not static)
         vite_asset_path("images/#{path.sub('@', '')}")
+      elsif path.start_with?("~/static/")
+        # For explicit static asset references
+        vite_asset_path(path)
       elsif path.start_with?("~/")
-        # For ~/ prefixed assets, use as-is with vite_asset_path
+        # For other ~/ prefixed assets, use as-is with vite_asset_path
         vite_asset_path(path)
       else
         # Return unchanged for other paths
@@ -580,15 +583,39 @@ module ApplicationHelper
 
     case File.extname(path).downcase
     when ".json", ".webmanifest"
-      # Parse JSON and update icon src paths to data URIs
+      # Parse JSON and update paths to be absolute or data URIs
       begin
         manifest_data = JSON.parse(content)
+
+        # Get the base URL for absolute URLs
+        base_url = "#{request.protocol}#{request.host_with_port}"
+
+        # Update start_url and scope to be absolute URLs
+        manifest_data["start_url"] = "#{base_url}#{manifest_data['start_url']}" if manifest_data["start_url"]&.start_with?("/")
+
+        manifest_data["scope"] = "#{base_url}#{manifest_data['scope']}" if manifest_data["scope"]&.start_with?("/")
+
+        # Update icon src paths to data URIs
         manifest_data["icons"]&.each do |icon|
+          if icon["src"]&.start_with?("/")
+            icon_data = inline_favicon(icon["src"])
+            icon["src"] = icon_data if icon_data
+          end
+        end
+
+        # Update shortcut URLs to be absolute
+        manifest_data["shortcuts"]&.each do |shortcut|
+          shortcut["url"] = "#{base_url}#{shortcut['url']}" if shortcut["url"]&.start_with?("/")
+
+          # Update shortcut icon src paths
+          shortcut["icons"]&.each do |icon|
             if icon["src"]&.start_with?("/")
               icon_data = inline_favicon(icon["src"])
               icon["src"] = icon_data if icon_data
             end
+          end
         end
+
         updated_content = JSON.pretty_generate(manifest_data)
         "data:application/manifest+json;base64,#{Base64.strict_encode64(updated_content)}"
       rescue JSON::ParserError => e
@@ -618,39 +645,54 @@ module ApplicationHelper
   def favicon_file_path(path)
     return unless path.is_a?(String)
 
-      if path.start_with?("@")
-        # For @ prefixed assets, look in images directory
-        asset_path = "images/#{path.sub('@', '')}"
-        vite_asset_path_to_file(asset_path)
-      elsif path.start_with?("~/")
-        # For ~/ prefixed assets, use vite asset path
-        vite_asset_path_to_file(path)
-      elsif path.start_with?("/")
-        # For absolute paths, check public directory
-        Rails.root.join("public#{path}")
-      else
-        # For relative paths, assume public directory
-        Rails.root.join("public", path)
-      end
+    # Prefer Vite-managed assets for all favicon/static asset lookups
+    if path.start_with?("@")
+      asset_path = "images/#{path.sub('@', '')}"
+      vite_asset_path_to_file(asset_path) ||
+        Rails.root.join("app", "images", File.basename(path)) ||
+        Rails.root.join("app", "assets", "static", File.basename(path))
+    elsif path.start_with?("~/")
+      vite_asset_path_to_file(path) ||
+        Rails.root.join("app", "images", File.basename(path)) ||
+        Rails.root.join("app", "assets", "static", File.basename(path))
+    elsif path.start_with?("/assets/static/")
+      Rails.root.join("app", "assets", "static", File.basename(path)) ||
+        Rails.root.join("app", "images", File.basename(path))
+    elsif path.start_with?("/")
+      vite_asset_path_to_file(path) ||
+        Rails.root.join("app", "images", File.basename(path)) ||
+        Rails.root.join("public#{path}") ||
+        Rails.root.join("app", "assets", "static", File.basename(path))
+    else
+      vite_asset_path_to_file(path) ||
+        Rails.root.join("app", "images", File.basename(path)) ||
+        Rails.root.join("public", path) ||
+        Rails.root.join("app", "assets", "static", File.basename(path))
+    end
   end
 
   # Converts vite asset path to file system path
   def vite_asset_path_to_file(asset_path)
     if Rails.env.development?
-      # In development, assets are in app/images
+      # In development, assets are in their source directories
       if asset_path.start_with?("images/")
         Rails.root.join("app", asset_path)
+      elsif asset_path.start_with?("static/")
+        Rails.root.join("app", asset_path)
+      elsif asset_path.start_with?("icons/")
+        Rails.root.join("app", asset_path)
       else
-        Rails.root.join("app", "images", asset_path)
+        # Try images directory as fallback
+        Rails.root.join("app", "images", File.basename(asset_path))
       end
     else
       # In production, use vite manifest to find compiled assets
       begin
-        manifest_path = Rails.root.join("public/vite/manifest.json")
+        manifest_path = Rails.root.join("public/vite/.vite/manifest.json")
         if File.exist?(manifest_path)
           manifest = JSON.parse(File.read(manifest_path))
           entry = manifest[asset_path]
-          Rails.root.join("public", "vite", entry["file"]) if entry && entry["file"]
+          Rails.root.join("public", "vite", "assets", entry["file"]) if entry && entry["file"]
         end
       rescue StandardError => e
         Rails.logger.warn "Failed to resolve vite asset path #{asset_path}: #{e.message}"

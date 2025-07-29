@@ -174,34 +174,34 @@ jobs:
                   tool: ${{ matrix.tool }}
 
     # Testing (runs in parallel)
-    # testing:
-    #     name: ${{ matrix.test-suite }}
-    #     runs-on: ubuntu-22.04
-    #     if: always()
-    #     permissions:
-    #         contents: read
-    #     env:
-    #         TIDB_HOST: ${{ secrets.TIDB_HOST }}
-    #         TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
-    #         TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
-    #     strategy:
-    #         fail-fast: false
-    #         matrix:
-    #             test-suite: [jest, rails-test]
+    testing:
+        name: ${{ matrix.test-suite }}
+        runs-on: ubuntu-22.04
+        if: always()
+        permissions:
+            contents: read
+        env:
+            TIDB_HOST: ${{ secrets.TIDB_HOST }}
+            TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
+            TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
+        strategy:
+            fail-fast: false
+            matrix:
+                test-suite: [jest, rails-test]
 
-    #     steps:
-    #         - name: Check out code
-    #           uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        steps:
+            - name: Check out code
+              uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-    #         - name: Setup Environment
-    #           uses: ./.github/actions/setup-environment
-    #           env:
-    #               MATRIX_JOB: test-${{ matrix.test-suite }}
+            - name: Setup Environment
+              uses: ./.github/actions/setup-environment
+              env:
+                  MATRIX_JOB: test-${{ matrix.test-suite }}
 
-    #         - name: Run Tests
-    #           uses: ./.github/actions/run-tests
-    #           with:
-    #               test-suite: ${{ matrix.test-suite }}
+            - name: Run Tests
+              uses: ./.github/actions/run-tests
+              with:
+                  test-suite: ${{ matrix.test-suite }}
 
     # Build and deployment (only runs on main branch and after quality checks pass)
     build-push:
