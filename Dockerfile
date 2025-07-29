@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Use phusion/passenger-full as base image for a smaller image.
-FROM phusion/passenger-full:latest
+FROM phusion/passenger-ruby34:latest
 
 # Set optimization and security flags
 ENV CFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
