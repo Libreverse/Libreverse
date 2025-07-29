@@ -53,7 +53,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 
 ### Prerequisites
 
-- Ruby ≥ 3.4.1 (see .ruby-version)
+- Ruby ≥ 3.4.2 (see .ruby-version)
 - Bun ≥ 1.2 (front‑end package manager)
 - SQLite ≥ 3.41 (compiled with FTS5 and JSON1)
 - ImageMagick (for Active Storage variants)

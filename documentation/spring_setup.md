@@ -84,8 +84,8 @@ spring server
 
 ## Environment Compatibility
 
-- ✅ **Ruby 3.4.1**: Fully supported
-- ✅ **Rails 7.x**: Fully supported
+- ✅ **Ruby 3.4.2**: Fully supported
+- ✅ **Rails 8.x**: Fully supported
 - ✅ **Development**: Enabled with reloading
 - ✅ **Test**: Enabled with reloading for Spring compatibility
 
