@@ -39,6 +39,14 @@
 # Ignore CI service files.
 /.github
 
+# Ignore CodeQL and coverage directories
+/.codeql
+/coverage
+
+# Ignore other common large dev directories
+/.vscode
+/.idea
+
 # Ignore Kamal files.
 /config/deploy*.yml
 /.kamal

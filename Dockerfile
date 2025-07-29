@@ -3,11 +3,18 @@
 # Use phusion/passenger-full as base image for a smaller image.
 FROM phusion/passenger-ruby34:latest
 
+# Install jemalloc for improved memory management
+RUN apt-get update && apt-get install -y libjemalloc2 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set optimization and security flags
 ENV CFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
 ENV CXXFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
 ENV LDFLAGS="-Wl,-z,relro -Wl,-z,now"
 ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20"
+
+# Preload jemalloc for all processes (Ruby, Passenger, Nginx, etc.)
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 # Set correct environment variables.
 ENV HOME /root
@@ -26,6 +33,10 @@ RUN bash -lc 'rvm --default use ruby-3.4.2 && bundle install --jobs 4 --retry 3'
 
 # Copy package.json and bun.lock for JS dependencies
 COPY package.json bun.lock ./
+
+# Install unzip for Bun installation
+RUN apt-get update && apt-get install -y unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Bun (for JS package management and build only)
 ENV BUN_INSTALL=/usr/local/bun
