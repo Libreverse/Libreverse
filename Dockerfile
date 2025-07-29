@@ -21,8 +21,8 @@ WORKDIR /home/app/webapp
 # Copy Gemfile and Gemfile.lock first for efficient caching
 COPY Gemfile Gemfile.lock ./
 
-# Install Ruby gems using RVM's default Ruby (3.4.4)
-RUN bash -lc 'rvm --default use ruby-3.4.4 && bundle install --jobs 4 --retry 3'
+# Install Ruby gems using RVM's default Ruby (3.4.2)
+RUN bash -lc 'rvm --default use ruby-3.4.2 && bundle install --jobs 4 --retry 3'
 
 # Copy package.json and bun.lock for JS dependencies
 COPY package.json bun.lock ./
@@ -40,7 +40,7 @@ COPY . .
 RUN chown -R app:app /home/app/webapp
 
 # Precompile Rails bootsnap cache
-RUN bash -lc 'rvm --default use ruby-3.4.4 && bundle exec bootsnap precompile app/ lib/'
+RUN bash -lc 'rvm --default use ruby-3.4.2 && bundle exec bootsnap precompile app/ lib/'
 
 # Precompile assets with vite (using bun)
 RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production VITE_RUBY_MODE=production \
