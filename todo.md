@@ -4,7 +4,7 @@
 
 Add extra indexers for the sandbox and other metaverses
 fix css compilation issues by moving to regular cssnano
-drop the pre-commit hook becausae the tests take 20 mins
+drop the pre-commit hook because the tests take 20 mins
 strip out old drawer and sidebar code
 add synk
 reintegrate zipkit for streaming downloads and look into streaming uploads too
