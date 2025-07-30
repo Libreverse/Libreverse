@@ -93,8 +93,6 @@ class ApplicationController < ActionController::Base
       # Check/set drawer state only if it's a guest account
       return unless current_account.guest?
 
-        # Use UserPreference.set which handles checking existence
-        UserPreference.set(current_account.id, :drawer_expanded, false)
       # Add other guest-specific preference initializations here if needed
 
       # Removed session initialization

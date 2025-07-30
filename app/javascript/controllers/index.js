@@ -37,9 +37,6 @@ application.register("glass-button", GlassButtonController);
 import GlassController from "./glass_controller";
 application.register("glass", GlassController);
 
-import GlassDrawerController from "./glass_drawer_controller";
-application.register("glass-drawer", GlassDrawerController);
-
 import HyperspaceController from "./hyperspace_controller";
 application.register("hyperspace", HyperspaceController);
 

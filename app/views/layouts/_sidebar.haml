@@ -1,11 +1,7 @@
 :ruby
   sidebar_id = local_assigns.fetch(:sidebar_id, "main")
-  sidebar_hovered = local_assigns.fetch(:sidebar_hovered, sidebar_hovered? ? 't' : 'f')
-  # If the sidebar is hovered, force expanded state to true so it renders expanded.
-  expanded_pref = local_assigns.fetch(:expanded, sidebar_expanded? ? 't' : 'f')
-  expanded = (sidebar_hovered == 't') ? 't' : expanded_pref
   rodauth_obj = local_assigns.fetch(:rodauth, rodauth)
-  Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}, sidebar_hovered=#{sidebar_hovered}, expanded=#{expanded}"
+  Rails.logger.debug "[Sidebar Template] Rendering sidebar #{sidebar_id}"
 
   # Navigation items setup with popover content
   public_links = [
@@ -43,18 +39,12 @@
   end
 
 %nav{id: "#{sidebar_id}-sidebar",
-     class: ["sidebar", "glass-component", "#{'sidebar-hovered' if expanded == 't'}"].compact.join(" "),
+     class: ["sidebar", "glass-component"].compact.join(" "),
      role: "navigation",
      aria: {label: "Navigation Sidebar"},
      style: "--glass-border-radius: #{local_assigns[:border_radius] || 12}px",
      data: {
        controller: "sidebar sidebar-popover",
-       # Stimulus values for child controllers (preferred)
-       "expanded-value": (expanded == 't' ? 'true' : 'false'),
-       "hovered-value": (sidebar_hovered == 't' ? 'true' : 'false'),
-       # Legacy attributes retained to avoid breaking any direct CSS/JS
-       expanded: (expanded == 't' ? 'true' : 'false'),
-       "hovered": (sidebar_hovered == 't' ? 'true' : 'false'),
        "html2canvas-ignore": true,
        # Glass configuration
        "enable-glass-value": true,
