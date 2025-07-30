@@ -28,9 +28,16 @@
     align-items: center;
     padding: 0;
     border-left: none;
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
     overflow: hidden;
     transition: all var(--glass-transition-medium) var(--glass-easing);
+    
+    // Ensure border-radius is applied consistently across all states
+    &,
+    &::before,
+    &::after {
+        border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
+    }
     
     // Content positioning
     > * {
@@ -78,19 +85,11 @@
     // Base link styling using glass system
     .sidebar-link,
     .sidebar-logout-button {
-        // Include base glass styles directly
-        background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
-            rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
-            rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
-        );
-        backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-        border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
-        box-shadow: 
-            var(--glass-shadow-light),
-            inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
-            inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
+        // Remove background - use transparent instead of glass gradient
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        box-shadow: none;
         
         // Sidebar button sizing
         width: var(--sidebar-button-size-medium);
@@ -173,4 +172,20 @@
         min-width: 64px !important;
         max-width: 64px !important;
     }
+}
+
+.sidebar.glass-component.glass-sidebar.glass-active {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
+
+    .glass-container {
+        background: transparent !important;
+        backdrop-filter: none !important;
+        border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
+    }
+}
+
+.glass-container {
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
 }
