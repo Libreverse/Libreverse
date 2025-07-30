@@ -3,7 +3,6 @@
 ## Other Tasks
 
 Add extra indexers for the sandbox and other metaverses
-move to sqlite for the cache db because it's faster for pure acess times and it's acceptable if it desyncs.
 move back to webrtc for the sync engine and use websockets for signaling with the p2p gem
 fix glass not scrolling as it should
 add synk
