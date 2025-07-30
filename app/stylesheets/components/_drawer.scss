@@ -1,24 +1,20 @@
 @use "../variables";
 @use "../emoji";
 
-/* Drawer container styles */
+/* Component drawer styles - simplified without expansion */
 .drawer {
     display: flex;
     position: fixed;
     right: 35px;
     bottom: 0;
-    height: 60px; /* Fixed height when collapsed */
+    height: 600px; /* Fixed height - always "expanded" */
     width: 350px;
     border-top: 1px solid variables.$glass-border;
     border-left: 1px solid variables.$glass-border;
     border-right: 1px solid variables.$glass-border;
     border-radius: 20px 20px 0 0;
     z-index: 5;
-    transition:
-        height 0.3s ease-in-out,
-        width 0.3s ease-in-out,
-        right 0.3s ease-in-out;
-    overflow: hidden;
+    overflow: auto; /* Allow scrolling instead of hidden */
     contain: layout paint;
 
     // Ensure content appears above glass canvas
@@ -81,14 +77,9 @@
     }
 }
 
-/* Expanded drawer state */
-.drawer.expanded {
-    height: 450px;
-    width: 95%;
-    right: 2.5%;
-}
 
-/* Drawer container for actions (bar at the top) */
+
+/* Drawer actions (header bar) */
 .drawer-actions {
     position: absolute;
     top: 0;
@@ -97,15 +88,9 @@
     height: 60px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center; /* Center content since no toggle button */
     padding: 0 20px;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s ease-in-out;
-}
-
-/* Change border color when expanded */
-.drawer.expanded .drawer-actions {
-    border-color: rgb(255 255 255 / 10%);
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
 }
 
 /* Drawer open/close handle styling */
@@ -148,25 +133,16 @@
     transform: scale(1.1);
 }
 
-/* Drawer content container */
+/* Drawer content */
 .drawer-content {
     position: absolute;
     inset: 60px 0 0; /* Height of actions bar */
     padding: 20px;
     overflow-y: auto;
-    opacity: 0;
-    transform: translateY(20px);
-    transition:
-        opacity 0.3s ease-in-out,
-        transform 0.3s ease-in-out;
-    will-change: transform, opacity;
+    opacity: 1; /* Always visible */
+    transform: translateY(0); /* No animation needed */
+    will-change: auto; /* Remove will-change since no animations */
     contain: layout paint;
-}
-
-/* Show content when expanded */
-.drawer.expanded .drawer-content {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 /* Custom scrollbar for the drawer content */

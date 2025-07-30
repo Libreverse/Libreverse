@@ -23,17 +23,6 @@ export default class extends GlassController
   customPostRenderSetup: ->
     console.log "[SidebarController] Custom post-render setup for sidebar"
 
-    # Apply any sidebar-specific enhancements
-    @setupSidebarInteractions()
-
-  setupSidebarInteractions: ->
-    # Add hover effects or other sidebar-specific interactions
-    @element.addEventListener "mouseenter", =>
-      @element.classList.add("sidebar-hover")
-
-    @element.addEventListener "mouseleave", =>
-      @element.classList.remove("sidebar-hover")
-
   # Action to refresh sidebar glass
   refresh: ->
     console.log "[SidebarController] Refresh action triggered"

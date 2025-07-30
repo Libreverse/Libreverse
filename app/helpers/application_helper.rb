@@ -354,28 +354,7 @@ module ApplicationHelper
     current_account ? UserPreference.get(current_account.id, key) || default_value : default_value
   end
 
-  # Get expanded state of sidebar from user preferences
-  def sidebar_expanded?
-    return "f" unless current_account
 
-    UserPreference.get(current_account.id, :sidebar_expanded) == "t"
-  end
-
-  # Check if the sidebar is currently hovered for the current user
-  def sidebar_hovered?
-    return "f" unless current_account
-
-    # Ensure we check for 't' to match the stored pattern
-    UserPreference.get(current_account.id, "sidebar_hovered") == "t"
-  end
-
-  # Checks if a specific drawer is expanded.
-  def drawer_expanded?(drawer_id = "main")
-    # Construct the key matching the UserPreference ALLOWED_KEYS format
-    key = "drawer_expanded_#{drawer_id}" # Keep as string
-    # Retrieve the preference (stored as 't'/'f' or nil) and check if it's 't'
-    get_user_preference(key, "f") == "t" # Default to 'f' if not set
-  end
 
   # Checks if a specific tutorial/item is dismissed.
   # Delegates to the existing helper in ApplicationController for consistency.

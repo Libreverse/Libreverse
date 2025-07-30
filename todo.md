@@ -3,7 +3,6 @@
 ## Other Tasks
 
 Add extra indexers for the sandbox and other metaverses
-drop the pre-commit hook because the tests take 20 mins
 move back to webrtc for the sync engine and use websockets for signaling with the p2p gem
 strip out old drawer and sidebar code
 fix glass not scrolling as it should

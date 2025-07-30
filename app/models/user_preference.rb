@@ -29,9 +29,6 @@ class UserPreference < ApplicationRecord
     welcome-message
     feature-announcement
     theme-selection
-    sidebar_expanded
-    sidebar_hovered
-    drawer_expanded_main
     locale
   ].freeze
 

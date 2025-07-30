@@ -1,24 +1,7 @@
 @use "emoji";
 @use "variables";
 
-/* Drawer container styles - using new glass system */
-.drawer-container {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 100vw;
-    height: 60px;
-    display: flex;
-    z-index: 2;
-    transition: height 0.3s;
-    pointer-events: none;
-
-    @media screen and (width <= 450px) {
-        right: auto;
-        justify-content: center;
-    }
-}
-
+/* Drawer styles - simplified without expansion functionality */
 .drawer {
     // Include base glass styles directly instead of extending
     background: linear-gradient(
@@ -39,14 +22,13 @@
     bottom: 0;
     right: 0;
     width: var(--drawer-width);
-    height: var(--drawer-height-collapsed);
+    height: var(--drawer-height-expanded); // Always use expanded height since no toggle
     display: flex;
     flex-direction: column;
     z-index: 3;
     border-bottom: none;
     border-radius: var(--drawer-border-radius) var(--drawer-border-radius) 0 0;
-    transition: height var(--glass-transition-medium) var(--glass-easing);
-    overflow: hidden;
+    overflow: auto; // Allow scrolling instead of hidden
     
     // Override specific behaviors
     pointer-events: auto;
@@ -89,17 +71,12 @@
         width: 90%;
         max-width: var(--drawer-width);
     }
-    
-    // Expanded state
-    &.expanded {
-        height: var(--drawer-height-expanded);
-    }
 }
 
 .drawer-header {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center; // Center the title since no toggle button
     align-items: center;
     padding: 2px;
     border-bottom: none;
@@ -113,7 +90,7 @@
     margin-left: 5%;
     margin-right: 5%;
     border-radius: 10px;
-    // Glass effects now handled by glass system
+    flex: 1; // Take remaining space
 }
 
 .drawer-content {
@@ -130,80 +107,12 @@
 }
 
 .drawer-contents {
-    flex-shrink: 0;
+    flex: 1; // Take remaining space
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 0;
     padding: 2px;
     box-sizing: border-box;
-    overflow: hidden;
-    transition: height 0.3s ease;
-
-    .drawer-expanded & {
-        height: calc(600px - 60px);
-    }
-
-    .drawer-content-container,
-    .drawer-content {
-        transition: opacity 300ms ease-out;
-    }
-}
-
-.drawer-toggle {
-    // Include base glass styles directly
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
-        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
-        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
-    );
-    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
-    box-shadow: 
-        var(--glass-shadow-light),
-        inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
-        inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
-    
-    // Button-specific styling
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    margin-right: 1.15%;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all var(--glass-transition-fast) var(--glass-easing);
-
-    @media screen and (width <= 450px) {
-        margin-right: 0;
-        position: relative;
-    }
-    
-    &:hover {
-        background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, var(--glass-hover-opacity)) 0%,
-            rgba(255, 255, 255, calc(var(--glass-hover-opacity) * 0.7)) 50%,
-            rgba(255, 255, 255, calc(var(--glass-hover-opacity) * 0.5)) 100%
-        );
-        transform: scale(1.1);
-    }
-    
-    &:active {
-        transform: scale(0.95);
-    }
-}
-
-.drawer-icons {
-    width: 100%;
-    user-select: none;
-    transition: transform 0.3s ease;
-
-    .drawer-expanded & {
-        transform: rotate(180deg);
-    }
+    overflow: auto; // Allow scrolling
 }
 
 .drawer-link {
@@ -221,5 +130,5 @@
     font-family: Hack, Noto-Sans, monospace;
     font-size: 20px;
     color: variables.$sidebar-icon;
-    margin-left: 5%;
+    margin: 0; // Remove left margin since centered
 }
