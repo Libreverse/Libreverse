@@ -3,10 +3,10 @@
 ## Other Tasks
 
 Add extra indexers for the sandbox and other metaverses
-fix css compilation issues by moving to regular cssnano
 drop the pre-commit hook because the tests take 20 mins
 move back to webrtc for the sync engine and use websockets for signaling with the p2p gem
 strip out old drawer and sidebar code
+fix glass not scrolling as it should
 add synk
 reintegrate zipkit for streaming downloads and look into streaming uploads too
 make indexers autostart if they don't already
