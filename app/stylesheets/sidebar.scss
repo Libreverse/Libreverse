@@ -1,168 +1,132 @@
 @use "variables";
 
 .sidebar {
-    // Core layout and positioning
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center; // Center all children horizontally
-    height: 80vh;
-    box-sizing: border-box;
+    // Include base glass styles directly instead of extending
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
+        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
+        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
+    );
+    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
+    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
+    box-shadow: 
+        var(--glass-shadow-light),
+        inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
+        inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
+    
+    // Sidebar-specific positioning and layout
     position: fixed;
     top: 50%;
     left: 0;
     transform: translateY(-50%);
     z-index: 5;
-    pointer-events: auto;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     padding: 0;
-
-    --sidebar-border-radius: 12px;
-    --sidebar-button-size: 42px; // Reduced from 48px
-    --sidebar-button-radius: 6px;
-
+    border-left: none;
     border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
     overflow: hidden;
-
-    // Responsive breakpoints - NO GLASS-SPECIFIC OVERRIDES
-    // Glass canvas should adapt to whatever size the sidebar naturally has
-    @media (width <= 600px) {
-        width: 48px;
-
-        --sidebar-button-size: 36px; // Reduced from 40px
-        --sidebar-border-radius: 10px;
-        --sidebar-button-radius: 5px;
+    transition: all var(--glass-transition-medium) var(--glass-easing);
+    
+    // Content positioning
+    > * {
+        position: relative;
+        z-index: 1;
     }
-
-    @media (width >= 601px) and (width <= 1500px) {
-        width: 56px;
-
-        --sidebar-button-size: 42px; // Reduced from 48px
-    }
-
-    @media (width >= 1501px) {
-        width: 64px;
-
-        --sidebar-button-size: 50px; // Reduced from 56px
-    }
-
-    // DEFAULT STATE: Glass not loaded - always visible fallback styling
-    background: linear-gradient(
-        135deg,
-        rgb(255 255 255 / 12%) 0%,
-        rgb(255 255 255 / 8%) 50%,
-        rgb(255 255 255 / 6%) 100%
-    );
-    backdrop-filter: blur(15px) saturate(1.8);
-    border-top: 1px solid rgb(255 255 255 / 18%);
-    border-right: 1px solid rgb(255 255 255 / 18%);
-    border-bottom: 1px solid rgb(255 255 255 / 18%);
-    border-left: none;
-    box-shadow:
-        0 8px 32px rgb(0 0 0 / 15%),
-        inset 0 1px 0 rgb(255 255 255 / 10%),
-        inset 0 -1px 0 rgb(255 255 255 / 5%);
-    opacity: 1;
-    visibility: visible;
-
-    // GLASS LOADED STATE: WebGL slots in seamlessly as background only
-    &[data-glass-active="true"] {
-        // DO NOT CHANGE ANY LAYOUT PROPERTIES - only visual background
-        // The glass canvas should be purely a background layer
-
-        // Only remove the CSS background, keep all positioning and layout
-        background: transparent !important;
-        backdrop-filter: none !important;
-        border: none !important;
-        box-shadow: none !important;
-
-        // CRITICAL: Do NOT change any of these layout properties
-        // width: stays the same
-        // height: stays the same
-        // position: stays the same
-        // top: stays the same
-        // left: stays the same
-        // transform: stays the same
-        // z-index: stays the same
-        // display: stays the same
-        // flex properties: stay the same
-    }
-
-    // Glass container (pure background layer - does not affect button layout)
-    .glass-container {
-        // Position as background layer only
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1; // Behind all content
-        pointer-events: none; // Never intercept interactions
-        display: none; // Hidden by default
-
-        // FORCE correct border radius - left flat, right rounded
-        border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0 !important;
-        overflow: hidden;
-
-        canvas {
-            // Canvas fills the container exactly
+    
+    // Enhanced state (when WebGL is active)
+    &.glass-enhanced {
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+        
+        .glass-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-
-            // FORCE same border radius on canvas
-            border-radius: 0 var(--sidebar-border-radius)
-                var(--sidebar-border-radius) 0 !important;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
-            z-index: -1;
+            border-radius: inherit;
+            
+            canvas {
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                border-radius: inherit;
+            }
         }
     }
-
-    // Show glass container when glass is active (pure background only)
-    &[data-glass-active="true"] .glass-container {
-        display: block; // Simple block display
-        // Everything else uses inheritance and defaults
+    
+    // Responsive width
+    width: var(--sidebar-width-medium);
+    
+    @media (max-width: var(--breakpoint-mobile)) {
+        width: var(--sidebar-width-small);
     }
-
-    // Base link styling - consolidated to avoid duplicates
+    
+    @media (min-width: calc(var(--breakpoint-tablet) + 1px)) {
+        width: var(--sidebar-width-large);
+    }
+    
+    // Override any specific behaviors not covered by the glass system
+    pointer-events: auto;
+    
+    // Base link styling using glass system
     .sidebar-link,
     .sidebar-logout-button {
-        width: var(--sidebar-button-size);
-        height: var(--sidebar-button-size);
-        min-width: var(--sidebar-button-size);
-        min-height: var(--sidebar-button-size);
-        max-width: var(--sidebar-button-size);
-        max-height: var(--sidebar-button-size);
-        border-radius: var(--sidebar-button-radius);
-        margin: 3px auto; // Auto margins for horizontal centering
+        // Include base glass styles directly
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
+            rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
+            rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
+        );
+        backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
+        border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
+        box-shadow: 
+            var(--glass-shadow-light),
+            inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
+            inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
+        
+        // Sidebar button sizing
+        width: var(--sidebar-button-size-medium);
+        height: var(--sidebar-button-size-medium);
+        min-width: var(--sidebar-button-size-medium);
+        min-height: var(--sidebar-button-size-medium);
+        border-radius: var(--glass-border-radius-small);
+        margin: 3px auto;
         display: flex;
         align-items: center;
         justify-content: center;
-        align-self: center; // Center within flex container
-
-        // Subtle button styling that complements the glass background
-        background: linear-gradient(
-            135deg,
-            rgb(255 255 255 / 8%) 0%,
-            rgb(255 255 255 / 4%) 50%,
-            rgb(255 255 255 / 2%) 100%
-        );
-        backdrop-filter: blur(8px) saturate(1.2);
-        border: 1px solid rgb(255 255 255 / 10%);
-        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-        text-decoration: none;
-        flex-shrink: 0;
-        position: relative;
-        z-index: 10; // Above glass container
-        overflow: hidden;
-
-        // Icon and text positioning
-        i {
-            font-size: 16px;
-            line-height: 1;
+        transition: all var(--glass-transition-fast) var(--glass-easing);
+        
+        /* Responsive button sizing */
+        @media (max-width: var(--breakpoint-mobile)) {
+            width: var(--sidebar-button-size-small);
+            height: var(--sidebar-button-size-small);
+            min-width: var(--sidebar-button-size-small);
+            min-height: var(--sidebar-button-size-small);
         }
-
+        
+        @media (min-width: calc(var(--breakpoint-tablet) + 1px)) {
+            width: var(--sidebar-button-size-large);
+            height: var(--sidebar-button-size-large);
+            min-width: var(--sidebar-button-size-large);
+            min-height: var(--sidebar-button-size-large);
+        }
+        
+        // Sidebar-specific overrides
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+        color: inherit;
+        
         // Icon styling
         img.sidebar-icons,
         svg {
@@ -171,72 +135,14 @@
             display: block;
             flex-shrink: 0;
             filter: drop-shadow(0 1px 2px rgb(0 0 0 / 20%));
-            transition: filter 0.15s ease;
+            transition: filter var(--glass-transition-fast) ease;
         }
-
-        // Hover state that works with glass background
-        &:hover:not(.sidebar-current) {
-            background: linear-gradient(
-                135deg,
-                rgb(255 255 255 / 12%) 0%,
-                rgb(255 255 255 / 8%) 50%,
-                rgb(255 255 255 / 6%) 100%
-            );
-            border-color: rgb(255 255 255 / 18%);
-            box-shadow:
-                0 4px 20px rgb(0 0 0 / 12%),
-                inset 0 1px 0 rgb(255 255 255 / 12%),
-                inset 0 -1px 0 rgb(255 255 255 / 6%);
-            transform: scale(1.05);
-
-            img.sidebar-icons,
-            svg {
-                filter: drop-shadow(0 2px 4px rgb(0 0 0 / 30%));
-            }
-        }
-
-        &:active:not(.sidebar-current) {
-            transform: scale(0.97);
-            box-shadow:
-                0 2px 10px rgb(0 0 0 / 20%),
-                inset 0 1px 0 rgb(255 255 255 / 10%);
-            transition: all 0.1s ease;
-        }
-
+        
         // Current page styling
         &.sidebar-current {
             opacity: 0.6;
             cursor: default;
-
-            &:hover:not(.sidebar-current) {
-                background: rgb(240 240 240);
-            }
-        }
-
-        // High contrast mode
-        @media (prefers-contrast: high) {
-            background: rgb(0 0 0 / 80%);
-            border: 2px solid white;
-            backdrop-filter: none;
-
-            &,
-            &:hover {
-                background: white;
-                border: 1px solid black;
-                color: black;
-                filter: grayscale(0.5);
-            }
-        }
-    }
-
-    // Reduced motion
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-
-        .sidebar-link,
-        .sidebar-logout-button {
-            transition: none;
-
+            
             &:hover {
                 transform: none;
             }

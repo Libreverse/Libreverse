@@ -2,38 +2,66 @@
 @use "text_effects";
 
 .glass-card {
+    // Include base glass styles directly
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
+        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
+        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
+    );
+    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
+    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
+    box-shadow: 
+        var(--glass-shadow-light),
+        inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
+        inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
+    
+    // Card-specific overrides
     position: relative;
     width: 100%;
     max-width: 420px;
-    padding: 2.5rem;
-    overflow: hidden;
     margin-top: 150px;
     margin-left: 60px;
     margin-right: 60px;
-    transition: margin 0.3s;
+    transition: margin 0.3s, transform var(--glass-transition-medium) var(--glass-easing);
+    border-radius: var(--glass-border-radius-medium);
+    padding: 24px;
+    overflow: hidden;
 
-    // Ensure content appears above glass canvas
+    // Content positioning
     > * {
         position: relative;
-        z-index: 2;
+        z-index: 1;
     }
-
-    // Default fallback styles (always applied)
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow:
-        0 4px 30px variables.$box-shadow,
-        0 0 30px rgba(variables.$login-primary, 0.1);
-    border-radius: 15px;
-
-    // Hide fallback styles when liquid glass is active
-    &[data-glass-active="true"] {
+    
+    // Enhanced state (when WebGL is active)
+    &.glass-enhanced {
         background: transparent;
         backdrop-filter: none;
-        box-shadow: none;
         border: none;
+        box-shadow: none;
+        
+        .glass-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            
+            canvas {
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                border-radius: inherit;
+            }
+        }
     }
-
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--glass-shadow-heavy);
+    }
+    
     @media screen and (width <= 600px) {
         margin-left: 40px;
         margin-right: 40px;
