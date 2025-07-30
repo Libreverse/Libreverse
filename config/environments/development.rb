@@ -43,8 +43,9 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Use Solid Cache for caching
-  config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }
+  # Use Solid Cache for caching with SQLite
+  config.cache_store = :solid_cache_store, { database: :cache }
+  config.solid_cache.connects_to = { database: { writing: :cache, reading: :cache } }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

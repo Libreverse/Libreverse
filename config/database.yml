@@ -1,14 +1,19 @@
 # TiDB configuration for Libreverse
 # TiDB is MySQL-compatible distributed database
+
+# Common pool size calculation
+<%
+  def calculate_pool_size
+    cpu_cores = Etc.nprocessors / 2
+    [[cpu_cores * 2 - 4, 5].max, 20].min
+  end
+%>
+
 default: &default
     adapter: trilogy
     encoding: utf8mb4
     collation: utf8mb4_unicode_ci
-    pool: <%= 
-      cpu_cores = Etc.nprocessors / 2
-      threads = [[cpu_cores * 2 - 4, 5].max, 20].min
-      threads
-    %>
+    pool: <%= calculate_pool_size %>
     # TiDB-friendly connection settings
     reconnect: true
     connect_timeout: 10
@@ -22,29 +27,106 @@ default: &default
         transaction_isolation: 'READ-COMMITTED'
 
 development:
-    <<: *default
-    database: libreverse_development
-    username: root
-    password: 
-    host: 127.0.0.1
-    port: 4000
+    primary:
+        <<: *default
+        database: libreverse_development
+        username: root
+        password: 
+        host: 127.0.0.1
+        port: 4000
+    queue:
+        <<: *default
+        database: libreverse_development
+        username: root
+        password: 
+        host: 127.0.0.1
+        port: 4000
+        migrations_paths: db/queue_migrate
+    cache:
+        adapter: sqlite3
+        database: db/cache_development.sqlite3
+        pool: <%= calculate_pool_size %>
+        migrations_paths: db/cache_migrate
+        pragmas:
+            analysis_limit: 0
+            automatic_index: 1
+            busy_timeout: 5000
+            cache_size: -20000
+            cache_spill: 0
+            cell_size_check: 0
+            checkpoint_fullfsync: 0
+            foreign_keys: 0
+            fullfsync: 0
+            journal_mode: 'WAL'
+            journal_size_limit: 1000000
+            locking_mode: 'NORMAL'
+            mmap_size: 268435456
+            page_size: 4096
+            secure_delete: 'ON'
+            synchronous: 1
+            temp_store: 2
+            threads: 4
+            incremental_vacuum: 0
+            read_uncommitted: 1
+            trusted_schema: 0
+            wal_autocheckpoint: 1000
+            auto_vacuum: 'INCREMENTAL'
+            optimize: 1048578
+        
 
 test:
-    adapter: mysql2
-    encoding: utf8mb4
-    collation: utf8mb4_unicode_ci
-    reconnect: true
-    connect_timeout: 10
-    read_timeout: 30
-    write_timeout: 30
-    checkout_timeout: 5
-    database: libreverse_test
-    username: <%= ENV["TIDB_USERNAME"] %>
-    password: <%= ENV["TIDB_PASSWORD"] %>
-    host: <%= ENV["TIDB_HOST"] %>
-    port: 4000
-    ssl_mode: VERIFY_IDENTITY
-    sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+    primary:
+        adapter: mysql2
+        encoding: utf8mb4
+        collation: utf8mb4_unicode_ci
+        reconnect: true
+        connect_timeout: 10
+        read_timeout: 30
+        write_timeout: 30
+        checkout_timeout: 5
+        pool: <%= calculate_pool_size %>
+        # TiDB works well with these MySQL variables
+        variables:
+            sql_mode: 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
+            # TiDB handles distributed transactions well
+            transaction_isolation: 'READ-COMMITTED'
+        database: libreverse_test
+        username: <%= ENV["TIDB_USERNAME"] %>
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: <%= ENV["TIDB_HOST"] %>
+        port: 4000
+        ssl_mode: VERIFY_IDENTITY
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+    cache:
+        adapter: sqlite3
+        database: db/cache_test.sqlite3
+        pool: <%= calculate_pool_size %>
+        migrations_paths: db/cache_migrate
+        pragmas:
+            analysis_limit: 0
+            automatic_index: 1
+            busy_timeout: 5000
+            cache_size: -20000
+            cache_spill: 0
+            cell_size_check: 0
+            checkpoint_fullfsync: 0
+            foreign_keys: 0
+            fullfsync: 0
+            journal_mode: 'WAL'
+            journal_size_limit: 1000000
+            locking_mode: 'NORMAL'
+            mmap_size: 268435456
+            page_size: 4096
+            secure_delete: 'ON'
+            synchronous: 1
+            temp_store: 2
+            threads: 4
+            incremental_vacuum: 0
+            read_uncommitted: 1
+            trusted_schema: 0
+            wal_autocheckpoint: 1000
+            auto_vacuum: 'INCREMENTAL'
+            optimize: 1048578
 
 production:
     primary:
@@ -55,7 +137,7 @@ production:
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
         ssl_mode: VERIFY_IDENTITY
-        sslca: /etc/ssl/certs/ca-certificates.crt
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
     queue:
         <<: *default
         database: libreverse_production
@@ -67,15 +149,35 @@ production:
         sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/queue_migrate
     cache:
-        <<: *default
-        database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] %>
-        password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] %>
-        port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: /etc/ssl/certs/ca-certificates.crt
+        adapter: sqlite3
+        database: db/cache_production.sqlite3
+        pool: <%= calculate_pool_size %>
         migrations_paths: db/cache_migrate
+        pragmas:
+            analysis_limit: 0
+            automatic_index: 1
+            busy_timeout: 5000
+            cache_size: -20000
+            cache_spill: 0
+            cell_size_check: 0
+            checkpoint_fullfsync: 0
+            foreign_keys: 0
+            fullfsync: 0
+            journal_mode: 'WAL'
+            journal_size_limit: 1000000
+            locking_mode: 'NORMAL'
+            mmap_size: 268435456
+            page_size: 4096
+            secure_delete: 'ON'
+            synchronous: 1
+            temp_store: 2
+            threads: 4
+            incremental_vacuum: 0
+            read_uncommitted: 1
+            trusted_schema: 0
+            wal_autocheckpoint: 1000
+            auto_vacuum: 'INCREMENTAL'
+            optimize: 1048578
     cable:
         <<: *default
         database: libreverse_production
@@ -84,5 +186,5 @@ production:
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
         ssl_mode: VERIFY_IDENTITY
-        sslca: /etc/ssl/certs/ca-certificates.crt
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
         migrations_paths: db/cable_migrate

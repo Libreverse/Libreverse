@@ -71,8 +71,9 @@ Rails.application.configure do
   # If needed, you can explicitly set it:
   # config.active_job.queue_adapter = :test
 
-  # Use Solid Cache for caching (optional, uncomment if required)
-  # config.cache_store = :solid_cache_store, { database_url: ENV["DATABASE_URL"] }
+  # Use Solid Cache for caching with SQLite in test
+  config.cache_store = :solid_cache_store, { database: :cache }
+  config.solid_cache.connects_to = { database: { writing: :cache, reading: :cache } }
 
   # Use Solid Queue for Active Job (optional, typically not needed)
   # config.active_job.queue_adapter = :solid_queue

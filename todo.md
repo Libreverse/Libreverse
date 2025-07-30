@@ -3,8 +3,8 @@
 ## Other Tasks
 
 Add extra indexers for the sandbox and other metaverses
+move to sqlite for the cache db because it's faster for pure acess times and it's acceptable if it desyncs.
 move back to webrtc for the sync engine and use websockets for signaling with the p2p gem
-strip out old drawer and sidebar code
 fix glass not scrolling as it should
 add synk
 reintegrate zipkit for streaming downloads and look into streaming uploads too
