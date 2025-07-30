@@ -87,6 +87,7 @@ Rails.application.configure do
 
   # Cache Store Configuration
   config.cache_store = :solid_cache_store
+  config.solid_cache.connects_to = { database: { writing: :cache, reading: :cache } }
 
   # Active Job Queue Adapter Configuration
   config.active_job.queue_adapter = :solid_queue
