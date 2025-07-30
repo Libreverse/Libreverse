@@ -11,6 +11,20 @@
 }
 
 .toast {
+    // Include base glass styles directly
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
+        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
+        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
+    );
+    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
+    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
+    box-shadow: 
+        var(--glass-shadow-light),
+        inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
+        inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
+    
     color: variables.$white-90;
     display: flex;
     flex-direction: column;
@@ -27,25 +41,35 @@
     pointer-events: auto;
     font-family: Hack, Noto-Sans, monospace;
     will-change: transform, opacity;
-
-    // Ensure content appears above glass canvas
+    border-radius: 12px;
+    
+    // Content positioning
     > * {
         position: relative;
-        z-index: 2;
+        z-index: 1;
     }
-
-    // Default fallback styles (always applied)
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border-radius: 12px;
-
-    // Hide fallback styles when liquid glass is active
-    &[data-glass-active="true"] {
+    
+    // Enhanced state (when WebGL is active)
+    &.glass-enhanced {
         background: transparent;
         backdrop-filter: none;
-        box-shadow: none;
         border: none;
+        box-shadow: none;
+        
+        .glass-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            
+            canvas {
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                border-radius: inherit;
+            }
+        }
     }
 }
 
