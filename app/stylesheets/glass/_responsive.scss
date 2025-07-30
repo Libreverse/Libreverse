@@ -2,7 +2,29 @@
  * Responsive behaviors and mobile optimizations for glass components
  */
 
-/* Mobile Optimizations */
+/* Mobile Optimiza/* Print Styles */
+@media print {
+  .glass,
+  .glass-sidebar,
+  .glass-drawer,
+  .glass-nav {
+    background: white !important;
+    backdrop-filter: none !important;
+    box-shadow: 0 0 0 1px #ccc !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  .glass-sidebar {
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
+  }
+  
+  .glass-button {
+    border: 1px solid #333 !important;
+    background: transparent !important;
+  }
+}
+
+/* Mobile and Tablet Optimizations */
 @media (max-width: var(--breakpoint-mobile)) {
   /* Reduce glass effects on mobile for better performance */
   .glass {
@@ -130,8 +152,12 @@
     border: 1px solid #ccc !important;
   }
   
+  .glass-sidebar {
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
+  }
+  
   .glass-button {
     border: 1px solid #333 !important;
-    background: #f5f5f5 !important;
+    background: transparent !important;
   }
 }

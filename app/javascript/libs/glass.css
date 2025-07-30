@@ -114,9 +114,9 @@
 
 /* Default fallback styles (always applied) */
 .glass-button:not([data-glass-active="true"]) {
-    background: rgb(255 255 255 / 15%);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 25px 50px rgb(0 0 0 / 25%);
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
     border-radius: 20px;
 }
 
@@ -202,12 +202,12 @@
     }
 
     .glass-button {
-        background: rgb(255 255 255 / 90%);
-        border: 1px solid black;
+        background: transparent;
+        border: 1px solid white;
     }
 
     .glass-button-text {
-        color: black;
+        color: white;
         font-weight: bold;
     }
 }

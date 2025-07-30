@@ -159,13 +159,14 @@
   }
   
   .glass-button {
-    background: ButtonFace;
+    background: transparent;
     border: 1px solid ButtonText;
     color: ButtonText;
     
     &:hover {
-      background: Highlight;
+      background: transparent;
       color: HighlightText;
+      border-color: HighlightText;
     }
   }
 }

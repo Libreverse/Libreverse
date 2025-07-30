@@ -2,6 +2,8 @@
 
 ## Other Tasks
 
+add in console1984 and audit1984
+add in idn homograph spoof checks to all external url things. Nothing with a homograph in it is legit.
 Add extra indexers for the sandbox and other metaverses
 move back to webrtc for the sync engine and use websockets for signaling with the p2p gem
 fix glass not scrolling as it should

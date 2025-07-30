@@ -93,14 +93,14 @@
 
     @if $corner-rounding == right {
         border-radius: 0
-            12px
-            12px
+            var(--sidebar-border-radius)
+            var(--sidebar-border-radius)
             0; // Only round corners away from screen edge
     } @else if $corner-rounding == left {
-        border-radius: 12px
+        border-radius: var(--sidebar-border-radius)
             0
             0
-            12px; // Only round corners away from screen edge
+            var(--sidebar-border-radius); // Only round corners away from screen edge
     }
 }
 
@@ -385,8 +385,8 @@
     &.glass-sidebar {
         @include glass-sidebar;
 
-        border-radius: 0 var(--glass-border-radius, 12px)
-            var(--glass-border-radius, 12px) 0;
+        border-radius: 0 var(--sidebar-border-radius)
+            var(--sidebar-border-radius) 0 !important;
         border-left: none;
     }
 
@@ -615,15 +615,13 @@
     transition: all 0.2s ease;
 
     &:hover {
-        box-shadow:
-            0 20px 60px rgb(0 0 0 / 25%),
-            inset 0 1px 0 rgb(255 255 255 / 20%);
+        // Remove background effects, keeping only subtle shadow
+        box-shadow: 0 0 0 1px rgb(255 255 255 / 10%);
     }
 
     &:active {
-        box-shadow:
-            0 8px 24px rgb(0 0 0 / 20%),
-            inset 0 1px 0 rgb(255 255 255 / 15%);
+        // Remove background effects, keeping only subtle shadow
+        box-shadow: 0 0 0 1px rgb(255 255 255 / 5%);
     }
 }
 
