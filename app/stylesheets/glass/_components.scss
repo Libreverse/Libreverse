@@ -5,94 +5,94 @@
 
 /* Utility Classes for Quick Implementation */
 .glass-sidebar-base {
-  position: fixed;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  z-index: 5;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0;
-  border-left: none;
-  border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 5;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    border-left: none;
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
 }
 
 .glass-drawer-base {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: var(--drawer-width);
-  height: var(--drawer-height-collapsed);
-  display: flex;
-  flex-direction: column;
-  z-index: 3;
-  border-bottom: none;
-  border-radius: var(--drawer-border-radius) var(--drawer-border-radius) 0 0;
-  transition: height var(--glass-transition-medium) var(--glass-easing);
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: var(--drawer-width);
+    height: var(--drawer-height-collapsed);
+    display: flex;
+    flex-direction: column;
+    z-index: 3;
+    border-bottom: none;
+    border-radius: var(--drawer-border-radius) var(--drawer-border-radius) 0 0;
+    transition: height var(--glass-transition-medium) var(--glass-easing);
 }
 
 .glass-card-base {
-  border-radius: var(--glass-border-radius-medium);
-  padding: 24px;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--glass-shadow-heavy);
-  }
+    border-radius: var(--glass-border-radius-medium);
+    padding: 24px;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--glass-shadow-heavy);
+    }
 }
 
 .glass-nav-base {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px 20px;
-  border-radius: var(--glass-border-radius-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-radius: var(--glass-border-radius-medium);
 }
 
 .glass-button-base {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  border-radius: var(--glass-border-radius-small);
-  cursor: pointer;
-  text-decoration: none;
-  border: none;
-  background: transparent;
-  
-  &:hover {
-    transform: translateY(-1px);
-  }
-  
-  &:active {
-    transform: translateY(0) scale(0.98);
-  }
-  
-  &:disabled,
-  &.disabled {
-    opacity: var(--glass-disabled-opacity);
-    cursor: not-allowed;
-    transform: none;
-  }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: var(--glass-border-radius-small);
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+
+    &:hover {
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:disabled,
+    &.disabled {
+        opacity: var(--glass-disabled-opacity);
+        cursor: not-allowed;
+        transform: none;
+    }
 }
 
 .glass-modal-base {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  max-width: 90vw;
-  max-height: 90vh;
-  border-radius: var(--glass-border-radius-large);
-  padding: 32px;
-  
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-  }
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: var(--glass-border-radius-large);
+    padding: 32px;
+
+    &::backdrop {
+        background: rgb(0 0 0 / 50%);
+        backdrop-filter: blur(4px);
+    }
 }

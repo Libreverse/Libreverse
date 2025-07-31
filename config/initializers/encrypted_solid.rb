@@ -11,9 +11,7 @@ module EncryptionHelper
     # Check if database exists before checking table existence
     begin
       # SQLite3Adapter doesn't have current_database method
-      unless model_class.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLite3Adapter)
-        model_class.connection.current_database
-      end
+      model_class.connection.current_database unless model_class.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLite3Adapter)
     rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
       return false
     end

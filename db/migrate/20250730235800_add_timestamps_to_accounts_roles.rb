@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddTimestampsToAccountsRoles < ActiveRecord::Migration[7.0]
   def change
     add_column :accounts_roles, :created_at, :datetime, null: false, default: -> { 'CURRENT_TIMESTAMP' }

@@ -2,7 +2,6 @@
 
 ## Other Tasks
 
-
 Add extra indexers for the sandbox and other metaverses
 fix glass not scrolling as it should
 add synk
