@@ -63,6 +63,9 @@ class ExperiencesMailer < ApplicationMailer
   private
 
   # Generate a ZIP file containing the experience
+  # NOTE: This method uses rubyzip (not zip_kit) because email attachments need to be 
+  # fully buffered in memory before being attached to the email. zip_kit is designed 
+  # for streaming and doesn't work well with email attachment workflows.
   def generate_experience_zip(experience)
     require "zip"
     Zip.default_compression = Zlib::BEST_COMPRESSION

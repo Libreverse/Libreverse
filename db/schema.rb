@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_28_142000) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_31_004000) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "session_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "last_use", null: false
+    t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_use", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["account_id", "session_id"], name: "index_account_active_session_keys_on_account_id_and_session_id", unique: true
     t.index ["session_id"], name: "index_account_active_session_keys_on_session_id", unique: true
   end
@@ -78,6 +78,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_142000) do
   create_table "accounts_roles", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id"
     t.bigint "role_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["account_id", "role_id"], name: "index_accounts_roles_on_account_id_and_role_id"
     t.index ["account_id"], name: "index_accounts_roles_on_account_id"
     t.index ["role_id"], name: "index_accounts_roles_on_role_id"
@@ -137,6 +139,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_142000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "audits1984_audits", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.text "notes"
+    t.bigint "session_id", null: false
+    t.bigint "auditor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auditor_id"], name: "index_audits1984_audits_on_auditor_id"
+    t.index ["session_id"], name: "index_audits1984_audits_on_session_id"
+  end
+
   create_table "blocked_domains", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "domain", null: false
     t.text "reason"
@@ -155,6 +168,40 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_142000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["activitypub_uri"], name: "index_blocked_experiences_on_activitypub_uri", unique: true
+  end
+
+  create_table "console1984_commands", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "statements"
+    t.bigint "sensitive_access_id"
+    t.bigint "session_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sensitive_access_id"], name: "index_console1984_commands_on_sensitive_access_id"
+    t.index ["session_id", "created_at", "sensitive_access_id"], name: "on_session_and_sensitive_chronologically"
+  end
+
+  create_table "console1984_sensitive_accesses", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "justification"
+    t.bigint "session_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_console1984_sensitive_accesses_on_session_id"
+  end
+
+  create_table "console1984_sessions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "reason"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_console1984_sessions_on_created_at"
+    t.index ["user_id", "created_at"], name: "index_console1984_sessions_on_user_id_and_created_at"
+  end
+
+  create_table "console1984_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "username", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["username"], name: "index_console1984_users_on_username"
   end
 
   create_table "experience_vectors", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

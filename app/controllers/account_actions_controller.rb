@@ -1,50 +1,52 @@
 # frozen_string_literal: true
 
 class AccountActionsController < ApplicationController
-  # include ZipKit::RailsStreaming # Removed ZipKit
-  require "zip" # Added for rubyzip
-  Zip.default_compression = Zlib::BEST_COMPRESSION
+  include ZipKit::RailsStreaming # Restored ZipKit for streaming web downloads
+  require "zip" # Keep for any legacy functionality if needed
 
   # Use new authentication - require authenticated users (no guests)
   before_action :require_authenticated_user
 
   # GET /account/export
   def export
-    zip_io = Zip::OutputStream.write_buffer do |zip|
-      # 1) Account XML
-      zip.put_next_entry("account.xml") # Add account.xml to the zip
-      zip.write account_json.to_xml(root: "account")
+    zip_kit_stream(filename: "libreverse_export.zip") do |zip|
+      # 1) Account XML - force deflated mode for maximum compression
+      zip.write_deflated_file("account.xml") do |sink|
+        sink << account_json.to_xml(root: "account")
+      end
 
-      # 2) Preferences XML
+      # 2) Preferences XML - force deflated mode for maximum compression
       prefs = UserPreference::ALLOWED_KEYS.each_with_object({}) do |key, h|
         val = UserPreference.get(current_account.id, key)
         h[key] = val if val.present?
       end
-      zip.put_next_entry("preferences.xml") # Add preferences.xml to the zip
-      zip.write prefs.to_xml(root: "preferences")
+      zip.write_deflated_file("preferences.xml") do |sink|
+        sink << prefs.to_xml(root: "preferences")
+      end
 
       # 3) Experiences
       Experience.where(account_id: current_account.id).find_each do |exp|
-        # Metadata
-        zip.put_next_entry("experiences/#{exp.id}/metadata.xml") # Add metadata.xml for each experience
-        zip.write exp.as_json(except: %i[account_id]).to_xml(root: "experience")
+        # Metadata - force deflated mode for maximum compression
+        zip.write_deflated_file("experiences/#{exp.id}/metadata.xml") do |sink|
+          sink << exp.as_json(except: %i[account_id]).to_xml(root: "experience")
+        end
 
-        # HTML attachment
+        # HTML attachment - stream directly without buffering
+        # Use deflated mode for maximum compression of HTML content
         if exp.html_file.attached?
           filename = exp.html_file.filename.to_s.presence || "experience_#{exp.id}.html"
-          zip.put_next_entry("experiences/#{exp.id}/#{filename}") # Add HTML file for each experience
-          begin
-            # Stream the file directly to the zip
-            exp.html_file.download { |chunk| zip.write chunk }
-          rescue StandardError => e
-            Rails.logger.error "[AccountExport] Error streaming html_file for experience #{exp.id}: #{e.message}"
+          zip.write_deflated_file("experiences/#{exp.id}/#{filename}") do |sink|
+            begin
+              # Stream the file directly using Active Storage's streaming capabilities
+              exp.html_file.download { |chunk| sink << chunk }
+            rescue StandardError => e
+              Rails.logger.error "[AccountExport] Error streaming html_file for experience #{exp.id}: #{e.message}"
+              sink << "Error: Could not export attached file - #{e.message}"
+            end
           end
         end
       end
     end
-
-    # Send the zip file to the client
-    send_data zip_io.string, type: "application/zip", disposition: "attachment", filename: "libreverse_export.zip"
   end
 
   # DELETE /account

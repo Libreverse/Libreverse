@@ -1,40 +1,49 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-    include CableReady::Broadcaster
-    include PasswordSecurityEnforcer
-    include Loggable
-    include SpamDetection
-    include WebsocketP2pHelper
-    include EnhancedCaching
+  include CableReady::Broadcaster
+  include PasswordSecurityEnforcer
+  include Loggable
+  include SpamDetection
+  include WebsocketP2pHelper
+  include EnhancedCaching
 
-    # CanCanCan integration
-    include CanCan::ControllerAdditions
+  # CanCanCan integration
+  include CanCan::ControllerAdditions
 
-    helper_method :current_account, :current_ability, :user_signed_in?, :authenticated_user?, :guest_user?, :can_create_content?
+  helper_method :current_account, :current_ability, :user_signed_in?, :authenticated_user?, :guest_user?, :can_create_content?
+  helper_method :privacy_policy_path
 
-    # Protection from CSRF
-    protect_from_forgery with: :exception
+  # Protection from CSRF
+  protect_from_forgery with: :exception
 
-    # Global spam protection as a safety net
-    before_action :global_spam_protection_check
+  # Global spam protection as a safety net
+  before_action :global_spam_protection_check
 
-    before_action :disable_browser_cache, if: -> { Rails.env.development? }
-    before_action :initialize_guest_preferences
-    before_action :log_request_info
-    after_action :log_response_info
-    after_action :set_compliance_headers, if: -> { EEAMode.enabled? }
-    after_action :apply_automatic_caching
-    before_action :set_current_ip
-    before_action :set_locale
+  before_action :disable_browser_cache, if: -> { Rails.env.development? }
+  before_action :initialize_guest_preferences
+  before_action :log_request_info
+  after_action :log_response_info
+  after_action :set_compliance_headers, if: -> { EEAMode.enabled? }
+  after_action :apply_automatic_caching
+  before_action :set_current_ip
+  before_action :set_locale
 
-    helper_method :tutorial_dismissed?, :consent_given?, :consent_path
+  helper_method :tutorial_dismissed?, :consent_given?, :consent_path
 
   private
 
+    def privacy_policy_path
+      privacy_path
+    end
+
     def set_compliance_headers
-      response.headers["X-Privacy-Policy"] = privacy_policy_path
-      response.headers["X-Cookie-Policy"] = cookie_policy_path
+      # Use the host application's routes, even when inside an isolated engine
+      privacy_path  = main_app.privacy_path
+      cookies_path  = main_app.cookie_policy_path
+
+      response.headers["X-Privacy-Policy"] = privacy_path
+      response.headers["X-Cookie-Policy"] = cookies_path
       response.headers["X-Consent-Required"] = (!consent_given?).to_s
       response.headers["X-Consent-Status"] = consent_given? ? "accepted" : "pending"
     end
@@ -302,6 +311,12 @@ class ApplicationController < ActionController::Base
 
       # Could also send to monitoring service here
       # SpamMonitoringService.record_attempt(log_data) if defined?(SpamMonitoringService)
+    end
+
+    # Used by audits1984 to identify the current auditor
+    def find_current_auditor
+      # Only allow admin accounts to audit
+      current_account if current_account&.admin?
     end
 
   # Intelligent automatic caching based on response characteristics

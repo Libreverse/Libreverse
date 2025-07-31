@@ -104,6 +104,20 @@ class AccountSequel < Sequel::Model(:accounts)
     end
   end
 
+  # Ensure timestamps are set for DBs that don't default them
+  def before_create
+    self.created_at ||= Time.now if respond_to?(:created_at) && !created_at
+    self.updated_at ||= Time.now if respond_to?(:updated_at) && !updated_at
+    super
+  end
+
+  # Ensure timestamps are set for join tables (e.g., accounts_roles)
+  def self.join_table_before_create(row)
+    row[:created_at] ||= Time.now if row.respond_to?(:created_at) && !row[:created_at]
+    row[:updated_at] ||= Time.now if row.respond_to?(:updated_at) && !row[:updated_at]
+    row
+  end
+
   private
 
   def validate_username_moderation
@@ -187,16 +201,37 @@ class AccountSequel < Sequel::Model(:accounts)
   end
 
   # Add has_role? method for Sequel model to work with Rolify
-  def role?(role_name)
+  def has_role?(role_name, resource = nil)
     # For AccountSequel, we can check roles directly through the database
     # This avoids the circular dependency issue
     return false if new?
-
-    # Check if account has the specified role
-    Role.joins(:accounts).where(
-      accounts: { id: id },
-      roles: { name: role_name.to_s, resource_type: nil, resource_id: nil }
-    ).exists?
+    
+    # Query the database directly to check for roles using Sequel's db connection
+    role_query = db[:accounts_roles]
+      .join(:roles, id: :role_id)
+      .where(account_id: id)
+      .where(Sequel[:roles][:name] => role_name.to_s)
+    
+    # If resource is specified, also check resource_type and resource_id
+    if resource
+      role_query = role_query.where(
+        Sequel[:roles][:resource_type] => resource.class.name,
+        Sequel[:roles][:resource_id] => resource.id
+      )
+    else
+      # For global roles, resource_type and resource_id should be null
+      role_query = role_query.where(
+        Sequel[:roles][:resource_type] => nil,
+        Sequel[:roles][:resource_id] => nil
+      )
+    end
+    
+    role_query.count > 0
+  end
+  
+  # Keep the old role? method as an alias for backwards compatibility
+  def role?(role_name)
+    has_role?(role_name)
   end
 end
 
@@ -369,4 +404,11 @@ class Account < ApplicationRecord
   def local?
     !federated?
   end
+end
+
+# Ensure timestamps for accounts_roles join table (Sequel direct insert)
+Sequel::Model(:accounts_roles).define_method(:before_create) do
+  self[:created_at] ||= Time.now if self.respond_to?(:created_at) && !self[:created_at]
+  self[:updated_at] ||= Time.now if self.respond_to?(:updated_at) && !self[:updated_at]
+  super()
 end

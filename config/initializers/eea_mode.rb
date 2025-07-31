@@ -84,7 +84,7 @@ module EEAMode
 
     # Returns true if the signed consent cookie has been stored.
     def consent_given?
-      cookies.signed[EEAMode::CONSENT_COOKIE_KEY] == "1"
+      cookies&.signed&.[](EEAMode::CONSENT_COOKIE_KEY) == "1"
     end
 
     # Main guard. Enforce consent for all HTML requests in EEA mode
