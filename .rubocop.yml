@@ -368,3 +368,7 @@ Style/TrailingCommaInHashLiteral:
 Naming/FileName:
     Enabled: true
     Description: "Ensures filenames match class/module names."
+
+Naming/PredicatePrefix:
+    Enabled: false
+    Description: "Allow has_ prefix for predicate methods."

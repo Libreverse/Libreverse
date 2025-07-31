@@ -4,9 +4,7 @@
 require Rails.root.join("lib/ip_anonymizer")
 require "re2"
 
-if Rails.env.development?
-  return
-end
+return if Rails.env.development?
 
 # Set Rack::Attack cache store outside the class definition
 Rack::Attack.cache.store = Rails.cache

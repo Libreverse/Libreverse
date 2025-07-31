@@ -4,169 +4,170 @@
 
 /* Basic Fallback for Browsers Without backdrop-filter Support */
 @supports not (backdrop-filter: blur(1px)) {
-  .glass {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.25) 0%,
-      rgba(255, 255, 255, 0.15) 50%,
-      rgba(255, 255, 255, 0.1) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-  
-  .glass-button {
-    background: rgba(255, 255, 255, 0.2);
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
+    .glass {
+        background: linear-gradient(
+            135deg,
+            rgb(255 255 255 / 25%) 0%,
+            rgb(255 255 255 / 15%) 50%,
+            rgb(255 255 255 / 10%) 100%
+        );
+        border: 1px solid rgb(255 255 255 / 30%);
+        box-shadow:
+            0 8px 32px rgb(0 0 0 / 15%),
+            inset 0 1px 0 rgb(255 255 255 / 20%);
     }
-    
-    &:active {
-      background: rgba(255, 255, 255, 0.15);
+
+    .glass-button {
+        background: rgb(255 255 255 / 20%);
+
+        &:hover {
+            background: rgb(255 255 255 / 30%);
+        }
+
+        &:active {
+            background: rgb(255 255 255 / 15%);
+        }
     }
-  }
 }
 
 /* Safari-specific Fixes */
 @supports (-webkit-backdrop-filter: blur(1px)) {
-  .glass {
-    -webkit-backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-  }
+    .glass {
+        backdrop-filter: blur(var(--glass-blur-radius))
+            saturate(var(--glass-saturation));
+    }
 }
 
 /* Firefox Fallbacks */
-@-moz-document url-prefix() {
-  .glass {
-    /* Firefox doesn't support backdrop-filter well, use enhanced solid background */
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.2) 0%,
-      rgba(255, 255, 255, 0.12) 50%,
-      rgba(255, 255, 255, 0.08) 100%
-    );
-  }
+@document url-prefix() {
+    .glass {
+        /* Firefox doesn't support backdrop-filter well, use enhanced solid background */
+        background: linear-gradient(
+            135deg,
+            rgb(255 255 255 / 20%) 0%,
+            rgb(255 255 255 / 12%) 50%,
+            rgb(255 255 255 / 8%) 100%
+        );
+    }
 }
 
 /* Internet Explorer 11 Support */
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  .glass {
-    background: rgba(240, 240, 240, 0.9);
-    border: 1px solid #ccc;
-    filter: none;
-  }
-  
-  .glass-button {
-    background: rgba(220, 220, 220, 0.9);
-    
-    &:hover {
-      background: rgba(200, 200, 200, 0.9);
+    .glass {
+        background: rgb(240 240 240 / 90%);
+        border: 1px solid #ccc;
+        filter: none;
     }
-  }
+
+    .glass-button {
+        background: rgb(220 220 220 / 90%);
+
+        &:hover {
+            background: rgb(200 200 200 / 90%);
+        }
+    }
 }
 
 /* Edge Legacy Support */
 @supports (-ms-ime-align: auto) {
-  .glass {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-  }
+    .glass {
+        background: rgb(255 255 255 / 15%);
+        border: 1px solid rgb(255 255 255 / 25%);
+    }
 }
 
 /* WebKit-specific Optimizations */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  .glass {
-    /* Optimize for WebKit rendering */
-    -webkit-backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-    will-change: backdrop-filter;
-  }
-  
-  .glass-button:hover {
-    -webkit-transform: translateY(-1px);
-    transform: translateY(-1px);
-  }
+@media screen and (resolution >= 1dppx) {
+    .glass {
+        /* Optimize for WebKit rendering */
+        backdrop-filter: blur(var(--glass-blur-radius))
+            saturate(var(--glass-saturation));
+        will-change: backdrop-filter;
+    }
+
+    .glass-button:hover {
+        transform: translateY(-1px);
+    }
 }
 
 /* Reduced Motion Fallbacks */
 @media (prefers-reduced-motion: reduce) {
-  .glass,
-  .glass-button,
-  .glass-card,
-  .glass-drawer {
-    transition: none !important;
-    animation: none !important;
-  }
-  
-  .glass-button:hover,
-  .glass-card:hover {
-    transform: none !important;
-  }
-  
-  .glass-loading::after {
-    animation: none !important;
-  }
+    .glass,
+    .glass-button,
+    .glass-card,
+    .glass-drawer {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .glass-button:hover,
+    .glass-card:hover {
+        transform: none !important;
+    }
+
+    .glass-loading::after {
+        animation: none !important;
+    }
 }
 
 /* Low-end Device Optimizations */
-@media (max-resolution: 150dpi) {
-  .glass {
-    --glass-blur-radius: 5px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  }
+@media (resolution <= 150dpi) {
+    .glass {
+        --glass-blur-radius: 5px;
+
+        box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+    }
 }
 
 /* Dark Mode Browser Inconsistency Fixes */
 @media (prefers-color-scheme: dark) {
-  @supports not (backdrop-filter: blur(1px)) {
-    .glass {
-      background: linear-gradient(
-        135deg,
-        rgba(0, 0, 0, 0.4) 0%,
-        rgba(0, 0, 0, 0.2) 50%,
-        rgba(0, 0, 0, 0.1) 100%
-      );
-      border: 1px solid rgba(255, 255, 255, 0.15);
+    @supports not (backdrop-filter: blur(1px)) {
+        .glass {
+            background: linear-gradient(
+                135deg,
+                rgb(0 0 0 / 40%) 0%,
+                rgb(0 0 0 / 20%) 50%,
+                rgb(0 0 0 / 10%) 100%
+            );
+            border: 1px solid rgb(255 255 255 / 15%);
+        }
     }
-  }
 }
 
 /* GPU Acceleration Fallbacks */
 @supports not (will-change: transform) {
-  .glass-button:hover {
-    /* Use traditional positioning for older browsers */
-    position: relative;
-    top: -1px;
-  }
+    .glass-button:hover {
+        /* Use traditional positioning for older browsers */
+        position: relative;
+        top: -1px;
+    }
 }
 
 /* Container Query Fallbacks */
 @supports not (container-type: inline-size) {
-  /* Use traditional media queries instead of container queries */
-  /* All responsive styles are already handled in _responsive.scss */
+    /* Use traditional media queries instead of container queries */
+
+    /* All responsive styles are already handled in _responsive.scss */
 }
 
 /* Forced Colors Mode (Windows High Contrast) */
 @media (forced-colors: active) {
-  .glass {
-    background: ButtonFace;
-    border: 1px solid ButtonText;
-    backdrop-filter: none;
-    forced-color-adjust: none;
-  }
-  
-  .glass-button {
-    background: transparent;
-    border: 1px solid ButtonText;
-    color: ButtonText;
-    
-    &:hover {
-      background: transparent;
-      color: HighlightText;
-      border-color: HighlightText;
+    .glass {
+        background: ButtonFace;
+        border: 1px solid ButtonText;
+        backdrop-filter: none;
+        forced-color-adjust: none;
     }
-  }
+
+    .glass-button {
+        background: transparent;
+        border: 1px solid ButtonText;
+        color: ButtonText;
+
+        &:hover {
+            background: transparent;
+            color: HighlightText;
+            border-color: HighlightText;
+        }
+    }
 }

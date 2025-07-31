@@ -354,8 +354,6 @@ module ApplicationHelper
     current_account ? UserPreference.get(current_account.id, key) || default_value : default_value
   end
 
-
-
   # Checks if a specific tutorial/item is dismissed.
   # Delegates to the existing helper in ApplicationController for consistency.
   # (Assumes tutorial_dismissed? helper is available via helper_method)

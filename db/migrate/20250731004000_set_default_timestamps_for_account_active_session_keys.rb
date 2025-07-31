@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SetDefaultTimestampsForAccountActiveSessionKeys < ActiveRecord::Migration[7.0]
   def up
     execute "ALTER TABLE account_active_session_keys MODIFY created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"

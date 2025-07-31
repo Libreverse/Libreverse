@@ -17,22 +17,34 @@ The liquid glass system has been completely rewritten to address production stab
 ### 🔄 Migration Required
 
 #### Old Approach (Fragmented)
+
 ```scss
 // Multiple different implementations
-@use "glass_mixins";          // Complex mixins
-@use "libs/glass.css";        // External CSS
-.sidebar { /* hardcoded styles */ }
-.drawer { /* different approach */ }
+@use "glass_mixins"; // Complex mixins
+@use "libs/glass.css"; // External CSS
+.sidebar {
+    /* hardcoded styles */
+}
+.drawer {
+    /* different approach */
+}
 ```
 
 #### New Approach (Unified)
+
 ```scss
 // Single, clean system
 @use "glass_system";
 
-.sidebar { @extend .glass-sidebar; }
-.drawer { @extend .glass-drawer; }
-.card { @extend .glass-card; }
+.sidebar {
+    @extend .glass-sidebar;
+}
+.drawer {
+    @extend .glass-drawer;
+}
+.card {
+    @extend .glass-card;
+}
 ```
 
 ## Implementation Steps
@@ -45,7 +57,7 @@ Replace hardcoded glass styling with new classes:
 // Old
 %nav.sidebar{data: {glass_active: "true"}}
 
-// New  
+// New
 %nav.sidebar.glass-sidebar
 ```
 
@@ -55,7 +67,7 @@ Replace hardcoded glass styling with new classes:
 // Available classes:
 .glass              // Base glass effect
 .glass-sidebar      // Sidebar component
-.glass-drawer       // Drawer component  
+.glass-drawer       // Drawer component
 .glass-card         // Card component
 .glass-nav          // Navigation component
 .glass-button       // Button component
@@ -76,9 +88,9 @@ Use CSS custom properties for customization:
 
 ```scss
 :root {
-  --glass-background-opacity: 0.15;  // Adjust transparency
-  --glass-blur-radius: 20px;         // Adjust blur
-  --glass-border-radius-medium: 16px; // Adjust corners
+    --glass-background-opacity: 0.15; // Adjust transparency
+    --glass-blur-radius: 20px; // Adjust blur
+    --glass-border-radius-medium: 16px; // Adjust corners
 }
 ```
 
@@ -97,24 +109,28 @@ element.classList.add("glass-enhanced")
 ## Benefits
 
 ### 🚀 Production Ready
+
 - Works in all browsers including IE11
-- Survives CSS minification and compression  
+- Survives CSS minification and compression
 - No JavaScript dependencies for basic functionality
 - Consistent cross-browser rendering
 
 ### 🎨 Better Styling
+
 - Smoother animations and transitions
 - Consistent responsive behavior
 - Better accessibility support
 - High contrast mode compatibility
 
 ### 🛠 Developer Experience
+
 - Single import instead of multiple systems
 - Self-documenting class names
 - Easy customization with CSS custom properties
 - Clear separation of concerns
 
 ### 📱 Mobile Optimized
+
 - Reduced blur effects on mobile for performance
 - Touch-friendly sizing
 - Better responsive breakpoints
@@ -123,11 +139,13 @@ element.classList.add("glass-enhanced")
 ## Compatibility
 
 ### Backward Compatibility
+
 - Existing `data-glass-active` attributes still work
 - JavaScript controllers don't need changes
 - Old mixins are deprecated but won't break existing code
 
 ### Browser Support
+
 - ✅ Modern browsers: Full glass effects with backdrop-filter
 - ✅ Older browsers: CSS gradient fallbacks
 - ✅ IE11: Basic solid backgrounds
@@ -146,16 +164,19 @@ element.classList.add("glass-enhanced")
 ## Troubleshooting
 
 ### Glass Effects Not Showing
+
 1. Check that `glass_system` is imported in `application.scss`
 2. Verify correct class names (`.glass-sidebar` not `.glass_sidebar`)
 3. Check browser console for CSS errors
 
 ### Layout Issues
+
 1. Glass system preserves existing layout - no positioning changes needed
 2. Use browser dev tools to verify CSS custom properties are applied
 3. Check for conflicting z-index values
 
 ### Performance Issues
+
 1. Glass system is optimized, but you can reduce effects on mobile
 2. Use `.glass-no-blur` class to disable blur on low-end devices
 3. Consider using `.glass-transparent` for lighter effects
@@ -163,6 +184,7 @@ element.classList.add("glass-enhanced")
 ## Support
 
 If you encounter issues during migration:
+
 1. Check browser dev tools for CSS conflicts
 2. Verify glass system is properly imported
 3. Test with the new utility classes first

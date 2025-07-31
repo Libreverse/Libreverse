@@ -36,13 +36,11 @@ class AccountActionsController < ApplicationController
         if exp.html_file.attached?
           filename = exp.html_file.filename.to_s.presence || "experience_#{exp.id}.html"
           zip.write_deflated_file("experiences/#{exp.id}/#{filename}") do |sink|
-            begin
               # Stream the file directly using Active Storage's streaming capabilities
               exp.html_file.download { |chunk| sink << chunk }
-            rescue StandardError => e
+          rescue StandardError => e
               Rails.logger.error "[AccountExport] Error streaming html_file for experience #{exp.id}: #{e.message}"
               sink << "Error: Could not export attached file - #{e.message}"
-            end
           end
         end
       end
