@@ -435,3 +435,19 @@ Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
     end
   end
 end
+
+# Enable console1984 in production and staging by default
+Rails.application.config.console1984.protected_environments = %i[ production staging ]
+# You can further configure console1984 here as needed
+# For example:
+# Rails.application.config.console1984.incinerate_after = 1.year
+# Rails.application.config.console1984.protected_urls = ["redis://example.com:6379"]
+# Rails.application.config.console1984.ask_for_username_if_empty = true
+# Rails.application.config.console1984.session_logger = Console1984::SessionsLogger::Database
+# Rails.application.config.console1984.username_resolver = Console1984::Username::EnvResolver.new("CONSOLE_USER")
+# Rails.application.config.console1984.incinerate = true
+# Rails.application.config.console1984.incineration_queue = "console1984_incineration"
+# Rails.application.config.console1984.base_record_class = ::ApplicationRecord
+# Rails.application.config.console1984.production_data_warning = "You have access to production data here. That's a big deal..."
+# Rails.application.config.console1984.enter_unprotected_encryption_mode_warning = "Before you can access personal information..."
+# Rails.application.config.console1984.enter_protected_mode_warning = "Great! You are back in protected mode..."

@@ -110,8 +110,11 @@ Rails.application.routes.draw do
   post "consent/accept", to: "consent#accept"
   post "consent/decline", to: "consent#decline"
 
+  # Mount audits1984 engine for auditing console sessions
+  mount Audits1984::Engine => "/console"
+
   # Policies (Privacy & Cookies)
-  get "privacy", to: "policies#privacy", as: :privacy_policy
+  get "privacy", to: "policies#privacy", as: :privacy
   get "cookies", to: "policies#cookies", as: :cookie_policy
 
   # Mount Federails engine at root for ActivityPub federation

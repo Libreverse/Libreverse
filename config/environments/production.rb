@@ -131,4 +131,16 @@ Rails.application.configure do
   }
   config.action_mailer.perform_caching = false
   config.action_mailer.raise_delivery_errors = false
+
+  # Active Record Encryption setup for console1984
+  # This uses a key generator based on secret_key_base for local/dev/test
+  key_generator = ActiveSupport::KeyGenerator.new(
+    Rails.application.secret_key_base, iterations: 1000
+  )
+  config.active_record.encryption.primary_key = key_generator.generate_key("active_record_encryption_primary", 32).unpack1("H*")
+  config.active_record.encryption.deterministic_key = key_generator.generate_key("active_record_encryption_deterministic", 32).unpack1("H*")
+  config.active_record.encryption.key_derivation_salt = "AR"
+  config.active_record.encryption.support_unencrypted_data = true
+  config.active_record.encryption.encrypt_fixtures = true
+  config.active_record.encryption.store_key_references = false
 end
