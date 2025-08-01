@@ -35,8 +35,6 @@
     .glass {
         backdrop-filter: blur(var(--glass-blur-radius))
             saturate(var(--glass-saturation));
-        backdrop-filter: blur(var(--glass-blur-radius))
-            saturate(var(--glass-saturation));
     }
 }
 
@@ -84,13 +82,10 @@
         /* Optimize for WebKit rendering */
         backdrop-filter: blur(var(--glass-blur-radius))
             saturate(var(--glass-saturation));
-        backdrop-filter: blur(var(--glass-blur-radius))
-            saturate(var(--glass-saturation));
         will-change: backdrop-filter;
     }
 
     .glass-button:hover {
-        transform: translateY(-1px);
         transform: translateY(-1px);
     }
 }

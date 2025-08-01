@@ -9,7 +9,8 @@ export default {
     ],
     rules: {
         "no-empty-source": undefined,
-        "at-extend-no-missing-placeholder": undefined,
-        "no-descending-specificity": undefined
+        "scss/at-extend-no-missing-placeholder": undefined,
+        "no-descending-specificity": undefined,
+        "media-feature-name-no-unknown": null
     },
 };
