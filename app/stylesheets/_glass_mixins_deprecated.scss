@@ -100,7 +100,9 @@
         border-radius: var(--sidebar-border-radius)
             0
             0
-            var(--sidebar-border-radius); // Only round corners away from screen edge
+            var(
+                --sidebar-border-radius
+            ); // Only round corners away from screen edge
     }
 }
 

@@ -4,17 +4,20 @@
     // Include base glass styles directly instead of extending
     background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
-        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
-        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
+        rgb(255 255 255 / var(--glass-background-opacity)) 0%,
+        rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.7)) 50%,
+        rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.5)) 100%
     );
-    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
-    box-shadow: 
+    backdrop-filter: blur(var(--glass-blur-radius))
+        saturate(var(--glass-saturation));
+    border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    box-shadow:
         var(--glass-shadow-light),
-        inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
-        inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
-    
+        inset 0 1px 0
+            rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
+        inset 0 -1px 0
+            rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.3));
+
     // Sidebar-specific positioning and layout
     position: fixed;
     top: 50%;
@@ -31,34 +34,35 @@
     border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
     overflow: hidden;
     transition: all var(--glass-transition-medium) var(--glass-easing);
-    
+
     // Ensure border-radius is applied consistently across all states
     &,
     &::before,
     &::after {
-        border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
+        border-radius: 0 var(--sidebar-border-radius)
+            var(--sidebar-border-radius) 0 !important;
     }
-    
+
     // Content positioning
     > * {
         position: relative;
         z-index: 1;
     }
-    
+
     // Enhanced state (when WebGL is active)
     &.glass-enhanced {
         background: transparent;
         backdrop-filter: none;
         border: none;
         box-shadow: none;
-        
+
         .glass-overlay {
             position: absolute;
             inset: 0;
             z-index: 0;
             pointer-events: none;
             border-radius: inherit;
-            
+
             canvas {
                 width: 100%;
                 height: 100%;
@@ -67,21 +71,21 @@
             }
         }
     }
-    
+
     // Responsive width
     width: var(--sidebar-width-medium);
-    
+
     @media (max-width: var(--breakpoint-mobile)) {
         width: var(--sidebar-width-small);
     }
-    
-    @media (min-width: calc(var(--breakpoint-tablet) + 1px)) {
+
+    @media (width >= calc(var(--breakpoint-tablet) + 1px)) {
         width: var(--sidebar-width-large);
     }
-    
+
     // Override any specific behaviors not covered by the glass system
     pointer-events: auto;
-    
+
     // Base link styling using glass system
     .sidebar-link,
     .sidebar-logout-button {
@@ -90,7 +94,7 @@
         backdrop-filter: none;
         border: none;
         box-shadow: none;
-        
+
         // Sidebar button sizing
         width: var(--sidebar-button-size-medium);
         height: var(--sidebar-button-size-medium);
@@ -102,7 +106,7 @@
         align-items: center;
         justify-content: center;
         transition: all var(--glass-transition-fast) var(--glass-easing);
-        
+
         /* Responsive button sizing */
         @media (max-width: var(--breakpoint-mobile)) {
             width: var(--sidebar-button-size-small);
@@ -110,22 +114,21 @@
             min-width: var(--sidebar-button-size-small);
             min-height: var(--sidebar-button-size-small);
         }
-        
-        @media (min-width: calc(var(--breakpoint-tablet) + 1px)) {
+
+        @media (width >= calc(var(--breakpoint-tablet) + 1px)) {
             width: var(--sidebar-button-size-large);
             height: var(--sidebar-button-size-large);
             min-width: var(--sidebar-button-size-large);
             min-height: var(--sidebar-button-size-large);
         }
-        
+
         // Sidebar-specific overrides
         text-decoration: none;
-        color: inherit;
         cursor: pointer;
         position: relative;
         z-index: 2;
         color: inherit;
-        
+
         // Icon styling
         img.sidebar-icons,
         svg {
@@ -136,12 +139,12 @@
             filter: drop-shadow(0 1px 2px rgb(0 0 0 / 20%));
             transition: filter var(--glass-transition-fast) ease;
         }
-        
+
         // Current page styling
         &.sidebar-current {
             opacity: 0.6;
             cursor: default;
-            
+
             &:hover {
                 transform: none;
             }
@@ -182,7 +185,8 @@
     .glass-container {
         background: transparent !important;
         backdrop-filter: none !important;
-        border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
+        border-radius: 0 var(--sidebar-border-radius)
+            var(--sidebar-border-radius) 0;
     }
 }
 
