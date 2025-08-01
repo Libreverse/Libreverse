@@ -4,74 +4,74 @@
  */
 
 :root {
-    /* Glass Effect Base Properties */
-    --glass-background-opacity: 0.12;
-    --glass-border-opacity: 0.18;
-    --glass-blur-radius: 15px;
-    --glass-saturation: 1.8;
-
-    /* Glass Component Sizing */
-    --glass-border-radius-small: 8px;
-    --glass-border-radius-medium: 12px;
-    --glass-border-radius-large: 20px;
-
-    /* Sidebar Configuration */
-    --sidebar-width-small: 48px;
-    --sidebar-width-medium: 56px;
-    --sidebar-width-large: 64px;
-    --sidebar-button-size-small: 36px;
-    --sidebar-button-size-medium: 42px;
-    --sidebar-button-size-large: 50px;
-    --sidebar-border-radius: var(--glass-border-radius-medium);
-
-    /* Drawer Configuration */
-    --drawer-width: 350px;
-    --drawer-height-collapsed: 60px;
-    --drawer-height-expanded: 600px;
-    --drawer-border-radius: var(--glass-border-radius-large);
-
-    /* Animation Timing */
-    --glass-transition-fast: 0.15s;
-    --glass-transition-medium: 0.3s;
-    --glass-transition-slow: 0.5s;
-    --glass-easing: cubic-bezier(0.4, 0, 0.2, 1);
-
-    /* Shadow Configuration */
-    --glass-shadow-light: 0 8px 32px rgb(0 0 0 / 15%);
-    --glass-shadow-medium: 0 12px 40px rgb(0 0 0 / 25%);
-    --glass-shadow-heavy: 0 25px 50px rgb(0 0 0 / 35%);
-
-    /* Interactive States */
-    --glass-hover-opacity: 0.18;
-    --glass-active-opacity: 0.08;
-    --glass-disabled-opacity: 0.6;
-
-    /* Responsive Breakpoints */
-    --breakpoint-mobile: 600px;
-    --breakpoint-tablet: 1500px;
+  /* Glass Effect Base Properties */
+  --glass-background-opacity: 0.12;
+  --glass-border-opacity: 0.18;
+  --glass-blur-radius: 15px;
+  --glass-saturation: 1.8;
+  
+  /* Glass Component Sizing */
+  --glass-border-radius-small: 8px;
+  --glass-border-radius-medium: 12px;
+  --glass-border-radius-large: 20px;
+  
+  /* Sidebar Configuration */
+  --sidebar-width-small: 48px;
+  --sidebar-width-medium: 56px;
+  --sidebar-width-large: 64px;
+  --sidebar-button-size-small: 36px;
+  --sidebar-button-size-medium: 42px;
+  --sidebar-button-size-large: 50px;
+  --sidebar-border-radius: var(--glass-border-radius-medium);
+  
+  /* Drawer Configuration */
+  --drawer-width: 350px;
+  --drawer-height-collapsed: 60px;
+  --drawer-height-expanded: 600px;
+  --drawer-border-radius: var(--glass-border-radius-large);
+  
+  /* Animation Timing */
+  --glass-transition-fast: 0.15s;
+  --glass-transition-medium: 0.3s;
+  --glass-transition-slow: 0.5s;
+  --glass-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Shadow Configuration */
+  --glass-shadow-light: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --glass-shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.25);
+  --glass-shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.35);
+  
+  /* Interactive States */
+  --glass-hover-opacity: 0.18;
+  --glass-active-opacity: 0.08;
+  --glass-disabled-opacity: 0.6;
+  
+  /* Responsive Breakpoints */
+  --breakpoint-mobile: 600px;
+  --breakpoint-tablet: 1500px;
 }
 
 /* Dark theme adjustments */
 [data-theme="dark"] {
-    --glass-background-opacity: 0.08;
-    --glass-border-opacity: 0.12;
-    --glass-blur-radius: 12px;
+  --glass-background-opacity: 0.08;
+  --glass-border-opacity: 0.12;
+  --glass-blur-radius: 12px;
 }
 
 /* High contrast mode adjustments */
 @media (prefers-contrast: high) {
-    :root {
-        --glass-background-opacity: 0.9;
-        --glass-border-opacity: 0.8;
-        --glass-blur-radius: 0px;
-    }
+  :root {
+    --glass-background-opacity: 0.9;
+    --glass-border-opacity: 0.8;
+    --glass-blur-radius: 0px;
+  }
 }
 
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-    :root {
-        --glass-transition-fast: 0s;
-        --glass-transition-medium: 0s;
-        --glass-transition-slow: 0s;
-    }
+  :root {
+    --glass-transition-fast: 0s;
+    --glass-transition-medium: 0s;
+    --glass-transition-slow: 0s;
+  }
 }
