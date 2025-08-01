@@ -5,17 +5,20 @@
     // Include base glass styles directly
     background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, var(--glass-background-opacity)) 0%,
-        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.7)) 50%,
-        rgba(255, 255, 255, calc(var(--glass-background-opacity) * 0.5)) 100%
+        rgb(255 255 255 / var(--glass-background-opacity)) 0%,
+        rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.7)) 50%,
+        rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.5)) 100%
     );
-    backdrop-filter: blur(var(--glass-blur-radius)) saturate(var(--glass-saturation));
-    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
-    box-shadow: 
+    backdrop-filter: blur(var(--glass-blur-radius))
+        saturate(var(--glass-saturation));
+    border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    box-shadow:
         var(--glass-shadow-light),
-        inset 0 1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.6)),
-        inset 0 -1px 0 rgba(255, 255, 255, calc(var(--glass-border-opacity) * 0.3));
-    
+        inset 0 1px 0
+            rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
+        inset 0 -1px 0
+            rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.3));
+
     // Card-specific overrides
     position: relative;
     width: 100%;
@@ -23,7 +26,9 @@
     margin-top: 150px;
     margin-left: 60px;
     margin-right: 60px;
-    transition: margin 0.3s, transform var(--glass-transition-medium) var(--glass-easing);
+    transition:
+        margin 0.3s,
+        transform var(--glass-transition-medium) var(--glass-easing);
     border-radius: var(--glass-border-radius-medium);
     padding: 24px;
     overflow: hidden;
@@ -33,21 +38,21 @@
         position: relative;
         z-index: 1;
     }
-    
+
     // Enhanced state (when WebGL is active)
     &.glass-enhanced {
         background: transparent;
         backdrop-filter: none;
         border: none;
         box-shadow: none;
-        
+
         .glass-overlay {
             position: absolute;
             inset: 0;
             z-index: 0;
             pointer-events: none;
             border-radius: inherit;
-            
+
             canvas {
                 width: 100%;
                 height: 100%;
@@ -56,12 +61,12 @@
             }
         }
     }
-    
+
     &:hover {
         transform: translateY(-2px);
         box-shadow: var(--glass-shadow-heavy);
     }
-    
+
     @media screen and (width <= 600px) {
         margin-left: 40px;
         margin-right: 40px;

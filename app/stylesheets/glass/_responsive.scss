@@ -4,160 +4,163 @@
 
 /* Mobile Optimiza/* Print Styles */
 @media print {
-  .glass,
-  .glass-sidebar,
-  .glass-drawer,
-  .glass-nav {
-    background: white !important;
-    backdrop-filter: none !important;
-    box-shadow: 0 0 0 1px #ccc !important;
-    border: 1px solid #ccc !important;
-  }
-  
-  .glass-sidebar {
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
-  }
-  
-  .glass-button {
-    border: 1px solid #333 !important;
-    background: transparent !important;
-  }
+    .glass,
+    .glass-sidebar,
+    .glass-drawer,
+    .glass-nav {
+        background: white !important;
+        backdrop-filter: none !important;
+        box-shadow: 0 0 0 1px #ccc !important;
+        border: 1px solid #ccc !important;
+    }
+
+    .glass-sidebar {
+        border-radius: 0 var(--sidebar-border-radius)
+            var(--sidebar-border-radius) 0 !important;
+    }
+
+    .glass-button {
+        border: 1px solid #333 !important;
+        background: transparent !important;
+    }
 }
 
 /* Mobile and Tablet Optimizations */
 @media (max-width: var(--breakpoint-mobile)) {
-  /* Reduce glass effects on mobile for better performance */
-  .glass {
-    --glass-blur-radius: 8px;
-    --glass-saturation: 1.2;
-  }
-  
-  /* Simplify animations on mobile */
-  .glass-button:hover {
-    transform: none;
-  }
-  
-  /* Adjust drawer for mobile */
-  .glass-drawer {
-    .drawer-content,
-    .drawer-contents {
-      padding: 12px;
+    /* Reduce glass effects on mobile for better performance */
+    .glass {
+        --glass-blur-radius: 8px;
+        --glass-saturation: 1.2;
     }
-  }
-  
-  /* Touch-friendly button sizing */
-  .glass-button {
-    min-height: 44px;
-    min-width: 44px;
-  }
+
+    /* Simplify animations on mobile */
+    .glass-button:hover {
+        transform: none;
+    }
+
+    /* Adjust drawer for mobile */
+    .glass-drawer {
+        .drawer-content,
+        .drawer-contents {
+            padding: 12px;
+        }
+    }
+
+    /* Touch-friendly button sizing */
+    .glass-button {
+        min-height: 44px;
+        min-width: 44px;
+    }
 }
 
 /* Tablet Adjustments */
-@media (min-width: calc(var(--breakpoint-mobile) + 1px)) and (max-width: var(--breakpoint-tablet)) {
-  .glass {
-    --glass-blur-radius: 12px;
-  }
+@media (width >= calc(var(--breakpoint-mobile) + 1px)) and (max-width: var(--breakpoint-tablet)) {
+    .glass {
+        --glass-blur-radius: 12px;
+    }
 }
 
 /* Desktop Enhancements */
-@media (min-width: calc(var(--breakpoint-tablet) + 1px)) {
-  .glass {
-    --glass-blur-radius: 15px;
-  }
-  
-  /* Enhanced hover effects on desktop */
-  .glass-button:hover {
-    transform: translateY(-2px) scale(1.02);
-  }
-  
-  .glass-card:hover {
-    transform: translateY(-4px);
-  }
+@media (width >= calc(var(--breakpoint-tablet) + 1px)) {
+    .glass {
+        --glass-blur-radius: 15px;
+    }
+
+    /* Enhanced hover effects on desktop */
+    .glass-button:hover {
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px);
+    }
 }
 
 /* Large Screen Optimizations */
-@media (min-width: 1920px) {
-  .glass {
-    --glass-blur-radius: 18px;
-    --glass-saturation: 2.0;
-  }
-  
-  .glass-card {
-    padding: 32px;
-  }
+@media (width >= 1920px) {
+    .glass {
+        --glass-blur-radius: 18px;
+        --glass-saturation: 2;
+    }
+
+    .glass-card {
+        padding: 32px;
+    }
 }
 
 /* Ultra-wide Screen Support */
-@media (min-width: 2560px) {
-  .glass-sidebar {
-    width: 80px;
-    
-    .sidebar-link,
-    .sidebar-button {
-      width: 60px;
-      height: 60px;
-      min-width: 60px;
-      min-height: 60px;
-      
-      img, svg {
-        width: 32px;
-        height: 32px;
-      }
+@media (width >= 2560px) {
+    .glass-sidebar {
+        width: 80px;
+
+        .sidebar-link,
+        .sidebar-button {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            min-height: 60px;
+
+            img,
+            svg {
+                width: 32px;
+                height: 32px;
+            }
+        }
     }
-  }
 }
 
 /* Portrait Orientation Adjustments */
 @media (orientation: portrait) and (max-width: var(--breakpoint-mobile)) {
-  .glass-drawer {
-    width: 95%;
-    margin: 0 2.5%;
-  }
-  
-  .glass-sidebar {
-    height: 70vh;
-  }
+    .glass-drawer {
+        width: 95%;
+        margin: 0 2.5%;
+    }
+
+    .glass-sidebar {
+        height: 70vh;
+    }
 }
 
 /* Landscape Mobile Adjustments */
-@media (orientation: landscape) and (max-height: 500px) {
-  .glass-sidebar {
-    height: 90vh;
-    gap: 4px;
-    
-    .sidebar-link,
-    .sidebar-button {
-      margin: 2px auto;
+@media (orientation: landscape) and (height <= 500px) {
+    .glass-sidebar {
+        height: 90vh;
+        gap: 4px;
+
+        .sidebar-link,
+        .sidebar-button {
+            margin: 2px auto;
+        }
     }
-  }
-  
-  .glass-drawer {
-    height: 40px;
-    
-    &.expanded {
-      height: 300px;
+
+    .glass-drawer {
+        height: 40px;
+
+        &.expanded {
+            height: 300px;
+        }
     }
-  }
 }
 
 /* Print Styles */
 @media print {
-  .glass,
-  .glass-sidebar,
-  .glass-drawer,
-  .glass-nav {
-    background: white !important;
-    backdrop-filter: none !important;
-    box-shadow: 0 0 0 1px #ccc !important;
-    border: 1px solid #ccc !important;
-  }
-  
-  .glass-sidebar {
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
-  }
-  
-  .glass-button {
-    border: 1px solid #333 !important;
-    background: transparent !important;
-  }
+    .glass,
+    .glass-sidebar,
+    .glass-drawer,
+    .glass-nav {
+        background: white !important;
+        backdrop-filter: none !important;
+        box-shadow: 0 0 0 1px #ccc !important;
+        border: 1px solid #ccc !important;
+    }
+
+    .glass-sidebar {
+        border-radius: 0 var(--sidebar-border-radius)
+            var(--sidebar-border-radius) 0 !important;
+    }
+
+    .glass-button {
+        border: 1px solid #333 !important;
+        background: transparent !important;
+    }
 }
