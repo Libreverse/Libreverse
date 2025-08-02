@@ -1,25 +1,7 @@
 #!/bin/bash
 # Entrypoint: run ALL processes with jemalloc for maximum memory optimization
 
-# Detect jemalloecho "  🔍 Checking migration status for all databases..."
-
-# Check migration status first
-check_migration_status "db:migrate:status" "Primary database"
-check_migration_status "db:migrate:status:cache" "Cache database"  
-check_migration_status "db:migrate:status:queue" "Queue tables (same DB, different migrations)"
-
-echo "  🔄 Running migrations for all databases..."
-
-# Primary database migrations (critical - don't skip errors)
-run_migrations "db:migrate" "Primary database" false
-
-# Cache database migrations (Solid Cache) - critical for caching
-# This uses a separate SQLite database
-run_migrations "db:migrate:cache" "Cache database (Solid Cache)" false
-
-# Queue table migrations (Solid Queue) - critical for background jobs
-# This uses the same database as primary but creates separate tables
-run_migrations "db:migrate:queue" "Queue tables (Solid Queue)" falser current architecture
+# Detect jemalloc library path for current architecture
 JEMALLOC_PATH=""
 if [ -f /usr/lib/x86_64-linux-gnu/libjemalloc.so.2 ]; then
     JEMALLOC_PATH="/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"
@@ -128,7 +110,7 @@ echo "  � Checking migration status for all databases..."
 # Check migration status first
 check_migration_status "db:migrate:status" "Primary database"
 check_migration_status "db:migrate:status:cache" "Cache database"  
-check_migration_status "db:migrate:status:queue" "Queue database"
+check_migration_status "db:migrate:status:queue" "Queue tables (same DB, different migrations)"
 
 echo "  🔄 Running migrations for all databases..."
 
@@ -136,10 +118,12 @@ echo "  🔄 Running migrations for all databases..."
 run_migrations "db:migrate" "Primary database" false
 
 # Cache database migrations (Solid Cache) - critical for caching
+# This uses a separate SQLite database
 run_migrations "db:migrate:cache" "Cache database (Solid Cache)" false
 
-# Queue database migrations (Solid Queue) - critical for background jobs
-run_migrations "db:migrate:queue" "Queue database (Solid Queue)" false
+# Queue table migrations (Solid Queue) - critical for background jobs
+# This uses the same database as primary but creates separate tables
+run_migrations "db:migrate:queue" "Queue tables (Solid Queue)" false
 
 # Cable database migrations (Action Cable) - less critical, can skip errors
 if grep -q "cable:" /home/app/webapp/config/database.yml 2>/dev/null; then
