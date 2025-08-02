@@ -191,11 +191,15 @@ export default defineConfig(({ mode }) => {
                     postcssInlineRtl(),
                     cssnano({
                         preset: [
-                            "default",
+                            "advanced",
                             {
+                                autoprefixer: true,
                                 discardComments: {
                                     removeAllButCopyright: true,
                                 },
+                                normalizeString: true,
+                                normalizeUrl: true,
+                                normalizeCharset: true,
                             },
                         ],
                     }),
