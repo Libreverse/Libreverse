@@ -4,6 +4,12 @@
     text-rendering: geometricprecision;
 }
 
+*.glass-active{
+    *:not(.glass-container){
+        position: relative !important;
+    }
+}
+
 .noscript-message {
     position: fixed;
     inset: 0;
