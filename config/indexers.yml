@@ -13,7 +13,8 @@ indexers:
             catalyst_content: "https://peer.decentraland.org/content"
             ipfs_gateway: "https://ipfs.io"
         schedule: "0 */12 * * *" # cron format - every 12 hours
-        max_items: 50 # Reasonable limit to prevent long-running jobs
+        max_items: 50 # Maximum items per run
+        daily_limit: 100 # Maximum items per day (progressive indexing)
         timeout: 45 # Longer timeout per API request
         batch_delay: 2 # Seconds to wait between batches
 
@@ -80,6 +81,7 @@ development:
     indexers:
         decentraland:
             max_items: 10 # Limit items in development
+            daily_limit: 20 # Small daily limit for testing progressive indexing
             schedule: null # Disable scheduling in development
         sandbox:
             max_items: 5

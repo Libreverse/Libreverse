@@ -30,6 +30,12 @@
             %dt.col-sm-3 Max Items
             %dd.col-sm-9= @config['max_items']
 
+            - if @config['daily_limit']
+              %dt.col-sm-3 Daily Limit
+              %dd.col-sm-9
+                = @config['daily_limit']
+                %small.text-muted per day
+
             %dt.col-sm-3 Cache Duration
             %dd.col-sm-9 #{@config['cache_duration']} seconds
 
@@ -39,6 +45,42 @@
                 %strong= name.humanize + ':'
                 %code= url
                 %br
+
+      - if @platform_name == 'decentraland' && @config['daily_limit']
+        %h3.mt-4 Progressive Indexing Status
+        .card
+          .card-body
+            .row
+              .col-md-4
+                %h6 Daily Progress
+                - today_count = IndexedContent.where(source_platform: 'decentraland').where('last_indexed_at >= ?', Time.current.beginning_of_day).count
+                - daily_limit = @config['daily_limit']
+                - progress_percent = daily_limit > 0 ? (today_count.to_f / daily_limit * 100).round(1) : 0
+                .progress.mb-2
+                  .progress-bar{style: "width: #{[progress_percent, 100].min}%", class: progress_percent >= 100 ? 'bg-success' : 'bg-primary'}
+                %small
+                  #{today_count} / #{daily_limit} items indexed today
+                  (#{progress_percent}%)
+              .col-md-4
+                %h6 Search Coverage
+                - search_radius = Rails.cache.read("decentraland_indexer_search_radius") || 5
+                - total_indexed = IndexedContent.where(source_platform: 'decentraland').count
+                %p.mb-1
+                  %strong Search Radius:
+                  #{search_radius} parcels
+                %p.mb-1
+                  %strong Total Indexed:
+                  #{total_indexed} scenes
+              .col-md-4
+                %h6 Status
+                - if today_count >= daily_limit
+                  %span.badge.bg-success Limit Reached
+                  %br
+                  %small.text-muted Will resume tomorrow
+                - else
+                  %span.badge.bg-primary Active
+                  %br
+                  %small.text-muted #{daily_limit - today_count} remaining today
 
       %h3.mt-4 Recent Runs
       - if @recent_runs.any?
