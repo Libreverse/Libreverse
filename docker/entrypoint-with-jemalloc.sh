@@ -134,4 +134,18 @@ fi
 
 echo "✅ Database migration step completed"
 
+# Fix permissions for SQLite databases
+echo "🔧 Setting proper permissions for SQLite databases..."
+chown -R app:app /home/app/webapp/db/
+chmod -R 664 /home/app/webapp/db/*.sqlite3 2>/dev/null || true
+chmod -R 775 /home/app/webapp/db/ 2>/dev/null || true
+
+# Also ensure log directory is writable
+echo "📝 Setting up log directory permissions..."
+mkdir -p /home/app/webapp/log
+chown -R app:app /home/app/webapp/log/
+chmod -R 664 /home/app/webapp/log/ 2>/dev/null || true
+
+echo "✅ File permissions configured"
+
 exec /sbin/my_init
