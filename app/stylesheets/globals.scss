@@ -4,8 +4,8 @@
     text-rendering: geometricprecision;
 }
 
-*.glass-active{
-    *:not(.glass-container){
+*.glass-active {
+    *:not(.glass-container) {
         position: relative !important;
     }
 }

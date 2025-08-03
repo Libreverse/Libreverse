@@ -5,17 +5,20 @@ The Decentraland indexer now supports progressive indexing, which allows it to s
 ## How it Works
 
 ### Spiral Expansion
+
 - **Starting Point**: Genesis Plaza (0,0) - the main spawn area
 - **Pattern**: Expands outward in a spiral pattern
 - **Radius Growth**: Starts with radius 5, expands by 5 each time the current area is exhausted
 - **Maximum**: Caps at radius 50 to prevent excessive API calls
 
 ### Daily Limits
+
 - **Production**: 100 items per day
 - **Development**: 20 items per day (for testing)
 - **Per Run**: Still respects `max_items` limit (50 in production, 10 in development)
 
 ### Smart Coordinate Selection
+
 1. **Unindexed Priority**: Only fetches coordinates that haven't been indexed yet
 2. **High-Value Fallback**: If spiral area is exhausted, includes known high-traffic areas
 3. **Persistent State**: Remembers progress between runs using Rails cache
@@ -25,19 +28,21 @@ The Decentraland indexer now supports progressive indexing, which allows it to s
 ```yaml
 # config/indexers.yml
 decentraland:
-  daily_limit: 100        # Maximum items per day
-  max_items: 50          # Maximum items per run
-  schedule: "0 */12 * * *" # Run every 12 hours
+    daily_limit: 100 # Maximum items per day
+    max_items: 50 # Maximum items per run
+    schedule: "0 */12 * * *" # Run every 12 hours
 ```
 
 ## Monitoring
 
 ### Admin Interface
+
 - View daily progress and limits in `/admin/indexers/decentraland`
 - Shows current search radius and total indexed scenes
 - Progress bar for daily limit
 
 ### Rake Tasks
+
 ```bash
 # Test progressive indexing without running
 rake indexing:test_progressive

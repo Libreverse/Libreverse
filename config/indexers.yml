@@ -18,19 +18,6 @@ indexers:
         timeout: 45 # Longer timeout per API request
         batch_delay: 2 # Seconds to wait between batches
 
-    sandbox:
-        enabled: true
-        rate_limit: 3 # More conservative for OpenSea
-        batch_size: 15 # Smaller batches
-        cache_duration: 3600
-        api_endpoints:
-            subgraph: "https://api.thegraph.com/subgraphs/name/thesandboxgame/sandbox"
-            opensea: "https://api.opensea.io/api/v1"
-        schedule: "0 */12 * * *" # every 12 hours (aligned with decentraland)
-        max_items: 100 # Reasonable limit
-        timeout: 45
-        batch_delay: 3 # Longer delay for stricter APIs
-
     roblox:
         enabled: false # Disabled by default - requires API key
         rate_limit: 20
@@ -65,6 +52,16 @@ indexers:
         max_items: 500
         timeout: 30
 
+    sandbox:
+        enabled: false # Disabled due to Cloudflare bot protection blocking datacenter IPs
+        rate_limit: 5 # Conservative rate limiting
+        batch_size: 50
+        cache_duration: 7200 # 2 hours
+        sitemap_url: "https://www.sandbox.game/__sitemap__/experiences.xml"
+        schedule: "0 */6 * * *" # every 6 hours
+        max_items: 2000 # Should cover all ~1600 experiences with room for growth
+        timeout: 60 # Longer timeout for browser operations
+
 # Global settings that apply to all indexers
 global:
     default_timeout: 30 # seconds
@@ -86,6 +83,7 @@ development:
         sandbox:
             max_items: 5
             schedule: null
+            enabled: false # Keep disabled even in development until Cloudflare issue resolved
 
 test:
     global:

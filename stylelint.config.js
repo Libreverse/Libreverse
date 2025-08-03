@@ -11,6 +11,6 @@ export default {
         "no-empty-source": undefined,
         "scss/at-extend-no-missing-placeholder": undefined,
         "no-descending-specificity": undefined,
-        "media-feature-name-no-unknown": null
+        "media-feature-name-no-unknown": null,
     },
 };

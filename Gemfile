@@ -11,6 +11,7 @@ gem "argon2"
 gem "audits1984"
 gem "bootsnap"
 gem "cancancan"
+gem "capybara"
 gem "console1984"
 gem "federails"
 gem "federails-moderation"
@@ -47,6 +48,7 @@ gem "rodauth-pwned"
 gem "rodauth-rails"
 gem "rolify"
 gem "rubyzip"
+gem "selenium-webdriver"
 gem "sentry-rails"
 gem "sentry-ruby"
 gem "sequel-activerecord_connection"
@@ -91,8 +93,8 @@ group :development do
 end
 
 group :test do
-  gem "capybara"
   gem "mocha"
   gem "mysql2"
-  gem "selenium-webdriver"
 end
+
+gem "robots", "~> 0.10.1"
