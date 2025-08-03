@@ -13,8 +13,7 @@
     border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
     box-shadow:
         var(--glass-shadow-light),
-        inset 0 1px 0
-            rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
+        inset 0 1px 0 rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
         inset 0 -1px 0
             rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.3));
 

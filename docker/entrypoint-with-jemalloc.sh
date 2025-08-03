@@ -39,16 +39,16 @@ run_migrations() {
     local command=$1
     local description=$2
     local skip_on_error=${3:-false}
-    
+
     echo "  📊 Migrating $description..."
-    
+
     # Capture both stdout and stderr
     local output
     local exit_code
-    
+
     output=$(bin/rails $command 2>&1)
     exit_code=$?
-    
+
     if [ $exit_code -eq 0 ]; then
         echo "  ✅ $description migration completed successfully"
         # Show relevant output if there were actual migrations
@@ -85,16 +85,16 @@ run_migrations() {
 check_migration_status() {
     local command=$1
     local description=$2
-    
+
     echo "  📋 Checking $description migration status..."
     local status_output
     status_output=$(bin/rails $command 2>&1)
-    
+
     if [ $? -eq 0 ]; then
         # Count pending migrations
         local pending_count
         pending_count=$(echo "$status_output" | grep -c " down ")
-        
+
         if [ "$pending_count" -gt 0 ]; then
             echo "  📈 $description has $pending_count pending migration(s)"
         else
@@ -109,7 +109,7 @@ echo "  � Checking migration status for all databases..."
 
 # Check migration status first
 check_migration_status "db:migrate:status" "Primary database"
-check_migration_status "db:migrate:status:cache" "Cache database"  
+check_migration_status "db:migrate:status:cache" "Cache database"
 check_migration_status "db:migrate:status:queue" "Queue tables (same DB, different migrations)"
 
 echo "  🔄 Running migrations for all databases..."
@@ -126,7 +126,7 @@ run_migrations "db:migrate:cache" "Cache database (Solid Cache)" false
 run_migrations "db:migrate:queue" "Queue tables (Solid Queue)" false
 
 # Cable database migrations (Action Cable) - less critical, can skip errors
-if grep -q "cable:" /home/app/webapp/config/database.yml 2>/dev/null; then
+if grep -q "cable:" /home/app/webapp/config/database.yml 2> /dev/null; then
     run_migrations "db:migrate:cable" "Cable database (Action Cable)" true
 else
     echo "  ℹ️ Cable database not configured, skipping"
@@ -137,14 +137,14 @@ echo "✅ Database migration step completed"
 # Fix permissions for SQLite databases
 echo "🔧 Setting proper permissions for SQLite databases..."
 chown -R app:app /home/app/webapp/db/
-chmod -R 664 /home/app/webapp/db/*.sqlite3 2>/dev/null || true
-chmod -R 775 /home/app/webapp/db/ 2>/dev/null || true
+chmod -R 664 /home/app/webapp/db/*.sqlite3 2> /dev/null || true
+chmod -R 775 /home/app/webapp/db/ 2> /dev/null || true
 
 # Also ensure log directory is writable
 echo "📝 Setting up log directory permissions..."
 mkdir -p /home/app/webapp/log
 chown -R app:app /home/app/webapp/log/
-chmod -R 664 /home/app/webapp/log/ 2>/dev/null || true
+chmod -R 664 /home/app/webapp/log/ 2> /dev/null || true
 
 echo "✅ File permissions configured"
 

@@ -15,7 +15,7 @@ module Metaverse
         # Get scenes by fetching a range of coordinates
         # Progressive indexing: start from Genesis Plaza area and expand outward
         coordinates = generate_coordinate_list(max_items)
-        
+
         if coordinates.empty?
           log_info "No new coordinates to index (daily limit reached or all coordinates processed)"
           return []
@@ -39,9 +39,7 @@ module Metaverse
 
         log_info "Retrieved #{scenes.size} scenes from Catalyst Content Service"
 
-        if scenes.empty?
-          log_warn "No scenes found in the requested coordinate range. This may be normal for unexplored areas."
-        end
+        log_warn "No scenes found in the requested coordinate range. This may be normal for unexplored areas." if scenes.empty?
 
         scenes
       end
@@ -174,7 +172,7 @@ module Metaverse
 
       # Get coordinates we haven't indexed yet
       unindexed_coordinates = generate_progressive_coordinates(max_items)
-      
+
       if unindexed_coordinates.empty?
         # If we've exhausted the current search area, expand it
         log_info "Current search area exhausted. Expanding search radius."
@@ -189,65 +187,61 @@ module Metaverse
     def generate_progressive_coordinates(max_items)
       coordinates = []
       search_radius = get_current_search_radius
-      
+
       # Start from center (Genesis Plaza) and spiral outward
       spiral_coordinates = generate_spiral_coordinates(0, 0, search_radius)
-      
+
       # Filter out coordinates we've already indexed
       indexed_coordinates = get_indexed_coordinates_set
-      
+
       spiral_coordinates.each do |coord|
         coord_key = "#{coord[:x]},#{coord[:y]}"
         next if indexed_coordinates.include?(coord_key)
-        
+
         coordinates << coord
         break if coordinates.size >= max_items
       end
-      
+
       # If we don't have enough from spiral, add some high-value known areas
       if coordinates.size < max_items
         high_value_coords = get_high_value_coordinates
         high_value_coords.each do |coord|
           coord_key = "#{coord[:x]},#{coord[:y]}"
           next if indexed_coordinates.include?(coord_key)
-          
+
           coordinates << coord
           break if coordinates.size >= max_items
         end
       end
-      
+
       coordinates
     end
 
     def generate_spiral_coordinates(center_x, center_y, max_radius)
       coordinates = []
-      
+
       # Start with center point
       coordinates << { x: center_x, y: center_y }
-      
+
       # Generate spiral pattern outward
       (1..max_radius).each do |radius|
         # Right side
         (-radius..radius).each do |dy|
           coordinates << { x: center_x + radius, y: center_y + dy }
-        end
-        
+
         # Left side
-        (-radius..radius).each do |dy|
-          coordinates << { x: center_x - radius, y: center_y + dy }
+        coordinates << { x: center_x - radius, y: center_y + dy }
         end
-        
+
         # Top side (excluding corners already covered)
         ((-radius + 1)..(radius - 1)).each do |dx|
           coordinates << { x: center_x + dx, y: center_y + radius }
-        end
-        
+
         # Bottom side (excluding corners already covered)
-        ((-radius + 1)..(radius - 1)).each do |dx|
-          coordinates << { x: center_x + dx, y: center_y - radius }
+        coordinates << { x: center_x + dx, y: center_y - radius }
         end
       end
-      
+
       coordinates.uniq
     end
 
@@ -259,33 +253,33 @@ module Metaverse
         { x: -1, y: 0 },   # Adjacent to Genesis Plaza
         { x: 1, y: 0 },    # Adjacent to Genesis Plaza
         { x: 0, y: -1 },   # Adjacent to Genesis Plaza
-        
+
         # Popular districts with known scenes
         { x: -20, y: -20 }, # Museum District
         { x: 20, y: 20 },   # Fashion District
         { x: -50, y: 50 },  # Casino District
         { x: 75, y: -75 },  # Dragon City
         { x: -100, y: 0 },  # Roads area
-        
+
         # Additional high-traffic areas
         { x: -16, y: -16 }, # Near Genesis Plaza
         { x: 16, y: 16 },   # Fashion District area
         { x: -8, y: 8 },    # Cultural area
-        { x: 8, y: -8 },    # Entertainment area
+        { x: 8, y: -8 } # Entertainment area
       ]
     end
 
     def get_indexed_coordinates_set
       # Get all coordinates we've already indexed for Decentraland
       indexed_coords = IndexedContent
-        .where(source_platform: 'decentraland')
-        .where.not(coordinates: nil)
-        .pluck(:coordinates)
-        .compact
-        .map { |coord_data| "#{coord_data['x']},#{coord_data['y']}" if coord_data.is_a?(Hash) && coord_data['x'] && coord_data['y'] }
-        .compact
-        .to_set
-      
+                       .where(source_platform: "decentraland")
+                       .where.not(coordinates: nil)
+                       .pluck(:coordinates)
+                       .compact
+                       .map { |coord_data| "#{coord_data['x']},#{coord_data['y']}" if coord_data.is_a?(Hash) && coord_data["x"] && coord_data["y"] }
+                       .compact
+                       .to_set
+
       log_debug "Found #{indexed_coords.size} already indexed coordinates"
       indexed_coords
     end
@@ -299,29 +293,29 @@ module Metaverse
 
     def expand_search_radius
       current_radius = get_current_search_radius
-      new_radius = [current_radius + 5, 50].min # Expand by 5, max radius of 50
+      new_radius = [ current_radius + 5, 50 ].min # Expand by 5, max radius of 50
       Rails.cache.write("decentraland_indexer_search_radius", new_radius, expires_in: 7.days)
       log_info "Expanded search radius from #{current_radius} to #{new_radius}"
     end
 
     def daily_limit_reached?
       return false unless config["daily_limit"]
-      
+
       daily_limit = config["daily_limit"].to_i
       return false if daily_limit <= 0
-      
+
       # Count items indexed today
       today_start = Time.current.beginning_of_day
       today_count = IndexedContent
-        .where(source_platform: 'decentraland')
-        .where('last_indexed_at >= ?', today_start)
-        .count
-      
+                    .where(source_platform: "decentraland")
+                    .where("last_indexed_at >= ?", today_start)
+                    .count
+
       if today_count >= daily_limit
         log_info "Daily limit reached: #{today_count}/#{daily_limit} items indexed today"
         return true
       end
-      
+
       log_info "Daily progress: #{today_count}/#{daily_limit} items indexed today"
       false
     end

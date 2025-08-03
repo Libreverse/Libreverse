@@ -541,6 +541,7 @@ GEM
       io-console (~> 0.5)
     rexml (3.4.1)
     rinku (2.0.6)
+    robots (0.10.1)
     roda (3.94.0)
       rack
     rodauth (2.39.0)
@@ -781,6 +782,7 @@ DEPENDENCIES
   rails
   rails-controller-testing
   re2
+  robots (~> 0.10.1)
   rodauth-guest
   rodauth-i18n
   rodauth-model
