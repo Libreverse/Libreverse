@@ -556,7 +556,7 @@ GEM
     rodauth-oauth (1.6.3)
       base64
       rodauth (~> 2.0)
-    rodauth-omniauth (0.6.1)
+    rodauth-omniauth (0.6.2)
       omniauth (~> 2.0)
       rodauth (~> 2.36)
     rodauth-pwned (0.2.1)
