@@ -12,6 +12,17 @@ class RobotsDisallowedError < StandardError; end
 class RateLimitError < StandardError; end
 class ForbiddenAccessError < StandardError; end
 
+# Fallback robots parser that disallows everything
+class FallbackRobotsParser
+  def allowed?(url)
+    false
+  end
+
+  def other_values(url)
+    {}
+  end
+end
+
 # Abstract base class for all indexers
 # Provides common functionality and interface for content indexing
 class BaseIndexer
@@ -26,6 +37,7 @@ class BaseIndexer
     @config = load_config.merge(config_overrides)
     @indexing_run = nil
     @total_items = nil
+    @persistent_session = nil
     setup_capybara
   end
 
@@ -50,6 +62,9 @@ class BaseIndexer
       fail_indexing_run(e)
       log_error "Indexing failed: #{e.message}"
       raise
+    ensure
+      # Clean up persistent session when indexing run completes
+      cleanup_session
     end
   end
 
@@ -140,8 +155,8 @@ class BaseIndexer
         return make_json_request(url, options)
       end
 
-      # For HTML/general web content, use Capybara
-      session = create_browser_session
+      # For HTML/general web content, use Capybara with persistent session
+      session = get_persistent_session
 
       begin
         # Visit the URL
@@ -154,8 +169,15 @@ class BaseIndexer
 
         # Return the page HTML content wrapped in a response-like object
         create_response_wrapper(session.html)
-      ensure
-        session&.quit
+      rescue StandardError => e
+        # If session becomes invalid, recreate it and retry once
+        if @persistent_session && e.message.include?('session')
+          log_warn "Session became invalid, recreating: #{e.message}"
+          cleanup_session
+          session = get_persistent_session
+          retry if (retries ||= 0) < 1
+        end
+        raise
       end
     end
   end
@@ -403,6 +425,17 @@ class BaseIndexer
     Capybara::Session.new(@driver_name)
   end
 
+  def get_persistent_session
+    @persistent_session ||= create_browser_session
+  end
+
+  def cleanup_session
+    if @persistent_session
+      @persistent_session.quit
+      @persistent_session = nil
+    end
+  end
+
   def is_blocked_by_cloudflare?(session)
     page_content = session.html.downcase
     page_content.include?("cloudflare") &&
@@ -542,7 +575,11 @@ class BaseIndexer
         log_warn "Access to #{url} is disallowed by robots.txt"
         # Log the relevant disallow rules if available
         log_debug "Disallowed paths: #{robots_parser.disallowed_paths}" if robots_parser.respond_to?(:disallowed_paths)
+        return false
       end
+
+      # Check for crawl-delay directive and enforce it
+      enforce_crawl_delay(url, robots_parser)
 
       allowed
   rescue StandardError => e
@@ -550,6 +587,56 @@ class BaseIndexer
       # If we can't check robots.txt at all, be conservative and disallow
       log_info "Being conservative - disallowing access when robots.txt check fails"
       false
+  end
+
+  # Enforce crawl-delay directive from robots.txt
+  def enforce_crawl_delay(url, robots_parser)
+    return unless robots_parser.respond_to?(:other_values)
+
+    begin
+      other_values = robots_parser.other_values(url)
+      return unless other_values.is_a?(Hash)
+
+      # Check for crawl-delay in various formats
+      crawl_delay = other_values['crawl-delay'] || 
+                   other_values[:crawl_delay] || 
+                   other_values['Crawl-delay'] || 
+                   other_values['Crawl-Delay']
+
+      return unless crawl_delay
+
+      delay_seconds = crawl_delay.to_f
+      return unless delay_seconds > 0
+
+      domain = URI.parse(url).host
+      log_info "Enforcing crawl-delay of #{delay_seconds}s for #{domain} (from robots.txt)"
+
+      # Check if we need to wait based on last crawl time for this domain
+      wait_for_crawl_delay(domain, delay_seconds)
+
+    rescue StandardError => e
+      log_debug "Failed to check crawl-delay for #{url}: #{e.message}"
+      # Don't fail the request if crawl-delay parsing fails
+    end
+  end
+
+  # Wait for crawl-delay if needed
+  def wait_for_crawl_delay(domain, delay_seconds)
+    cache_key = "last_crawl_time_#{domain}"
+    last_crawl_time = Rails.cache.read(cache_key)
+
+    if last_crawl_time
+      elapsed = Time.current - last_crawl_time
+      
+      if elapsed < delay_seconds
+        wait_time = delay_seconds - elapsed
+        log_info "Crawl-delay: sleeping #{wait_time.round(2)}s for #{domain}"
+        sleep(wait_time)
+      end
+    end
+
+    # Update last crawl time for this domain
+    Rails.cache.write(cache_key, Time.current, expires_in: 1.hour)
   end
 
   def get_robots_parser(domain)
