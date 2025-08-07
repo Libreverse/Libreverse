@@ -82,6 +82,11 @@ class BaseIndexer
     self.class.name.demodulize.underscore.gsub("_indexer", "")
   end
 
+  # Override in subclasses to skip robots.txt checking for sites that don't have robots.txt
+  def requires_robots_txt_check?
+    true
+  end
+
   protected
 
   # Convert platform-specific data to standardized format
@@ -554,6 +559,12 @@ class BaseIndexer
 
   # Robots.txt compliance checking with caching via marshalling
   def robots_allowed?(url)
+      # Skip robots.txt checking for indexers that don't require it
+      unless requires_robots_txt_check?
+        log_debug "Robots.txt check skipped for #{url} (indexer doesn't require it)"
+        return true
+      end
+
       uri = URI.parse(url)
       domain = "#{uri.scheme}://#{uri.host}"
       domain += ":#{uri.port}" if uri.port && ![ 80, 443 ].include?(uri.port)
