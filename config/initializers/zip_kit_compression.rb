@@ -17,5 +17,3 @@ module ZipKit
     end
   end
 end
-
-Rails.logger.info "[ZipKit] Configured to use maximum compression (Zlib::BEST_COMPRESSION = #{Zlib::BEST_COMPRESSION})"

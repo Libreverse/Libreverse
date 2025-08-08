@@ -48,9 +48,9 @@
             %li
               = link_to "Cookie Policy", cookie_policy_path
             %li
-              = link_to "About Libreverse", "/about"
-            %li
               = link_to "GitHub Repository", "https://github.com/Libreverse/Libreverse", target: "_blank", rel: "noopener"
+            %li
+              = link_to "Gitea Repository", "https://versioncontrol.geor.me/Libreverse/Libreverse", target: "_blank", rel: "noopener"
             - if authenticated_user? && current_account&.admin?
               %li
                 = link_to "Admin Panel", admin_root_path
