@@ -38,7 +38,7 @@ begin
   if items.count.positive?
     puts "\nFirst 5 items:"
     i = 0
-    while i < [5, items.length].min
+    while i < [ 5, items.length ].min
       item = items[i]
       puts "  #{i + 1}. Scene ID: #{item['id']}"
       puts "     Type: #{item['type']}"
@@ -48,7 +48,7 @@ begin
         puts "     Title: #{title}" if title
       end
       puts
-      
+
       i += 1
     end
 

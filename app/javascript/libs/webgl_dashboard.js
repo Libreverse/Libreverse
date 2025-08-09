@@ -150,7 +150,7 @@ class WebGLDashboard {
                 ? `
           <div style="margin-bottom: 15px;">
             <div style="color: ${monitorStats.emergencyCleanupActive || monitorStats.emergencyPauseActive ? "#ff4444" : "#00ff88"};">
-              Monitor Status: ${monitorStats.emergencyCleanupActive ? "🚨 EMERGENCY" : (monitorStats.emergencyPauseActive ? "⏸️ PAUSED" : "✅ NORMAL")}
+              Monitor Status: ${monitorStats.emergencyCleanupActive ? "🚨 EMERGENCY" : monitorStats.emergencyPauseActive ? "⏸️ PAUSED" : "✅ NORMAL"}
             </div>
             <div style="font-size: 10px; color: #888;">
               Creation Rate: ${monitorStats.contextCreationRate}/s | Thresholds: ${monitorStats.warningThreshold}/${monitorStats.criticalThreshold}
