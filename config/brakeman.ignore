@@ -1,0 +1,74 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 25,
+      "fingerprint": "59721dd04a24368cf9950c9a9c57e7387083e5b9af955dc57cc2ae872f6cdeb3",
+      "check_name": "Deserialize",
+      "message": "Use of `Marshal.load` may be dangerous",
+      "file": "app/indexers/base_indexer.rb",
+      "line": 685,
+      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
+      "code": "Marshal.load(Rails.cache.read(\"robots_parser_#{domain}\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "BaseIndexer",
+        "method": "get_robots_parser"
+      },
+      "user_input": null,
+      "confidence": "Weak",
+      "cwe_id": [
+        502
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 25,
+      "fingerprint": "c53f8c5cd33e575f3825520db613c08dc6af4963e4edea13adcce157e554655e",
+      "check_name": "Deserialize",
+      "message": "Use of `Marshal.load` may be dangerous",
+      "file": "app/indexers/base_indexer.rb",
+      "line": 698,
+      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
+      "code": "Marshal.load(Rails.cache.read(\"robots_parser_#{domain}\")[:data])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "BaseIndexer",
+        "method": "get_robots_parser"
+      },
+      "user_input": null,
+      "confidence": "Weak",
+      "cwe_id": [
+        502
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 25,
+      "fingerprint": "c53f8c5cd33e575f3825520db613c08dc6af4963e4edea13adcce157e554655e",
+      "check_name": "Deserialize",
+      "message": "Use of `Marshal.load` may be dangerous",
+      "file": "app/indexers/base_indexer.rb",
+      "line": 712,
+      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
+      "code": "Marshal.load(Rails.cache.read(\"robots_parser_#{domain}\")[:data])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "BaseIndexer",
+        "method": "get_robots_parser"
+      },
+      "user_input": null,
+      "confidence": "Weak",
+      "cwe_id": [
+        502
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.1.0"
+}
