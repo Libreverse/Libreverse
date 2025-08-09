@@ -58,7 +58,7 @@
         "stylelint": "^16.23.1",
         "stylelint-config-standard-scss": "^14.0.0",
         "terser": "^5.43.1",
-        "vite": "^6.3.5",
+        "vite": "^7.1.1",
         "vite-plugin-compression": "^0.5.1",
         "vite-plugin-full-reload": "^1.2.0",
         "vite-plugin-ruby": "^5.1.1",
