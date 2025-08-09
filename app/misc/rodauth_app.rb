@@ -77,19 +77,12 @@ class RodauthApp < Rodauth::Rails::App
       rodauth.require_account
       Rails.logger.debug "[RodauthApp] Called require_account for /dashboard. State after: logged_in?=#{rodauth.logged_in?}, guest?=#{rodauth.guest_logged_in?}"
 
-      # 2. Redirect if it's a guest account.
-      if rodauth.guest_logged_in?
-        Rails.logger.warn "[RodauthApp] Guest account access attempt to /dashboard denied. Redirecting to login."
-        rodauth.flash[:error] = "Please log in with a registered account to access the dashboard."
-        r.redirect rodauth.login_path
-      else
-        # Log why we think it's NOT a guest
-        Rails.logger.debug "[RodauthApp] Path /dashboard continuing: Not identified as guest. Account ID: #{begin
+      # Dashboard is accessible to both guests and regular users - no additional restrictions
+      Rails.logger.debug "[RodauthApp] Path /dashboard continuing: Account access granted. Account ID: #{begin
                                                                                                               rodauth.session_value
-        rescue StandardError
+      rescue StandardError
                                                                                                               'N/A'
-        end}"
-      end
+      end}, Guest: #{rodauth.guest_logged_in?}"
     end
 
     # Add logic for other specific paths here...
