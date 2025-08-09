@@ -1,165 +1,176 @@
 ---
 zh:
-  consent:
-    screen:
-      access_message_html: 要访问应用，您必须同意我们的%{privacy_policy_link}和%{cookie_policy_link}。
-      agree_and_continue: 同意并继续
-      decline: 拒绝
-      english_only_notice: 由于资源限制，这些政策目前仅提供英文版本。我们计划未来提供翻译版本。
-      intro: 'Welcome to Libreverse! A few things before we get started:'
-      remember_info_html: 我们还使用可选的'记住我'Cookie来存储您的登录状态30天。
-      remember_opt_in_label: 启用非必要Cookie以保持跨会话登录（技术上可选但强烈推荐）
-  dashboard:
-    index:
-      account_actions_title: 账户操作
-      account_settings: 账户设置
-      change_password: 修改密码
-      compliance_options_title: 合规选项
-      delete_account: 删除账户
-      edit_profile: 编辑资料
-      export_data: 导出数据
-      review_consent: 查看同意
-      sign_out: 退出登录
-      title: 仪表板
-      tutorial_description: 您已登录账户仪表板。可在此管理账户设置。
-      tutorial_heading: 您的账户
-      welcome: 欢迎，
-  experiences:
-    edit:
-      back_to_experiences: 返回体验列表
-      created_and_updated_html: 此体验创建于%{created_date}，最近更新于%{updated_ago}前。
-      instructions: 请在下方修改您的体验，准备就绪后保存。
-      refining: 正在优化"%{title}"
-      subtitle: 修改您的体验
-      title: 编辑体验
-      view_current_experience: 查看当前体验
-    experiences_list:
-      approve: 通过
-      awaiting_approval: 等待审核
-      by: 作者：
-      created_at: 创建时间：
-      delete: 删除
-      edit_details: 编辑详情
-    form:
-      current_file: 当前文件：
-      errors_prohibited: 以下问题导致体验保存失败：
-      replace_file: "（上传新文件以替换）"
-      rich_description_help: 丰富的描述有助于他人更好地理解您的体验。
-      upload_single_html_help: 请上传体验的单个HTML文件。
-    index:
-      create_new_heading: 创建新体验
-      subtitle: 创建和管理您的体验
-      title: 我的体验
-      tutorial_description: 管理您的体验并创建新体验与Libreverse社区分享。
-      tutorial_heading: 您的创意集合
-    new:
-      back: 返回
-      title: 新建体验
-    show:
-      find_similar: 查找相似体验
-      last_updated: 最后更新：
-      subtitle: 查看体验详细信息
-      title: 体验详情
-  flash:
-    content_flagged: Your submission contains content that appears to be spam.
-    please_try_again: Please try again in a moment.
-    suspicious_activity: Suspicious activity detected. Please try again later.
-    too_many_requests: You're submitting forms too quickly. Please wait a moment.
-  homepage:
-    index:
-      brand: Libreverse
-      digital_life_inevitable: A digital life may be inevitable, but it shouldn’t
-        enslave us.
-      help_build_alternative: Help us build an open, ethical alternative to Meta's
-        metaverse
-      know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
-      libre_word: 自由
-      meta_charging: Meta’s charging toward this future, but we can’t let one company
-        own it.
-      metaverse_article_title: The case for an open-source metaverse.
-      metaverse_hook: The Metaverse could hook us with a fake paradise, and we might
-        not unplug.
-      not_one_product: It’s not one product; it’s a shift to a fully online existence.
-      open_source_rival: An open-source rival like Libreverse is vital, letting others
-        build competing Metaverses without starting from scratch.
-      reclaim_potential: Let’s reclaim the Metaverse’s potential—before it’s just
-        Meta’s world.
-      sounds_cool: Sounds cool, but it risks becoming a Matrix-style trap, hijacking
-        our brains like social media, gambling, or junk food do.
-      take_control: Take control
-      verse_word: 之境
-      zuckerberg_rebrand: Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
-        digital world for work, play, and life—is taking shape.
-  invisible_captcha:
-    spam_detection:
-      general_spam: Your submission appears to be spam. Please try again.
-      honeypot_triggered: 'Spam detected: hidden field was filled'
-    timestamp_error_message: Form submitted too quickly. Please wait a moment and
-      try again.
-  layouts:
-    application:
-      noscript_heading: 需要JavaScript支持
-      noscript_message: 本应用需要JavaScript才能正常运行。请在浏览器设置中启用JavaScript并刷新页面。
-    default_drawer:
-      by: 作者：
-      intro_html: 在Libreverse，我们❤️采用开放许可的项目，并希望向使libreverse成为可能的项目致谢。目前仅包含需要署名的项目，但我们计划未来扩展此列表。
-      libreverse_twemoji: Libreverse-Twemoji
-      licensed_under: 授权许可：
-      modified_from: 修改自
-    drawer:
-      attribution: 署名
-  policies:
-    cookie_policy: Cookie政策
-    cookies:
-      adjust_preferences_html: 您可随时通过访问%{consent_link}调整同意偏好。
-      consent_page: 同意页面
-      intro_html: Libreverse使用严格必要的会话安全Cookie（"_libreverse_session"）和可选的记住我Cookie（"remember_*"），该Cookie可将您的登录状态保持30天。
-      manage_cookies: 您可以通过浏览器设置管理Cookie。但禁用严格必要的Cookie将导致网站无法正常运作。
-      title: Cookie政策
-    privacy:
-      compliance_discovery: 用于合规性和自动发现。
-      data_storage_description: Libreverse仅存储服务运行所需的数据：账户凭证、可选偏好设置及您上传的任何内容（"体验"）。我们从不出售您的数据，也不使用第三方跟踪器或分析工具。
-      endpoint_available_at: 端点已在此处提供
-      lawful_basis_description: 我们处理您数据的法律依据是合同（提供服务）以及在适用情况下的同意（可选Cookie）。
-      machine_readable: 可通过机器读取的
-      note_label: 注意：
-      rights_tools_info: 账户仪表板中提供了行使您权利的工具（在适用情况下）。
-    privacy_policy: 隐私政策
-    view_cookie_policy: 查看Cookie政策
-    view_privacy_policy: 查看隐私政策
-  rodauth:
-    create_account:
-      footer_have_account: 已有账户？
-      sign_in: 登录
-    login:
-      footer_no_account: 没有账户？
-      sign_up: 注册
-    multi_phase_login:
-      footer_need_help: 需要帮助？
-      return_to_login: 返回登录
-  search:
-    federated_experience_description: This experience is hosted on %{domain} and will
-      open in a new tab
-    from_instance: From %{domain}
-    index:
-      experiences_word: 体验
-      input_aria_label: 搜索体验
-      search_placeholder: 搜索体验
-      search_word: 搜索
-      title: 搜索体验
-      tutorial_description: 输入关键词查找Libreverse中的体验。输入时实时显示结果。
-      tutorial_heading: 搜索指南
-  settings:
-    index:
-      description: 管理您的偏好设置。
-      language: 语言
-      title: 设置
-  spam_protection:
-    bot_detected: Automated behavior detected. Please try again.
-    hashcash_failed: Security validation failed. Please ensure JavaScript is enabled
-      and try again.
-  terms:
-    index:
-      intro: Libreverse是个人非商业开源项目。使用本平台即表示您同意：
-      risk_clause: 使用风险自负。我们对性能和可用性不作任何保证。
-      title: Libreverse服务条款
+    consent:
+        screen:
+            access_message_html: 要访问应用，您必须同意我们的%{privacy_policy_link}和%{cookie_policy_link}。
+            agree_and_continue: 同意并继续
+            decline: 拒绝
+            english_only_notice: 由于资源限制，这些政策目前仅提供英文版本。我们计划未来提供翻译版本。
+            intro: "Welcome to Libreverse! A few things before we get started:"
+            remember_info_html: 我们还使用可选的'记住我'Cookie来存储您的登录状态30天。
+            remember_opt_in_label: 启用非必要Cookie以保持跨会话登录（技术上可选但强烈推荐）
+    dashboard:
+        index:
+            account_actions_title: 账户操作
+            account_settings: 账户设置
+            change_password: 修改密码
+            compliance_options_title: 合规选项
+            delete_account: 删除账户
+            edit_profile: 编辑资料
+            export_data: 导出数据
+            review_consent: 查看同意
+            sign_out: 退出登录
+            title: 仪表板
+            tutorial_description: 您已登录账户仪表板。可在此管理账户设置。
+            tutorial_heading: 您的账户
+            welcome: 欢迎，
+    experiences:
+        edit:
+            back_to_experiences: 返回体验列表
+            created_and_updated_html: 此体验创建于%{created_date}，最近更新于%{updated_ago}前。
+            instructions: 请在下方修改您的体验，准备就绪后保存。
+            refining: 正在优化"%{title}"
+            subtitle: 修改您的体验
+            title: 编辑体验
+            view_current_experience: 查看当前体验
+        experiences_list:
+            approve: 通过
+            awaiting_approval: 等待审核
+            by: 作者：
+            created_at: 创建时间：
+            delete: 删除
+            edit_details: 编辑详情
+        form:
+            current_file: 当前文件：
+            errors_prohibited: 以下问题导致体验保存失败：
+            replace_file: "（上传新文件以替换）"
+            rich_description_help: 丰富的描述有助于他人更好地理解您的体验。
+            upload_single_html_help: 请上传体验的单个HTML文件。
+        index:
+            create_new_heading: 创建新体验
+            subtitle: 创建和管理您的体验
+            title: 我的体验
+            tutorial_description: 管理您的体验并创建新体验与Libreverse社区分享。
+            tutorial_heading: 您的创意集合
+        new:
+            back: 返回
+            title: 新建体验
+        show:
+            find_similar: 查找相似体验
+            last_updated: 最后更新：
+            subtitle: 查看体验详细信息
+            title: 体验详情
+    flash:
+        content_flagged: Your submission contains content that appears to be spam.
+        please_try_again: Please try again in a moment.
+        suspicious_activity: Suspicious activity detected. Please try again later.
+        too_many_requests: You're submitting forms too quickly. Please wait a moment.
+    homepage:
+        index:
+            brand: Libreverse
+            digital_life_inevitable:
+                A digital life may be inevitable, but it shouldn’t
+                enslave us.
+            help_build_alternative:
+                Help us build an open, ethical alternative to Meta's
+                metaverse
+            know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
+            libre_word: 自由
+            meta_charging:
+                Meta’s charging toward this future, but we can’t let one company
+                own it.
+            metaverse_article_title: The case for an open-source metaverse.
+            metaverse_hook:
+                The Metaverse could hook us with a fake paradise, and we might
+                not unplug.
+            not_one_product: It’s not one product; it’s a shift to a fully online existence.
+            open_source_rival:
+                An open-source rival like Libreverse is vital, letting others
+                build competing Metaverses without starting from scratch.
+            reclaim_potential:
+                Let’s reclaim the Metaverse’s potential—before it’s just
+                Meta’s world.
+            sounds_cool:
+                Sounds cool, but it risks becoming a Matrix-style trap, hijacking
+                our brains like social media, gambling, or junk food do.
+            take_control: Take control
+            verse_word: 之境
+            zuckerberg_rebrand:
+                Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
+                digital world for work, play, and life—is taking shape.
+    invisible_captcha:
+        spam_detection:
+            general_spam: Your submission appears to be spam. Please try again.
+            honeypot_triggered: "Spam detected: hidden field was filled"
+        timestamp_error_message:
+            Form submitted too quickly. Please wait a moment and
+            try again.
+    layouts:
+        application:
+            noscript_heading: 需要JavaScript支持
+            noscript_message: 本应用需要JavaScript才能正常运行。请在浏览器设置中启用JavaScript并刷新页面。
+        default_drawer:
+            by: 作者：
+            intro_html: 在Libreverse，我们❤️采用开放许可的项目，并希望向使libreverse成为可能的项目致谢。目前仅包含需要署名的项目，但我们计划未来扩展此列表。
+            libreverse_twemoji: Libreverse-Twemoji
+            licensed_under: 授权许可：
+            modified_from: 修改自
+        drawer:
+            attribution: 署名
+    policies:
+        cookie_policy: Cookie政策
+        cookies:
+            adjust_preferences_html: 您可随时通过访问%{consent_link}调整同意偏好。
+            consent_page: 同意页面
+            intro_html: Libreverse使用严格必要的会话安全Cookie（"_libreverse_session"）和可选的记住我Cookie（"remember_*"），该Cookie可将您的登录状态保持30天。
+            manage_cookies: 您可以通过浏览器设置管理Cookie。但禁用严格必要的Cookie将导致网站无法正常运作。
+            title: Cookie政策
+        privacy:
+            compliance_discovery: 用于合规性和自动发现。
+            data_storage_description: Libreverse仅存储服务运行所需的数据：账户凭证、可选偏好设置及您上传的任何内容（"体验"）。我们从不出售您的数据，也不使用第三方跟踪器或分析工具。
+            endpoint_available_at: 端点已在此处提供
+            lawful_basis_description: 我们处理您数据的法律依据是合同（提供服务）以及在适用情况下的同意（可选Cookie）。
+            machine_readable: 可通过机器读取的
+            note_label: 注意：
+            rights_tools_info: 账户仪表板中提供了行使您权利的工具（在适用情况下）。
+        privacy_policy: 隐私政策
+        view_cookie_policy: 查看Cookie政策
+        view_privacy_policy: 查看隐私政策
+    rodauth:
+        create_account:
+            footer_have_account: 已有账户？
+            sign_in: 登录
+        login:
+            footer_no_account: 没有账户？
+            sign_up: 注册
+        multi_phase_login:
+            footer_need_help: 需要帮助？
+            return_to_login: 返回登录
+    search:
+        federated_experience_description:
+            This experience is hosted on %{domain} and will
+            open in a new tab
+        from_instance: From %{domain}
+        index:
+            experiences_word: 体验
+            input_aria_label: 搜索体验
+            search_placeholder: 搜索体验
+            search_word: 搜索
+            title: 搜索体验
+            tutorial_description: 输入关键词查找Libreverse中的体验。输入时实时显示结果。
+            tutorial_heading: 搜索指南
+    settings:
+        index:
+            description: 管理您的偏好设置。
+            language: 语言
+            title: 设置
+    spam_protection:
+        bot_detected: Automated behavior detected. Please try again.
+        hashcash_failed:
+            Security validation failed. Please ensure JavaScript is enabled
+            and try again.
+    terms:
+        index:
+            intro: Libreverse是个人非商业开源项目。使用本平台即表示您同意：
+            risk_clause: 使用风险自负。我们对性能和可用性不作任何保证。
+            title: Libreverse服务条款

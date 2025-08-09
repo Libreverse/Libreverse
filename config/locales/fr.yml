@@ -1,193 +1,224 @@
 ---
 fr:
-  consent:
-    screen:
-      access_message_html: Pour accéder à l'application, vous devez accepter notre
-        %{privacy_policy_link} et notre %{cookie_policy_link}.
-      agree_and_continue: Accepter et continuer
-      decline: Refuser
-      english_only_notice: Ces politiques sont en anglais en raison de contraintes
-        de ressources. Des traductions sont prévues pour l'avenir.
-      intro: 'Welcome to Libreverse! A few things before we get started:'
-      remember_info_html: Nous utilisons également un cookie optionnel 'Se souvenir
-        de moi' pour stocker votre connexion pendant 30 jours.
-      remember_opt_in_label: Activer les cookies non essentiels nécessaires pour rester
-        connecté entre les sessions (techniquement optionnel mais fortement recommandé)
-  dashboard:
-    index:
-      account_actions_title: Actions du compte
-      account_settings: Paramètres du compte
-      change_password: Changer le mot de passe
-      compliance_options_title: Options de conformité
-      delete_account: Supprimer le compte
-      edit_profile: Modifier le profil
-      export_data: Exporter les données
-      review_consent: Revoir le consentement
-      sign_out: Se déconnecter
-      title: Tableau de bord
-      tutorial_description: Vous êtes connecté à votre tableau de bord de compte.
-        Gérez les paramètres de votre compte à partir d'ici.
-      tutorial_heading: Votre compte
-      welcome: Bienvenue,
-  experiences:
-    edit:
-      back_to_experiences: Retour aux expériences
-      created_and_updated_html: Cette expérience a été créée le %{created_date} et
-        mise à jour pour la dernière fois il y a %{updated_ago}.
-      instructions: Apportez des modifications à votre expérience ci-dessous et enregistrez
-        lorsque vous êtes prêt.
-      refining: Affiner "%{title}"
-      subtitle: Apporter des modifications à votre expérience
-      title: Modifier l'expérience
-      view_current_experience: Voir l'expérience actuelle
-    experiences_list:
-      approve: Approuver
-      awaiting_approval: En attente d'approbation
-      by: Par
-      created_at: 'Créé le :'
-      delete: Supprimer
-      edit_details: Modifier les détails
-    form:
-      current_file: 'Fichier actuel :'
-      errors_prohibited: 'a empêché cette expérience d''être sauvegardée :'
-      replace_file: "(Remplacer en téléchargeant un nouveau fichier)"
-      rich_description_help: Les descriptions riches aident les autres à mieux comprendre
-        votre expérience.
-      upload_single_html_help: Téléchargez le fichier HTML unique pour votre expérience.
-    index:
-      create_new_heading: Créer une nouvelle expérience
-      subtitle: Créez et gérez vos expériences
-      title: Mes expériences
-      tutorial_description: Gérez vos expériences et créez-en de nouvelles à partager
-        avec la communauté Libreverse.
-      tutorial_heading: Votre collection créative
-    new:
-      back: Retour
-      title: Nouvelle expérience
-    show:
-      find_similar: Trouver des expériences similaires
-      last_updated: 'Dernière mise à jour :'
-      subtitle: Affichage des détails d'une expérience
-      title: Détails de l'expérience
-  flash:
-    content_flagged: Your submission contains content that appears to be spam.
-    please_try_again: Please try again in a moment.
-    suspicious_activity: Suspicious activity detected. Please try again later.
-    too_many_requests: You're submitting forms too quickly. Please wait a moment.
-  homepage:
-    index:
-      brand: Libreverse
-      digital_life_inevitable: A digital life may be inevitable, but it shouldn’t
-        enslave us.
-      help_build_alternative: Help us build an open, ethical alternative to Meta's
-        metaverse
-      know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
-      libre_word: Libre
-      meta_charging: Meta’s charging toward this future, but we can’t let one company
-        own it.
-      metaverse_article_title: The case for an open-source metaverse.
-      metaverse_hook: The Metaverse could hook us with a fake paradise, and we might
-        not unplug.
-      not_one_product: It’s not one product; it’s a shift to a fully online existence.
-      open_source_rival: An open-source rival like Libreverse is vital, letting others
-        build competing Metaverses without starting from scratch.
-      reclaim_potential: Let’s reclaim the Metaverse’s potential—before it’s just
-        Meta’s world.
-      sounds_cool: Sounds cool, but it risks becoming a Matrix-style trap, hijacking
-        our brains like social media, gambling, or junk food do.
-      take_control: Take control
-      verse_word: verse
-      zuckerberg_rebrand: Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
-        digital world for work, play, and life—is taking shape.
-  invisible_captcha:
-    spam_detection:
-      general_spam: Your submission appears to be spam. Please try again.
-      honeypot_triggered: 'Spam detected: hidden field was filled'
-    timestamp_error_message: Form submitted too quickly. Please wait a moment and
-      try again.
-  layouts:
-    application:
-      noscript_heading: JavaScript requis
-      noscript_message: Cette application nécessite JavaScript pour fonctionner correctement.
-        Veuillez activer JavaScript dans les paramètres de votre navigateur et actualiser
-        la page.
-    default_drawer:
-      by: par
-      intro_html: Chez Libreverse, nous ❤️ les projets sous licences ouvertes et souhaitons
-        donner du crédit aux projets qui ont rendu Libreverse possible. Actuellement,
-        cela inclut uniquement les projets où l'attribution est une exigence de licence,
-        mais nous prévoyons de l'étendre à l'avenir.
-      libreverse_twemoji: Libreverse-Twemoji
-      licensed_under: sous licence
-      modified_from: qui est modifié à partir de
-    drawer:
-      attribution: Attribution
-  policies:
-    cookie_policy: Politique des cookies
-    cookies:
-      adjust_preferences_html: Vous pouvez ajuster vos préférences de consentement
-        à tout moment en visitant la %{consent_link}.
-      consent_page: page de consentement
-      intro_html: Libreverse utilise des cookies strictement nécessaires pour la sécurité
-        de la session ("_libreverse_session") et un cookie optionnel de "se souvenir
-        de moi" ("remember_*") qui conserve votre connexion pendant 30 jours.
-      manage_cookies: Vous pouvez gérer les cookies via les paramètres de votre navigateur.
-        Cependant, désactiver les cookies strictement nécessaires empêchera le site
-        de fonctionner correctement.
-      title: Politique des cookies
-    privacy:
-      compliance_discovery: pour la conformité et la découverte automatisée.
-      data_storage_description: 'Libreverse ne stocke que les données nécessaires
-        au fonctionnement du service : identifiants de compte, préférences optionnelles
-        et tout contenu que vous téléchargez ("expériences"). Nous ne vendons jamais
-        vos données et n''utilisons pas de traceurs ou d''analytiques tiers.'
-      endpoint_available_at: point de terminaison est disponible à
-      lawful_basis_description: Vos données sont traitées sur la base d'un contrat
-        (pour fournir le service) et, le cas échéant, sur la base du consentement
-        (cookies optionnels).
-      machine_readable: Un
-      note_label: 'Note :'
-      rights_tools_info: Des outils sont fournis dans le tableau de bord du compte
-        pour exercer vos droits lorsque cela est applicable.
-    privacy_policy: Politique de confidentialité
-    view_cookie_policy: Voir la politique des cookies
-    view_privacy_policy: Voir la politique de confidentialité
-  rodauth:
-    create_account:
-      footer_have_account: Vous avez déjà un compte ?
-      sign_in: Se connecter
-    login:
-      footer_no_account: Vous n'avez pas de compte ?
-      sign_up: S'inscrire
-    multi_phase_login:
-      footer_need_help: Besoin d'aide ?
-      return_to_login: Retour à la connexion
-  search:
-    federated_experience_description: This experience is hosted on %{domain} and will
-      open in a new tab
-    from_instance: From %{domain}
-    index:
-      experiences_word: Expériences
-      input_aria_label: Rechercher des expériences
-      search_placeholder: Rechercher une expérience
-      search_word: Rechercher
-      title: Rechercher des expériences
-      tutorial_description: Tapez des mots-clés pour trouver des expériences dans
-        Libreverse. Les résultats apparaîtront au fur et à mesure que vous tapez.
-      tutorial_heading: Guide de recherche
-  settings:
-    index:
-      description: Gérez vos préférences.
-      language: Langue
-      title: Paramètres
-  spam_protection:
-    bot_detected: Automated behavior detected. Please try again.
-    hashcash_failed: Security validation failed. Please ensure JavaScript is enabled
-      and try again.
-  terms:
-    index:
-      intro: 'Libreverse est un projet personnel, non commercial et open source. En
-        utilisant cette plateforme, vous acceptez :'
-      risk_clause: D'utiliser à vos propres risques. Nous ne fournissons aucune garantie
-        de performance ou de disponibilité.
-      title: Conditions d'utilisation de Libreverse
+    consent:
+        screen:
+            access_message_html:
+                Pour accéder à l'application, vous devez accepter notre
+                %{privacy_policy_link} et notre %{cookie_policy_link}.
+            agree_and_continue: Accepter et continuer
+            decline: Refuser
+            english_only_notice:
+                Ces politiques sont en anglais en raison de contraintes
+                de ressources. Des traductions sont prévues pour l'avenir.
+            intro: "Welcome to Libreverse! A few things before we get started:"
+            remember_info_html:
+                Nous utilisons également un cookie optionnel 'Se souvenir
+                de moi' pour stocker votre connexion pendant 30 jours.
+            remember_opt_in_label:
+                Activer les cookies non essentiels nécessaires pour rester
+                connecté entre les sessions (techniquement optionnel mais fortement recommandé)
+    dashboard:
+        index:
+            account_actions_title: Actions du compte
+            account_settings: Paramètres du compte
+            change_password: Changer le mot de passe
+            compliance_options_title: Options de conformité
+            delete_account: Supprimer le compte
+            edit_profile: Modifier le profil
+            export_data: Exporter les données
+            review_consent: Revoir le consentement
+            sign_out: Se déconnecter
+            title: Tableau de bord
+            tutorial_description:
+                Vous êtes connecté à votre tableau de bord de compte.
+                Gérez les paramètres de votre compte à partir d'ici.
+            tutorial_heading: Votre compte
+            welcome: Bienvenue,
+    experiences:
+        edit:
+            back_to_experiences: Retour aux expériences
+            created_and_updated_html:
+                Cette expérience a été créée le %{created_date} et
+                mise à jour pour la dernière fois il y a %{updated_ago}.
+            instructions:
+                Apportez des modifications à votre expérience ci-dessous et enregistrez
+                lorsque vous êtes prêt.
+            refining: Affiner "%{title}"
+            subtitle: Apporter des modifications à votre expérience
+            title: Modifier l'expérience
+            view_current_experience: Voir l'expérience actuelle
+        experiences_list:
+            approve: Approuver
+            awaiting_approval: En attente d'approbation
+            by: Par
+            created_at: "Créé le :"
+            delete: Supprimer
+            edit_details: Modifier les détails
+        form:
+            current_file: "Fichier actuel :"
+            errors_prohibited: "a empêché cette expérience d'être sauvegardée :"
+            replace_file: "(Remplacer en téléchargeant un nouveau fichier)"
+            rich_description_help:
+                Les descriptions riches aident les autres à mieux comprendre
+                votre expérience.
+            upload_single_html_help: Téléchargez le fichier HTML unique pour votre expérience.
+        index:
+            create_new_heading: Créer une nouvelle expérience
+            subtitle: Créez et gérez vos expériences
+            title: Mes expériences
+            tutorial_description:
+                Gérez vos expériences et créez-en de nouvelles à partager
+                avec la communauté Libreverse.
+            tutorial_heading: Votre collection créative
+        new:
+            back: Retour
+            title: Nouvelle expérience
+        show:
+            find_similar: Trouver des expériences similaires
+            last_updated: "Dernière mise à jour :"
+            subtitle: Affichage des détails d'une expérience
+            title: Détails de l'expérience
+    flash:
+        content_flagged: Your submission contains content that appears to be spam.
+        please_try_again: Please try again in a moment.
+        suspicious_activity: Suspicious activity detected. Please try again later.
+        too_many_requests: You're submitting forms too quickly. Please wait a moment.
+    homepage:
+        index:
+            brand: Libreverse
+            digital_life_inevitable:
+                A digital life may be inevitable, but it shouldn’t
+                enslave us.
+            help_build_alternative:
+                Help us build an open, ethical alternative to Meta's
+                metaverse
+            know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
+            libre_word: Libre
+            meta_charging:
+                Meta’s charging toward this future, but we can’t let one company
+                own it.
+            metaverse_article_title: The case for an open-source metaverse.
+            metaverse_hook:
+                The Metaverse could hook us with a fake paradise, and we might
+                not unplug.
+            not_one_product: It’s not one product; it’s a shift to a fully online existence.
+            open_source_rival:
+                An open-source rival like Libreverse is vital, letting others
+                build competing Metaverses without starting from scratch.
+            reclaim_potential:
+                Let’s reclaim the Metaverse’s potential—before it’s just
+                Meta’s world.
+            sounds_cool:
+                Sounds cool, but it risks becoming a Matrix-style trap, hijacking
+                our brains like social media, gambling, or junk food do.
+            take_control: Take control
+            verse_word: verse
+            zuckerberg_rebrand:
+                Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
+                digital world for work, play, and life—is taking shape.
+    invisible_captcha:
+        spam_detection:
+            general_spam: Your submission appears to be spam. Please try again.
+            honeypot_triggered: "Spam detected: hidden field was filled"
+        timestamp_error_message:
+            Form submitted too quickly. Please wait a moment and
+            try again.
+    layouts:
+        application:
+            noscript_heading: JavaScript requis
+            noscript_message:
+                Cette application nécessite JavaScript pour fonctionner correctement.
+                Veuillez activer JavaScript dans les paramètres de votre navigateur et actualiser
+                la page.
+        default_drawer:
+            by: par
+            intro_html:
+                Chez Libreverse, nous ❤️ les projets sous licences ouvertes et souhaitons
+                donner du crédit aux projets qui ont rendu Libreverse possible. Actuellement,
+                cela inclut uniquement les projets où l'attribution est une exigence de licence,
+                mais nous prévoyons de l'étendre à l'avenir.
+            libreverse_twemoji: Libreverse-Twemoji
+            licensed_under: sous licence
+            modified_from: qui est modifié à partir de
+        drawer:
+            attribution: Attribution
+    policies:
+        cookie_policy: Politique des cookies
+        cookies:
+            adjust_preferences_html:
+                Vous pouvez ajuster vos préférences de consentement
+                à tout moment en visitant la %{consent_link}.
+            consent_page: page de consentement
+            intro_html:
+                Libreverse utilise des cookies strictement nécessaires pour la sécurité
+                de la session ("_libreverse_session") et un cookie optionnel de "se souvenir
+                de moi" ("remember_*") qui conserve votre connexion pendant 30 jours.
+            manage_cookies:
+                Vous pouvez gérer les cookies via les paramètres de votre navigateur.
+                Cependant, désactiver les cookies strictement nécessaires empêchera le site
+                de fonctionner correctement.
+            title: Politique des cookies
+        privacy:
+            compliance_discovery: pour la conformité et la découverte automatisée.
+            data_storage_description:
+                'Libreverse ne stocke que les données nécessaires
+                au fonctionnement du service : identifiants de compte, préférences optionnelles
+                et tout contenu que vous téléchargez ("expériences"). Nous ne vendons jamais
+                vos données et n''utilisons pas de traceurs ou d''analytiques tiers.'
+            endpoint_available_at: point de terminaison est disponible à
+            lawful_basis_description:
+                Vos données sont traitées sur la base d'un contrat
+                (pour fournir le service) et, le cas échéant, sur la base du consentement
+                (cookies optionnels).
+            machine_readable: Un
+            note_label: "Note :"
+            rights_tools_info:
+                Des outils sont fournis dans le tableau de bord du compte
+                pour exercer vos droits lorsque cela est applicable.
+        privacy_policy: Politique de confidentialité
+        view_cookie_policy: Voir la politique des cookies
+        view_privacy_policy: Voir la politique de confidentialité
+    rodauth:
+        create_account:
+            footer_have_account: Vous avez déjà un compte ?
+            sign_in: Se connecter
+        login:
+            footer_no_account: Vous n'avez pas de compte ?
+            sign_up: S'inscrire
+        multi_phase_login:
+            footer_need_help: Besoin d'aide ?
+            return_to_login: Retour à la connexion
+    search:
+        federated_experience_description:
+            This experience is hosted on %{domain} and will
+            open in a new tab
+        from_instance: From %{domain}
+        index:
+            experiences_word: Expériences
+            input_aria_label: Rechercher des expériences
+            search_placeholder: Rechercher une expérience
+            search_word: Rechercher
+            title: Rechercher des expériences
+            tutorial_description:
+                Tapez des mots-clés pour trouver des expériences dans
+                Libreverse. Les résultats apparaîtront au fur et à mesure que vous tapez.
+            tutorial_heading: Guide de recherche
+    settings:
+        index:
+            description: Gérez vos préférences.
+            language: Langue
+            title: Paramètres
+    spam_protection:
+        bot_detected: Automated behavior detected. Please try again.
+        hashcash_failed:
+            Security validation failed. Please ensure JavaScript is enabled
+            and try again.
+    terms:
+        index:
+            intro:
+                "Libreverse est un projet personnel, non commercial et open source. En
+                utilisant cette plateforme, vous acceptez :"
+            risk_clause:
+                D'utiliser à vos propres risques. Nous ne fournissons aucune garantie
+                de performance ou de disponibilité.
+            title: Conditions d'utilisation de Libreverse

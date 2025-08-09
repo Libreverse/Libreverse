@@ -76,7 +76,7 @@ while i < test_cases.length
   end
 
   puts
-  
+
   i += 1
 end
 

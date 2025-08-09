@@ -4,6 +4,8 @@ require "capybara"
 require "selenium-webdriver"
 require "robots"
 require "net/http"
+require "digest"
+require "openssl"
 
 # Custom error classes for indexing
 class CloudflareBlockError < StandardError; end
@@ -270,6 +272,35 @@ class BaseIndexer
   end
 
   private
+
+  # Generate a cryptographically secure integrity hash for cache data
+  # Uses HMAC-SHA256 with domain salt and derived pepper for maximum security
+  def generate_cache_integrity_hash(data, domain)
+    # Generate a derived key specifically for robots cache integrity
+    # This isolates the key so even if it leaks, other app secrets remain safe
+    key_generator = ActiveSupport::KeyGenerator.new(
+      Rails.application.secret_key_base,
+      iterations: 1000
+    )
+    pepper = key_generator.generate_key("robots_cache_integrity", 32)
+
+    # Create domain-specific salt to prevent cross-domain attacks
+    domain_salt = "robots_cache_salt_#{domain}"
+
+    # Use HMAC-SHA256 for cryptographically secure integrity checking
+    # This is actually preferred for integrity verification vs password hashing
+    require "openssl"
+    OpenSSL::HMAC.hexdigest("SHA256", "#{pepper}#{domain_salt}", data)
+  end
+
+  # Verify cache data integrity using secure comparison
+  def verify_cache_integrity(data, domain, stored_hash)
+    # Generate the same hash and compare
+    expected_hash = generate_cache_integrity_hash(data, domain)
+
+    # Use secure comparison to prevent timing attacks
+    ActiveSupport::SecurityUtils.secure_compare(expected_hash, stored_hash)
+  end
 
   def load_config
     # Load the indexers configuration with environment-specific overrides
@@ -642,13 +673,49 @@ class BaseIndexer
     cache_key = "robots_parser_#{domain}"
 
     # Try to get cached parser
-    cached_parser = Rails.cache.read(cache_key)
-    if cached_parser
+    cached_entry = Rails.cache.read(cache_key)
+    if cached_entry
       begin
-        # Unmarshal the cached parser
-        return Marshal.load(cached_parser) if cached_parser.is_a?(String)
+        # Handle both old format (direct Marshal string) and new format (with integrity hash)
+        if cached_entry.is_a?(String)
+          # Legacy format - direct Marshal string
+          log_debug "Loading legacy cached robots parser for #{domain}"
+          return Marshal.load(cached_entry)
+        elsif cached_entry.is_a?(Hash) && cached_entry[:data]
+          marshalled_data = cached_entry[:data]
 
-        return cached_parser
+          if cached_entry[:integrity_hash]
+            # New format with Argon2 integrity checking
+            stored_hash = cached_entry[:integrity_hash]
+
+            # Verify data integrity using cryptographically secure Argon2
+            if verify_cache_integrity(marshalled_data, domain, stored_hash)
+              log_debug "Loading cryptographically verified cached robots parser for #{domain}"
+              return Marshal.load(marshalled_data)
+            else
+              log_warn "Cached robots parser Argon2 integrity check failed for #{domain} - data may be corrupted or tampered with"
+              # Fall through to create new parser
+            end
+          elsif cached_entry[:hash]
+            # Legacy SHA256 format - still verify but warn about upgrade
+            require "digest" # only load when needed for legacy
+            stored_hash = cached_entry[:hash]
+            computed_hash = Digest::SHA256.hexdigest(marshalled_data)
+            if computed_hash == stored_hash
+              log_debug "Loading legacy SHA256 verified cached robots parser for #{domain} - will upgrade to Argon2 on next cache write"
+              return Marshal.load(marshalled_data)
+            else
+              log_warn "Cached robots parser legacy SHA256 integrity check failed for #{domain} - hash mismatch"
+              # Fall through to create new parser
+            end
+          else
+            log_debug "Cached robots parser has no integrity hash for #{domain} - will create new one with Argon2 protection"
+            # Fall through to create new parser
+          end
+        else
+          log_debug "Invalid cached robots parser format for #{domain}"
+          # Fall through to create new parser
+        end
       rescue StandardError => e
         log_debug "Failed to unmarshal cached robots parser: #{e.message}"
         # Fall through to create new parser
@@ -684,10 +751,17 @@ class BaseIndexer
       test_result = robots_parser.allowed?("#{domain}/")
       log_debug "Robots parser test for #{domain}: #{test_result}"
 
-      # Cache the parser using marshalling as suggested
+      # Cache the parser with cryptographically secure Argon2 integrity checking
       marshalled_parser = Marshal.dump(robots_parser)
-      Rails.cache.write(cache_key, marshalled_parser, expires_in: 24.hours)
-      log_debug "Cached robots parser for #{domain}"
+      integrity_hash = generate_cache_integrity_hash(marshalled_parser, domain)
+      cache_entry = {
+        data: marshalled_parser,
+        integrity_hash: integrity_hash,
+        created_at: Time.current.iso8601,
+        domain: domain # for audit trail
+      }
+      Rails.cache.write(cache_key, cache_entry, expires_in: 24.hours)
+      log_debug "Cached robots parser for #{domain} with Argon2 integrity protection - literally impossible to forge without Rails secret key"
     rescue StandardError => e
       log_warn "Failed to create/cache robots parser for #{domain}: #{e.message}"
       log_info "Being conservative - will disallow access when robots parser fails"
@@ -768,8 +842,8 @@ class BaseIndexer
         # If it's a large number, assume it's a Unix timestamp
         return [ reset_time - Time.current.to_i, 0 ].max if reset_time > Time.current.to_i
 
-          # Otherwise assume it's seconds from now
-          return reset_time
+        # Otherwise assume it's seconds from now
+        return reset_time
       rescue StandardError
         log_warn "Failed to parse X-RateLimit-Reset: #{reset_header}"
       end

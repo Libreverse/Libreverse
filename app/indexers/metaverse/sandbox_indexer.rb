@@ -179,7 +179,7 @@ module Metaverse
       while index < url_entries.length
         entry = url_entries[index]
         loc = entry.at_css("loc")&.text
-        
+
         unless loc&.include?("/experiences/")
           index += 1
           next
@@ -201,7 +201,7 @@ module Metaverse
           url: loc,
           row_index: index + 1
         }
-        
+
         index += 1
       end
 
@@ -225,7 +225,7 @@ module Metaverse
         row = rows[index]
         # Get the first cell which contains the experience URL
         url_cell = row.at_css("td:first-child a")
-        
+
         unless url_cell
           index += 1
           next
@@ -254,7 +254,7 @@ module Metaverse
           url: href,
           row_index: index + 1
         }
-        
+
         index += 1
       end
 

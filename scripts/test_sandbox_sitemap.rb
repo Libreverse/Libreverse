@@ -73,7 +73,7 @@ begin
       if experience_urls.count.positive?
         puts "\nFirst 5 experience URLs:"
         i = 0
-        while i < [5, experience_urls.length].min
+        while i < [ 5, experience_urls.length ].min
           entry = experience_urls[i]
           loc = entry.at_css('loc')&.text
           puts "  #{i + 1}. #{loc}"
@@ -87,7 +87,7 @@ begin
             puts "     UUID: #{uuid}"
           end
           puts
-          
+
           i += 1
         end
 
@@ -115,7 +115,7 @@ begin
           row = rows[i]
           # Get the first cell which contains the experience URL
           url_cell = row.at_css('td:first-child a')
-          
+
           unless url_cell
             i += 1
             next
@@ -147,7 +147,7 @@ begin
             url: href,
             row_index: i + 1
           }
-          
+
           i += 1
         end
 
@@ -157,13 +157,13 @@ begin
         if experience_data.count.positive?
           puts "\nFirst 5 experiences:"
           i = 0
-          while i < [5, experience_data.length].min
+          while i < [ 5, experience_data.length ].min
             exp = experience_data[i]
             puts "  #{i + 1}. #{exp[:title]}"
             puts "     UUID: #{exp[:uuid]}"
             puts "     URL: #{exp[:url]}"
             puts
-            
+
             i += 1
           end
 
@@ -193,7 +193,7 @@ begin
       if experience_links.count.positive?
         puts "\nFirst 5 alternative experience URLs:"
         i = 0
-        while i < [5, experience_links.length].min
+        while i < [ 5, experience_links.length ].min
           link = experience_links[i]
           href = link['href']
           puts "  #{i + 1}. #{href}"
@@ -207,7 +207,7 @@ begin
             puts "     UUID: #{uuid}"
           end
           puts
-          
+
           i += 1
         end
       else
