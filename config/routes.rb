@@ -42,9 +42,11 @@ Rails.application.routes.draw do
     post "json", to: "json#endpoint" # For method specified in body
   end
 
-  # Routes available only if authenticated via Rodauth
+  # Dashboard route - accessible to both authenticated users and guests
+  get "dashboard", to: "dashboard#index"
+
+  # Routes available only if authenticated via Rodauth (excluding guest accounts)
   constraints Rodauth::Rails.authenticate do
-    get "dashboard", to: "dashboard#index"
     resources :experiences do
       member do
         get "display"
