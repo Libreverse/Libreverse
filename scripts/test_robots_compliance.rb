@@ -33,7 +33,9 @@ test_cases = [
 puts "Testing robots.txt compliance for various URLs:"
 puts
 
-test_cases.each_with_index do |test_case, i|
+i = 0
+while i < test_cases.length
+  test_case = test_cases[i]
   puts "#{i + 1}. #{test_case[:name]}"
   puts "   URL: #{test_case[:url]}"
   puts "   Expected: #{test_case[:expected] ? 'ALLOWED' : 'BLOCKED'}"
@@ -74,6 +76,8 @@ test_cases.each_with_index do |test_case, i|
   end
 
   puts
+  
+  i += 1
 end
 
 # Test caching behavior

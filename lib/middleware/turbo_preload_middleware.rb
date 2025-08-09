@@ -1,4 +1,6 @@
-require 'nokogiri'
+# frozen_string_literal: true
+
+require "nokogiri"
 
 class TurboPreloadMiddleware
   def initialize(app)
@@ -9,25 +11,25 @@ class TurboPreloadMiddleware
     status, headers, response = @app.call(env)
 
     # Only process HTML responses
-    return [status, headers, response] unless html_response?(headers)
+    return [ status, headers, response ] unless html_response?(headers)
 
     # Handle different response types (ActionController::Live, Rack::BodyProxy, etc.)
     response_body = extract_response_body(response)
-    return [status, headers, response] if response_body.empty?
+    return [ status, headers, response ] if response_body.empty?
 
     # Parse and modify HTML with Nokogiri
     modified_body = add_turbo_preload(response_body)
 
     # Update Content-Length header if necessary
-    headers['Content-Length'] = modified_body.bytesize.to_s if headers['Content-Length']
+    headers["Content-Length"] = modified_body.bytesize.to_s if headers["Content-Length"]
 
-    [status, headers, [modified_body]]
+    [ status, headers, [ modified_body ] ]
   end
 
   private
 
   def html_response?(headers)
-    headers['Content-Type']&.include?('text/html')
+    headers["Content-Type"]&.include?("text/html")
   end
 
   def extract_response_body(response)
@@ -39,7 +41,7 @@ class TurboPreloadMiddleware
     elsif response.respond_to?(:each)
       response.to_a.join
     else
-      ''
+      ""
     end
   end
 
@@ -51,15 +53,15 @@ class TurboPreloadMiddleware
     return body unless doc.html?
 
     # Select all <a> tags and add data-turbo-preload
-    doc.css('a[href]').each do |link|
-      href = link['href'].to_s
+    doc.css("a[href]").each do |link|
+      href = link["href"].to_s
 
       # Skip external links, non-HTTP links, and dynamic routes
-      next unless href.start_with?('/')
+      next unless href.start_with?("/")
       next if dynamic_route?(href)
 
       # Add data-turbo-preload unless already present
-      link['data-turbo-preload'] = '' unless link['data-turbo-preload']
+      link["data-turbo-preload"] = "" unless link["data-turbo-preload"]
     end
 
     doc.to_html

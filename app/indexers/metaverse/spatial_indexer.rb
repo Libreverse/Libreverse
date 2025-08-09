@@ -15,30 +15,29 @@ module Metaverse
       log_info "Fetching space data from Spatial.io sitemap"
 
       # Don't cache sitemap requests - we want fresh data for each indexing run
-      spaces = []
       max_items = config.fetch("max_items") { 100 }
 
       # Fetch the sitemap using BaseIndexer's make_request for proper rate limiting
       response = make_request(SITEMAP_URL)
-      
+
       # Parse XML and extract space URLs
       doc = Nokogiri::XML(response.body)
       doc.remove_namespaces! # Remove namespaces for simpler XPath
-      
+
       # Find all URLs that contain '/s/' (space URLs)
       space_urls = doc.xpath("//url/loc").map(&:text).select { |url| url.include?("/s/") }
-      
+
       log_info "Found #{space_urls.size} space URLs in sitemap"
-      
+
       # Limit to max_items
       limited_urls = space_urls.first(max_items)
       log_info "Processing first #{limited_urls.size} spaces"
-      
+
       # Convert URLs to space data
       spaces = limited_urls.map do |url|
         extract_space_info_from_url(url)
       end.compact
-      
+
       log_info "Successfully processed #{spaces.size} spaces from sitemap"
       spaces
     rescue StandardError => e
@@ -58,11 +57,11 @@ module Metaverse
     # Sitemaps are specifically meant to be crawled, so this is acceptable
     def robots_allowed?(url)
       uri = URI.parse(url)
-      if uri.host == "www.spatial.io" || uri.host == "spatial.io"
+      if [ "www.spatial.io", "spatial.io" ].include?(uri.host)
         log_debug "Spatial.io has no robots.txt - allowing sitemap access"
         return true
       end
-      
+
       # Fall back to default behavior for other domains
       super
     end
@@ -74,7 +73,7 @@ module Metaverse
       space_id || raw_data[:id] || url
     end
 
-    def extract_content_type(raw_data)
+    def extract_content_type(_raw_data)
       "space"
     end
 
@@ -90,7 +89,7 @@ module Metaverse
       raw_data[:creator]
     end
 
-    def extract_coordinates(raw_data)
+    def extract_coordinates(_raw_data)
       nil # Spatial.io doesn't use coordinate system
     end
 
@@ -108,7 +107,7 @@ module Metaverse
     def extract_space_info_from_url(space_url)
       # Extract space name and ID from URL pattern: /s/space-name-space_id
       # Handle query parameters by removing them first
-      clean_url = space_url.split('?').first
+      clean_url = space_url.split("?").first
       match = clean_url.match(%r{/s/(.+)-([a-f0-9]+)$})
       return nil unless match
 

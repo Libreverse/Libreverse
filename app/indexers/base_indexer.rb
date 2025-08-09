@@ -14,11 +14,11 @@ class ForbiddenAccessError < StandardError; end
 
 # Fallback robots parser that disallows everything
 class FallbackRobotsParser
-  def allowed?(url)
+  def allowed?(_url)
     false
   end
 
-  def other_values(url)
+  def other_values(_url)
     {}
   end
 end
@@ -136,14 +136,12 @@ class BaseIndexer
   # Make web requests using Capybara (handles JavaScript, modern web challenges)
   def make_request(url, options = {})
     wait_for_rate_limit
-    
+
     # Check for domain-specific blocks and rate limits
     domain = URI.parse(url).host
-    
-    if domain_blocked?(domain)
-      raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly."
-    end
-    
+
+    raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly." if domain_blocked?(domain)
+
     wait_for_domain_rate_limit(domain) if domain_rate_limited?(domain)
 
     # Check robots.txt before making any request
@@ -176,7 +174,7 @@ class BaseIndexer
         create_response_wrapper(session.html)
       rescue StandardError => e
         # If session becomes invalid, recreate it and retry once
-        if @persistent_session && e.message.include?('session')
+        if @persistent_session && e.message.include?("session")
           log_warn "Session became invalid, recreating: #{e.message}"
           cleanup_session
           session = get_persistent_session
@@ -192,11 +190,9 @@ class BaseIndexer
 
     # Check for domain-specific blocks and rate limits
     domain = URI.parse(url).host
-    
-    if domain_blocked?(domain)
-      raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly."
-    end
-    
+
+    raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly." if domain_blocked?(domain)
+
     wait_for_domain_rate_limit(domain) if domain_rate_limited?(domain)
 
     # Check robots.txt for JSON API requests too
@@ -210,7 +206,7 @@ class BaseIndexer
     response = HTTParty.get(url, default_options.merge(options))
 
     # Handle rate limiting responses
-    if response.code == 429 || response.code == 503
+    if [ 429, 503 ].include?(response.code)
       handle_rate_limit_response(response, url)
     elsif response.code == 403
       handle_forbidden_response(response, url)
@@ -238,14 +234,12 @@ class BaseIndexer
     # For POST requests, we may need to fall back to HTTParty or implement
     # form submission via Capybara depending on the specific use case
     wait_for_rate_limit
-    
+
     # Check for domain-specific blocks and rate limits
     domain = URI.parse(url).host
-    
-    if domain_blocked?(domain)
-      raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly."
-    end
-    
+
+    raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly." if domain_blocked?(domain)
+
     wait_for_domain_rate_limit(domain) if domain_rate_limited?(domain)
 
     with_retry do
@@ -260,7 +254,7 @@ class BaseIndexer
       response = HTTParty.post(url, default_options.merge(options))
 
       # Handle rate limiting responses
-      if response.code == 429 || response.code == 503
+      if [ 429, 503 ].include?(response.code)
         handle_rate_limit_response(response, url)
       elsif response.code == 403
         handle_forbidden_response(response, url)
@@ -310,27 +304,26 @@ class BaseIndexer
 
   def extract_instance_domain
     # Try multiple ways to get the instance domain
-    domain = nil
-    
+
     # 1. Check environment variables first (most explicit)
-    domain = ENV['LIBREVERSE_DOMAIN'] || ENV['DOMAIN'] || ENV['HOST']
-    
+    domain = ENV["LIBREVERSE_DOMAIN"] || ENV["DOMAIN"] || ENV["HOST"]
+
     # 2. Check Rails application configuration
     if domain.nil?
       begin
         # Try default URL options first
         domain = Rails.application.config.default_url_options&.dig(:host)
-        
+
         # Check Action Mailer configuration
         domain ||= Rails.application.config.action_mailer&.default_url_options&.dig(:host)
-        
+
         # Check routes configuration
         domain ||= Rails.application.routes.default_url_options&.dig(:host)
       rescue StandardError => e
         log_debug "Failed to extract domain from Rails config: #{e.message}"
       end
     end
-    
+
     # 3. Try to detect from server name (development/testing)
     if domain.nil?
       begin
@@ -339,9 +332,9 @@ class BaseIndexer
         if hosts.respond_to?(:to_a) && !hosts.empty?
           # Filter out localhost variants and IP addresses
           candidate = hosts.to_a.find do |host|
-            host.is_a?(String) && 
-            !host.match?(/^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])/) &&
-            host.include?('.')
+            host.is_a?(String) &&
+              !host.match?(/^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])/) &&
+              host.include?(".")
           end
           domain = candidate if candidate
         end
@@ -349,54 +342,50 @@ class BaseIndexer
         log_debug "Failed to extract domain from hosts config: #{e.message}"
       end
     end
-    
+
     # 4. Development/local fallbacks
-    if domain.nil?
+    if domain.nil? && (Rails.env.development? || Rails.env.test?)
       # Check if we're in a known development environment
-      if Rails.env.development? || Rails.env.test?
-        domain = 'localhost'
-      end
+      domain = "localhost"
     end
-    
+
     # 5. Final fallback
     domain ||= "UnknownInstance"
-    
+
     # Clean up the domain (remove protocol, port, etc.)
     domain = normalize_domain(domain)
-    
+
     # Ensure it's a valid domain-like string
     domain.empty? ? "UnknownInstance" : domain
   end
 
   def normalize_domain(domain_string)
-    return "UnknownInstance" if domain_string.nil? || domain_string.empty?
-    
+    return "UnknownInstance" if domain_string.blank?
+
     # Convert to string and clean up
     cleaned = domain_string.to_s.strip
-    
+
     # Remove protocol if present
-    cleaned = cleaned.gsub(/^https?:\/\//, '')
-    
+    cleaned = cleaned.gsub(%r{^https?://}, "")
+
     # Remove port if present
-    cleaned = cleaned.gsub(/:.*$/, '')
-    
+    cleaned = cleaned.gsub(/:.*$/, "")
+
     # Remove path components if any
-    cleaned = cleaned.split('/').first
-    
+    cleaned = cleaned.split("/").first
+
     # Handle IP addresses and localhost variants
-    if cleaned.match?(/^(127\.0\.0\.1|0\.0\.0\.0|\[::1\]|::1)$/)
-      return "localhost"
-    end
-    
+    return "localhost" if cleaned.match?(/^(127\.0\.0\.1|0\.0\.0\.0|\[::1\]|::1)$/)
+
     # Remove invalid characters, keep only alphanumeric, dots, and hyphens
-    cleaned = cleaned.gsub(/[^a-zA-Z0-9.-]/, '')
-    
+    cleaned = cleaned.gsub(/[^a-zA-Z0-9.-]/, "")
+
     # Remove leading/trailing dots
-    cleaned = cleaned.gsub(/^\.+|\.+$/, '')
-    
+    cleaned = cleaned.gsub(/^\.+|\.+$/, "")
+
     # Return localhost if it's empty after cleaning or if it was localhost
     return "localhost" if cleaned.empty? || cleaned == "localhost"
-    
+
     cleaned
   end
 
@@ -421,7 +410,7 @@ class BaseIndexer
       Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
     end
 
-    Capybara.default_max_wait_time = config.fetch("timeout", 30).to_i
+    Capybara.default_max_wait_time = config.fetch("timeout") { 30 }.to_i
     @capybara_setup = true
     @driver_name = driver_name
   end
@@ -431,14 +420,14 @@ class BaseIndexer
   end
 
   def get_persistent_session
-    @persistent_session ||= create_browser_session
+    @get_persistent_session ||= create_browser_session
   end
 
   def cleanup_session
-    if @persistent_session
+    return unless @persistent_session
+
       @persistent_session.quit
       @persistent_session = nil
-    end
   end
 
   def is_blocked_by_cloudflare?(session)
@@ -609,22 +598,21 @@ class BaseIndexer
       return unless other_values.is_a?(Hash)
 
       # Check for crawl-delay in various formats
-      crawl_delay = other_values['crawl-delay'] || 
-                   other_values[:crawl_delay] || 
-                   other_values['Crawl-delay'] || 
-                   other_values['Crawl-Delay']
+      crawl_delay = other_values["crawl-delay"] ||
+                    other_values[:crawl_delay] ||
+                    other_values["Crawl-delay"] ||
+                    other_values["Crawl-Delay"]
 
       return unless crawl_delay
 
       delay_seconds = crawl_delay.to_f
-      return unless delay_seconds > 0
+      return unless delay_seconds.positive?
 
       domain = URI.parse(url).host
       log_info "Enforcing crawl-delay of #{delay_seconds}s for #{domain} (from robots.txt)"
 
       # Check if we need to wait based on last crawl time for this domain
       wait_for_crawl_delay(domain, delay_seconds)
-
     rescue StandardError => e
       log_debug "Failed to check crawl-delay for #{url}: #{e.message}"
       # Don't fail the request if crawl-delay parsing fails
@@ -638,7 +626,7 @@ class BaseIndexer
 
     if last_crawl_time
       elapsed = Time.current - last_crawl_time
-      
+
       if elapsed < delay_seconds
         wait_time = delay_seconds - elapsed
         log_info "Crawl-delay: sleeping #{wait_time.round(2)}s for #{domain}"
@@ -721,13 +709,13 @@ class BaseIndexer
   def handle_rate_limit_response(response, url)
     retry_after = extract_retry_after(response)
     domain = URI.parse(url).host
-    
+
     log_warn "Rate limited by #{domain}: HTTP #{response.code}"
     log_info "Retry-After: #{retry_after} seconds"
-    
+
     # Store the rate limit information for this domain
     set_domain_rate_limit(domain, retry_after)
-    
+
     # Create a rate limit error that can be handled by retry logic
     error = RateLimitError.new("Rate limited by #{domain}. Retry after #{retry_after} seconds.")
     error.define_singleton_method(:retry_after) { retry_after }
@@ -738,13 +726,13 @@ class BaseIndexer
   # Handle 403 Forbidden responses with monthly recheck
   def handle_forbidden_response(response, url)
     domain = URI.parse(url).host
-    
+
     log_warn "Access forbidden by #{domain}: HTTP 403"
     log_info "Domain will be blocked for 30 days, then rechecked in case of temporary/accidental block"
-    
+
     # Block the domain for 30 days (monthly recheck)
     set_domain_block(domain, 30.days.to_i)
-    
+
     # Create a forbidden access error
     error = ForbiddenAccessError.new("Access forbidden by #{domain}. Will recheck in 30 days.")
     error.define_singleton_method(:recheck_after) { 30.days.to_i }
@@ -754,42 +742,39 @@ class BaseIndexer
 
   def extract_retry_after(response)
     # Check for Retry-After header (can be seconds or HTTP date)
-    retry_after_header = response.headers['Retry-After'] || response.headers['retry-after']
-    
+    retry_after_header = response.headers["Retry-After"] || response.headers["retry-after"]
+
     if retry_after_header
       # If it's a number, it's seconds
-      if retry_after_header.match?(/^\d+$/)
-        return retry_after_header.to_i
-      else
+      return retry_after_header.to_i if retry_after_header.match?(/^\d+$/)
+
         # If it's a date, calculate seconds from now
         begin
-          retry_time = Time.parse(retry_after_header)
-          return [(retry_time - Time.current).to_i, 0].max
+          retry_time = Time.zone.parse(retry_after_header)
+          return [ (retry_time - Time.current).to_i, 0 ].max
         rescue StandardError
           log_warn "Failed to parse Retry-After date: #{retry_after_header}"
         end
-      end
+
     end
-    
+
     # Check for X-RateLimit-Reset (common in APIs)
-    reset_header = response.headers['X-RateLimit-Reset'] || response.headers['x-ratelimit-reset']
+    reset_header = response.headers["X-RateLimit-Reset"] || response.headers["x-ratelimit-reset"]
     if reset_header
       begin
         # Could be Unix timestamp or seconds from now
         reset_time = reset_header.to_i
-        
+
         # If it's a large number, assume it's a Unix timestamp
-        if reset_time > Time.current.to_i
-          return [reset_time - Time.current.to_i, 0].max
-        else
+        return [ reset_time - Time.current.to_i, 0 ].max if reset_time > Time.current.to_i
+
           # Otherwise assume it's seconds from now
           return reset_time
-        end
       rescue StandardError
         log_warn "Failed to parse X-RateLimit-Reset: #{reset_header}"
       end
     end
-    
+
     # Default fallback - exponential backoff based on response code
     case response.code
     when 429
@@ -805,7 +790,7 @@ class BaseIndexer
     # Store rate limit info in Rails cache with expiration
     cache_key = "rate_limit_#{domain}"
     rate_limit_until = Time.current + retry_after_seconds.seconds
-    
+
     Rails.cache.write(cache_key, rate_limit_until, expires_in: retry_after_seconds.seconds + 60)
     log_debug "Set rate limit for #{domain} until #{rate_limit_until}"
   end
@@ -813,9 +798,9 @@ class BaseIndexer
   def domain_rate_limited?(domain)
     cache_key = "rate_limit_#{domain}"
     rate_limit_until = Rails.cache.read(cache_key)
-    
+
     return false unless rate_limit_until
-    
+
     if Time.current < rate_limit_until
       log_debug "Domain #{domain} is rate limited until #{rate_limit_until}"
       true
@@ -830,7 +815,7 @@ class BaseIndexer
     # Store domain block info in Rails cache with long expiration
     cache_key = "domain_blocked_#{domain}"
     blocked_until = Time.current + block_duration_seconds.seconds
-    
+
     Rails.cache.write(cache_key, blocked_until, expires_in: block_duration_seconds.seconds + 1.day)
     log_info "Blocked domain #{domain} until #{blocked_until.strftime('%Y-%m-%d')} (#{block_duration_seconds / 1.day.to_i} days)"
   end
@@ -838,9 +823,9 @@ class BaseIndexer
   def domain_blocked?(domain)
     cache_key = "domain_blocked_#{domain}"
     blocked_until = Rails.cache.read(cache_key)
-    
+
     return false unless blocked_until
-    
+
     if Time.current < blocked_until
       days_remaining = ((blocked_until - Time.current) / 1.day).ceil
       log_debug "Domain #{domain} is blocked for #{days_remaining} more days (until #{blocked_until.strftime('%Y-%m-%d')})"
@@ -873,14 +858,12 @@ class BaseIndexer
         raise
       end
     rescue StandardError => e
-      if attempts < max_attempts && should_retry_error?(e)
+      raise unless attempts < max_attempts && should_retry_error?(e)
+
         wait_time = delay * (2**(attempts - 1)) # Exponential backoff
         log_warn "Request failed (attempt #{attempts}/#{max_attempts}), retrying in #{wait_time}s: #{e.message}"
         sleep(wait_time)
         retry
-      else
-        raise
-      end
     end
   end
 
@@ -912,7 +895,7 @@ class BaseIndexer
 
     min_interval = config.fetch("min_request_interval") { 0.1 } # 100ms default
     elapsed = Time.current - last_request_time
-    
+
     if elapsed < min_interval
       sleep_time = min_interval - elapsed
       log_debug "Rate limiting: sleeping #{sleep_time.round(3)}s"
@@ -935,12 +918,12 @@ class BaseIndexer
   def wait_for_domain_rate_limit(domain)
     cache_key = "rate_limit_#{domain}"
     rate_limit_until = Rails.cache.read(cache_key)
-    
+
     return unless rate_limit_until && Time.current < rate_limit_until
-    
+
     wait_seconds = (rate_limit_until - Time.current).to_i
     log_info "Waiting #{wait_seconds} seconds for #{domain} rate limit to expire"
-    
+
     sleep(wait_seconds)
     Rails.cache.delete(cache_key)
   end
@@ -964,25 +947,14 @@ class BaseIndexer
 
   def format_log_context(context)
     return "" if context.empty?
-    
+
     base_context = {
       indexer: self.class.name,
       platform: platform_name,
       run_id: @indexing_run&.id
     }
-    
+
     full_context = base_context.merge(context).compact
-    "{#{full_context.map { |k, v| "#{k}: #{v.inspect}" }.join(", ")}}"
-  end
-end
-
-# Fallback robots parser that disallows everything when robots.txt is inaccessible
-class FallbackRobotsParser
-  def allowed?(_url)
-    false # Conservative approach - disallow if we can't verify
-  end
-
-  def other_values(_url)
-    {}
+    "{#{full_context.map { |k, v| "#{k}: #{v.inspect}" }.join(', ')}}"
   end
 end

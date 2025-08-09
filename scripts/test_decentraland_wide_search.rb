@@ -37,7 +37,9 @@ begin
 
   if items.count.positive?
     puts "\nFirst 5 items:"
-    items.first(5).each_with_index do |item, i|
+    i = 0
+    while i < [5, items.length].min
+      item = items[i]
       puts "  #{i + 1}. Scene ID: #{item['id']}"
       puts "     Type: #{item['type']}"
       puts "     Pointers: #{item['pointers']&.first(3)&.join(', ')}"
@@ -46,6 +48,8 @@ begin
         puts "     Title: #{title}" if title
       end
       puts
+      
+      i += 1
     end
 
     puts "=== Processing first few items ==="

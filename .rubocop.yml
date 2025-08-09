@@ -372,3 +372,7 @@ Naming/FileName:
 Naming/PredicatePrefix:
     Enabled: false
     Description: "Allow has_ prefix for predicate methods."
+
+Naming/AccessorMethodName:
+    Enabled: false
+    Description: "Allow has_ prefix for accessor methods."

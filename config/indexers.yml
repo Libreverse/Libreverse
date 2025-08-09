@@ -43,17 +43,12 @@ indexers:
         enabled: false # Disabled - API is currently broken but ready for when it comes back
         rate_limit: 2 # Very conservative - 2 requests per second for when API returns
         batch_size: 25 # Small batches for API
-        cache_duration: 0 # No caching for live session data
+        cache_duration: 3600 # 1 hour cache for category pages and sessions
         api_url: "https://api.neos.com/api/sessions"
-        schedule: "0 */4 * * *" # every 4 hours when enabled
-        max_items: 100 # 100 sessions per run
-        timeout: 30 # Standard timeout
-        batch_delay: 3 # 3 seconds between batches to be extra respectful
-        cache_duration: 3600 # 1 hour cache for category pages
         schedule: "0 */8 * * *" # every 8 hours
-        max_items: 100 # Maximum spaces per run
+        max_items: 100 # Maximum sessions/spaces per run
         timeout: 30 # Standard timeout for web requests
-        batch_delay: 1 # Seconds to wait between category page fetches
+        batch_delay: 3 # 3 seconds between batches to be extra respectful
 
 # Global settings that apply to all indexers
 global:

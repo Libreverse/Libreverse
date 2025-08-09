@@ -72,7 +72,9 @@ begin
 
       if experience_urls.count.positive?
         puts "\nFirst 5 experience URLs:"
-        experience_urls.first(5).each_with_index do |entry, i|
+        i = 0
+        while i < [5, experience_urls.length].min
+          entry = experience_urls[i]
           loc = entry.at_css('loc')&.text
           puts "  #{i + 1}. #{loc}"
 
@@ -85,6 +87,8 @@ begin
             puts "     UUID: #{uuid}"
           end
           puts
+          
+          i += 1
         end
 
         puts "Total experience URLs: #{experience_urls.count}"
@@ -106,16 +110,28 @@ begin
       if rows.count.positive?
         experience_data = []
 
-        rows.each_with_index do |row, i|
+        i = 0
+        while i < rows.length
+          row = rows[i]
           # Get the first cell which contains the experience URL
           url_cell = row.at_css('td:first-child a')
-          next unless url_cell
+          
+          unless url_cell
+            i += 1
+            next
+          end
 
           href = url_cell['href']
-          next unless href&.include?('/experiences/')
+          unless href&.include?('/experiences/')
+            i += 1
+            next
+          end
 
           # Extract title and UUID from URL
-          next unless (match = href.match(%r{/experiences/([^/]+)/([a-f0-9-]{36})/page}))
+          unless (match = href.match(%r{/experiences/([^/]+)/([a-f0-9-]{36})/page}))
+            i += 1
+            next
+          end
 
           title_encoded = match[1]
           uuid = match[2]
@@ -131,6 +147,8 @@ begin
             url: href,
             row_index: i + 1
           }
+          
+          i += 1
         end
 
         puts "\n=== Parsing Results ==="
@@ -138,11 +156,15 @@ begin
 
         if experience_data.count.positive?
           puts "\nFirst 5 experiences:"
-          experience_data.first(5).each_with_index do |exp, i|
+          i = 0
+          while i < [5, experience_data.length].min
+            exp = experience_data[i]
             puts "  #{i + 1}. #{exp[:title]}"
             puts "     UUID: #{exp[:uuid]}"
             puts "     URL: #{exp[:url]}"
             puts
+            
+            i += 1
           end
 
           # Check for duplicates
@@ -170,7 +192,9 @@ begin
 
       if experience_links.count.positive?
         puts "\nFirst 5 alternative experience URLs:"
-        experience_links.first(5).each_with_index do |link, i|
+        i = 0
+        while i < [5, experience_links.length].min
+          link = experience_links[i]
           href = link['href']
           puts "  #{i + 1}. #{href}"
 
@@ -183,6 +207,8 @@ begin
             puts "     UUID: #{uuid}"
           end
           puts
+          
+          i += 1
         end
       else
         puts "No experience links found anywhere"
