@@ -685,15 +685,15 @@ class BaseIndexer
           marshalled_data = cached_entry[:data]
 
           if cached_entry[:integrity_hash]
-            # New format with Argon2 integrity checking
+            # New format with HMAC integrity checking
             stored_hash = cached_entry[:integrity_hash]
 
-            # Verify data integrity using cryptographically secure Argon2
+            # Verify data integrity using cryptographically secure HMAC
             if verify_cache_integrity(marshalled_data, domain, stored_hash)
               log_debug "Loading cryptographically verified cached robots parser for #{domain}"
               return Marshal.load(marshalled_data)
             else
-              log_warn "Cached robots parser Argon2 integrity check failed for #{domain} - data may be corrupted or tampered with"
+              log_warn "Cached robots parser HMAC integrity check failed for #{domain} - data may be corrupted or tampered with"
               # Fall through to create new parser
             end
           elsif cached_entry[:hash]
@@ -702,7 +702,7 @@ class BaseIndexer
             stored_hash = cached_entry[:hash]
             computed_hash = Digest::SHA256.hexdigest(marshalled_data)
             if computed_hash == stored_hash
-              log_debug "Loading legacy SHA256 verified cached robots parser for #{domain} - will upgrade to Argon2 on next cache write"
+              log_debug "Loading legacy SHA256 verified cached robots parser for #{domain} - will upgrade to HMAC on next cache write"
               return Marshal.load(marshalled_data)
             else
               log_warn "Cached robots parser legacy SHA256 integrity check failed for #{domain} - hash mismatch"
