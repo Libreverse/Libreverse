@@ -175,11 +175,20 @@ module Metaverse
       # Look for URL entries
       url_entries = xml_doc.css("url")
 
-      url_entries.each_with_index do |entry, index|
+      index = 0
+      while index < url_entries.length
+        entry = url_entries[index]
         loc = entry.at_css("loc")&.text
-        next unless loc&.include?("/experiences/")
+        
+        unless loc&.include?("/experiences/")
+          index += 1
+          next
+        end
 
-        next unless (match = loc.match(%r{/experiences/([^/]+)/([a-f0-9-]{36})/page}))
+        unless (match = loc.match(%r{/experiences/([^/]+)/([a-f0-9-]{36})/page}))
+          index += 1
+          next
+        end
 
         title_encoded = match[1]
         uuid = match[2]
@@ -192,6 +201,8 @@ module Metaverse
           url: loc,
           row_index: index + 1
         }
+        
+        index += 1
       end
 
       experiences
@@ -209,16 +220,28 @@ module Metaverse
       # Get all table rows (skip header)
       rows = table.css("tbody tr")
 
-      rows.each_with_index do |row, index|
+      index = 0
+      while index < rows.length
+        row = rows[index]
         # Get the first cell which contains the experience URL
         url_cell = row.at_css("td:first-child a")
-        next unless url_cell
+        
+        unless url_cell
+          index += 1
+          next
+        end
 
         href = url_cell["href"]
-        next unless href&.include?("/experiences/")
+        unless href&.include?("/experiences/")
+          index += 1
+          next
+        end
 
         # Extract title and UUID from URL
-        next unless (match = href.match(%r{/experiences/([^/]+)/([a-f0-9-]{36})/page}))
+        unless (match = href.match(%r{/experiences/([^/]+)/([a-f0-9-]{36})/page}))
+          index += 1
+          next
+        end
 
         title_encoded = match[1]
         uuid = match[2]
@@ -231,6 +254,8 @@ module Metaverse
           url: href,
           row_index: index + 1
         }
+        
+        index += 1
       end
 
       experiences

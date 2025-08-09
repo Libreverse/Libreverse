@@ -6,7 +6,7 @@ module Metaverse
   # Note: API is currently broken but indexer is ready for when it comes back online
   class NeosIndexer < BaseIndexer
     API_BASE_URL = "https://api.neos.com"
-    SESSIONS_ENDPOINT = "#{API_BASE_URL}/api/sessions"
+    SESSIONS_ENDPOINT = "#{API_BASE_URL}/api/sessions".freeze
 
     def requires_robots_txt_check?
       false # NeosVR API has no robots.txt file
@@ -16,13 +16,12 @@ module Metaverse
       log_info "Fetching public sessions from NeosVR API"
 
       # Don't cache API requests - we want fresh session data
-      sessions = []
       max_items = config.fetch("max_items") { 100 }
 
       begin
         # Fetch public sessions using the API
         response = make_request("#{SESSIONS_ENDPOINT}?accessLevel=Anyone")
-        
+
         unless response.success?
           log_warn "NeosVR API returned HTTP #{response.code}"
           return []
@@ -30,7 +29,7 @@ module Metaverse
 
         # Parse JSON response
         parsed_response = response.parsed_response
-        
+
         unless parsed_response.is_a?(Array)
           log_warn "NeosVR API returned unexpected format: expected array, got #{parsed_response.class}"
           return []
@@ -39,15 +38,14 @@ module Metaverse
         # Limit to max_items for performance
         limited_sessions = parsed_response.first(max_items)
         log_info "Found #{parsed_response.size} total sessions, processing first #{limited_sessions.size}"
-        
+
         # Convert API response to our internal format
         sessions = limited_sessions.map do |session_data|
           extract_session_info(session_data)
         end.compact
-        
+
         log_info "Successfully processed #{sessions.size} sessions from NeosVR API"
         sessions
-
       rescue JSON::ParserError => e
         log_error "Failed to parse NeosVR API response as JSON: #{e.message}"
         []
@@ -74,8 +72,8 @@ module Metaverse
       if indexed_content
         log_debug "Successfully processed session: #{session_data[:name]}"
         update_progress(1) if respond_to?(:update_progress)
-      else
-        handle_item_error(StandardError.new("Failed to save indexed content"), session_data) if respond_to?(:handle_item_error)
+      elsif respond_to?(:handle_item_error)
+        handle_item_error(StandardError.new("Failed to save indexed content"), session_data)
       end
 
       indexed_content
@@ -119,7 +117,7 @@ module Metaverse
       raw_data[:session_id] || raw_data[:name] || "unknown"
     end
 
-    def extract_content_type(raw_data)
+    def extract_content_type(_raw_data)
       "session" # NeosVR sessions are worlds/sessions
     end
 
@@ -133,14 +131,10 @@ module Metaverse
 
       # Generate description from session metadata
       user_info = ""
-      if raw_data[:active_users] && raw_data[:max_users]
-        user_info = " (#{raw_data[:active_users]}/#{raw_data[:max_users]} users)"
-      end
+      user_info = " (#{raw_data[:active_users]}/#{raw_data[:max_users]} users)" if raw_data[:active_users] && raw_data[:max_users]
 
       host_info = ""
-      if raw_data[:host_username]
-        host_info = " hosted by #{raw_data[:host_username]}"
-      end
+      host_info = " hosted by #{raw_data[:host_username]}" if raw_data[:host_username]
 
       "NeosVR session#{user_info}#{host_info}"
     end
@@ -149,7 +143,7 @@ module Metaverse
       raw_data[:host_username]
     end
 
-    def extract_coordinates(raw_data)
+    def extract_coordinates(_raw_data)
       # NeosVR doesn't use spatial coordinates like Decentraland
       nil
     end

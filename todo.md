@@ -1,6 +1,5 @@
 # Todo
 
-Add extra indexer for the sandbox
 revamp the p2p api using yjs
 also weigh up the architecture of yjs stateful, webrtc stateless and local stores for data.
 make container runtime using docker in docker

@@ -53,9 +53,10 @@
             .row
               .col-md-4
                 %h6 Daily Progress
-                - today_count = IndexedContent.where(source_platform: 'decentraland').where('last_indexed_at >= ?', Time.current.beginning_of_day).count
-                - daily_limit = @config['daily_limit']
-                - progress_percent = daily_limit > 0 ? (today_count.to_f / daily_limit * 100).round(1) : 0
+                :ruby
+                  today_count = IndexedContent.where(source_platform: 'decentraland').where('last_indexed_at >= ?', Time.current.beginning_of_day).count
+                  daily_limit = @config['daily_limit']
+                  progress_percent = daily_limit > 0 ? (today_count.to_f / daily_limit * 100).round(1) : 0
                 .progress.mb-2
                   .progress-bar{style: "width: #{[progress_percent, 100].min}%", class: progress_percent >= 100 ? 'bg-success' : 'bg-primary'}
                 %small
