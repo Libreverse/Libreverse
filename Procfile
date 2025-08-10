@@ -1,4 +1,4 @@
-web: bundle exec passenger start -p 3000 --environment development
+web: bundle exec passenger start -p 3000 --environment development --max-pool-size 10 --min-instances 1
 vite: bin/vite dev
 jobs: bundle exec bin/jobs
 mailhog: mailhog

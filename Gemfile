@@ -72,6 +72,7 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "zip_kit"
 gem "zstd-ruby"
+gem "comfortable_media_surfer", "~> 3.1.0"
 
 group :development, :test do
   gem "debug", platforms: %i[mri]

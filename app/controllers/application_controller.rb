@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   include CanCan::ControllerAdditions
 
   helper_method :current_account, :current_ability, :user_signed_in?, :authenticated_user?, :guest_user?, :can_create_content?
-  helper_method :privacy_policy_path
+  helper_method :privacy_policy_path, :blog_url, :recent_blog_posts
 
   # Protection from CSRF
   protect_from_forgery with: :exception
@@ -214,6 +214,35 @@ class ApplicationController < ActionController::Base
       current_account&.federated_identifier || "@guest@#{current_instance_domain}"
     end
     helper_method :current_account_federated_id
+
+    # Blog helper methods
+    def blog_url
+      "/blog"
+    end
+
+    def recent_blog_posts(limit: 5)
+      return [] unless defined?(Comfy::Cms::Site)
+      
+      blog_site = Comfy::Cms::Site.find_by(identifier: 'instance-blog')
+      return [] unless blog_site
+
+      blog_site.pages
+               .published
+               .where.not(parent_id: nil) # Exclude root page
+               .order(created_at: :desc)
+               .limit(limit)
+               .map do |page|
+        {
+          title: page.fragments.find_by(identifier: 'title')&.content&.strip&.gsub(/^---\s*/, '') || page.label,
+          url: "/blog#{page.full_path}",
+          published_at: page.fragments.find_by(identifier: 'published_at')&.content&.strip&.gsub(/^---\s*['"]?|['"]?\s*$/, ''),
+          excerpt: page.fragments.find_by(identifier: 'meta_description')&.content&.strip&.gsub(/^---\s*/, '') || ''
+        }
+      end
+    rescue StandardError => e
+      Rails.logger.warn "Error fetching recent blog posts: #{e.message}"
+      []
+    end
 
     # Global spam protection method - acts as a safety net for forms that might bypass controller-specific protection
     def global_spam_protection_check

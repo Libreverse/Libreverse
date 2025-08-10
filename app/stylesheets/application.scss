@@ -20,13 +20,13 @@
 @use "form";
 @use "components/_form_validation";
 @use "emoji";
-@use "drawer";
 @use "password_requirements";
 @use "locomotive_scroll";
 @use "consent";
 @use "settings";
 @use "fonts";
 @use "site_footer";
+@use "blog";
 // Note: Removed glass.css import - now handled by glass_system
 
 html,

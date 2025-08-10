@@ -5,14 +5,14 @@
     .new-hp-bg{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
       - wood_img = bitmap_image_data_url("images/wood")
       - paper_img = bitmap_image_data_url("images/paper")
-      = image_tag(wood_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-      = image_tag(wood_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-      = image_tag(wood_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
     .pre-book
       .paper-container
-        = image_tag(paper_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
-        = image_tag(paper_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
-        = image_tag(paper_img['.avif'], loading: "eager", decoding: "sync", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
+        = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
+        = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
+        = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
         %h1= t('homepage.index.metaverse_article_title')
         %p= t('homepage.index.zuckerberg_rebrand')
         %p= t('homepage.index.not_one_product')

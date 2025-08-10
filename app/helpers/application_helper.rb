@@ -28,7 +28,7 @@ module ApplicationHelper
     image_tag(path,
               class: "sidebar-icons #{additional_class}".strip,
               loading: "eager",
-              decoding: "sync",
+              decoding: "async",
               fetchpriority: "high",
               draggable: "false",
               aria: { hidden: true },
