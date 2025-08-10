@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # CMS Admin routes (secured with Rodauth)
+  comfy_route :cms_admin, path: "/cms-admin"
+  
+  # Blog CMS routes - mount under /blog only
+  comfy_route :cms, path: "/blog"
   post "/graphql", to: "graphql#execute"
   resources :search_new, only: [ :index ]
   get "search_new/index"

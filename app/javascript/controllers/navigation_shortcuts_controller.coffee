@@ -9,15 +9,8 @@ export default class extends ApplicationController
     super()
     useHotkeys @, {
       hotkeys: {
-        h: {
-          handler: @goHome.bind(@)
-        }
-        s: {
-          handler: @goSearch.bind(@)
-        }
-        d: {
-          handler: @openDrawer.bind(@)
-        }
+        h: { handler: @goHome.bind(@) }
+        s: { handler: @goSearch.bind(@) }
       }
       filter: (event) =>
         event.target.tagName isnt "INPUT" and
@@ -37,10 +30,4 @@ export default class extends ApplicationController
     event.preventDefault()
     if globalThis.location.pathname isnt "/search"
       visit "/search"
-    return
-
-  openDrawer: (event) ->
-    event.preventDefault()
-    # Drawer expansion functionality has been removed
-    console.log("Drawer expansion functionality has been removed")
     return

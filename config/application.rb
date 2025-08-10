@@ -16,6 +16,9 @@ require_relative "../lib/middleware/turbo_preload_middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
+    # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
+    # route. Without this file serving routes are inaccessible.
+    config.railties_order = [ActiveStorage::Engine, :main_app, :all]
     config.autoload_paths << "app/graphql"
     config.autoload_paths << "app/indexers"
 
@@ -45,7 +48,9 @@ module LibreverseInstance
     config.middleware.use WhitespaceCompressor
 
     # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
-    config.middleware.use TurboPreloadMiddleware
+    if Rails.env.production?
+      config.middleware.use TurboPreloadMiddleware
+    end
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification

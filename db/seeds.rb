@@ -9,3 +9,7 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Setup ComfortableMediaSurfer blog
+puts "Setting up blog with ComfortableMediaSurfer..."
+load Rails.root.join('db', 'cms_blog_setup.rb')

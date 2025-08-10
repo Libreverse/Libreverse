@@ -1,0 +1,116 @@
+@use "variables";
+
+.blog-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem 0;
+  border-radius: 12px;
+}
+
+.blog-container {
+  padding: 1rem 0 3rem;
+}
+
+.blog-post {
+  border-bottom: 1px solid variables.$gray-200;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+
+  &:last-child { border-bottom: 0; }
+
+  h2, h3 {
+    color: variables.$hp-primary;
+    margin-bottom: .5rem;
+  }
+
+  .post-meta {
+    color: variables.$secondary;
+    font-size: .9rem;
+    margin-bottom: .75rem;
+  }
+
+  a {
+    color: variables.$primary;
+    text-decoration: underline;
+  }
+}
+
+/* Ensure content area respects app layout spacing */
+.content-wrapper .blog-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Blog utility + component shims for CMS markup (no Bootstrap dependency) */
+.blog-container {
+  .lead { font-size: 1.15rem; color: variables.$white-80; }
+  .text-muted { color: variables.$white-60; }
+  .text-end { text-align: right; }
+  .text-decoration-none { text-decoration: none; }
+
+  /* Spacing utilities */
+  .mb-4 { margin-bottom: 1.5rem; }
+  .mb-3 { margin-bottom: 1rem; }
+  .mt-5 { margin-top: 3rem; }
+  .me-2 { margin-right: .5rem; }
+
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    border: 1px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .btn-primary {
+    background-color: variables.$primary;
+    border-color: variables.$primary;
+    color: #fff;
+    &:hover { filter: brightness(1.1); }
+  }
+  .btn-outline-primary {
+    background-color: transparent;
+    border-color: variables.$primary;
+    color: variables.$primary;
+    &:hover { background-color: variables.$primary; color: #fff; }
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    gap: .5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .page-item { display: inline-flex; }
+  .page-link {
+    display: inline-block;
+    padding: .4rem .75rem;
+    border: 1px solid variables.$gray-200;
+    border-radius: .35rem;
+    color: variables.$primary;
+    background: variables.$background-light;
+    text-decoration: none;
+  }
+  .page-item.active .page-link { background: variables.$primary; color: #fff; border-color: variables.$primary; }
+  .page-item.disabled .page-link { opacity: .5; pointer-events: none; }
+
+  /* Simple grid */
+  .row { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .col-md-6 { width: 100%; }
+  @media (min-width: 768px) { .col-md-6 { width: calc(50% - .5rem); } }
+
+  /* Alerts */
+  .alert {
+    padding: 1rem;
+    border-radius: .5rem;
+    border: 1px solid variables.$gray-200;
+    background: variables.$gray-100;
+  }
+  .alert-info { border-color: variables.$info; background: variables.$info-20; }
+  .alert-success { border-color: variables.$success; background: variables.$success-border; color: #062; }
+}
