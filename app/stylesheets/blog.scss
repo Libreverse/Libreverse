@@ -1,44 +1,52 @@
+@use "sass:color";
 @use "variables";
 
-.blog-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem 0;
-  border-radius: 12px;
+/* Blog container and header */
+.blog-container {
+  padding: 1.25rem 0 3.5rem;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
-.blog-container {
-  padding: 1rem 0 3rem;
+.blog-header {
+  background: linear-gradient(135deg, color.adjust(#667eea, $lightness: -2%) 0%, #764ba2 100%);
+  color: #fff;
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+
+  h1 { margin: 0 0 .25rem; font-weight: 800; letter-spacing: -.02em; }
+  .lead { margin: 0; font-size: 1.125rem; color: rgba(255,255,255,0.9); }
 }
+
+/* Post list */
+.blog-posts { margin-top: 1.5rem; display: grid; gap: 1.25rem; }
 
 .blog-post {
-  border-bottom: 1px solid variables.$gray-200;
-  padding-bottom: 1.25rem;
-  margin-bottom: 1.25rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(128,128,128,0.18);
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 1.1rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 
-  &:last-child { border-bottom: 0; }
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.14); border-color: rgba(128,128,128,0.28); }
 
-  h2, h3 {
-    color: variables.$hp-primary;
-    margin-bottom: .5rem;
-  }
+  h2 { font-size: 1.35rem; margin: 0 0 .35rem; line-height: 1.25; }
+  h2 a { color: var(--primary, #6c5ce7); text-decoration: none; }
+  h2 a:hover { text-decoration: underline; }
 
-  .post-meta {
-    color: variables.$secondary;
-    font-size: .9rem;
-    margin-bottom: .75rem;
-  }
+  .post-meta { color: rgba(128,128,128,0.9); font-size: .92rem; margin-bottom: .75rem; }
 
-  a {
-    color: variables.$primary;
-    text-decoration: underline;
-  }
+  p { margin: 0 0 .75rem; color: rgba(255,255,255,0.92); }
+  .lead { font-size: 1.05rem; color: rgba(255,255,255,0.9); }
 }
 
 /* Ensure content area respects app layout spacing */
 .content-wrapper .blog-container {
-  max-width: 900px;
-  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 /* Blog utility + component shims for CMS markup (no Bootstrap dependency) */
@@ -63,19 +71,20 @@
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .06s ease;
   }
+  .btn:active { transform: translateY(1px); }
   .btn-primary {
-    background-color: variables.$primary;
-    border-color: variables.$primary;
+    background-color: var(--primary, #6c5ce7);
+    border-color: var(--primary, #6c5ce7);
     color: #fff;
-    &:hover { filter: brightness(1.1); }
+    &:hover { filter: brightness(1.06); }
   }
   .btn-outline-primary {
     background-color: transparent;
-    border-color: variables.$primary;
-    color: variables.$primary;
-    &:hover { background-color: variables.$primary; color: #fff; }
+    border-color: var(--primary, #6c5ce7);
+    color: var(--primary, #6c5ce7);
+    &:hover { background-color: var(--primary, #6c5ce7); color: #fff; }
   }
 
   /* Pagination */
@@ -90,14 +99,14 @@
   .page-link {
     display: inline-block;
     padding: .4rem .75rem;
-    border: 1px solid variables.$gray-200;
-    border-radius: .35rem;
-    color: variables.$primary;
-    background: variables.$background-light;
+    border: 1px solid rgba(128,128,128,0.24);
+    border-radius: .5rem;
+    color: var(--primary, #6c5ce7);
+    background: rgba(255,255,255,0.04);
     text-decoration: none;
   }
-  .page-item.active .page-link { background: variables.$primary; color: #fff; border-color: variables.$primary; }
-  .page-item.disabled .page-link { opacity: .5; pointer-events: none; }
+  .page-item.active .page-link { background: var(--primary, #6c5ce7); color: #fff; border-color: var(--primary, #6c5ce7); }
+  .page-item.disabled .page-link { opacity: .6; pointer-events: none; }
 
   /* Simple grid */
   .row { display: flex; flex-wrap: wrap; gap: 1rem; }
@@ -107,10 +116,40 @@
   /* Alerts */
   .alert {
     padding: 1rem;
-    border-radius: .5rem;
-    border: 1px solid variables.$gray-200;
-    background: variables.$gray-100;
+    border-radius: .65rem;
+    border: 1px solid rgba(128,128,128,0.24);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.92);
   }
-  .alert-info { border-color: variables.$info; background: variables.$info-20; }
-  .alert-success { border-color: variables.$success; background: variables.$success-border; color: #062; }
+  .alert-info { border-color: #2f86eb; background: rgba(47,134,235,.12); }
+  .alert-success { border-color: #28a745; background: rgba(40,167,69,.12); color: #eaffea; }
 }
+
+/* Layout grid */
+.blog-body { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+.blog-main { min-width: 0; }
+.blog-aside { min-width: 0; }
+@media (min-width: 992px) { .blog-body { grid-template-columns: 2fr 1fr; gap: 1.5rem; } }
+
+/* CMS content defaults */
+.cms-content {
+  h2 { margin-top: 1.25rem; font-size: 1.25rem; }
+  h3 { margin-top: 1rem; font-size: 1.1rem; }
+  p { margin: 0 0 .9rem; }
+  ul, ol { margin: 0 0 .9rem 1.25rem; }
+  a { color: var(--primary, #6c5ce7); text-decoration: underline; }
+  img { max-width: 100%; height: auto; border-radius: 8px; }
+  code, pre { background: rgba(255,255,255,0.06); border-radius: 6px; }
+  pre { padding: .75rem; overflow: auto; }
+  blockquote { margin: 1rem 0; padding-left: 1rem; border-left: 3px solid rgba(128,128,128,.35); color: rgba(255,255,255,.85); }
+}
+
+/* Sidebar widgets */
+.widget { background: rgba(255,255,255,0.04); border: 1px solid rgba(128,128,128,0.18); border-radius: 14px; padding: 1rem; box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+.widget-title { margin: 0 0 .75rem; font-size: 1.05rem; font-weight: 700; }
+
+/* Recent posts list tweaks */
+.widget .blog-posts, .widget ul { list-style: none; padding: 0; margin: 0; }
+.widget .blog-post { background: transparent; border: 0; padding: .4rem 0; box-shadow: none; }
+.widget .blog-post h2 { font-size: 1rem; margin: 0 0 .25rem; }
+.widget .blog-post .post-meta { font-size: .85rem; margin: 0; }
