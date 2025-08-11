@@ -3,9 +3,9 @@
 #
 # Usage:
 #   <div data-controller="raindrop"
-#        data-raindrop-background-url-value="..."
+#        data-raindrop-background-url-value=""
 #        data-raindrop-rainyday-options-value="{&quot;blur&quot;:5, &quot;fps&quot;:30}">
-#     <canvas class="raindrop-canvas"></canvas>
+#     <template data-raindrop-target="source">/images/bg.avif</template>
 #   </div>
 #
 # The 'rainydayOptions' value can be set to any RainyDay.js options (see library docs).
@@ -13,6 +13,9 @@
 import ApplicationController from "./application_controller"
 import "../libs/rainyday.js"
 import { setupLocomotiveScrollParallax } from "./parallax_utils.coffee"
+# Vite-imported backgrounds for inline asset URLs
+import cloudsBg from "../../images/clouds.avif"
+import garageBg from "../../images/garage.avif"
 
 ###*
  * Manages an iframe containing the RaindropFX effect to isolate its context.
@@ -21,6 +24,7 @@ export default class extends ApplicationController
   @values =
     backgroundUrl: String
     rainydayOptions: { type: Object, default: {} }
+  @targets = ["source"]
 
   connect: ->
     super.connect()
@@ -38,6 +42,19 @@ export default class extends ApplicationController
     return
 
   setupRainyDay: ->
+    # Fallback: if no data value, try hidden template, then path-map, then default
+    unless @hasBackgroundUrlValue
+      if @hasSourceTarget and @sourceTarget?.textContent?
+        url = @sourceTarget.textContent.trim()
+        if url?.length > 0 then @backgroundUrlValue = url
+
+      unless @hasBackgroundUrlValue
+        mapped = @bgFromPath(window?.location?.pathname or "/")
+        if mapped? then @backgroundUrlValue = mapped
+
+      unless @hasBackgroundUrlValue
+        @backgroundUrlValue = garageBg
+
     unless @hasBackgroundUrlValue
       return
 
@@ -120,3 +137,13 @@ export default class extends ApplicationController
     @rainyday = null
     @setupRainyDay()
     return
+
+  bgFromPath: (path) ->
+    # Path prefix -> image map
+    mapping =
+      "/blog": cloudsBg
+      # add more: "/search": someOtherBg
+
+    for prefix, url of mapping when path.indexOf(prefix) is 0
+      return url
+    null
