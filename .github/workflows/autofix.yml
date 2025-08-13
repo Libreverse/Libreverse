@@ -121,3 +121,21 @@ jobs:
           commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
           push_options: '--force-with-lease'
           skip_fetch: false
+          file_pattern: |
+            app/**
+            config/**
+            lib/**
+            public/**
+            scripts/**
+            spec/**
+            test/**
+            .github/**
+            Gemfile
+            Gemfile.lock
+            package.json
+            bun.lock*
+            eslint.config.js
+            stylelint.config.js
+            prettier.config.js
+            .erb-lint.yml
+            .erb-formaterrc.json
