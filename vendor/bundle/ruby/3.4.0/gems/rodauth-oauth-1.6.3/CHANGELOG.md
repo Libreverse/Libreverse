@@ -1,1 +1,0 @@
-See the Release Notes under https://gitlab.com/os85/rodauth-oauth/-/tree/master/doc/release_notes

@@ -1,4 +1,0 @@
-source 'https://rubygems.org'
-
-# Specify dependencies in foundation-emails.gemspec
-gemspec

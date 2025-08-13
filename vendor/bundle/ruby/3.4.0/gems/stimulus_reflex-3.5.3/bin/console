@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-require "bundler/setup"
-require "stimulus_reflex"
-
-StimulusReflex.configuration.parent_channel = "ActionCable::Channel::Base"
