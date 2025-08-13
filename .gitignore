@@ -30,3 +30,4 @@ coverage/
 
 # CodeQL local analysis files
 .codeql/
+/vendor/bundle/
