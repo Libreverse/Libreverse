@@ -72,7 +72,9 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "zip_kit"
 gem "zstd-ruby"
-gem "comfortable_media_surfer", "~> 3.1.0"
+gem "comfortable_media_surfer"
+gem "robots"
+gem "better_html"
 
 group :development, :test do
   gem "debug", platforms: %i[mri]
@@ -91,11 +93,11 @@ group :development do
   gem "rubocop-rails"
   gem "spring"
   gem "web-console"
+  gem "erb_lint"
+  gem "erb-formatter"
 end
 
 group :test do
   gem "mocha"
   gem "mysql2"
 end
-
-gem "robots", "~> 0.10.1"
