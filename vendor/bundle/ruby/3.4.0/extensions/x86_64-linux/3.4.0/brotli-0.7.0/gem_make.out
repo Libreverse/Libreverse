@@ -1,0 +1,28 @@
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/brotli-0.7.0/ext/brotli
+/opt/hostedtoolcache/Ruby/3.4.2/x64/bin/ruby extconf.rb
+checking for brotli/decode.h... yes
+checking for brotli/encode.h... yes
+checking for pkg-config for libbrotlicommon... [" ", "", "-lbrotlicommon"]
+checking for pkg-config for libbrotlidec... [" ", "", "-lbrotlidec"]
+checking for pkg-config for libbrotlienc... [" ", "", "-lbrotlienc"]
+checking for brotli/shared_dictionary.h... no
+checking for BrotliEncoderPrepareDictionary() in brotli/encode.h... no
+checking for BrotliEncoderAttachPreparedDictionary() in brotli/encode.h... no
+checking for BrotliDecoderAttachDictionary() in brotli/decode.h... no
+creating Makefile
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/brotli-0.7.0/ext/brotli
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-vwbb90 sitelibdir\=./.gem.20250806-2152-vwbb90 clean
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/brotli-0.7.0/ext/brotli
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-vwbb90 sitelibdir\=./.gem.20250806-2152-vwbb90
+compiling brotli.c
+compiling buffer.c
+linking shared-object brotli/brotli.so
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/brotli-0.7.0/ext/brotli
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-vwbb90 sitelibdir\=./.gem.20250806-2152-vwbb90 install
+/usr/bin/install -c -m 0755 brotli.so ./.gem.20250806-2152-vwbb90/brotli
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/brotli-0.7.0/ext/brotli
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-vwbb90 sitelibdir\=./.gem.20250806-2152-vwbb90 clean
