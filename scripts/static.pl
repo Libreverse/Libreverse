@@ -121,9 +121,9 @@ run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
 run_command("HAML Whitespace Cleanup", "sh", "-c", "find . -name '*.haml' -not -path './node_modules/*' -not -path './.git/*' -exec sed -i '' 's/[[:space:]]*\$//' {} +");
 run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
 
-# New: ERB formatting and linting
-run_command("ERB Format",    "sh", "-c", "bundle exec erb-format app/views/**/*.erb --write");
-run_command("ERB Lint",      "bundle", "exec", "erblint", "--config", ".erb-lint.yml", "app/views");
+# New: ERB formatting and linting (guarded)
+run_command("ERB Format",    "sh", "-c", "command -v bundle >/dev/null && bundle exec erb-format --help >/dev/null 2>&1 && find app -name '*.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true");
+run_command("ERB Lint",      "sh", "-c", "command -v bundle >/dev/null && bundle exec erblint --version >/dev/null 2>&1 && bundle exec erblint --config .erb-lint.yml app/views || true");
 
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");

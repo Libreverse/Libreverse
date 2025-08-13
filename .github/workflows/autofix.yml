@@ -62,47 +62,66 @@ jobs:
 
       - name: Run formatters/linters on changed files
         if: always()
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
+          # Don't stop on individual tool failures; apply what we can
+          set +e
+          set -u
+          # Filter out paths we never want to touch
+          grep -vE '^(vendor/|node_modules/|\.codeql/|coverage/|log/|tmp/|storage/|public/assets/)' changed_files.txt > changed_files_filtered.txt || true
+          mv changed_files_filtered.txt changed_files.txt
+
           # Helper to run a tool only when matching files exist
           run_if_any() {
             pattern="$1"; shift
             mapfile -t files < <(grep -E "$pattern" changed_files.txt || true)
             if [ ${#files[@]} -gt 0 ]; then
               echo "Running: $* on ${#files[@]} files"
-              printf '%s\n' "${files[@]}" | xargs -r $@
+              printf '%s\0' "${files[@]}" | xargs -0 -r $@ || true
             else
               echo "No files match pattern: $pattern"
             fi
           }
 
-          # Prettier (via bun) for common text formats
+          command -v bun >/dev/null 2>&1 || { echo "bun not found"; exit 0; }
+
+          # Prettier (via bun)
           run_if_any '\\.(json|md|ya?ml|html|css|graphql|gql|mdx)$' bun prettier --write --log-level warn
 
-          # ESLint (via bun) for JS/TS
+          # ESLint (via bun)
           run_if_any '\\.(js|jsx|ts|tsx)$' bun eslint --fix
 
-          # Stylelint (via bun) for styles
+          # Stylelint (via bun)
           run_if_any '\\.(css|scss|sass)$' bun stylelint --fix
 
-          # markdownlint (via bun) for Markdown
+          # markdownlint (via bun)
           run_if_any '\\.md$' bun markdownlint-cli2 --fix --config .markdownlint-cli2.jsonc
 
-          # Rubocop for Ruby
-          run_if_any '\\.rb$' bash -lc 'xargs -r bundle exec rubocop -A --force-exclusion'
+          # Rubocop
+          if bundle exec rubocop -v >/dev/null 2>&1; then
+            run_if_any '\\.rb$' bash -lc 'xargs -0 -r bundle exec rubocop -A --force-exclusion || true'
+          fi
 
-          # Haml-lint for HAML
-          run_if_any '\\.(haml)$' bash -lc 'xargs -r bundle exec haml-lint --auto-correct'
+          # Haml-lint
+          if bundle exec haml-lint -v >/dev/null 2>&1; then
+            run_if_any '\\.(haml)$' bash -lc 'xargs -0 -r bundle exec haml-lint --auto-correct || true'
+          fi
 
-          # ERB formatter for ERB templates
-          run_if_any '\\.(erb)$' bash -lc 'xargs -r bundle exec erb-format --write'
+          # ERB formatter
+          if bundle exec erb-format --help >/dev/null 2>&1; then
+            run_if_any '\\.(erb)$' bash -lc 'xargs -0 -r bundle exec erb-format --write || true'
+          fi
 
-          # ERB Lint autocorrect (limited autocorrect capability)
-          run_if_any '\\.(erb)$' bash -lc 'xargs -r bundle exec erblint -a --config .erb-lint.yml'
+          # ERB Lint autocorrect
+          if bundle exec erblint --version >/dev/null 2>&1; then
+            run_if_any '\\.(erb)$' bash -lc 'xargs -0 -r bundle exec erblint -a --config .erb-lint.yml || true'
+          fi
 
-          # Typos (write fixes)
-          run_if_any '.*' bash -lc 'xargs -r typos -w'
+          # Typos (if available)
+          if command -v typos >/dev/null 2>&1; then
+            run_if_any '.*' bash -lc 'xargs -0 -r typos -w || true'
+          fi
 
       - name: Rebase on latest branch to minimize conflicts
         shell: bash
@@ -113,6 +132,7 @@ jobs:
           git pull --rebase origin "$BRANCH" || true
 
       - name: Commit and push changes (if any)
+        if: always()
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(autofix): apply automated format/lint fixes"

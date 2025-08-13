@@ -45,6 +45,7 @@ runs:
           shell: bash
           run: |
               bundle config set --local path 'vendor/bundle'
+              bundle config set without ""
               bundle install --retry 3 --jobs 4
               bun install --verbose
 
