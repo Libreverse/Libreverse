@@ -120,6 +120,11 @@ push @sequential_status, $prettier_status;
 run_command("Rubocop",      "bundle", "exec", "rubocop", "-A");
 run_command("HAML Whitespace Cleanup", "sh", "-c", "find . -name '*.haml' -not -path './node_modules/*' -not -path './.git/*' -exec sed -i '' 's/[[:space:]]*\$//' {} +");
 run_command("haml-lint",    "bundle", "exec", "haml-lint", "--auto-correct", ".");
+
+# New: ERB formatting and linting
+run_command("ERB Format",    "sh", "-c", "bundle exec erb-format app/views/**/*.erb --write");
+run_command("ERB Lint",      "bundle", "exec", "erblint", "--config", ".erb-lint.yml", "app/views");
+
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
 run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc");

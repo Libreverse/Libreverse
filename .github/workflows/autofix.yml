@@ -1,0 +1,123 @@
+name: Autofix (formatters and linters)
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autofix-${{ github.event.pull_request.number || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  autofix:
+    name: Apply autofixes to changed files
+    runs-on: ubuntu-22.04
+    # Allow PRs from same repo, and direct pushes, but avoid loops from bot commits and skip autofix commits
+    if: >
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      ) || (
+        github.event_name == 'push' &&
+        github.actor != 'github-actions[bot]' &&
+        !contains(github.event.head_commit.message, 'chore(autofix)')
+      )
+    steps:
+      - name: Check out code
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Determine changed files
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="${{ github.base_ref }}"
+            git fetch origin "$BASE_REF" --depth=1
+            git diff --name-only --diff-filter=ACMR "origin/${BASE_REF}...HEAD" > changed_files.txt
+          else
+            BEFORE="${{ github.event.before }}"
+            AFTER="${{ github.sha }}"
+            if [ -z "$BEFORE" ]; then
+              # Fallback to last commit if BEFORE is unavailable
+              BEFORE=$(git rev-parse HEAD~1 || echo "")
+            fi
+            if [ -n "$BEFORE" ]; then
+              git diff --name-only --diff-filter=ACMR "$BEFORE" "$AFTER" > changed_files.txt
+            else
+              git diff --name-only --diff-filter=ACMR "$AFTER~1" "$AFTER" > changed_files.txt
+            fi
+          fi
+          echo "Changed files:" && cat changed_files.txt || true
+
+      - name: Run formatters/linters on changed files
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Helper to run a tool only when matching files exist
+          run_if_any() {
+            pattern="$1"; shift
+            mapfile -t files < <(grep -E "$pattern" changed_files.txt || true)
+            if [ ${#files[@]} -gt 0 ]; then
+              echo "Running: $* on ${#files[@]} files"
+              printf '%s\n' "${files[@]}" | xargs -r $@
+            else
+              echo "No files match pattern: $pattern"
+            fi
+          }
+
+          # Prettier (via bun) for common text formats
+          run_if_any '\\.(json|md|ya?ml|html|css|graphql|gql|mdx)$' bun prettier --write --log-level warn
+
+          # ESLint (via bun) for JS/TS
+          run_if_any '\\.(js|jsx|ts|tsx)$' bun eslint --fix
+
+          # Stylelint (via bun) for styles
+          run_if_any '\\.(css|scss|sass)$' bun stylelint --fix
+
+          # markdownlint (via bun) for Markdown
+          run_if_any '\\.md$' bun markdownlint-cli2 --fix --config .markdownlint-cli2.jsonc
+
+          # Rubocop for Ruby
+          run_if_any '\\.rb$' bash -lc 'xargs -r bundle exec rubocop -A --force-exclusion'
+
+          # Haml-lint for HAML
+          run_if_any '\\.(haml)$' bash -lc 'xargs -r bundle exec haml-lint --auto-correct'
+
+          # ERB formatter for ERB templates
+          run_if_any '\\.(erb)$' bash -lc 'xargs -r bundle exec erb-format --write'
+
+          # ERB Lint autocorrect (limited autocorrect capability)
+          run_if_any '\\.(erb)$' bash -lc 'xargs -r bundle exec erblint -a --config .erb-lint.yml'
+
+          # Typos (write fixes)
+          run_if_any '.*' bash -lc 'xargs -r typos -w'
+
+      - name: Rebase on latest branch to minimize conflicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="${{ github.head_ref != '' && github.head_ref || github.ref_name }}"
+          git config pull.rebase true
+          git pull --rebase origin "$BRANCH" || true
+
+      - name: Commit and push changes (if any)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(autofix): apply automated format/lint fixes"
+          branch: ${{ github.head_ref || github.ref_name }}
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          push_options: '--force-with-lease'
+          skip_fetch: false

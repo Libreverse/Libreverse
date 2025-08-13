@@ -30,6 +30,7 @@ jobs:
                         prettier,
                         rubocop,
                         haml-lint,
+                        erb-format,
                         eslint,
                         stylelint,
                         markdownlint,
@@ -62,6 +63,11 @@ jobs:
               shell: bash
               run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
 
+            - name: Run ERB Formatter
+              if: matrix.tool == 'erb-format'
+              shell: bash
+              run: bundle exec erb-format app/views/**/*.erb --write
+
             - name: Run ESLint
               if: matrix.tool == 'eslint'
               shell: bash
@@ -87,7 +93,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [i18n-validation]
+                tool: [i18n-validation, erb-lint]
 
         steps:
             - name: Check out code
@@ -100,6 +106,11 @@ jobs:
               if: matrix.tool == 'i18n-validation'
               shell: bash
               run: ruby scripts/i18n_validate.rb
+
+            - name: Run ERB Lint
+              if: matrix.tool == 'erb-lint'
+              shell: bash
+              run: bundle exec erblint --config .erb-lint.yml app/views
 
     # Security analysis (runs in parallel)
     security-analysis:
