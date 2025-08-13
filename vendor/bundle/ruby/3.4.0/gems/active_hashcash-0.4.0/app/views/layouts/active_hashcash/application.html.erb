@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html class="active-analytics">
+<head>
+  <title>Active Hashcash</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= tag.link rel: "icon", href: asset_path(:favicon, format: :ico), sizes: "32x32" %>
+  <%= tag.link rel: "icon", href: asset_path(:favicon, format: :svg), type: "image/svg+xml" %>
+
+  <%= tag.link rel: "stylesheet", href: asset_path(:ariato, format: :css) %>
+  <%= tag.link rel: "stylesheet", href: asset_path(:application, format: :css) %>
+</head>
+<body>
+  <header>
+    <nav aria-label="site">
+      <ul role="menu" aria-label="Elements" class="is-horizontal">
+        <li role="none" class="logo"><%= link_to(root_path) { render partial: "/active_hashcash/assets/logo", formats: [:svg] } %></li>
+        <li role="none"><%= link_to_unless_current ActiveHashcash::Stamp.model_name.human.pluralize, stamps_path %></li>
+        <li role="none"><%= link_to_unless_current "Top IP addresses", addresses_path %></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="card">
+    <%= yield %>
+  </main>
+
+  <footer>
+    Made by <a href="https://www.rorvswild.com">RorVsWild</a> |
+    <a href="https://github.com/BaseSecrete/active_hashcash">Source code</a> |
+    <a href="https://twitter.com/rorvswild">Twitter</a> |
+    <a href="https://ruby.social/@rorvswild">Mastodon</a> |
+  </footer>
+</body>
+</html>

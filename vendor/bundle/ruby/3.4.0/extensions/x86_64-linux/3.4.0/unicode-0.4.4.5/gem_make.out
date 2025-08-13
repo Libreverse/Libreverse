@@ -1,0 +1,28 @@
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+/opt/hostedtoolcache/Ruby/3.4.2/x64/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-pmrngb sitelibdir\=./.gem.20250806-2152-pmrngb clean
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-pmrngb sitelibdir\=./.gem.20250806-2152-pmrngb
+compiling unicode.c
+unicode.c: In function ‘Init_unicode_native’:
+unicode.c:1238:1: warning: old-style function definition [-Wold-style-definition]
+ 1238 | Init_unicode_native()
+      | ^~~~~~~~~~~~~~~~~~~
+unicode.c: At top level:
+cc1: note: unrecognized command-line option ‘-Wno-self-assign’ may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option ‘-Wno-parentheses-equality’ may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option ‘-Wno-constant-logical-operand’ may have been intended to silence earlier diagnostics
+compiling ustring.c
+compiling wstring.c
+linking shared-object unicode/unicode_native.so
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-pmrngb sitelibdir\=./.gem.20250806-2152-pmrngb install
+/usr/bin/install -c -m 0755 unicode_native.so ./.gem.20250806-2152-pmrngb/unicode
+
+current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/unicode-0.4.4.5/ext/unicode
+make DESTDIR\= sitearchdir\=./.gem.20250806-2152-pmrngb sitelibdir\=./.gem.20250806-2152-pmrngb clean

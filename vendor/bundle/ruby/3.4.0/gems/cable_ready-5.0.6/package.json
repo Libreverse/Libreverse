@@ -1,0 +1,65 @@
+{
+  "name": "cable_ready",
+  "version": "5.0.6",
+  "description": "CableReady helps you create great real-time user experiences by making it simple to trigger client-side DOM changes from server-side Ruby.",
+  "keywords": [
+    "ruby",
+    "rails",
+    "websockets",
+    "actioncable",
+    "cable",
+    "ssr",
+    "stimulus_reflex",
+    "client-side",
+    "dom"
+  ],
+  "homepage": "https://cableready.stimulusreflex.com",
+  "bugs": "https://github.com/stimulusreflex/cable_ready/issues",
+  "repository": "https://github.com/stimulusreflex/cable_ready",
+  "license": "MIT",
+  "author": "Nathan Hopkins <natehop@gmail.com>",
+  "contributors": [
+    "Andrew Mason <andrewmcodes@protonmail.com>",
+    "Julian Rubisch <julian@julianrubisch.at>",
+    "Marco Roth <marco.roth@intergga.ch>",
+    "Nathan Hopkins <natehop@gmail.com>"
+  ],
+  "main": "./dist/cable_ready.js",
+  "module": "./dist/cable_ready.js",
+  "browser": "./dist/cable_ready.js",
+  "import": "./dist/cable_ready.js",
+  "unpkg": "./dist/cable_ready.umd.js",
+  "umd": "./dist/cable_ready.umd.js",
+  "files": [
+    "dist/*",
+    "javascript/*"
+  ],
+  "scripts": {
+    "lint": "yarn run format --check",
+    "format": "yarn run prettier-standard ./javascript/**/*.js rollup.config.mjs",
+    "build": "yarn rollup -c",
+    "watch": "yarn rollup -wc",
+    "test": "web-test-runner javascript/test/**/*.test.js",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs && cp ./docs/_redirects ./docs/.vitepress/dist",
+    "docs:preview": "vitepress preview docs"
+  },
+  "dependencies": {
+    "morphdom": "2.6.1"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@web/dev-server-esbuild": "^1.0.3",
+    "@web/dev-server-rollup": "^0.6.4",
+    "@web/test-runner": "^0.19.0",
+    "prettier-standard": "^16.4.1",
+    "rollup": "^4.25.0",
+    "sinon": "^19.0.2",
+    "vite": "^5.4.10",
+    "vitepress": "^1.5.0",
+    "vitepress-plugin-search": "^1.0.4-alpha.22"
+  }
+}
