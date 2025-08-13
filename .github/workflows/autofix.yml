@@ -71,6 +71,7 @@ jobs:
           # Filter out paths we never want to touch
           grep -vE '^(vendor/|node_modules/|\.codeql/|coverage/|log/|tmp/|storage/|public/assets/)' changed_files.txt > changed_files_filtered.txt || true
           mv changed_files_filtered.txt changed_files.txt
+          echo "Changed source files:" && cat changed_files.txt || true
 
           # Helper to run a tool only when matching files exist
           run_if_any() {
@@ -123,13 +124,21 @@ jobs:
             run_if_any '.*' bash -lc 'xargs -0 -r typos -w || true'
           fi
 
+          # Fallback: run Prettier on all changed files, but ignore unknown types
+          if [ -s changed_files.txt ]; then
+            printf '%s\0' $(cat changed_files.txt) | xargs -0 -r bun prettier --write --log-level warn --ignore-unknown || true
+          fi
+
       - name: Rebase on latest branch to minimize conflicts
         shell: bash
         run: |
           set -euo pipefail
           BRANCH="${{ github.head_ref != '' && github.head_ref || github.ref_name }}"
-          git config pull.rebase true
+          # Stash in case formatters left uncommitted changes
+          git stash -u --quiet || true
+          git fetch origin "$BRANCH" --depth=1 || true
           git pull --rebase origin "$BRANCH" || true
+          git stash pop --quiet || true
 
       - name: Commit and push changes (if any)
         if: always()
