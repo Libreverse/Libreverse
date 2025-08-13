@@ -3,10 +3,10 @@ current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.
 creating Makefile
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/sassc-2.4.0/ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-lg433p sitelibdir\=./.gem.20250813-2076-lg433p clean
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-vdzp3p sitelibdir\=./.gem.20250813-2046-vdzp3p clean
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/sassc-2.4.0/ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-lg433p sitelibdir\=./.gem.20250813-2076-lg433p
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-vdzp3p sitelibdir\=./.gem.20250813-2046-vdzp3p
 compiling ./libsass/src/ast.cpp
 compiling ./libsass/src/ast2c.cpp
 compiling ./libsass/src/ast_fwd_decl.cpp
@@ -76,8 +76,8 @@ compiling ./libsass/src/values.cpp
 linking shared-object sassc/libsass.so
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/sassc-2.4.0/ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-lg433p sitelibdir\=./.gem.20250813-2076-lg433p install
-/usr/bin/install -c -m 0755 libsass.so ./.gem.20250813-2076-lg433p/sassc
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-vdzp3p sitelibdir\=./.gem.20250813-2046-vdzp3p install
+/usr/bin/install -c -m 0755 libsass.so ./.gem.20250813-2046-vdzp3p/sassc
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/sassc-2.4.0/ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-lg433p sitelibdir\=./.gem.20250813-2076-lg433p clean
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-vdzp3p sitelibdir\=./.gem.20250813-2046-vdzp3p clean

@@ -3,10 +3,10 @@ current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.
 creating Makefile
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/better_html-2.1.1/ext/better_html_ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-7vlw4s sitelibdir\=./.gem.20250813-2076-7vlw4s clean
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-ja56eu sitelibdir\=./.gem.20250813-2046-ja56eu clean
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/better_html-2.1.1/ext/better_html_ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-7vlw4s sitelibdir\=./.gem.20250813-2076-7vlw4s
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-ja56eu sitelibdir\=./.gem.20250813-2046-ja56eu
 compiling html_tokenizer.c
 compiling parser.c
 parser.c: In function ‘parser_document_append’:
@@ -33,8 +33,8 @@ cc1: note: unrecognized command-line option ‘-Wno-constant-logical-operand’ 
 linking shared-object better_html_ext.so
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/better_html-2.1.1/ext/better_html_ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-7vlw4s sitelibdir\=./.gem.20250813-2076-7vlw4s install
-/usr/bin/install -c -m 0755 better_html_ext.so ./.gem.20250813-2076-7vlw4s
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-ja56eu sitelibdir\=./.gem.20250813-2046-ja56eu install
+/usr/bin/install -c -m 0755 better_html_ext.so ./.gem.20250813-2046-ja56eu
 
 current directory: /home/runner/work/Libreverse/Libreverse/vendor/bundle/ruby/3.4.0/gems/better_html-2.1.1/ext/better_html_ext
-make DESTDIR\= sitearchdir\=./.gem.20250813-2076-7vlw4s sitelibdir\=./.gem.20250813-2076-7vlw4s clean
+make DESTDIR\= sitearchdir\=./.gem.20250813-2046-ja56eu sitelibdir\=./.gem.20250813-2046-ja56eu clean
