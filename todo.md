@@ -5,6 +5,7 @@ also weigh up the architecture of yjs stateful, webrtc stateless and local store
 make container runtime using docker in docker
 fix glass not scrolling as it should
 integrate the rodauth complex multi-db account features
+finish blog and social features (i.e blog posts as an AP post that then are replied to with linked mastodon accounts) will require us to ship a prebuilt blocklist. Of course, this comes with censorship concerns
 deploy without master_key being pre-set - pretty much as simple as removing the creds.yml.enc file
 deploy with ssl without a reverse proxy - easy to do now with nginx but the current cloud setup makes this not a logical choice.
 release beta
