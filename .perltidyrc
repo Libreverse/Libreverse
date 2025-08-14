@@ -1,0 +1,38 @@
+; Prettier-style perltidy configuration adapted from https://github.com/menozero/perltidy-prettier-style
+; Warnings
+-w
+
+; Indentation / layout
+i=2          ; indentation width
+; ci=2      ; (default continuation indent acceptable)
+
+; Prettier ignore markers
+fsb=# prettier-ignore-start
+fse=# prettier-ignore-end
+
+; Horizontal spacing tightness
+nsfs        ; no space before semicolon in for
+tso         ; tight secret operators
+pt=2        ; paren tightness
+sbt=2       ; square bracket tightness
+bbt=1       ; block brace tightness
+bar         ; opening brace on same line
+
+; Vertical layout
+ce          ; cuddled else
+wn          ; weld nested containers
+sot         ; stack opening tokens
+
+; Comments handling
+nbbc        ; no blank line before block comments
+isbc        ; indent spaced block comments
+
+; (Disabled options kept for clarity)
+; l=80      ; typical print width (omit to allow longer lines when needed)
+; utf8
+; ole=unix
+; iob       ; ignore old breakpoints
+; vt=0
+; mbl=1
+
+; End of .perltidyrc
