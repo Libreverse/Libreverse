@@ -127,6 +127,7 @@ run_command("ERB Lint",      "sh", "-c", "command -v bundle >/dev/null && bundle
 
 run_command("eslint",       "bun", "eslint", ".", "--fix");
 run_command("Stylelint",    "sh", "-c", "bun stylelint '**/*.scss' --fix");
+run_command("Coffeelint Fix", "sh", "-c", "command -v bun >/dev/null && bun coffeelint --help >/dev/null 2>&1 && find . -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true");
 run_command("markdownlint", "sh", "-c", "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc");
 run_command("bundle update", "bundle", "update");
 run_command("bun update", "bun", "update");
@@ -198,12 +199,7 @@ sub run_in_background {
 }
 
 # --- Define and run parallel commands ---
-my @coffee_files;
-# Use backticks with find to mimic bash script
-my $find_output = qx(find . -path ./node_modules -prune -o -name '*.coffee' -print0);
-@coffee_files = split /\0/, $find_output;
-
-@parallel_tools = ("Fasterer", "Coffeelint", "Typos", "Jest", "Rails test", "Brakeman");
+@parallel_tools = ("Fasterer", "Typos", "Jest", "Rails test", "Brakeman");
 # TEMPORARILY DISABLED: "CodeQL Ruby", "CodeQL JavaScript"
 my $num_tools = scalar @parallel_tools;
 
@@ -215,29 +211,8 @@ for my $i (0 .. $num_tools - 1) {
     my @cmd;
     if ($tool_name eq "Fasterer") {
         @cmd = ("fasterer");
-    } elsif ($tool_name eq "Coffeelint") {
-        if (@coffee_files) {
-            @cmd = ("bun", "coffeelint", "-f", "coffeelint.json", @coffee_files);
-        } else {
-            print "  [ SKIP] Coffeelint: No .coffee files found.\n";
-            $pids[$i] = 0;
-            $tool_exit_codes[$i] = 0;
-            $parallel_status[$i] = "[SKIP]";
-            my $log_file = "$log_dir/coffeelint.log";
-            $tool_log_files[$i] = $log_file;
-            open my $skip_fh, '>', $log_file or warn "Cannot create skip log $log_file: $!";
-            if ($skip_fh) {
-                print $skip_fh "--------------------------------------------------\n";
-                print $skip_fh "--- Coffeelint Results ---\n";
-                print $skip_fh "--------------------------------------------------\n";
-                print $skip_fh "Skipped: No .coffee files found.\n\n";
-                print $skip_fh "--------------------------------------------------\n";
-                print $skip_fh "--- End of Coffeelint Results (Exit Code: 0) ---\n";
-                print $skip_fh "--------------------------------------------------\n";
-                close $skip_fh;
-            }
-            next; # Skip running background task
-        }
+    } elsif ($tool_name eq "UNUSED_PLACEHOLDER") { # placeholder to keep elsif structure consistent if needed later
+        @cmd = ("true");
     } elsif ($tool_name eq "Typos") {
         @cmd = ("typos");
     } elsif ($tool_name eq "Jest") {

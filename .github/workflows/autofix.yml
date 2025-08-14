@@ -77,6 +77,7 @@ jobs:
           run_if_any() {
             pattern="$1"; shift
             mapfile -t files < <(grep -E "$pattern" changed_files.txt || true)
+            echo "Pattern: $pattern => ${#files[@]} match(es)"
             if [ ${#files[@]} -gt 0 ]; then
               echo "Running: $* on ${#files[@]} files"
               printf '%s\0' "${files[@]}" | xargs -0 -r $@ || true
@@ -87,46 +88,62 @@ jobs:
 
           command -v bun >/dev/null 2>&1 || { echo "bun not found"; exit 0; }
 
-          # Prettier (via bun)
-          run_if_any '\\.(json|md|ya?ml|html|css|graphql|gql|mdx)$' bun prettier --write --log-level warn
+          # Prettier (via bun) – broad formatting set (adds shell & style extensions)
+            run_if_any '\\.(json|md|ya?ml|html?|css|scss|sass|graphql|gql|mdx|sh|bash|zsh|env(\.example)?|env\.local)$' bun prettier --write --log-level warn
+            # Dockerfiles (Prettier plugin sh handles these) – match Dockerfile variants
+            run_if_any '(^|/)[Dd]ockerfile(\..*)?$' bun prettier --write --log-level warn
 
           # ESLint (via bun)
-          run_if_any '\\.(js|jsx|ts|tsx)$' bun eslint --fix
 
-          # Stylelint (via bun)
-          run_if_any '\\.(css|scss|sass)$' bun stylelint --fix
+            # Coffeelint (autofix) – CoffeeScript
+            if bun coffeelint --help >/dev/null 2>&1; then
+              run_if_any '\\.(coffee)$' bun coffeelint --fix -f coffeelint.json
+            fi
+          run_if_any '\.(js|jsx|ts|tsx)$' bun eslint --fix
+
+          # Stylelint (via bun) – style-specific lint autofixes
+          run_if_any '\.(css|scss|sass)$' bun stylelint --fix
 
           # markdownlint (via bun)
-          run_if_any '\\.md$' bun markdownlint-cli2 --fix --config .markdownlint-cli2.jsonc
+          run_if_any '\.md$' bun markdownlint-cli2 --fix --config .markdownlint-cli2.jsonc
 
           # Rubocop
           if bundle exec rubocop -v >/dev/null 2>&1; then
-            run_if_any '\\.rb$' bash -lc 'xargs -0 -r bundle exec rubocop -A --force-exclusion || true'
+            run_if_any '\.rb$' bash -lc 'xargs -0 -r bundle exec rubocop -A --force-exclusion || true'
           fi
 
           # Haml-lint
           if bundle exec haml-lint -v >/dev/null 2>&1; then
-            run_if_any '\\.(haml)$' bash -lc 'xargs -0 -r bundle exec haml-lint --auto-correct || true'
+            run_if_any '\.(haml)$' bash -lc 'xargs -0 -r bundle exec haml-lint --auto-correct || true'
           fi
 
           # ERB formatter
           if bundle exec erb-format --help >/dev/null 2>&1; then
-            run_if_any '\\.(erb)$' bash -lc 'xargs -0 -r bundle exec erb-format --write || true'
+            run_if_any '\.(erb)$' bash -lc 'xargs -0 -r bundle exec erb-format --write || true'
           fi
 
           # ERB Lint autocorrect
           if bundle exec erblint --version >/dev/null 2>&1; then
-            run_if_any '\\.(erb)$' bash -lc 'xargs -0 -r bundle exec erblint -a --config .erb-lint.yml || true'
+            run_if_any '\.(erb)$' bash -lc 'xargs -0 -r bundle exec erblint -a --config .erb-lint.yml || true'
           fi
 
-          # Typos (if available)
+          # Typos (if available) – spelling corrections
           if command -v typos >/dev/null 2>&1; then
             run_if_any '.*' bash -lc 'xargs -0 -r typos -w || true'
           fi
 
-          # Fallback: run Prettier on all changed files, but ignore unknown types
+          # i18n-tasks normalize – reorder & dedupe locale YAML when they changed
+          if bundle exec i18n-tasks --version >/dev/null 2>&1; then
+            mapfile -t locale_changes < <(grep -E '^config/locales/.*\.ya?ml$' changed_files.txt || true)
+            if [ ${#locale_changes[@]} -gt 0 ]; then
+              echo "Normalizing i18n locale files"
+              bundle exec i18n-tasks normalize -p || true
+            fi
+          fi
+
+          # Fallback: NUL-safe Prettier across all changed files (ignore unknown types)
           if [ -s changed_files.txt ]; then
-            printf '%s\0' $(cat changed_files.txt) | xargs -0 -r bun prettier --write --log-level warn --ignore-unknown || true
+            tr '\n' '\0' < changed_files.txt | xargs -0 -r bun prettier --write --log-level warn --ignore-unknown || true
           fi
 
       - name: Rebase on latest branch to minimize conflicts
