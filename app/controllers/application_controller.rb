@@ -222,8 +222,8 @@ class ApplicationController < ActionController::Base
 
     def recent_blog_posts(limit: 5)
       return [] unless defined?(Comfy::Cms::Site)
-      
-      blog_site = Comfy::Cms::Site.find_by(identifier: 'instance-blog')
+
+      blog_site = Comfy::Cms::Site.find_by(identifier: "instance-blog")
       return [] unless blog_site
 
       blog_site.pages
@@ -233,10 +233,10 @@ class ApplicationController < ActionController::Base
                .limit(limit)
                .map do |page|
         {
-          title: page.fragments.find_by(identifier: 'title')&.content&.strip&.gsub(/^---\s*/, '') || page.label,
+          title: page.fragments.find_by(identifier: "title")&.content&.strip&.gsub(/^---\s*/, "") || page.label,
           url: "/blog#{page.full_path}",
-          published_at: page.fragments.find_by(identifier: 'published_at')&.content&.strip&.gsub(/^---\s*['"]?|['"]?\s*$/, ''),
-          excerpt: page.fragments.find_by(identifier: 'meta_description')&.content&.strip&.gsub(/^---\s*/, '') || ''
+          published_at: page.fragments.find_by(identifier: "published_at")&.content&.strip&.gsub(/^---\s*['"]?|['"]?\s*$/, ""),
+          excerpt: page.fragments.find_by(identifier: "meta_description")&.content&.strip&.gsub(/^---\s*/, "") || ""
         }
       end
     rescue StandardError => e
