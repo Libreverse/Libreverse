@@ -14,14 +14,14 @@ module BlogHelper
 
   # Checks if the current page is within the blog section
   def in_blog_section?
-    request.path.start_with?('/blog')
+    request.path.start_with?("/blog")
   end
 
   # Returns navigation items for the blog
   def blog_navigation_items
     [
-      { label: 'Blog Home', path: blog_url },
-      { label: 'Latest Posts', path: "#{blog_url}#latest" },
+      { label: "Blog Home", path: blog_url },
+      { label: "Latest Posts", path: "#{blog_url}#latest" }
     ]
   end
 
@@ -29,8 +29,8 @@ module BlogHelper
   # This can be used in your main application to show recent blog posts
   def recent_blog_posts(limit: 5)
     return [] unless defined?(Comfy::Cms::Site)
-    
-    blog_site = Comfy::Cms::Site.find_by(identifier: 'instance-blog')
+
+    blog_site = Comfy::Cms::Site.find_by(identifier: "instance-blog")
     return [] unless blog_site
 
     blog_site.pages
@@ -40,10 +40,10 @@ module BlogHelper
              .limit(limit)
              .map do |page|
       {
-        title: page.fragments.find_by(identifier: 'title')&.content&.strip&.gsub(/^---\s*/, '') || page.label,
+        title: page.fragments.find_by(identifier: "title")&.content&.strip&.gsub(/^---\s*/, "") || page.label,
         url: "/blog#{page.full_path}",
-        published_at: page.fragments.find_by(identifier: 'published_at')&.content&.strip&.gsub(/^---\s*['"]?|['"]?\s*$/, ''),
-        excerpt: page.fragments.find_by(identifier: 'meta_description')&.content&.strip&.gsub(/^---\s*/, '') || ''
+        published_at: page.fragments.find_by(identifier: "published_at")&.content&.strip&.gsub(/^---\s*['"]?|['"]?\s*$/, ""),
+        excerpt: page.fragments.find_by(identifier: "meta_description")&.content&.strip&.gsub(/^---\s*/, "") || ""
       }
     end
   rescue StandardError => e
