@@ -60,91 +60,83 @@ jobs:
           fi
           echo "Changed files:" && cat changed_files.txt || true
 
-      - name: Run formatters/linters on changed files
+      - name: Run repository-wide autofixers
         if: always()
         continue-on-error: true
         shell: bash
         run: |
-          # Don't stop on individual tool failures; apply what we can
-          set +e
-          set -u
-          # Filter out paths we never want to touch
-          grep -vE '^(vendor/|node_modules/|\.codeql/|coverage/|log/|tmp/|storage/|public/assets/)' changed_files.txt > changed_files_filtered.txt || true
-          mv changed_files_filtered.txt changed_files.txt
-          echo "Changed source files:" && cat changed_files.txt || true
-
-          # Helper to run a tool only when matching files exist
-          run_if_any() {
-            pattern="$1"; shift
-            mapfile -t files < <(grep -E "$pattern" changed_files.txt || true)
-            echo "Pattern: $pattern => ${#files[@]} match(es)"
-            if [ ${#files[@]} -gt 0 ]; then
-              echo "Running: $* on ${#files[@]} files"
-              printf '%s\0' "${files[@]}" | xargs -0 -r $@ || true
-            else
-              echo "No files match pattern: $pattern"
-            fi
-          }
-
+          set -euo pipefail
+          echo "Running full-repo autofix (not limited to changed files)"
           command -v bun >/dev/null 2>&1 || { echo "bun not found"; exit 0; }
 
-          # Prettier (via bun) – broad formatting set (adds shell & style extensions)
-            run_if_any '\\.(json|md|ya?ml|html?|css|scss|sass|graphql|gql|mdx|sh|bash|zsh|env(\.example)?|env\.local)$' bun prettier --write --log-level warn
-            # Dockerfiles (Prettier plugin sh handles these) – match Dockerfile variants
-            run_if_any '(^|/)[Dd]ockerfile(\..*)?$' bun prettier --write --log-level warn
+          # Prettier (formats many languages) – run once repo-wide, ignore unknown
+          bun prettier --write --log-level warn --ignore-unknown . || true
+          # Dockerfiles may already be covered above (plugin), explicit re-run cheap
+          find . -type f -iname 'Dockerfile*' -print0 | xargs -0 -r bun prettier --write --log-level warn || true
 
-          # ESLint (via bun)
+          # ESLint (JS/TS)
+          bun eslint . --fix || true
 
-            # Coffeelint (autofix) – CoffeeScript
-            if bun coffeelint --help >/dev/null 2>&1; then
-              run_if_any '\\.(coffee)$' bun coffeelint --fix -f coffeelint.json
-            fi
-          run_if_any '\.(js|jsx|ts|tsx)$' bun eslint --fix
+          # Coffeelint (CoffeeScript) with autofix
+          if bun coffeelint --help >/dev/null 2>&1; then
+            find . -type f -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true
+          fi
 
-          # Stylelint (via bun) – style-specific lint autofixes
-          run_if_any '\.(css|scss|sass)$' bun stylelint --fix
+          # Stylelint (CSS/SCSS/SASS)
+          bun stylelint '**/*.{css,scss,sass}' --fix || true
 
-          # markdownlint (via bun)
-          run_if_any '\.md$' bun markdownlint-cli2 --fix --config .markdownlint-cli2.jsonc
+            # markdownlint (Markdown)
+          bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc || true
 
-          # Rubocop
+          # Rubocop (Ruby)
           if bundle exec rubocop -v >/dev/null 2>&1; then
-            run_if_any '\.rb$' bash -lc 'xargs -0 -r bundle exec rubocop -A --force-exclusion || true'
+            bundle exec rubocop -A --force-exclusion || true
           fi
 
-          # Haml-lint
+          # Haml-lint (HAML)
           if bundle exec haml-lint -v >/dev/null 2>&1; then
-            run_if_any '\.(haml)$' bash -lc 'xargs -0 -r bundle exec haml-lint --auto-correct || true'
+            bundle exec haml-lint --auto-correct . || true
           fi
 
-          # ERB formatter
+          # ERB format
           if bundle exec erb-format --help >/dev/null 2>&1; then
-            run_if_any '\.(erb)$' bash -lc 'xargs -0 -r bundle exec erb-format --write || true'
+            find app -type f -name '*.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true
           fi
 
-          # ERB Lint autocorrect
+          # ERB lint autocorrect
           if bundle exec erblint --version >/dev/null 2>&1; then
-            run_if_any '\.(erb)$' bash -lc 'xargs -0 -r bundle exec erblint -a --config .erb-lint.yml || true'
+            bundle exec erblint -a --config .erb-lint.yml || true
           fi
 
-          # Typos (if available) – spelling corrections
+          # Typos (spelling) – repository-wide
           if command -v typos >/dev/null 2>&1; then
-            run_if_any '.*' bash -lc 'xargs -0 -r typos -w || true'
+            typos -w || true
           fi
 
-          # i18n-tasks normalize – reorder & dedupe locale YAML when they changed
+          # i18n normalize (always safe; skip if no task)
           if bundle exec i18n-tasks --version >/dev/null 2>&1; then
-            mapfile -t locale_changes < <(grep -E '^config/locales/.*\.ya?ml$' changed_files.txt || true)
-            if [ ${#locale_changes[@]} -gt 0 ]; then
-              echo "Normalizing i18n locale files"
-              bundle exec i18n-tasks normalize -p || true
-            fi
+            bundle exec i18n-tasks normalize -p || true
           fi
 
-          # Fallback: NUL-safe Prettier across all changed files (ignore unknown types)
-          if [ -s changed_files.txt ]; then
-            tr '\n' '\0' < changed_files.txt | xargs -0 -r bun prettier --write --log-level warn --ignore-unknown || true
+          # Perl formatting (perltidy) – install if missing, then format
+          if ! command -v perltidy >/dev/null 2>&1; then
+            echo "Installing perltidy (not found)";
+            cpanm --notest Perl::Tidy >/dev/null 2>&1 || { echo "perltidy install failed (cpanm missing?)"; }
           fi
+          if command -v perltidy >/dev/null 2>&1; then
+            echo "Running perltidy";
+            find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
+              -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+              | xargs -0 -r perltidy -pro=.perltidyrc -b || true
+            # perltidy with -b creates .bak originals; remove them after success to avoid polluting commits
+            find . -type f -name '*.bak' -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' -delete 2>/dev/null || true
+            find . -type f -name '*.pl.bak' -delete 2>/dev/null || true
+            find . -type f -name '*.pm.bak' -delete 2>/dev/null || true
+            find . -type f -name '*.t.bak' -delete 2>/dev/null || true
+            find . -type f -name '*.psgi.bak' -delete 2>/dev/null || true
+          fi
+
+          echo "Autofix pass complete."
 
       - name: Rebase on latest branch to minimize conflicts
         shell: bash
