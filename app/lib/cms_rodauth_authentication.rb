@@ -25,9 +25,9 @@ module CmsRodauthAuthentication
     controller.redirect_to("/login?#{controller.request.query_string}")
     false
   end
-  
+
   private
-  
+
   def controller
     @controller ||= self
   end
