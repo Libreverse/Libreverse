@@ -30,11 +30,24 @@ export default class extends ApplicationController
     @ydoc.on "update", (update, origin) =>
       return if @finalized
       return if origin is 'remote'
-      b64 = btoa(String.fromCharCode.apply(null, update))
+      b64 = btoa(Array.from(update, (byte) -> String.fromCharCode(byte)).join(''))
       @pending.push(b64)
       @scheduleFlush()
 
   disconnect: ->
+    # Unsubscribe from ActionCable channel to stop receiving messages
+    if @channel?.unsubscribe?
+      @channel.unsubscribe()
+
+    # Clear any scheduled flush
+    if @flushTimer?
+      clearTimeout(@flushTimer)
+      @flushTimer = null
+        for u in msg.updates
+          try
+            Y.applyUpdate(@ydoc, @decode(u), 'remote')
+          catch error
+            console.error('Failed to apply update:', error)
     @ydoc?.destroy()
     super()
 

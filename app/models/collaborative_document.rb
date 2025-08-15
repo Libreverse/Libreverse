@@ -8,7 +8,8 @@ class CollaborativeDocument < ApplicationRecord
   # Append a Yjs update, auto-incrementing seq
   def append_update!(raw_bytes)
     next_seq = (collaborative_document_updates.maximum(:seq) || 0) + 1
-    collaborative_document_updates.create!(seq: next_seq, update: raw_bytes)
+  # Use the `ops` alias for the `update` column to avoid colliding with AR#update
+  collaborative_document_updates.create!(seq: next_seq, ops: raw_bytes)
   end
 
   def pending_updates_after(seq)

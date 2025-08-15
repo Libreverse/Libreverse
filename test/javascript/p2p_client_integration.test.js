@@ -47,6 +47,7 @@ describe("Injected P2P + Yjs API", () => {
     });
 
     it("fires iframe-ready message", () => {
+        expect(globalThis.LibreverseWebSocketP2P).toBeDefined();
         const spy = jest.spyOn(
             globalThis.LibreverseWebSocketP2P.prototype,
             "sendToParent",
