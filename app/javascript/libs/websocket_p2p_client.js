@@ -120,8 +120,9 @@ class LibreverseWebSocketP2P {
                 globalThis.ActionCable.createConsumer &&
                 globalThis.ActionCable.createConsumer());
         if (!consumer) {
-            console.warn("No ActionCable consumer available for Yjs provider");
-            return;
+            throw new Error(
+                "No ActionCable consumer available for Yjs provider",
+            );
         }
         const provider = new YActionCableProvider(
             this.ydoc,
@@ -151,13 +152,15 @@ class LibreverseWebSocketP2P {
     }
 
     onCollabReady(handler) {
+        if (typeof handler !== "function") {
+            throw new TypeError("Handler must be a function");
+        }
         this.collabReadyHandlers.add(handler);
         // Immediate fire if already connected
         if (this.defaultDocId && this._providerConnected(this.defaultDocId))
             handler(this.defaultDocId, this.ydoc);
         return () => this.collabReadyHandlers.delete(handler);
     }
-
     _providerConnected(documentId) {
         const p = this.yProviders.get(documentId);
         return p && p.synced; // yrb-actioncable provider sets synced when initial state applied

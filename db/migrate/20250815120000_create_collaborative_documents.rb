@@ -13,9 +13,10 @@ class CreateCollaborativeDocuments < ActiveRecord::Migration[7.1]
     add_index :collaborative_documents, :session_id, unique: true
 
     create_table :collaborative_document_updates do |t|
-      t.references :collaborative_document, null: false, foreign_key: true
+      t.references :collaborative_document, null: false, foreign_key: { on_delete: :cascade }
       t.integer :seq, null: false
-      t.binary  :update, null: false
+      # Use non-conflicting column name; avoid ActiveRecord#update collision
+      t.binary  :ops, null: false
       t.timestamps
     end
     add_index :collaborative_document_updates, %i[collaborative_document_id seq], unique: true, name: "idx_doc_seq"

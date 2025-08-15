@@ -5,9 +5,11 @@ messages:
         fields:
             session_id: string
             update_b64: base64
-            ts: integer
+            ts: integer (epoch_ms)
         limits:
-            max_size_bytes: 32768
+            max_size_bytes: 32768 # decoded update bytes (not base64 wire length)
+            rate:
+                messages_per_second: 10
     yjs_bootstrap_request:
         direction: c2s
         fields:
