@@ -1,16 +1,17 @@
-# Todo
+# To-do
 
-revamp the p2p api using yjs
-also weigh up the architecture of yjs stateful, webrtc stateless and local stores for data.
-make container runtime using docker in docker
-fix glass not scrolling as it should
-integrate the rodauth complex multi-db account features
-finish blog and social features (i.e blog posts as an AP post that then are replied to with linked mastodon accounts) will require us to ship a prebuilt blocklist. Of course, this comes with censorship concerns
-deploy without master_key being pre-set - pretty much as simple as removing the creds.yml.enc file
-deploy with ssl without a reverse proxy - easy to do now with nginx but the current cloud setup makes this not a logical choice.
-release beta
-add in premade bad stuff blocklist for federation
-add full decentralisation mode where blockchain nodes are used to make the index for decentraland and the sandbox and others
-Release v3 gamma
-Add telegram search bot
-Add x.com search bot
+- [ ] Fix glass not scrolling as it should
+- [ ] Integrate the rodauth complex multi-db account features
+- [ ] Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations)
+- [ ] Deploy without master_key pre-set (remove `credentials.yml.enc` handling adjustments)
+- [ ] Deploy with SSL without reverse proxy (evaluate direct nginx inside container viability vs current cloud setup)
+- [] Add container runtime using podman in docker
+
+- [ ] Release beta
+- [ ] Add premade "bad content" federation blocklist
+- [ ] Add full decentralisation mode (blockchain-backed index for Decentraland, The Sandbox, etc.)
+- [ ] Release v3 gamma
+- [ ] Add Telegram search bot
+- [ ] Add x.com search bot
+
+---

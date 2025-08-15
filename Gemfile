@@ -9,9 +9,11 @@ gem "activerecord-enhancedsqlite3-adapter"
 gem "active_storage_validations"
 gem "argon2"
 gem "audits1984"
+gem "better_html"
 gem "bootsnap"
 gem "cancancan"
 gem "capybara"
+gem "comfortable_media_surfer"
 gem "console1984"
 gem "federails"
 gem "federails-moderation"
@@ -39,6 +41,7 @@ gem "rack-cors"
 gem "rails"
 gem "rails-controller-testing"
 gem "re2"
+gem "robots"
 gem "rodauth-guest"
 gem "rodauth-i18n"
 gem "rodauth-model"
@@ -70,11 +73,9 @@ gem "unidecoder"
 gem "view_component"
 gem "vite_rails"
 gem "voight_kampff"
+gem "y-rb_actioncable"
 gem "zip_kit"
 gem "zstd-ruby"
-gem "comfortable_media_surfer"
-gem "robots"
-gem "better_html"
 
 group :development, :test do
   gem "debug", platforms: %i[mri]
@@ -84,6 +85,8 @@ end
 
 group :development do
   gem "brakeman"
+  gem "erb-formatter"
+  gem "erb_lint"
   gem "fasterer"
   gem "grpc-tools"
   gem "haml-lint"
@@ -93,8 +96,6 @@ group :development do
   gem "rubocop-rails"
   gem "spring"
   gem "web-console"
-  gem "erb_lint"
-  gem "erb-formatter"
 end
 
 group :test do

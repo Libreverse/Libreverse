@@ -3,7 +3,7 @@
 # Utility to delete legacy drawer assets
 paths = [
   Rails.root.join('app/stylesheets/drawer.scss'),
-  Rails.root.join('app/stylesheets/components/_drawer.scss'),
+  Rails.root.join('app/stylesheets/components/_drawer.scss')
 ]
 
 paths.each do |p|

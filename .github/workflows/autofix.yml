@@ -1,179 +1,179 @@
 name: Autofix (formatters and linters)
 
 on:
-  pull_request:
-    branches: [ "main" ]
-  push:
-    branches: [ "main" ]
+    pull_request:
+        branches: ["main"]
+    push:
+        branches: ["main"]
 
 permissions:
-  contents: write
+    contents: write
 
 concurrency:
-  group: autofix-${{ github.event.pull_request.number || github.ref_name }}
-  cancel-in-progress: true
+    group: autofix-${{ github.event.pull_request.number || github.ref_name }}
+    cancel-in-progress: true
 
 jobs:
-  autofix:
-    name: Apply autofixes to changed files
-    runs-on: ubuntu-22.04
-    # Allow PRs from same repo, and direct pushes, but avoid loops from bot commits and skip autofix commits
-    if: >
-      (
-        github.event_name == 'pull_request' &&
-        github.event.pull_request.head.repo.full_name == github.repository
-      ) || (
-        github.event_name == 'push' &&
-        github.actor != 'github-actions[bot]' &&
-        !contains(github.event.head_commit.message, 'chore(autofix)')
-      )
-    steps:
-      - name: Check out code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          fetch-depth: 0
+    autofix:
+        name: Apply autofixes to changed files
+        runs-on: ubuntu-22.04
+        # Allow PRs from same repo, and direct pushes, but avoid loops from bot commits and skip autofix commits
+        if: >
+            (
+              github.event_name == 'pull_request' &&
+              github.event.pull_request.head.repo.full_name == github.repository
+            ) || (
+              github.event_name == 'push' &&
+              github.actor != 'github-actions[bot]' &&
+              !contains(github.event.head_commit.message, 'chore(autofix)')
+            )
+        steps:
+            - name: Check out code
+              uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+              with:
+                  fetch-depth: 0
 
-      - name: Setup Environment
-        uses: ./.github/actions/setup-environment
+            - name: Setup Environment
+              uses: ./.github/actions/setup-environment
 
-      - name: Determine changed files
-        id: changes
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_REF="${{ github.base_ref }}"
-            git fetch origin "$BASE_REF" --depth=1
-            git diff --name-only --diff-filter=ACMR "origin/${BASE_REF}...HEAD" > changed_files.txt
-          else
-            BEFORE="${{ github.event.before }}"
-            AFTER="${{ github.sha }}"
-            if [ -z "$BEFORE" ]; then
-              # Fallback to last commit if BEFORE is unavailable
-              BEFORE=$(git rev-parse HEAD~1 || echo "")
-            fi
-            if [ -n "$BEFORE" ]; then
-              git diff --name-only --diff-filter=ACMR "$BEFORE" "$AFTER" > changed_files.txt
-            else
-              git diff --name-only --diff-filter=ACMR "$AFTER~1" "$AFTER" > changed_files.txt
-            fi
-          fi
-          echo "Changed files:" && cat changed_files.txt || true
+            - name: Determine changed files
+              id: changes
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    BASE_REF="${{ github.base_ref }}"
+                    git fetch origin "$BASE_REF" --depth=1
+                    git diff --name-only --diff-filter=ACMR "origin/${BASE_REF}...HEAD" > changed_files.txt
+                  else
+                    BEFORE="${{ github.event.before }}"
+                    AFTER="${{ github.sha }}"
+                    if [ -z "$BEFORE" ]; then
+                      # Fallback to last commit if BEFORE is unavailable
+                      BEFORE=$(git rev-parse HEAD~1 || echo "")
+                    fi
+                    if [ -n "$BEFORE" ]; then
+                      git diff --name-only --diff-filter=ACMR "$BEFORE" "$AFTER" > changed_files.txt
+                    else
+                      git diff --name-only --diff-filter=ACMR "$AFTER~1" "$AFTER" > changed_files.txt
+                    fi
+                  fi
+                  echo "Changed files:" && cat changed_files.txt || true
 
-      - name: Run repository-wide autofixers
-        if: always()
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Running full-repo autofix (not limited to changed files)"
-          command -v bun >/dev/null 2>&1 || { echo "bun not found"; exit 0; }
+            - name: Run repository-wide autofixers
+              if: always()
+              continue-on-error: true
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  echo "Running full-repo autofix (not limited to changed files)"
+                  command -v bun >/dev/null 2>&1 || { echo "bun not found"; exit 0; }
 
-          # Prettier (formats many languages) – run once repo-wide, ignore unknown
-          bun prettier --write --log-level warn --ignore-unknown . || true
-          # Dockerfiles may already be covered above (plugin), explicit re-run cheap
-          find . -type f -iname 'Dockerfile*' -print0 | xargs -0 -r bun prettier --write --log-level warn || true
+                  # Prettier (formats many languages) – run once repo-wide, ignore unknown
+                  bun prettier --write --log-level warn --ignore-unknown . || true
+                  # Dockerfiles may already be covered above (plugin), explicit re-run cheap
+                  find . -type f -iname 'Dockerfile*' -print0 | xargs -0 -r bun prettier --write --log-level warn || true
 
-          # ESLint (JS/TS)
-          bun eslint . --fix || true
+                  # ESLint (JS/TS)
+                  bun eslint . --fix || true
 
-          # Coffeelint (CoffeeScript) with autofix
-          if bun coffeelint --help >/dev/null 2>&1; then
-            find . -type f -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true
-          fi
+                  # Coffeelint (CoffeeScript) with autofix
+                  if bun coffeelint --help >/dev/null 2>&1; then
+                    find . -type f -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true
+                  fi
 
-          # Stylelint (CSS/SCSS/SASS)
-          bun stylelint '**/*.{css,scss,sass}' --fix || true
+                  # Stylelint (CSS/SCSS/SASS)
+                  bun stylelint '**/*.{css,scss,sass}' --fix || true
 
-            # markdownlint (Markdown)
-          bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc || true
+                    # markdownlint (Markdown)
+                  bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc || true
 
-          # Rubocop (Ruby)
-          if bundle exec rubocop -v >/dev/null 2>&1; then
-            bundle exec rubocop -A --force-exclusion || true
-          fi
+                  # Rubocop (Ruby)
+                  if bundle exec rubocop -v >/dev/null 2>&1; then
+                    bundle exec rubocop -A --force-exclusion || true
+                  fi
 
-          # Haml-lint (HAML)
-          if bundle exec haml-lint -v >/dev/null 2>&1; then
-            bundle exec haml-lint --auto-correct . || true
-          fi
+                  # Haml-lint (HAML)
+                  if bundle exec haml-lint -v >/dev/null 2>&1; then
+                    bundle exec haml-lint --auto-correct . || true
+                  fi
 
-          # ERB format
-          if bundle exec erb-format --help >/dev/null 2>&1; then
-            find app -type f -name '*.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true
-          fi
+                  # ERB format
+                  if bundle exec erb-format --help >/dev/null 2>&1; then
+                    find app -type f -name '*.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true
+                  fi
 
-          # ERB lint autocorrect
-          if bundle exec erblint --version >/dev/null 2>&1; then
-            bundle exec erblint -a --config .erb-lint.yml || true
-          fi
+                  # ERB lint autocorrect
+                  if bundle exec erblint --version >/dev/null 2>&1; then
+                    bundle exec erblint -a --config .erb-lint.yml || true
+                  fi
 
-          # Typos (spelling) – repository-wide
-          if command -v typos >/dev/null 2>&1; then
-            typos -w || true
-          fi
+                  # Typos (spelling) – repository-wide
+                  if command -v typos >/dev/null 2>&1; then
+                    typos -w || true
+                  fi
 
-          # i18n normalize (always safe; skip if no task)
-          if bundle exec i18n-tasks --version >/dev/null 2>&1; then
-            bundle exec i18n-tasks normalize -p || true
-          fi
+                  # i18n normalize (always safe; skip if no task)
+                  if bundle exec i18n-tasks --version >/dev/null 2>&1; then
+                    bundle exec i18n-tasks normalize -p || true
+                  fi
 
-          # Perl formatting (perltidy) – install if missing, then format
-          if ! command -v perltidy >/dev/null 2>&1; then
-            echo "Installing perltidy (not found)";
-            cpanm --notest Perl::Tidy >/dev/null 2>&1 || { echo "perltidy install failed (cpanm missing?)"; }
-          fi
-          if command -v perltidy >/dev/null 2>&1; then
-            echo "Running perltidy";
-            find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
-              -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
-              | xargs -0 -r perltidy -pro=.perltidyrc -b || true
-            # perltidy with -b creates .bak originals; remove them after success to avoid polluting commits
-            find . -type f -name '*.bak' -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' -delete 2>/dev/null || true
-            find . -type f -name '*.pl.bak' -delete 2>/dev/null || true
-            find . -type f -name '*.pm.bak' -delete 2>/dev/null || true
-            find . -type f -name '*.t.bak' -delete 2>/dev/null || true
-            find . -type f -name '*.psgi.bak' -delete 2>/dev/null || true
-          fi
+                  # Perl formatting (perltidy) – install if missing, then format
+                  if ! command -v perltidy >/dev/null 2>&1; then
+                    echo "Installing perltidy (not found)";
+                    cpanm --notest Perl::Tidy >/dev/null 2>&1 || { echo "perltidy install failed (cpanm missing?)"; }
+                  fi
+                  if command -v perltidy >/dev/null 2>&1; then
+                    echo "Running perltidy";
+                    find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
+                      -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                      | xargs -0 -r perltidy -pro=.perltidyrc -b || true
+                    # perltidy with -b creates .bak originals; remove them after success to avoid polluting commits
+                    find . -type f -name '*.bak' -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' -delete 2>/dev/null || true
+                    find . -type f -name '*.pl.bak' -delete 2>/dev/null || true
+                    find . -type f -name '*.pm.bak' -delete 2>/dev/null || true
+                    find . -type f -name '*.t.bak' -delete 2>/dev/null || true
+                    find . -type f -name '*.psgi.bak' -delete 2>/dev/null || true
+                  fi
 
-          echo "Autofix pass complete."
+                  echo "Autofix pass complete."
 
-      - name: Rebase on latest branch to minimize conflicts
-        shell: bash
-        run: |
-          set -euo pipefail
-          BRANCH="${{ github.head_ref != '' && github.head_ref || github.ref_name }}"
-          # Stash in case formatters left uncommitted changes
-          git stash -u --quiet || true
-          git fetch origin "$BRANCH" --depth=1 || true
-          git pull --rebase origin "$BRANCH" || true
-          git stash pop --quiet || true
+            - name: Rebase on latest branch to minimize conflicts
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  BRANCH="${{ github.head_ref != '' && github.head_ref || github.ref_name }}"
+                  # Stash in case formatters left uncommitted changes
+                  git stash -u --quiet || true
+                  git fetch origin "$BRANCH" --depth=1 || true
+                  git pull --rebase origin "$BRANCH" || true
+                  git stash pop --quiet || true
 
-      - name: Commit and push changes (if any)
-        if: always()
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(autofix): apply automated format/lint fixes"
-          branch: ${{ github.head_ref || github.ref_name }}
-          commit_user_name: github-actions[bot]
-          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          push_options: '--force-with-lease'
-          skip_fetch: false
-          file_pattern: |
-            app/**
-            config/**
-            lib/**
-            public/**
-            scripts/**
-            spec/**
-            test/**
-            .github/**
-            Gemfile
-            Gemfile.lock
-            package.json
-            bun.lock*
-            eslint.config.js
-            stylelint.config.js
-            prettier.config.js
-            .erb-lint.yml
-            .erb-formaterrc.json
+            - name: Commit and push changes (if any)
+              if: always()
+              uses: stefanzweifel/git-auto-commit-action@v5
+              with:
+                  commit_message: "chore(autofix): apply automated format/lint fixes"
+                  branch: ${{ github.head_ref || github.ref_name }}
+                  commit_user_name: github-actions[bot]
+                  commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+                  push_options: "--force-with-lease"
+                  skip_fetch: false
+                  file_pattern: |
+                      app/**
+                      config/**
+                      lib/**
+                      public/**
+                      scripts/**
+                      spec/**
+                      test/**
+                      .github/**
+                      Gemfile
+                      Gemfile.lock
+                      package.json
+                      bun.lock*
+                      eslint.config.js
+                      stylelint.config.js
+                      prettier.config.js
+                      .erb-lint.yml
+                      .erb-formaterrc.json

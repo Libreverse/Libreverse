@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'better_html'
+require "better_html"
 
 # Configure BetterHtml using the repo-level YAML if present; otherwise keep defaults.
 # This enables HTML-aware ERB parsing and runtime validations for .html.erb templates.
 
 begin
-  yaml_path = Rails.root.join('.better-html.yml')
+  yaml_path = Rails.root.join(".better-html.yml")
   if File.exist?(yaml_path)
-    require 'yaml'
+    require "yaml"
     BetterHtml.config = BetterHtml::Config.new(
-      YAML.load_file(yaml_path, permitted_classes: [Regexp])
+      YAML.load_file(yaml_path, permitted_classes: [ Regexp ])
     )
   else
     BetterHtml.configure do |config|

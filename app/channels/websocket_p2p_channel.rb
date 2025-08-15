@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class WebsocketP2pChannel < ApplicationCable::Channel
-  # WebSocket-based P2P signaling channel
-  # Handles peer discovery, connection coordination, and message routing
+  # Alpha: stripped down to peer roster + generic messaging.
 
   def subscribed
     @session_id = params[:session_id]
@@ -49,12 +48,9 @@ class WebsocketP2pChannel < ApplicationCable::Channel
     return unless valid_message?(data)
 
     case data["type"]
-    when "message"
-      handle_p2p_message(data)
-    when "heartbeat"
-      handle_heartbeat(data)
-    when "request_peers"
-      send_peers_list
+    when "message" then handle_p2p_message(data)
+    when "heartbeat" then handle_heartbeat(data)
+    when "request_peers" then send_peers_list
     else
       Rails.logger.warn "[WebsocketP2pChannel] Unknown message type: #{data['type']}"
     end

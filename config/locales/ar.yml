@@ -1,213 +1,185 @@
 ---
 ar:
-    consent:
-        screen:
-            access_message_html:
-                للوصول إلى التطبيق، يجب أن توافق على %{privacy_policy_link}
-                و %{cookie_policy_link}.
-            agree_and_continue: الموافقة والمتابعة
-            decline: رفض
-            english_only_notice:
-                هذه السياسات باللغة الإنجليزية بسبب قيود الموارد. الترجمات
-                مخططة للمستقبل.
-            intro: "Welcome to Libreverse! A few things before we get started:"
-            remember_info_html:
-                نستخدم أيضًا ملف تعريف ارتباط اختياري 'تذكرني' لتخزين تسجيل
-                الدخول الخاص بك لمدة 30 يومًا.
-            remember_opt_in_label:
-                تمكين ملفات تعريف الارتباط غير الضرورية المطلوبة للبقاء
-                مسجل الدخول عبر الجلسات (اختياري تقنيًا ولكن يوصى به بشدة)
-    dashboard:
-        index:
-            account_actions_title: إجراءات الحساب
-            account_settings: إعدادات الحساب
-            change_password: تغيير كلمة المرور
-            compliance_options_title: خيارات الامتثال
-            delete_account: حذف الحساب
-            edit_profile: تحرير الملف الشخصي
-            export_data: تصدير البيانات
-            review_consent: مراجعة الموافقة
-            sign_out: تسجيل الخروج
-            title: لوحة التحكم
-            tutorial_description:
-                أنت مسجل الدخول إلى لوحة تحكم حسابك. إدارة إعدادات حسابك
-                من هنا.
-            tutorial_heading: حسابك
-            welcome: مرحبا،
-    experiences:
-        edit:
-            back_to_experiences: العودة إلى التجارب
-            created_and_updated_html:
-                تم إنشاء هذه التجربة في %{created_date} وآخر تحديث
-                منذ %{updated_ago}.
-            instructions: قم بإجراء التغييرات على تجربتك أدناه واحفظ عندما تكون جاهزًا.
-            refining: صقل "%{title}"
-            subtitle: إجراء التغييرات على تجربتك
-            title: تحرير التجربة
-            view_current_experience: عرض التجربة الحالية
-        experiences_list:
-            approve: الموافقة
-            awaiting_approval: في انتظار الموافقة
-            by: بواسطة
-            created_at: "تم الإنشاء في:"
-            delete: حذف
-            edit_details: تحرير التفاصيل
-        form:
-            current_file: "الملف الحالي:"
-            errors_prohibited: "منع هذه التجربة من الحفظ:"
-            replace_file: "(استبدال بتحميل ملف جديد)"
-            rich_description_help: الأوصاف الغنية تساعد الآخرين على فهم تجربتك بشكل أفضل.
-            upload_single_html_help: قم بتحميل ملف HTML الفردي لتجربتك.
-        index:
-            create_new_heading: إنشاء تجربة جديدة
-            subtitle: إنشاء وإدارة تجاربك
-            title: تجاربي
-            tutorial_description: إدارة تجاربك وإنشاء تجارب جديدة لمشاركتها مع مجتمع Libreverse.
-            tutorial_heading: مجموعتك الإبداعية
-        new:
-            back: العودة
-            title: تجربة جديدة
-        show:
-            find_similar: العثور على تجارب مماثلة
-            last_updated: "آخر تحديث:"
-            subtitle: عرض تفاصيل التجربة
-            title: تفاصيل التجربة
-    flash:
-        content_flagged: Your submission contains content that appears to be spam.
-        please_try_again: Please try again in a moment.
-        suspicious_activity: Suspicious activity detected. Please try again later.
-        too_many_requests: You're submitting forms too quickly. Please wait a moment.
-    homepage:
-        index:
-            brand: Libreverse
-            digital_life_inevitable:
-                A digital life may be inevitable, but it shouldn’t
-                enslave us.
-            help_build_alternative:
-                Help us build an open, ethical alternative to Meta's
-                metaverse
-            know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
-            libre_word: ليبر
-            meta_charging:
-                Meta’s charging toward this future, but we can’t let one company
-                own it.
-            metaverse_article_title: The case for an open-source metaverse.
-            metaverse_hook:
-                The Metaverse could hook us with a fake paradise, and we might
-                not unplug.
-            not_one_product: It’s not one product; it’s a shift to a fully online existence.
-            open_source_rival:
-                An open-source rival like Libreverse is vital, letting others
-                build competing Metaverses without starting from scratch.
-            reclaim_potential:
-                Let’s reclaim the Metaverse’s potential—before it’s just
-                Meta’s world.
-            sounds_cool:
-                Sounds cool, but it risks becoming a Matrix-style trap, hijacking
-                our brains like social media, gambling, or junk food do.
-            take_control: Take control
-            verse_word: فيرس
-            zuckerberg_rebrand:
-                Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
-                digital world for work, play, and life—is taking shape.
-    invisible_captcha:
-        spam_detection:
-            general_spam: Your submission appears to be spam. Please try again.
-            honeypot_triggered: "Spam detected: hidden field was filled"
-        timestamp_error_message:
-            Form submitted too quickly. Please wait a moment and
-            try again.
-    layouts:
-        application:
-            noscript_heading: جافا سكريبت مطلوب
-            noscript_message:
-                يتطلب هذا التطبيق جافا سكريبت ليعمل بشكل صحيح. يرجى تمكين
-                جافا سكريبت في إعدادات المتصفح وتحديث الصفحة.
-        default_drawer:
-            by: بواسطة
-            intro_html:
-                في Libreverse، نحن ❤️ المشاريع تحت تراخيص مفتوحة ونريد أن نعطي الفضل
-                للمشاريع التي جعلت Libreverse ممكنًا. حاليًا، هذا يشمل فقط المشاريع حيث الإسناد
-                هو متطلب ترخيص، لكن لدينا خطط لتوسيعه في المستقبل.
-            libreverse_twemoji: Libreverse-Twemoji
-            licensed_under: مرخص بموجب
-            modified_from: الذي تم تعديله من
-        drawer:
-            attribution: الإسناد
-    policies:
-        cookie_policy: سياسة ملفات تعريف الارتباط
-        cookies:
-            adjust_preferences_html:
-                يمكنك ضبط تفضيلات الموافقة الخاصة بك في أي وقت عن طريق
-                زيارة %{consent_link}.
-            consent_page: صفحة الموافقة
-            intro_html:
-                يستخدم Libreverse ملفات تعريف الارتباط الضرورية لأمان الجلسة ("_libreverse_session")
-                وملف تعريف ارتباط اختياري لتذكرني ("remember_*") الذي يحتفظ بتسجيل الدخول
-                لمدة 30 يومًا.
-            manage_cookies:
-                يمكنك إدارة ملفات تعريف الارتباط من خلال إعدادات المتصفح. ومع
-                ذلك، فإن تعطيل ملفات تعريف الارتباط الضرورية سيمنع الموقع من العمل بشكل صحيح.
-            title: سياسة ملفات تعريف الارتباط
-        privacy:
-            compliance_discovery: للامتثال واكتشاف الآلي
-            data_storage_description:
-                'يخزن Libreverse البيانات الضرورية فقط لتشغيل الخدمة:
-                بيانات اعتماد الحساب، والتفضيلات الاختيارية، وأي محتوى تقوم بتحميله ("التجارب").
-                نحن لا نبيع بياناتك أبدًا ولا نستخدم أدوات تتبع أو تحليلات من أطراف ثالثة.'
-            endpoint_available_at: نقطة النهاية متاحة في
-            lawful_basis_description:
-                تتم معالجة بياناتك على أساس العقد (لتوفير الخدمة)
-                وحيثما ينطبق، الموافقة (ملفات تعريف الارتباط الاختيارية).
-            machine_readable: قابل للقراءة آليًا
-            note_label: "ملاحظة:"
-            rights_tools_info:
-                هناك أدوات مقدمة في لوحة تحكم الحساب لممارسة حقوقك حيثما
-                ينطبق.
-        privacy_policy: سياسة الخصوصية
-        view_cookie_policy: عرض سياسة ملفات تعريف الارتباط
-        view_privacy_policy: عرض سياسة الخصوصية
-    rodauth:
-        create_account:
-            footer_have_account: لديك بالفعل حساب؟
-            sign_in: تسجيل الدخول
-        login:
-            footer_no_account: ليس لديك حساب؟
-            sign_up: التسجيل
-        multi_phase_login:
-            footer_need_help: تحتاج إلى مساعدة؟
-            return_to_login: العودة إلى تسجيل الدخول
-    search:
-        federated_experience_description:
-            This experience is hosted on %{domain} and will
-            open in a new tab
-        from_instance: From %{domain}
-        index:
-            experiences_word: التجارب
-            input_aria_label: البحث في التجارب
-            search_placeholder: ابحث عن تجربة
-            search_word: البحث
-            title: البحث في التجارب
-            tutorial_description:
-                اكتب كلمات مفتاحية للعثور على التجارب في Libreverse. ستظهر
-                النتائج أثناء الكتابة.
-            tutorial_heading: دليل البحث
-    settings:
-        index:
-            description: إدارة تفضيلاتك.
-            language: اللغة
-            title: الإعدادات
-    spam_protection:
-        bot_detected: Automated behavior detected. Please try again.
-        hashcash_failed:
-            Security validation failed. Please ensure JavaScript is enabled
-            and try again.
-    terms:
-        index:
-            intro:
-                "Libreverse هو مشروع شخصي غير تجاري مفتوح المصدر. باستخدام هذا المنصة،
-                فإنك توافق على:"
-            risk_clause:
-                الاستخدام على مسؤوليتك الخاصة. نحن لا نقدم أي ضمانات للأداء أو
-                التوافر.
-            title: شروط خدمة Libreverse
+  consent:
+    screen:
+      access_message_html: للوصول إلى التطبيق، يجب أن توافق على %{privacy_policy_link}
+        و %{cookie_policy_link}.
+      agree_and_continue: الموافقة والمتابعة
+      decline: رفض
+      english_only_notice: هذه السياسات باللغة الإنجليزية بسبب قيود الموارد. الترجمات
+        مخططة للمستقبل.
+      intro: 'Welcome to Libreverse! A few things before we get started:'
+      remember_info_html: نستخدم أيضًا ملف تعريف ارتباط اختياري 'تذكرني' لتخزين تسجيل
+        الدخول الخاص بك لمدة 30 يومًا.
+      remember_opt_in_label: تمكين ملفات تعريف الارتباط غير الضرورية المطلوبة للبقاء
+        مسجل الدخول عبر الجلسات (اختياري تقنيًا ولكن يوصى به بشدة)
+  dashboard:
+    index:
+      account_actions_title: إجراءات الحساب
+      account_settings: إعدادات الحساب
+      change_password: تغيير كلمة المرور
+      compliance_options_title: خيارات الامتثال
+      delete_account: حذف الحساب
+      edit_profile: تحرير الملف الشخصي
+      export_data: تصدير البيانات
+      review_consent: مراجعة الموافقة
+      sign_out: تسجيل الخروج
+      title: لوحة التحكم
+      tutorial_description: أنت مسجل الدخول إلى لوحة تحكم حسابك. إدارة إعدادات حسابك
+        من هنا.
+      tutorial_heading: حسابك
+      welcome: مرحبا،
+  experiences:
+    edit:
+      back_to_experiences: العودة إلى التجارب
+      created_and_updated_html: تم إنشاء هذه التجربة في %{created_date} وآخر تحديث
+        منذ %{updated_ago}.
+      instructions: قم بإجراء التغييرات على تجربتك أدناه واحفظ عندما تكون جاهزًا.
+      refining: صقل "%{title}"
+      subtitle: إجراء التغييرات على تجربتك
+      title: تحرير التجربة
+      view_current_experience: عرض التجربة الحالية
+    experiences_list:
+      approve: الموافقة
+      awaiting_approval: في انتظار الموافقة
+      by: بواسطة
+      created_at: 'تم الإنشاء في:'
+      delete: حذف
+      edit_details: تحرير التفاصيل
+    form:
+      current_file: 'الملف الحالي:'
+      errors_prohibited: 'منع هذه التجربة من الحفظ:'
+      replace_file: "(استبدال بتحميل ملف جديد)"
+      rich_description_help: الأوصاف الغنية تساعد الآخرين على فهم تجربتك بشكل أفضل.
+      upload_single_html_help: قم بتحميل ملف HTML الفردي لتجربتك.
+    index:
+      create_new_heading: إنشاء تجربة جديدة
+      subtitle: إنشاء وإدارة تجاربك
+      title: تجاربي
+      tutorial_description: إدارة تجاربك وإنشاء تجارب جديدة لمشاركتها مع مجتمع Libreverse.
+      tutorial_heading: مجموعتك الإبداعية
+    new:
+      back: العودة
+      title: تجربة جديدة
+    show:
+      find_similar: العثور على تجارب مماثلة
+      last_updated: 'آخر تحديث:'
+      subtitle: عرض تفاصيل التجربة
+      title: تفاصيل التجربة
+  flash:
+    content_flagged: Your submission contains content that appears to be spam.
+    please_try_again: Please try again in a moment.
+    suspicious_activity: Suspicious activity detected. Please try again later.
+    too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  homepage:
+    index:
+      brand: Libreverse
+      digital_life_inevitable: A digital life may be inevitable, but it shouldn’t
+        enslave us.
+      help_build_alternative: Help us build an open, ethical alternative to Meta's
+        metaverse
+      know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
+      libre_word: ليبر
+      meta_charging: Meta’s charging toward this future, but we can’t let one company
+        own it.
+      metaverse_article_title: The case for an open-source metaverse.
+      metaverse_hook: The Metaverse could hook us with a fake paradise, and we might
+        not unplug.
+      not_one_product: It’s not one product; it’s a shift to a fully online existence.
+      open_source_rival: An open-source rival like Libreverse is vital, letting others
+        build competing Metaverses without starting from scratch.
+      reclaim_potential: Let’s reclaim the Metaverse’s potential—before it’s just
+        Meta’s world.
+      sounds_cool: Sounds cool, but it risks becoming a Matrix-style trap, hijacking
+        our brains like social media, gambling, or junk food do.
+      take_control: Take control
+      verse_word: فيرس
+      zuckerberg_rebrand: Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
+        digital world for work, play, and life—is taking shape.
+  invisible_captcha:
+    spam_detection:
+      general_spam: Your submission appears to be spam. Please try again.
+      honeypot_triggered: 'Spam detected: hidden field was filled'
+    timestamp_error_message: Form submitted too quickly. Please wait a moment and
+      try again.
+  layouts:
+    application:
+      noscript_heading: جافا سكريبت مطلوب
+      noscript_message: يتطلب هذا التطبيق جافا سكريبت ليعمل بشكل صحيح. يرجى تمكين
+        جافا سكريبت في إعدادات المتصفح وتحديث الصفحة.
+    default_drawer:
+      by: بواسطة
+      intro_html: في Libreverse، نحن ❤️ المشاريع تحت تراخيص مفتوحة ونريد أن نعطي الفضل
+        للمشاريع التي جعلت Libreverse ممكنًا. حاليًا، هذا يشمل فقط المشاريع حيث الإسناد
+        هو متطلب ترخيص، لكن لدينا خطط لتوسيعه في المستقبل.
+      libreverse_twemoji: Libreverse-Twemoji
+      licensed_under: مرخص بموجب
+      modified_from: الذي تم تعديله من
+    drawer:
+      attribution: الإسناد
+  policies:
+    cookie_policy: سياسة ملفات تعريف الارتباط
+    cookies:
+      adjust_preferences_html: يمكنك ضبط تفضيلات الموافقة الخاصة بك في أي وقت عن طريق
+        زيارة %{consent_link}.
+      consent_page: صفحة الموافقة
+      intro_html: يستخدم Libreverse ملفات تعريف الارتباط الضرورية لأمان الجلسة ("_libreverse_session")
+        وملف تعريف ارتباط اختياري لتذكرني ("remember_*") الذي يحتفظ بتسجيل الدخول
+        لمدة 30 يومًا.
+      manage_cookies: يمكنك إدارة ملفات تعريف الارتباط من خلال إعدادات المتصفح. ومع
+        ذلك، فإن تعطيل ملفات تعريف الارتباط الضرورية سيمنع الموقع من العمل بشكل صحيح.
+      title: سياسة ملفات تعريف الارتباط
+    privacy:
+      compliance_discovery: للامتثال واكتشاف الآلي
+      data_storage_description: 'يخزن Libreverse البيانات الضرورية فقط لتشغيل الخدمة:
+        بيانات اعتماد الحساب، والتفضيلات الاختيارية، وأي محتوى تقوم بتحميله ("التجارب").
+        نحن لا نبيع بياناتك أبدًا ولا نستخدم أدوات تتبع أو تحليلات من أطراف ثالثة.'
+      endpoint_available_at: نقطة النهاية متاحة في
+      lawful_basis_description: تتم معالجة بياناتك على أساس العقد (لتوفير الخدمة)
+        وحيثما ينطبق، الموافقة (ملفات تعريف الارتباط الاختيارية).
+      machine_readable: قابل للقراءة آليًا
+      note_label: 'ملاحظة:'
+      rights_tools_info: هناك أدوات مقدمة في لوحة تحكم الحساب لممارسة حقوقك حيثما
+        ينطبق.
+    privacy_policy: سياسة الخصوصية
+    view_cookie_policy: عرض سياسة ملفات تعريف الارتباط
+    view_privacy_policy: عرض سياسة الخصوصية
+  rodauth:
+    create_account:
+      footer_have_account: لديك بالفعل حساب؟
+      sign_in: تسجيل الدخول
+    login:
+      footer_no_account: ليس لديك حساب؟
+      sign_up: التسجيل
+    multi_phase_login:
+      footer_need_help: تحتاج إلى مساعدة؟
+      return_to_login: العودة إلى تسجيل الدخول
+  search:
+    federated_experience_description: This experience is hosted on %{domain} and will
+      open in a new tab
+    from_instance: From %{domain}
+    index:
+      experiences_word: التجارب
+      input_aria_label: البحث في التجارب
+      search_placeholder: ابحث عن تجربة
+      search_word: البحث
+      title: البحث في التجارب
+      tutorial_description: اكتب كلمات مفتاحية للعثور على التجارب في Libreverse. ستظهر
+        النتائج أثناء الكتابة.
+      tutorial_heading: دليل البحث
+  settings:
+    index:
+      description: إدارة تفضيلاتك.
+      language: اللغة
+      title: الإعدادات
+  spam_protection:
+    bot_detected: Automated behavior detected. Please try again.
+    hashcash_failed: Security validation failed. Please ensure JavaScript is enabled
+      and try again.
+  terms:
+    index:
+      intro: 'Libreverse هو مشروع شخصي غير تجاري مفتوح المصدر. باستخدام هذا المنصة،
+        فإنك توافق على:'
+      risk_clause: الاستخدام على مسؤوليتك الخاصة. نحن لا نقدم أي ضمانات للأداء أو
+        التوافر.
+      title: شروط خدمة Libreverse

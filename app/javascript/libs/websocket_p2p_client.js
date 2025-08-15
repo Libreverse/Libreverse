@@ -1,6 +1,9 @@
 // WebSocket P2P Client Library for Libreverse Experiences
 // Provides backwards compatible API with the previous P2P implementation
 
+import * as Y from "yjs";
+import { WebsocketProvider as YActionCableProvider } from "@y-rb/actioncable";
+
 class LibreverseWebSocketP2P {
     constructor() {
         this.connected = false;
@@ -10,6 +13,12 @@ class LibreverseWebSocketP2P {
         this.participants = {};
         this.messageHandlers = new Map();
         this.status = "disconnected";
+
+        // Yjs related
+        this.ydoc = new Y.Doc();
+        this.yProviders = new Map(); // docId -> provider
+        this.defaultDocId = undefined;
+        this.collabReadyHandlers = new Set();
 
         // Listen for messages from parent window (Libreverse app)
         window.addEventListener("message", (event) => {
@@ -45,6 +54,11 @@ class LibreverseWebSocketP2P {
                 this.isHost = message.isHost;
                 this.connected = message.connected;
                 this.onInit(message);
+                // Auto attach default collaborative doc once session known
+                if (!this.defaultDocId && this.sessionId) {
+                    this.defaultDocId = `session:${this.sessionId}`;
+                    this.attachCollab(this.defaultDocId);
+                }
                 break;
             }
 
@@ -91,6 +105,71 @@ class LibreverseWebSocketP2P {
                 }
                 this.onParticipantsChange(this.participants);
                 break;
+            }
+        }
+    }
+
+    // --- Collaborative Document API (Yjs + yrb-actioncable) ---
+    attachCollab(documentId) {
+        if (!documentId) throw new Error("documentId required");
+        if (this.yProviders.has(documentId))
+            return this.yProviders.get(documentId);
+        const consumer =
+            globalThis.App?.cable ||
+            (globalThis.ActionCable &&
+                globalThis.ActionCable.createConsumer &&
+                globalThis.ActionCable.createConsumer());
+        if (!consumer) {
+            console.warn("No ActionCable consumer available for Yjs provider");
+            return;
+        }
+        const provider = new YActionCableProvider(
+            this.ydoc,
+            consumer,
+            "SyncChannel",
+            { id: documentId },
+        );
+        provider.on("status", (eventStatus) => {
+            if (eventStatus.status === "connected") {
+                this._notifyCollabReady(documentId);
+            }
+        });
+        this.yProviders.set(documentId, provider);
+        return provider;
+    }
+
+    detachCollab(documentId) {
+        const provider = this.yProviders.get(documentId);
+        if (provider) {
+            provider.destroy();
+            this.yProviders.delete(documentId);
+        }
+    }
+
+    getDoc() {
+        return this.ydoc;
+    }
+
+    onCollabReady(handler) {
+        this.collabReadyHandlers.add(handler);
+        // Immediate fire if already connected
+        if (this.defaultDocId && this._providerConnected(this.defaultDocId))
+            handler(this.defaultDocId, this.ydoc);
+        return () => this.collabReadyHandlers.delete(handler);
+    }
+
+    _providerConnected(documentId) {
+        const p = this.yProviders.get(documentId);
+        return p && p.synced; // yrb-actioncable provider sets synced when initial state applied
+    }
+
+    _notifyCollabReady(documentId) {
+        if (!this._providerConnected(documentId)) return;
+        for (const h of this.collabReadyHandlers) {
+            try {
+                h(documentId, this.ydoc);
+            } catch (error) {
+                console.error("collabReady handler error", error);
             }
         }
     }

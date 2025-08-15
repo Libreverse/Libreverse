@@ -1,221 +1,191 @@
 ---
 hi:
-    consent:
-        screen:
-            access_message_html:
-                ऐप तक पहुंचने के लिए, आपको हमारी %{privacy_policy_link}
-                और %{cookie_policy_link} से सहमत होना होगा।
-            agree_and_continue: सहमत हों और जारी रखें
-            decline: अस्वीकार करें
-            english_only_notice:
-                संसाधन सीमाओं के कारण ये नीतियां अंग्रेजी में हैं। भविष्य
-                में अनुवाद की योजना है।
-            intro: "Welcome to Libreverse! A few things before we get started:"
-            remember_info_html:
-                हम आपके लॉगिन को 30 दिनों तक संग्रहीत करने के लिए एक वैकल्पिक
-                'मुझे याद रखें' कुकी का भी उपयोग करते हैं।
-            remember_opt_in_label:
-                सत्रों के बीच लॉग इन रहने के लिए आवश्यक गैर-आवश्यक कुकीज़
-                को सक्षम करें (तकनीकी रूप से वैकल्पिक लेकिन अत्यधिक अनुशंसित)
-    dashboard:
-        index:
-            account_actions_title: खाता क्रियाएं
-            account_settings: खाता सेटिंग्स
-            change_password: पासवर्ड बदलें
-            compliance_options_title: अनुपालन विकल्प
-            delete_account: खाता हटाएं
-            edit_profile: प्रोफ़ाइल संपादित करें
-            export_data: डेटा निर्यात करें
-            review_consent: सहमति की समीक्षा करें
-            sign_out: साइन आउट
-            title: डैशबोर्ड
-            tutorial_description:
-                आप अपने खाता डैशबोर्ड में लॉग इन हैं। यहां से अपने खाता
-                सेटिंग्स को प्रबंधित करें।
-            tutorial_heading: आपका खाता
-            welcome: स्वागत है,
-    experiences:
-        edit:
-            back_to_experiences: अनुभवों पर वापस जाएं
-            created_and_updated_html:
-                यह अनुभव %{created_date} को बनाया गया था और अंतिम
-                बार %{updated_ago} पहले अपडेट किया गया था।
-            instructions: नीचे अपने अनुभव में परिवर्तन करें और जब आप तैयार हों तो सहेजें।
-            refining: '"%{title}" को परिष्कृत करना'
-            subtitle: अपने अनुभव में परिवर्तन करें
-            title: अनुभव संपादित करें
-            view_current_experience: वर्तमान अनुभव देखें
-        experiences_list:
-            approve: अनुमोदित करें
-            awaiting_approval: अनुमोदन की प्रतीक्षा में
-            by: द्वारा
-            created_at: "निर्मित तिथि:"
-            delete: हटाएं
-            edit_details: विवरण संपादित करें
-        form:
-            current_file: "वर्तमान फ़ाइल:"
-            errors_prohibited: "इस अनुभव को सहेजने से रोका:"
-            replace_file: "(नई फ़ाइल अपलोड करके बदलें)"
-            rich_description_help:
-                समृद्ध विवरण दूसरों को आपके अनुभव को बेहतर ढंग से समझने
-                में मदद करते हैं।
-            upload_single_html_help: अपने अनुभव के लिए एकल HTML फ़ाइल अपलोड करें।
-        index:
-            create_new_heading: नया अनुभव बनाएं
-            subtitle: अपने अनुभव बनाएं और प्रबंधित करें
-            title: मेरे अनुभव
-            tutorial_description:
-                अपने अनुभवों को प्रबंधित करें और Libreverse समुदाय के
-                साथ साझा करने के लिए नए बनाएं।
-            tutorial_heading: आपका रचनात्मक संग्रह
-        new:
-            back: वापस
-            title: नया अनुभव
-        show:
-            find_similar: समान अनुभव खोजें
-            last_updated: "अंतिम अपडेट:"
-            subtitle: एक अनुभव के लिए विवरण देखना
-            title: अनुभव विवरण
-    flash:
-        content_flagged: Your submission contains content that appears to be spam.
-        please_try_again: Please try again in a moment.
-        suspicious_activity: Suspicious activity detected. Please try again later.
-        too_many_requests: You're submitting forms too quickly. Please wait a moment.
-    homepage:
-        index:
-            brand: Libreverse
-            digital_life_inevitable:
-                A digital life may be inevitable, but it shouldn’t
-                enslave us.
-            help_build_alternative:
-                Help us build an open, ethical alternative to Meta's
-                metaverse
-            know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
-            libre_word: लिबरे
-            meta_charging:
-                Meta’s charging toward this future, but we can’t let one company
-                own it.
-            metaverse_article_title: The case for an open-source metaverse.
-            metaverse_hook:
-                The Metaverse could hook us with a fake paradise, and we might
-                not unplug.
-            not_one_product: It’s not one product; it’s a shift to a fully online existence.
-            open_source_rival:
-                An open-source rival like Libreverse is vital, letting others
-                build competing Metaverses without starting from scratch.
-            reclaim_potential:
-                Let’s reclaim the Metaverse’s potential—before it’s just
-                Meta’s world.
-            sounds_cool:
-                Sounds cool, but it risks becoming a Matrix-style trap, hijacking
-                our brains like social media, gambling, or junk food do.
-            take_control: Take control
-            verse_word: वर्स
-            zuckerberg_rebrand:
-                Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
-                digital world for work, play, and life—is taking shape.
-    invisible_captcha:
-        spam_detection:
-            general_spam: Your submission appears to be spam. Please try again.
-            honeypot_triggered: "Spam detected: hidden field was filled"
-        timestamp_error_message:
-            Form submitted too quickly. Please wait a moment and
-            try again.
-    layouts:
-        application:
-            noscript_heading: जावास्क्रिप्ट आवश्यक
-            noscript_message:
-                यह एप्लिकेशन ठीक से काम करने के लिए जावास्क्रिप्ट की आवश्यकता
-                है। कृपया अपने ब्राउज़र सेटिंग्स में जावास्क्रिप्ट सक्षम करें और पृष्ठ को
-                रिफ्रेश करें।
-        default_drawer:
-            by: द्वारा
-            intro_html:
-                Libreverse पर, हम ❤️ खुले लाइसेंस के तहत परियोजनाओं को पसंद करते
-                हैं और उन परियोजनाओं को श्रेय देना चाहते हैं जिन्होंने Libreverse को संभव
-                बनाया। वर्तमान में, इसमें केवल वे परियोजनाएं शामिल हैं जहां श्रेय एक लाइसेंस
-                आवश्यकता है, लेकिन हम भविष्य में इसका विस्तार करने की योजना बना रहे हैं।
-            libreverse_twemoji: Libreverse-Twemoji
-            licensed_under: के तहत लाइसेंस प्राप्त
-            modified_from: जो संशोधित है
-        drawer:
-            attribution: श्रेय
-    policies:
-        cookie_policy: कुकी नीति
-        cookies:
-            adjust_preferences_html:
-                आप %{consent_link} पर जाकर किसी भी समय अपनी सहमति प्राथमिकताओं
-                को समायोजित कर सकते हैं।
-            consent_page: सहमति पृष्ठ
-            intro_html:
-                Libreverse सत्र सुरक्षा के लिए अत्यावश्यक कुकीज़ ("_libreverse_session")
-                और एक वैकल्पिक "मुझे याद रखें" कुकी ("remember_*") का उपयोग करता है, जो आपके
-                लॉगिन को 30 दिनों तक बनाए रखती है।
-            manage_cookies:
-                आप अपने ब्राउज़र सेटिंग्स के माध्यम से कुकीज़ को प्रबंधित कर
-                सकते हैं। हालांकि, अत्यावश्यक कुकीज़ को अक्षम करने से साइट ठीक से काम नहीं
-                करेगी।
-            title: कुकी नीति
-        privacy:
-            compliance_discovery: अनुपालन और स्वचालित खोज के लिए।
-            data_storage_description:
-                'Libreverse केवल सेवा को संचालित करने के लिए आवश्यक
-                डेटा संग्रहीत करता है: खाता क्रेडेंशियल्स, वैकल्पिक प्राथमिकताएं, और आपके
-                द्वारा अपलोड किया गया कोई भी सामग्री ("अनुभव")। हम आपका डेटा कभी नहीं बेचते
-                हैं और तीसरे पक्ष के ट्रैकर्स या एनालिटिक्स का उपयोग नहीं करते हैं।'
-            endpoint_available_at: एंडपॉइंट पर उपलब्ध है
-            lawful_basis_description:
-                आपका डेटा अनुबंध के आधार पर (सेवा प्रदान करने के लिए)
-                और, जहां लागू हो, सहमति (वैकल्पिक कुकीज़) के आधार पर संसाधित किया जाता है।
-            machine_readable: एक मशीन-पठनीय
-            note_label: "नोट:"
-            rights_tools_info:
-                खाता डैशबोर्ड में उपकरण दिए गए हैं ताकि आप अपने अधिकारों
-                का प्रयोग कर सकें, जहां लागू हो।
-        privacy_policy: गोपनीयता नीति
-        view_cookie_policy: कुकी नीति देखें
-        view_privacy_policy: गोपनीयता नीति देखें
-    rodauth:
-        create_account:
-            footer_have_account: क्या आपके पास पहले से ही एक खाता है?
-            sign_in: साइन इन करें
-        login:
-            footer_no_account: क्या आपके पास खाता नहीं है?
-            sign_up: साइन अप करें
-        multi_phase_login:
-            footer_need_help: मदद की ज़रूरत है?
-            return_to_login: लॉगिन पर वापस जाएं
-    search:
-        federated_experience_description:
-            This experience is hosted on %{domain} and will
-            open in a new tab
-        from_instance: From %{domain}
-        index:
-            experiences_word: अनुभव
-            input_aria_label: अनुभव खोजें
-            search_placeholder: एक अनुभव खोजें
-            search_word: खोजें
-            title: अनुभव खोजें
-            tutorial_description:
-                Libreverse में अनुभव खोजने के लिए कीवर्ड टाइप करें। परिणाम
-                आपके टाइप करते ही दिखाई देंगे।
-            tutorial_heading: खोज गाइड
-    settings:
-        index:
-            description: अपनी वरीयताएँ प्रबंधित करें।
-            language: भाषा
-            title: सेटिंग्स
-    spam_protection:
-        bot_detected: Automated behavior detected. Please try again.
-        hashcash_failed:
-            Security validation failed. Please ensure JavaScript is enabled
-            and try again.
-    terms:
-        index:
-            intro:
-                "Libreverse एक व्यक्तिगत, गैर-व्यावसायिक ओपन-सोर्स प्रोजेक्ट है। इस प्लेटफ़ॉर्म
-                का उपयोग करके, आप सहमत होते हैं:"
-            risk_clause:
-                अपने जोखिम पर उपयोग करें। हम प्रदर्शन या उपलब्धता के लिए कोई वारंटी
-                प्रदान नहीं करते हैं।
-            title: Libreverse सेवा की शर्तें
+  consent:
+    screen:
+      access_message_html: ऐप तक पहुंचने के लिए, आपको हमारी %{privacy_policy_link}
+        और %{cookie_policy_link} से सहमत होना होगा।
+      agree_and_continue: सहमत हों और जारी रखें
+      decline: अस्वीकार करें
+      english_only_notice: संसाधन सीमाओं के कारण ये नीतियां अंग्रेजी में हैं। भविष्य
+        में अनुवाद की योजना है।
+      intro: 'Welcome to Libreverse! A few things before we get started:'
+      remember_info_html: हम आपके लॉगिन को 30 दिनों तक संग्रहीत करने के लिए एक वैकल्पिक
+        'मुझे याद रखें' कुकी का भी उपयोग करते हैं।
+      remember_opt_in_label: सत्रों के बीच लॉग इन रहने के लिए आवश्यक गैर-आवश्यक कुकीज़
+        को सक्षम करें (तकनीकी रूप से वैकल्पिक लेकिन अत्यधिक अनुशंसित)
+  dashboard:
+    index:
+      account_actions_title: खाता क्रियाएं
+      account_settings: खाता सेटिंग्स
+      change_password: पासवर्ड बदलें
+      compliance_options_title: अनुपालन विकल्प
+      delete_account: खाता हटाएं
+      edit_profile: प्रोफ़ाइल संपादित करें
+      export_data: डेटा निर्यात करें
+      review_consent: सहमति की समीक्षा करें
+      sign_out: साइन आउट
+      title: डैशबोर्ड
+      tutorial_description: आप अपने खाता डैशबोर्ड में लॉग इन हैं। यहां से अपने खाता
+        सेटिंग्स को प्रबंधित करें।
+      tutorial_heading: आपका खाता
+      welcome: स्वागत है,
+  experiences:
+    edit:
+      back_to_experiences: अनुभवों पर वापस जाएं
+      created_and_updated_html: यह अनुभव %{created_date} को बनाया गया था और अंतिम
+        बार %{updated_ago} पहले अपडेट किया गया था।
+      instructions: नीचे अपने अनुभव में परिवर्तन करें और जब आप तैयार हों तो सहेजें।
+      refining: '"%{title}" को परिष्कृत करना'
+      subtitle: अपने अनुभव में परिवर्तन करें
+      title: अनुभव संपादित करें
+      view_current_experience: वर्तमान अनुभव देखें
+    experiences_list:
+      approve: अनुमोदित करें
+      awaiting_approval: अनुमोदन की प्रतीक्षा में
+      by: द्वारा
+      created_at: 'निर्मित तिथि:'
+      delete: हटाएं
+      edit_details: विवरण संपादित करें
+    form:
+      current_file: 'वर्तमान फ़ाइल:'
+      errors_prohibited: 'इस अनुभव को सहेजने से रोका:'
+      replace_file: "(नई फ़ाइल अपलोड करके बदलें)"
+      rich_description_help: समृद्ध विवरण दूसरों को आपके अनुभव को बेहतर ढंग से समझने
+        में मदद करते हैं।
+      upload_single_html_help: अपने अनुभव के लिए एकल HTML फ़ाइल अपलोड करें।
+    index:
+      create_new_heading: नया अनुभव बनाएं
+      subtitle: अपने अनुभव बनाएं और प्रबंधित करें
+      title: मेरे अनुभव
+      tutorial_description: अपने अनुभवों को प्रबंधित करें और Libreverse समुदाय के
+        साथ साझा करने के लिए नए बनाएं।
+      tutorial_heading: आपका रचनात्मक संग्रह
+    new:
+      back: वापस
+      title: नया अनुभव
+    show:
+      find_similar: समान अनुभव खोजें
+      last_updated: 'अंतिम अपडेट:'
+      subtitle: एक अनुभव के लिए विवरण देखना
+      title: अनुभव विवरण
+  flash:
+    content_flagged: Your submission contains content that appears to be spam.
+    please_try_again: Please try again in a moment.
+    suspicious_activity: Suspicious activity detected. Please try again later.
+    too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  homepage:
+    index:
+      brand: Libreverse
+      digital_life_inevitable: A digital life may be inevitable, but it shouldn’t
+        enslave us.
+      help_build_alternative: Help us build an open, ethical alternative to Meta's
+        metaverse
+      know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
+      libre_word: लिबरे
+      meta_charging: Meta’s charging toward this future, but we can’t let one company
+        own it.
+      metaverse_article_title: The case for an open-source metaverse.
+      metaverse_hook: The Metaverse could hook us with a fake paradise, and we might
+        not unplug.
+      not_one_product: It’s not one product; it’s a shift to a fully online existence.
+      open_source_rival: An open-source rival like Libreverse is vital, letting others
+        build competing Metaverses without starting from scratch.
+      reclaim_potential: Let’s reclaim the Metaverse’s potential—before it’s just
+        Meta’s world.
+      sounds_cool: Sounds cool, but it risks becoming a Matrix-style trap, hijacking
+        our brains like social media, gambling, or junk food do.
+      take_control: Take control
+      verse_word: वर्स
+      zuckerberg_rebrand: Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
+        digital world for work, play, and life—is taking shape.
+  invisible_captcha:
+    spam_detection:
+      general_spam: Your submission appears to be spam. Please try again.
+      honeypot_triggered: 'Spam detected: hidden field was filled'
+    timestamp_error_message: Form submitted too quickly. Please wait a moment and
+      try again.
+  layouts:
+    application:
+      noscript_heading: जावास्क्रिप्ट आवश्यक
+      noscript_message: यह एप्लिकेशन ठीक से काम करने के लिए जावास्क्रिप्ट की आवश्यकता
+        है। कृपया अपने ब्राउज़र सेटिंग्स में जावास्क्रिप्ट सक्षम करें और पृष्ठ को
+        रिफ्रेश करें।
+    default_drawer:
+      by: द्वारा
+      intro_html: Libreverse पर, हम ❤️ खुले लाइसेंस के तहत परियोजनाओं को पसंद करते
+        हैं और उन परियोजनाओं को श्रेय देना चाहते हैं जिन्होंने Libreverse को संभव
+        बनाया। वर्तमान में, इसमें केवल वे परियोजनाएं शामिल हैं जहां श्रेय एक लाइसेंस
+        आवश्यकता है, लेकिन हम भविष्य में इसका विस्तार करने की योजना बना रहे हैं।
+      libreverse_twemoji: Libreverse-Twemoji
+      licensed_under: के तहत लाइसेंस प्राप्त
+      modified_from: जो संशोधित है
+    drawer:
+      attribution: श्रेय
+  policies:
+    cookie_policy: कुकी नीति
+    cookies:
+      adjust_preferences_html: आप %{consent_link} पर जाकर किसी भी समय अपनी सहमति प्राथमिकताओं
+        को समायोजित कर सकते हैं।
+      consent_page: सहमति पृष्ठ
+      intro_html: Libreverse सत्र सुरक्षा के लिए अत्यावश्यक कुकीज़ ("_libreverse_session")
+        और एक वैकल्पिक "मुझे याद रखें" कुकी ("remember_*") का उपयोग करता है, जो आपके
+        लॉगिन को 30 दिनों तक बनाए रखती है।
+      manage_cookies: आप अपने ब्राउज़र सेटिंग्स के माध्यम से कुकीज़ को प्रबंधित कर
+        सकते हैं। हालांकि, अत्यावश्यक कुकीज़ को अक्षम करने से साइट ठीक से काम नहीं
+        करेगी।
+      title: कुकी नीति
+    privacy:
+      compliance_discovery: अनुपालन और स्वचालित खोज के लिए।
+      data_storage_description: 'Libreverse केवल सेवा को संचालित करने के लिए आवश्यक
+        डेटा संग्रहीत करता है: खाता क्रेडेंशियल्स, वैकल्पिक प्राथमिकताएं, और आपके
+        द्वारा अपलोड किया गया कोई भी सामग्री ("अनुभव")। हम आपका डेटा कभी नहीं बेचते
+        हैं और तीसरे पक्ष के ट्रैकर्स या एनालिटिक्स का उपयोग नहीं करते हैं।'
+      endpoint_available_at: एंडपॉइंट पर उपलब्ध है
+      lawful_basis_description: आपका डेटा अनुबंध के आधार पर (सेवा प्रदान करने के लिए)
+        और, जहां लागू हो, सहमति (वैकल्पिक कुकीज़) के आधार पर संसाधित किया जाता है।
+      machine_readable: एक मशीन-पठनीय
+      note_label: 'नोट:'
+      rights_tools_info: खाता डैशबोर्ड में उपकरण दिए गए हैं ताकि आप अपने अधिकारों
+        का प्रयोग कर सकें, जहां लागू हो।
+    privacy_policy: गोपनीयता नीति
+    view_cookie_policy: कुकी नीति देखें
+    view_privacy_policy: गोपनीयता नीति देखें
+  rodauth:
+    create_account:
+      footer_have_account: क्या आपके पास पहले से ही एक खाता है?
+      sign_in: साइन इन करें
+    login:
+      footer_no_account: क्या आपके पास खाता नहीं है?
+      sign_up: साइन अप करें
+    multi_phase_login:
+      footer_need_help: मदद की ज़रूरत है?
+      return_to_login: लॉगिन पर वापस जाएं
+  search:
+    federated_experience_description: This experience is hosted on %{domain} and will
+      open in a new tab
+    from_instance: From %{domain}
+    index:
+      experiences_word: अनुभव
+      input_aria_label: अनुभव खोजें
+      search_placeholder: एक अनुभव खोजें
+      search_word: खोजें
+      title: अनुभव खोजें
+      tutorial_description: Libreverse में अनुभव खोजने के लिए कीवर्ड टाइप करें। परिणाम
+        आपके टाइप करते ही दिखाई देंगे।
+      tutorial_heading: खोज गाइड
+  settings:
+    index:
+      description: अपनी वरीयताएँ प्रबंधित करें।
+      language: भाषा
+      title: सेटिंग्स
+  spam_protection:
+    bot_detected: Automated behavior detected. Please try again.
+    hashcash_failed: Security validation failed. Please ensure JavaScript is enabled
+      and try again.
+  terms:
+    index:
+      intro: 'Libreverse एक व्यक्तिगत, गैर-व्यावसायिक ओपन-सोर्स प्रोजेक्ट है। इस प्लेटफ़ॉर्म
+        का उपयोग करके, आप सहमत होते हैं:'
+      risk_clause: अपने जोखिम पर उपयोग करें। हम प्रदर्शन या उपलब्धता के लिए कोई वारंटी
+        प्रदान नहीं करते हैं।
+      title: Libreverse सेवा की शर्तें

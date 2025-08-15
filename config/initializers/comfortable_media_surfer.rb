@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load custom authentication module
-require_relative '../../app/lib/cms_rodauth_authentication'
+require_relative "../../app/lib/cms_rodauth_authentication"
 
 ComfortableMediaSurfer.configure do |config|
   # Title of the admin area
@@ -15,19 +15,19 @@ ComfortableMediaSurfer.configure do |config|
 
   # Module responsible for authentication. You can replace it with your own.
   # It simply needs to have #authenticate method. See http_auth.rb for reference.
-  config.admin_auth = 'CmsRodauthAuthentication'
+  config.admin_auth = "CmsRodauthAuthentication"
   # Use custom base controller for public CMS to render within app layout
-  config.public_base_controller = 'CmsPublicBaseController'
+  config.public_base_controller = "CmsPublicBaseController"
 
   # Allow rendering of app partials from CMS
   config.allowed_partials = [
-    'layouts/sidebar',
-    'layouts/meta_tags',
-    'layouts/flash_messages',
-    'layouts/site_footer',
-    'layouts/drawer',
-    'layouts/development_headers',
-    'layouts/app_assets'
+    "layouts/sidebar",
+    "layouts/meta_tags",
+    "layouts/flash_messages",
+    "layouts/site_footer",
+    "layouts/drawer",
+    "layouts/development_headers",
+    "layouts/app_assets"
   ]
 
   # Allow helpers used in CMS layouts
