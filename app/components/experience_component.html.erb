@@ -1,6 +1,10 @@
-<article class="dashboard-section article-section dashboard-experience" itemscope itemtype="https://schema.org/CreativeWork">
+<article
+  class="dashboard-section article-section dashboard-experience"
+  itemscope
+  itemtype="https://schema.org/CreativeWork"
+>
   <%= render ExperienceComponent::HeaderComponent.new(experience: experience) %>
-  
+
   <div class="experience-content mb-4">
     <h3 class="h5 text-primary mb-3">
       Description
@@ -9,6 +13,6 @@
       <%= simple_format(experience.description) %>
     </div>
   </div>
-  
+
   <%= render ExperienceComponent::ActionsComponent.new(experience: experience) %>
-</article> 
+</article>

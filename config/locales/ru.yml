@@ -1,217 +1,188 @@
 ---
 ru:
-    consent:
-        screen:
-            access_message_html:
-                Для доступа к приложению вы должны согласиться с нашей
-                %{privacy_policy_link} и %{cookie_policy_link}.
-            agree_and_continue: Согласиться и продолжить
-            decline: Отклонить
-            english_only_notice:
-                Эти политики пока доступны только на английском языке из-за
-                ограниченных ресурсов. Переводы запланированы на будущее.
-            intro: "Welcome to Libreverse! A few things before we get started:"
-            remember_info_html:
-                Мы также используем опциональный файл cookie 'Запомнить
-                меня' для сохранения вашего входа на 30 дней.
-            remember_opt_in_label:
-                Включить необязательные файлы cookie для сохранения входа
-                между сессиями (технически опционально, но настоятельно рекомендуется)
-    dashboard:
-        index:
-            account_actions_title: Действия с аккаунтом
-            account_settings: Настройки аккаунта
-            change_password: Изменить пароль
-            compliance_options_title: Параметры соответствия
-            delete_account: Удалить аккаунт
-            edit_profile: Редактировать профиль
-            export_data: Экспорт данных
-            review_consent: Просмотреть согласие
-            sign_out: Выйти
-            title: Панель управления
-            tutorial_description:
-                Вы вошли в панель управления аккаунтом. Управляйте настройками
-                аккаунта отсюда.
-            tutorial_heading: Ваш аккаунт
-            welcome: Добро пожаловать,
-    experiences:
-        edit:
-            back_to_experiences: Назад к опытам
-            created_and_updated_html:
-                Этот опыт был создан %{created_date} и последний раз
-                обновлен %{updated_ago} назад.
-            instructions: Внесите изменения в ваш опыт ниже и сохраните, когда будете готовы.
-            refining: Редактирование "%{title}"
-            subtitle: Внесение изменений в ваш опыт
-            title: Редактирование опыта
-            view_current_experience: Посмотреть текущий опыт
-        experiences_list:
-            approve: Одобрить
-            awaiting_approval: Ожидает одобрения
-            by: "Автор:"
-            created_at: "Создано:"
-            delete: Удалить
-            edit_details: Редактировать
-        form:
-            current_file: "Текущий файл:"
-            errors_prohibited: "не позволили сохранить опыт:"
-            replace_file: "(Заменить, загрузив новый файл)"
-            rich_description_help: Подробное описание помогает другим лучше понять ваш опыт.
-            upload_single_html_help: Загрузите HTML-файл для вашего опыта.
-        index:
-            create_new_heading: Создать новый опыт
-            subtitle: Создание и управление опытами
-            title: Мои опыты
-            tutorial_description:
-                Управляйте своими опытами и создавайте новые, чтобы делиться
-                с сообществом Libreverse.
-            tutorial_heading: Ваша коллекция
-        new:
-            back: Назад
-            title: Новый опыт
-        show:
-            find_similar: Найти похожие опыты
-            last_updated: "Последнее обновление:"
-            subtitle: Просмотр деталей опыта
-            title: Детали опыта
-    flash:
-        content_flagged: Your submission contains content that appears to be spam.
-        please_try_again: Please try again in a moment.
-        suspicious_activity: Suspicious activity detected. Please try again later.
-        too_many_requests: You're submitting forms too quickly. Please wait a moment.
-    homepage:
-        index:
-            brand: Libreverse
-            digital_life_inevitable:
-                A digital life may be inevitable, but it shouldn’t
-                enslave us.
-            help_build_alternative:
-                Help us build an open, ethical alternative to Meta's
-                metaverse
-            know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
-            libre_word: Libre
-            meta_charging:
-                Meta’s charging toward this future, but we can’t let one company
-                own it.
-            metaverse_article_title: The case for an open-source metaverse.
-            metaverse_hook:
-                The Metaverse could hook us with a fake paradise, and we might
-                not unplug.
-            not_one_product: It’s not one product; it’s a shift to a fully online existence.
-            open_source_rival:
-                An open-source rival like Libreverse is vital, letting others
-                build competing Metaverses without starting from scratch.
-            reclaim_potential:
-                Let’s reclaim the Metaverse’s potential—before it’s just
-                Meta’s world.
-            sounds_cool:
-                Sounds cool, but it risks becoming a Matrix-style trap, hijacking
-                our brains like social media, gambling, or junk food do.
-            take_control: Take control
-            verse_word: verse
-            zuckerberg_rebrand:
-                Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
-                digital world for work, play, and life—is taking shape.
-    invisible_captcha:
-        spam_detection:
-            general_spam: Your submission appears to be spam. Please try again.
-            honeypot_triggered: "Spam detected: hidden field was filled"
-        timestamp_error_message:
-            Form submitted too quickly. Please wait a moment and
-            try again.
-    layouts:
-        application:
-            noscript_heading: Требуется JavaScript
-            noscript_message:
-                Для работы приложения требуется JavaScript. Включите JavaScript
-                в настройках браузера и обновите страницу.
-        default_drawer:
-            by: от
-            intro_html:
-                В Libreverse мы ❤️ проекты с открытыми лицензиями и хотим отдать
-                должное проектам, которые сделали libreverse возможным. Пока это включает
-                только проекты, где атрибуция требуется лицензией, но мы планируем расширить
-                список.
-            libreverse_twemoji: Libreverse-Twemoji
-            licensed_under: лицензировано под
-            modified_from: изменено на основе
-        drawer:
-            attribution: Атрибуция
-    policies:
-        cookie_policy: Политика использования файлов cookie
-        cookies:
-            adjust_preferences_html:
-                Вы можете изменить настройки согласия в любое время,
-                посетив %{consent_link}.
-            consent_page: страницу согласия
-            intro_html:
-                Libreverse использует строго необходимые файлы cookie для безопасности
-                сессии ("_libreverse_session") и опциональный файл cookie запоминания ("remember_*"),
-                который сохраняет ваш вход на 30 дней.
-            manage_cookies:
-                Вы можете управлять файлами cookie через настройки вашего браузера.
-                Однако отключение строго необходимых файлов cookie сделает сайт неработоспособным.
-            title: Политика использования файлов cookie
-        privacy:
-            compliance_discovery: для целей соответствия и автоматического обнаружения.
-            data_storage_description:
-                'Libreverse хранит только данные, необходимые для
-                работы сервиса: учетные данные, опциональные настройки и загружаемый вами
-                контент ("опыты"). Мы никогда не продаем ваши данные и не используем сторонние
-                трекеры или аналитику.'
-            endpoint_available_at: доступна по адресу
-            lawful_basis_description:
-                Ваши данные обрабатываются на основании договора (для
-                предоставления услуги) и, где применимо, согласия (опциональные файлы cookie).
-            machine_readable: Машиночитаемая
-            note_label: "Примечание:"
-            rights_tools_info:
-                В личном кабинете доступны инструменты для реализации ваших
-                прав, где это применимо.
-        privacy_policy: Политика конфиденциальности
-        view_cookie_policy: Посмотреть политику использования cookie
-        view_privacy_policy: Посмотреть политику конфиденциальности
-    rodauth:
-        create_account:
-            footer_have_account: Уже есть аккаунт?
-            sign_in: Войти
-        login:
-            footer_no_account: Нет аккаунта?
-            sign_up: Зарегистрироваться
-        multi_phase_login:
-            footer_need_help: Нужна помощь?
-            return_to_login: Вернуться к входу
-    search:
-        federated_experience_description:
-            This experience is hosted on %{domain} and will
-            open in a new tab
-        from_instance: From %{domain}
-        index:
-            experiences_word: Опытов
-            input_aria_label: Поиск опытов
-            search_placeholder: Поиск опыта
-            search_word: Поиск
-            title: Поиск опытов
-            tutorial_description:
-                Вводите ключевые слова для поиска опытов в Libreverse.
-                Результаты будут появляться по мере ввода.
-            tutorial_heading: Руководство по поиску
-    settings:
-        index:
-            description: Управляйте своими предпочтениями.
-            language: Язык
-            title: Настройки
-    spam_protection:
-        bot_detected: Automated behavior detected. Please try again.
-        hashcash_failed:
-            Security validation failed. Please ensure JavaScript is enabled
-            and try again.
-    terms:
-        index:
-            intro:
-                "Libreverse - личный некоммерческий проект с открытым исходным кодом.
-                Используя платформу, вы соглашаетесь:"
-            risk_clause:
-                Использование на ваш страх и риск. Мы не даем гарантий производительности
-                или доступности.
-            title: Условия использования Libreverse
+  consent:
+    screen:
+      access_message_html: Для доступа к приложению вы должны согласиться с нашей
+        %{privacy_policy_link} и %{cookie_policy_link}.
+      agree_and_continue: Согласиться и продолжить
+      decline: Отклонить
+      english_only_notice: Эти политики пока доступны только на английском языке из-за
+        ограниченных ресурсов. Переводы запланированы на будущее.
+      intro: 'Welcome to Libreverse! A few things before we get started:'
+      remember_info_html: Мы также используем опциональный файл cookie 'Запомнить
+        меня' для сохранения вашего входа на 30 дней.
+      remember_opt_in_label: Включить необязательные файлы cookie для сохранения входа
+        между сессиями (технически опционально, но настоятельно рекомендуется)
+  dashboard:
+    index:
+      account_actions_title: Действия с аккаунтом
+      account_settings: Настройки аккаунта
+      change_password: Изменить пароль
+      compliance_options_title: Параметры соответствия
+      delete_account: Удалить аккаунт
+      edit_profile: Редактировать профиль
+      export_data: Экспорт данных
+      review_consent: Просмотреть согласие
+      sign_out: Выйти
+      title: Панель управления
+      tutorial_description: Вы вошли в панель управления аккаунтом. Управляйте настройками
+        аккаунта отсюда.
+      tutorial_heading: Ваш аккаунт
+      welcome: Добро пожаловать,
+  experiences:
+    edit:
+      back_to_experiences: Назад к опытам
+      created_and_updated_html: Этот опыт был создан %{created_date} и последний раз
+        обновлен %{updated_ago} назад.
+      instructions: Внесите изменения в ваш опыт ниже и сохраните, когда будете готовы.
+      refining: Редактирование "%{title}"
+      subtitle: Внесение изменений в ваш опыт
+      title: Редактирование опыта
+      view_current_experience: Посмотреть текущий опыт
+    experiences_list:
+      approve: Одобрить
+      awaiting_approval: Ожидает одобрения
+      by: 'Автор:'
+      created_at: 'Создано:'
+      delete: Удалить
+      edit_details: Редактировать
+    form:
+      current_file: 'Текущий файл:'
+      errors_prohibited: 'не позволили сохранить опыт:'
+      replace_file: "(Заменить, загрузив новый файл)"
+      rich_description_help: Подробное описание помогает другим лучше понять ваш опыт.
+      upload_single_html_help: Загрузите HTML-файл для вашего опыта.
+    index:
+      create_new_heading: Создать новый опыт
+      subtitle: Создание и управление опытами
+      title: Мои опыты
+      tutorial_description: Управляйте своими опытами и создавайте новые, чтобы делиться
+        с сообществом Libreverse.
+      tutorial_heading: Ваша коллекция
+    new:
+      back: Назад
+      title: Новый опыт
+    show:
+      find_similar: Найти похожие опыты
+      last_updated: 'Последнее обновление:'
+      subtitle: Просмотр деталей опыта
+      title: Детали опыта
+  flash:
+    content_flagged: Your submission contains content that appears to be spam.
+    please_try_again: Please try again in a moment.
+    suspicious_activity: Suspicious activity detected. Please try again later.
+    too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  homepage:
+    index:
+      brand: Libreverse
+      digital_life_inevitable: A digital life may be inevitable, but it shouldn’t
+        enslave us.
+      help_build_alternative: Help us build an open, ethical alternative to Meta's
+        metaverse
+      know_they_are_bad: We know they’re bad, yet we keep scrolling, betting, eating.
+      libre_word: Libre
+      meta_charging: Meta’s charging toward this future, but we can’t let one company
+        own it.
+      metaverse_article_title: The case for an open-source metaverse.
+      metaverse_hook: The Metaverse could hook us with a fake paradise, and we might
+        not unplug.
+      not_one_product: It’s not one product; it’s a shift to a fully online existence.
+      open_source_rival: An open-source rival like Libreverse is vital, letting others
+        build competing Metaverses without starting from scratch.
+      reclaim_potential: Let’s reclaim the Metaverse’s potential—before it’s just
+        Meta’s world.
+      sounds_cool: Sounds cool, but it risks becoming a Matrix-style trap, hijacking
+        our brains like social media, gambling, or junk food do.
+      take_control: Take control
+      verse_word: verse
+      zuckerberg_rebrand: Zuckerberg’s Meta rebrand in 2021 drew laughs, yet the Metaverse—a
+        digital world for work, play, and life—is taking shape.
+  invisible_captcha:
+    spam_detection:
+      general_spam: Your submission appears to be spam. Please try again.
+      honeypot_triggered: 'Spam detected: hidden field was filled'
+    timestamp_error_message: Form submitted too quickly. Please wait a moment and
+      try again.
+  layouts:
+    application:
+      noscript_heading: Требуется JavaScript
+      noscript_message: Для работы приложения требуется JavaScript. Включите JavaScript
+        в настройках браузера и обновите страницу.
+    default_drawer:
+      by: от
+      intro_html: В Libreverse мы ❤️ проекты с открытыми лицензиями и хотим отдать
+        должное проектам, которые сделали libreverse возможным. Пока это включает
+        только проекты, где атрибуция требуется лицензией, но мы планируем расширить
+        список.
+      libreverse_twemoji: Libreverse-Twemoji
+      licensed_under: лицензировано под
+      modified_from: изменено на основе
+    drawer:
+      attribution: Атрибуция
+  policies:
+    cookie_policy: Политика использования файлов cookie
+    cookies:
+      adjust_preferences_html: Вы можете изменить настройки согласия в любое время,
+        посетив %{consent_link}.
+      consent_page: страницу согласия
+      intro_html: Libreverse использует строго необходимые файлы cookie для безопасности
+        сессии ("_libreverse_session") и опциональный файл cookie запоминания ("remember_*"),
+        который сохраняет ваш вход на 30 дней.
+      manage_cookies: Вы можете управлять файлами cookie через настройки вашего браузера.
+        Однако отключение строго необходимых файлов cookie сделает сайт неработоспособным.
+      title: Политика использования файлов cookie
+    privacy:
+      compliance_discovery: для целей соответствия и автоматического обнаружения.
+      data_storage_description: 'Libreverse хранит только данные, необходимые для
+        работы сервиса: учетные данные, опциональные настройки и загружаемый вами
+        контент ("опыты"). Мы никогда не продаем ваши данные и не используем сторонние
+        трекеры или аналитику.'
+      endpoint_available_at: доступна по адресу
+      lawful_basis_description: Ваши данные обрабатываются на основании договора (для
+        предоставления услуги) и, где применимо, согласия (опциональные файлы cookie).
+      machine_readable: Машиночитаемая
+      note_label: 'Примечание:'
+      rights_tools_info: В личном кабинете доступны инструменты для реализации ваших
+        прав, где это применимо.
+    privacy_policy: Политика конфиденциальности
+    view_cookie_policy: Посмотреть политику использования cookie
+    view_privacy_policy: Посмотреть политику конфиденциальности
+  rodauth:
+    create_account:
+      footer_have_account: Уже есть аккаунт?
+      sign_in: Войти
+    login:
+      footer_no_account: Нет аккаунта?
+      sign_up: Зарегистрироваться
+    multi_phase_login:
+      footer_need_help: Нужна помощь?
+      return_to_login: Вернуться к входу
+  search:
+    federated_experience_description: This experience is hosted on %{domain} and will
+      open in a new tab
+    from_instance: From %{domain}
+    index:
+      experiences_word: Опытов
+      input_aria_label: Поиск опытов
+      search_placeholder: Поиск опыта
+      search_word: Поиск
+      title: Поиск опытов
+      tutorial_description: Вводите ключевые слова для поиска опытов в Libreverse.
+        Результаты будут появляться по мере ввода.
+      tutorial_heading: Руководство по поиску
+  settings:
+    index:
+      description: Управляйте своими предпочтениями.
+      language: Язык
+      title: Настройки
+  spam_protection:
+    bot_detected: Automated behavior detected. Please try again.
+    hashcash_failed: Security validation failed. Please ensure JavaScript is enabled
+      and try again.
+  terms:
+    index:
+      intro: 'Libreverse - личный некоммерческий проект с открытым исходным кодом.
+        Используя платформу, вы соглашаетесь:'
+      risk_clause: Использование на ваш страх и риск. Мы не даем гарантий производительности
+        или доступности.
+      title: Условия использования Libreverse

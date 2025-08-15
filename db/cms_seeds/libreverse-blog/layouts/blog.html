@@ -1,37 +1,63 @@
 {{ cms:partial 'layouts/sidebar' }}
-<div class="sp-bg" role="presentation"
-     data-controller="raindrop"
-     data-scroll="true" data-scroll-speed="-2"></div>
+<div
+    class="sp-bg"
+    role="presentation"
+    data-controller="raindrop"
+    data-scroll="true"
+    data-scroll-speed="-2"
+></div>
 <div data-controller="locomotive-scroll" data-scroll-container="true">
-  <div data-controller="navigation-shortcuts">
-    <main class="content-wrapper">
-      <div class="container blog-container">
-        <header class="sp-main" role="banner">
-          <h1 class="large">Instance Blog</h1>
-          <span class="small">Instance Blog</span>
-        </header>
+    <div data-controller="navigation-shortcuts">
+        <main class="content-wrapper">
+            <div class="container blog-container">
+                <header class="sp-main" role="banner">
+                    <h1 class="large">Instance Blog</h1>
+                    <span class="small">Instance Blog</span>
+                </header>
 
-        <section class="blog-body" role="region" aria-label="Blog content">
-          <div class="blog-main">
-            <div class="cms-content">
-              {% for post in cms:page.children.published %}
-                <article class="blog-post">
-                  <h2><a href="{{ post.full_path }}" class="text-decoration-none">{{ post.label }}</a></h2>
-                  {% if post.fragments['published_at'] %}
-                    <div class="post-meta mb-3">
-                      <span class="text-muted">{{ post.fragments['published_at'].content }}</span>
+                <section
+                    class="blog-body"
+                    role="region"
+                    aria-label="Blog content"
+                >
+                    <div class="blog-main">
+                        <div class="cms-content">
+                            {% for post in cms:page.children.published %}
+                            <article class="blog-post">
+                                <h2>
+                                    <a
+                                        href="{{ post.full_path }}"
+                                        class="text-decoration-none"
+                                        >{{ post.label }}</a
+                                    >
+                                </h2>
+                                {% if post.fragments['published_at'] %}
+                                <div class="post-meta mb-3">
+                                    <span class="text-muted"
+                                        >{{
+                                        post.fragments['published_at'].content
+                                        }}</span
+                                    >
+                                </div>
+                                {% endif %} {% if
+                                post.fragments['meta_description'] %}
+                                <p class="lead">
+                                    {{
+                                    post.fragments['meta_description'].content
+                                    }}
+                                </p>
+                                {% endif %}
+                                <a
+                                    href="{{ post.full_path }}"
+                                    class="btn btn-primary"
+                                    >Read more</a
+                                >
+                            </article>
+                            {% endfor %}
+                        </div>
                     </div>
-                  {% endif %}
-                  {% if post.fragments['meta_description'] %}
-                    <p class="lead">{{ post.fragments['meta_description'].content }}</p>
-                  {% endif %}
-                  <a href="{{ post.full_path }}" class="btn btn-primary">Read more</a>
-                </article>
-              {% endfor %}
+                </section>
             </div>
-          </div>
-        </section>
-      </div>
-    </main>
-  </div>
+        </main>
+    </div>
 </div>

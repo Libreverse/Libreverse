@@ -15,7 +15,7 @@ module CMSBlogSync
     site = Comfy::Cms::Site.find_by(identifier: site_identifier)
     abort "[cms_blog_setup] Site not found: #{site_identifier}" unless site
 
-    seeds_root = Rails.root.join('db', 'cms_seeds', 'libreverse-blog')
+    seeds_root = Rails.root.join("db/cms_seeds/libreverse-blog")
     layouts_dir = seeds_root.join('layouts')
     abort "[cms_blog_setup] Layouts dir missing: #{layouts_dir}" unless Dir.exist?(layouts_dir)
 
@@ -38,35 +38,39 @@ module CMSBlogSync
       clear_page_caches_for_layout(site, layout)
 
       updated_count += 1
-      puts "[cms_blog_setup] Synced layout: #{ident} (app_layout=#{layout.app_layout})"
+      Rails.logger.debug "[cms_blog_setup] Synced layout: #{ident} (app_layout=#{layout.app_layout})"
     end
 
-    puts "[cms_blog_setup] Done. Updated #{updated_count} layouts."
+    Rails.logger.debug "[cms_blog_setup] Done. Updated #{updated_count} layouts."
   end
 
   def extract_front_matter(text)
-    return [{}, text] unless text.start_with?('---')
+    return [ {}, text ] unless text.start_with?('---')
+
     parts = text.split(/^---\s*$\n/, 3) # leading empty, front matter, body
     if parts.length >= 3
       fm_text = parts[1]
       body = parts[2]
       begin
         fm = YAML.safe_load(fm_text, aliases: true) || {}
-      rescue => e
+      rescue StandardError => e
         warn "[cms_blog_setup] front matter parse error: #{e.message}"
         fm = {}
       end
-      [fm, body]
+      [ fm, body ]
     else
-      [{}, text]
+      [ {}, text ]
     end
   end
 
   def clear_page_caches_for_layout(site, layout)
     page_ids = site.pages.where(layout_id: layout.id).pluck(:id)
     return if page_ids.empty?
-    site.pages.where(id: page_ids).update_all(content_cache: nil)
-    puts "[cms_blog_setup] Cleared content_cache for #{page_ids.size} page(s) using #{layout.identifier}"
+
+    site.pages.where(id: page_ids).find_each do |page|
+      page.update!(content_cache: nil)
+    end
+    Rails.logger.debug "[cms_blog_setup] Cleared content_cache for #{page_ids.size} page(s) using #{layout.identifier}"
   end
 end
 

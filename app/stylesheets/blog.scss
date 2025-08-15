@@ -1,13 +1,6 @@
 @use "sass:color";
 @use "variables";
 
-/* Blog container and header */
-.blog-container {
-    padding: 1.25rem 0 3.5rem;
-    max-width: 960px;
-    margin: 0 auto;
-}
-
 .blog-header {
     background: linear-gradient(
         135deg,
@@ -97,6 +90,10 @@
 
 /* Blog utility + component shims for CMS markup (no Bootstrap dependency) */
 .blog-container {
+    padding: 1.25rem 0 3.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+
     .lead {
         font-size: 1.15rem;
         color: variables.$white-80;

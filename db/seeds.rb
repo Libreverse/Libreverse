@@ -11,5 +11,5 @@
 #   end
 
 # Setup ComfortableMediaSurfer blog
-puts "Setting up blog with ComfortableMediaSurfer..."
-load Rails.root.join('db', 'cms_blog_setup.rb')
+Rails.logger.debug "Setting up blog with ComfortableMediaSurfer..."
+load Rails.root.join("db/cms_blog_setup.rb")

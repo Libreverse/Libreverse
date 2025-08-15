@@ -17,6 +17,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 - **API functionality** – Full-featured GraphQL API, XML-RPC endpoints, JSON API, and integrated gRPC server with HTTP bridge.
 - **Zero‑Redis architecture** – Solid Cable and Solid Queue keep ActionCable and background jobs inside SQLite.
 - **Security‑centric design** – CSP, Rack::Attack rate limiting, Brotli compression, and an evolving [security roadmap](todo.md).
+- **Collaborative Realtime** – WebSocket + Yjs CRDT layer providing durable shared state and ephemeral movement/presence without WebRTC complexity.
 
 ---
 

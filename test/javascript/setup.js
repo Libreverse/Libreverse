@@ -1,11 +1,12 @@
 // Polyfill TextEncoder and TextDecoder for jsdom compatibility
-import { TextEncoder, TextDecoder } from "node:util";
+// eslint-disable-next-line unicorn/prefer-module
+const { TextEncoder, TextDecoder } = require("node:util");
 globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
 
 // Import Jest DOM matchers
-import "@testing-library/jest-dom";
-import { jest } from "@jest/globals";
+// eslint-disable-next-line unicorn/prefer-module
+require("@testing-library/jest-dom");
 
 // Mock Turbo's visit function which is used in many controllers
 globalThis.Turbo = {
