@@ -9,17 +9,19 @@ export default class extends ApplicationController
     autoBootstrap: { type: Boolean, default: true }
   }
 
+
   connect: ->
     super()
     @ydoc = new Y.Doc()
     @pending = []
     @flushTimer = null
     @finalized = false
+    @relaxedSync = false
 
     @channel = App.cable.subscriptions.create({
       channel: "WebsocketP2pChannel",
       session_id: @sessionIdValue,
-      peer_id: "yjs_#{Math.random().toString(36).slice(2,10)}"
+      peer_id: "yjs_#{Math.random().toString(36).slice(2, 10)}"
     }, {
       received: @received.bind(@),
       connected: =>
@@ -30,11 +32,46 @@ export default class extends ApplicationController
     @ydoc.on "update", (update, origin) =>
       return if @finalized
       return if origin is 'remote'
-      b64 = btoa(Array.from(update, (byte) -> String.fromCharCode(byte)).join(''))
-      @pending.push(b64)
-      @scheduleFlush()
+      if @relaxedSync
+        # Only store update, don't send immediately
+        @pending.push(update)
+      else
+        b64 = btoa(Array.from(update, (byte) => String.fromCharCode(byte)).join(''))
+        @pending.push(b64)
+        @scheduleFlush()
 
-  disconnect: ->
+    # Listen for sync mode changes
+    window.addEventListener "sync-mode-changed", (e) =>
+      @relaxedSync = e.detail.mode is "relaxed"
+      if not @relaxedSync
+        # If switching to strict, immediately flush all pending updates
+        @flushAllPending()
+
+    # Listen for visibility changes
+    document.addEventListener "visibilitychange", =>
+      if @relaxedSync
+        if document.visibilityState is "hidden"
+          @flushAllPending()
+
+  flushAllPending: =>
+    if @pending.length > 0
+      # Merge all pending updates into one update
+      merged = null
+      try
+        merged = Y.mergeUpdates(@pending)
+      catch error
+        # fallback: send individually
+        merged = null
+      if merged
+        b64 = btoa(Array.from(merged, (byte) => String.fromCharCode(byte)).join(''))
+        @channel.send({ type: 'yjs_update', update_b64: b64 })
+      else
+        for update in @pending
+          b64 = btoa(Array.from(update, (byte) => String.fromCharCode(byte)).join(''))
+          @channel.send({ type: 'yjs_update', update_b64: b64 })
+      @pending = []
+
+  disconnect: =>
     # Unsubscribe from ActionCable channel to stop receiving messages
     if @channel?.unsubscribe?
       @channel.unsubscribe()
@@ -43,15 +80,10 @@ export default class extends ApplicationController
     if @flushTimer?
       clearTimeout(@flushTimer)
       @flushTimer = null
-        for u in msg.updates
-          try
-            Y.applyUpdate(@ydoc, @decode(u), 'remote')
-          catch error
-            console.error('Failed to apply update:', error)
     @ydoc?.destroy()
     super()
 
-  received: (msg) ->
+  received: (msg) =>
     switch msg.type
       when 'yjs_bootstrap'
         if msg.base_b64?.length > 0
@@ -64,9 +96,9 @@ export default class extends ApplicationController
       when 'session_finalized'
         @finalized = true
 
-  scheduleFlush: ->
+  scheduleFlush: =>
     return if @flushTimer
-    @flushTimer = setTimeout(() =>
+    @flushTimer = setTimeout(=>
       batch = @pending
       @pending = []
       clearTimeout(@flushTimer)
@@ -75,6 +107,6 @@ export default class extends ApplicationController
         @channel.send({ type: 'yjs_update', update_b64: u })
     , 25)
 
-  decode: (b64) ->
+  decode: (b64) =>
     str = atob(b64)
-    Uint8Array.from(str, (c) -> c.charCodeAt(0))
+    Uint8Array.from(str, (c) => c.charCodeAt(0))
