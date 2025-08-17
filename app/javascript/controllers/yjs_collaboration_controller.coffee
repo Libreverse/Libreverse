@@ -41,45 +41,73 @@ export default class extends ApplicationController
         @scheduleFlush()
 
     # Listen for sync mode changes
-    window.addEventListener "sync-mode-changed", (e) =>
-      @relaxedSync = e.detail.mode is "relaxed"
+    @onSyncModeChanged ?= (e) =>
+      @relaxedSync = e?.detail?.mode is "relaxed"
       if not @relaxedSync
         # If switching to strict, immediately flush all pending updates
         @flushAllPending()
+    window.addEventListener "sync-mode-changed", @onSyncModeChanged
 
     # Listen for visibility changes
-    document.addEventListener "visibilitychange", =>
-      if @relaxedSync
-        if document.visibilityState is "hidden"
-          @flushAllPending()
+    @onVisibilityChange ?= =>
+      if @relaxedSync and document.visibilityState is "hidden"
+        @flushAllPending()
+    document.addEventListener "visibilitychange", @onVisibilityChange
 
   flushAllPending: =>
-    if @pending.length > 0
-      # Merge all pending updates into one update
-      merged = null
-      try
-        merged = Y.mergeUpdates(@pending)
-      catch error
-        # fallback: send individually
-        merged = null
-      if merged
-        b64 = btoa(Array.from(merged, (byte) => String.fromCharCode(byte)).join(''))
-        @channel.send({ type: 'yjs_update', update_b64: b64 })
+    return unless @pending?.length > 0
+    # Helper: produce base64 for either Uint8Array or already-base64 string
+    toB64 = (u) ->
+      if u instanceof Uint8Array
+        btoa(Array.from(u, (byte) -> String.fromCharCode(byte)).join(''))
       else
-        for update in @pending
-          b64 = btoa(Array.from(update, (byte) => String.fromCharCode(byte)).join(''))
-          @channel.send({ type: 'yjs_update', update_b64: b64 })
-      @pending = []
+        u
 
+    # Normalize to Uint8Array for merging
+    normalized = []
+    for u in @pending
+      if u instanceof Uint8Array
+        normalized.push(u)
+      else
+        try
+          normalized.push(@decode(u))  # base64 -> Uint8Array
+        catch error
+          continue
+
+    merged = null
+    try
+      if normalized.length > 1
+        merged = Y.mergeUpdates(normalized)
+      else if normalized.length is 1
+        merged = normalized[0]
+    catch error
+      merged = null
+
+    if merged?
+      @channel?.send({ type: 'yjs_update', update_b64: toB64(merged) })
+    else
+      for u in @pending
+        @channel?.send({ type: 'yjs_update', update_b64: toB64(u) })
+    @pending = []
   disconnect: =>
+    # Remove global listeners
+    if @onSyncModeChanged?
+      window.removeEventListener "sync-mode-changed", @onSyncModeChanged
+      @onSyncModeChanged = null
+    if @onVisibilityChange?
+      document.removeEventListener "visibilitychange", @onVisibilityChange
+      @onVisibilityChange = null
+
+    # Clear timer and flush pending before tearing down the channel
+    if @flushTimer?
+      clearTimeout(@flushTimer)
+      @flushTimer = null
+    @flushAllPending?()
+
     # Unsubscribe from ActionCable channel to stop receiving messages
     if @channel?.unsubscribe?
       @channel.unsubscribe()
 
-    # Clear any scheduled flush
-    if @flushTimer?
-      clearTimeout(@flushTimer)
-      @flushTimer = null
     @ydoc?.destroy()
     super()
 

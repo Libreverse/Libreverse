@@ -6,7 +6,6 @@ export const ConnectionState = {
     IceCandidate: "IceCandidate",
     Error: "Error",
     New: "new",
-    Negotiating: "negotiating",
     Connecting: "connecting",
     Connected: "connected",
     DisConnected: "disconnected",

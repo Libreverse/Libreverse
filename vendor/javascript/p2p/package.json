@@ -9,6 +9,6 @@
     "esbuild": "^0.20.2"
   },
   "scripts": {
-    "build": "esbuild app/assets/javascripts/*.* --bundle --minify --format=esm --outdir=app/assets/builds --public-path=/assets"
+    "build": "esbuild ../../../app/assets/javascripts/*.* --bundle --minify --format=esm --outdir=../../../app/assets/builds --public-path=/assets"
   }
 }

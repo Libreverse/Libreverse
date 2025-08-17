@@ -1,11 +1,12 @@
+// @ts-nocheck
 import { ConnectionState, MessageType } from "p2p/message"
 
 const ICE_CONFIG = {
     iceServers: [
-		{ 
+        {
             urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]
         },
-	],
+    ],
 }
 
 export default class P2pConnection {
@@ -17,7 +18,14 @@ export default class P2pConnection {
         this.state = ConnectionState.New
         this.lastTimeUpdate = 0
         this.iceConfig = iceConfig || ICE_CONFIG
-        this.heartbeatConfig = heartbeatConfig
+        this.heartbeatConfig = (heartbeatConfig && typeof heartbeatConfig === 'object')
+            ? { interval_mls: 10000, idle_timeout_mls: 30000, ...heartbeatConfig }
+            : null
+        this.heartbeat = null
+        this.sendDataChannel = null
+        this.receiveDataChannel = null
+        this.sendDataChannelOpen = false
+        this.rtcPeerConnection = null
     }
 
     setupRTCPeerConnection() {
@@ -32,19 +40,19 @@ export default class P2pConnection {
                 this.peer.signal(ConnectionState.IceCandidate, ice)
             }
         }
-        this.rtcPeerConnection.oniceconnectionstatechange = event => {
-            // console.log(event)
+        this.rtcPeerConnection.oniceconnectionstatechange = () => {
+            // optional: handle ICE connection state changes
         }
 
-        this.rtcPeerConnection.onconnectionstatechange = (ev) => {
+        this.rtcPeerConnection.onconnectionstatechange = () => {
             // console.log(`onconnectionstatechange ${this.rtcPeerConnection.connectionState}`)
             this.state = this.rtcPeerConnection.connectionState
             if (this.state == ConnectionState.DisConnected || this.state == ConnectionState.Closed) {
                 this.close()
             }
             this.peer.updateP2pConnectionState(this)
-          }
-        
+        }
+
         this.sendDataChannel = this.rtcPeerConnection.createDataChannel("sendChannel")
         this.sendDataChannelOpen = false
         this.sendDataChannel.onopen = this.handleSendChannelStatusChange.bind(this)
@@ -56,7 +64,7 @@ export default class P2pConnection {
             this.receiveDataChannel.onmessage = this.receiveP2pMessage.bind(this)
             this.receiveDataChannel.onopen = this.handleReceiveChannelStatusChange.bind(this)
             this.receiveDataChannel.onclose = this.handleReceiveChannelStatusChange.bind(this)
-            
+
             this.peer.updateP2pConnectionState(this)
         }
 
@@ -65,7 +73,15 @@ export default class P2pConnection {
 
     receiveP2pMessage(event) {
         // console.log(`p2p received msg: ${event.data}`)
-        const msg = JSON.parse(event.data)
+        let msg
+        try {
+            msg = JSON.parse(event.data)
+        } catch (_e) {
+            return
+        }
+        if (!msg || typeof msg !== 'object' || !msg.type) {
+            return
+        }
         switch (msg.type) {
             case MessageType.Heartbeat:
                 this.state = ConnectionState.Connected
@@ -85,36 +101,49 @@ export default class P2pConnection {
                 data: message
             })
             this.sendDataChannel.send(msgJson)
-        } else {
-            // console.warn("the send data channel is not available!")
         }
     }
 
-    handleSendChannelStatusChange(event) {
+    handleSendChannelStatusChange(_event) {
         // console.log(event)
         if (this.sendDataChannel) {
-            this.sendDataChannelOpen = this.sendDataChannel.readyState == "open"
-            if (this.sendDataChannelOpen && this.heartbeatConfig) {
+            const open = this.sendDataChannel.readyState === "open"
+            this.sendDataChannelOpen = open
+            if (open && this.heartbeatConfig) {
                 this.scheduleHeartbeat()
+            } else {
+                this.stopHeartbeat()
             }
         }
+        this.peer.updateP2pConnectionState(this)
     }
 
-    handleReceiveChannelStatusChange(event) {
-        // console.log(event)
+    handleReceiveChannelStatusChange(_event) {
+        // no-op placeholder to keep symmetry and avoid missing handler
+        this.peer.updateP2pConnectionState(this)
     }
 
     scheduleHeartbeat() {
-        this.heartbeat = setTimeout(() => {
-            this.sendHeartbeat()
-        }, this.heartbeatConfig.interval_mls)
+        if (!this.heartbeatConfig || typeof this.heartbeatConfig.interval_mls !== 'number' || this.heartbeatConfig.interval_mls <= 0) {
+            return
+        }
+        clearTimeout(this.heartbeat)
+        this.heartbeat = setTimeout(() => this.sendHeartbeat(), this.heartbeatConfig.interval_mls)
     }
 
     sendHeartbeat() {
-        if (this.lastTimeUpdate > 0 && Date.now() - this.lastTimeUpdate > this.heartbeatConfig.idle_timeout_mls) {
+        if (!this.heartbeatConfig) return
+        const idle = this.heartbeatConfig.idle_timeout_mls
+        if (
+            this.lastTimeUpdate > 0 &&
+            typeof idle === 'number' &&
+            idle > 0 &&
+            Date.now() - this.lastTimeUpdate > idle
+        ) {
             // console.log("HEART-BEAT DETECT DISCONNECTED ............")
             this.state = ConnectionState.DisConnected
             this.peer.updateP2pConnectionState(this)
+            this.close()
         } else {
             this.sendP2pMessage("ping", MessageType.Heartbeat)
             this.scheduleHeartbeat()
@@ -125,9 +154,14 @@ export default class P2pConnection {
         // console.log(`stop heartbeat ${this.hostId} <-> ${this.clientId}`)
         clearTimeout(this.heartbeat)
     }
-    
+
     close() {
         // console.log(`close the connection ${this.hostId} <-> ${this.clientId}`)
         this.stopHeartbeat()
+        try { this.sendDataChannel && this.sendDataChannel.close() } catch (_e) {}
+        try { this.receiveDataChannel && this.receiveDataChannel.close() } catch (_e) {}
+        try { this.rtcPeerConnection && this.rtcPeerConnection.close() } catch (_e) {}
+        this.state = ConnectionState.Closed
+        this.peer.updateP2pConnectionState(this)
     }
 }

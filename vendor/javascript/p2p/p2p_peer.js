@@ -17,15 +17,15 @@ export default class P2pPeer {
     setup() {
         this.connections = new Map()
         this.signal(ConnectionState.SessionJoin, {})
-        this.dispatchP2pConnectionState({state: ConnectionState.Negotiating})
+        this.dispatchP2pConnectionState({ state: ConnectionState.Connecting })
     }
 
     signal(state, data) {
-        let msg = {
-            "type": MessageType.Connection,
-            "session_id": this.sessionId,
-            "peer_id": this.peerId,
-            "state": state,
+        const msg = {
+            type: MessageType.Connection,
+            session_id: this.sessionId,
+            peer_id: this.peerId,
+            state,
             ...data
         }
         this.signaling.send(msg)
@@ -36,10 +36,11 @@ export default class P2pPeer {
             case ConnectionState.SessionJoin:
                 break
             case ConnectionState.SessionReady:
-                if (msg.host_peer_id == this.peerId) { // iam host
+                if (msg.host_peer_id === this.peerId) { // I am host
                     this.iamHost = true
                     this.hostPeerId = this.peerId
-                    if (msg.peer_id == this.peerId) {
+
+                    if (msg.peer_id === this.peerId) {
                         this.updateP2pConnectionState()
                         return
                     }
@@ -47,87 +48,129 @@ export default class P2pPeer {
                     const connection = new P2pConnection(this, msg.peer_id, this.peerId, this.iamHost, this.iceConfig, this.heartbeatConfig)
                     this.connections.set(msg.peer_id, connection)
 
-                    const rtcPeerConnection = connection.setupRTCPeerConnection()
-                    if (!rtcPeerConnection) {
-                        // TODO: failed case
+                    let rtcPeerConnection
+                    try {
+                        rtcPeerConnection = connection.setupRTCPeerConnection()
+                    } catch (err) {
+                        this._handleConnectionSetupFailure(err, connection, { peerKey: msg.peer_id, role: 'host', host_peer_id: this.peerId, remote_peer_id: msg.peer_id })
                         return
                     }
+
                     rtcPeerConnection.createOffer()
-                        .then(offer => {
-                            return rtcPeerConnection.setLocalDescription(offer)
-                        })
+                        .then(offer => rtcPeerConnection.setLocalDescription(offer))
                         .then(() => {
-                            let offer = {"host_peer_id": msg.host_peer_id}
+                            const offer = { host_peer_id: msg.host_peer_id }
                             offer[ConnectionState.SdpOffer] = JSON.stringify(rtcPeerConnection.localDescription)
                             this.signal(ConnectionState.SdpOffer, offer)
                         })
-                        .catch(err => console.log(err))
+                        .catch(err => {
+                            console.error('Failed to create offer:', err)
+                            connection.state = ConnectionState.Failed
+                            this.updateP2pConnectionState(connection)
+                        })
                 }
 
                 this.state = ConnectionState.SessionReady
-
                 break
+
             case ConnectionState.SdpOffer:
-                if (msg.host_peer_id != this.peerId && this.state != ConnectionState.SdpOffer) { // iam not host
+                if (msg.host_peer_id !== this.peerId && this.state !== ConnectionState.SdpOffer) { // I am not host
                     this.hostPeerId = msg.host_peer_id
                     const connection = new P2pConnection(this, this.peerId, msg.host_peer_id, this.iamHost, this.iceConfig, this.heartbeatConfig)
                     this.connections.set(this.peerId, connection)
-                    
-                    const rtcPeerConnection = connection.setupRTCPeerConnection()
 
-                    let offer = JSON.parse(msg[ConnectionState.SdpOffer])
-                    // console.log(`${this.peerId} get Offer`)
-                    // console.log(offer)
+                    let rtcPeerConnection
+                    try {
+                        rtcPeerConnection = connection.setupRTCPeerConnection()
+                    } catch (err) {
+                        this._handleConnectionSetupFailure(err, connection, { peerKey: this.peerId, role: 'client', host_peer_id: msg.host_peer_id, remote_peer_id: msg.host_peer_id })
+                        return
+                    }
+
+                    const rawOffer = msg[ConnectionState.SdpOffer]
+                    let offer
+                    try {
+                        offer = JSON.parse(rawOffer)
+                    } catch (e) {
+                        const errorInfo = {
+                            error: 'Malformed JSON in SdpOffer',
+                            peer_id: this.peerId,
+                            host_peer_id: msg.host_peer_id,
+                            raw_message: rawOffer
+                        }
+                        console.error('[P2pPeer]', errorInfo, e)
+                        this.signal(ConnectionState.Error, { context: 'SdpOffer', ...errorInfo })
+                        return
+                    }
+
                     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(offer))
+                        .then(() => rtcPeerConnection.createAnswer())
+                        .then(answer => rtcPeerConnection.setLocalDescription(answer))
                         .then(() => {
-                            rtcPeerConnection.createAnswer()
-                                .then(answer => {
-                                    return rtcPeerConnection.setLocalDescription(answer)
-                                })
-                                .then(() => {
-                                    let answer = {"host_peer_id": msg.host_peer_id}
-                                    answer[ConnectionState.SdpAnswer] = JSON.stringify(rtcPeerConnection.localDescription)
-                                    this.signal(ConnectionState.SdpAnswer, answer)
-                                })
-                                .catch(err => console.log(err))
+                            const answer = { host_peer_id: msg.host_peer_id }
+                            answer[ConnectionState.SdpAnswer] = JSON.stringify(rtcPeerConnection.localDescription)
+                            this.signal(ConnectionState.SdpAnswer, answer)
                         })
+                        .catch(err => {
+                            console.error('Failed to handle SdpOffer:', err)
+                            connection.state = ConnectionState.Failed
+                            this.updateP2pConnectionState(connection)
+                        })
+
+                    this.state = ConnectionState.SdpOffer
                 }
                 break
+
             case ConnectionState.SdpAnswer:
-                if (msg.host_peer_id == this.peerId) { // iam host
-                    // console.log(` ${this.peerId} get Answer`)
+                if (msg.host_peer_id === this.peerId) { // I am host
                     const clientConnection = this.connections.get(msg.peer_id)
-                    if (!clientConnection) return;
+                    if (!clientConnection) return
 
                     const rtcPeerConnection = clientConnection.rtcPeerConnection
-                    let answer = JSON.parse(msg[ConnectionState.SdpAnswer])
-                    
+                    const rawAnswer = msg[ConnectionState.SdpAnswer]
+                    let answer
+                    try {
+                        answer = JSON.parse(rawAnswer)
+                    } catch (e) {
+                        const errorInfo = {
+                            error: 'Malformed JSON in SdpAnswer',
+                            peer_id: this.peerId,
+                            client_peer_id: msg.peer_id,
+                            raw_message: rawAnswer
+                        }
+                        console.error('[P2pPeer]', errorInfo, e)
+                        this.signal(ConnectionState.Error, { context: 'SdpAnswer', ...errorInfo })
+                        return
+                    }
+
                     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(answer))
-                        .catch(err => console.log(err))
+                        .catch(err => console.error('Failed to set remote description (answer):', err))
                 }
                 break
+
             case ConnectionState.IceCandidate:
                 if (msg[ConnectionState.IceCandidate]) {
-                    this.connections.forEach((connection, peerId) => {
+                    this.connections.forEach((connection) => {
                         connection.rtcPeerConnection.addIceCandidate(new RTCIceCandidate(msg[ConnectionState.IceCandidate]))
-                            .catch(err => console.log(err))
+                            .catch(err => console.error('Failed to add ICE candidate:', err))
                     })
                 }
                 break
+
             case ConnectionState.Error:
-                // console.log("Connection Error")
                 break
+
             default:
                 break
         }
     }
 
     dispatchP2pMessage(message, type, senderId) {
-        this.connections.forEach((connection, peerId) => {
+        this.connections.forEach((connection) => {
             connection.sendP2pMessage(message, type, senderId)
         })
     }
-    
+
     sendP2pMessage(message) {
         if (this.iamHost) {
             this.container.dispatchP2pMessage({
@@ -137,7 +180,7 @@ export default class P2pPeer {
             })
         }
 
-        this.connections.forEach((connection, peerId) => {
+        this.connections.forEach((connection) => {
             connection.sendP2pMessage(message, MessageType.Data, this.peerId)
         })
     }
@@ -147,11 +190,8 @@ export default class P2pPeer {
             case MessageType.Data:
             case MessageType.DataConnectionState:
                 if (this.iamHost) {
-                    //broadcast to all connections
                     this.dispatchP2pMessage(message.data, message.type, message.senderId)
                 }
-                
-                // dispatch msg to all sub views
                 this.container.dispatchP2pMessage(message)
                 break
             default:
@@ -161,7 +201,7 @@ export default class P2pPeer {
 
     updateP2pConnectionState(connection = null) {
         if (this.iamHost) {
-            this.connectionStatus ||= {}
+            this.connectionStatus = this.connectionStatus || {}
             this.connections.forEach((connection, peerId) => {
                 this.connectionStatus[peerId] = connection.state
             })
@@ -183,9 +223,6 @@ export default class P2pPeer {
 
     dispatchP2pConnectionState(connection) {
         switch (connection.state) {
-            case ConnectionState.Negotiating:
-                this.container.p2pNegotiating()
-                break
             case ConnectionState.Connecting:
                 this.container.p2pConnecting()
                 break
@@ -203,6 +240,30 @@ export default class P2pPeer {
                 break
             default:
                 break
-          }
+        }
+    }
+
+    _handleConnectionSetupFailure(err, connection, meta = {}) {
+        const { peerKey, role, host_peer_id, remote_peer_id } = meta || {}
+        const errorInfo = {
+            error: 'Failed to setup RTCPeerConnection',
+            peer_id: this.peerId,
+            role,
+            host_peer_id,
+            remote_peer_id,
+            details: err && (err.message || String(err))
+        }
+        console.error('[P2pPeer]', errorInfo)
+
+        try { connection && connection.close && connection.close() } catch (_e) {}
+        if (peerKey && this.connections && this.connections.has(peerKey)) {
+            try { this.connections.delete(peerKey) } catch (_e) {}
+        }
+
+        if (this.container && typeof this.container.p2pError === 'function') {
+            try { this.container.p2pError() } catch (_e) {}
+        }
+
+        this.signal(ConnectionState.Error, { context: 'SetupRTCPeerConnection', ...errorInfo })
     }
 }
