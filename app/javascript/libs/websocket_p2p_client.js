@@ -107,13 +107,12 @@ class LibreverseWebSocketP2P {
                     const cfgIce = Array.isArray(defaults.iceServers)
                         ? defaults.iceServers
                         : (Array.isArray(defaults.ice_servers)
-                              ? defaults.ice_servers
-                              : undefined);
+                          ? defaults.ice_servers
+                          : undefined);
                     const documentOptions = { mode, webrtc };
                     if (Array.isArray(cfgIce))
-                        documentOptions.iceServers = this._normalizeIceServers(
-                            cfgIce,
-                        );
+                        documentOptions.iceServers =
+                            this._normalizeIceServers(cfgIce);
                     this.configureDocSync(this.defaultDocId, documentOptions);
                 }
                 break;
@@ -169,9 +168,28 @@ class LibreverseWebSocketP2P {
     // --- Collaborative Document API (Yjs + yrb-actioncable) ---
     attachCollab(documentId) {
         if (!documentId) throw new Error("documentId required");
-        if (this.serverProviders.has(documentId))
-            return this.serverProviders.get(documentId);
-
+        // If we've already created a provider for this document, reapply any updated config before returning it
+        if (this.serverProviders.has(documentId)) {
+            const existing = this.serverProviders.get(documentId);
+            const cfg = this.docConfigs.get(documentId);
+            if (cfg) {
+                // Reapply configuration to existing provider
+                if (cfg.mode === "strict") {
+                    this._connectServerProvider(documentId);
+                } else {
+                    this._disconnectServerProvider(documentId, false);
+                }
+                if (cfg.webrtc) {
+                    this._ensureWebRTCProvider(
+                        documentId,
+                        this.docs.get(documentId),
+                    );
+                } else {
+                    this._destroyWebRTCProvider(documentId);
+                }
+            }
+            return existing;
+        }
         // Prepare ActionCable consumer
         const consumer =
             globalThis.App?.cable ||
@@ -188,13 +206,13 @@ class LibreverseWebSocketP2P {
         if (!this.docs.has(documentId)) this.docs.set(documentId, new Y.Doc());
         const ydoc = this.docs.get(documentId);
 
-    // Set default config if missing
+        // Set default config if missing
         if (!this.docConfigs.has(documentId))
             this.docConfigs.set(documentId, {
                 mode: "strict",
                 webrtc: true,
                 signaling: undefined,
-        iceServers: DEFAULT_ICE_SERVERS,
+                iceServers: DEFAULT_ICE_SERVERS,
             });
         const cfg = this.docConfigs.get(documentId);
 
@@ -288,8 +306,8 @@ class LibreverseWebSocketP2P {
         const userIce = Array.isArray(options.iceServers)
             ? options.iceServers
             : (Array.isArray(options.ice_servers)
-                  ? options.ice_servers
-                  : undefined);
+              ? options.ice_servers
+              : undefined);
         if (Array.isArray(userIce))
             next.iceServers = this._normalizeIceServers(userIce);
         this.docConfigs.set(documentId, next);
@@ -374,7 +392,10 @@ class LibreverseWebSocketP2P {
         const normalized = [];
         for (const entry of servers) {
             if (typeof entry === "string") {
-                const value = entry.startsWith("stun:") || entry.startsWith("turn:") ? entry : `stun:${entry}`;
+                const value =
+                    entry.startsWith("stun:") || entry.startsWith("turn:")
+                        ? entry
+                        : `stun:${entry}`;
                 normalized.push({ urls: value });
             } else if (entry && typeof entry === "object") {
                 if (Array.isArray(entry.urls)) {

@@ -15,21 +15,18 @@ export default class extends Controller {
     }
 
     get peerId() {
-        this.p2pFrame.peer?.peerId
+        return this.p2pFrame?.peer?.peerId
     }
     
     get hostPeerId() {
-        this.p2pFrame.peer?.hostPeerId
+        return this.p2pFrame?.peer?.hostPeerId
     }
 
     get iamHost() {
-        this.p2pFrame.peer?.iamHost
+        return this.p2pFrame?.peer?.iamHost
     }
-
     // p2p callbacks
     
-    p2pNegotiating() {}
-
     p2pConnecting() {}
 
     p2pConnected() {}
