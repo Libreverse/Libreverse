@@ -32,6 +32,10 @@ class WebSocketP2PFrame extends HTMLElement
     @setAttribute("data-controller", "websocket-p2p")
     @setAttribute("data-websocket-p2p-session-id-value", @sessionId)
     @setAttribute("data-websocket-p2p-peer-id-value", @peerId)
+    try
+      @setAttribute("data-websocket-p2p-config-value", JSON.stringify(@config))
+    catch error
+      console.warn "[WebSocketP2PFrame] Failed to serialize config:", error
 
     # Set up iframe target
     iframe = @querySelector("iframe")

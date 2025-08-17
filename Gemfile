@@ -102,3 +102,5 @@ group :test do
   gem "mocha"
   gem "mysql2"
 end
+
+gem "p2p_streams_channel", "~> 0.0.3"

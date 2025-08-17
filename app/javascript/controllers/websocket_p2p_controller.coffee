@@ -9,7 +9,8 @@ export default class extends ApplicationController
     autoConnect: { type: Boolean, default: true },
     heartbeatInterval: { type: Number, default: 30000 }, # 30 seconds
     reconnectDelay: { type: Number, default: 2000 }, # 2 seconds
-    maxReconnectAttempts: { type: Number, default: 5 }
+  maxReconnectAttempts: { type: Number, default: 5 },
+  config: { type: Object, default: {} }
   }
 
   @targets = ["iframe", "status"]
@@ -46,9 +47,10 @@ export default class extends ApplicationController
     @updateStatus("connecting")
 
     # Create ActionCable subscription
+    channelName = if @configValue?.useP2pStreams then "P2pStreamsChannel" else "WebsocketP2pChannel"
     @channel = App.cable.subscriptions.create(
       {
-        channel: "WebsocketP2pChannel",
+        channel: channelName,
         session_id: @sessionIdValue,
         peer_id: @peerIdValue
       },
@@ -121,7 +123,8 @@ export default class extends ApplicationController
       peerId: @peerIdValue,
       sessionId: @sessionIdValue,
       isHost: @isHost(),
-      connected: @isConnected
+      connected: @isConnected,
+      config: @configValue
     })
 
     # Send current peers
