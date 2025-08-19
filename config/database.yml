@@ -5,8 +5,14 @@
 <%
   def calculate_pool_size
     cpu_cores = Etc.nprocessors / 2
-    [[cpu_cores * 2 - 4, 5].max, 20].min
+    # Previous implementation capped pool size at 20; remove cap to allow scaling with hardware
+    [cpu_cores * 2 - 4, 5].max
   end
+    def sqlite_thread_count
+        # Use at least 2 threads, up to the number of logical processors.
+        # SQLite docs: threads pragma sets the number of worker threads for sorter/PCache.
+        [Etc.nprocessors, 2].max
+    end
 %>
 
 default: &default
@@ -44,12 +50,13 @@ development:
         migrations_paths: db/queue_migrate
     cache:
         adapter: sqlite3
+        encoding: utf8
         database: db/cache_development.sqlite3
         pool: <%= calculate_pool_size %>
         migrations_paths: db/cache_migrate
         pragmas:
             analysis_limit: 0
-            automatic_index: 1
+            automatic_index: 0
             busy_timeout: 5000
             cache_size: -20000
             cache_spill: 0
@@ -59,19 +66,19 @@ development:
             fullfsync: 0
             journal_mode: 'WAL'
             journal_size_limit: 1000000
+            wal_checkpoint: 'PASSIVE'
             locking_mode: 'NORMAL'
             mmap_size: 268435456
             page_size: 4096
             secure_delete: 'ON'
-            synchronous: 1
+            synchronous: 0
             temp_store: 2
-            threads: 4
+            threads: <%= sqlite_thread_count %>
             incremental_vacuum: 0
             read_uncommitted: 1
-            trusted_schema: 0
+            trusted_schema: 'OFF'
             wal_autocheckpoint: 1000
-            auto_vacuum: 'INCREMENTAL'
-            optimize: 1048578
+            auto_vacuum: 'NONE'
         
 
 test:
@@ -99,12 +106,13 @@ test:
         sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
     cache:
         adapter: sqlite3
+        encoding: utf8
         database: db/cache_test.sqlite3
         pool: <%= calculate_pool_size %>
         migrations_paths: db/cache_migrate
         pragmas:
             analysis_limit: 0
-            automatic_index: 1
+            automatic_index: 0
             busy_timeout: 5000
             cache_size: -20000
             cache_spill: 0
@@ -114,19 +122,19 @@ test:
             fullfsync: 0
             journal_mode: 'WAL'
             journal_size_limit: 1000000
+            wal_checkpoint: 'PASSIVE'
             locking_mode: 'NORMAL'
             mmap_size: 268435456
             page_size: 4096
             secure_delete: 'ON'
-            synchronous: 1
+            synchronous: 0
             temp_store: 2
-            threads: 4
+            threads: <%= sqlite_thread_count %>
             incremental_vacuum: 0
             read_uncommitted: 1
-            trusted_schema: 0
+            trusted_schema: 'OFF'
             wal_autocheckpoint: 1000
-            auto_vacuum: 'INCREMENTAL'
-            optimize: 1048578
+            auto_vacuum: 'NONE'
 
 production:
     primary:
@@ -150,12 +158,13 @@ production:
         migrations_paths: db/queue_migrate
     cache:
         adapter: sqlite3
+        encoding: utf8
         database: db/cache_production.sqlite3
         pool: <%= calculate_pool_size %>
         migrations_paths: db/cache_migrate
         pragmas:
             analysis_limit: 0
-            automatic_index: 1
+            automatic_index: 0
             busy_timeout: 5000
             cache_size: -20000
             cache_spill: 0
@@ -165,19 +174,19 @@ production:
             fullfsync: 0
             journal_mode: 'WAL'
             journal_size_limit: 1000000
+            wal_checkpoint: 'PASSIVE'
             locking_mode: 'NORMAL'
             mmap_size: 268435456
             page_size: 4096
             secure_delete: 'ON'
-            synchronous: 1
+            synchronous: 0
             temp_store: 2
-            threads: 4
+            threads: <%= sqlite_thread_count %>
             incremental_vacuum: 0
             read_uncommitted: 1
-            trusted_schema: 0
+            trusted_schema: 'OFF'
             wal_autocheckpoint: 1000
-            auto_vacuum: 'INCREMENTAL'
-            optimize: 1048578
+            auto_vacuum: 'NONE'
     cable:
         <<: *default
         database: libreverse_production

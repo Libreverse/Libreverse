@@ -12,8 +12,14 @@ module CMSBlogSync
   module_function
 
   def run!(site_identifier: 'instance-blog')
-    site = Comfy::Cms::Site.find_by(identifier: site_identifier)
-    abort "[cms_blog_setup] Site not found: #{site_identifier}" unless site
+    site = Comfy::Cms::Site.find_or_create_by!(identifier: site_identifier) do |s|
+      s.label = 'Instance Blog'
+      # Use env override so different hostnames can be used per-env. Fallback keeps it local/dev friendly.
+      s.hostname = ENV.fetch('CMS_BLOG_HOSTNAME', 'localhost')
+      # Blank path means root; adjust via CMS_BLOG_PATH if needed later.
+      s.path = ENV['CMS_BLOG_PATH'] if ENV['CMS_BLOG_PATH']
+    end
+    Rails.logger.debug "[cms_blog_setup] Using site id=#{site.id} identifier=#{site.identifier} hostname=#{site.hostname}"
 
     seeds_root = Rails.root.join("db/cms_seeds/libreverse-blog")
     layouts_dir = seeds_root.join('layouts')
@@ -41,16 +47,17 @@ module CMSBlogSync
       Rails.logger.debug "[cms_blog_setup] Synced layout: #{ident} (app_layout=#{layout.app_layout})"
     end
 
-    Rails.logger.debug "[cms_blog_setup] Done. Updated #{updated_count} layouts."
+  Rails.logger.debug "[cms_blog_setup] Done. Updated #{updated_count} layouts."
+
+  # Pages ------------------------------------------------------------------
+  sync_pages(site, seeds_root.join('pages'))
   end
 
   def extract_front_matter(text)
-    return [ {}, text ] unless text.start_with?('---')
-
-    parts = text.split(/^---\s*$\n/, 3) # leading empty, front matter, body
-    if parts.length >= 3
-      fm_text = parts[1]
-      body = parts[2]
+    # Robust extraction supporting Windows/Unix line endings and avoiding false positives.
+    if text =~ /\A---\s*\r?\n(.*?)\r?\n---\s*\r?\n(.*)\z/m
+      fm_text = Regexp.last_match(1)
+      body = Regexp.last_match(2)
       begin
         fm = YAML.safe_load(fm_text, aliases: true) || {}
       rescue StandardError => e
@@ -71,6 +78,74 @@ module CMSBlogSync
       page.update!(content_cache: nil)
     end
     Rails.logger.debug "[cms_blog_setup] Cleared content_cache for #{page_ids.size} page(s) using #{layout.identifier}"
+  end
+
+  # --- Page syncing ---------------------------------------------------------
+  def sync_pages(site, pages_root)
+    return unless Dir.exist?(pages_root)
+
+    ensure_root_page(site)
+    ensure_not_found_page(site)
+
+    # Traverse directories under pages_root. Convention: 'index' directory represents root page.
+    Dir.glob(pages_root.join('**/content.html')).sort.each do |content_path|
+      rel_dir = Pathname(content_path).dirname.relative_path_from(pages_root).to_s # e.g. "index/initial-post"
+      parts = rel_dir.split(File::SEPARATOR)
+      next if parts == ['index'] # root handled separately
+
+      fm, body = extract_front_matter(File.read(content_path))
+      layout_identifier = fm['layout'] || 'blog_post'
+      layout = site.layouts.find_by(identifier: layout_identifier)
+      unless layout
+        Rails.logger.warn "[cms_blog_setup] Skipping page #{rel_dir} - layout '#{layout_identifier}' missing"
+        next
+      end
+
+      parent_page = site.pages.find_by(full_path: '/') # currently only supporting one-level for now
+      slug = parts.last # use directory name as slug
+      label = fm['label'] || slug.tr('_-', ' ').split.map(&:capitalize).join(' ')
+      full_path = "/#{slug}"
+
+      page = site.pages.find_or_initialize_by(full_path: full_path)
+      page.slug = slug
+      page.label = label
+      page.layout = layout
+      page.parent = parent_page
+      page.is_published = fm.key?('is_published') ? !!fm['is_published'] : true
+      page.position = fm['position'] if fm['position']
+      page.save!
+
+      # Single primary body fragment. If body empty skip.
+      if body && !body.strip.empty?
+        frag = page.fragments.find_or_initialize_by(identifier: 'content')
+        frag.tag = 'wysiwyg'
+        frag.content = body.strip
+        frag.save!
+      end
+
+      page.update!(content_cache: nil) # clear cache
+      Rails.logger.debug "[cms_blog_setup] Synced page: #{full_path} (layout=#{layout.identifier})"
+    end
+  end
+
+  def ensure_root_page(site)
+    root = site.pages.find_or_initialize_by(full_path: '/')
+    root.slug = nil
+    root.label = 'Blog'
+    root.layout ||= site.layouts.find_by(identifier: 'blog') || site.layouts.first
+    root.is_published = true if root.new_record?
+    root.save! if root.changed?
+    root
+  end
+
+  def ensure_not_found_page(site)
+    nf = site.pages.find_or_initialize_by(full_path: '/404')
+    nf.slug = '404'
+    nf.label = '404'
+    nf.layout ||= site.layouts.find_by(identifier: 'blog') || site.layouts.first
+    nf.is_published = true if nf.new_record?
+    nf.save! if nf.changed?
+    nf
   end
 end
 

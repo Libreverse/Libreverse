@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_09_160306) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_15_125500) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "session_id", null: false

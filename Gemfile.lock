@@ -737,6 +737,8 @@ GEM
       httpclient (>= 2.4)
     syntax_tree (6.3.0)
       prettier_print (>= 1.2.0)
+    sys-filesystem (1.5.3)
+      ffi (~> 1.1)
     sysexits (1.2.0)
     temple (0.10.4)
     terminal-table (4.0.0)
@@ -909,6 +911,7 @@ DEPENDENCIES
   sqlite3
   stimulus-rails
   stimulus_reflex (= 3.5.3)
+  sys-filesystem (~> 1.5)
   thor (>= 1.4.0)
   tilt
   trilogy

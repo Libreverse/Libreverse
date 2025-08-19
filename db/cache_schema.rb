@@ -21,8 +21,4 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_19_205559) do
     t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
-
-# Could not dump table "sqlite_stat1" because of following StandardError
-#   Unknown type '' for column 'tbl'
-
 end

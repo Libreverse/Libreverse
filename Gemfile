@@ -104,3 +104,5 @@ group :test do
 end
 
 gem "p2p_streams_channel", "~> 0.0.3"
+
+gem "sys-filesystem", "~> 1.5"

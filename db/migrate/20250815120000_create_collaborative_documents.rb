@@ -5,8 +5,11 @@ class CreateCollaborativeDocuments < ActiveRecord::Migration[7.1]
     create_table :collaborative_documents do |t|
       t.string  :session_id, null: false
       t.integer :experience_id
-      t.binary  :base_snapshot, null: false, default: "".b
-      t.jsonb   :version_vector, null: false, default: {}
+      # MySQL/TiDB do not allow defaults on BLOB/TEXT/JSON columns. Provide
+      # application-level defaults instead.
+      t.binary  :base_snapshot, null: false
+      # jsonb is Postgres-only; use :json. No DB default for portability.
+      t.json    :version_vector, null: false
       t.datetime :finalized_at
       t.timestamps
     end
@@ -23,8 +26,8 @@ class CreateCollaborativeDocuments < ActiveRecord::Migration[7.1]
 
     create_table :session_finalizations do |t|
       t.string :session_id, null: false
-      t.jsonb  :transient_state, null: false, default: {}
-      t.jsonb  :yjs_vector, null: false, default: {}
+  t.json  :transient_state, null: false
+  t.json  :yjs_vector, null: false
       t.datetime :created_at, null: false
     end
     add_index :session_finalizations, :session_id, unique: true
