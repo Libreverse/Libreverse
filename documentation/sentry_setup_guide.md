@@ -12,7 +12,7 @@
     ```bash
     # Copy the example file (optional)
     cp .env.example .env
-    
+
     # Optionally set app version for better error tracking
     APP_REVISION=v1.0.0
     ```

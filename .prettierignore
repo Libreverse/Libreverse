@@ -2,6 +2,7 @@
 **.coffee
 config/database.yml
 config/queue.yml
+config/cache.yml
 vendor/**
 node_modules/**
 tmp/**
@@ -12,3 +13,4 @@ coverage/**
 **/openid_connect*/**
 **/iodine*/**
 .codeql/**
+config/locales/**

@@ -26,10 +26,10 @@ CodeQL is GitHub's static analysis engine that helps find security vulnerabiliti
     ```bash
     # Install CodeQL CLI (first time only)
     scripts/codeql-local.sh --install
-    
+
     # Run analysis for all languages
     scripts/codeql-local.sh --create-db
-    
+
     # Run analysis for specific language
     scripts/codeql-local.sh --language ruby --create-db
     scripts/codeql-local.sh --language javascript --create-db
@@ -40,13 +40,13 @@ CodeQL is GitHub's static analysis engine that helps find security vulnerabiliti
     ```bash
     # View summary for all languages
     scripts/codeql-viewer.sh
-    
+
     # View detailed findings
     scripts/codeql-viewer.sh --detailed
-    
+
     # View results for specific language
     scripts/codeql-viewer.sh ruby --detailed --limit 5
-    
+
     # List available result files
     scripts/codeql-viewer.sh --files
     ```
@@ -202,7 +202,7 @@ CodeQL is integrated into the main static analysis pipeline (`scripts/static.pl`
     # Ensure project dependencies are installed
     bundle install
     bun install
-    
+
     # Try recreating databases
     rm -rf .codeql/databases/
     scripts/codeql-local.sh --create-db
@@ -221,7 +221,7 @@ CodeQL is integrated into the main static analysis pipeline (`scripts/static.pl`
     ```bash
     # Check if analysis completed successfully
     scripts/codeql-viewer.sh --files
-    
+
     # Re-run analysis with verbose output
     scripts/codeql-local.sh --create-db
     ```

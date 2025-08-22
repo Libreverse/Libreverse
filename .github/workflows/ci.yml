@@ -31,6 +31,8 @@ jobs:
                         rubocop,
                         haml-lint,
                         erb-format,
+                        perltidy,
+                        shfmt,
                         eslint,
                         stylelint,
                         markdownlint,
@@ -67,6 +69,35 @@ jobs:
               if: matrix.tool == 'erb-format'
               shell: bash
               run: bundle exec erb-format app/views/**/*.erb --write
+
+            - name: Run perltidy
+              if: matrix.tool == 'perltidy'
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if ! command -v perltidy >/dev/null 2>&1; then
+                    echo "Installing perltidy via apt";
+                    sudo apt-get update -y >/dev/null 2>&1 || true
+                    sudo apt-get install -y perltidy >/dev/null 2>&1 || { echo "perltidy apt install failed"; exit 0; }
+                  fi
+                  find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
+                    -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                    | xargs -0 -r perltidy -pro=.perltidyrc -b || true
+                  # cleanup backups
+                  find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true
+
+            - name: Run shfmt
+              if: matrix.tool == 'shfmt'
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if ! command -v shfmt >/dev/null 2>&1; then
+                    echo "Installing shfmt";
+                    sudo bash -lc "curl -sSL https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.7.0_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt" || true
+                  fi
+                  find . -type f -name '*.sh' \
+                    -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                    | xargs -0 -r shfmt -w || true
 
             - name: Run ESLint
               if: matrix.tool == 'eslint'

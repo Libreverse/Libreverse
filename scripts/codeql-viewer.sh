@@ -39,9 +39,9 @@ print_summary() {
     fi
 
     # Check if jq is available for JSON parsing
-    if command -v jq > /dev/null 2>&1; then
+    if command -v jq >/dev/null 2>&1; then
         local total_findings
-        total_findings=$(jq -r '.runs[0].results | length' "${results_file}" 2> /dev/null || echo "0")
+        total_findings=$(jq -r '.runs[0].results | length' "${results_file}" 2>/dev/null || echo "0")
 
         if [ "${total_findings}" -eq 0 ]; then
             echo -e "${GREEN}✅ No security or quality issues found!${NC}"
@@ -52,9 +52,9 @@ print_summary() {
 
         # Count by severity level
         local error_count warning_count note_count
-        error_count=$(jq -r '.runs[0].results | map(select(.level == "error")) | length' "${results_file}" 2> /dev/null || echo "0")
-        warning_count=$(jq -r '.runs[0].results | map(select(.level == "warning")) | length' "${results_file}" 2> /dev/null || echo "0")
-        note_count=$(jq -r '.runs[0].results | map(select(.level == "note")) | length' "${results_file}" 2> /dev/null || echo "0")
+        error_count=$(jq -r '.runs[0].results | map(select(.level == "error")) | length' "${results_file}" 2>/dev/null || echo "0")
+        warning_count=$(jq -r '.runs[0].results | map(select(.level == "warning")) | length' "${results_file}" 2>/dev/null || echo "0")
+        note_count=$(jq -r '.runs[0].results | map(select(.level == "note")) | length' "${results_file}" 2>/dev/null || echo "0")
 
         [ "${error_count}" -gt 0 ] && echo -e "${RED}🚨 Errors: ${error_count}${NC}"
         [ "${warning_count}" -gt 0 ] && echo -e "${YELLOW}⚠️  Warnings: ${warning_count}${NC}"
@@ -62,7 +62,7 @@ print_summary() {
 
         # Show top issues by rule
         echo -e "\n${CYAN}🔍 Top Issues by Rule:${NC}"
-        jq -r '.runs[0].results | group_by(.ruleId) | map({rule: .[0].ruleId, count: length, level: .[0].level}) | sort_by(-.count) | .[:5] | .[] | "   \(.rule): \(.count) (\(.level))"' "${results_file}" 2> /dev/null | while read -r line; do
+        jq -r '.runs[0].results | group_by(.ruleId) | map({rule: .[0].ruleId, count: length, level: .[0].level}) | sort_by(-.count) | .[:5] | .[] | "   \(.rule): \(.count) (\(.level))"' "${results_file}" 2>/dev/null | while read -r line; do
             # Color code by severity mentioned in the line
             if [[ "$line" == *"error"* ]]; then
                 echo -e "${RED}   ${line}${NC}"
@@ -95,7 +95,7 @@ print_detailed_findings() {
         return 1
     fi
 
-    if ! command -v jq > /dev/null 2>&1; then
+    if ! command -v jq >/dev/null 2>&1; then
         echo -e "${YELLOW}⚠️  jq required for detailed findings. Install with: brew install jq${NC}"
         return 1
     fi
@@ -109,7 +109,7 @@ print_detailed_findings() {
    Message: \(.message.text // "No message")
    File: \(.locations[0].physicalLocation.artifactLocation.uri // "unknown")
    Line: \(.locations[0].physicalLocation.region.startLine // "unknown")
-   "' "${results_file}" 2> /dev/null | while IFS= read -r line; do
+   "' "${results_file}" 2>/dev/null | while IFS= read -r line; do
         if [[ "$line" == 🚨* ]]; then
             echo -e "${RED}${line}${NC}"
         elif [[ "$line" == *"Severity: error"* ]]; then
@@ -140,7 +140,7 @@ show_files() {
             found_files=true
             local basename=$(basename "$file")
             local size=$(du -h "$file" | cut -f1)
-            local mtime=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "$file" 2> /dev/null || stat -c "%y" "$file" 2> /dev/null | cut -d' ' -f1,2 | cut -d'.' -f1)
+            local mtime=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "$file" 2>/dev/null || stat -c "%y" "$file" 2>/dev/null | cut -d' ' -f1,2 | cut -d'.' -f1)
             echo -e "   📄 ${basename} (${size}, ${mtime})"
         fi
     done
@@ -183,35 +183,35 @@ main() {
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --detailed | -d)
-                show_detailed=true
-                shift
-                ;;
-            --limit)
-                limit="$2"
-                shift 2
-                ;;
-            --files | -f)
-                show_files_only=true
-                shift
-                ;;
-            --help | -h)
-                print_help
-                exit 0
-                ;;
-            ruby | javascript)
-                languages=("$1")
-                shift
-                ;;
-            all)
-                languages=("ruby" "javascript")
-                shift
-                ;;
-            *)
-                echo "Unknown option: $1"
-                print_help
-                exit 1
-                ;;
+        --detailed | -d)
+            show_detailed=true
+            shift
+            ;;
+        --limit)
+            limit="$2"
+            shift 2
+            ;;
+        --files | -f)
+            show_files_only=true
+            shift
+            ;;
+        --help | -h)
+            print_help
+            exit 0
+            ;;
+        ruby | javascript)
+            languages=("$1")
+            shift
+            ;;
+        all)
+            languages=("ruby" "javascript")
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            print_help
+            exit 1
+            ;;
         esac
     done
 

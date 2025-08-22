@@ -88,11 +88,11 @@ get_codeql_executable() {
 get_build_mode() {
     local language="$1"
     case "$language" in
-        "ruby") echo "none" ;;
-        "javascript-typescript") echo "none" ;;
-        "python") echo "none" ;;
-        "java-kotlin") echo "autobuild" ;;
-        *) echo "none" ;;
+    "ruby") echo "none" ;;
+    "javascript-typescript") echo "none" ;;
+    "python") echo "none" ;;
+    "java-kotlin") echo "autobuild" ;;
+    *) echo "none" ;;
     esac
 }
 
@@ -159,7 +159,7 @@ install_codeql_cli() {
         # Move other files from codeql subdirectory if any
         [[ -f "${CODEQL_CLI_DIR}/codeql/.codeqlmanifest.json" ]] && mv "${CODEQL_CLI_DIR}/codeql/.codeqlmanifest.json" "${CODEQL_CLI_DIR}/"
         # Clean up empty directory
-        [[ -d "${CODEQL_CLI_DIR}/codeql" ]] && rmdir "${CODEQL_CLI_DIR}/codeql" 2> /dev/null || true
+        [[ -d "${CODEQL_CLI_DIR}/codeql" ]] && rmdir "${CODEQL_CLI_DIR}/codeql" 2>/dev/null || true
     fi
 
     # Cleanup
@@ -205,7 +205,7 @@ setup_codeql() {
     mkdir -p "${CODEQL_DIR}" "${CODEQL_DATABASE_DIR}" "${CODEQL_RESULTS_DIR}"
 
     # Install CodeQL CLI if not present
-    if ! get_codeql_executable > /dev/null 2>&1; then
+    if ! get_codeql_executable >/dev/null 2>&1; then
         detect_latest_codeql_version
         install_codeql_cli || return 1
     else
@@ -317,16 +317,16 @@ autobuild_if_needed() {
     if [[ "$build_mode" == "autobuild" ]]; then
         log "Running autobuild for ${language}..."
         case "$language" in
-            "ruby")
-                if [[ -f "${PROJECT_ROOT}/Gemfile" ]]; then
-                    cd "${PROJECT_ROOT}"
-                    bundle install --quiet
-                    success "Ruby gems installed"
-                fi
-                ;;
-            "java-kotlin")
-                log "Java/Kotlin autobuild would run here"
-                ;;
+        "ruby")
+            if [[ -f "${PROJECT_ROOT}/Gemfile" ]]; then
+                cd "${PROJECT_ROOT}"
+                bundle install --quiet
+                success "Ruby gems installed"
+            fi
+            ;;
+        "java-kotlin")
+            log "Java/Kotlin autobuild would run here"
+            ;;
         esac
     else
         log "No build required for ${language} (build mode: ${build_mode})"
@@ -418,7 +418,7 @@ analyze_codeql() {
             "$database_path" \
             --format=text \
             --output="$txt_results" \
-            < "$results_path" 2> /dev/null || true
+            <"$results_path" 2>/dev/null || true
     fi
 
     success "CodeQL analysis completed for ${language}"
@@ -462,24 +462,24 @@ run_language_analysis() {
 parse_arguments() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --language)
-                LANGUAGE="$2"
-                shift 2
-                ;;
-            --config-file)
-                CONFIG_FILE="$2"
-                shift 2
-                ;;
-            --setup-only)
-                SETUP_ONLY=true
-                shift
-                ;;
-            --quick-test)
-                QUICK_TEST=true
-                shift
-                ;;
-            --help | -h)
-                cat << EOF
+        --language)
+            LANGUAGE="$2"
+            shift 2
+            ;;
+        --config-file)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        --setup-only)
+            SETUP_ONLY=true
+            shift
+            ;;
+        --quick-test)
+            QUICK_TEST=true
+            shift
+            ;;
+        --help | -h)
+            cat <<EOF
 CodeQL Local Analysis - GitHub Actions Mirror
 
 Usage: $0 [OPTIONS]
@@ -498,12 +498,12 @@ Examples:
 
 This script mirrors GitHub Actions CodeQL workflow locally.
 EOF
-                exit 0
-                ;;
-            *)
-                error "Unknown option: $1"
-                exit 1
-                ;;
+            exit 0
+            ;;
+        *)
+            error "Unknown option: $1"
+            exit 1
+            ;;
         esac
     done
 }
@@ -571,7 +571,7 @@ main() {
             local results_file="${CODEQL_RESULTS_DIR}/${lang}-results.sarif"
             if [[ -f "$results_file" ]]; then
                 local finding_count
-                finding_count=$(grep -c '"ruleId"' "$results_file" 2> /dev/null || echo "0")
+                finding_count=$(grep -c '"ruleId"' "$results_file" 2>/dev/null || echo "0")
                 log "${lang}: ${finding_count} findings"
             fi
         done
