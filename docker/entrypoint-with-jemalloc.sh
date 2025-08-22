@@ -134,6 +134,21 @@ fi
 
 echo "✅ Database migration step completed"
 
+# Database Seeding Step
+echo "🌱 Running database seeds..."
+seed_output=$(bin/rails db:seed 2>&1)
+if [ $? -eq 0 ]; then
+    echo "  ✅ Database seeds applied"
+    echo "$seed_output" | grep -E "created|updated|seed" | sed 's/^/    /' || true
+else
+    if echo "$seed_output" | grep -qi "nothing to seed"; then
+        echo "  ℹ️ No seeds to apply"
+    else
+        echo "  ⚠️ Database seeding failed"
+        echo "$seed_output" | sed 's/^/    /'
+    fi
+fi
+
 # Fix permissions for SQLite databases
 echo "🔧 Setting proper permissions for SQLite databases..."
 chown -R app:app /home/app/webapp/db/

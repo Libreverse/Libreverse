@@ -10,7 +10,7 @@ gem "active_storage_validations"
 gem "argon2"
 gem "audits1984"
 gem "better_html"
-gem "bootsnap"
+gem "bootsnap", require: false
 gem "cancancan"
 gem "capybara"
 gem "comfortable_media_surfer"
@@ -31,6 +31,7 @@ gem "jbuilder"
 gem "lockbox"
 gem "nokogiri"
 gem "ostruct"
+gem "p2p_streams_channel"
 gem "passenger", ">= 6.0.20"
 gem "permessage_deflate"
 gem "premailer-rails"
@@ -62,12 +63,13 @@ gem "solid_queue"
 gem "sqlite3"
 gem "stimulus-rails"
 gem "stimulus_reflex", "3.5.3"
+gem "sys-filesystem"
 gem "thor", ">= 1.4.0"
 gem "tilt"
 gem "trilogy"
 gem "turbo_power"
 gem "turbo-rails"
-gem "tzinfo-data", platforms: %i[jruby]
+gem "tzinfo-data"
 gem "unicode"
 gem "unidecoder"
 gem "view_component"
@@ -78,7 +80,7 @@ gem "zip_kit"
 gem "zstd-ruby"
 
 group :development, :test do
-  gem "debug", platforms: %i[mri]
+  gem "debug"
   gem "dotenv-rails"
   gem "listen"
 end
@@ -102,7 +104,3 @@ group :test do
   gem "mocha"
   gem "mysql2"
 end
-
-gem "p2p_streams_channel", "~> 0.0.3"
-
-gem "sys-filesystem", "~> 1.5"

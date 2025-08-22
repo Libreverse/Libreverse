@@ -91,7 +91,7 @@ module CMSBlogSync
     Dir.glob(pages_root.join('**/content.html')).sort.each do |content_path|
       rel_dir = Pathname(content_path).dirname.relative_path_from(pages_root).to_s # e.g. "index/initial-post"
       parts = rel_dir.split(File::SEPARATOR)
-      next if parts == ['index'] # root handled separately
+      next if parts == [ 'index' ] # root handled separately
 
       fm, body = extract_front_matter(File.read(content_path))
       layout_identifier = fm['layout'] || 'blog_post'
@@ -111,7 +111,7 @@ module CMSBlogSync
       page.label = label
       page.layout = layout
       page.parent = parent_page
-      page.is_published = fm.key?('is_published') ? !!fm['is_published'] : true
+      page.is_published = fm.key?('is_published') ? !fm['is_published'].nil? : true
       page.position = fm['position'] if fm['position']
       page.save!
 
