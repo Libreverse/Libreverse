@@ -3,7 +3,7 @@
 set -e
 
 help() {
-    cat << 'EOF'
+    cat <<'EOF'
 Install a binary release of a Rust crate hosted on GitHub
 
 Usage:
@@ -38,7 +38,7 @@ err() {
 }
 
 need() {
-    if ! command -v "$1" > /dev/null 2>&1; then
+    if ! command -v "$1" >/dev/null 2>&1; then
         err "need $1 (command not found)"
     fi
 }
@@ -46,34 +46,34 @@ need() {
 force=false
 while test $# -gt 0; do
     case $1 in
-        --crate)
-            crate=$2
-            shift
-            ;;
-        --force | -f)
-            force=true
-            ;;
-        --git)
-            git=$2
-            shift
-            ;;
-        --help | -h)
-            help
-            exit 0
-            ;;
-        --tag)
-            tag=$2
-            shift
-            ;;
-        --target)
-            target=$2
-            shift
-            ;;
-        --to)
-            dest=$2
-            shift
-            ;;
-        *) ;;
+    --crate)
+        crate=$2
+        shift
+        ;;
+    --force | -f)
+        force=true
+        ;;
+    --git)
+        git=$2
+        shift
+        ;;
+    --help | -h)
+        help
+        exit 0
+        ;;
+    --tag)
+        tag=$2
+        shift
+        ;;
+    --target)
+        target=$2
+        shift
+        ;;
+    --to)
+        dest=$2
+        shift
+        ;;
+    *) ;;
 
     esac
     shift

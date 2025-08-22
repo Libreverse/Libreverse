@@ -105,7 +105,7 @@ test_database_creation() {
         --source-root="${PROJECT_ROOT}" \
         --overwrite \
         --threads=2 \
-        --ram=1024 > /dev/null 2>&1; then
+        --ram=1024 >/dev/null 2>&1; then
         success "Test database creation successful"
 
         # Clean up test database
@@ -124,7 +124,7 @@ test_query_availability() {
     if [ ! -d "$queries_dir" ]; then
         warn "CodeQL queries not found, downloading..."
         cd "${PROJECT_ROOT}/.codeql/codeql-queries"
-        git clone --depth 1 https://github.com/github/codeql.git codeql-repo > /dev/null 2>&1
+        git clone --depth 1 https://github.com/github/codeql.git codeql-repo >/dev/null 2>&1
     fi
 
     # Check for Ruby queries
@@ -269,7 +269,7 @@ run_mini_analysis() {
     mkdir -p "${test_db_dir}-source"
 
     # Create a simple Ruby file with a potential issue
-    cat > "${test_db_dir}-source/test.rb" << 'EOF'
+    cat >"${test_db_dir}-source/test.rb" <<'EOF'
 # Simple test file for CodeQL
 class TestClass
   def unsafe_eval(user_input)
@@ -284,14 +284,14 @@ EOF
         --source-root="${test_db_dir}-source" \
         --overwrite \
         --threads=1 \
-        --ram=512 > /dev/null 2>&1; then
+        --ram=512 >/dev/null 2>&1; then
 
         # Try to run a basic query
         local query_result
         query_result=$("${PROJECT_ROOT}/.codeql/codeql-cli/codeql" database analyze "$test_db_dir" \
             "${PROJECT_ROOT}/.codeql/codeql-queries/codeql-repo/ruby/ql/src/codeql-suites/ruby-security-and-quality.qls" \
             --format=csv \
-            --output=/dev/stdout 2> /dev/null | wc -l)
+            --output=/dev/stdout 2>/dev/null | wc -l)
 
         if [ "$query_result" -gt 1 ]; then
             success "Mini analysis completed successfully (found some results)"

@@ -1,38 +1,35 @@
-; Prettier-style perltidy configuration adapted from https://github.com/menozero/perltidy-prettier-style
-; Warnings
--w
+# https://github.com/menozero/perltidy-prettier-style
 
-; Indentation / layout
-i=2          ; indentation width
-; ci=2      ; (default continuation indent acceptable)
+-w      # show all warnings
+# -utf8
+# -ole=unix
+# -it=2
 
-; Prettier ignore markers
-fsb=# prettier-ignore-start
-fse=# prettier-ignore-end
+#-l=80  # Prettier print-width
+-i=2    # Prettier tab-width (default 4)
+#-ci=2  # default
 
-; Horizontal spacing tightness
-nsfs        ; no space before semicolon in for
-tso         ; tight secret operators
-pt=2        ; paren tightness
-sbt=2       ; square bracket tightness
-bbt=1       ; block brace tightness
-bar         ; opening brace on same line
+-fsb='# prettier-ignore-start'
+-fse='# prettier-ignore-end'
 
-; Vertical layout
-ce          ; cuddled else
-wn          ; weld nested containers
-sot         ; stack opening tokens
+# horizontal
+-nsfs   # no space for semicolon in for
+-tso    # tight secret operators
+-pt=2   # Prettier paren tightness (default 1)
+-sbt=2  # Prettier square bracket tightness (default 1)
+#-bt=1  # Prettier brace tightness
+-bbt=1  # Prettier block brace tightness (default 0)
+-bar    # opening brace always on right
 
-; Comments handling
-nbbc        ; no blank line before block comments
-isbc        ; indent spaced block comments
+# vertical
+#-iob   # ? ignore old breakpoints
+#-vt=0  # vertical tightness
+-ce     # Prettier cuddled else
+-wn     # weld nested containers
+-sot    # stack opening tokens
+#-mbl=1 # Prettier maximum consecutive blank lines
 
-; (Disabled options kept for clarity)
-; l=80      ; typical print width (omit to allow longer lines when needed)
-; utf8
-; ole=unix
-; iob       ; ignore old breakpoints
-; vt=0
-; mbl=1
-
-; End of .perltidyrc
+# comments
+-nbbc   # no blanks before comments (?)
+-isbc   # indent (only) spaced block comments
+# TODO need more tests with comments

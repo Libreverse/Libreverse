@@ -14,11 +14,11 @@ if [ -n "$JEMALLOC_PATH" ]; then
     export LD_PRELOAD="$JEMALLOC_PATH"
 
     # Also write to /etc/environment for system-wide availability
-    echo "LD_PRELOAD=$JEMALLOC_PATH" >> /etc/environment
+    echo "LD_PRELOAD=$JEMALLOC_PATH" >>/etc/environment
 
     # Configure jemalloc for optimal performance
     export MALLOC_CONF="dirty_decay_ms:1000,muzzy_decay_ms:1000,background_thread:true,abort_conf:true"
-    echo "MALLOC_CONF=$MALLOC_CONF" >> /etc/environment
+    echo "MALLOC_CONF=$MALLOC_CONF" >>/etc/environment
 
     echo "✓ jemalloc enabled system-wide: $JEMALLOC_PATH"
 else
@@ -126,7 +126,7 @@ run_migrations "db:migrate:cache" "Cache database (Solid Cache)" false
 run_migrations "db:migrate:queue" "Queue tables (Solid Queue)" false
 
 # Cable database migrations (Action Cable) - less critical, can skip errors
-if grep -q "cable:" /home/app/webapp/config/database.yml 2> /dev/null; then
+if grep -q "cable:" /home/app/webapp/config/database.yml 2>/dev/null; then
     run_migrations "db:migrate:cable" "Cable database (Action Cable)" true
 else
     echo "  ℹ️ Cable database not configured, skipping"
@@ -152,14 +152,14 @@ fi
 # Fix permissions for SQLite databases
 echo "🔧 Setting proper permissions for SQLite databases..."
 chown -R app:app /home/app/webapp/db/
-chmod -R 664 /home/app/webapp/db/*.sqlite3 2> /dev/null || true
-chmod -R 775 /home/app/webapp/db/ 2> /dev/null || true
+chmod -R 664 /home/app/webapp/db/*.sqlite3 2>/dev/null || true
+chmod -R 775 /home/app/webapp/db/ 2>/dev/null || true
 
 # Also ensure log directory is writable
 echo "📝 Setting up log directory permissions..."
 mkdir -p /home/app/webapp/log
 chown -R app:app /home/app/webapp/log/
-chmod -R 664 /home/app/webapp/log/ 2> /dev/null || true
+chmod -R 664 /home/app/webapp/log/ 2>/dev/null || true
 
 echo "✅ File permissions configured"
 

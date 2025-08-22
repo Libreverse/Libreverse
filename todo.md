@@ -4,8 +4,6 @@
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (bugfix) allow css glass substitute to render and then fade into the webgl one.
 - [ ] (feature) add crowdsec nginx bouncer
-- [ ] (feature) migrate all shell to perl
-- [ ] (feature) get erb lint, format and perltidy in static.pl. Get perltidy in gh actions
 - [ ] (feature) Integrate the rodauth complex multi-db account features
       --- september ---
 - [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations, also OSA compliance.)

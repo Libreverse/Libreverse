@@ -40,7 +40,7 @@ This document provides a comprehensive guide for migrating your Libreverse Rails
     ```bash
     # Update Gemfile (already done)
     bundle install
-    
+
     # Test with Passenger standalone
     bundle exec passenger start -p 3000 --environment development
     ```
@@ -94,7 +94,7 @@ If you prefer traditional server deployment:
     sudo apt install nginx
     gem install passenger
     sudo passenger-install-nginx-module
-    
+
     # CentOS/RHEL
     sudo yum install nginx
     gem install passenger
@@ -145,7 +145,7 @@ If you prefer traditional server deployment:
     # Check Passenger status
     sudo passenger-status
     sudo passenger-memory-stats
-    
+
     # nginx logs
     tail -f /var/log/nginx/access.log
     tail -f /var/log/nginx/error.log

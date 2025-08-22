@@ -15,7 +15,7 @@ module CMSBlogSync
     site = Comfy::Cms::Site.find_or_create_by!(identifier: site_identifier) do |s|
       s.label = 'Instance Blog'
       # Use env override so different hostnames can be used per-env. Fallback keeps it local/dev friendly.
-      s.hostname = ENV.fetch('CMS_BLOG_HOSTNAME', 'localhost')
+      s.hostname = ENV.fetch('CMS_BLOG_HOSTNAME') { 'localhost' }
       # Blank path means root; adjust via CMS_BLOG_PATH if needed later.
       s.path = ENV['CMS_BLOG_PATH'] if ENV['CMS_BLOG_PATH']
     end

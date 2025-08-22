@@ -121,7 +121,11 @@ jobs:
                   # Perl formatting (perltidy) – install if missing, then format
                   if ! command -v perltidy >/dev/null 2>&1; then
                     echo "Installing perltidy (not found)";
-                    cpanm --notest Perl::Tidy >/dev/null 2>&1 || { echo "perltidy install failed (cpanm missing?)"; }
+                    sudo apt-get update -y >/dev/null 2>&1 || true
+                    sudo apt-get install -y perltidy >/dev/null 2>&1 || {
+                      echo "apt install failed; trying cpanm";
+                      cpanm --notest Perl::Tidy >/dev/null 2>&1 || echo "perltidy install failed (cpanm missing?)";
+                    }
                   fi
                   if command -v perltidy >/dev/null 2>&1; then
                     echo "Running perltidy";
@@ -134,6 +138,18 @@ jobs:
                     find . -type f -name '*.pm.bak' -delete 2>/dev/null || true
                     find . -type f -name '*.t.bak' -delete 2>/dev/null || true
                     find . -type f -name '*.psgi.bak' -delete 2>/dev/null || true
+                  fi
+
+                  # Shell formatting (shfmt)
+                  if ! command -v shfmt >/dev/null 2>&1; then
+                    echo "Installing shfmt";
+                    sudo bash -lc "curl -sSL https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.7.0_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt" || true
+                  fi
+                  if command -v shfmt >/dev/null 2>&1; then
+                    echo "Running shfmt";
+                    find . -type f -name '*.sh' \
+                      -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                      | xargs -0 -r shfmt -w || true
                   fi
 
                   echo "Autofix pass complete."
@@ -165,6 +181,7 @@ jobs:
                       lib/**
                       public/**
                       scripts/**
+                      docker/**
                       spec/**
                       test/**
                       .github/**
