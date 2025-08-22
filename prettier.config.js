@@ -1,4 +1,2 @@
-const config = {
-    plugins: ["prettier-plugin-sh"],
-};
+const config = {};
 export default config;

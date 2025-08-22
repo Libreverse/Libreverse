@@ -6,6 +6,7 @@ class DropCollaborativeDocumentsTables < ActiveRecord::Migration[7.1]
   # It now no-ops to preserve the recreated tables. Set DROP_COLLAB_DOCS=1
   # to execute the original destructive behavior.
   return unless ENV["DROP_COLLAB_DOCS"] == "1"
+
   drop_table :collaborative_document_updates, if_exists: true
   drop_table :collaborative_documents, if_exists: true
   drop_table :session_finalizations, if_exists: true

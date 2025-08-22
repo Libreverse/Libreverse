@@ -10,7 +10,7 @@ export default {
         "^~/(.*)$": "<rootDir>/app/javascript/$1",
         "^../utils/xmlrpc$":
             "<rootDir>/test/javascript/utils/__mocks__/xmlrpc.js",
-    "^y-webrtc$": "<rootDir>/test/javascript/__mocks__/y-webrtc.js",
+        "^y-webrtc$": "<rootDir>/test/javascript/__mocks__/y-webrtc.js",
     },
     setupFilesAfterEnv: ["<rootDir>/test/javascript/setup.js"],
     testMatch: ["<rootDir>/test/javascript/**/*.test.js"],

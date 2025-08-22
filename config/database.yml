@@ -102,8 +102,10 @@ test:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <% unless ENV['DB_SSL_DISABLE']=='true' %>
+            ssl_mode: VERIFY_IDENTITY
+            sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <% end %>
     cache:
         adapter: sqlite3
         encoding: utf8
@@ -144,8 +146,10 @@ production:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <% unless ENV['DB_SSL_DISABLE']=='true' %>
+            ssl_mode: VERIFY_IDENTITY
+            sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <% end %>
     queue:
         <<: *default
         database: libreverse_production
@@ -153,8 +157,10 @@ production:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: /etc/ssl/certs/ca-certificates.crt
+        <% unless ENV['DB_SSL_DISABLE']=='true' %>
+            ssl_mode: VERIFY_IDENTITY
+            sslca: /etc/ssl/certs/ca-certificates.crt
+        <% end %>
         migrations_paths: db/queue_migrate
     cache:
         adapter: sqlite3
@@ -194,6 +200,8 @@ production:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <% unless ENV['DB_SSL_DISABLE']=='true' %>
+            ssl_mode: VERIFY_IDENTITY
+            sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <% end %>
         migrations_paths: db/cable_migrate
