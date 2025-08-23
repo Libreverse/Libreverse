@@ -1,0 +1,147 @@
+---PqeH5PKV---A--
+[23/Aug/2025:17:37:14 +0000] 175597063488.515266 127.0.0.1 37218 127.0.0.1 3000
+---PqeH5PKV---B--
+HEAD / HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Passenger Prespawn Script
+Connection: close
+
+---PqeH5PKV---D--
+
+---PqeH5PKV---F--
+HTTP/1.1 200
+content-security-policy: default-src 'self'; font-src 'self' https: data:; img-src 'self' https: data: blob:; object-src 'none'; manifest-src 'self' data:; script-src 'self' https: 'unsafe-inline' data: blob:; style-src 'self' https: 'unsafe-inline' data:; worker-src 'self' blob:; connect-src 'self' https: data: ws:; frame-src 'self' data:; report-uri /csp-report
+x-content-type-options: nosniff
+feature-policy: accelerometer 'none'; autoplay 'self'; camera 'none'; display-capture 'none'; encrypted-media 'self'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'self'; screen-wake-lock 'none'; sync-xhr 'self'; usb 'none'
+x-runtime: 0.905836
+x-frame-options: SAMEORIGIN
+x-download-options: noopen
+expect-ct: max-age=86400, enforce
+strict-transport-security: max-age=31536000; includeSubDomains
+cross-origin-opener-policy: same-origin
+x-xss-protection: 1; mode=block
+x-request-id: e2c4dc1e-47cc-45d9-bd28-b89f899ef05f
+Server: nginx/1.24.0 + Phusion Passenger(R) 6.0.27
+Server: nginx/1.24.0 + Phusion Passenger(R) 6.0.27
+Date: Sat, 23 Aug 2025 17:37:20 GMT
+Date: Sat, 23 Aug 2025 17:37:20 GMT
+Connection: close
+Content-Length: 2053848
+Content-Type: text/html; charset=utf-8
+Status: 200 OK
+x-permitted-cross-domain-policies: none
+cross-origin-resource-policy: same-origin
+cache-control: max-age=0, private, must-revalidate
+vary: Origin
+etag: W/"da10da9fb6455f72afd7aea7c1e1192a"
+referrer-policy: strict-origin-when-cross-origin
+Set-Cookie: _libreverse_session=T47eVELFRsdhfscESliISFB5aoH3OUVVO7OxkYIgXMb7vZuA8KEkn8ds9XCop4MY8CyK%2F2P2E3TSSI6v%2F33ERftuqnE7M5A9wx26kTf%2FXzopNFmEMosuQZ40aY1tNqD6iNuKzOxlmO3WmY9VSfebSVtQfPvTxDXb%2F2PI8G8kX6RB0kE%2BtzLofBV%2BZqnIuKBA1iQWnOyf%2F%2F9znAmBdyBTcs%2BeFnQRW6eNOB1P3zt43MGK5X1dTFCdY5zfgMcUkOEt%2FKkfeRQvqvKQuFx%2Ffab%2BcpoIEtu%2F9CGIoaHG5QKtRgIq99GnTSz4iavYFjOCaQtJc7zlVK9NGhf21%2FVZExXJ74oqHGd9fqZ8wPts6nCr2sLtFmW9VFCOlJelsOEu4SB79mmQ3fL3ijRGMSxarwNxPR9xF%2BAL92AmuwSNFntgfPvUSIr95P4AdCxdfR0nNHtMXWwE9WWyASgoh2sST81Rq8zHGp%2F0%2BCvsdUkTpBCHIND4dATfnCKZ6dGwDhyJbwZJH7LH7Jbay%2FmM0MM5AYv75yFs87AdbPF%2FHlKcEa7aXMat3Bamquv%2B59euwZWRddxIqls4Uol6FqAIyjlKRw%3D%3D--LTd1XpjkgNHUdZnJ--iiErjVbU9iE9fHMG9sxDFg%3D%3D; path=/; expires=Sat, 23 Aug 2025 19:37:20 GMT; secure; httponly; samesite=strict
+X-Powered-By: Phusion Passenger(R) 6.0.27
+
+---PqeH5PKV---H--
+ModSecurity: Warning. Matched "Operator `Rx' with parameter `^[\d.:]+$' against variable `REQUEST_HEADERS:Host' (Value: `127.0.0.1' ) [file "/etc/modsecurity/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf"] [line "719"] [id "920350"] [rev ""] [msg "Host header is a numeric IP address"] [data "127.0.0.1"] [severity "4"] [ver "OWASP_CRS/3.3.5"] [maturity "0"] [accuracy "0"] [tag "application-multi"] [tag "language-multi"] [tag "platform-multi"] [tag "attack-protocol"] [tag "paranoia-level/1"] [tag "OWASP_CRS"] [tag "capec/1000/210/272"] [tag "PCI/6.5.10"] [hostname "127.0.0.1"] [uri "/"] [unique_id "175597063488.515266"] [ref "o0,9v22,9"]
+
+---PqeH5PKV---I--
+
+---PqeH5PKV---J--
+
+---PqeH5PKV---Z--
+
+---yvHPVq1V---A--
+[23/Aug/2025:18:05:29 +0000] 175597232959.867202 127.0.0.1 38742 127.0.0.1 3000
+---yvHPVq1V---B--
+HEAD / HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Passenger Prespawn Script
+Connection: close
+
+---yvHPVq1V---D--
+
+---yvHPVq1V---F--
+HTTP/1.1 200
+content-security-policy: default-src 'self'; font-src 'self' https: data:; img-src 'self' https: data: blob:; object-src 'none'; manifest-src 'self' data:; script-src 'self' https: 'unsafe-inline' data: blob:; style-src 'self' https: 'unsafe-inline' data:; worker-src 'self' blob:; connect-src 'self' https: data: ws:; frame-src 'self' data:; report-uri /csp-report
+x-content-type-options: nosniff
+feature-policy: accelerometer 'none'; autoplay 'self'; camera 'none'; display-capture 'none'; encrypted-media 'self'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'self'; screen-wake-lock 'none'; sync-xhr 'self'; usb 'none'
+x-runtime: 0.801527
+x-frame-options: SAMEORIGIN
+x-download-options: noopen
+expect-ct: max-age=86400, enforce
+strict-transport-security: max-age=31536000; includeSubDomains
+cross-origin-opener-policy: same-origin
+x-xss-protection: 1; mode=block
+x-request-id: 2c561941-9673-4a48-a3bb-6eee6f369e11
+Server: nginx/1.24.0 + Phusion Passenger(R) 6.0.27
+Server: nginx/1.24.0 + Phusion Passenger(R) 6.0.27
+Date: Sat, 23 Aug 2025 18:05:35 GMT
+Date: Sat, 23 Aug 2025 18:05:35 GMT
+Connection: close
+Content-Length: 2053848
+Content-Type: text/html; charset=utf-8
+Status: 200 OK
+x-permitted-cross-domain-policies: none
+cross-origin-resource-policy: same-origin
+cache-control: max-age=0, private, must-revalidate
+vary: Origin
+etag: W/"3fd83110af1ed8f539088d25156ac375"
+referrer-policy: strict-origin-when-cross-origin
+Set-Cookie: _libreverse_session=MXRs6K1MbJFvEBzee1ZN3W3JeJV5uHs7AfsJzq3yKVHFKbJmbs1z7oD0haYkeK8%2FzSVm0thqXtIZiR94b%2FC7xqnozMDC4CSA7pLzSpAn13WPJvHtc0a%2Bo%2Bxv4J%2BD571mvxi7hVf%2FXfqIWUK%2FhinSMOna70QP61%2BTErq366IY8EFzWT7SGeIHSea%2FD%2F%2F2NbEPlzAQi6oN%2Fdxitj7BCSiPisD6eQq3Jji7sK9QGlc1OKIUSGi2m4ZnYqQY1m1QX%2FIUlvquo8TFRx6nlCH5F%2Fh%2FE0T5ox4nycclOXLZpUO3yrKAIcLFsIQY2oN8zzEkRZX0iJJcrdBTpMwhMP9akxNFg0pTf%2Fkk37Ws30N5p9Zf6QDPxodbOSafKk%2FDnjc4q6IEItvRyXQIlMxE0WeRLFsDKYrp%2BNtqnV3sYVrQfLAAP2Fd5dgtYBZKVdden%2BHQkfbEBUsrO6posjWuFLdpi7A3OMYIev%2BUwhEPtGFcwHPn9IF086hUDohTelAVRDNw5N%2FLxWV0kBnzdq24nS1Bvps%2BuTPS4n4mPI1WeFN%2FrCRZuyhERGtA0fL36lL0PzXo9nU%2FXOzqQB5CljvCICPhGQ%3D%3D--ei1JMDBZElxo3zgH--IHTtNFu4P39N8EIAcQjWvA%3D%3D; path=/; expires=Sat, 23 Aug 2025 20:05:35 GMT; secure; httponly; samesite=strict
+X-Powered-By: Phusion Passenger(R) 6.0.27
+
+---yvHPVq1V---H--
+ModSecurity: Warning. Matched "Operator `Rx' with parameter `^[\d.:]+$' against variable `REQUEST_HEADERS:Host' (Value: `127.0.0.1' ) [file "/etc/modsecurity/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf"] [line "719"] [id "920350"] [rev ""] [msg "Host header is a numeric IP address"] [data "127.0.0.1"] [severity "4"] [ver "OWASP_CRS/3.3.5"] [maturity "0"] [accuracy "0"] [tag "application-multi"] [tag "language-multi"] [tag "platform-multi"] [tag "attack-protocol"] [tag "paranoia-level/1"] [tag "OWASP_CRS"] [tag "capec/1000/210/272"] [tag "PCI/6.5.10"] [hostname "127.0.0.1"] [uri "/"] [unique_id "175597232959.867202"] [ref "o0,9v22,9"]
+
+---yvHPVq1V---I--
+
+---yvHPVq1V---J--
+
+---yvHPVq1V---Z--
+
+---54ZaD3mi---A--
+[23/Aug/2025:18:16:13 +0000] 175597297392.749457 127.0.0.1 58236 127.0.0.1 3000
+---54ZaD3mi---B--
+HEAD / HTTP/1.1
+Host: 127.0.0.1
+User-Agent: Passenger Prespawn Script
+Connection: close
+
+---54ZaD3mi---D--
+
+---54ZaD3mi---F--
+HTTP/1.1 200
+content-security-policy: default-src 'self'; font-src 'self' https: data:; img-src 'self' https: data: blob:; object-src 'none'; manifest-src 'self' data:; script-src 'self' https: 'unsafe-inline' data: blob:; style-src 'self' https: 'unsafe-inline' data:; worker-src 'self' blob:; connect-src 'self' https: data: ws:; frame-src 'self' data:; report-uri /csp-report
+x-content-type-options: nosniff
+feature-policy: accelerometer 'none'; autoplay 'self'; camera 'none'; display-capture 'none'; encrypted-media 'self'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'self'; screen-wake-lock 'none'; sync-xhr 'self'; usb 'none'
+x-runtime: 0.984058
+x-frame-options: SAMEORIGIN
+x-download-options: noopen
+expect-ct: max-age=86400, enforce
+strict-transport-security: max-age=31536000; includeSubDomains
+cross-origin-opener-policy: same-origin
+x-xss-protection: 1; mode=block
+x-request-id: c5392f6d-b6f9-4962-a8f9-f82cc1b5899d
+Server: nginx/1.24.0 + Phusion Passenger(R) 6.0.27
+Server: nginx/1.24.0 + Phusion Passenger(R) 6.0.27
+Date: Sat, 23 Aug 2025 18:16:20 GMT
+Date: Sat, 23 Aug 2025 18:16:20 GMT
+Connection: close
+Content-Length: 2053848
+Content-Type: text/html; charset=utf-8
+Status: 200 OK
+x-permitted-cross-domain-policies: none
+cross-origin-resource-policy: same-origin
+cache-control: max-age=0, private, must-revalidate
+vary: Origin
+etag: W/"8c3623fc1c6dca2efd7155999e4ef5ae"
+referrer-policy: strict-origin-when-cross-origin
+Set-Cookie: _libreverse_session=1hbHDQEjLFQjuByEANpnM%2FaYxTy%2FwvVGa8xmTu3bcKu3%2BGM1oaQ7xGHRF9xLx4JgnUVEO606SMUFPwp0g0%2FI2RX4VR%2FiwMBDrZ3dNu0XShRQOWJas1Yplmo9%2BhI%2Fn%2FKBZCWnAHC%2B1XPVJ5KAia75HyhjOMbn7D2h5uHVQnOa1AuVYU6VjuTYpHarJOyFm2JCPAjjgXqYwc3aegUpAMau6rfMdakGwLkyeVjEF2dJOmlMybZy2rX3XWKAVkFa%2Fk5xvU7fNtrAw%2Bon4sxspHSpRid4maOG7CAw8THDpE0fWR%2Fns%2FCDoi8EkjGzaTqb1pJ3jufBouPXYxU4xvUvUInyPLmDHAyh9osQ6KrvE6t7y78IhhrqyBmfTxPazoS4a4XIIubTSIPR%2BA8Ty00hwaPbpG0gjiyOTvKTN1aOOkf2V0QcPxPUu6fLmvehb4P0dDInNMxexBfKCy6EiUP3cKw7yH5UlABs1VbXiPSGU0kKX%2FH8LTsQMMyFBuh0Pi2GPozxeaT9OPphaISBcaeb558cmsYJxKGuagXAgeWcmIT0XZCcUMPIL3ruKoDXWSot%2BOUlCiWvEEyiBZquo3o4Jw%3D%3D--%2BkBgIbEg8J5%2FnKk2--jVw7UxIcIT4C5slfy49vuQ%3D%3D; path=/; expires=Sat, 23 Aug 2025 20:16:20 GMT; secure; httponly; samesite=strict
+X-Powered-By: Phusion Passenger(R) 6.0.27
+
+---54ZaD3mi---H--
+ModSecurity: Warning. Matched "Operator `Rx' with parameter `^[\d.:]+$' against variable `REQUEST_HEADERS:Host' (Value: `127.0.0.1' ) [file "/etc/modsecurity/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf"] [line "719"] [id "920350"] [rev ""] [msg "Host header is a numeric IP address"] [data "127.0.0.1"] [severity "4"] [ver "OWASP_CRS/3.3.5"] [maturity "0"] [accuracy "0"] [tag "application-multi"] [tag "language-multi"] [tag "platform-multi"] [tag "attack-protocol"] [tag "paranoia-level/1"] [tag "OWASP_CRS"] [tag "capec/1000/210/272"] [tag "PCI/6.5.10"] [hostname "127.0.0.1"] [uri "/"] [unique_id "175597297392.749457"] [ref "o0,9v22,9"]
+
+---54ZaD3mi---I--
+
+---54ZaD3mi---J--
+
+---54ZaD3mi---Z--
+

@@ -111,11 +111,8 @@ RUN set -eux; \
     ./install.sh; \
     rm -rf /tmp/crowdsec-nginx-bouncer* /var/lib/apt/lists/*
 
-# Remove any captcha-related settings from the bouncer config at build time
-RUN if [ -f /etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf ]; then \
-            sed -i -e '/^CAPTCHA_/d' -e '/^RECAPTCHA_/d' -e '/^HCAPTCHA_/d' -e '/captcha/Id' \
-                /etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf; \
-        fi
+# Provide a minimal deny-only config for the Lua bouncer
+COPY docker/crowdsec-nginx-bouncer.conf /etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf
 
 # Create runit service for Solid Queue worker process
 RUN mkdir -p /etc/service/worker
