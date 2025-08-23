@@ -6,9 +6,10 @@
 - [ ] (feature) add crowdsec nginx bouncer
 - [ ] (feature) Integrate the rodauth complex multi-db account features
       --- september ---
-- [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations, also OSA compliance.)
+- [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations)
 - [ ] (feature) osa compliance audit and changes
 - [ ] (feature) Deploy without master_key pre-set (remove `credentials.yml.enc` handling adjustments)
+- [ ] (feature) make local codeql work fully
 - [ ] (feature) Deploy with SSL without reverse proxy (evaluate direct nginx inside container viability vs current cloud setup)
 - [ ] (feature) Add container runtime using podman in docker
 - [ ] (feature) Release beta

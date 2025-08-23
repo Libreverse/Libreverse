@@ -163,4 +163,10 @@ chmod -R 664 /home/app/webapp/log/ 2>/dev/null || true
 
 echo "✅ File permissions configured"
 
+# Bootstrap CrowdSec bouncer key from Rails secrets if CrowdSec is present
+if [ -x /home/app/webapp/docker/crowdsec-bootstrap.sh ]; then
+    echo "🛡️  Bootstrapping CrowdSec bouncer configuration..."
+    /home/app/webapp/docker/crowdsec-bootstrap.sh || true
+fi
+
 exec /sbin/my_init
