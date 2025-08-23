@@ -12,6 +12,7 @@ RUN set -eux; \
             libjemalloc2 libjemalloc-dev \
             libmodsecurity3 libnginx-mod-http-modsecurity modsecurity-crs \
             shared-mime-info coreutils imagemagick unzip \
+            libnginx-mod-http-ndk libnginx-mod-http-lua lua5.1 lua-cjson luarocks gettext-base sudo \
         ; \
         mkdir -p /etc/modsecurity; \
         ln -sf /usr/share/modsecurity-crs/rules /etc/modsecurity/rules || true; \
@@ -90,17 +91,57 @@ COPY docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY docker/nginx-main.conf /etc/nginx/nginx.conf
 COPY docker/passenger.conf /etc/nginx/passenger.conf
 
+# Install CrowdSec (LAPI + agent) from official repo and NGINX bouncer Lua component
+RUN set -eux; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl ca-certificates; \
+    # Prevent systemctl/postinst failures in non-systemd container
+    ln -sf /bin/true /usr/bin/systemctl; \
+    printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d; chmod +x /usr/sbin/policy-rc.d; \
+    curl -fsSL https://install.crowdsec.net | bash; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends crowdsec; \
+    mkdir -p /etc/crowdsec/acquis.d; \
+    touch /etc/crowdsec/acquis.yaml; \
+    # Disable agent; run LAPI only and explicitly enable API server
+    printf 'crowdsec_service:\n  enable: false\napi:\n  server:\n    enable: true\n    listen_uri: 127.0.0.1:8080\n' > /etc/crowdsec/config.yaml.local; \
+    mkdir -p /etc/crowdsec/bouncers; \
+    curl -fsSL -o /tmp/crowdsec-nginx-bouncer.tgz https://github.com/crowdsecurity/cs-nginx-bouncer/releases/download/v1.1.3/crowdsec-nginx-bouncer.tgz; \
+    tar -xzf /tmp/crowdsec-nginx-bouncer.tgz -C /tmp; \
+    cd /tmp/crowdsec-nginx-bouncer-*; \
+    ./install.sh; \
+    rm -rf /tmp/crowdsec-nginx-bouncer* /var/lib/apt/lists/*
+
+# Remove any captcha-related settings from the bouncer config at build time
+RUN if [ -f /etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf ]; then \
+            sed -i -e '/^CAPTCHA_/d' -e '/^RECAPTCHA_/d' -e '/^HCAPTCHA_/d' -e '/captcha/Id' \
+                /etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf; \
+        fi
+
 # Create runit service for Solid Queue worker process
 RUN mkdir -p /etc/service/worker
 COPY docker/worker.sh /etc/service/worker/run
 RUN chmod +x /etc/service/worker/run
 
+# Create runit service for CrowdSec LAPI/agent
+RUN mkdir -p /etc/service/crowdsec
+COPY docker/crowdsec-run.sh /etc/service/crowdsec/run
+RUN chmod +x /etc/service/crowdsec/run
+
+# Add a one-shot runit service to wait for LAPI and then bootstrap the bouncer
+RUN mkdir -p /etc/service/crowdsec-bootstrap
+COPY docker/wait-for-lapi.sh /etc/service/crowdsec-bootstrap/run
+RUN chmod +x /etc/service/crowdsec-bootstrap/run
+
+# Ensure bootstrap helper is executable
+RUN chmod +x /home/app/webapp/docker/crowdsec-bootstrap.sh || true
+
 # Clean up APT when done
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Add entrypoint script to launch app with jemalloc only for Passenger
+# Add entrypoint script to launch app with jemalloc and run migrations, then exec my_init
 COPY docker/entrypoint-with-jemalloc.sh /usr/local/bin/entrypoint-with-jemalloc.sh
 RUN chmod +x /usr/local/bin/entrypoint-with-jemalloc.sh
 
 # Use baseimage-docker's init process, but override to use jemalloc for app
+ENV DISABLE_AGENT=true
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
