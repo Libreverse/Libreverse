@@ -574,7 +574,7 @@ GEM
     robots (0.10.1)
     roda (3.95.0)
       rack
-    rodauth (2.39.0)
+    rodauth (2.40.0)
       roda (>= 2.6.0)
       sequel (>= 4)
     rodauth-guest (0.0.1)

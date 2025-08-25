@@ -3,12 +3,11 @@
 # Bootsnap Performance Optimization
 require "bootsnap"
 
-# Fasterer: using block form of fetch for efficiency
-env = ENV.fetch("RAILS_ENV") { "development" }
+# Use Rails.env instead of ENV
 Bootsnap.setup(
-  cache_dir: "tmp/cache",
+  cache_dir: Rails.root.join("tmp/cache"),
   ignore_directories: [ "node_modules" ],
-  development_mode: env == "development",
+  development_mode: Rails.env.development?,
   load_path_cache: true,
   compile_cache_iseq: true,
   compile_cache_yaml: true,
