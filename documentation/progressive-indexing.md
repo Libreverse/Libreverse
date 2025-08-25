@@ -70,3 +70,70 @@ rake indexing:reset_progressive
 - **High-Value Areas**: Always checks popular districts even outside current spiral
 
 This system ensures that over time, the indexer will eventually cover the entire active areas of Decentraland while respecting API limits and being efficient with resources.
+
+## Governance and error handling
+
+Progressive indexing operates under clear request-governance rules to be respectful to third-party services and resilient to errors.
+
+### 403 Forbidden domain blocking
+
+When a domain returns HTTP 403, we treat it as a temporary block and automatically recover later without manual intervention.
+
+Key behaviors:
+
+- 30-day domain cooldown when 403 is received (stored in Rails cache)
+- All requests to blocked domains are skipped during the cooldown
+- Automatic recheck after cooldown expiry; no permanent abandonment
+- Rich, structured logging for visibility
+
+Error classification overview:
+
+- 403 Forbidden → 30-day cooldown; recheck after expiry
+- 429 Too Many Requests → short-term rate limiting honoring Retry-After
+- 503 Service Unavailable → transient; quick retry
+- Other 4xx → considered permanent for that request
+- 5xx → transient; immediate retry with backoff
+
+Implementation sketch:
+
+```ruby
+class ForbiddenAccessError < StandardError; end
+
+def handle_forbidden_response(response, url)
+    domain = URI(url).host
+    set_domain_block(domain, 30.days.to_i)
+    raise ForbiddenAccessError, "#{domain} blocked for 30 days"
+end
+
+def set_domain_block(domain, seconds)
+    Rails.cache.write("forbidden:#{domain}", Time.now.to_i + seconds, expires_in: seconds + 1.day)
+end
+
+def domain_blocked?(domain)
+    until_ts = Rails.cache.read("forbidden:#{domain}")
+    return false unless until_ts
+    Time.now.to_i < until_ts
+end
+```
+
+Request flow:
+
+1. Pre-request: skip if `domain_blocked?(host)`
+2. On 403: `handle_forbidden_response` and begin cooldown
+3. After expiry: normal requests resume and system self-heals
+
+Monitoring examples:
+
+```text
+[WARN] [INDEXER] Access forbidden by api.example.com: HTTP 403
+[INFO] [INDEXER] Domain will be blocked for 30 days, then rechecked
+[DEBUG] [INDEXER] Domain api.example.com is blocked for N more days
+```
+
+Notes:
+
+- Duration can be made configurable (e.g., `forbidden_block_days`)
+- Cache entries expire automatically; a +1 day buffer avoids edge cutoffs
+- Works across GET/POST and headless/capybara flows consistently
+
+See also: [Rate limiting implementation](rate-limiting-implementation.md)

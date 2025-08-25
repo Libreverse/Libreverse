@@ -1,3 +1,6 @@
+# P2P collaborative document types
+
+```yml
 version: 1
 messages:
     yjs_update:
@@ -53,3 +56,4 @@ messages:
         fields:
             code: string
             message: string
+```

@@ -1,69 +1,98 @@
 # Libreverse Documentation
 
-Welcome to the Libreverse documentation. This directory contains comprehensive documentation for all features and components of the Libreverse platform.
+Welcome! This folder contains user- and developer-facing docs for Libreverse. The index below organizes everything that remains after pruning non-actionable change logs and status notes.
 
-## Documentation Structure
+## 📚 Table of contents
 
-The documentation is organized by feature area:
+### Getting started and setup
 
-- [Homepage & Navigation](homepage_navigation.md): Entry point and navigation system
-- [Authentication](authentication.md): User authentication and account management
-- [Experiences](experiences.md): Core content creation and management
-- [Search](search.md): Content discovery functionality
-- [Dashboard](dashboard.md): Personalized user dashboard
-- [XML-RPC API](xmlrpc_api.md): Programmatic access to platform features
-- [User Preferences](user_preferences.md): User-specific settings and preferences
-- [Attribution Notes](attributionnotes.md): Credits for third-party assets
-- [Technical & Organisational Measures (TOMs)](toms.md): Security controls including encryption, access controls, and backups
+- [Configuration](configuration.md)
+- [Spring setup](spring-setup.md)
+- [SQLite guide](sqlite-guide.md)
+- [Passenger migration guide](passenger-migration-guide.md)
+- [Sentry setup](sentry-setup-guide.md)
+- [MailHog integration](mailhog-integration.md)
+- [Foundation for Emails](foundation-for-emails.md)
+- [Gem sources](gem-sources.md)
+- [CodeQL quickstart](codeql-quickstart.md)
+- [CodeQL security analysis](codeql-security-analysis.md)
+- [Litestream integration](litestream-integration.md)
 
-## For Developers
+### Core product features
 
-If you're a developer working on the Libreverse platform, these documents provide detailed information about the implementation of each feature, including:
+- [Homepage & navigation](homepage-navigation.md)
+- [Authentication](authentication.md)
+- [Experiences](experiences.md)
+- [Search](search.md)
+- [Dashboard](dashboard.md)
+- [User preferences](user-preferences.md)
 
-- Data models and relationships
-- Controller logic and request flow
-- Integration points between components
-- API access methods
-- Performance considerations
+### APIs and integrations
 
-## For Users
+- [GraphQL API](graphql-api.md)
+- [gRPC API](grpc-api.md)
+- [JSON:API](json-api.md)
+	- JavaScript client example (inlined at the end)
+- [XML-RPC overview](xmlrpc.md)
+- [XML-RPC API](xmlrpc-api.md)
+	- Ruby client example (inlined at the end)
+- [Realtime P2P API](realtime-p2p-api.md)
+- [P2P WebSocket message types](p2p-ws-message-types.yml)
 
-If you're a user of the Libreverse platform, the documentation explains:
+### Glass system and visual effects
 
-- How to navigate the platform
-- Creating and managing experiences
-- Finding content through search
-- Customizing your experience through preferences
-- Using the dashboard to manage your account
+- [Glass system](glass-system.md)
+- [Simplified glass system](simplified-glass-system.md)
+- [Enhanced glass fallback system](enhanced-glass-fallback-system.md)
+- [Enhanced glass fallback documentation](enhanced-glass-fallback-documentation.md)
+- [Glass cleanup migration](glass-cleanup-migration.md)
+- [Glass migration guide](glass-migration-guide.md)
+- [Infinite-scale glass effects](infinite-scale-glass-effects.md)
+- [Liquid glass optimisation guide](liquid-glass-optimization-guide.md)
+- [WebGL context debug fix](webgl-context-debug-fix.md)
+- [WebGL context emergency management](webgl-context-emergency-management.md)
+- [Text glow effects](text-glow-effects.md)
 
-## For Contributors
+### Performance and reliability
 
-If you're contributing to the Libreverse project, please ensure that you:
+- [Enhanced caching](enhanced-caching.md)
+- [Progressive indexing](progressive-indexing.md)
+- [Maximum compression implementation](maximum-compression-implementation.md)
+- [Rate limiting implementation](rate-limiting-implementation.md)
+- [Logging](logging-1.md)
 
-1. Keep documentation up to date when making code changes
-2. Follow the existing documentation format
-3. Include technical details and examples
-4. Consider both developer and user perspectives
+### Security, compliance, and federation
 
-## Documentation Format
+- [Security federation implementation](security-federation-implementation.md)
+- [Active Hashcash integration](active-hashcash-integration.md)
+- [403 handling (Progressive indexing governance)](progressive-indexing.md#403-forbidden-domain-blocking)
+- [GDPR error tracking](gdpr-error-tracking.md)
+- [Role/authorization integration (Rolify + CanCanCan)](rolify-cancancan-integration.md)
+- [TOMs (Technical & Organisational Measures)](toms.md)
+- [Federation overview](federation.md)
 
-All documentation is written in Markdown format. Each document follows a consistent structure:
+### Analytics, email, and UX enhancements
 
-1. Title and overview
-2. Detailed feature description
-3. User workflow
-4. Technical implementation details
-5. Best practices and considerations
-6. Future enhancements (where applicable)
+- [Umami analytics](umami-analytics.md)
+- [Email configuration](email-configuration.md)
+- [Email CSS inlining](email-css-inlining.md)
 
-## Updating Documentation
+## ✍️ Authoring guidelines
 
-When updating the documentation:
+To keep this corpus useful:
 
-1. Ensure factual accuracy
-2. Keep code examples current
-3. Maintain consistent terminology
-4. Use clear, concise language
-5. Include diagrams and visual aids where helpful
+- Write actionable documentation (guides, specs, how-tos). Avoid change logs, status updates, or summaries without instructions.
+- Prefer one topic per file, with a short “Overview”, “How it works”, and “How to use” structure.
+- Include minimal, runnable examples when describing APIs or CLIs.
+- Keep names descriptive and consistent; use lowercase-with-hyphens for new filenames.
 
-For questions about the documentation or to suggest improvements, please contact the Libreverse development team.
+## 🔄 Updating documentation
+
+When updating docs:
+
+- Ensure accuracy and keep examples current.
+- Use consistent terminology.
+- Link to related docs to help readers discover context.
+- If removing outdated content, replace it with a pointer to the canonical document or delete it outright (don’t keep status-only notes).
+
+Questions or suggestions? Open an issue or PR with your proposed changes.

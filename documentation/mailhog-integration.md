@@ -116,6 +116,6 @@ In production, MailHog is not included. The system uses:
 
 ## Related Documentation
 
-- [Foundation for Emails Integration](foundation_for_emails.md)
-- [Email Configuration Guide](email_configuration.md)
+- [Foundation for Emails Integration](foundation-for-emails.md)
+- [Email Configuration Guide](email-configuration.md)
 - [MailHog Official Documentation](https://github.com/mailhog/MailHog)
