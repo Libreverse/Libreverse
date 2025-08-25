@@ -73,7 +73,7 @@ Based on static analysis feedback:
 
 ```bash
 # gRPC Server Settings
-export GRPC_HOST="0.0.0.0" # Server bind address
+export GRPC_HOST="127.0.0.1" # Server bind address (use 0.0.0.0 to expose externally)
 export GRPC_PORT="50051"   # Server port
 
 # SSL Configuration (Production)

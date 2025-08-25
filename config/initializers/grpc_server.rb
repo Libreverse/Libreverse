@@ -12,7 +12,7 @@ Rails.application.configure do
             next
         end
 
-        Thread.new do
+      Thread.new do
             Thread.current.abort_on_exception = true
             Thread.current.name = "grpc-server" if Thread.current.respond_to?(:name=)
             Rails.logger.info "Starting integrated gRPC server..."
@@ -20,6 +20,8 @@ Rails.application.configure do
             begin
                 require Rails.root.join("app/grpc/grpc_server")
                 server = Libreverse::GrpcServer.new
+          # Mark that we're running gRPC inside the Rails process
+          ENV["GRPC_INTEGRATED"] = "true"
                 server.start
             rescue StandardError => e
                 Rails.logger.error "Failed to start integrated gRPC server: #{e.message}"

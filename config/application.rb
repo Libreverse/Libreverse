@@ -253,9 +253,16 @@ module LibreverseInstance
 
     @grpc_enabled = if can_access_database?
       setting = InstanceSetting.find_by(key: "grpc_enabled")
-      ActiveModel::Type::Boolean.new.cast(setting&.value)
+      raw = setting&.value
+      # Enabled by default when no explicit setting is present
+      if raw.nil? || raw.to_s.strip.empty?
+        true
+      else
+        ActiveModel::Type::Boolean.new.cast(raw)
+      end
     else
-      false
+      # No DB available yet — enable by default
+      true
     end
   end
 

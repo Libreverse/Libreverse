@@ -53,7 +53,8 @@ settings_hash      = @instance_settings.pluck(:key, :value).to_h
     )
     @eea_mode_enabled = get_setting_with_fallback.call("eea_mode_enabled", nil, "true") == "true"
     @force_ssl = get_setting_with_fallback.call("force_ssl", nil, Rails.env.production? ? "true" : "false") == "true"
-    @grpc_enabled = get_setting_with_fallback.call("grpc_enabled", nil, "false") == "true"
+  # Enabled by default when not explicitly set
+  @grpc_enabled = get_setting_with_fallback.call("grpc_enabled", nil, "true") == "true"
 
     # Get current values for text inputs
     rails_log_default = if Rails.env.development?

@@ -26,7 +26,7 @@ The gRPC server will start on port 50051 by default alongside the web server.
 The gRPC server is configured in `config/initializers/grpc.rb`:
 
 - **Port**: `GRPC_PORT` environment variable (default: 50051)
-- **Host**: `GRPC_HOST` environment variable (default: 0.0.0.0)
+- **Host**: `GRPC_HOST` environment variable (default: 127.0.0.1)
 - **SSL**: Enabled in production with `GRPC_SSL_CERT_PATH` and `GRPC_SSL_KEY_PATH`
 - **Rate limiting**: 30 requests per minute per IP
 - **Authentication**: Session-based via cookies or headers
