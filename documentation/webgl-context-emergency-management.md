@@ -4,6 +4,33 @@
 
 This guide outlines the advanced WebGL context management system designed to prevent context overloading and maintain stable performance with many concurrent glass effects.
 
+## Quick fixes summary (from debug investigations)
+
+Field fixes we’ve applied and validated:
+
+- Reduce max contexts (12 → 8) and pool size (6 → 4)
+- Lower active rendering instances (8 → 6)
+- Increase cleanup cadence (5s → 3s)
+- Immediate visibility check + larger root margin for earlier init
+- Timeout fallback to ensure eager initialization when intersection is late
+- Add double-check before context creation to avoid oversubscription
+
+New default configuration (effective baseline):
+
+```javascript
+optimizedWebGLContextManager.maxContexts = 8; // was 12
+optimizedWebGLContextManager.maxPoolSize = 4; // was 6
+optimizedWebGLContextManager.cleanupInterval = 3000; // was 5000ms
+
+Container.maxConcurrentInstances = 8; // was 12
+Container.maxActiveRenderingInstances = 6; // was 8
+
+webglContextMonitor.warningThreshold = 6; // was 8
+webglContextMonitor.criticalThreshold = 8; // was 10
+```
+
+These tie directly into the emergency prevention system below.
+
 ## Emergency Prevention System
 
 ### 1. WebGL Context Monitor (`webgl_context_monitor.js`)

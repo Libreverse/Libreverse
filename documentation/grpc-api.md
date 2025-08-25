@@ -9,6 +9,28 @@ The Libreverse gRPC API provides type-safe, efficient remote procedure calls usi
 1. **Native gRPC**: Direct gRPC connections for maximum performance and type safety
 2. **HTTP-based gRPC**: JSON over HTTP for easier integration from web applications
 
+## Integration (server)
+
+The gRPC server runs inside the Rails process for simplicity and shared state:
+
+- Starts with Rails (background thread)
+- Default host/port: 127.0.0.1:50051 (config via `GRPC_HOST`, `GRPC_PORT`)
+- SSL in production (via `GRPC_SSL_CERT_PATH`, `GRPC_SSL_KEY_PATH`)
+- Rate limiting and auth aligned with XML-RPC
+
+Development:
+
+```bash
+# Start web + gRPC together
+bin/dev
+```
+
+HTTP bridge:
+
+```javascript
+await fetch("/api/grpc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method: "GetAllExperiences", request: {} }) })
+```
+
 ## Authentication
 
 Similar to the XML-RPC API, authentication is handled through:

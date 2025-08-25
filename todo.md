@@ -3,7 +3,7 @@
 - [ ] (bugfix) Fix glass not scrolling as it should
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (bugfix) allow css glass substitute to render and then fade into the webgl one.
-- [ ] (feature) enable the grpc server and allow the container all ports that it would use
+- [ ] clear up attribution for images
       --- september ---
 - [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations)
 - [ ] (feature) osa compliance audit and changes

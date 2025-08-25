@@ -1,5 +1,7 @@
 # Realtime P2P + Yjs (Alpha)
 
+<!-- markdownlint-disable MD046 -->
+
 The Libreverse iframe environment injects a global collaborative + messaging API into experiences:
 
 Globals:
@@ -8,6 +10,25 @@ Globals:
 - Backed by ActionCable channels:
     - `WebsocketP2pChannel` – peer roster + generic messages only.
     - `SyncChannel` (yrb-actioncable) – Yjs CRDT synchronization.
+
+## Architecture (WebSocket-based)
+
+    Core components:
+
+    1. WebSocket P2P Controller – manages P2P sessions and peer coordination
+    2. WebSocket P2P Channel (ActionCable) – signaling and peer roster
+    3. WebSocket P2P Connection – per-peer connection lifecycle
+    4. P2P Frame custom element – hosts the experience iframe
+    5. Client library – P2P/Yjs API surface for experiences
+
+    Key features:
+
+    - Pure WebSocket implementation (no WebRTC)
+    - Backwards compatible with previous P2P API
+    - Room-based connections with host/peer model
+    - Automatic reconnection and heartbeat
+    - Broadcast and direct messaging
+    - Peer discovery and session management
 
 ## Basic Messaging
 
