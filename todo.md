@@ -4,6 +4,7 @@
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (bugfix) allow css glass substitute to render and then fade into the webgl one.
 - [ ] (feature) Integrate the rodauth complex multi-db account features
+enable the grpc server and allow the container all ports that it would use
       --- september ---
 - [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations)
 - [ ] (feature) osa compliance audit and changes
