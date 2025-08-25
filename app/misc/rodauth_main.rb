@@ -13,6 +13,8 @@ class RodauthMain < Rodauth::Rails::Auth
            :change_password, :change_login,
            :close_account,
            :argon2, :pwned_password,
+           :active_sessions, :single_session,
+           :update_password_hash,
            :guest, # anonymous auth
            :internal_request,
            :i18n,

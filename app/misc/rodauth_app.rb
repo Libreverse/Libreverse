@@ -66,6 +66,14 @@ class RodauthApp < Rodauth::Rails::App
       end
     end
 
+    # Enforce session integrity for authenticated sessions.
+    if rodauth.logged_in?
+      # Keep sessions up to date and valid across devices/browsers.
+      rodauth.check_active_session if rodauth.respond_to?(:check_active_session)
+      rodauth.check_single_session if rodauth.respond_to?(:check_single_session)
+      rodauth.update_last_activity if rodauth.respond_to?(:update_last_activity)
+    end
+
     # Route rodauth internal requests first (e.g., POST /login, GET /create-account).
     r.rodauth
 
