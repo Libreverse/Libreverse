@@ -3,28 +3,20 @@
 
 # Common pool size calculation
 <%
-  def calculate_pool_size
-    cpu_cores = Etc.nprocessors / 2
-    # Previous implementation capped pool size at 20; remove cap to allow scaling with hardware
-    [cpu_cores * 2 - 4, 5].max
-  end
-    def sqlite_thread_count
-        # Use at least 2 threads, up to the number of logical processors.
-        # SQLite docs: threads pragma sets the number of worker threads for sorter/PCache.
-        [Etc.nprocessors, 2].max
-    end
+  require 'etc'
+  nproc = Etc.respond_to?(:nprocessors) ? Etc.nprocessors : 5
+  # Calculate pool size: prefer (even nproc - 4) but never below 5
+  pool_size = [(nproc / 2) * 2 - 4, 5].max
+  # SQLite threads: at least 2, up to number of logical processors
+  sqlite_threads = [nproc, 2].max
 %>
 
 default: &default
     adapter: trilogy
     encoding: utf8mb4
     collation: utf8mb4_unicode_ci
-    pool: <%= calculate_pool_size %>
-    # TiDB-friendly connection settings
+    pool: <%= pool_size %>
     reconnect: true
-    connect_timeout: 10
-    read_timeout: 30
-    write_timeout: 30
     checkout_timeout: 5
     # TiDB works well with these MySQL variables
     variables:
@@ -52,12 +44,9 @@ development:
         adapter: sqlite3
         encoding: utf8
         database: db/cache_development.sqlite3
-        pool: <%= calculate_pool_size %>
+        pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
         pragmas:
-            analysis_limit: 0
-            automatic_index: 0
-            busy_timeout: 5000
             cache_size: -20000
             cache_spill: 0
             cell_size_check: 0
@@ -73,49 +62,30 @@ development:
             secure_delete: 'ON'
             synchronous: 0
             temp_store: 2
-            threads: <%= sqlite_thread_count %>
+            threads: <%= sqlite_threads %>
             incremental_vacuum: 0
             read_uncommitted: 1
             trusted_schema: 'OFF'
             wal_autocheckpoint: 1000
             auto_vacuum: 'NONE'
-        
 
 test:
     primary:
-        adapter: mysql2
-        encoding: utf8mb4
-        collation: utf8mb4_unicode_ci
-        reconnect: true
-        connect_timeout: 10
-        read_timeout: 30
-        write_timeout: 30
-        checkout_timeout: 5
-        pool: <%= calculate_pool_size %>
-        # TiDB works well with these MySQL variables
-        variables:
-            sql_mode: 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
-            # TiDB handles distributed transactions well
-            transaction_isolation: 'READ-COMMITTED'
-        database: libreverse_test
-        username: <%= ENV["TIDB_USERNAME"] %>
-        password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] %>
-        port: 4000
-        <% unless ENV['DB_SSL_DISABLE']=='true' %>
-            ssl_mode: VERIFY_IDENTITY
-            sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-        <% end %>
+    <<: *default
+    database: libreverse_test
+    username: <%= ENV["TIDB_USERNAME"] %>
+    password: <%= ENV["TIDB_PASSWORD"] %>
+    host: <%= ENV["TIDB_HOST"] %>
+    port: 4000
+    ssl_mode: VERIFY_IDENTITY
+    sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
     cache:
         adapter: sqlite3
         encoding: utf8
         database: db/cache_test.sqlite3
-        pool: <%= calculate_pool_size %>
+        pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
         pragmas:
-            analysis_limit: 0
-            automatic_index: 0
-            busy_timeout: 5000
             cache_size: -20000
             cache_spill: 0
             cell_size_check: 0
@@ -131,7 +101,7 @@ test:
             secure_delete: 'ON'
             synchronous: 0
             temp_store: 2
-            threads: <%= sqlite_thread_count %>
+            threads: <%= sqlite_threads %>
             incremental_vacuum: 0
             read_uncommitted: 1
             trusted_schema: 'OFF'
@@ -146,10 +116,8 @@ production:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        <% unless ENV['DB_SSL_DISABLE']=='true' %>
-            ssl_mode: VERIFY_IDENTITY
-            sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-        <% end %>
+        ssl_mode: VERIFY_IDENTITY
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
     queue:
         <<: *default
         database: libreverse_production
@@ -157,21 +125,16 @@ production:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        <% unless ENV['DB_SSL_DISABLE']=='true' %>
-            ssl_mode: VERIFY_IDENTITY
-            sslca: /etc/ssl/certs/ca-certificates.crt
-        <% end %>
+        ssl_mode: VERIFY_IDENTITY
+        sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/queue_migrate
     cache:
         adapter: sqlite3
         encoding: utf8
         database: db/cache_production.sqlite3
-        pool: <%= calculate_pool_size %>
+        pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
         pragmas:
-            analysis_limit: 0
-            automatic_index: 0
-            busy_timeout: 5000
             cache_size: -20000
             cache_spill: 0
             cell_size_check: 0
@@ -187,7 +150,7 @@ production:
             secure_delete: 'ON'
             synchronous: 0
             temp_store: 2
-            threads: <%= sqlite_thread_count %>
+            threads: <%= sqlite_threads %>
             incremental_vacuum: 0
             read_uncommitted: 1
             trusted_schema: 'OFF'
@@ -200,8 +163,6 @@ production:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV["TIDB_HOST"] %>
         port: 4000
-        <% unless ENV['DB_SSL_DISABLE']=='true' %>
-            ssl_mode: VERIFY_IDENTITY
-            sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-        <% end %>
+        ssl_mode: VERIFY_IDENTITY
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
         migrations_paths: db/cable_migrate

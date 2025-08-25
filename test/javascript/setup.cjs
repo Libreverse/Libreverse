@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 // CommonJS setup for Jest to avoid ESM import parsing issues
-const { TextEncoder, TextDecoder } = require('node:util');
+const { TextEncoder, TextDecoder } = require("node:util");
 globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
 
 // Import Jest DOM matchers
-require('@testing-library/jest-dom');
+require("@testing-library/jest-dom");
 
 // Mock Turbo's visit function which is used in many controllers
 globalThis.Turbo = {
@@ -35,7 +36,7 @@ class LocalStorageMock {
     }
 }
 
-Object.defineProperty(globalThis, 'localStorage', {
+Object.defineProperty(globalThis, "localStorage", {
     value: new LocalStorageMock(),
 });
 
@@ -44,8 +45,8 @@ class XMLHttpRequestMock {
     constructor() {
         this.readyState = 0;
         this.status = 0;
-        this.responseType = '';
-        this.responseText = '';
+        this.responseType = "";
+        this.responseText = "";
         this.responseXML = undefined;
         this.responseJSON = undefined;
         this.headers = {};
@@ -53,7 +54,7 @@ class XMLHttpRequestMock {
     }
     open() {
         this.readyState = 1;
-        this._trigger('readystatechange');
+        this._trigger("readystatechange");
     }
     setRequestHeader(header, value) {
         this.headers[header] = value;
@@ -62,8 +63,8 @@ class XMLHttpRequestMock {
         setTimeout(() => {
             this.readyState = 4;
             this.status = 200;
-            this._trigger('readystatechange');
-            this._trigger('load');
+            this._trigger("readystatechange");
+            this._trigger("load");
         }, 0);
     }
     addEventListener(event, callback) {
@@ -72,12 +73,14 @@ class XMLHttpRequestMock {
     }
     removeEventListener(event, callback) {
         if (!this._events[event]) return;
-        this._events[event] = this._events[event].filter((cb) => cb !== callback);
+        this._events[event] = this._events[event].filter(
+            (callback_) => callback_ !== callback,
+        );
     }
     _trigger(event) {
         if (!this._events[event]) return;
         const callbacks = this._events[event];
-        for (const cb of callbacks) cb.call(this);
+        for (const callback of callbacks) callback.call(this);
     }
 }
 
@@ -97,11 +100,13 @@ expect.extend({
         const pass = received >= floor && received <= ceiling;
         return pass
             ? {
-                  message: () => `expected ${received} not to be within range ${floor} - ${ceiling}`,
+                  message: () =>
+                      `expected ${received} not to be within range ${floor} - ${ceiling}`,
                   pass: true,
               }
             : {
-                  message: () => `expected ${received} to be within range ${floor} - ${ceiling}`,
+                  message: () =>
+                      `expected ${received} to be within range ${floor} - ${ceiling}`,
                   pass: false,
               };
     },
@@ -110,6 +115,6 @@ expect.extend({
 // Clean up between tests
 afterEach(() => {
     jest.clearAllMocks();
-    document.body.innerHTML = '';
+    document.body.innerHTML = "";
     globalThis.localStorage.clear();
 });

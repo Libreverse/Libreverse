@@ -3,7 +3,6 @@
 - [ ] (bugfix) Fix glass not scrolling as it should
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (bugfix) allow css glass substitute to render and then fade into the webgl one.
-- [ ] (feature) add crowdsec nginx bouncer
 - [ ] (feature) Integrate the rodauth complex multi-db account features
       --- september ---
 - [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations)

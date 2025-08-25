@@ -45,8 +45,8 @@ touch "$CONF"
 # Replace templated placeholders if present
 if grep -q '<API_KEY>' "$CONF" 2>/dev/null || grep -q '<LAPI_URL>' "$CONF" 2>/dev/null; then
     TMP=$(mktemp)
-    API_KEY="$KEY" CROWDSEC_LAPI_URL="$API_URL_DEFAULT" envsubst '$API_KEY $CROWDSEC_LAPI_URL' < "$CONF" > "$TMP"
-    cat "$TMP" > "$CONF"
+    API_KEY="$KEY" CROWDSEC_LAPI_URL="$API_URL_DEFAULT" envsubst '$API_KEY $CROWDSEC_LAPI_URL' <"$CONF" >"$TMP"
+    cat "$TMP" >"$CONF"
     rm -f "$TMP"
 fi
 
@@ -54,27 +54,27 @@ fi
 if grep -q '^API_URL=' "$CONF" 2>/dev/null; then
     sed -i "s#^API_URL=.*#API_URL=$API_URL_DEFAULT#" "$CONF" || true
 else
-    echo "API_URL=$API_URL_DEFAULT" >> "$CONF"
+    echo "API_URL=$API_URL_DEFAULT" >>"$CONF"
 fi
 if grep -q '^API_KEY=' "$CONF" 2>/dev/null; then
     sed -i "s#^API_KEY=.*#API_KEY=$KEY#" "$CONF" || true
 else
-    echo "API_KEY=$KEY" >> "$CONF"
+    echo "API_KEY=$KEY" >>"$CONF"
 fi
 
-    # Enforce deny-only, no-captcha, no-appsec settings at runtime
-    sed -i "/^CAPTCHA_/d" "$CONF" 2>/dev/null || true
-    sed -i "/^RECAPTCHA_/d" "$CONF" 2>/dev/null || true
-    sed -i "/^HCAPTCHA_/d" "$CONF" 2>/dev/null || true
-    sed -i "/^BOUNCER_MODE=/d" "$CONF" 2>/dev/null || true
-    sed -i "/^DISABLE_CAPTCHA=/d" "$CONF" 2>/dev/null || true
-    grep -q '^CAPTCHA_PROVIDER=' "$CONF" 2>/dev/null && sed -i 's/^CAPTCHA_PROVIDER=.*/CAPTCHA_PROVIDER=none/' "$CONF" || echo 'CAPTCHA_PROVIDER=none' >> "$CONF"
-    grep -q '^FALLBACK_REMEDIATION=' "$CONF" 2>/dev/null && sed -i 's/^FALLBACK_REMEDIATION=.*/FALLBACK_REMEDIATION=ban/' "$CONF" || echo 'FALLBACK_REMEDIATION=ban' >> "$CONF"
-    grep -q '^ALWAYS_SEND_TO_APPSEC=' "$CONF" 2>/dev/null && sed -i 's/^ALWAYS_SEND_TO_APPSEC=.*/ALWAYS_SEND_TO_APPSEC=false/' "$CONF" || echo 'ALWAYS_SEND_TO_APPSEC=false' >> "$CONF"
-    grep -q '^APPSEC_URL=' "$CONF" 2>/dev/null && sed -i 's#^APPSEC_URL=.*#APPSEC_URL=#' "$CONF" || echo 'APPSEC_URL=' >> "$CONF"
-    grep -q '^REDIRECT_LOCATION=' "$CONF" 2>/dev/null && sed -i 's#^REDIRECT_LOCATION=.*#REDIRECT_LOCATION=#' "$CONF" || echo 'REDIRECT_LOCATION=' >> "$CONF"
-    grep -q '^ENABLED=' "$CONF" 2>/dev/null && sed -i 's/^ENABLED=.*/ENABLED=true/' "$CONF" || echo 'ENABLED=true' >> "$CONF"
-    grep -q '^MODE=' "$CONF" 2>/dev/null && sed -i 's/^MODE=.*/MODE=stream/' "$CONF" || echo 'MODE=stream' >> "$CONF"
+# Enforce deny-only, no-captcha, no-appsec settings at runtime
+sed -i "/^CAPTCHA_/d" "$CONF" 2>/dev/null || true
+sed -i "/^RECAPTCHA_/d" "$CONF" 2>/dev/null || true
+sed -i "/^HCAPTCHA_/d" "$CONF" 2>/dev/null || true
+sed -i "/^BOUNCER_MODE=/d" "$CONF" 2>/dev/null || true
+sed -i "/^DISABLE_CAPTCHA=/d" "$CONF" 2>/dev/null || true
+grep -q '^CAPTCHA_PROVIDER=' "$CONF" 2>/dev/null && sed -i 's/^CAPTCHA_PROVIDER=.*/CAPTCHA_PROVIDER=none/' "$CONF" || echo 'CAPTCHA_PROVIDER=none' >>"$CONF"
+grep -q '^FALLBACK_REMEDIATION=' "$CONF" 2>/dev/null && sed -i 's/^FALLBACK_REMEDIATION=.*/FALLBACK_REMEDIATION=ban/' "$CONF" || echo 'FALLBACK_REMEDIATION=ban' >>"$CONF"
+grep -q '^ALWAYS_SEND_TO_APPSEC=' "$CONF" 2>/dev/null && sed -i 's/^ALWAYS_SEND_TO_APPSEC=.*/ALWAYS_SEND_TO_APPSEC=false/' "$CONF" || echo 'ALWAYS_SEND_TO_APPSEC=false' >>"$CONF"
+grep -q '^APPSEC_URL=' "$CONF" 2>/dev/null && sed -i 's#^APPSEC_URL=.*#APPSEC_URL=#' "$CONF" || echo 'APPSEC_URL=' >>"$CONF"
+grep -q '^REDIRECT_LOCATION=' "$CONF" 2>/dev/null && sed -i 's#^REDIRECT_LOCATION=.*#REDIRECT_LOCATION=#' "$CONF" || echo 'REDIRECT_LOCATION=' >>"$CONF"
+grep -q '^ENABLED=' "$CONF" 2>/dev/null && sed -i 's/^ENABLED=.*/ENABLED=true/' "$CONF" || echo 'ENABLED=true' >>"$CONF"
+grep -q '^MODE=' "$CONF" 2>/dev/null && sed -i 's/^MODE=.*/MODE=stream/' "$CONF" || echo 'MODE=stream' >>"$CONF"
 
 # Wait for LAPI to be ready (up to ~30s)
 for i in $(seq 1 30); do
@@ -104,7 +104,7 @@ else
             if grep -q '^API_KEY=' "$CONF"; then
                 sed -i "s/^API_KEY=.*/API_KEY=$NEWKEY/" "$CONF" || true
             else
-                echo "API_KEY=$NEWKEY" >> "$CONF"
+                echo "API_KEY=$NEWKEY" >>"$CONF"
             fi
         fi
     fi

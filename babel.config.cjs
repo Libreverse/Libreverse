@@ -5,8 +5,8 @@ module.exports = {
             "@babel/preset-env",
             {
                 targets: { node: "current" },
-                // Compile modules to CommonJS for Jest's runtime.
-                modules: "commonjs",
+                // Preserve ES modules; Jest will handle ESM via babel-jest with useESM.
+                modules: false,
             },
         ],
     ],

@@ -1,7 +1,8 @@
 // We'll import the library after setting up window mocks
+import { jest } from "@jest/globals";
 
-// Mock yrb-actioncable provider to avoid network dependencies
-jest.mock("@y-rb/actioncable", () => ({
+// Mock yrb-actioncable provider to avoid network dependencies (ESM-compatible)
+await jest.unstable_mockModule("@y-rb/actioncable", () => ({
     WebsocketProvider: class MockProvider {
         constructor() {
             this.synced = false;
