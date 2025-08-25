@@ -28,7 +28,7 @@ module Libreverse
       end
 
       def host
-        ENV.fetch("GRPC_HOST") { "0.0.0.0" }
+  ENV.fetch("GRPC_HOST") { "127.0.0.1" }
       end
 
       def bind_address

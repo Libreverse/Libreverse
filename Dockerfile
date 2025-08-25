@@ -142,3 +142,8 @@ RUN chmod +x /usr/local/bin/entrypoint-with-jemalloc.sh
 # Use baseimage-docker's init process, but override to use jemalloc for app
 ENV DISABLE_AGENT=true
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
+
+# Expose application ports
+EXPOSE 3000
+# Optional: enable when gRPC server is used
+EXPOSE 50051

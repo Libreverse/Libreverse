@@ -134,7 +134,8 @@ class InstanceSetting < ApplicationRecord
       "no_ssl" => "false",
       "cors_origins" => (Rails.env.development? || Rails.env.test? ? "*" : "localhost"),
       "port" => "3000",
-      "grpc_enabled" => "false"
+  # Enable gRPC server by default
+  "grpc_enabled" => "true"
     }
 
     defaults.each do |key, default_value|
