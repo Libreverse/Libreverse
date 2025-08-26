@@ -1,81 +1,10 @@
 # Libreverse Documentation
 
-Welcome! This folder contains user- and developer-facing docs for Libreverse. The index below organizes everything that remains after pruning non-actionable change logs and status notes.
+Welcome! This folder contains user- and developer-facing docs for Libreverse.
 
-## 📚 Table of contents
+## 📚 Browse the docs
 
-### Getting started and setup
-
-- [Configuration](configuration.md)
-- [Spring setup](spring-setup.md)
-- [SQLite guide](sqlite-guide.md)
-- [Passenger migration guide](passenger-migration-guide.md)
-- [Sentry setup](sentry-setup-guide.md)
-- [MailHog integration](mailhog-integration.md)
-- [Foundation for Emails](foundation-for-emails.md)
-- [Gem sources](gem-sources.md)
-- [CodeQL quickstart](codeql-quickstart.md)
-- [CodeQL security analysis](codeql-security-analysis.md)
-- [Litestream integration](litestream-integration.md)
-
-### Core product features
-
-- [Homepage & navigation](homepage-navigation.md)
-- [Authentication](authentication.md)
-- [Experiences](experiences.md)
-- [Search](search.md)
-- [Dashboard](dashboard.md)
-- [User preferences](user-preferences.md)
-
-### APIs and integrations
-
-- [GraphQL API](graphql-api.md)
-- [gRPC API](grpc-api.md)
-- [JSON:API](json-api.md)
-    - JavaScript client example (inlined at the end)
-- [XML-RPC overview](xmlrpc.md)
-- [XML-RPC API](xmlrpc-api.md)
-    - Ruby client example (inlined at the end)
-- [Realtime P2P API](realtime-p2p-api.md)
-- [P2P WebSocket message types](p2p-ws-message-types.yml)
-
-### Glass system and visual effects
-
-- [Glass system](glass-system.md)
-- [Simplified glass system](simplified-glass-system.md)
-- [Enhanced glass fallback system](enhanced-glass-fallback-system.md)
-- [Enhanced glass fallback documentation](enhanced-glass-fallback-documentation.md)
-- [Glass cleanup migration](glass-cleanup-migration.md)
-- [Glass migration guide](glass-migration-guide.md)
-- [Infinite-scale glass effects](infinite-scale-glass-effects.md)
-- [Liquid glass optimisation guide](liquid-glass-optimization-guide.md)
-- [WebGL context debug fix](webgl-context-debug-fix.md)
-- [WebGL context emergency management](webgl-context-emergency-management.md)
-- [Text glow effects](text-glow-effects.md)
-
-### Performance and reliability
-
-- [Enhanced caching](enhanced-caching.md)
-- [Progressive indexing](progressive-indexing.md)
-- [Maximum compression implementation](maximum-compression-implementation.md)
-- [Rate limiting implementation](rate-limiting-implementation.md)
-- [Logging](logging-1.md)
-
-### Security, compliance, and federation
-
-- [Security federation implementation](security-federation-implementation.md)
-- [Active Hashcash integration](active-hashcash-integration.md)
-- [403 handling (Progressive indexing governance)](progressive-indexing.md#403-forbidden-domain-blocking)
-- [GDPR error tracking](gdpr-error-tracking.md)
-- [Role/authorization integration (Rolify + CanCanCan)](rolify-cancancan-integration.md)
-- [TOMs (Technical & Organisational Measures)](toms.md)
-- [Federation overview](federation.md)
-
-### Analytics, email, and UX enhancements
-
-- [Umami analytics](umami-analytics.md)
-- [Email configuration](email-configuration.md)
-- [Email CSS inlining](email-css-inlining.md)
+Use the sidebar to navigate all available guides and references. It’s the single source of truth for the current documentation set.
 
 ## ✍️ Authoring guidelines
 
