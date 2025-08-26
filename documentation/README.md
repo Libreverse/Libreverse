@@ -32,10 +32,10 @@ Welcome! This folder contains user- and developer-facing docs for Libreverse. Th
 - [GraphQL API](graphql-api.md)
 - [gRPC API](grpc-api.md)
 - [JSON:API](json-api.md)
-	- JavaScript client example (inlined at the end)
+    - JavaScript client example (inlined at the end)
 - [XML-RPC overview](xmlrpc.md)
 - [XML-RPC API](xmlrpc-api.md)
-	- Ruby client example (inlined at the end)
+    - Ruby client example (inlined at the end)
 - [Realtime P2P API](realtime-p2p-api.md)
 - [P2P WebSocket message types](p2p-ws-message-types.yml)
 

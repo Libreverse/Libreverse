@@ -28,7 +28,11 @@ bin/dev
 HTTP bridge:
 
 ```javascript
-await fetch("/api/grpc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method: "GetAllExperiences", request: {} }) })
+await fetch("/api/grpc", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method: "GetAllExperiences", request: {} }),
+});
 ```
 
 ## Authentication

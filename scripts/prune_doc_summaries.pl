@@ -22,7 +22,7 @@ for my $arg (@ARGV) {
   $use_git   = 1 if $arg eq '--git';
 }
 
-my $repo_root = abs_path( File::Spec->catdir( $Bin, '..' ) );
+my $repo_root = abs_path(File::Spec->catdir($Bin, '..'));
 die "Unable to resolve repo root from $Bin\n" unless defined $repo_root;
 
 my @files = (
@@ -63,7 +63,8 @@ my @files = (
 
 my $is_git_repo = _is_git_repo($repo_root);
 if ($use_git && !$is_git_repo) {
-  warn "--git specified but repository not detected at $repo_root; proceeding without git.\n";
+  warn
+"--git specified but repository not detected at $repo_root; proceeding without git.\n";
   $use_git = 0;
 }
 
@@ -78,14 +79,18 @@ if (!@existing) {
   exit 0;
 }
 
-print(($do_delete ? 'Deleting' : 'Would delete') . " the following files (" . scalar(@existing) . ")\n\n");
+print(($do_delete ? 'Deleting' : 'Would delete')
+  . " the following files ("
+    . scalar(@existing)
+    . ")\n\n");
 for my $f (@existing) {
   print "  - $f->{rel}\n";
 }
 print "\n";
 
 if (!$do_delete) {
-  print "Dry-run only. Re-run with --yes to perform deletion" . ($use_git ? " using git" : "") . ".\n";
+  print "Dry-run only. Re-run with --yes to perform deletion"
+    . ($use_git ? " using git" : "") . ".\n";
   exit 0;
 }
 
@@ -93,16 +98,20 @@ my ($deleted, $failed) = (0, 0);
 for my $f (@existing) {
   if ($use_git) {
     my $ok = system('git', '-C', $repo_root, 'rm', '-f', $f->{rel}) == 0;
-    if ($ok) { $deleted++ } else { warn "git rm failed for $f->{rel}\n"; $failed++ }
+    if   ($ok) { $deleted++ }
+    else       { warn "git rm failed for $f->{rel}\n"; $failed++ }
   } else {
-    if (unlink $f->{abs}) { $deleted++ } else { warn "unlink failed for $f->{rel}: $!\n"; $failed++ }
+    if (unlink $f->{abs}) { $deleted++ }
+    else { warn "unlink failed for $f->{rel}: $!\n"; $failed++ }
   }
 }
 
 print "\nDone. Deleted: $deleted. Failed: $failed.\n";
-exit ($failed ? 1 : 0);
+exit($failed ? 1 : 0);
 
 sub _is_git_repo {
   my ($dir) = @_;
-  return system('git', '-C', $dir, 'rev-parse', '--is-inside-work-tree', '>/dev/null', '2>&1') == 0;
+  return
+    system('git', '-C', $dir, 'rev-parse', '--is-inside-work-tree',
+    '>/dev/null', '2>&1') == 0;
 }

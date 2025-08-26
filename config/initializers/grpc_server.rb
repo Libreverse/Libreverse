@@ -27,6 +27,6 @@ Rails.application.configure do
                 Rails.logger.error "Failed to start integrated gRPC server: #{e.message}"
                 Rails.logger.error e.backtrace.join("\n")
             end
-        end
+      end
     end
 end
