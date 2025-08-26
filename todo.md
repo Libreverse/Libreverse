@@ -21,7 +21,4 @@
 
 ---
 
-- [ ] (infra) Add separate mail service stack/container for self-hosted email flow
-      - Expose on mail container: 25 (MX), optional 587 (submission), 993 (IMAPS)
-      - Keep app container exposing only 3000 (+443 later) and optional 50051 (gRPC)
-      - Wire app to IMAP/SMTP host via `LibreverseInstance.email_bot_*` settings
+- [ ] (infra) Add separate mail service stack/container for self-hosted email flow - Expose on mail container: 25 (MX), optional 587 (submission), 993 (IMAPS) - Keep app container exposing only 3000 (+443 later) and optional 50051 (gRPC) - Wire app to IMAP/SMTP host via `LibreverseInstance.email_bot_*` settings

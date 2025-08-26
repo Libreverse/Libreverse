@@ -1,46 +1,274 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no, viewport-fit=cover">
-    <meta name="description" content="">
-    <title></title>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no, viewport-fit=cover"
+        />
+        <meta name="description" content="" />
+        <title>Libreverse Documentation</title>
 
-    <!-- Themes (light + dark) -->
-    <link rel="stylesheet" media="(prefers-color-scheme: dark)" href="//cdn.jsdelivr.net/gh/LIGMATV/docsify-theme-98@latest/98.css">
-    <link rel="stylesheet" media="(prefers-color-scheme: light)" href="//cdn.jsdelivr.net/gh/LIGMATV/docsify-theme-xp@latest/xp.css">
+        <!-- Themes (light + dark via prefers-color-scheme) -->
+        <link
+            rel="stylesheet"
+            href="//cdn.jsdelivr.net/gh/LIGMATV/docsify-theme-vista@latest/vista.css"
+            media="(prefers-color-scheme: light)"
+        />
+        <link
+            rel="stylesheet"
+            href="//cdn.jsdelivr.net/gh/LIGMATV/docsify-theme-98@latest/98.css"
+            media="(prefers-color-scheme: dark)"
+        />
 
-    <!-- Custom Styles -->
-    <style>
-      :root {
-         /* --theme-hue: 325; */
-      }
-    </style>
-</head>
-<body>
-    <div id="app"></div>
+        <!-- Twemoji minimal styling to align emoji images with text -->
+        <style>
+            img.emoji {
+                height: 1em;
+                width: 1em;
+                margin: 0 0.05em 0 0.1em;
+                vertical-align: -0.1em;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app"></div>
+        <script>
+            // Docsify Configuration
+            window.$docsify = {
+                loadSidebar: true,
+                alias: {
+                    "/.*/_sidebar.md": "/_sidebar.md",
+                },
+                subMaxLevel: 2,
+                auto2top: true,
+            };
+        </script>
 
-    <script>
-      // Docsify Configuration
-      window.$docsify = {
-         timeUpdater: {
-            text: "Last updated on {docsify-updated}",
-            formatUpdated: "{DD}/{MM}/{YY}",
-            whereToPlace: "bottom"
-         }
-      };
-    </script>
+        <!-- Twemoji library -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"
+            crossorigin="anonymous"
+        ></script>
 
-    <!-- Required -->
-    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js"></script>
+        <script>
+            // Docsify plugin: parse all rendered content with Twemoji
+            window.$docsify = window.$docsify || {};
+            window.$docsify.plugins = (window.$docsify.plugins || []).concat(
+                function (hook, vm) {
+                    // Leave the HTML string untouched; parse the live DOM instead
+                    hook.afterEach(function (html, next) {
+                        next(html);
+                    });
 
-    <!-- docsify-updated -->
-    <script src="https://cdn.jsdelivr.net/npm/docsify-updated/src/time-updater.min.js"></script>
+                    let mo;
+                    let rafScheduled = false;
 
-    <!-- Recommended -->
-    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
-</body>
+                    function scheduleParse() {
+                        if (rafScheduled) return;
+                        rafScheduled = true;
+                        const run = () => {
+                            rafScheduled = false;
+                            runTwemojiParse();
+                        };
+                        if (window.requestAnimationFrame)
+                            requestAnimationFrame(run);
+                        else setTimeout(run, 16);
+                    }
+
+                    function startObserver() {
+                        if (mo || !window.MutationObserver) return;
+                        const app = document.getElementById("app");
+                        if (!app) return;
+                        mo = new MutationObserver((mutations) => {
+                            // Any DOM change inside app might include sidebar/search/content updates
+                            scheduleParse();
+                        });
+                        mo.observe(app, { childList: true, subtree: true });
+                    }
+
+                    function runTwemojiParse() {
+                        if (
+                            !(
+                                window.twemoji &&
+                                typeof window.twemoji.parse === "function"
+                            )
+                        )
+                            return;
+                        const doParse = () => {
+                            const selectors = [
+                                ".markdown-section",
+                                ".sidebar",
+                                ".sidebar-nav",
+                            ];
+                            const roots = new Set();
+                            selectors.forEach((sel) =>
+                                document
+                                    .querySelectorAll(sel)
+                                    .forEach((node) => roots.add(node)),
+                            );
+                            if (!roots.size) return;
+                            roots.forEach((root) => {
+                                window.twemoji.parse(root, {
+                                    base: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/",
+                                    folder: "svg",
+                                    ext: ".svg",
+                                    className: "emoji",
+                                    ignore: function (el) {
+                                        if (!el || !el.tagName) return false;
+                                        const tag = el.tagName.toLowerCase();
+                                        if (
+                                            tag === "code" ||
+                                            tag === "pre" ||
+                                            tag === "script" ||
+                                            tag === "style"
+                                        )
+                                            return true;
+                                        return (
+                                            el.closest &&
+                                            !!el.closest(".no-emoji")
+                                        );
+                                    },
+                                });
+                            });
+                        };
+                        if (window.requestAnimationFrame) {
+                            window.requestAnimationFrame(doParse);
+                        } else {
+                            setTimeout(doParse, 0);
+                        }
+                    }
+
+                    // Initial mount and after each page render
+                    hook.mounted(function () {
+                        startObserver();
+                        runTwemojiParse();
+                    });
+                    hook.doneEach(function () {
+                        runTwemojiParse();
+                    });
+                    // As a final safety, run once when ready
+                    hook.ready(function () {
+                        startObserver();
+                        runTwemojiParse();
+                    });
+                },
+            );
+        </script>
+
+        <script>
+            // Configure bottom "Edit on GitHub" link
+            const docEditBase =
+                "https://github.com/Libreverse/Libreverse/edit/main/documentation/";
+            const title =
+                "Found something inaccurate? Edit this page on GitHub to fix it.";
+
+            window.$docsify = window.$docsify || {};
+            window.$docsify.plugins = (window.$docsify.plugins || []).concat(
+                (hook, vm) => {
+                    hook.afterEach((html, next) => {
+                        const file = vm.route.file || "README.md";
+                        const editUrl = docEditBase + file;
+                        const footer = `
+                <p class="edit-on-github" style="margin-top:1rem">
+                    <a href="${editUrl}" target="_blank" rel="noopener">${title}</a>
+                </p>`;
+                        next(html + footer);
+                    });
+                },
+            );
+        </script>
+
+        <script>
+            // Native Docsify warning using markdown admonition (!>) injected before render
+            (function () {
+                function formatDateNatural(date) {
+                    const day = date.getDate();
+                    const months = [
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December",
+                    ];
+                    const monthName = months[date.getMonth()];
+                    const year = date.getFullYear();
+                    const j = day % 10,
+                        k = day % 100;
+                    let suffix = "th";
+                    if (j === 1 && k !== 11) suffix = "st";
+                    else if (j === 2 && k !== 12) suffix = "nd";
+                    else if (j === 3 && k !== 13) suffix = "rd";
+                    return `${day}${suffix} of ${monthName} ${year}`;
+                }
+
+                function daysAgo(fromDate) {
+                    const now = new Date();
+                    const diffMs = Math.max(0, now - fromDate);
+                    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                }
+
+                function inaccuracyLevel(days) {
+                    if (days <= 7) return "unlikely to be inaccurate";
+                    if (days <= 30) return "potentially inaccurate";
+                    if (days <= 90) return "reasonably likely to be inaccurate";
+                    return "highly likely to be inaccurate";
+                }
+
+                function buildMarkdown(formatted, days, levelPhrase) {
+                    const plural = days === 1 ? "" : "s";
+                    return `!> ⚠️ Libreverse is an early-stage project iterating quickly. This page was last updated on the ${formatted}. That was ${days} day${plural} ago. This page is ${levelPhrase}. ⚠️\n\n`;
+                }
+
+                window.$docsify = window.$docsify || {};
+                window.$docsify.plugins = (
+                    window.$docsify.plugins || []
+                ).concat(function (hook, vm) {
+                    hook.beforeEach(function (content, next) {
+                        const file =
+                            vm && vm.route && vm.route.file
+                                ? vm.route.file
+                                : "README.md";
+                        fetch(file, { method: "HEAD", cache: "no-cache" })
+                            .then((res) => res.headers.get("Last-Modified"))
+                            .then((lm) => {
+                                const d = lm ? new Date(lm) : new Date();
+                                const days = daysAgo(d);
+                                const levelPhrase = inaccuracyLevel(days);
+                                next(
+                                    buildMarkdown(
+                                        formatDateNatural(d),
+                                        days,
+                                        levelPhrase,
+                                    ) + content,
+                                );
+                            })
+                            .catch(() => {
+                                const d = new Date();
+                                const days = daysAgo(d);
+                                const levelPhrase = inaccuracyLevel(days);
+                                next(
+                                    buildMarkdown(
+                                        formatDateNatural(d),
+                                        days,
+                                        levelPhrase,
+                                    ) + content,
+                                );
+                            });
+                    });
+                });
+            })();
+        </script>
+
+        <!-- Required -->
+        <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    </body>
 </html>
