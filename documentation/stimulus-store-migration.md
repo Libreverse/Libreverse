@@ -1,372 +1,268 @@
-# Stimulus Store Migration Guide
+# Stimulus Store System Guide
 
-This guide explains how to migrate from the existing Stimulus controllers to the new enhanced controllers that use stimulus-store for centralized state management.
+Centralized, reactive state for Stimulus controllers with lightweight persistence, shared state, and clean debugging.
 
-## Overview
+## What Is stimulus-store?
 
-The stimulus-store library provides a lightweight, atomic state management solution for Stimulus controllers. It allows you to:
+stimulus-store is an atomic state container layer for Stimulus. It lets multiple controllers read/write shared state, react to changes, persist across sessions, and debug from a single place.
 
-- **Share state between controllers**: Multiple controllers can access and modify the same state
-- **Centralize state management**: Keep related state in dedicated stores rather than scattered across controllers
-- **Reactive updates**: Controllers automatically update when store values change
-- **Persistent state**: Easily save and restore state across sessions
-- **Better debugging**: All state changes are centralized and trackable
+Key capabilities:
 
-## Stores Overview
+- Shared state across controllers
+- Reactive updates with minimal code
+- Optional persistence (e.g., localStorage)
+- Centralized debugging and tooling
 
-### Available Stores
+Install:
 
-1. **themeStore** - App-wide theme and UI preferences
-2. **glassConfigStore** - Glass effect configuration
-3. **navigationStore** - Navigation state and current page
-4. **instanceSettingsStore** - Instance configuration settings
-5. **toastStore** - Toast notifications management
-6. **experienceStore** - Experience/content state
-7. **searchStore** - Search and filtering state
+- bun add stimulus-store
 
-### Store Structure
+## Core Concepts
 
-Each store contains:
+- Store: Named, typed, reactive container
+- Shape:
+    - name: Unique store id
+    - type: Data type (Object, String, Number, etc.)
+    - initialValue: Default data
+    - value: Current reactive value (accessed via controller accessors)
+- Controller integration:
+    - @stores = [storeA, storeB]
+    - Use useStore(this) on connect
+    - Access store with @storeNameStoreValue
 
-- `name`: Unique identifier
-- `type`: Data type (Object, String, Number, etc.)
-- `initialValue`: Default state
-- `value`: Current state (reactive)
+## Stores In This App
 
-## Migration Steps
+- themeStore: Theme and UI preferences
+- glassConfigStore: Glass effect configuration
+- navigationStore: Navigation and current page
+- instanceSettingsStore: Instance configuration and flags
+- toastStore: Toasts list and options
+- experienceStore: Experience/content state
+- searchStore: Search and filtering state
 
-### Step 1: Update Controller Imports
-
-Replace your existing controller imports with enhanced versions:
-
-```javascript
-// Before
-import GlassController from "./glass_controller";
-
-// After
-import EnhancedGlassController from "./enhanced_glass_controller";
-```
-
-### Step 2: Update HTML Data Attributes
-
-Replace controller names in your HTML:
-
-```html
-<!-- Before -->
-<div data-controller="glass" data-glass-border-radius-value="20">
-    <!-- After -->
-    <div
-        data-controller="enhanced-glass"
-        data-enhanced-glass-border-radius-value="20"
-    ></div>
-</div>
-```
-
-### Step 3: Update Controller Registration
-
-Update your controller registration in `app/javascript/controllers/index.js`:
-
-```javascript
-// Before
-import GlassController from "./glass_controller";
-application.register("glass", GlassController);
-
-// After
-import EnhancedGlassController from "./enhanced_glass_controller";
-application.register("enhanced-glass", EnhancedGlassController);
-```
-
-## Controller-Specific Migration
-
-### Glass Controller → Enhanced Glass Controller
-
-The enhanced glass controller uses centralized glass configuration:
-
-#### Before (glass_controller.coffee)
+## Creating A Store
 
 ```coffeescript
-@values = {
-  borderRadius: { type: Number, default: 20 },
-  tintOpacity: { type: Number, default: 0.12 },
-  glassType: { type: String, default: "rounded" },
-  # ... other values
-}
+# app/javascript/stores/my_custom_store.coffee
+import { createStore } from 'stimulus-store'
+
+export const myCustomStore = createStore
+    name: 'myCustom'
+    type: Object
+    initialValue:
+        customProperty: 'default value'
 ```
 
-#### After (enhanced_glass_controller.coffee)
+## Using A Store In A Controller
 
 ```coffeescript
-@stores = [themeStore, glassConfigStore, navigationStore]
+# app/javascript/controllers/example_controller.coffee
+import { Controller } from '@hotwired/stimulus'
+import { useStore } from 'stimulus-store'
+import { myCustomStore } from '../stores/my_custom_store'
 
-# Values are now managed in glassConfigStore
-# Access via @glassConfigStoreValue.borderRadius
+export default class extends Controller
+    @stores = [myCustomStore]
+
+    connect: ->
+        useStore @
+        console.log @myCustomStoreValue # => { customProperty: 'default value' }
+
+    updateCustom: (event) ->
+        @myCustomStoreValue =
+            ...@myCustomStoreValue
+            customProperty: event.target.value
 ```
 
-#### Benefits
-
-- **Shared configuration**: All glass elements use the same config
-- **Dynamic updates**: Change glass settings globally
-- **Theme integration**: Glass effects respond to theme changes
-
-### Instance Settings Controller → Enhanced Instance Settings Controller
-
-The enhanced version provides optimistic updates and auto-save:
-
-#### Before (instance_settings_controller.coffee)
+Register (controllers/index.coffee):
 
 ```coffeescript
-toggleAutomoderation: (event) ->
-  event.preventDefault()
-  @stimulate('InstanceSettings#toggle_automoderation')
+import { Application } from '@hotwired/stimulus'
+import ExampleController from './example_controller'
+
+application = Application.start()
+application.register 'example', ExampleController
 ```
 
-#### After (enhanced_instance_settings_controller.coffee)
+## HTML/HAML Integration
 
-```coffeescript
-toggleAutomoderation: (event) ->
-  event.preventDefault()
+Prefer HAML for templates.
 
-  # Optimistic update
-  settings = @instanceSettingsStoreValue
-  newValue = not settings.automoderation
+- Glass (centralized config via glassConfigStore)
 
-  @instanceSettingsStoreValue = {
-    ...settings,
-    automoderation: newValue,
-    isDirty: true
-  }
-
-  # Auto-save or immediate save
-  unless @autoSaveValue
-    @stimulate('InstanceSettings#toggle_automoderation')
-```
-
-#### Migration Benefits
-
-- **Optimistic updates**: UI responds immediately
-- **Auto-save**: Configurable auto-save functionality
-- **Validation**: Built-in form validation
-- **State tracking**: Know when settings are dirty or loading
-
-### Toast Controller → Enhanced Toast Controller
-
-The enhanced version provides centralized toast management:
-
-#### Before (toast_controller.coffee)
-
-```coffeescript
-# Individual toast management
-@values = { timeout: { type: Number, default: 5000 } }
-```
-
-#### After (enhanced_toast_controller.coffee)
-
-```coffeescript
-# Centralized toast state
-@stores = [toastStore]
-
-# Access to global toast management
-@toastStoreValue.toasts # All active toasts
-@toastStoreValue.maxToasts # Maximum number of toasts
-```
-
-#### Toast Store Benefits
-
-- **Global toast management**: Control all toasts from one place
-- **Toast queue**: Automatic management of multiple toasts
-- **Enhanced animations**: Better animation and positioning
-- **Accessibility**: Improved keyboard and screen reader support
-
-## Using Store Utilities
-
-### StoreManager
-
-Access all stores and perform bulk operations:
-
-```javascript
-import { storeManager } from "./stores/utilities";
-
-// Get all store values
-const allStores = storeManager.getAllStoreValues();
-
-// Reset all stores
-storeManager.resetAllStores();
-
-// Save state to localStorage
-storeManager.saveToLocalStorage();
-
-// Load state from localStorage
-storeManager.loadFromLocalStorage();
-
-// Subscribe to store changes
-const unsubscribe = storeManager.subscribeToStore(
-    "theme",
-    (newValue, oldValue) => {
-        console.log("Theme changed:", newValue);
-    },
-);
-```
-
-### ToastManager
-
-Easily show toast notifications:
-
-```javascript
-import { toastManager } from "./stores/utilities";
-
-// Show different types of toasts
-toastManager.success("Settings saved successfully!");
-toastManager.error("Failed to save settings");
-toastManager.warning("Please check your input");
-toastManager.info("Processing your request...");
-
-// Custom toast with options
-toastManager.show("Custom message", "info", {
-    timeout: 10000,
-    showProgress: true,
-});
-```
-
-### ThemeManager
-
-Manage app-wide theme settings:
-
-```javascript
-import { themeManager } from "./stores/utilities";
-
-// Toggle theme features
-themeManager.toggleDarkMode();
-themeManager.toggleGlass();
-themeManager.toggleAnimations();
-
-// Check current theme state
-if (themeManager.isDarkMode()) {
-    // Dark mode is enabled
+```haml
+/ Before
+%nav{
+    data: {
+        controller: 'glass',
+        'glass-component-type-value': 'nav',
+        'glass-border-radius-value': '20'
+    }
 }
 
-if (themeManager.isGlassEnabled()) {
-    // Glass effects are enabled
+-# After
+%nav{
+    data: {
+        controller: 'enhanced-glass',
+        'enhanced-glass-component-type-value': 'nav'
+    }
 }
+/ Border radius now comes from glassConfigStore
 ```
 
-## HTML Template Updates
+- Instance settings (optimistic updates + optional auto-save)
 
-### Enhanced Glass Controller
+```haml
+/ Before
+%form{ data: { controller: 'instance-settings' } }
+    %input{
+        type: 'checkbox',
+        data: { action: 'click->instance-settings#toggleAutomoderation' }
+    }
 
-```html
-<!-- Before -->
-<nav
-    data-controller="glass"
-    data-glass-component-type-value="nav"
-    data-glass-border-radius-value="20"
->
-    <!-- nav content -->
-</nav>
-
-<!-- After -->
-<nav
-    data-controller="enhanced-glass"
-    data-enhanced-glass-component-type-value="nav"
->
-    <!-- nav content -->
-    <!-- Border radius now comes from glassConfigStore -->
-</nav>
+/ After
+%form{
+    data: {
+        controller: 'enhanced-instance-settings',
+        'enhanced-instance-settings-auto-save-value': 'true'
+    }
+}
+    %input{
+        type: 'checkbox',
+        data: { action: 'click->enhanced-instance-settings#toggleAutomoderation' }
+    }
 ```
 
-### Enhanced Instance Settings Controller
+- Toasts (centralized toastStore)
 
-```html
-<!-- Before -->
-<form data-controller="instance-settings">
-    <input
-        type="checkbox"
-        data-action="click->instance-settings#toggleAutomoderation"
-    />
-</form>
+```haml
+/ Before
+%div{ data: { controller: 'toast', 'toast-timeout-value': '5000' } } Toast message
 
-<!-- After -->
-<form
-    data-controller="enhanced-instance-settings"
-    data-enhanced-instance-settings-auto-save-value="true"
->
-    <input
-        type="checkbox"
-        data-action="click->enhanced-instance-settings#toggleAutomoderation"
-    />
-</form>
-```
-
-### Enhanced Toast Controller
-
-```html
-<!-- Before -->
-<div data-controller="toast" data-toast-timeout-value="5000">Toast message</div>
-
-<!-- After -->
-<div
-    data-controller="enhanced-toast"
-    data-enhanced-toast-toast-id-value="123"
-    data-enhanced-toast-type-value="success"
->
+/ After
+%div{
+    data: {
+        controller: 'enhanced-toast',
+        'enhanced-toast-toast-id-value': '123',
+        'enhanced-toast-type-value': 'success'
+    }
+}
     Toast message
-</div>
 ```
 
-## Advanced Usage
+## Controller Patterns
 
-### Custom Store Integration
+- Centralized glass config (EnhancedGlassController)
+    - @stores = [themeStore, glassConfigStore, navigationStore]
+    - Read/write with @glassConfigStoreValue
+- Optimistic settings (EnhancedInstanceSettingsController)
+    - Toggle local value, mark isDirty, auto-save optional
+    - Fall back to server call when auto-save is off
+- Global toasts (EnhancedToastController)
+    - @stores = [toastStore]
+    - @toastStoreValue.toasts, @toastStoreValue.maxToasts
 
-Create custom stores for your specific needs:
+Example (optimistic toggle, CoffeeScript):
 
-```javascript
-// Create custom store
-import { createStore } from "stimulus-store"
+```coffeescript
+toggleAutomoderation: (event) ->
+    event.preventDefault()
+    settings = @instanceSettingsStoreValue
+    newValue = not settings.automoderation
 
-export const myCustomStore = createStore({
-  name: "myCustom",
-  type: Object,
-  initialValue: {
-    customProperty: "default value"
-  }
-})
+    @instanceSettingsStoreValue =
+        ...settings
+        automoderation: newValue
+        isDirty: true
 
-// Use in controller
-import { myCustomStore } from "../stores/custom"
-
-export default class extends Controller {
-  @stores = [myCustomStore]
-
-  connect() {
-    useStore(this)
-    console.log(this.myCustomStoreValue)
-  }
-}
+    unless @autoSaveValue
+        @stimulate 'InstanceSettings#toggle_automoderation'
 ```
 
-### Store Synchronization
+## Utilities
 
-Keep stores in sync with server state:
+StoreManager:
 
-```javascript
-// In your controller
-syncWithServer() {
-  fetch('/api/settings')
-    .then(response => response.json())
-    .then(data => {
-      this.instanceSettingsStoreValue = {
-        ...this.instanceSettingsStoreValue,
-        ...data
-      }
-    })
-}
+```coffeescript
+import { storeManager } from './stores/utilities'
+
+allStores = storeManager.getAllStoreValues()
+storeManager.resetAllStores()
+storeManager.saveToLocalStorage()
+storeManager.loadFromLocalStorage()
+
+unsubscribe = storeManager.subscribeToStore 'theme', (newValue, oldValue) ->
+    console.log 'Theme changed:', newValue
 ```
 
-### Debugging
+ToastManager:
 
-Access stores from browser console:
+```coffeescript
+import { toastManager } from './stores/utilities'
+
+toastManager.success 'Settings saved successfully!'
+toastManager.error 'Failed to save settings'
+toastManager.warning 'Please check your input'
+toastManager.info 'Processing your request...'
+
+toastManager.show 'Custom message', 'info',
+    timeout: 10000
+    showProgress: true
+```
+
+ThemeManager:
+
+```coffeescript
+import { themeManager } from './stores/utilities'
+
+themeManager.toggleDarkMode()
+themeManager.toggleGlass()
+themeManager.toggleAnimations()
+
+if themeManager.isDarkMode()
+    # Dark mode enabled
+
+if themeManager.isGlassEnabled()
+    # Glass effects enabled
+```
+
+## Persistence
+
+- Use storeManager.saveToLocalStorage() and loadFromLocalStorage()
+- Keep store shapes flat and serializable
+- Consider versioning stored payloads to handle schema changes
+
+## Server Sync
+
+- Pull server state into stores
+- Prefer backend StimulusReflex for authoritative changes, then reflect to stores
+
+```coffeescript
+# Controller: pull latest settings
+syncWithServer: ->
+    fetch('/api/settings')
+        .then (r) -> r.json()
+        .then (data) =>
+            @instanceSettingsStoreValue =
+                ...@instanceSettingsStoreValue
+                ...data
+```
+
+With StimulusReflex (minimal sketch):
+
+```coffeescript
+# Controller
+saveSettings: ->
+    @stimulate 'InstanceSettings#save', @instanceSettingsStoreValue
+
+# Reflex (Ruby) persists and broadcasts; controller updates store on receive.
+```
+
+## Debugging
+
+From browser console:
 
 ```javascript
-// Available in browser console
 LibreverseStores.manager.getAllStoreValues();
 LibreverseStores.theme.toggleDarkMode();
 LibreverseStores.toast.success("Debug message");
@@ -374,48 +270,44 @@ LibreverseStores.toast.success("Debug message");
 
 ## Best Practices
 
-1. **Use stores for shared state**: If multiple controllers need the same data, use a store
-2. **Keep stores flat**: Avoid deeply nested objects in stores
-3. **Use descriptive names**: Store names should clearly indicate their purpose
-4. **Initialize stores early**: Set up stores in your application controller
-5. **Handle errors gracefully**: Always handle store update errors
-6. **Use utilities**: Leverage provided utility classes for common operations
-7. **Document custom stores**: Document any custom stores you create
+1. Use stores whenever state is shared across controllers
+2. Keep stores flat; avoid deeply nested objects
+3. Name stores and keys descriptively
+4. Initialize core stores early (application controller)
+5. Handle failures and rollbacks for optimistic updates
+6. Use utilities (StoreManager/ToastManager/ThemeManager)
+7. Document custom stores and their schema
 
 ## Troubleshooting
 
-### Common Issues
+- Store not updating: Ensure useStore(this) is called in connect
+- Events not firing: Verify store names match
+- Performance: Avoid rapid updates in tight loops
+- Memory leaks: Unsubscribe listeners in disconnect
 
-1. **Store not updating**: Make sure you're using `useStore(this)` in your controller
-2. **Events not firing**: Check that store names match between definition and usage
-3. **Performance issues**: Avoid frequent store updates in loops
-4. **Memory leaks**: Clean up store listeners in disconnect()
+## Checklist
 
-### Migration Checklist
-
-- [ ] Install stimulus-store package
-- [ ] Create store definitions
-- [ ] Update controller imports
-- [ ] Update HTML data attributes
-- [ ] Update controller registration
-- [ ] Test all functionality
-- [ ] Update documentation
+- [ ] Install stimulus-store (bun add stimulus-store)
+- [ ] Define stores (type + initialValue)
+- [ ] Add @stores and useStore(this) in controllers
+- [ ] Update templates to use enhanced controllers
+- [ ] Wire persistence (optional)
+- [ ] Add tests and docs
 
 ## Examples
 
-See the enhanced controllers in `app/javascript/controllers/` for complete examples:
+See app/javascript/controllers/:
 
-- `enhanced_application_controller.coffee` - Base controller setup
-- `enhanced_glass_controller.coffee` - Glass effects with stores
-- `enhanced_instance_settings_controller.coffee` - Form state management
-- `enhanced_toast_controller.coffee` - Toast notifications
-- `enhanced_search_controller.coffee` - Search functionality
+- enhanced_application_controller.coffee
+- enhanced_glass_controller.coffee
+- enhanced_instance_settings_controller.coffee
+- enhanced_toast_controller.coffee
+- enhanced_search_controller.coffee
 
-## Support
+## Reference
 
-For questions or issues with the migration:
-
-1. Check the stimulus-store documentation: <https://stimulus-store.com/>
-2. Review the example controllers in this project
-3. Use the browser console debugging tools
-4. Check the store utilities for helper functions
+- stimulus-store docs: <https://stimulus-store.com/>
+- Use HAML for templates, SCSS for styles, CoffeeScript for controllers
+- Use bun for package management and running scripts
+- Prefer backend StimulusReflex for server-authoritative updates
+- Turbo/Haml note: ensure .html.haml extension or add initializer default_format patch
