@@ -1,0 +1,12 @@
+{
+  // Make the VS Code Pull button use rebase instead of merge
+  "git.pullRebase": true,
+  // Prune on fetch so the remote view is tidy
+  "git.pruneOnFetch": true,
+  // Do not force fast-forward only in the UI pull; rebase will handle divergence
+  "git.fastForwardOnly": false,
+  // Avoid passing --tags with Pull button; tag fetch can be done by fetch
+  "git.fetchTags": false,
+  // Auto-fetch periodically to keep things fresh
+  "git.autofetch": true
+}
