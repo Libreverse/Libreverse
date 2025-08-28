@@ -57,9 +57,9 @@ export default class extends ApplicationController
   flushAllPending: =>
     return unless @pending?.length > 0
     # Helper: produce base64 for either Uint8Array or already-base64 string
-    toB64 = (u) ->
+    toB64 = (u) =>
       if u instanceof Uint8Array
-        btoa(Array.from(u, (byte) -> String.fromCharCode(byte)).join(''))
+        btoa(Array.from(u, (byte) => String.fromCharCode(byte)).join(''))
       else
         u
 
