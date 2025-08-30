@@ -54,15 +54,52 @@ module LibreverseInstance
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks middleware haml_lint])
 
-    # Zstandard compression middleware
+    # Zstandard compression middleware - dynamic based on CPU cores
+    cores = ThreadBudget.total_threads
+    if cores < 8
+      # Maximize for speed on low-core systems
+      zstd_window_log = 20
+      zstd_chain_log = 20
+      zstd_hash_log = 20
+      zstd_search_log = 5
+      zstd_min_match = 3
+      zstd_strategy = :btfast
+    elsif cores < 16
+      # Balance speed and compression on mid-core systems
+      zstd_window_log = 24
+      zstd_chain_log = 24
+      zstd_hash_log = 22
+      zstd_search_log = 7
+      zstd_min_match = 4
+      zstd_strategy = :btopt
+    else
+      # Maximize compression on high-core systems
+      zstd_window_log = 27
+      zstd_chain_log = 27
+      zstd_hash_log = 25
+      zstd_search_log = 9
+      zstd_min_match = 3
+      zstd_strategy = :btultra2
+    end
+
     config.middleware.use Rack::Zstd,
-                          window_log: 27,
-                          chain_log: 27,
-                          hash_log: 25,
-                          search_log: 9,
-                          min_match: 3,
-                          strategy: :btultra2,
+                          window_log: zstd_window_log,
+                          chain_log: zstd_chain_log,
+                          hash_log: zstd_hash_log,
+                          search_log: zstd_search_log,
+                          min_match: zstd_min_match,
+                          strategy: zstd_strategy,
                           sync: false
+
+    config.after_initialize do
+      Rails.logger.info "Zstandard compression middleware configured with:"
+      Rails.logger.info " - window_log: #{zstd_window_log}"
+      Rails.logger.info " - chain_log: #{zstd_chain_log}"
+      Rails.logger.info " - hash_log: #{zstd_hash_log}"
+      Rails.logger.info " - search_log: #{zstd_search_log}"
+      Rails.logger.info " - min_match: #{zstd_min_match}"
+      Rails.logger.info " - strategy: #{zstd_strategy}"
+    end
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
