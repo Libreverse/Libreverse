@@ -4,11 +4,17 @@
 # Common pool size calculation
 <%
   require 'etc'
-  nproc = Etc.respond_to?(:nprocessors) ? Etc.nprocessors : 5
-  # Calculate pool size: prefer (even nproc - 4) but never below 5
-  pool_size = [(nproc / 2) * 2 - 4, 5].max
-  # SQLite threads: at least 2, up to number of logical processors
-  sqlite_threads = [nproc, 2].max
+    nproc = Etc.respond_to?(:nprocessors) ? Etc.nprocessors : 5
+    # Prefer thread budget values when present; otherwise fall back to legacy heuristics
+    pool_size = Integer(ENV.fetch('APP_THREADS_BUDGET', '0'))
+    if pool_size <= 0
+        pool_size = [(nproc / 2) * 2 - 4, 5].max
+    end
+    # SQLite threads derived from budget if present, else fallback
+    sqlite_threads = Integer(ENV.fetch('SQLITE_THREADS_BUDGET', '0'))
+    if sqlite_threads <= 0
+        sqlite_threads = [nproc, 2].max
+    end
 %>
 
 default: &default

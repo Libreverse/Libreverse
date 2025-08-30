@@ -16,6 +16,26 @@ require_relative "../lib/middleware/turbo_preload_middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
+    # Log thread budget
+    config.after_initialize do
+      total = ThreadBudget.total_threads
+      Rails.logger.info "Thread budget: #{total} total"
+      ThreadBudget.percentages.each do |component, percentage|
+        Rails.logger.info " - #{component}: #{percentage}% (#{ThreadBudget.allocated_threads(component)} threads)"
+      end
+
+      # Rich summary
+      d = ThreadBudget.details
+      Rails.logger.info "App threads: #{d[:app][:threads]}"
+      Rails.logger.info "SQLite threads: #{d[:sqlite][:threads]}"
+      sq = d[:solid_queue]
+      Rails.logger.info "Solid Queue: #{sq[:total_threads]} total (#{sq[:processes]} procs x #{sq[:threads_per_process]} threads)"
+
+      if ThreadBudget.oversubscribed?
+        Rails.logger.warn "Thread budget oversubscribed: allocated #{ThreadBudget.allocation_sum} > total #{total}. This is intentional due to minimums."
+      end
+    end
+
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]

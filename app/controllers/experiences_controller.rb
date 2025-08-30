@@ -21,8 +21,7 @@ class ExperiencesController < ApplicationController
 
   # GET /experiences
   def index
-    local_experiences = if current_account&
-      .admin?
+    local_experiences = if current_account&.admin?
       Experience.order(created_at: :desc)
     else
       Experience.approved.order(created_at: :desc)
@@ -38,8 +37,8 @@ class ExperiencesController < ApplicationController
     @experiences = UnifiedExperience.from_search_results(combined)
     @experience = Experience.new
 
-    # Generate ETag for conditional requests based on experiences and user role
-    # Extract timestamp from loaded collection to avoid additional query
+  # Generate ETag for conditional requests based on experiences and user role
+  # Extract timestamp from loaded collection to avoid additional query
   timestamps = (local_experiences.map(&:updated_at) + metaverse_content.map(&:updated_at))
   timestamp = timestamps.any? ? timestamps.max.to_i : 0
   user_role = current_account&.admin? ? "admin" : "user"
@@ -51,8 +50,8 @@ class ExperiencesController < ApplicationController
     return if Rails.env.development?
 
     # Bail out unless the representation is stale.
+    # Bail out unless the representation is stale.
     nil unless stale?(etag: etag, public: false)
-
     # Content has changed or no ETag in request, proceed with rendering
   end
 
@@ -124,11 +123,10 @@ class ExperiencesController < ApplicationController
     end
 
     # Handle local experience
-    unless @experience.approved? || current_account&.admin? || @experience.account_id == current_account.id
+    unless @experience.approved? || current_account&.admin? || @experience.account_id == current_account&.id
       redirect_to experiences_path, alert: "Experience is awaiting approval."
       return
     end
-
     @experience.reload
 
     unless @experience.html_file.attached?
