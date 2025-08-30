@@ -78,6 +78,9 @@ logger.formatter.extend(CustomTaggedFormatter)
 # Replace the Rails logger
 Rails.logger = logger
 
+# Ensure the application config uses the same logger instance
+Rails.application.config.logger = Rails.logger
+
 # Configure log levels based on environment
 if Rails.env.development?
   Rails.logger.level = Logger::DEBUG
