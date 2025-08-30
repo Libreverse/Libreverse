@@ -158,6 +158,7 @@ ar:
     federated_experience_description: This experience is hosted on %{domain} and will
       open in a new tab
     from_instance: From %{domain}
+    from_platform: From %{platform}
     index:
       experiences_word: التجارب
       input_aria_label: البحث في التجارب

@@ -142,6 +142,7 @@ ja:
     federated_experience_description: This experience is hosted on %{domain} and will
       open in a new tab
     from_instance: From %{domain}
+    from_platform: From %{platform}
     index:
       experiences_word: 体験
       input_aria_label: 体験を検索

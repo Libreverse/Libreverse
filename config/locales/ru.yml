@@ -161,6 +161,7 @@ ru:
     federated_experience_description: This experience is hosted on %{domain} and will
       open in a new tab
     from_instance: From %{domain}
+    from_platform: From %{platform}
     index:
       experiences_word: Опытов
       input_aria_label: Поиск опытов

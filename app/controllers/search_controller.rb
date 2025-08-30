@@ -78,9 +78,19 @@ class SearchController < ApplicationController
         }
       end
     else
-      # No query - show recent local experiences as unified experiences
-      recent_experiences = scope.order(created_at: :desc).limit(20)
-      @experiences = UnifiedExperience.from_search_results(recent_experiences)
+      # No query - show recent experiences from all sources (local, federated, metaverse)
+      local_experiences = scope.order(created_at: :desc).limit(10)
+
+      # Include recent federated experiences
+      federated_experiences = FederatedAnnouncement.recent.limit(5)
+
+      # Include recent metaverse content
+      metaverse_content = IndexedContent.order(created_at: :desc).limit(5)
+
+      # Combine all sources
+      combined_experiences = local_experiences.to_a + federated_experiences.to_a + metaverse_content.to_a
+
+      @experiences = UnifiedExperience.from_search_results(combined_experiences)
       @search_metadata = { total_results: @experiences.length, search_type: :recent }
     end
 
