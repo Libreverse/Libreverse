@@ -7,7 +7,7 @@ require "bootsnap/setup" # Speed up boot time by caching expensive operations.
 
 # Establish thread budgeting before Rails loads other initializers/config ERB
 begin
-	require_relative "thread_budget"
+  require_relative "thread_budget"
 rescue LoadError => e
-	warn "Thread budget not loaded: #{e.message}"
+  warn "Thread budget not loaded: #{e.message}"
 end

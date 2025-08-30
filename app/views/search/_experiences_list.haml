@@ -1,5 +1,5 @@
 - experiences.each do |experience|
-  .sp-experience{ class: experience.federated? ? 'federated-experience' : 'local-experience',
+  .sp-experience{ class: experience.federated? ? 'federated-experience' : experience.metaverse? ? 'metaverse-experience' : 'local-experience',
                   data: {
                     controller: "glass",
                     "glass-enable-glass-value": true,
@@ -22,6 +22,18 @@
           %p.sp-author
             %span.federated-source
               = t('search.from_instance', domain: experience.source_domain)
+    - elsif experience.metaverse?
+      -# Metaverse experience link
+      = link_to experience.experience_url, class: "experience-link metaverse-link", target: "_blank", rel: "noopener" do
+        %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
+          %h3{itemprop: "name"}
+            = sanitize experience.title
+            %span.metaverse-badge 🌍 Metaverse
+          %div{itemprop: "description"}
+            = sanitize simple_format(experience.description)
+          %p.sp-author
+            %span.metaverse-source
+              = t('search.from_platform', platform: experience.metaverse_platform.humanize)
     - else
       -# Local experience (using unified interface)
       = link_to experience.display_path, class: "experience-link" do

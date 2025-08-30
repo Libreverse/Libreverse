@@ -31,9 +31,7 @@ module LibreverseInstance
       sq = d[:solid_queue]
       Rails.logger.info "Solid Queue: #{sq[:total_threads]} total (#{sq[:processes]} procs x #{sq[:threads_per_process]} threads)"
 
-      if ThreadBudget.oversubscribed?
-        Rails.logger.warn "Thread budget oversubscribed: allocated #{ThreadBudget.allocation_sum} > total #{total}. This is intentional due to minimums."
-      end
+      Rails.logger.warn "Thread budget oversubscribed: allocated #{ThreadBudget.allocation_sum} > total #{total}. This is intentional due to minimums." if ThreadBudget.oversubscribed?
     end
 
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
