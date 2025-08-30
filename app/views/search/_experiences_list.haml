@@ -15,7 +15,6 @@
         %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
           %h3{itemprop: "name"}
             = sanitize experience.title
-            %span.federated-badge 🌐 Federated
           %div{itemprop: "description"}
             %p.federated-description
               = t('search.federated_experience_description', domain: experience.source_domain)
@@ -28,7 +27,6 @@
         %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
           %h3{itemprop: "name"}
             = sanitize experience.title
-            %span.metaverse-badge 🌍 Metaverse
           %div{itemprop: "description"}
             = sanitize simple_format(experience.description)
           %p.sp-author
