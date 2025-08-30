@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'shellwords'
+require "shellwords"
 
 desc "Run ERB lint"
 task erb_lint: :environment do
@@ -10,13 +10,13 @@ end
 namespace :erb do
   desc "Format ERB templates in place"
   task format: :environment do
-    files = Dir.glob('app/**/*.erb', File::FNM_EXTGLOB)
-               .reject { |p| p == 'app/views/layouts/mailer.html.erb' }
+    files = Dir.glob("app/**/*.erb", File::FNM_EXTGLOB)
+               .reject { |p| p == "app/views/layouts/mailer.html.erb" }
     unless files.empty?
       cmd = [
-        'bundle', 'exec', 'erb-format', '--write',
+        "bundle", "exec", "erb-format", "--write",
         *files.map { |f| Shellwords.escape(f) }
-      ].join(' ')
+      ].join(" ")
       sh cmd
     end
   end

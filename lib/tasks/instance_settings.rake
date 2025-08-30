@@ -108,7 +108,7 @@ namespace :instance_settings do
     # gRPC-specific validation
     if LibreverseInstance::Application.grpc_enabled?
       warnings << "gRPC is enabled in production but may fail without proper SSL certificates" if Rails.env.production? && !(ENV["GRPC_SSL_CERT_PATH"] && ENV["GRPC_SSL_KEY_PATH"])
-      warnings << "gRPC server is enabled but may conflict with other services on port 50051"
+      # Standalone gRPC server has been removed; only HTTP-routed gRPC remains
     end
 
     # Output results

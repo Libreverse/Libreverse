@@ -12,7 +12,14 @@ Rails.application.configure do
             next
         end
 
-      Thread.new do
+        # Only start gRPC when running the Rails web server. Skip for runner/console/rake.
+        server_context = defined?(Rails::Server) || defined?(PhusionPassenger) || ENV["GRPC_START_IN_NON_SERVER"] == "true"
+        unless server_context
+            Rails.logger.debug "Skipping gRPC server start (not a Rails::Server context)"
+            next
+        end
+
+        Thread.new do
             Thread.current.abort_on_exception = true
             Thread.current.name = "grpc-server" if Thread.current.respond_to?(:name=)
             Rails.logger.info "Starting integrated gRPC server..."
@@ -20,13 +27,13 @@ Rails.application.configure do
             begin
                 require Rails.root.join("app/grpc/grpc_server")
                 server = Libreverse::GrpcServer.new
-          # Mark that we're running gRPC inside the Rails process
-          ENV["GRPC_INTEGRATED"] = "true"
+                # Mark that we're running gRPC inside the Rails process
+                ENV["GRPC_INTEGRATED"] = "true"
                 server.start
             rescue StandardError => e
                 Rails.logger.error "Failed to start integrated gRPC server: #{e.message}"
                 Rails.logger.error e.backtrace.join("\n")
             end
-      end
+        end
     end
 end

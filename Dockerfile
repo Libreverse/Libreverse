@@ -145,5 +145,3 @@ CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
 
 # Expose application ports
 EXPOSE 3000
-# Optional: enable when gRPC server is used
-EXPOSE 50051

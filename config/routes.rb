@@ -98,6 +98,9 @@ Rails.application.routes.draw do
     delete "federation/unblock_domain/:domain", to: "federation#unblock_domain", as: :unblock_domain
     post "federation/generate_actors", to: "federation#generate_actors"
     get "federation/federated_experiences", to: "federation#federated_experiences"
+
+    # ActiveStorageDB utilities (optional admin utilities)
+    mount ActiveStorageDB::Engine => "/active_storage_db"
   end
 
   get ".well-known/security.txt", to: "well_known#security_txt", format: false

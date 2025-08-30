@@ -13,7 +13,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 - **Secure account system** – Rodauth with Argon2 hashing, email‑based login, remember‑me cookies, and optional guest mode.
 - **ActivityPub Federation** – Share experiences across Libreverse instances using ActivityPub protocol with custom metaverse-specific fields.
 - **Cross-instance Discovery** – Search and discover experiences from other federated Libreverse instances.
-- **Media attachments** – Active Storage with rigorous validations, encrypted blobs via _lockbox_, and one‑click ZIP export of your entire account.
+- **Media attachments** – Active Storage with rigorous validations, encrypted blobs at rest, and one‑click ZIP export of your entire account.
 - **API functionality** – Full-featured GraphQL API, XML-RPC endpoints, JSON API, and integrated gRPC server with HTTP bridge.
 - **Zero‑Redis architecture** – Solid Cable and Solid Queue keep ActionCable and background jobs inside SQLite.
 - **Security‑centric design** – CSP, Rack::Attack rate limiting, Brotli compression, and an evolving [security roadmap](todo.md).

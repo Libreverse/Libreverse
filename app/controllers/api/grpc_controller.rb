@@ -7,6 +7,8 @@ module Api
     # Skip CSRF protection for gRPC requests since they use different auth
     skip_before_action :verify_authenticity_token
 
+    # Short-circuit if gRPC is disabled at the instance level
+    before_action :ensure_grpc_enabled
     before_action :validate_content_type
     before_action :apply_rate_limit, if: -> { response.status == 200 }
     before_action :set_no_cache_headers, if: -> { response.status == 200 }
@@ -88,6 +90,13 @@ module Api
     end
 
     private
+
+    def ensure_grpc_enabled
+      return true if LibreverseInstance::Application.grpc_enabled?
+
+      render json: { error: "gRPC service disabled" }, status: :service_unavailable
+      false
+    end
 
     def load_grpc_dependencies
       # Load gRPC files only when needed to avoid boot issues

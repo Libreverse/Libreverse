@@ -266,22 +266,33 @@ class ApplicationController < ActionController::Base
       # Perform timestamp validation
       return if params[:invisible_captcha_timestamp].blank?
 
-        timestamp = params[:invisible_captcha_timestamp].to_i
-        current_time = Time.current.to_i
-        threshold = 4 # seconds - more lenient for global check
+        raw_ts = params[:invisible_captcha_timestamp].to_s
+        begin
+          submitted_time = Time.iso8601(raw_ts)
+        rescue ArgumentError
+          # Fallback for legacy integer timestamps
+          int_ts = raw_ts.to_i
+          submitted_time = Time.at(int_ts).utc if int_ts.positive?
+        end
 
-        return unless (current_time - timestamp) < threshold
+        if submitted_time.present?
+          current_time = Time.current.utc
+          threshold = 4 # seconds - more lenient for global check
 
-          log_spam_attempt("timestamp", {
-                             timestamp: timestamp,
-                             current_time: current_time,
-                             threshold: threshold,
-                             detection_method: "global_protection"
-                           })
+          if (current_time - submitted_time) < threshold
+            log_spam_attempt("timestamp", {
+                               timestamp: submitted_time.iso8601,
+                               current_time: current_time.iso8601,
+                               threshold: threshold,
+                               detection_method: "global_protection"
+                             })
 
-          flash[:alert] = "Please wait a moment before submitting the form."
-          redirect_to_safe_location
-          nil
+            flash[:alert] = "Please wait a moment before submitting the form."
+            redirect_to_safe_location
+            return
+          end
+        end
+        nil
     end
 
     # Check if we should perform global spam detection
