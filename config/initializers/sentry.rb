@@ -21,17 +21,6 @@ Sentry.init do |config|
     # Clear user context to prevent sending user data
     event.user = {}
 
-    # Limit and sanitize breadcrumbs
-    if event.breadcrumbs&.values
-      # Keep only last 3 breadcrumbs to minimize data
-      event.breadcrumbs.values = event.breadcrumbs.values.last(3)
-
-      # Remove data from breadcrumbs that might contain personal info
-      event.breadcrumbs.each_value do |breadcrumb|
-        breadcrumb.delete(:data) if breadcrumb[:data]
-      end
-    end
-
     event
   end
 
@@ -41,9 +30,9 @@ Sentry.init do |config|
   # Disable performance monitoring to reduce data collection
   config.traces_sample_rate = 0.0
 
-  # Minimize breadcrumbs collection
+  # Minimize breadcrumbs collection (avoid manipulating BreadcrumbBuffer directly)
   config.breadcrumbs_logger = []
-  config.max_breadcrumbs = 3
+  config.max_breadcrumbs = 0
 
   # Set release and environment
   config.release = ENV.fetch("APP_REVISION") { nil }

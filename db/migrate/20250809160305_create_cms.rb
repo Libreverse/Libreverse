@@ -78,8 +78,11 @@ class CreateCms < ActiveRecord::Migration[5.2]
       t.datetime    :datetime
       t.timestamps
 
-      t.index %i[record_type record_id]
-      t.index %i[record_type record_id identifier], unique: true
+      # Explicit short index names to satisfy MySQL/TiDB 64-char limit
+      t.index %i[record_type record_id],
+        name: "index_cms_fragments_on_rtype_rid"
+      t.index %i[record_type record_id identifier], unique: true,
+        name: "index_cms_fragments_on_rtype_rid_ident"
       t.index %i[datetime]
       t.index %i[boolean]
     end
