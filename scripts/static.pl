@@ -126,7 +126,7 @@ run_command("haml-lint", "bundle", "exec", "haml-lint", "--auto-correct", ".");
 
 # New: ERB formatting and linting (guarded)
 run_command("ERB Format", "sh", "-c",
-"command -v bundle >/dev/null && bundle exec erb-format --help >/dev/null 2>&1 && find app -name '*.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true"
+"command -v bundle >/dev/null && bundle exec erb-format --help >/dev/null 2>&1 && find app -name '*.erb' -not -path 'app/views/layouts/mailer.html.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true"
 );
 run_command("ERB Lint", "sh", "-c",
 "command -v bundle >/dev/null && bundle exec erblint --version >/dev/null 2>&1 && bundle exec erblint --config .erb-lint.yml app/views || true"
