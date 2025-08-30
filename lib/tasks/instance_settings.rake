@@ -106,8 +106,8 @@ namespace :instance_settings do
     warnings << "Application port is not using the standard 3000 (currently: #{port})" if port != 3000
 
     # gRPC-specific validation
-    if LibreverseInstance::Application.grpc_enabled?
-      warnings << "gRPC is enabled in production but may fail without proper SSL certificates" if Rails.env.production? && !(ENV["GRPC_SSL_CERT_PATH"] && ENV["GRPC_SSL_KEY_PATH"])
+    if LibreverseInstance::Application.grpc_enabled? && Rails.env.production? && !(ENV["GRPC_SSL_CERT_PATH"] && ENV["GRPC_SSL_KEY_PATH"])
+      warnings << "gRPC is enabled in production but may fail without proper SSL certificates"
       # Standalone gRPC server has been removed; only HTTP-routed gRPC remains
     end
 

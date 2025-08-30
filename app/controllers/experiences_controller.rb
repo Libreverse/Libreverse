@@ -21,22 +21,29 @@ class ExperiencesController < ApplicationController
 
   # GET /experiences
   def index
-    local_experiences = if current_account&.admin?
+    local_experiences = if current_account&
+      .admin?
       Experience.order(created_at: :desc)
     else
       Experience.approved.order(created_at: :desc)
     end
 
+    # Also include recently indexed metaverse content so it appears by default
+    # Keep this modest to avoid overwhelming the page
+    metaverse_content = IndexedContent.order(created_at: :desc).limit(20)
+
+    combined = local_experiences.to_a + metaverse_content.to_a
+
     # Convert to unified experiences for consistent UI
-    @experiences = UnifiedExperience.from_search_results(local_experiences)
+    @experiences = UnifiedExperience.from_search_results(combined)
     @experience = Experience.new
 
     # Generate ETag for conditional requests based on experiences and user role
     # Extract timestamp from loaded collection to avoid additional query
-    timestamps = local_experiences.map(&:updated_at)
-    timestamp = timestamps.any? ? timestamps.max.to_i : 0
-    user_role = current_account&.admin? ? "admin" : "user"
-    cache_key = "experiences_index/#{user_role}/#{local_experiences.size}/#{timestamp}"
+  timestamps = (local_experiences.map(&:updated_at) + metaverse_content.map(&:updated_at))
+  timestamp = timestamps.any? ? timestamps.max.to_i : 0
+  user_role = current_account&.admin? ? "admin" : "user"
+  cache_key = "experiences_index/#{user_role}/#{combined.size}/#{timestamp}"
     etag = Digest::MD5.hexdigest(cache_key)
 
     # Handle conditional requests - if content hasn't changed, return 304
