@@ -36,8 +36,8 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
-  # Active Storage
-  config.active_storage.service = :local
+  # Active Storage: store files in the database using active_storage_db
+  config.active_storage.service = :db
 
   # Action Cable Configuration
   # Mount Action Cable outside main process or domain.

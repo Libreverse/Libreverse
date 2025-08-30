@@ -102,6 +102,10 @@ class RodauthMain < Rodauth::Rails::Auth
         db.from(:account_remember_keys).where(id: guest_account_id).delete
         db.from(:account_verification_keys).where(id: guest_account_id).delete
         db.from(:account_login_change_keys).where(id: guest_account_id).delete
+        # Custom table for session keys keyed by account id
+        if db.table_exists?(:account_session_keys)
+          db.from(:account_session_keys).where(id: guest_account_id).delete
+        end
 
         # Delete active session keys (uses account_id as foreign key, not primary key)
         db.from(:account_active_session_keys).where(account_id: guest_account_id).delete
@@ -356,6 +360,14 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Do additional cleanup after the account is closed.
     after_close_account do
+      # Clean up session key tables that may hold FKs to this account
+      if db.table_exists?(:account_session_keys)
+        db.from(:account_session_keys).where(id: account_id).delete
+      end
+      if db.table_exists?(:account_active_session_keys)
+        db.from(:account_active_session_keys).where(account_id: account_id).delete
+      end
+
       # Remove user preferences
       UserPreference.where(account_id: account_id).delete_all
 

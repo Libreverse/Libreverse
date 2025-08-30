@@ -11,19 +11,7 @@ The Libreverse gRPC API provides type-safe, efficient remote procedure calls usi
 
 ## Integration (server)
 
-The gRPC server runs inside the Rails process for simplicity and shared state:
-
-- Starts with Rails (background thread)
-- Default host/port: 127.0.0.1:50051 (config via `GRPC_HOST`, `GRPC_PORT`)
-- SSL in production (via `GRPC_SSL_CERT_PATH`, `GRPC_SSL_KEY_PATH`)
-- Rate limiting and auth aligned with XML-RPC
-
-Development:
-
-```bash
-# Start web + gRPC together
-bin/dev
-```
+Libreverse no longer runs an internal standalone gRPC server. Instead, it exposes the same functionality over an HTTP bridge route in Rails. If you operate a separate gRPC server, client examples below still apply to that external service, but this app only provides the HTTP endpoint.
 
 HTTP bridge:
 
@@ -67,8 +55,7 @@ curl -X POST https://localhost:3000/api/grpc \
 
 ### Native gRPC Server
 
-- **Host**: `localhost:50051` (configurable via `GRPC_PORT` environment variable)
-- **Protocol**: gRPC over HTTP/2
+Not provided by this Rails app. If you deploy a separate gRPC server, configure clients to connect to that service.
 
 ### HTTP-based gRPC Endpoint
 
@@ -303,21 +290,11 @@ client.getAllExperiences({}, (error, response) => {
 });
 ```
 
-## Running the gRPC Server
-
-### Standalone gRPC Server
-
-```bash
-# Start the gRPC server (runs on port 50051 by default)
-bundle exec rake grpc:server
-
-# Or specify a different port
-GRPC_PORT=9090 bundle exec rake grpc:server
-```
-
-### HTTP-based gRPC (via Rails)
+## HTTP-based gRPC (via Rails)
 
 The HTTP-based gRPC endpoint is available automatically when the Rails application is running at `/api/grpc`.
+
+Note: If the instance setting disables gRPC, the HTTP endpoint will respond with HTTP 503 (Service Unavailable).
 
 ## Development and Testing
 
@@ -331,12 +308,7 @@ bundle exec rake grpc:generate
 
 ### Testing
 
-Both native gRPC and HTTP-based gRPC can be tested using the provided client examples:
-
-```bash
-# Test with the Ruby client example
-ruby documentation/grpc_client_example.rb
-```
+Use the HTTP-based examples (curl, fetch) against `/api/grpc` while Rails is running.
 
 ## Performance Considerations
 

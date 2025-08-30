@@ -33,7 +33,8 @@ module InvisibleCaptchaHelper
 
       # Add timestamp field if timestamp is enabled in configuration
       if InvisibleCaptcha.timestamp_enabled
-        timestamp_value = Time.zone.now.to_i.to_s
+        # Use ISO8601 timestamp string to match invisible_captcha gem expectations
+        timestamp_value = Time.current.utc.iso8601
         session[timestamp_name] = timestamp_value if respond_to?(:session)
         fields_html += hidden_field_tag(timestamp_name, timestamp_value, autocomplete: "off")
       end

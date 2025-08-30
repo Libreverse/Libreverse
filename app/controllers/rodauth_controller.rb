@@ -184,14 +184,25 @@ class RodauthController < ApplicationController
     # Check timestamp
     return if params[:invisible_captcha_timestamp].blank?
 
-      timestamp = params[:invisible_captcha_timestamp].to_i
-      current_time = Time.current.to_i
-      threshold = 2 # seconds
+      raw_ts = params[:invisible_captcha_timestamp].to_s
+      begin
+        submitted_time = Time.iso8601(raw_ts)
+      rescue ArgumentError
+        # Fallback for legacy integer timestamps
+        int_ts = raw_ts.to_i
+        submitted_time = Time.at(int_ts).utc if int_ts.positive?
+      end
 
-      return unless (current_time - timestamp) < threshold
+      if submitted_time.present?
+        current_time = Time.current.utc
+        threshold = 2 # seconds
 
-        handle_timestamp_spam
-        nil
+        if (current_time - submitted_time) < threshold
+          handle_timestamp_spam
+          return
+        end
+      end
+      nil
   end
 
   # Bot detection check for auth routes (duplicated from EnhancedSpamProtection)

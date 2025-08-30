@@ -40,8 +40,8 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # Disable browser caching in development
   config.public_file_server.enabled = false
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploaded files in the database using active_storage_db
+  config.active_storage.service = :db
 
   # Use Solid Cache for caching with SQLite
   config.cache_store = :solid_cache_store, { database: :cache }

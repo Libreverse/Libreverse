@@ -61,6 +61,9 @@ gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
 gem "sqlite3"
+
+# Store Active Storage files in the database instead of the filesystem
+gem "active_storage_db"
 gem "stimulus-rails"
 gem "stimulus_reflex", "3.5.3"
 gem "sys-filesystem"

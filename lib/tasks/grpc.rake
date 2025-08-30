@@ -14,15 +14,4 @@ namespace :grpc do
     abort("protoc failed – see above") unless ok
     puts "gRPC service files generated in #{output_dir}"
   end
-
-  desc "Start gRPC server"
-  task server: :environment do
-    require_relative "../../app/grpc/grpc_server"
-
-    port = ENV.fetch("GRPC_PORT", "50051")
-    puts "Starting gRPC server on port #{port}"
-
-    server = Libreverse::GrpcServer.new
-    server.start(port)
-  end
 end
