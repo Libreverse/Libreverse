@@ -18,7 +18,7 @@
 - [ ] (feature) Add Telegram search bot
 - [ ] (feature) Add x.com search bot
 - [ ] (feature) add litestream back for optional cache backups
-      move glitchtip back to local
+      move glitchtip back to local server
 
 ---
 
