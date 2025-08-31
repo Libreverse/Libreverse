@@ -209,11 +209,12 @@ GEM
       federails (~> 0.4)
       public_suffix (~> 6.0)
       rails (>= 7.2.2)
-    ffi (1.17.2)
     ffi (1.17.2-aarch64-linux-gnu)
+    ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
+    ffi (1.17.2-x86_64-linux-musl)
     ffi-compiler (1.3.2)
       ffi (>= 1.15.5)
       rake
@@ -231,10 +232,10 @@ GEM
       openid_connect (~> 1.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (4.32.0)
+    google-protobuf (4.32.0-aarch64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.32.0-aarch64-linux-gnu)
+    google-protobuf (4.32.0-aarch64-linux-musl)
       bigdecimal
       rake (>= 13)
     google-protobuf (4.32.0-arm64-darwin)
@@ -246,6 +247,9 @@ GEM
     google-protobuf (4.32.0-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
+    google-protobuf (4.32.0-x86_64-linux-musl)
+      bigdecimal
+      rake (>= 13)
     googleapis-common-protos-types (1.20.0)
       google-protobuf (>= 3.18, < 5.a)
     graphql (2.5.11)
@@ -255,10 +259,10 @@ GEM
     graphql_rails (3.1.0)
       activesupport (>= 4)
       graphql (~> 2)
-    grpc (1.74.1)
+    grpc (1.74.1-aarch64-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.74.1-aarch64-linux-gnu)
+    grpc (1.74.1-aarch64-linux-musl)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     grpc (1.74.1-arm64-darwin)
@@ -268,6 +272,9 @@ GEM
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     grpc (1.74.1-x86_64-linux-gnu)
+      google-protobuf (>= 3.25, < 5.0)
+      googleapis-common-protos-types (~> 1.0)
+    grpc (1.74.1-x86_64-linux-musl)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     grpc-tools (1.74.1)
@@ -384,7 +391,10 @@ GEM
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
+    minify_html (0.16.4-aarch64-linux)
+    minify_html (0.16.4-arm64-darwin)
+    minify_html (0.16.4-x86_64-darwin)
+    minify_html (0.16.4-x86_64-linux)
     minitest (5.25.5)
     mocha (2.7.1)
       ruby2_keywords (>= 0.0.5)
@@ -406,16 +416,17 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.9)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.18.9-aarch64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.9-aarch64-linux-musl)
       racc (~> 1.4)
     nokogiri (1.18.9-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.9-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.9-x86_64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-musl)
       racc (~> 1.4)
     nokogiri-html5-inference (0.3.0)
       nokogiri (~> 1.14)
@@ -557,12 +568,12 @@ GEM
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
-    re2 (2.19.0)
-      mini_portile2 (~> 2.8.7)
     re2 (2.19.0-aarch64-linux-gnu)
+    re2 (2.19.0-aarch64-linux-musl)
     re2 (2.19.0-arm64-darwin)
     re2 (2.19.0-x86_64-darwin)
     re2 (2.19.0-x86_64-linux-gnu)
+    re2 (2.19.0-x86_64-linux-musl)
     readline (0.0.4)
       reline
     redis (5.4.1)
@@ -691,12 +702,12 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
-    sqlite3 (2.7.3)
-      mini_portile2 (~> 2.8.0)
     sqlite3 (2.7.3-aarch64-linux-gnu)
+    sqlite3 (2.7.3-aarch64-linux-musl)
     sqlite3 (2.7.3-arm64-darwin)
     sqlite3 (2.7.3-x86_64-darwin)
     sqlite3 (2.7.3-x86_64-linux-gnu)
+    sqlite3 (2.7.3-x86_64-linux-musl)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stimulus_reflex (3.5.3)
@@ -779,10 +790,10 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    y-rb (0.6.0)
+    y-rb (0.6.0-aarch64-linux-gnu)
       rake (~> 13.2)
       rb_sys (~> 0.9.110)
-    y-rb (0.6.0-aarch64-linux-gnu)
+    y-rb (0.6.0-aarch64-linux-musl)
       rake (~> 13.2)
       rb_sys (~> 0.9.110)
     y-rb (0.6.0-arm64-darwin)
@@ -794,6 +805,9 @@ GEM
     y-rb (0.6.0-x86_64-linux-gnu)
       rake (~> 13.2)
       rb_sys (~> 0.9.110)
+    y-rb (0.6.0-x86_64-linux-musl)
+      rake (~> 13.2)
+      rb_sys (~> 0.9.110)
     y-rb_actioncable (0.1.7)
       rails (>= 7.0.4)
       y-rb (>= 0.4.5)
@@ -802,13 +816,14 @@ GEM
     zstd-ruby (1.5.7.0)
 
 PLATFORMS
+  aarch64-linux
   aarch64-linux-gnu
-  arm64-darwin-23
-  arm64-darwin-24
-  x86_64-darwin-23
-  x86_64-freebsd
+  aarch64-linux-musl
+  arm64-darwin
+  x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
+  x86_64-linux-musl
 
 DEPENDENCIES
   active_hashcash
@@ -847,6 +862,7 @@ DEPENDENCIES
   jbuilder
   listen
   lockbox
+  minify_html (= 0.16.4)
   mocha
   mysql2
   nokogiri
