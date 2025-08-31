@@ -85,8 +85,8 @@ Rails.application.configure do
     LibreverseInstance::Application.rails_log_level
   end
 
-  # Prevent any accidental file logger from writing to a file (logs go to STDOUT via initializer)
-  config.paths["log"] = "/dev/null"
+  # Use default Rails log file location for production
+  # config.paths["log"] = "/dev/null"
 
   # Cache Store Configuration
   config.cache_store = :solid_cache_store

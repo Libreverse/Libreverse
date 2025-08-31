@@ -66,7 +66,7 @@ require "active_support/logger"
 
 # Create an ActiveSupport::Logger (not the standard Ruby Logger)
 # which automatically includes the silence method needed by ActiveRecord session store
-logger = ActiveSupport::Logger.new($stdout)
+logger = ActiveSupport::Logger.new(Rails.root.join("log", "#{Rails.env}.log"))
 
 # Ensure it has the LoggerSilencer module included (needed for the 'silence' method)
 logger.extend(ActiveSupport::LoggerSilencer) unless logger.respond_to?(:silence)

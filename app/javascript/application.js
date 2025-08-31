@@ -226,3 +226,70 @@ function handleInvalidSession() {
 
 // Initialize the header checking
 document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
+
+// Parent-side keyboard lock handler for iframes
+(function () {
+    // Listen for keyboard lock requests from iframes
+    globalThis.addEventListener("message", (event) => {
+        if (event.data.type === "keyboard-lock-request") {
+            // Check if we have keyboard API available
+            if (navigator.keyboard && navigator.keyboard.lock) {
+                try {
+                    navigator.keyboard
+                        .lock(event.data.keyCodes)
+                        .then(() => {
+                            // Send success response to iframe
+                            event.source.postMessage(
+                                {
+                                    type: "keyboard-lock-response",
+                                    messageId: event.data.messageId,
+                                    success: true,
+                                },
+                                "*",
+                            );
+                        })
+                        .catch((error) => {
+                            // Send error response to iframe
+                            event.source.postMessage(
+                                {
+                                    type: "keyboard-lock-response",
+                                    messageId: event.data.messageId,
+                                    success: false,
+                                    error: error.message,
+                                },
+                                "*",
+                            );
+                        });
+                } catch (error) {
+                    event.source.postMessage(
+                        {
+                            type: "keyboard-lock-response",
+                            messageId: event.data.messageId,
+                            success: false,
+                            error: error.message,
+                        },
+                        "*",
+                    );
+                }
+            } else {
+                // Keyboard API not available
+                event.source.postMessage(
+                    {
+                        type: "keyboard-lock-response",
+                        messageId: event.data.messageId,
+                        success: false,
+                        error: "Keyboard API not supported",
+                    },
+                    "*",
+                );
+            }
+        } else if (event.data.type === "keyboard-unlock-request" && // Handle unlock requests
+            navigator.keyboard && navigator.keyboard.unlock) {
+                try {
+                    navigator.keyboard.unlock();
+                } catch (error) {
+                    console.warn("Keyboard unlock failed:", error.message);
+                }
+            }
+    });
+})();
