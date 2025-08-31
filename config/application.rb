@@ -81,11 +81,25 @@ module LibreverseInstance
                             min_match: zstd_min_match,
                             strategy: zstd_strategy,
                             sync: false
+    else
+      # Fastest compression on low-core systems
+      config.middleware.use Rack::Zstd,
+                            window_log: 18,
+                            chain_log: 18,
+                            hash_log: 16,
+                            search_log: 4,
+                            min_match: 7,
+                            strategy: :btfast,
+                            sync: false
     end
 
     config.after_initialize do
       if cores >= 8
-        Rails.logger.info "Zstandard compression middleware configured with:"
+        if cores < 16
+          Rails.logger.info "Zstandard compression middleware configured for balanced compression (cores: #{cores}):"
+        else
+          Rails.logger.info "Zstandard compression middleware configured for maximum compression (cores: #{cores}):"
+        end
         Rails.logger.info " - window_log: #{zstd_window_log}"
         Rails.logger.info " - chain_log: #{zstd_chain_log}"
         Rails.logger.info " - hash_log: #{zstd_hash_log}"
@@ -93,16 +107,22 @@ module LibreverseInstance
         Rails.logger.info " - min_match: #{zstd_min_match}"
         Rails.logger.info " - strategy: #{zstd_strategy}"
       else
-        Rails.logger.info "Zstandard compression middleware disabled (cores: #{cores} < 8)"
+        Rails.logger.info "Zstandard compression middleware configured for fastest compression (cores: #{cores} < 8):"
+        Rails.logger.info " - window_log: 18"
+        Rails.logger.info " - chain_log: 18"
+        Rails.logger.info " - hash_log: 16"
+        Rails.logger.info " - search_log: 4"
+        Rails.logger.info " - min_match: 7"
+        Rails.logger.info " - strategy: btfast"
       end
     end
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     # Only enable on systems with sufficient cores (>= 8) to avoid performance impact
-    config.middleware.use WhitespaceCompressor if cores >= 8
+    config.middleware.use WhitespaceCompressor
 
     # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
-    config.middleware.use TurboPreloadMiddleware if Rails.env.production?
+    config.middleware.use TurboPreloadMiddleware
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
