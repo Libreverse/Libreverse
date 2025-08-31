@@ -11,7 +11,7 @@ Rails.application.configure do
     policy.manifest_src :self, :data # Allow inlined manifests as data URIs
 
     # ---- Dynamic script/style directives ----
-    script_sources = %i[self https unsafe_inline data blob]
+    script_sources = %i[self https unsafe_inline unsafe_eval data blob]
     style_sources  = %i[self https unsafe_inline data]
 
     # Removed nonce requirement to allow inline scripts/styles since our app inlines large Vite bundles.
@@ -42,22 +42,22 @@ Rails.application.configure do
 
   # Configure a default Permissions-Policy (removing browsing-topics if it was added by default)
   config.permissions_policy do |policy|
-    policy.accelerometer :none
+    policy.accelerometer :self
     policy.autoplay :self
-    policy.camera :none
-    policy.display_capture :none
+    policy.camera :self
+    policy.display_capture :self
     policy.encrypted_media :self
     policy.fullscreen :self
-    policy.geolocation :none
-    policy.gyroscope :none
-    policy.magnetometer :none
-    policy.microphone :none
+    policy.geolocation :self
+    policy.gyroscope :self
+    policy.magnetometer :self
+    policy.microphone :self
     policy.midi :none
     policy.payment :none
     policy.picture_in_picture :self
-    policy.screen_wake_lock :none
+    policy.screen_wake_lock :self
     policy.sync_xhr :self
-    policy.usb :none
+    policy.usb :self
   end
 
   # Initially ran in report‑only mode; switched to false after verifying

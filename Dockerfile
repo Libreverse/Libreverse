@@ -139,9 +139,17 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 COPY docker/entrypoint-with-jemalloc.sh /usr/local/bin/entrypoint-with-jemalloc.sh
 RUN chmod +x /usr/local/bin/entrypoint-with-jemalloc.sh
 
+# Create log directory and ensure proper permissions for volume mounting
+RUN mkdir -p /home/app/webapp/log && \
+    chown -R app:app /home/app/webapp/log && \
+    chmod -R 755 /home/app/webapp/log
+
 # Use baseimage-docker's init process, but override to use jemalloc for app
 ENV DISABLE_AGENT=true
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
 
 # Expose application ports
 EXPOSE 3000
+
+# Create volume for logs to make them accessible from host
+VOLUME ["/home/app/webapp/log"]

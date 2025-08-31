@@ -129,6 +129,15 @@ class ExperiencesController < ApplicationController
 
     @html_content = @experience.html_file.download.force_encoding("UTF-8")
 
+    # Inject storage access script for secure IndexedDB access
+    @html_content = inject_storage_access_client(@html_content)
+
+    # Inject permissions handler script for camera, microphone, sensors, and geolocation
+    @html_content = inject_permissions_handler_client(@html_content)
+
+    # Inject keyboard lock handler script for secure keyboard access
+    @html_content = inject_keyboard_lock_handler_client(@html_content)
+
     # Auto-enable P2P for experiences that are not offline-available (multiplayer experiences)
     unless @experience.offline_available
       @is_multiplayer = true
@@ -283,6 +292,63 @@ class ExperiencesController < ApplicationController
     else
       # If no proper HTML structure, append to end
       html_content + p2p_script_tag
+    end
+  end
+
+  # Inject Storage Access client library into experience HTML
+  def inject_storage_access_client(html_content)
+    # Read the storage access script
+    storage_script = File.read(Rails.root.join("app/javascript/libs/storage_access.js"))
+
+    # Wrap in script tags
+    storage_script_tag = "<script>#{storage_script}</script>"
+
+    # Inject the script before the closing </head> tag, or before </body> if no </head>
+    if html_content.include?("</head>")
+      html_content.sub("</head>", "#{storage_script_tag}\n</head>")
+    elsif html_content.include?("</body>")
+      html_content.sub("</body>", "#{storage_script_tag}\n</body>")
+    else
+      # If no proper HTML structure, append to end
+      html_content + storage_script_tag
+    end
+  end
+
+  # Inject Permissions Handler client library into experience HTML
+  def inject_permissions_handler_client(html_content)
+    # Read the permissions handler script
+    permissions_script = File.read(Rails.root.join("app/javascript/libs/permissions_handler.js"))
+
+    # Wrap in script tags
+    permissions_script_tag = "<script>#{permissions_script}</script>"
+
+    # Inject the script before the closing </head> tag, or before </body> if no </head>
+    if html_content.include?("</head>")
+      html_content.sub("</head>", "#{permissions_script_tag}\n</head>")
+    elsif html_content.include?("</body>")
+      html_content.sub("</body>", "#{permissions_script_tag}\n</body>")
+    else
+      # If no proper HTML structure, append to end
+      html_content + permissions_script_tag
+    end
+  end
+
+  # Inject Keyboard Lock Handler client library into experience HTML
+  def inject_keyboard_lock_handler_client(html_content)
+    # Read the keyboard lock handler script
+    keyboard_script = File.read(Rails.root.join("app/javascript/libs/keyboard_lock_handler.js"))
+
+    # Wrap in script tags
+    keyboard_script_tag = "<script>#{keyboard_script}</script>"
+
+    # Inject the script before the closing </head> tag, or before </body> if no </head>
+    if html_content.include?("</head>")
+      html_content.sub("</head>", "#{keyboard_script_tag}\n</head>")
+    elsif html_content.include?("</body>")
+      html_content.sub("</body>", "#{keyboard_script_tag}\n</body>")
+    else
+      # If no proper HTML structure, append to end
+      html_content + keyboard_script_tag
     end
   end
 end

@@ -22,8 +22,8 @@
                            "data-websocket-p2p-session-id-value" => @session_id,
                            "data-websocket-p2p-peer-id-value" => @peer_id,
                            "data-websocket-p2p-target" => "status" }
-          %iframe.experiencedisplay-iframe{ allow: "pointer-lock",
-                                          sandbox: "allow-scripts allow-pointer-lock allow-same-origin",
+          %iframe.experiencedisplay-iframe{ allow: "pointer-lock storage-access camera microphone accelerometer gyroscope magnetometer geolocation forms modals orientation-lock",
+                                          sandbox: "allow-scripts allow-pointer-lock allow-same-origin allow-storage-access allow-forms allow-modals allow-orientation-lock",
                                           srcdoc: @html_content.to_s,
                                           title: "Multiplayer Experience: #{@experience.title}",
                                           id: "experience-iframe",
@@ -141,7 +141,7 @@
     }
 
 - else
-  %iframe.experiencedisplay-iframe{ allow: "pointer-lock",
-                                  sandbox: "allow-scripts allow-pointer-lock",
+  %iframe.experiencedisplay-iframe{ allow: "pointer-lock storage-access camera microphone accelerometer gyroscope magnetometer geolocation forms modals orientation-lock",
+                                  sandbox: "allow-scripts allow-pointer-lock allow-storage-access allow-forms allow-modals allow-orientation-lock",
                                   srcdoc: @html_content.to_s,
                                   title: "Experience: #{@experience.title}" }
