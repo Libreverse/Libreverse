@@ -22,10 +22,16 @@ module EnhancedSpamProtection
     # Check bot detection first - if it fails, block the request
     return unless check_bot_protection
 
-    # Both protections should pass for the request to be valid
-    # invisible_captcha is handled by its own before_action callbacks
-    # We handle ActiveHashcash here
-    check_hashcash
+    # Skip hashcash for experience creation/update only
+    if controller_name == "experiences" && %w[create update].include?(action_name)
+      # Hashcash disabled for experience forms only
+      Rails.logger.info "[EnhancedSpamProtection] Skipping hashcash for experience #{action_name}"
+    else
+      # Both protections should pass for the request to be valid
+      # invisible_captcha is handled by its own before_action callbacks
+      # We handle ActiveHashcash here
+      check_hashcash
+    end
   end
 
   # Bot detection check for high/highest protection actions
