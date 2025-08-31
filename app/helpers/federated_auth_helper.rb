@@ -15,6 +15,12 @@ module FederatedAuthHelper
   end
 
   def fetch_oidc_config(domain)
+    # Validate domain to prevent SSRF
+    unless valid_federated_domain?(domain)
+      Rails.logger.error "Invalid domain for OIDC config: #{domain}"
+      return nil
+    end
+
     url = "https://#{domain}/.well-known/openid-configuration"
 
     response = HTTParty.get(url, timeout: 10, headers: {
@@ -94,5 +100,19 @@ module FederatedAuthHelper
     return nil unless federated_id&.include?("@")
 
     federated_id.split("@", 2).first
+  end
+
+  private
+
+  def valid_federated_domain?(domain)
+    return false if domain.blank?
+
+    # Prevent localhost and private IPs
+    return false if domain.match?(/^(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/i)
+
+    # Basic domain validation
+    return false unless domain.match?(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+
+    true
   end
 end

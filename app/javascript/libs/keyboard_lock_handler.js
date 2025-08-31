@@ -52,7 +52,7 @@
                               messageId: messageId,
                               keyCodes: keyCodes,
                           },
-                          "*",
+                          globalThis.location.origin,
                       );
 
                       // Timeout after 5 seconds
@@ -88,7 +88,7 @@
                     {
                         type: "keyboard-unlock-request",
                     },
-                    "*",
+                    globalThis.location.origin,
                 );
             }
         };
@@ -96,6 +96,10 @@
 
     // Listen for responses from parent
     globalThis.addEventListener("message", (event) => {
+        // Verify origin for security
+        if (event.origin !== globalThis.location.origin) {
+            return;
+        }
         if (event.data.type === "keyboard-lock-response") {
             // Response handled by the promise resolver above
         }

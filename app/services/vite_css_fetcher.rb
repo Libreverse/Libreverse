@@ -97,9 +97,9 @@ class ViteCssFetcher
 
       # Fallback: look for other CSS injection patterns in Vite
       vite_css_patterns = [
-        /updateStyle\([^,]+,\s*"([^"]+)"/,
-        /\.textContent\s*=\s*"([^"]+)"/,
-        /innerHTML\s*=\s*"([^"]+)"/
+        /updateStyle\((?>[^,]+),\s*"(?>[^"]+)"/,
+        /\.textContent\s*=\s*"(?>[^"]+)"/,
+        /innerHTML\s*=\s*"(?>[^"]+)"/
       ]
 
       vite_css_patterns.each do |pattern|
@@ -148,9 +148,9 @@ class ViteCssFetcher
     def extract_css_from_javascript(js_content)
       # Look for CSS string literals in the JavaScript
       css_patterns = [
-        /"([^"]*(?:color|background|font|margin|padding|border)[^"]*)"/,
-        /'([^']*(?:color|background|font|margin|padding|border)[^']*)'/,
-        /`([^`]*(?:color|background|font|margin|padding|border)[^`]*)`/
+        /"(?>[^"]*(?:color|background|font|margin|padding|border)[^"]*)"/,
+        /'(?>[^']*(?:color|background|font|margin|padding|border)[^']*)'/,
+        /`(?>[^`]*(?:color|background|font|margin|padding|border)[^`]*)`/
       ]
 
       css_content = ""
@@ -192,7 +192,7 @@ class ViteCssFetcher
         /updateStyle\s*\(\s*["'`]([^"'`]+)["'`]/,
         /insertRule\s*\(\s*["'`]([^"'`]+)["'`]/,
         /cssText\s*=\s*["'`]([^"'`]+)["'`]/,
-        /innerHTML\s*=\s*["'`]([^"'`]+)["'`]/
+        /innerHTML\s*\(\s*["'`]([^"'`]+)["'`]/
       ]
 
       css_content = ""

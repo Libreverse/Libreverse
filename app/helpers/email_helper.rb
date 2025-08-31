@@ -207,7 +207,7 @@ module EmailHelper
 
     # Clean up the CSS content
     css_content.strip
-               .gsub(%r{/\*.*?\*/}m, "") # Remove comments
+               .gsub(%r{/\*(?:[^*]|\*+[^/*])*\*/}, "") # Remove comments
                .gsub(/\s+/, " ")         # Compress whitespace
                .gsub(/;\s*}/, "}")       # Clean up semicolons
 

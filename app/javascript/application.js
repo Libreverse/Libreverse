@@ -231,6 +231,10 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
 (function () {
     // Listen for keyboard lock requests from iframes
     globalThis.addEventListener("message", (event) => {
+        // Verify origin for security
+        if (event.origin !== globalThis.location.origin) {
+            return;
+        }
         if (event.data.type === "keyboard-lock-request") {
             // Check if we have keyboard API available
             if (navigator.keyboard && navigator.keyboard.lock) {
@@ -245,7 +249,7 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
                                     messageId: event.data.messageId,
                                     success: true,
                                 },
-                                "*",
+                                event.origin,
                             );
                         })
                         .catch((error) => {
@@ -257,7 +261,7 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
                                     success: false,
                                     error: error.message,
                                 },
-                                "*",
+                                event.origin,
                             );
                         });
                 } catch (error) {
@@ -268,7 +272,7 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
                             success: false,
                             error: error.message,
                         },
-                        "*",
+                        event.origin,
                     );
                 }
             } else {
@@ -280,7 +284,7 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
                         success: false,
                         error: "Keyboard API not supported",
                     },
-                    "*",
+                    event.origin,
                 );
             }
         } else if (
