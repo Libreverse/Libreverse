@@ -1,7 +1,5 @@
 // Secure permission handling for iframes
 (function () {
-    "use strict";
-
     // Function to request permissions if needed
     function requestPermissionsIfNeeded() {
         const permissions = [
