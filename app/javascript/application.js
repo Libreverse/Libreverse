@@ -283,13 +283,16 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
                     "*",
                 );
             }
-        } else if (event.data.type === "keyboard-unlock-request" && // Handle unlock requests
-            navigator.keyboard && navigator.keyboard.unlock) {
-                try {
-                    navigator.keyboard.unlock();
-                } catch (error) {
-                    console.warn("Keyboard unlock failed:", error.message);
-                }
+        } else if (
+            event.data.type === "keyboard-unlock-request" && // Handle unlock requests
+            navigator.keyboard &&
+            navigator.keyboard.unlock
+        ) {
+            try {
+                navigator.keyboard.unlock();
+            } catch (error) {
+                console.warn("Keyboard unlock failed:", error.message);
             }
+        }
     });
 })();
