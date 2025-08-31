@@ -54,53 +54,52 @@ module LibreverseInstance
 
     # Zstandard compression middleware - dynamic based on CPU cores
     cores = ThreadBudget.total_threads
-    if cores < 8
-      # Maximize for speed on low-core systems
-      zstd_window_log = 20
-      zstd_chain_log = 20
-      zstd_hash_log = 20
-      zstd_search_log = 5
-      zstd_min_match = 3
-      zstd_strategy = :btfast
-    elsif cores < 16
-      # Balance speed and compression on mid-core systems
-      zstd_window_log = 24
-      zstd_chain_log = 24
-      zstd_hash_log = 22
-      zstd_search_log = 7
-      zstd_min_match = 4
-      zstd_strategy = :btopt
-    else
-      # Maximize compression on high-core systems
-      zstd_window_log = 27
-      zstd_chain_log = 27
-      zstd_hash_log = 25
-      zstd_search_log = 9
-      zstd_min_match = 3
-      zstd_strategy = :btultra2
+    if cores >= 8
+      if cores < 16
+        # Balance speed and compression on mid-core systems
+        zstd_window_log = 24
+        zstd_chain_log = 24
+        zstd_hash_log = 22
+        zstd_search_log = 7
+        zstd_min_match = 4
+        zstd_strategy = :btopt
+      else
+        # Maximize compression on high-core systems
+        zstd_window_log = 27
+        zstd_chain_log = 27
+        zstd_hash_log = 25
+        zstd_search_log = 9
+        zstd_min_match = 3
+        zstd_strategy = :btultra2
+      end
+
+      config.middleware.use Rack::Zstd,
+                            window_log: zstd_window_log,
+                            chain_log: zstd_chain_log,
+                            hash_log: zstd_hash_log,
+                            search_log: zstd_search_log,
+                            min_match: zstd_min_match,
+                            strategy: zstd_strategy,
+                            sync: false
     end
 
-    config.middleware.use Rack::Zstd,
-                          window_log: zstd_window_log,
-                          chain_log: zstd_chain_log,
-                          hash_log: zstd_hash_log,
-                          search_log: zstd_search_log,
-                          min_match: zstd_min_match,
-                          strategy: zstd_strategy,
-                          sync: false
-
     config.after_initialize do
-      Rails.logger.info "Zstandard compression middleware configured with:"
-      Rails.logger.info " - window_log: #{zstd_window_log}"
-      Rails.logger.info " - chain_log: #{zstd_chain_log}"
-      Rails.logger.info " - hash_log: #{zstd_hash_log}"
-      Rails.logger.info " - search_log: #{zstd_search_log}"
-      Rails.logger.info " - min_match: #{zstd_min_match}"
-      Rails.logger.info " - strategy: #{zstd_strategy}"
+      if cores >= 8
+        Rails.logger.info "Zstandard compression middleware configured with:"
+        Rails.logger.info " - window_log: #{zstd_window_log}"
+        Rails.logger.info " - chain_log: #{zstd_chain_log}"
+        Rails.logger.info " - hash_log: #{zstd_hash_log}"
+        Rails.logger.info " - search_log: #{zstd_search_log}"
+        Rails.logger.info " - min_match: #{zstd_min_match}"
+        Rails.logger.info " - strategy: #{zstd_strategy}"
+      else
+        Rails.logger.info "Zstandard compression middleware disabled (cores: #{cores} < 8)"
+      end
     end
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
-    config.middleware.use WhitespaceCompressor
+    # Only enable on systems with sufficient cores (>= 8) to avoid performance impact
+    config.middleware.use WhitespaceCompressor if cores >= 8
 
     # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
     config.middleware.use TurboPreloadMiddleware if Rails.env.production?
