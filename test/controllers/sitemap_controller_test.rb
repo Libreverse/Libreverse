@@ -142,7 +142,7 @@ class SitemapControllerTest < ActionController::TestCase
 
     # All URLs should use the canonical host
     urls.each do |url|
-      assert_match(%r{^https://example\.com}, url)
+      assert_match(%r{^https://example\.com(?:/|$)}, url)
     end
 
     # Clean up

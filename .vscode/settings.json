@@ -8,5 +8,6 @@
     // Avoid passing --tags with Pull button; tag fetch can be done by fetch
     "git.fetchTags": false,
     // Auto-fetch periodically to keep things fresh
-    "git.autofetch": true
+    "git.autofetch": true,
+    "sarif-viewer.connectToGithubCodeScanning": "on"
 }

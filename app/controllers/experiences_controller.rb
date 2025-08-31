@@ -219,15 +219,10 @@ class ExperiencesController < ApplicationController
       # You can customize this logic based on your federation setup
       allowed_domains = Rails.application.config.federation&.dig(:allowed_domains) || []
 
-      # If no specific domains are configured, allow any HTTPS domain
-      # but add basic validation
+      # If no specific domains are configured, disallow to prevent open redirect
       if allowed_domains.empty?
-        # Basic validation: must be a valid domain, no localhost/private IPs
-        return nil if parsed_uri.host.nil?
-        return nil if parsed_uri.host.match?(/^(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/)
-
-        canonical = Addressable::URI.heuristic_parse(uri).normalize
- canonical.to_s
+        Rails.logger.warn "Federated redirect attempted but no allowed domains configured"
+        return nil
       end
 
       # Check against allowed domains
