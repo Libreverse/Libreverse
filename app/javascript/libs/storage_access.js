@@ -8,7 +8,7 @@
         ) {
             // Try to open a test database to see if access is granted
             var request = indexedDB.open("test_access", 1);
-            request.addEventListener('error', function () {
+            request.addEventListener("error", function () {
                 // If error, perhaps access is denied, try to request
                 document
                     .requestStorageAccess()
@@ -20,7 +20,7 @@
                         console.warn("Storage access denied");
                     });
             });
-            request.addEventListener('success', function () {
+            request.addEventListener("success", function () {
                 // Access is fine
                 request.result.close();
             });
