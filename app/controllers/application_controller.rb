@@ -36,12 +36,12 @@ class ApplicationController < ActionController::Base
     return Current.account if Current.account
 
     # Request-local memoization to avoid multiple DB hits in one request
-    if (acc = request.env['libreverse.current_account'])
+    if (acc = request.env["libreverse.current_account"])
       return acc
     end
 
     # Otherwise get account_id from session (like GraphqlController pattern)
-    account_id = session[:account_id] || request.env['rack.session']&.[](:account_id)
+    account_id = session[:account_id] || request.env["rack.session"]&.[](:account_id)
     return nil unless account_id
 
     account = FunctionCache.instance.cache(:account_by_id, account_id, ttl: 300) do
@@ -64,14 +64,14 @@ class ApplicationController < ActionController::Base
         reset_session
 
         # Set response header to instruct browser to clear cookies
-        response.headers['X-Clear-Cookies'] = 'invalid-session'
-        response.headers['X-Reload-Required'] = 'true'
+        response.headers["X-Clear-Cookies"] = "invalid-session"
+        response.headers["X-Reload-Required"] = "true"
       end
 
       return nil
     end
 
-    request.env['libreverse.current_account'] = account
+    request.env["libreverse.current_account"] = account
     account
   end
 

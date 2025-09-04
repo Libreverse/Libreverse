@@ -39,13 +39,13 @@ Rails.application.configure do
   # Provide explicit X-Accel mapping to Rack::Sendfile so it can translate
   # filesystem paths to the internal NGINX locations without relying on
   # request headers. Keep trailing slashes for correct prefix substitution.
-  storage_fs  = Rails.root.join('storage').to_s + '/'
-  storage_uri = '/_internal/storage/'
-  private_fs  = Rails.root.join('private').to_s + '/'
-  private_uri = '/_internal/private/'
-  config.middleware.swap Rack::Sendfile, Rack::Sendfile, 'X-Accel-Redirect', [
-    [storage_fs, storage_uri],
-    [private_fs, private_uri]
+  storage_fs  = Rails.root.join("storage/").to_s
+  storage_uri = "/_internal/storage/"
+  private_fs  = Rails.root.join("private/").to_s
+  private_uri = "/_internal/private/"
+  config.middleware.swap Rack::Sendfile, Rack::Sendfile, "X-Accel-Redirect", [
+    [ storage_fs, storage_uri ],
+    [ private_fs, private_uri ]
   ]
 
   # Active Storage: store files in the database using active_storage_db

@@ -25,7 +25,7 @@ HOST       = ENV['HOST'] || 'localhost:3000'
 flame_env  = ENV['FLAME']
 FLAME_FILE = if flame_env && !flame_env.strip.empty?
                flame_env.match?(/\A(1|true|yes)\z/i) ? 'tmp/flame_all.html' : flame_env
-             end
+end
 SLOW_MS = (ENV['SLOW_MS'] || '50').to_f
 
 app = Rails.application
@@ -39,8 +39,8 @@ SKIP_ROUTE_PATTERNS = [
   %r{^/cable},
   %r{^/auth},            # OmniAuth
   %r{^/users/auth},      # Devise/OmniAuth style
-  %r{^/oauth},
-]
+  %r{^/oauth}
+].freeze
 
 EXTRA_SKIPS = (ENV['SKIP'] || '').split(',').map(&:strip).reject(&:empty?).map { |s| Regexp.new(s) }
 
@@ -65,10 +65,12 @@ def discover_get_paths
   paths = []
   Rails.application.routes.routes.each do |r|
     verb = r.verb.to_s
-    next unless verb =~ /(GET|HEAD)/
+    next unless /(GET|HEAD)/.match?(verb)
+
     raw = r.path.spec.to_s
   next if SKIP_ROUTE_PATTERNS.any? { |re| raw =~ re }
   next if EXTRA_SKIPS.any? { |re| raw =~ re }
+
     path = sample_path(raw)
     paths << path
   end
@@ -77,7 +79,7 @@ end
 
 def hit(mock, path, host)
   mock.get(path, 'HTTP_HOST' => host, 'HTTPS' => 'on', 'HTTP_USER_AGENT' => 'ProfileAll')
-rescue => e
+rescue StandardError => e
   warn "Request error for #{path}: #{e.class} #{e.message}"
 end
 
@@ -107,10 +109,11 @@ end
 
 def extract_table(sql)
   s = sql.to_s
-  return $1 if s =~ /\bfrom\s+[`\"]?([\w\.]+)[`\"]?/i
-  return $1 if s =~ /\binsert\s+into\s+[`\"]?([\w\.]+)[`\"]?/i
-  return $1 if s =~ /\bupdate\s+[`\"]?([\w\.]+)[`\"]?/i
-  return $1 if s =~ /\bdelete\s+from\s+[`\"]?([\w\.]+)[`\"]?/i
+  return Regexp.last_match(1) if s =~ /\bfrom\s+[`"]?([\w.]+)[`"]?/i
+  return Regexp.last_match(1) if s =~ /\binsert\s+into\s+[`"]?([\w.]+)[`"]?/i
+  return Regexp.last_match(1) if s =~ /\bupdate\s+[`"]?([\w.]+)[`"]?/i
+  return Regexp.last_match(1) if s =~ /\bdelete\s+from\s+[`"]?([\w.]+)[`"]?/i
+
   nil
 end
 
@@ -120,7 +123,7 @@ ActiveSupport::Notifications.subscribe('start_processing.action_controller') do 
   Thread.current[:_prof_curr_action] = "#{payload[:controller]}##{payload[:action]}"
 end
 
-sub_action = ActiveSupport::Notifications.subscribe('process_action.action_controller') do |name, start, finish, id, payload|
+sub_action = ActiveSupport::Notifications.subscribe('process_action.action_controller') do |_name, start, finish, _id, payload|
   key = "#{payload[:controller]}##{payload[:action]}"
   dur_ms = (finish - start) * 1000.0
   db_ms = payload[:db_runtime].to_f
@@ -135,22 +138,21 @@ sub_action = ActiveSupport::Notifications.subscribe('process_action.action_contr
   Thread.current[:_prof_curr_action] = nil
 end
 
-sub_sql = ActiveSupport::Notifications.subscribe('sql.active_record') do |name, start, finish, id, payload|
+sub_sql = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name, start, finish, _id, payload|
   next if payload[:name] == 'SCHEMA'
+
   dur = (finish - start) * 1000.0
   sql_total_ms += dur
 
-  if (key = curr_key.call())
+  if (key = curr_key.call)
     a = actions[key]
     a[:sql][:count] += 1
     a[:sql][:total_ms] += dur
-    a[:sql][:selects] += 1 if payload[:sql].to_s =~ /\bselect\b/i
+    a[:sql][:selects] += 1 if /\bselect\b/i.match?(payload[:sql].to_s)
     if (t = extract_table(payload[:sql]))
       a[:sql][:tables][t] += 1
     end
-    if dur >= SLOW_MS
-      slow_queries << [dur, normalize_sql(payload[:sql]), key]
-    end
+    slow_queries << [ dur, normalize_sql(payload[:sql]), key ] if dur >= SLOW_MS
   end
 end
 
@@ -167,16 +169,16 @@ total_samples = data[:samples] || 0
 frames = data[:frames] || {}
 
 sorted = frames.values
-  .select { |f| f[:samples].to_i > 0 }
-  .sort_by { |f| -f[:samples].to_i }
-  .first(30)
+               .select { |f| f[:samples].to_i.positive? }
+               .sort_by { |f| -f[:samples].to_i }
+               .first(30)
 
 puts "\nTop 30 methods by samples (#{total_samples} total):"
 sorted.each_with_index do |f, i|
   name = f[:name]
   samples = f[:samples]
   loc = f[:file] && f[:line] ? "#{f[:file]}:#{f[:line]}" : ""
-  pct = total_samples > 0 ? (100.0 * samples / total_samples) : 0
+  pct = total_samples.positive? ? (100.0 * samples / total_samples) : 0
   puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i + 1, name, samples, pct, loc)
 end
 
@@ -186,7 +188,7 @@ if actions.any?
     avg = a[:total_ms] / a[:count]
     avg_db = a[:db_ms] / a[:count]
     avg_view = a[:view_ms] / a[:count]
-    [key, a[:count], avg, avg_db, avg_view]
+    [ key, a[:count], avg, avg_db, avg_view ]
   end
   rows.sort_by! { |_, _, avg, _, _| -avg }
   puts "\nTop controller actions by avg total ms (count, avg_total, avg_db, avg_view):"
@@ -199,14 +201,15 @@ end
 # SQL/N+1 indicators per action
 sql_rows = actions.map do |key, a|
   next if a[:count] <= 0
+
   sql = a[:sql]
   avg_sql_ms = sql[:total_ms] / a[:count]
   avg_sql_count = sql[:count].to_f / a[:count]
-  [key, a[:count], avg_sql_ms, avg_sql_count, sql[:tables].sort_by { |_, c| -c }.first(3)]
+  [ key, a[:count], avg_sql_ms, avg_sql_count, sql[:tables].sort_by { |_, c| -c }.first(3) ]
 end.compact
 
 if sql_rows.any?
-  sql_rows.sort_by! { |_, _, avg_ms, avg_count, _| [-avg_ms, -avg_count] }
+  sql_rows.sort_by! { |_, _, avg_ms, avg_count, _| [ -avg_ms, -avg_count ] }
   puts "\nTop actions by avg SQL time and query count:"
   sql_rows.first(20).each do |key, count, avg_ms, avg_count, top_tables|
     tables = top_tables.map { |t, c| "#{t}(#{c})" }.join(', ')
@@ -225,16 +228,16 @@ end
 # Focus on your app code under app/ and lib/
 app_root = Rails.root.to_s
 app_sorted = frames.values
-  .select { |f| f[:samples].to_i > 0 && f[:file].to_s.start_with?(app_root + '/app', app_root + '/lib') }
-  .sort_by { |f| -f[:samples].to_i }
-  .first(30)
+                   .select { |f| f[:samples].to_i.positive? && f[:file].to_s.start_with?("#{app_root}/app", "#{app_root}/lib") }
+                   .sort_by { |f| -f[:samples].to_i }
+                   .first(30)
 
 puts "\nTop 30 methods by samples (app/ & lib/ only):"
 app_sorted.each_with_index do |f, i|
   name = f[:name]
   samples = f[:samples]
   loc = f[:file] && f[:line] ? "#{f[:file]}:#{f[:line]}" : ""
-  pct = total_samples > 0 ? (100.0 * samples / total_samples) : 0
+  pct = total_samples.positive? ? (100.0 * samples / total_samples) : 0
   puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i + 1, name, samples, pct, loc)
 end
 
@@ -242,13 +245,14 @@ by_module = Hash.new(0)
 frames.each_value do |f|
   s = f[:samples].to_i
   next if s <= 0
+
   mod = f[:name].to_s.split(/[#.]/, 2).first
   by_module[mod] += s
 end
 
 puts "\nTop 20 modules/classes by samples:"
 by_module.sort_by { |_, s| -s }.first(20).each_with_index do |(mod, s), i|
-  pct = total_samples > 0 ? (100.0 * s / total_samples) : 0
+  pct = total_samples.positive? ? (100.0 * s / total_samples) : 0
   puts format("%2d. %-40s %8d samples  %5.1f%%", i + 1, mod, s, pct)
 end
 
@@ -261,7 +265,7 @@ if FLAME_FILE && !FLAME_FILE.strip.empty?
   FileUtils.mkdir_p(File.dirname(FLAME_FILE))
   Flamegraph.generate(FLAME_FILE) do
       exercise(mock, HOST, paths, 1)
-    end
+  end
   puts "Flamegraph written to #{FLAME_FILE}"
   rescue LoadError
     warn "flamegraph gem not available; skipping flamegraph generation"

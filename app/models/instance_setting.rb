@@ -53,7 +53,7 @@ class InstanceSetting < ApplicationRecord
   # Get a setting value by key
   def self.get(key)
     # Fast-path cache: memoize values with a short TTL
-    return FunctionCache.instance.cache(:instance_setting_get, key, ttl: 300) do
+    FunctionCache.instance.cache(:instance_setting_get, key, ttl: 300) do
       record = find_by(key: key)
     return nil unless record
 
@@ -98,7 +98,7 @@ class InstanceSetting < ApplicationRecord
   # Get setting with fallback to environment variable or default
   def self.get_with_fallback(key, env_var = nil, default = nil)
     # Cache the full fallback chain, since DB/env/default is deterministic per key
-    return FunctionCache.instance.cache(:instance_setting_fallback, key, env_var, default, ttl: 300) do
+    FunctionCache.instance.cache(:instance_setting_fallback, key, env_var, default, ttl: 300) do
       # First try database
       value = get(key)
       return value if value.present?

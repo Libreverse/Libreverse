@@ -263,6 +263,10 @@ Style/BlockComments:
     Enabled: false
     Description: "Disabled to allow block comments where needed."
 
+Style/ClassVars:
+    Enabled: false
+    Description: "Disables checks for class variable usage."
+
 Style/ColonMethodCall:
     Enabled: true
     Description: "Prefers `Foo.method` over `Foo::method`."
@@ -282,6 +286,10 @@ Style/EmptyMethod:
 Style/For:
     Enabled: true
     Description: "Checks for proper `for` loop usage vs `each`."
+
+Style/FormatStringToken:
+    Enabled: false
+    Description: "Disables checks for format string token usage."
 
 Style/FrozenStringLiteralComment:
     Enabled: true

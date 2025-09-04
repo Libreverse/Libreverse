@@ -4,7 +4,7 @@
 require "digest"
 
 class FunctionCache
-  NAMESPACE = "function_cache:v1".freeze
+  NAMESPACE = "function_cache:v1"
 
   def initialize(default_ttl: nil, max_size: 1000)
     @default_ttl = default_ttl
@@ -13,12 +13,12 @@ class FunctionCache
 
   # Cache a function's result based on its name and arguments
   # Usage: FunctionCache.instance.cache(:my_function, arg1, arg2, ttl: 60) { my_function(arg1, arg2) }
-  def cache(function_name, *args, ttl: @default_ttl)
+  def cache(function_name, *args, ttl: @default_ttl, &block)
     raise ArgumentError, "Block required for computation" unless block_given?
 
   key_str = build_key(function_name, args)
-  expires_in = ttl && ttl.to_f > 0 ? ttl.to_f : nil
-  Rails.cache.fetch(key_str, expires_in: expires_in) { yield }
+  expires_in = ttl&.to_f&.positive? ? ttl.to_f : nil
+  Rails.cache.fetch(key_str, expires_in: expires_in, &block)
   end
 
   # Delete a cached value for a specific function/args

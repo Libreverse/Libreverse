@@ -59,6 +59,7 @@ gem "sentry-rails"
 gem "sentry-ruby"
 gem "sequel-activerecord_connection"
 gem "sitemap_generator"
+gem "snappy"
 gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
@@ -80,7 +81,6 @@ gem "voight_kampff"
 gem "y-rb_actioncable"
 gem "zip_kit"
 gem "zstd-ruby"
-gem "snappy"
 
 group :development, :test do
   gem "debug"
@@ -93,17 +93,17 @@ group :development do
   gem "erb-formatter"
   gem "erb_lint"
   gem "fasterer"
+  gem "flamegraph", require: false
   gem "grpc-tools"
   gem "haml-lint"
   gem "i18n-tasks"
   gem "rack-mini-profiler", require: false
   gem "redis", require: false
-  gem "stackprof", require: false
-  gem "flamegraph", require: false
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "spring"
+  gem "stackprof", require: false
   gem "web-console"
 end
 

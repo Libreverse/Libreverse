@@ -11,7 +11,7 @@
                   } }
     - if experience.federated?
       -# Federated experience link
-      = link_to experience.experience_url, class: "experience-link federated-link", target: "_blank", rel: "noopener" do
+      = link_to experience.experience_url, class: "experience-link federated-link", target: "_blank", rel: "noopener noreferrer" do
         %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
           %h3{itemprop: "name"}
             = sanitize experience.title
@@ -23,7 +23,7 @@
               = t('search.from_instance', domain: experience.source_domain)
     - elsif experience.metaverse?
       -# Metaverse experience link
-      = link_to experience.experience_url, class: "experience-link metaverse-link", target: "_blank", rel: "noopener" do
+      = link_to experience.experience_url, class: "experience-link metaverse-link", target: "_blank", rel: "noopener noreferrer" do
         %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}
           %h3{itemprop: "name"}
             = sanitize experience.title

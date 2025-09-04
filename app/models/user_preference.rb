@@ -88,7 +88,7 @@ class UserPreference < ApplicationRecord
 
     Rails.logger.info "Dismissing: account_id=#{account_id}, key=#{key}"
   set(account_id, key, "t") # Use 't' consistently for dismissed state
-  # Cache is already invalidated by set
+    # Cache is already invalidated by set
   end
 
   # Helper method to check if something is dismissed

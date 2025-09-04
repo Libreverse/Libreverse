@@ -27,7 +27,7 @@ mock = Rack::MockRequest.new(app)
 
 def hit(mock, path, host)
   mock.get(path, 'HTTP_HOST' => host, 'HTTPS' => 'on', 'HTTP_USER_AGENT' => 'Profiler')
-rescue => e
+rescue StandardError => e
   warn "Request error for #{path}: #{e.class} #{e.message}"
 end
 
@@ -50,23 +50,24 @@ total_samples = data[:samples] || 0
 frames = data[:frames] || {}
 
 sorted = frames.values
-  .select { |f| f[:samples].to_i > 0 }
-  .sort_by { |f| -f[:samples].to_i }
-  .first(25)
+               .select { |f| f[:samples].to_i.positive? }
+               .sort_by { |f| -f[:samples].to_i }
+               .first(25)
 
 puts "\nTop 25 methods by samples (#{total_samples} total):"
 sorted.each_with_index do |f, i|
   name = f[:name]
   samples = f[:samples]
   loc = f[:file] && f[:line] ? "#{f[:file]}:#{f[:line]}" : ""
-  pct = total_samples > 0 ? (100.0 * samples / total_samples) : 0
+  pct = total_samples.positive? ? (100.0 * samples / total_samples) : 0
   puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i + 1, name, samples, pct, loc)
 end
 
 # Aggregate by module/class prefix: split on # or . and use the left side
 by_module = Hash.new(0)
 frames.each_value do |f|
-  next unless (s = f[:samples].to_i) > 0
+  next unless (s = f[:samples].to_i).positive?
+
   name = f[:name].to_s
   mod = name.split(/[#.]/, 2).first
   by_module[mod] += s
@@ -76,7 +77,7 @@ mod_sorted = by_module.sort_by { |_, s| -s }.first(20)
 
 puts "\nTop 20 modules/classes by samples:"
 mod_sorted.each_with_index do |(mod, s), i|
-  pct = total_samples > 0 ? (100.0 * s / total_samples) : 0
+  pct = total_samples.positive? ? (100.0 * s / total_samples) : 0
   puts format("%2d. %-40s %8d samples  %5.1f%%", i + 1, mod, s, pct)
 end
 
