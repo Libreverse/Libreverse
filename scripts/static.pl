@@ -266,7 +266,7 @@ for my $i (0 .. $num_tools - 1) {
       "NODE_OPTIONS='--experimental-vm-modules' npx jest --coverage=false"
     );
   } elsif ($tool_name eq "Brakeman") {
-    @cmd = ("brakeman", "--quiet", "--no-summary", "--no-pager");
+    @cmd = ("brakeman", "-A", "--except", "WeakHash", "--quiet", "--no-summary", "--no-pager");
 # TEMPORARILY DISABLED - CodeQL local analysis needs fixes
 # } elsif ($tool_name eq "CodeQL Ruby") {
 #     @cmd = ("scripts/codeql-local.sh", "--language", "ruby", "--no-summary", "--no-create-db");

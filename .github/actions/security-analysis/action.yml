@@ -15,7 +15,7 @@ runs:
               bundle update
               bun update
 
-        - name: Run Brakeman
+                - name: Run Brakeman
           if: inputs.tool == 'brakeman'
           shell: bash
-          run: bundle exec brakeman --quiet --no-summary --no-pager
+                      run: bundle exec brakeman -A --except WeakHash --quiet --no-summary --no-pager

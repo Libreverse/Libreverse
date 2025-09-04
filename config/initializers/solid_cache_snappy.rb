@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require 'snappy'
+require "snappy"
 
 if defined?(SolidCache)
   module SolidCache
     module Coders
       class SnappyMarshal
         # Return raw Marshal dump (uncompressed). Allow extra args to match caller.
-        def dump(value, *args, **kwargs)
+        def dump(value, *_args, **_kwargs)
           Marshal.dump(value)
         end
 
-        def load(payload, *args, **kwargs)
+        def load(payload, *_args, **_kwargs)
           data = if defined?(Snappy)
                    begin
                      Snappy.inflate(payload)
@@ -19,9 +19,9 @@ if defined?(SolidCache)
                      # Fallback if payload is not snappy-compressed
                      payload
                    end
-                 else
+          else
                    payload
-                 end
+          end
           Marshal.load(data)
         end
 
@@ -42,9 +42,7 @@ if defined?(SolidCache)
     SolidCache.default_coder = coder
   else
     Rails.application.config.after_initialize do
-      if defined?(ActiveSupport::Cache::SolidCacheStore) && Rails.cache.is_a?(ActiveSupport::Cache::SolidCacheStore)
-        Rails.cache.instance_variable_set(:@coder, coder)
-      end
+      Rails.cache.instance_variable_set(:@coder, coder) if defined?(ActiveSupport::Cache::SolidCacheStore) && Rails.cache.is_a?(ActiveSupport::Cache::SolidCacheStore)
     end
   end
 end

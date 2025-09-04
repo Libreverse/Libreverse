@@ -5,20 +5,20 @@ This app ships a containerized Nginx + Passenger configuration. We applied a sub
 ## What we applied
 
 - Nginx
-  - `worker_processes auto;` and `worker_connections 1024` (already present)
-  - Gzip disabled here (zstd middleware already handles compression in-app)
-  - `aio threads;` to offload disk reads
-  - `listen ... reuseport;` in the app server for better connection distribution
-  - access log buffering (`buffer=16k`)
-  - Included `/etc/nginx/conf.d/*.conf` to allow runtime tuning drops
+    - `worker_processes auto;` and `worker_connections 1024` (already present)
+    - Gzip disabled here (zstd middleware already handles compression in-app)
+    - `aio threads;` to offload disk reads
+    - `listen ... reuseport;` in the app server for better connection distribution
+    - access log buffering (`buffer=16k`)
+    - Included `/etc/nginx/conf.d/*.conf` to allow runtime tuning drops
 - Passenger
-  - `passenger_app_env production;` in the virtual host
-  - `passenger_pre_start` is generated at boot. It must point to a URL that matches `server_name` and port. Override with `PASSENGER_PRESTART_URL` or its parts (scheme/host/port/path).
-  - At container start, we compute process pool size from the existing `ThreadBudget` (see `config/thread_budget.rb`) and write `/etc/nginx/conf.d/99-passenger-pool.conf` with:
-    - `passenger_max_pool_size`
-    - `passenger_min_instances`
-    - `passenger_max_instances_per_app`
-  - This aligns pool size to app thread budget when running Passenger OSS (1 concurrent request per process). If you use Passenger Enterprise, you can extend the entrypoint to also set `passenger_concurrency_model thread;` and map `ThreadBudget.app_threads` to `passenger_thread_count` with fewer processes.
+    - `passenger_app_env production;` in the virtual host
+    - `passenger_pre_start` is generated at boot. It must point to a URL that matches `server_name` and port. Override with `PASSENGER_PRESTART_URL` or its parts (scheme/host/port/path).
+    - At container start, we compute process pool size from the existing `ThreadBudget` (see `config/thread_budget.rb`) and write `/etc/nginx/conf.d/99-passenger-pool.conf` with:
+        - `passenger_max_pool_size`
+        - `passenger_min_instances`
+        - `passenger_max_instances_per_app`
+    - This aligns pool size to app thread budget when running Passenger OSS (1 concurrent request per process). If you use Passenger Enterprise, you can extend the entrypoint to also set `passenger_concurrency_model thread;` and map `ThreadBudget.app_threads` to `passenger_thread_count` with fewer processes.
 
 ## What we did not apply (host-level or situational)
 
@@ -30,12 +30,12 @@ This app ships a containerized Nginx + Passenger configuration. We applied a sub
 ## Host-level suggestions (non-container)
 
 - `/etc/sysctl.conf` (or drop-ins):
-  - `net.ipv4.tcp_tw_reuse = 1`
-  - `net.netfilter.nf_conntrack_max = 65536` (name varies by distro)
-  - Apply via `sysctl -p`
+    - `net.ipv4.tcp_tw_reuse = 1`
+    - `net.netfilter.nf_conntrack_max = 65536` (name varies by distro)
+    - Apply via `sysctl -p`
 - Nginx TLS (when terminating TLS here):
-  - `ssl_protocols TLSv1.2 TLSv1.3;`
-  - Modern AEAD ciphers; consider ECDSA cert alongside RSA
+    - `ssl_protocols TLSv1.2 TLSv1.3;`
+    - Modern AEAD ciphers; consider ECDSA cert alongside RSA
 - Load testing & verification: use `passenger-status`, `passenger-memory-stats`, Siege, or k6.
 
 ## Notes
