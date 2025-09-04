@@ -127,7 +127,15 @@ module ApplicationHelper
       return
     end
 
-    raw_css = File.read(file_path)
+    # Read from disk with cache; invalidate when manifest changes
+    raw_css = Rails.cache.fetch([
+      :vite_inline,
+      :css,
+      vite_manifest_version,
+      css_rel_path
+    ].join(':'), expires_in: 24.hours) do
+      File.read(file_path)
+    end
 
     # Escape any `</style>` (or variants) that would prematurely close the tag
     safe_css = raw_css.gsub(STYLE_CLOSE_REGEX, '<\\/style>')
@@ -229,8 +237,12 @@ module ApplicationHelper
       return ""
     end
 
-    # Read and validate SVG content
-    svg_content = File.read(icon_path)
+    # Read and validate SVG content (cache by file version)
+    svg_content = Rails.cache.fetch([
+      :svg_icon_content,
+      icon_path.to_s,
+      file_version(icon_path)
+    ].join(":"), expires_in: 24.hours) { File.read(icon_path) }
     Rails.logger.info "Read SVG content for #{icon_name}: #{svg_content.length} characters, preview: #{svg_content[0..100]}"
 
     # Basic SVG validation
@@ -266,8 +278,12 @@ module ApplicationHelper
       return ""
     end
 
-    # Read and validate SVG content
-    svg_content = File.read(icon_path)
+    # Read and validate SVG content (cache by file version)
+    svg_content = Rails.cache.fetch([
+      :svg_icon_data_url,
+      icon_path.to_s,
+      file_version(icon_path)
+    ].join(":"), expires_in: 24.hours) { File.read(icon_path) }
 
     # Basic SVG validation
     unless svg_content.include?("<svg") && svg_content.include?("</svg>")
@@ -317,9 +333,16 @@ module ApplicationHelper
       end
 
       begin
-        image_data = File.binread(resolved_path)
-        encoded_data = Base64.strict_encode64(image_data)
-        results[ext] = "data:#{mime_type};base64,#{encoded_data}"
+        # Cache each encoded image by resolved path and file version
+        results[ext] = Rails.cache.fetch([
+          :bitmap_image_data_url,
+          resolved_path.to_s,
+          file_version(resolved_path)
+        ].join(":"), expires_in: 7.days) do
+          image_data = File.binread(resolved_path)
+          encoded_data = Base64.strict_encode64(image_data)
+          "data:#{mime_type};base64,#{encoded_data}"
+        end
       rescue StandardError => e
         Rails.logger.error "Error reading or encoding bitmap image #{resolved_path}: #{e.message}"
         next
@@ -495,7 +518,10 @@ module ApplicationHelper
       file_path = base_dir.join(relative_manifest_path)
 
       if File.exist?(file_path)
-        File.read(file_path)
+        # Cache raw asset content; key includes manifest version so it
+        # naturally expires on deploy
+        cache_key = [ :vite_inline, type, vite_manifest_version, relative_manifest_path ].join(':')
+        Rails.cache.fetch(cache_key, expires_in: 24.hours) { File.read(file_path) }
       else
         Rails.logger.error "[ViteInline] Asset not found at #{file_path} (derived from manifest key: #{manifest_key}, manifest path: #{manifest_path})"
         nil
@@ -505,6 +531,22 @@ module ApplicationHelper
     nil
   end
   # --- End Vite Asset Inlining Helpers ---
+
+  # Returns a cache-busting version for the current Vite manifest.
+  # Uses mtime and size of the manifest.json so any deploy that changes assets
+  # naturally invalidates the cache keys.
+  def vite_manifest_version
+    @vite_manifest_version ||= begin
+      manifest_file = Rails.root.join('public', ViteRuby.instance.config.public_output_dir, 'manifest.json')
+      if File.exist?(manifest_file)
+        m = File.mtime(manifest_file).to_i
+        s = File.size(manifest_file)
+        "v#{m}-#{s}"
+      else
+        'v0'
+      end
+    end
+  end
 
   # Enrich navigation items with SVG content from disk
   def enrich_nav_items_with_svgs(nav_items)
@@ -536,13 +578,19 @@ module ApplicationHelper
     return nil unless file_path && File.exist?(file_path)
 
     # Read the file content
-    content = File.read(file_path)
+    data_uri = Rails.cache.fetch([
+      :inline_favicon,
+      file_path.to_s,
+      file_version(file_path)
+    ].join(':'), expires_in: 7.days) do
+      content = File.read(file_path)
+      # Determine MIME type based on file extension
+      mime_type = favicon_mime_type(file_path)
+      # Encode as base64 data URI
+      "data:#{mime_type};base64,#{Base64.strict_encode64(content)}"
+    end
 
-    # Determine MIME type based on file extension
-    mime_type = favicon_mime_type(file_path)
-
-    # Encode as base64 data URI
-    "data:#{mime_type};base64,#{Base64.strict_encode64(content)}"
+    data_uri
   rescue StandardError => e
     Rails.logger.warn "Failed to inline favicon #{path}: #{e.message}"
     nil
@@ -557,7 +605,7 @@ module ApplicationHelper
     file_path = Rails.root.join("app/manifests", filename)
     return nil unless File.exist?(file_path)
 
-    content = File.read(file_path)
+  content = File.read(file_path)
 
     case File.extname(path).downcase
     when ".json", ".webmanifest"
@@ -594,8 +642,11 @@ module ApplicationHelper
           end
         end
 
-        updated_content = JSON.pretty_generate(manifest_data)
-        "data:application/manifest+json;base64,#{Base64.strict_encode64(updated_content)}"
+        cache_key = [ :inline_manifest_json, file_path.to_s, file_version(file_path), request.base_url ].join(':')
+        Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+          updated_content = JSON.pretty_generate(manifest_data)
+          "data:application/manifest+json;base64,#{Base64.strict_encode64(updated_content)}"
+        end
       rescue JSON::ParserError => e
         Rails.logger.warn "Failed to parse manifest JSON #{path}: #{e.message}"
         nil
@@ -608,8 +659,11 @@ module ApplicationHelper
         icon_data = inline_favicon(favicon_path)
         icon_data ? "src=\"#{icon_data}\"" : match
       end
-      # Return as data URI with charset for proper XML handling
-      "data:application/xml;charset=utf-8,#{ERB::Util.url_encode(updated_content)}"
+      cache_key = [ :inline_manifest_xml, file_path.to_s, file_version(file_path), request.base_url ].join(':')
+      Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+        # Return as data URI with charset for proper XML handling
+        "data:application/xml;charset=utf-8,#{ERB::Util.url_encode(updated_content)}"
+      end
     else
       Rails.logger.warn "Unsupported manifest file type: #{path}"
       nil
@@ -624,7 +678,9 @@ module ApplicationHelper
     return unless path.is_a?(String)
 
     # Prefer Vite-managed assets for all favicon/static asset lookups
-    if path.start_with?("@")
+    cache_key = [ :favicon_file_path, path, vite_manifest_version ].join(':')
+    return Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      if path.start_with?("@")
       asset_path = "images/#{path.sub('@', '')}"
       vite_asset_path_to_file(asset_path) ||
         Rails.root.join("app", "images", File.basename(path)) ||
@@ -646,6 +702,7 @@ module ApplicationHelper
         Rails.root.join("app", "images", File.basename(path)) ||
         Rails.root.join("public", path) ||
         Rails.root.join("app", "assets", "static", File.basename(path))
+    end
     end
   end
 
@@ -705,7 +762,8 @@ module ApplicationHelper
 
   def fetch_umami_script_content
     # Use Rails cache to avoid fetching the script on every request
-    Rails.cache.fetch("umami_script_content", expires_in: 24.hours) do
+  cache_key = [ :umami_script, request.base_url, vite_manifest_version ].join(":" )
+  Rails.cache.fetch(cache_key, expires_in: 24.hours) do
       fetch_umami_script_from_source
     end
   end
@@ -735,3 +793,10 @@ module ApplicationHelper
 
   # --- End Umami Analytics Inlining Helpers ---
 end
+  # Lightweight file version string from mtime and size
+  def file_version(path)
+    p = path.is_a?(Pathname) ? path : Pathname.new(path.to_s)
+    return '0-0' unless p.exist?
+    "#{p.mtime.to_i}-#{p.size}"
+  end
+

@@ -1,7 +1,5 @@
 # To-do
 
-x-sendfile
-
 - [ ] (bugfix) Fix glass not scrolling as it should
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (bugfix) allow css glass substitute to render and then fade into the webgl one.
