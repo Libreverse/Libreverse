@@ -80,6 +80,7 @@ gem "voight_kampff"
 gem "y-rb_actioncable"
 gem "zip_kit"
 gem "zstd-ruby"
+gem "snappy"
 
 group :development, :test do
   gem "debug"
@@ -95,6 +96,10 @@ group :development do
   gem "grpc-tools"
   gem "haml-lint"
   gem "i18n-tasks"
+  gem "rack-mini-profiler", require: false
+  gem "redis", require: false
+  gem "stackprof", require: false
+  gem "flamegraph", require: false
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"

@@ -43,7 +43,9 @@ class UserPreference < ApplicationRecord
 
   # Get a preference value for a specific account and key
   def self.get(account_id, key)
-    find_by(account_id: account_id, key: key)&.value
+    FunctionCache.instance.cache(:user_preference_get, account_id, key.to_s, ttl: 300) do
+      find_by(account_id: account_id, key: key)&.value
+    end
   end
 
   # Set a preference value for a specific account and key
@@ -58,7 +60,7 @@ class UserPreference < ApplicationRecord
     # Normalize the value to 't' or 'f' for boolean-like values
     normalized_value = normalize_value(value)
 
-    preference = find_or_initialize_by(account_id: account_id, key: key_string)
+  preference = find_or_initialize_by(account_id: account_id, key: key_string)
     preference.value = normalized_value
 
     # Log the preference change
@@ -69,7 +71,9 @@ class UserPreference < ApplicationRecord
     end
 
     begin
-      preference.save! # Use save! to raise an error on validation failure
+  preference.save! # Use save! to raise an error on validation failure
+  # Invalidate cached reads
+  FunctionCache.instance.delete(:user_preference_get, account_id, key_string)
       normalized_value
     rescue StandardError => e
       Rails.logger.error "[UserPreference] Validation failed for account #{account_id}, key '#{key}': #{e.message}"
@@ -83,7 +87,8 @@ class UserPreference < ApplicationRecord
     return nil unless ALLOWED_KEYS.include?(key)
 
     Rails.logger.info "Dismissing: account_id=#{account_id}, key=#{key}"
-    set(account_id, key, "t") # Use 't' consistently for dismissed state
+  set(account_id, key, "t") # Use 't' consistently for dismissed state
+  # Cache is already invalidated by set
   end
 
   # Helper method to check if something is dismissed

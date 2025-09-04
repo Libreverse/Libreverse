@@ -52,7 +52,9 @@ class InstanceSetting < ApplicationRecord
 
   # Get a setting value by key
   def self.get(key)
-    record = find_by(key: key)
+    # Fast-path cache: memoize values with a short TTL
+    return FunctionCache.instance.cache(:instance_setting_get, key, ttl: 300) do
+      record = find_by(key: key)
     return nil unless record
 
     value = record.value
@@ -71,6 +73,7 @@ class InstanceSetting < ApplicationRecord
       Rails.logger.warn "[InstanceSetting] Unexpected value type for key '#{key}': #{value.class} - #{value.inspect}"
       value.to_s
     end
+    end
   end
 
   # Set a setting value by key
@@ -82,6 +85,9 @@ class InstanceSetting < ApplicationRecord
     setting.description = description if description.present?
 
     if setting.save
+      # Invalidate cached reads
+      FunctionCache.instance.delete(:instance_setting_get, key)
+      FunctionCache.instance.delete(:instance_setting_fallback, key, nil, nil)
       setting.value
     else
       Rails.logger.error "[InstanceSetting] Failed to save setting #{key}: #{setting.errors.full_messages.join(', ')}"
@@ -91,18 +97,21 @@ class InstanceSetting < ApplicationRecord
 
   # Get setting with fallback to environment variable or default
   def self.get_with_fallback(key, env_var = nil, default = nil)
-    # First try database
-    value = get(key)
-    return value if value.present?
+    # Cache the full fallback chain, since DB/env/default is deterministic per key
+    return FunctionCache.instance.cache(:instance_setting_fallback, key, env_var, default, ttl: 300) do
+      # First try database
+      value = get(key)
+      return value if value.present?
 
-    # Then try environment variable
-    if env_var.present?
-      env_value = ENV[env_var]
-      return env_value if env_value.present?
+      # Then try environment variable
+      if env_var.present?
+        env_value = ENV[env_var]
+        return env_value if env_value.present?
+      end
+
+      # Finally return default
+      default
     end
-
-    # Finally return default
-    default
   end
 
   # Initialize default settings
