@@ -670,70 +670,16 @@ class BaseIndexer
   end
 
   def get_robots_parser(domain)
-    cache_key = "robots_parser_#{domain}"
-
-    # Try to get cached parser
-    cached_entry = Rails.cache.read(cache_key)
-    if cached_entry
-      begin
-        # Handle both old format (direct Marshal string) and new format (with integrity hash)
-        if cached_entry.is_a?(String)
-          # Legacy format - direct Marshal string
-          log_debug "Loading legacy cached robots parser for #{domain}"
-          return Marshal.load(cached_entry)
-        elsif cached_entry.is_a?(Hash) && cached_entry[:data]
-          marshalled_data = cached_entry[:data]
-
-          if cached_entry[:integrity_hash]
-            # New format with HMAC integrity checking
-            stored_hash = cached_entry[:integrity_hash]
-
-            # Verify data integrity using cryptographically secure HMAC
-            if verify_cache_integrity(marshalled_data, domain, stored_hash)
-              log_debug "Loading cryptographically verified cached robots parser for #{domain}"
-              return Marshal.load(marshalled_data)
-            else
-              log_warn "Cached robots parser HMAC integrity check failed for #{domain} - data may be corrupted or tampered with"
-              # Fall through to create new parser
-            end
-          elsif cached_entry[:hash]
-            # Legacy SHA256 format - still verify but warn about upgrade
-            require "digest" # only load when needed for legacy
-            stored_hash = cached_entry[:hash]
-            computed_hash = Digest::SHA256.hexdigest(marshalled_data)
-            if computed_hash == stored_hash
-              log_debug "Loading legacy SHA256 verified cached robots parser for #{domain} - will upgrade to HMAC on next cache write"
-              return Marshal.load(marshalled_data)
-            else
-              log_warn "Cached robots parser legacy SHA256 integrity check failed for #{domain} - hash mismatch"
-              # Fall through to create new parser
-            end
-          else
-            log_debug "Cached robots parser has no integrity hash for #{domain} - will create new one with Argon2 protection"
-            # Fall through to create new parser
-          end
-        else
-          log_debug "Invalid cached robots parser format for #{domain}"
-          # Fall through to create new parser
-        end
-      rescue StandardError => e
-        log_debug "Failed to unmarshal cached robots parser: #{e.message}"
-        # Fall through to create new parser
-      end
-    end
-
-    # First, check if robots.txt is actually accessible
+    # First, check if robots.txt is actually accessible (do not cache fallbacks)
     robots_url = "#{domain}/robots.txt"
     begin
       uri = URI(robots_url)
       response = Net::HTTP.get_response(uri)
-
       if response.code.to_i >= 400
         log_warn "Robots.txt returned #{response.code} for #{domain}"
         log_info "Being conservative - will disallow access when robots.txt is inaccessible"
         return create_fallback_robots_parser
       end
-
       log_debug "Robots.txt accessible for #{domain} (#{response.code})"
     rescue StandardError => e
       log_warn "Failed to fetch robots.txt for #{domain}: #{e.message}"
@@ -741,35 +687,23 @@ class BaseIndexer
       return create_fallback_robots_parser
     end
 
-    # Create new robots parser only if robots.txt was accessible
-    log_debug "Creating new robots parser for #{domain}"
     user_agent = "LibreverseIndexerFor#{extract_instance_domain}"
-    robots_parser = Robots.new(user_agent)
 
+    # Use FunctionCache to cache the parser for 24 hours
     begin
-      # Test if the parser works by checking a basic URL
-      test_result = robots_parser.allowed?("#{domain}/")
-      log_debug "Robots parser test for #{domain}: #{test_result}"
-
-      # Cache the parser with cryptographically secure Argon2 integrity checking
-      marshalled_parser = Marshal.dump(robots_parser)
-      integrity_hash = generate_cache_integrity_hash(marshalled_parser, domain)
-      cache_entry = {
-        data: marshalled_parser,
-        integrity_hash: integrity_hash,
-        created_at: Time.current.iso8601,
-        domain: domain # for audit trail
-      }
-      Rails.cache.write(cache_key, cache_entry, expires_in: 24.hours)
-      log_debug "Cached robots parser for #{domain} with Argon2 integrity protection - literally impossible to forge without Rails secret key"
+      FunctionCache.instance.cache(:robots_parser, domain, ttl: 24.hours) do
+        log_debug "Creating new robots parser for #{domain}"
+        parser = Robots.new(user_agent)
+        # Smoke test to ensure parser is functional
+        test_result = parser.allowed?("#{domain}/")
+        log_debug "Robots parser test for #{domain}: #{test_result}"
+        parser
+      end
     rescue StandardError => e
       log_warn "Failed to create/cache robots parser for #{domain}: #{e.message}"
       log_info "Being conservative - will disallow access when robots parser fails"
-      # Return a restrictive fallback parser
-      return create_fallback_robots_parser
+      create_fallback_robots_parser
     end
-
-    robots_parser
   end
 
   def create_fallback_robots_parser

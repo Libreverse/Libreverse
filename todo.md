@@ -1,11 +1,13 @@
 # To-do
 
+x-sendfile
+
 - [ ] (bugfix) Fix glass not scrolling as it should
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (bugfix) allow css glass substitute to render and then fade into the webgl one.
 - [ ] clear up attribution for images
       --- september ---
-- [ ] (feature) Finish blog & social features (blog posts as ActivityPub posts; ship prebuilt blocklist & document censorship considerations)
+- [ ] (feature) Finish blog & social features (blog posts as ActivityPub/atproto ideally posts; ship prebuilt blocklist & document censorship considerations)
 - [ ] (feature) osa compliance audit and changes
 - [ ] (feature) Deploy without master_key pre-set (remove `credentials.yml.enc` handling adjustments)
 - [ ] (feature) make local codeql work fully

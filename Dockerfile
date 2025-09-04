@@ -9,7 +9,7 @@ RUN set -eux; \
         rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock || true; \
         apt-get update; \
         DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            libjemalloc2 libjemalloc-dev \
+            libjemalloc2 libjemalloc-dev libsnappy-dev libtool automake autoconf \
             libmodsecurity3 libnginx-mod-http-modsecurity modsecurity-crs \
             shared-mime-info coreutils imagemagick unzip \
             libnginx-mod-http-ndk libnginx-mod-http-lua lua5.1 lua-cjson luarocks gettext-base sudo \

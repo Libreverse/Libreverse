@@ -32,37 +32,47 @@ class ApplicationController < ActionController::Base
   helper_method :tutorial_dismissed?, :consent_given?, :consent_path
 
   def current_account
-      # Use Current.account if available (set by ApplicationReflex)
-      # Otherwise get account_id from session (like GraphqlController pattern)
-      Current.account || begin
-          account_id = session[:account_id] || request.env["rack.session"]&.[](:account_id)
-          if account_id
-              account = AccountSequel.where(id: account_id).first
-              unless account
-                  # Account ID in session doesn't exist in DB - invalid session
-                  Rails.logger.warn "[ApplicationController] Account ID '#{account_id}' found in session does not exist in DB. Clearing session and instructing cookie clear."
+    # Use Current.account if available (set by ApplicationReflex)
+    return Current.account if Current.account
 
-                  # Check if we recently sent a cookie clear instruction to prevent loops
-                  cache_key = "cookie_clear_sent_#{account_id}_#{request.remote_ip}"
-                  recently_sent = Rails.cache.read(cache_key)
+    # Request-local memoization to avoid multiple DB hits in one request
+    if (acc = request.env['libreverse.current_account'])
+      return acc
+    end
 
-                  unless recently_sent
-                      # Mark that we've sent this instruction recently
-                      Rails.cache.write(cache_key, true, expires_in: 60.seconds)
+    # Otherwise get account_id from session (like GraphqlController pattern)
+    account_id = session[:account_id] || request.env['rack.session']&.[](:account_id)
+    return nil unless account_id
 
-                      # Clear the session
-                      reset_session
+    account = FunctionCache.instance.cache(:account_by_id, account_id, ttl: 300) do
+      AccountSequel.where(id: account_id).first
+    end
 
-                      # Set response header to instruct browser to clear cookies
-                      response.headers["X-Clear-Cookies"] = "invalid-session"
-                      response.headers["X-Reload-Required"] = "true"
-                  end
+    unless account
+      # Account ID in session doesn't exist in DB - invalid session
+      Rails.logger.warn "[ApplicationController] Account ID '#{account_id}' found in session does not exist in DB. Clearing session and instructing cookie clear."
 
-                  return nil
-              end
-              account
-          end
+      # Check if we recently sent a cookie clear instruction to prevent loops
+      cache_key = "cookie_clear_sent_#{account_id}_#{request.remote_ip}"
+      recently_sent = Rails.cache.read(cache_key)
+
+      unless recently_sent
+        # Mark that we've sent this instruction recently
+        Rails.cache.write(cache_key, true, expires_in: 60.seconds)
+
+        # Clear the session
+        reset_session
+
+        # Set response header to instruct browser to clear cookies
+        response.headers['X-Clear-Cookies'] = 'invalid-session'
+        response.headers['X-Reload-Required'] = 'true'
       end
+
+      return nil
+    end
+
+    request.env['libreverse.current_account'] = account
+    account
   end
 
   private
