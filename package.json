@@ -8,7 +8,7 @@
         "@hotwired/turbo-rails": "^8.0.16",
         "@rails/activestorage": "^8.0.201",
         "@rails/request.js": "^0.0.12",
-        "@sentry/browser": "^9.46.0",
+        "@sentry/browser": "^10.8.0",
         "@sxwjs/sxwjs": "^4.0.0",
         "@vitejs/plugin-legacy": "^7.2.1",
         "@y-rb/actioncable": "^0.1.5",
