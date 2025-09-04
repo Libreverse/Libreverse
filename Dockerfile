@@ -17,7 +17,10 @@ RUN set -eux; \
         mkdir -p /etc/modsecurity; \
         ln -sf /usr/share/modsecurity-crs/rules /etc/modsecurity/rules || true; \
         (ln -sf /usr/share/nginx/modules-available/mod-http-modsecurity.conf /etc/nginx/modules-enabled/50-mod-http-modsecurity.conf || true); \
-        rm -rf /var/lib/apt/lists/*
+    # Prepare TLS directory for user-provided certs
+    mkdir -p /etc/nginx/ssl; \
+    chmod 700 /etc/nginx/ssl; \
+    rm -rf /var/lib/apt/lists/*
 
 # Provide consolidated main include for ModSecurity rules (copied later before Nginx reload)
 COPY docker/modsecurity/modsecurity.conf /etc/modsecurity/modsecurity.conf
@@ -87,9 +90,14 @@ RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production VITE_RUBY_MODE=production \
 
 # Remove default Nginx site and add custom config for Rails app
 RUN rm /etc/nginx/sites-enabled/default
+RUN mkdir -p /etc/nginx/conf.d /etc/nginx/main.d
 COPY docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY docker/nginx-main.conf /etc/nginx/nginx.conf
 COPY docker/passenger.conf /etc/nginx/passenger.conf
+RUN printf '%s\n' \
+    'passenger_log_file /var/log/nginx/passenger.log;' \
+    'passenger_file_descriptor_log_file /var/log/nginx/passenger_fd.log;' \
+    > /etc/nginx/conf.d/10-passenger-base.conf
 
 # Install CrowdSec (LAPI + agent) from official repo and NGINX bouncer Lua component
 RUN set -eux; \
