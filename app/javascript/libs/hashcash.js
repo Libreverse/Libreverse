@@ -140,8 +140,8 @@ globalThis.Hashcash.setSubmitText = function (submit, text) {
         return;
     }
     if (submit.tagName == "BUTTON") {
-        !submit.originalValue && (submit.originalValue = submit.innerHTML);
-        submit.innerHTML = text;
+        !submit.originalValue && (submit.originalValue = submit.textContent);
+        submit.textContent = text;
     } else {
         !submit.originalValue && (submit.originalValue = submit.value);
         submit.value = text;
