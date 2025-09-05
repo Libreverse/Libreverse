@@ -22,6 +22,10 @@
                       const messageId = Date.now() + Math.random();
 
                       const messageHandler = (event) => {
+                          // Add origin check for security
+                          if (event.origin !== globalThis.location.origin) {
+                              return;
+                          }
                           if (
                               event.data.type === "keyboard-lock-response" &&
                               event.data.messageId === messageId
