@@ -96,7 +96,8 @@ COPY docker/passenger.conf /etc/nginx/passenger.conf
 # Add Libreverse HTTP context customizations without replacing base nginx.conf
 COPY docker/nginx-libreverse.conf /etc/nginx/conf.d/20-libreverse.conf
 RUN printf '%s\n' \
-    'passenger_log_file /var/log/nginx/passenger.log;' \
+    '# Send Passenger logs to the Nginx global error log so they are forwarded by the container log forwarder' \
+    'passenger_log_file /var/log/nginx/error.log;' \
     'passenger_file_descriptor_log_file /var/log/nginx/passenger_fd.log;' \
     > /etc/nginx/conf.d/10-passenger-base.conf
 
