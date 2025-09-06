@@ -1,7 +1,6 @@
 # To-do
 
 mimalloc
-full yjit
 
 - [ ] (bugfix) Fix glass not scrolling as it should
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
