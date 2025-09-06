@@ -46,7 +46,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/maste
 ENV CFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
 ENV CXXFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
 ENV LDFLAGS="-Wl,-z,relro -Wl,-z,now"
-ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-disable"
+ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20"
 
 # Set correct environment variables.
 ENV HOME=/root
