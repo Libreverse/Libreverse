@@ -159,7 +159,10 @@ chmod -R 775 /home/app/webapp/db/ 2>/dev/null || true
 echo "📝 Setting up log directory permissions..."
 mkdir -p /home/app/webapp/log
 chown -R app:app /home/app/webapp/log/
-chmod -R 664 /home/app/webapp/log/ 2>/dev/null || true
+chmod -R 775 /home/app/webapp/log/ 2>/dev/null || true
+touch /home/app/webapp/log/production.log
+chown app:app /home/app/webapp/log/production.log
+chmod 664 /home/app/webapp/log/production.log
 
 echo "✅ File permissions configured"
 
@@ -200,7 +203,7 @@ EOF
 echo "  ➜ passenger_max_pool_size/min_instances set to $APP_PROC_TARGET"
 
 # Configure Passenger prestart to warm processes.
-"# Build a correct URL: scheme + host + :port + path"
+# Build a correct URL: scheme + host + :port + path
 # Ignore commented lines and extract settings from active directives.
 SERVER_NAME_CONF=$(awk '/^[[:space:]]*server_name[[:space:]]/ {for (i=2;i<=NF;i++){gsub(/;$/,"",$i); if ($i!="") {print $i; exit}}}' /etc/nginx/sites-enabled/webapp.conf | head -n1)
 LISTEN_PORT=$(awk '/^[[:space:]]*listen[[:space:]]/ {for (i=2;i<=NF;i++){gsub(/;$/,"",$i); if ($i ~ /^[0-9]+$/) {print $i; exit}}}' /etc/nginx/sites-enabled/webapp.conf | head -n1)
