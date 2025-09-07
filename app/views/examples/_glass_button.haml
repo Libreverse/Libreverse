@@ -1,19 +1,6 @@
 -# Example: Glass Button Component - Usage: Add this for standalone glass buttons
 
-%button{data: {
-          controller: "glass",
-          "glass-enable-glass-value": true,
-          "glass-component-type-value": "button",
-          "glass-glass-type-value": "pill",
-          "glass-border-radius-value": 25,
-          "glass-tint-opacity-value": 0.15,
-          "glass-corner-rounding-value": "all",
-          "html2canvas-ignore": "true",
-          "button-text-value": text,
-          "button-path-value": path,
-          "button-method-value": method || "get"
-        },
-        class: "glass-component glass-button-base"}
+%button{class: "glass glass-component glass-button glass-button-base"}
   .button-contents
     - if icon
       = raw svg_icon_data_url(icon)

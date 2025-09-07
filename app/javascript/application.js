@@ -1,9 +1,5 @@
 import "../stylesheets/application.scss";
-import "./libs/webgl_fallback_system.js"; // Add fallback system
-import "./libs/critical_element_fallback.js"; // Add critical element fallback
-import "./libs/glass_fallback_monitor.js"; // Enhanced glass fallback monitoring
 import "./libs/hashcash.js"; // ActiveHashcash proof-of-work for bot protection
-import html2canvas from "html2canvas";
 import debounced from "debounced";
 import "./libs/foundation.js";
 import "./libs/websocket_p2p_frame.coffee";
@@ -146,8 +142,7 @@ debounced.register(["resize"], {
     trailing: true,
 });
 
-// Make html2canvas globally available for liquid glass effects
-globalThis.html2canvas = html2canvas;
+// WebGL and html2canvas removed; CSS-only glass requires no globals
 
 import * as Turbo from "@hotwired/turbo";
 import TurboPower from "turbo_power";

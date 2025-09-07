@@ -14,13 +14,7 @@
       %main
         - unless tutorial_dismissed?("search-tutorial")
           %div{"data-controller" => "dismissible"}
-            .search-tutorial#search-tutorial{"data-controller" => "glass",
-                                             "data-glass-enable-glass-value" => true,
-                                             "data-glass-component-type-value" => "card",
-                                             "data-glass-glass-type-value" => "rounded",
-                                             "data-glass-border-radius-value" => 5,
-                                             "data-glass-tint-opacity-value" => 0.1,
-                                             "data-html2canvas-ignore" => "true",
+            .search-tutorial#search-tutorial{
                                              "data-dismissible-key-value" => "search-tutorial",
                                              "data-dismissible-target" => "container"}
               .tutorial-dismiss
@@ -30,13 +24,7 @@
               %p.tutorial-description= t('search.index.tutorial_description')
         %section{"aria-labelledby" => "search-heading"}
           .sp-search-bar
-            .sp-search-bar-container{"data-controller" => "glass",
-                                     "data-glass-enable-glass-value" => true,
-                                     "data-glass-component-type-value" => "card",
-                                     "data-glass-glass-type-value" => "rounded",
-                                     "data-glass-border-radius-value" => 5,
-                                     "data-glass-tint-opacity-value" => 0.1,
-                                     "data-html2canvas-ignore" => "true"}
+            .sp-search-bar-container.glass.glass-card-base
               %input.sp-search-bar-input#search{"aria-label" => t('search.index.input_aria_label'),
                                                 :autocomplete => "off",
                                                 "data-controller" => "search-url-updater",

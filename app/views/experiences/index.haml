@@ -9,14 +9,7 @@
         %p.header-description= t('experiences.index.subtitle')
       - if user_signed_in? && !guest_user? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
-          .dashboard-section#experiences-tutorial{"data-controller" => "glass",
-                                                 "data-glass-enable-glass-value" => true,
-                                                 "data-glass-component-type-value" => "card",
-                                                 "data-glass-glass-type-value" => "rounded",
-                                                 "data-glass-border-radius-value" => 5,
-                                                 "data-glass-tint-opacity-value" => 0.1,
-                                                 "data-html2canvas-ignore" => "true",
-                                                 "data-dismissible-key-value" => "experiences-tutorial",
+          .dashboard-section#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial",
                                                  "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}
@@ -53,13 +46,7 @@
           .mt-3
             = link_to "Upgrade to Full Account", "/create-account", class: "btn btn-primary me-2"
       - else
-        %section.experience-form-container.mt-5#create-experience{"data-controller" => "glass",
-                                                               "data-glass-enable-glass-value" => true,
-                                                               "data-glass-component-type-value" => "card",
-                                                               "data-glass-glass-type-value" => "rounded",
-                                                               "data-glass-border-radius-value" => 5,
-                                                               "data-glass-tint-opacity-value" => 0.1,
-                                                               "data-html2canvas-ignore" => "true"}
+  %section.experience-form-container.mt-5#create-experience.glass.glass-card-base
           - if authenticated_user?
             %h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
             %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.

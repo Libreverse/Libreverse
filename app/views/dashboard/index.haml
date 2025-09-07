@@ -47,14 +47,7 @@
 
         - if user_signed_in? && !tutorial_dismissed?("dashboard-tutorial")
           %div{"data-controller" => "dismissible"}
-            .dashboard-section#dashboard-tutorial{"data-controller" => "glass",
-                                                 "data-glass-enable-glass-value" => true,
-                                                 "data-glass-component-type-value" => "card",
-                                                 "data-glass-glass-type-value" => "rounded",
-                                                 "data-glass-border-radius-value" => 5,
-                                                 "data-glass-tint-opacity-value" => 0.1,
-                                                 "data-html2canvas-ignore" => "true",
-                                                 "data-dismissible-key-value" => "dashboard-tutorial",
+            .dashboard-section#dashboard-tutorial{"data-dismissible-key-value" => "dashboard-tutorial",
                                                  "data-dismissible-target" => "container"}
               .section-dismiss
                 %button.dismiss-button{"data-action" => "dismissible#dismiss"}
@@ -62,13 +55,7 @@
               %h2.section-heading= t('dashboard.index.tutorial_heading')
               %p.section-description= t('dashboard.index.tutorial_description')
 
-        .info-card{"data-controller" => "glass",
-                   "data-glass-enable-glass-value" => true,
-                   "data-glass-component-type-value" => "card",
-                   "data-glass-glass-type-value" => "rounded",
-                   "data-glass-border-radius-value" => 5,
-                   "data-glass-tint-opacity-value" => 0.1,
-                   "data-html2canvas-ignore" => "true"}
+  .info-card.glass.glass-card-base
           .info-grid
             .info-item
               .info-label FEDERATED ID
@@ -90,13 +77,7 @@
               .info-value= @password_strength[:level].capitalize
 
         %h3.section-title= t('dashboard.index.account_actions_title')
-        .info-card{"data-controller" => "glass",
-                   "data-glass-enable-glass-value" => true,
-                   "data-glass-component-type-value" => "card",
-                   "data-glass-glass-type-value" => "rounded",
-                   "data-glass-border-radius-value" => 5,
-                   "data-glass-tint-opacity-value" => 0.1,
-                   "data-html2canvas-ignore" => "true"}
+  .info-card.glass.glass-card-base
           .info-grid
             .info-item
               .info-label PASSWORD
@@ -120,13 +101,7 @@
                   = t('dashboard.index.sign_out')
 
         %h3.section-title= t('dashboard.index.compliance_options_title')
-        .info-card{"data-controller" => "glass",
-                   "data-glass-enable-glass-value" => true,
-                   "data-glass-component-type-value" => "card",
-                   "data-glass-glass-type-value" => "rounded",
-                   "data-glass-border-radius-value" => 5,
-                   "data-glass-tint-opacity-value" => 0.1,
-                   "data-html2canvas-ignore" => "true"}
+  .info-card.glass.glass-card-base
           .info-grid
             .info-item
               .info-label PRIVACY POLICY

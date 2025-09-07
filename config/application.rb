@@ -122,10 +122,9 @@ module LibreverseInstance
     # Only enable on systems with sufficient cores (>= 8) to avoid performance impact
     config.middleware.use WhitespaceCompressor
 
-  # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
-  # Temporarily disabled; re-enable by uncommenting the line below
-  # config.middleware.use TurboPreloadMiddleware
-
+    # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
+    config.middleware.use TurboPreloadMiddleware
+    
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
     config.middleware.insert_before WhitespaceCompressor, EmojiReplacer, {

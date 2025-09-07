@@ -7,23 +7,11 @@
       .dashboard-header-section
         %h1.display-heading= t('.title')
         %p.header-description= t('.subtitle')
-      .dashboard-section.welcome-section.mb-4{"data-controller" => "glass",
-                                         "data-glass-enable-glass-value" => true,
-                                         "data-glass-component-type-value" => "card",
-                                         "data-glass-glass-type-value" => "rounded",
-                                         "data-glass-border-radius-value" => 5,
-                                         "data-glass-tint-opacity-value" => 0.1,
-                                         "data-html2canvas-ignore" => "true"}
+  .dashboard-section.welcome-section.mb-4.glass.glass-card-base
         %h2.h4.mb-2
           = t('.refining', title: @experience.title)
         %p.text-muted.mb-0= t('.instructions')
-      .experience-form-container{"data-controller" => "glass",
-                                 "data-glass-enable-glass-value" => true,
-                                 "data-glass-component-type-value" => "card",
-                                 "data-glass-glass-type-value" => "rounded",
-                                 "data-glass-border-radius-value" => 5,
-                                 "data-glass-tint-opacity-value" => 0.1,
-                                 "data-html2canvas-ignore" => "true"}
+  .experience-form-container.glass.glass-card-base
         = render "form", experience: @experience
       .actions-section.mt-4.d-flex.justify-content-between
         = link_to display_experience_path(@experience), class: "btn btn-outline-primary" do

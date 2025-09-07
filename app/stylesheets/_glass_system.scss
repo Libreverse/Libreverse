@@ -1,3 +1,7 @@
+@forward "glass/base";
+@forward "glass/components";
+@forward "glass/responsive";
+@forward "glass/fallbacks";
 /* Glass System - Production Ready Implementation
  * Clean, maintainable glass effects with robust fallbacks
  * Replaces the fragmented glass implementation with a unified system

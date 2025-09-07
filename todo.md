@@ -1,5 +1,9 @@
 # To-do
 
+re-enable turbo preload
+add caching to turbo preload and html minifier
+add enter removing re2 pass to html minifier
+replace locotmotive scroll with lenis
 mimalloc
 
 - [ ] (bugfix) Fix glass not scrolling as it should

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "nokogiri"
+require "digest/sha1"
 
 class TurboPreloadMiddleware
   def initialize(app)
@@ -17,8 +18,16 @@ class TurboPreloadMiddleware
     response_body = extract_response_body(response)
     return [ status, headers, response ] if response_body.empty?
 
-    # Parse and modify HTML with Nokogiri
-    modified_body = add_turbo_preload(response_body)
+    # Caching: Use Rails.cache to store processed HTML based on SHA1 hash of original
+    # This saves unnecessary work for repeated identical responses (e.g., static pages)
+    unless response_body.empty?
+      cache_key = "tp_html:#{::Digest::SHA1.hexdigest(response_body)}"
+      modified_body = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+        add_turbo_preload(response_body)
+      end
+    else
+      modified_body = response_body
+    end
 
     # Update Content-Length header if necessary
     headers["Content-Length"] = modified_body.bytesize.to_s if headers["Content-Length"]
