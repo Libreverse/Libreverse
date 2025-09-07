@@ -2,21 +2,12 @@
   drawer_id = local_assigns.fetch(:drawer_id, "main")
   enable_glass = local_assigns.fetch(:enable_glass, true)
 
-%div{class: "drawer #{'glass-enabled' if enable_glass}",
+%div{class: "drawer #{'glass-enabled' if enable_glass} glass glass-drawer-base",
      id: "#{drawer_id}-drawer",
      role: "complementary",
      "aria-labelledby": "drawer-title-#{drawer_id}",
      "data-drawer-id": drawer_id,
-     data: {
-       controller: "glass",
-       # Glass configuration
-       "enable-glass-value": enable_glass,
-       "component-type-value": "drawer",
-       "corner-rounding-value": "top",
-       "border-radius-value": 20,
-       "tint-opacity-value": 0.1,
-       "html2canvas-ignore": true
-     }}
+  data: {}}
   .drawer-header{data: {"reflex-permanent": ""}}
     %h2.drawer-title{id: "drawer-title-#{drawer_id}"}
       - if content_for?(:drawer_title)

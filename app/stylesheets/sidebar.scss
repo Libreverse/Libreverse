@@ -48,28 +48,7 @@
         z-index: 1;
     }
 
-    // Enhanced state (when WebGL is active)
-    &.glass-enhanced {
-        background: transparent;
-        backdrop-filter: none;
-        border: none;
-        box-shadow: none;
-
-        .glass-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            border-radius: inherit;
-
-            canvas {
-                width: 100%;
-                height: 100%;
-                pointer-events: none;
-                border-radius: inherit;
-            }
-        }
-    }
+    // WebGL enhanced state removed - CSS-only implementation
 
     // Responsive width
     width: var(--sidebar-width-medium);
@@ -176,19 +155,4 @@
     }
 }
 
-.sidebar.glass-component.glass-sidebar.glass-active {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
-
-    .glass-container {
-        background: transparent !important;
-        backdrop-filter: none !important;
-        border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0;
-    }
-}
-
-.glass-container {
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
-}
+// Remove special WebGL container overrides

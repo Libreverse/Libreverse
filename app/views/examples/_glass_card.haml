@@ -1,16 +1,6 @@
 -# Example: Glass Card Component - Usage: Add this anywhere you want a glass card effect
 
-%div{data: {
-       controller: "glass",
-       "glass-enable-glass-value": true,
-       "glass-component-type-value": "card",
-       "glass-glass-type-value": "rounded",
-       "glass-border-radius-value": 15,
-       "glass-tint-opacity-value": 0.08,
-       "glass-corner-rounding-value": "all",
-       "html2canvas-ignore": "true"
-     },
-     class: "glass-component glass-card"}
+%div{class: "glass glass-component glass-card glass-card-base"}
   .card-contents
     %h3= title
     %p= content

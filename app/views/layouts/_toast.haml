@@ -9,17 +9,11 @@
   toast_id = "toast-#{SecureRandom.hex(4)}"
 
 %div{id: toast_id,
-     class: "toast #{toast_class_modifier} show",
+  class: "toast #{toast_class_modifier} show glass glass-card-base",
      role: "alert",
      "aria-live" => "assertive",
      "aria-atomic" => "true",
-     "data-controller" => "toast glass",
-     "data-glass-enable-glass-value" => true,
-     "data-glass-component-type-value" => "card",
-     "data-glass-glass-type-value" => "rounded",
-     "data-glass-border-radius-value" => 4,
-     "data-glass-tint-opacity-value" => 0.12,
-     "data-html2canvas-ignore" => "true",
+  "data-controller" => "toast",
      "data-toast-timeout-value" => "5000"}
   .toast-header
     %strong.me-auto= title

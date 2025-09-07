@@ -1,11 +1,5 @@
 - experiences.each do |experience|
-  .sp-experience{"data-controller" => "glass",
-                 "data-glass-enable-glass-value" => true,
-                 "data-glass-component-type-value" => "card",
-                 "data-glass-glass-type-value" => "rounded",
-                 "data-glass-border-radius-value" => 5,
-                 "data-glass-tint-opacity-value" => 0.1,
-                 "data-html2canvas-ignore" => "true"}
+  .sp-experience.glass.glass-card-base
     - link_href = experience.respond_to?(:display_path) ? experience.display_path : display_experience_path(experience)
     = link_to link_href, class: "experience-link", target: (experience.respond_to?(:federated?) && (experience.federated? || experience.metaverse?) ? "_blank" : nil), rel: (experience.respond_to?(:federated?) && (experience.federated? || experience.metaverse?) ? "noopener" : nil) do
       %article{itemscope: "", itemtype: "https://schema.org/CreativeWork"}

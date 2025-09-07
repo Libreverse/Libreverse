@@ -212,7 +212,6 @@ export default defineConfig(({ mode }) => {
         optimizeDeps: {
             // Force inclusion of dependencies that might not be detected
             include: [
-                "html2canvas",
                 "debounced",
                 "@hotwired/turbo",
                 "@hotwired/stimulus",

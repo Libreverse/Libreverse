@@ -1,14 +1,5 @@
 - experiences.each do |experience|
-  .sp-experience{ class: experience.federated? ? 'federated-experience' : experience.metaverse? ? 'metaverse-experience' : 'local-experience',
-                  data: {
-                    controller: "glass",
-                    "glass-enable-glass-value": true,
-                    "glass-component-type-value": "card",
-                    "glass-glass-type-value": "rounded",
-                    "glass-border-radius-value": 5,
-                    "glass-tint-opacity-value": 0.1,
-                    "html2canvas-ignore": "true"
-                  } }
+  .sp-experience{ class: [experience.federated? ? 'federated-experience' : experience.metaverse? ? 'metaverse-experience' : 'local-experience', 'glass', 'glass-card-base'].join(' ') }
     - if experience.federated?
       -# Federated experience link
       = link_to experience.experience_url, class: "experience-link federated-link", target: "_blank", rel: "noopener noreferrer" do

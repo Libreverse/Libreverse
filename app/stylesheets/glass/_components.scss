@@ -44,6 +44,23 @@
     }
 }
 
+/* Corner rounding utilities */
+.glass-corners-right {
+    border-radius: 0 var(--glass-border-radius-medium) var(--glass-border-radius-medium) 0;
+}
+
+.glass-corners-left {
+    border-radius: var(--glass-border-radius-medium) 0 0 var(--glass-border-radius-medium);
+}
+
+.glass-corners-top {
+    border-radius: var(--glass-border-radius-medium) var(--glass-border-radius-medium) 0 0;
+}
+
+.glass-corners-bottom {
+    border-radius: 0 0 var(--glass-border-radius-medium) var(--glass-border-radius-medium);
+}
+
 .glass-nav-base {
     display: flex;
     align-items: center;

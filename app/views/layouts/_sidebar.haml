@@ -40,20 +40,13 @@
   end
 
 %nav{id: "#{sidebar_id}-sidebar",
-     class: ["sidebar", "glass-component"].compact.join(" "),
+     class: ["sidebar", "glass-component", "glass", "glass-sidebar-base"].compact.join(" "),
      role: "navigation",
      aria: {label: "Navigation Sidebar"},
      style: "--glass-border-radius: #{local_assigns[:border_radius] || 12}px",
      data: {
        controller: "sidebar sidebar-popover",
-       "html2canvas-ignore": true,
-       # Glass configuration
-       "enable-glass-value": true,
-       "component-type-value": "sidebar",
-       "border-radius-value": local_assigns[:border_radius] || 12,
-       "tint-opacity-value": local_assigns[:tint_opacity] || 0.12,
-       "corner-rounding-value": "right",
-       # Popover configuration
+       # Popover configuration only
        "sidebar-popover-delay-value": 800,
        "sidebar-popover-position-value": "right",
        "sidebar-popover-alignment-value": "center"
