@@ -147,12 +147,17 @@ export default function typehints(options = {}) {
 
     return {
         name: "vite-plugin-v8-type-hints-with-ts",
+        // Only run during static builds
+        apply: "build",
 
         configResolved(config) {
             isBuild = config.command === "build";
         },
 
         async transform(code, id) {
+            // Hard no-op in dev (extra guard; apply: 'build' already limits this)
+            if (!isBuild) return;
+
             // Normalize path and extension
             const cleanId = String(id).split("?")[0];
             if (!/\.([cm]?jsx?)$/i.test(cleanId)) return;
@@ -475,10 +480,6 @@ export default function typehints(options = {}) {
                 return; // Graceful fallback in dev
             }
         },
-        handleHotUpdate({ file, server }) {
-            if (file.endsWith(".js")) {
-                server.config.logger.info(`Updated V8 hints for ${file}`);
-            }
-        },
+        // No HMR behavior; plugin only applies in build
     };
 }

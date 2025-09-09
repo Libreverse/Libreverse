@@ -155,8 +155,8 @@
 // Foundation tooltip overrides for sidebar popovers
 .tooltip.sidebar-popover {
     // Override Foundation's default tooltip styling
-    background: transparent !important;
-    color: inherit !important;
+    background: transparent ;
+    color: inherit ;
 
     // Ensure proper positioning
     pointer-events: none;
@@ -165,7 +165,7 @@
     // Remove Foundation's default arrow
     &::before,
     &::after {
-        display: none !important;
+        display: none ;
     }
 }
 
@@ -174,11 +174,11 @@
 .sidebar-logout-button {
     &[aria-describedby] {
         // Remove background and just keep the scale effect and subtle glow
-        background: transparent !important;
-        transform: scale(1.02) !important;
+        background: transparent ;
+        transform: scale(1.02) ;
 
         // Keep a minimal glow effect without background
-        box-shadow: 0 0 0 1px rgb(255 255 255 / 10%) !important;
+        box-shadow: 0 0 0 1px rgb(255 255 255 / 10%) ;
     }
 }
 

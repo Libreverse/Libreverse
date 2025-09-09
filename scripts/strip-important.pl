@@ -62,6 +62,7 @@ sub strip_important_stream {
   my $out = '';
   my $len = length $s;
   my $i = 0;
+  my $removed = 0; # track if we removed any !important
 
   my $STATE_CODE = 0;
   my $STATE_STR  = 1;
@@ -109,9 +110,9 @@ sub strip_important_stream {
         if ($remaining =~ /^important\b/i) {
           # Remove any trailing part of 'important'
           my $skip = 9; # length('important')
-          # Trim preceding horizontal whitespace in output to avoid stray spaces
-          $out =~ s/[\t ]+$//;
+          # Advance index to just after the 'important' token
           $i = $j + $skip;
+      $removed++;
           next;
         }
       }
@@ -157,12 +158,7 @@ sub strip_important_stream {
     }
   }
 
-  # Light tidy: remove spaces before semicolons and closing braces/parens
-  $out =~ s/\s+;/;/g;
-  $out =~ s/\s+\}/}/g;
-  $out =~ s/\s+\)/)/g;
-
-  return $out;
+  return ($out, $removed ? 1 : 0);
 }
 
 sub process_file {
@@ -181,9 +177,9 @@ sub process_file {
   my $text = eval { decode('UTF-8', $raw, 1) };
   $text = $raw unless defined $text; # fall back if not UTF-8
 
-  my $processed = strip_important_stream($text);
+  my ($processed, $modified) = strip_important_stream($text);
 
-  if ($processed ne $text) {
+  if ($modified) {
     if ($dry_run) {
       print "Would modify: $path\n" if $verbose;
       return 1;
