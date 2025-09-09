@@ -90,6 +90,8 @@
     margin-right: 10%;
     position: relative;
     flex-grow: 1;
+    display: flex; // keep the container sized tightly to its content height
+    align-items: stretch;
 
     // Ensure content appears above glass canvas
     > * {
@@ -120,7 +122,7 @@
     padding: 10px;
     font-size: 18px;
     border: none;
-    border-radius: 5px;
+    border-radius: inherit; // match container radius so glass bounds = input bounds
     text-align: left;
     background: transparent;
     outline: none;
@@ -134,6 +136,12 @@
         border-color: variables.$sp-primary;
         box-shadow: 0 0 5px rgb(0 0 0 / 30%);
     }
+}
+
+// Make the search bar card glass match the input size exactly
+.sp-search-bar-container.glass.glass-card-base {
+    padding: 0; // remove default card padding to avoid oversized glass area
+    border-radius: 12px; // defines the pill/rounding used by both glass and input
 }
 
 @media screen and (width <= 600px) {
@@ -310,6 +318,13 @@
         border-top: none;
         border-right: none;
         border-bottom: none;
+    }
+
+    // When upgraded to glass card base via HAML, ensure compatibility
+    &.glass.glass-card-base {
+        border-left: 4px solid variables.$sp-primary;
+        /* Preserve original spacing and layout */
+        padding: 1.5rem;
     }
 
     &.dismissed {

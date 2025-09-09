@@ -10,6 +10,10 @@
     }
 }
 
+.turbo-progress-bar {
+    will-change: width, opacity;
+}
+
 .noscript-message {
     position: fixed;
     inset: 0;

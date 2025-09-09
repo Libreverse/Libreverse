@@ -20,12 +20,13 @@ To use this generic liquid glass effect:
 
 @mixin liquid-glass-core {
     position: relative;
-    display: inline-flex; /* Change to 'block', 'flex', etc., based on your needs */
+    /* Default to block for general containers; specific components can override */
+    display: block; /* Change to 'inline-flex', 'flex', etc., in component bases if needed */
     font-weight: 600;
     overflow: hidden;
     isolation: isolate; /* create stacking context for pseudo-elements */
     color: black;
-    cursor: pointer;
+    cursor: default;
     box-shadow:
         0 6px 6px rgb(0 0 0 / 20%),
         0 0 20px rgb(0 0 0 / 10%);
