@@ -50,8 +50,8 @@
     );
 
     /* Fallback/ridge cases */
-    border-top-right-radius: var(--sidebar-border-radius) !important;
-    border-bottom-right-radius: var(--sidebar-border-radius) !important;
+    border-top-right-radius: var(--sidebar-border-radius) ;
+    border-bottom-right-radius: var(--sidebar-border-radius) ;
     transition: all var(--glass-transition-medium) var(--glass-easing);
 
     // Ensure border-radius is applied consistently across all states
@@ -59,16 +59,16 @@
     &::before,
     &::after {
         border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0 !important;
+            var(--sidebar-border-radius) 0 ;
     }
 
     /* Remove overlay (after) border on the screen edge */
     &::after {
-        border-left: 0 !important;
-        border-inline-start: 0 !important;
+        border-left: 0 ;
+        border-inline-start: 0 ;
 
         /* Remove inner highlight that can appear as a border */
-        box-shadow: none !important;
+        box-shadow: none ;
 
         /* Clip overlay to the same rounded shape */
         clip-path: inset(
@@ -92,8 +92,8 @@
             0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius)
                 0
         );
-        border-top-right-radius: var(--sidebar-border-radius) !important;
-        border-bottom-right-radius: var(--sidebar-border-radius) !important;
+        border-top-right-radius: var(--sidebar-border-radius) ;
+        border-bottom-right-radius: var(--sidebar-border-radius) ;
     }
 
     // Content positioning
@@ -119,8 +119,8 @@
     pointer-events: auto;
 
     /* Absolutely forbid a left/inline-start border on the sidebar */
-    border-left: 0 !important;
-    border-inline-start: 0 !important;
+    border-left: 0 ;
+    border-inline-start: 0 ;
 
     // Base link styling using glass system
     .sidebar-link,
@@ -192,24 +192,24 @@
 .sidebar.glass-sidebar,
 .sidebar.glass-component {
     // Force our responsive widths over the mixin defaults with highest specificity
-    width: inherit !important;
+    width: inherit ;
 
     @media (width <= 600px) {
-        width: 48px !important;
-        min-width: 48px !important;
-        max-width: 48px !important;
+        width: 48px ;
+        min-width: 48px ;
+        max-width: 48px ;
     }
 
     @media (width >= 601px) and (width <= 1500px) {
-        width: 56px !important;
-        min-width: 56px !important;
-        max-width: 56px !important;
+        width: 56px ;
+        min-width: 56px ;
+        max-width: 56px ;
     }
 
     @media (width >= 1501px) {
-        width: 64px !important;
-        min-width: 64px !important;
-        max-width: 64px !important;
+        width: 64px ;
+        min-width: 64px ;
+        max-width: 64px ;
     }
 }
 
