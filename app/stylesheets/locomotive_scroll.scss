@@ -1,4 +1,5 @@
 @use "variables";
+@use "glass/liquid" as liquid;
 
 /* stylelint-disable selector-class-pattern */
 
@@ -7,12 +8,7 @@
     will-change: transform;
 }
 
-@mixin glass-effect {
-    background-color: variables.$glass;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px variables.$box-shadow;
-    border-radius: 8px;
-}
+// Use the shared liquid glass system from the app instead of a local mixin.
 
 .c-scrollbar {
     position: absolute;
@@ -26,6 +22,7 @@
         transform 0.3s,
         opacity 0.3s;
     opacity: 0;
+    z-index: 9999;
 }
 
 .c-scrollbar:hover {
@@ -61,15 +58,15 @@
     cursor: grab;
     transition: opacity 0.3s;
 
-    // Default fallback styles (always applied)
-    @include glass-effect;
+    // Apply the app-wide liquid glass effect
+    @include liquid.liquid-glass-core;
 
-    // Hide fallback styles when liquid glass is active
-    &[data-glass-active="true"] {
-        background: transparent;
-        backdrop-filter: none;
-        box-shadow: none;
-        border: none;
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
+    &::after {
+        @include liquid.liquid-glass-overlay;
     }
 }
 

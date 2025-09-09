@@ -642,7 +642,16 @@
     }
 
     // Default fallback styles (always applied)
+    // When combined with .glass, liquid glass will override these backgrounds.
     @include glass-effect;
+
+    // Compatibility when .glass.glass-card-base is applied to section containers
+    &.glass.glass-card-base {
+        /* Keep the colored border-left above glass overlays */
+        border-left: 4px solid variables.$dashboard-primary;
+        /* Ensure content is above ::before/::after of glass */
+        > * { position: relative; z-index: 2; }
+    }
 
     // Hide fallback styles when liquid glass is active (keep colored border)
     &[data-glass-active="true"] {
@@ -664,7 +673,7 @@
 
     .dismiss-button {
         // Nested class
-        background: transparent;
+    background: transparent;
         border: none;
         cursor: pointer;
         padding: 5px;

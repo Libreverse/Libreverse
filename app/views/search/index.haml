@@ -14,7 +14,7 @@
       %main
         - unless tutorial_dismissed?("search-tutorial")
           %div{"data-controller" => "dismissible"}
-            .search-tutorial#search-tutorial{
+            .search-tutorial.glass.glass-card-base#search-tutorial{
                                              "data-dismissible-key-value" => "search-tutorial",
                                              "data-dismissible-target" => "container"}
               .tutorial-dismiss

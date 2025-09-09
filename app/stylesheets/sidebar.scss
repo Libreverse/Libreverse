@@ -44,10 +44,11 @@
     overflow: hidden;
     background-clip: padding-box;
 
-    /* Extra safety for perfect rounding */
-    clip-path: inset(
-        0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0
-    );
+    /* Rely on border-radius instead of clipping to avoid cutting the stroke */
+    /* Removing clip-path prevents the border from being sheared at corners */
+    /* Keep background confined to padding box so it doesn't bleed under border */
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
 
     /* Fallback/ridge cases */
     border-top-right-radius: var(--sidebar-border-radius) ;
@@ -62,38 +63,25 @@
             var(--sidebar-border-radius) 0 ;
     }
 
-    /* Remove overlay (after) border on the screen edge */
+    /* Remove overlay (after) border on the screen edge without clipping corners */
     &::after {
-        border-left: 0 ;
-        border-inline-start: 0 ;
-
-        /* Remove inner highlight that can appear as a border */
-        box-shadow: none ;
-
-        /* Clip overlay to the same rounded shape */
-        clip-path: inset(
-            0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius)
-                0
-        );
-
-        /* Ensure no 1px on the screen edge from any effect */
-        mask-image: linear-gradient(
-            to right,
-            transparent 0,
-            transparent 1px,
-            #000 1px,
-            #000 100%
-        );
+        border-left: 0;
+        border-inline-start: 0;
+        /* Ensure overlays respect the rounding and don't create square edges */
+        border-radius: inherit;
+        box-shadow: none;
+        /* Avoid clip-path/masks that can shear borders at radii */
+        -webkit-mask-image: none;
+        mask-image: none;
     }
 
-    /* Match clipping on the displaced layer too */
+    /* Match rounding on any displaced layer, without clipping */
     &::before {
-        clip-path: inset(
-            0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius)
-                0
-        );
-        border-top-right-radius: var(--sidebar-border-radius) ;
-        border-bottom-right-radius: var(--sidebar-border-radius) ;
+        border-radius: inherit;
+        border-top-right-radius: var(--sidebar-border-radius);
+        border-bottom-right-radius: var(--sidebar-border-radius);
+        -webkit-mask-image: none;
+        mask-image: none;
     }
 
     // Content positioning
@@ -102,7 +90,8 @@
         z-index: 1;
     }
 
-    // WebGL enhanced state removed - CSS-only implementation
+    border-radius: 0px 12px 12px 0px !important;
+    border-left: none !important;
 
     // Responsive width
     width: var(--sidebar-width-medium);

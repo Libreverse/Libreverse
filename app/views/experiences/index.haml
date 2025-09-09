@@ -9,7 +9,7 @@
         %p.header-description= t('experiences.index.subtitle')
       - if user_signed_in? && !guest_user? && !tutorial_dismissed?("experiences-tutorial")
         %div{"data-controller" => "dismissible"}
-          .dashboard-section#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial",
+          .dashboard-section.glass.glass-card-base#experiences-tutorial{"data-dismissible-key-value" => "experiences-tutorial",
                                                  "data-dismissible-target" => "container"}
             .section-dismiss
               %button.dismiss-button{"data-action" => "dismissible#dismiss"}

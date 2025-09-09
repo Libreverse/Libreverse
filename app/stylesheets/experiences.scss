@@ -172,6 +172,12 @@
 .dashboard-section {
     @extend %administrative-section;
 
+    // When glass is applied to the dismissable tutorial section
+    &.glass.glass-card-base {
+        border-left: 4px solid variables.$dashboard-primary;
+        padding: 1.5rem;
+    }
+
     .section-dismiss {
         @extend %administrative-section-dismiss;
     }

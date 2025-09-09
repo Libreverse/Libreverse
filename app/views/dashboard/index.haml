@@ -47,7 +47,7 @@
 
         - if user_signed_in? && !tutorial_dismissed?("dashboard-tutorial")
           %div{"data-controller" => "dismissible"}
-            .dashboard-section#dashboard-tutorial{"data-dismissible-key-value" => "dashboard-tutorial",
+            .dashboard-section.glass.glass-card-base#dashboard-tutorial{"data-dismissible-key-value" => "dashboard-tutorial",
                                                  "data-dismissible-target" => "container"}
               .section-dismiss
                 %button.dismiss-button{"data-action" => "dismissible#dismiss"}

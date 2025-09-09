@@ -55,6 +55,10 @@
         @include liquid.liquid-glass-before;
     }
 
+    /* Cards should behave like block containers, not inline-flex */
+    display: block;
+    cursor: default;
+
     border-radius: var(--glass-border-radius-medium);
     padding: 24px;
 
