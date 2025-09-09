@@ -29,6 +29,9 @@
 @use "blog";
 // Note: Removed glass.css import - now handled by glass_system
 
+// Ensure legacy admin glass fallbacks don't override the new liquid glass
+@use "glass_overrides";
+
 html,
 body {
     width: 100%;

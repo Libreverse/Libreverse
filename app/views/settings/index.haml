@@ -9,9 +9,9 @@
         %p.header-description
           = t('settings.index.description')
         %h3.section-title= t('settings.index.language')
-  .language-picker-board.glass.glass-card-base{ data: { controller: 'language-picker' } }
-          - I18n.available_locales.each do |locale|
-            - flag = locale_flag_emoji(locale)
-            - is_current = I18n.locale == locale
-            %span.language-flag{ data: { action: 'click->language-picker#select', locale: locale }, class: (is_current ? 'selected' : '') }
-              = flag
+      .language-picker-board.glass.glass-card-base{ data: { controller: 'language-picker' } }
+        - I18n.available_locales.each do |locale|
+          - flag = locale_flag_emoji(locale)
+          - is_current = I18n.locale == locale
+          %span.language-flag{ data: { action: 'click->language-picker#select', locale: locale }, class: (is_current ? 'selected' : '') }
+            = flag

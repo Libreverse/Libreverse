@@ -1,0 +1,37 @@
+/* Final-pass overrides to ensure the new liquid glass shines through
+ * Loaded at the end of application.scss
+ */
+
+/* When a component uses .glass or glass-* bases, remove the older fallback
+   glass styles coming from templates/_administrative.scss placeholders. */
+[data-glass-active="true"],
+.glass,
+.glass-card-base,
+.glass-drawer-base,
+.glass-sidebar-base {
+    /* Neutralize heavy fallback visuals that make the glass look muddy */
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Ensure the pseudo-elements can sit above parents with overflow hidden */
+.glass,
+.glass-card-base,
+.glass-drawer-base,
+.glass-sidebar-base {
+    isolation: isolate;
+}
+
+/* Sidebar glass base: remove border on inline-start (screen edge), keep others */
+.glass-sidebar-base {
+    border-inline-start: 0 !important;
+    border-inline-end: 1px solid rgb(255 255 255 / 18%);
+    border-block-start: 1px solid rgb(255 255 255 / 12%);
+    border-block-end: 1px solid rgb(255 255 255 / 12%);
+}
+
+/* Slightly brighten text on glass for contrast */
+.glass,
+.glass * {
+    color: rgb(255 255 255 / 92%);
+}

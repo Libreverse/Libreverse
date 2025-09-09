@@ -10,7 +10,17 @@
     );
     backdrop-filter: blur(var(--glass-blur-radius))
         saturate(var(--glass-saturation));
-    border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+
+    /* Borders: top/right/bottom only; keep screen-edge (left) clean */
+    border: none;
+    border-top: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    border-right: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    border-bottom: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+
+    /* Logical props for RTL too */
+    border-block-start: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    border-block-end: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    border-inline-end: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
     box-shadow:
         var(--glass-shadow-light),
         inset 0 1px 0 rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
@@ -29,9 +39,19 @@
     justify-content: space-between;
     align-items: center;
     padding: 0;
-    border-left: none;
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
+
+    /* No border on the screen edge */
     overflow: hidden;
+    background-clip: padding-box;
+
+    /* Extra safety for perfect rounding */
+    clip-path: inset(
+        0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0
+    );
+
+    /* Fallback/ridge cases */
+    border-top-right-radius: var(--sidebar-border-radius) !important;
+    border-bottom-right-radius: var(--sidebar-border-radius) !important;
     transition: all var(--glass-transition-medium) var(--glass-easing);
 
     // Ensure border-radius is applied consistently across all states
@@ -40,6 +60,40 @@
     &::after {
         border-radius: 0 var(--sidebar-border-radius)
             var(--sidebar-border-radius) 0 !important;
+    }
+
+    /* Remove overlay (after) border on the screen edge */
+    &::after {
+        border-left: 0 !important;
+        border-inline-start: 0 !important;
+
+        /* Remove inner highlight that can appear as a border */
+        box-shadow: none !important;
+
+        /* Clip overlay to the same rounded shape */
+        clip-path: inset(
+            0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius)
+                0
+        );
+
+        /* Ensure no 1px on the screen edge from any effect */
+        mask-image: linear-gradient(
+            to right,
+            transparent 0,
+            transparent 1px,
+            #000 1px,
+            #000 100%
+        );
+    }
+
+    /* Match clipping on the displaced layer too */
+    &::before {
+        clip-path: inset(
+            0 round 0 var(--sidebar-border-radius) var(--sidebar-border-radius)
+                0
+        );
+        border-top-right-radius: var(--sidebar-border-radius) !important;
+        border-bottom-right-radius: var(--sidebar-border-radius) !important;
     }
 
     // Content positioning
@@ -63,6 +117,10 @@
 
     // Override any specific behaviors not covered by the glass system
     pointer-events: auto;
+
+    /* Absolutely forbid a left/inline-start border on the sidebar */
+    border-left: 0 !important;
+    border-inline-start: 0 !important;
 
     // Base link styling using glass system
     .sidebar-link,

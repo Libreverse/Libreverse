@@ -9,7 +9,6 @@ import { application } from "./application";
 import ApplicationController from "./application_controller";
 application.register("application", ApplicationController);
 
-
 import ConsentController from "./consent_controller";
 application.register("consent", ConsentController);
 
@@ -31,7 +30,6 @@ application.register("form-auto-submit", FormAutoSubmitController);
 import FoundationController from "./foundation_controller";
 application.register("foundation", FoundationController);
 
-
 import HyperspaceController from "./hyperspace_controller";
 application.register("hyperspace", HyperspaceController);
 
@@ -46,7 +44,6 @@ application.register("link", LinkController);
 
 import LocomotiveScrollController from "./locomotive_scroll_controller";
 application.register("locomotive-scroll", LocomotiveScrollController);
-
 
 import NavigationShortcutsController from "./navigation_shortcuts_controller";
 application.register("navigation-shortcuts", NavigationShortcutsController);
@@ -65,7 +62,6 @@ application.register("search", SearchController);
 
 import SearchUrlUpdaterController from "./search_url_updater_controller";
 application.register("search-url-updater", SearchUrlUpdaterController);
-
 
 import SidebarPopoverController from "./sidebar_popover_controller";
 application.register("sidebar-popover", SidebarPopoverController);

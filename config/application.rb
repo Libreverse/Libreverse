@@ -119,12 +119,11 @@ module LibreverseInstance
     end
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
-    # Only enable on systems with sufficient cores (>= 8) to avoid performance impact
     config.middleware.use WhitespaceCompressor
 
     # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
-    config.middleware.use TurboPreloadMiddleware
-    
+    config.middleware.use TurboPreloadMiddleware if cores > 16 && Rails.env.production?
+
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
     config.middleware.insert_before WhitespaceCompressor, EmojiReplacer, {

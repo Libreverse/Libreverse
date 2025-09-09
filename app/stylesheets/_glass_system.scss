@@ -2,6 +2,8 @@
 @forward "glass/components";
 @forward "glass/responsive";
 @forward "glass/fallbacks";
+@forward "glass/liquid";
+
 /* Glass System - Production Ready Implementation
  * Clean, maintainable glass effects with robust fallbacks
  * Replaces the fragmented glass implementation with a unified system
@@ -12,6 +14,7 @@
 @use "glass/components";
 @use "glass/responsive";
 @use "glass/fallbacks";
+@use "glass/liquid";
 
 // Forward the main glass classes so they can be extended by other files
 @forward "glass/base";
