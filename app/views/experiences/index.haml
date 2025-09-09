@@ -46,7 +46,7 @@
           .mt-3
             = link_to "Upgrade to Full Account", "/create-account", class: "btn btn-primary me-2"
       - else
-  %section.experience-form-container.mt-5#create-experience.glass.glass-card-base
+        %section.glass.glass-card-base.experience-form-container.mt-5#create-experience
           - if authenticated_user?
             %h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
             %p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
@@ -56,6 +56,6 @@
             .alert.alert-secondary.mb-4
               %h4.alert-heading Share Your Voice
               %p Create an account to share your experiences, stories, and insights with our community.
-              .mt-3
-                = link_to "Sign Up", "/create-account", class: "btn btn-primary me-2"
-                = link_to "Log In", "/login", class: "btn btn-outline-primary"
+            .mt-3
+              = link_to "Sign Up", "/create-account", class: "btn btn-primary me-2"
+              = link_to "Log In", "/login", class: "btn btn-outline-primary"

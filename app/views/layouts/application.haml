@@ -1,4 +1,4 @@
-!!!
+!!! 5
 - rtl_locales = %w[ar]
 %html.no-js{dir: (rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr'), lang: I18n.locale.to_s}
   %head
@@ -6,6 +6,7 @@
     = render "layouts/meta_tags"
     = csrf_meta_tags
   %body
+    = render "layouts/glass_filter"
     %noscript
       .noscript-message
         .noscript-message__content
@@ -41,7 +42,7 @@
 
           -# Attribution section
           .off-canvas-attribution{role: "complementary",
-                                  "aria-labelledby": "off-canvas-attribution-title"}
+                                  'aria-labelledby' => 'off-canvas-attribution-title'}
             %h5.off-canvas-attribution-title{id: "off-canvas-attribution-title"}
               = t('layouts.drawer.attribution')
             .off-canvas-attribution-content

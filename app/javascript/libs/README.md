@@ -25,10 +25,12 @@ Example:
 Using the Stimulus controller:
 
 ```html
-<div data-controller="glass"
-         data-glass-component-type-value="sidebar"
-         data-glass-border-radius-value="16"
-         data-glass-tint-opacity-value="0.12"></div>
+<div
+    data-controller="glass"
+    data-glass-component-type-value="sidebar"
+    data-glass-border-radius-value="16"
+    data-glass-tint-opacity-value="0.12"
+></div>
 ```
 
 ## Files

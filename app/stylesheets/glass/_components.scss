@@ -1,3 +1,5 @@
+@use "./liquid" as liquid;
+
 /* Glass Component Utilities
  * Utility classes for common glass component patterns
  * All components extend the base .glass class and add specific styling
@@ -5,6 +7,12 @@
 
 /* Utility Classes for Quick Implementation */
 .glass-sidebar-base {
+    @include liquid.liquid-glass-core;
+
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
     position: fixed;
     top: 50%;
     left: 0;
@@ -21,6 +29,12 @@
 }
 
 .glass-drawer-base {
+    @include liquid.liquid-glass-core;
+
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
     position: fixed;
     bottom: 0;
     right: 0;
@@ -35,33 +49,46 @@
 }
 
 .glass-card-base {
+    @include liquid.liquid-glass-core;
+
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
     border-radius: var(--glass-border-radius-medium);
     padding: 24px;
 
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--glass-shadow-heavy);
-    }
+    // No hover motion
 }
 
 /* Corner rounding utilities */
 .glass-corners-right {
-    border-radius: 0 var(--glass-border-radius-medium) var(--glass-border-radius-medium) 0;
+    border-radius: 0 var(--glass-border-radius-medium)
+        var(--glass-border-radius-medium) 0;
 }
 
 .glass-corners-left {
-    border-radius: var(--glass-border-radius-medium) 0 0 var(--glass-border-radius-medium);
+    border-radius: var(--glass-border-radius-medium) 0 0
+        var(--glass-border-radius-medium);
 }
 
 .glass-corners-top {
-    border-radius: var(--glass-border-radius-medium) var(--glass-border-radius-medium) 0 0;
+    border-radius: var(--glass-border-radius-medium)
+        var(--glass-border-radius-medium) 0 0;
 }
 
 .glass-corners-bottom {
-    border-radius: 0 0 var(--glass-border-radius-medium) var(--glass-border-radius-medium);
+    border-radius: 0 0 var(--glass-border-radius-medium)
+        var(--glass-border-radius-medium);
 }
 
 .glass-nav-base {
+    @include liquid.liquid-glass-core;
+
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,6 +98,12 @@
 }
 
 .glass-button-base {
+    @include liquid.liquid-glass-core;
+
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -81,13 +114,9 @@
     border: none;
     background: transparent;
 
-    &:hover {
-        transform: translateY(-1px);
-    }
+    // No hover motion
 
-    &:active {
-        transform: translateY(0) scale(0.98);
-    }
+    // No active scaling
 
     &:disabled,
     &.disabled {
@@ -98,6 +127,12 @@
 }
 
 .glass-modal-base {
+    @include liquid.liquid-glass-core;
+
+    &::before {
+        @include liquid.liquid-glass-before;
+    }
+
     position: fixed;
     top: 50%;
     left: 50%;

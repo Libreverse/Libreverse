@@ -4,8 +4,9 @@ import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
-import * as coffee from "coffeescript";
+import coffeescript from "./plugins/coffeescript.js";
 import postcssUrl from "postcss-url";
+import typehints from "./plugins/typehints.js";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
@@ -223,33 +224,11 @@ export default defineConfig(({ mode }) => {
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
         plugins: [
+            coffeescript(),
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),
-            {
-                name: "vite-plugin-coffeescript",
-                transform(code, id) {
-                    if (id.endsWith(".coffee")) {
-                        try {
-                            const compiled = coffee.compile(code, {
-                                filename: id,
-                                bare: true, // Back to true for cleaner output
-                                sourceMap: false,
-                            });
-                            return {
-                                code:
-                                    typeof compiled === "string"
-                                        ? compiled
-                                        : compiled.js,
-                                map: null,
-                            };
-                        } catch (error) {
-                            throw error;
-                        }
-                    }
-                    return null;
-                },
-            },
             stimulusHMR(),
+            typehints(),
         ],
     };
 });

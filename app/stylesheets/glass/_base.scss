@@ -3,100 +3,17 @@
  * Works without JavaScript, enhanced with WebGL when available
  */
 
-/* Base Glass Effect Mixin */
-@mixin glass-base {
-    background: linear-gradient(
-        135deg,
-        rgb(255 255 255 / var(--glass-background-opacity)) 0%,
-        rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.7)) 50%,
-        rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.5)) 100%
-    );
-    backdrop-filter: blur(var(--glass-blur-radius))
-        saturate(var(--glass-saturation));
-    border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-    box-shadow:
-        var(--glass-shadow-light),
-        inset 0 1px 0 rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
-        inset 0 -1px 0
-            rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.3));
-}
+/* Core .glass class now mapped to `.liquid-glass` in _liquid.scss */
 
-/* Core Glass Component Class */
-.glass {
-    @include glass-base;
-
-    position: relative;
-    overflow: hidden;
-    transition: all var(--glass-transition-medium) var(--glass-easing);
-
-    /* Ensure content appears above any background effects */
-    > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* WebGL enhanced state removed - CSS-only implementation */
-
-    /* Loading state */
-    &.glass-loading {
-        opacity: 0.9;
-
-        /* Multi-layer gradient approximating refraction */
-        background:
-            /* subtle internal rim (top) */
-            radial-gradient(120% 60% at 50% -10%, rgb(255 255 255 / 0.20) 0%, transparent 60%) ,
-            /* diagonal luminance like refraction */
-            linear-gradient(
-                135deg,
-                rgb(255 255 255 / calc(var(--glass-background-opacity) * 1.0)) 0%,
-                rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.70)) 48%,
-                rgb(255 255 255 / calc(var(--glass-background-opacity) * 0.45)) 100%
-            );
-
-        /* Stronger blur + saturation to mimic depth */
-        backdrop-filter: blur(calc(var(--glass-blur-radius) * 1.2)) saturate(calc(var(--glass-saturation) * 1.05));
-
-        /* Translucent highlight border */
-        border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-
-        /* Outer soft shadow + inner edge highlights */
-        box-shadow:
-            var(--glass-shadow-light),
-            inset 0 1px 0 rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.7)),
-            inset 0 -1px 0 rgb(0 0 0 / 0.04);
-
-        position: relative;
-        isolation: isolate; /* keep filters contained */
-
-        /* Specular sheen sweep (very subtle) */
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            pointer-events: none;
-            background: linear-gradient( to bottom, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.02) 40%, transparent 60% );
-            mix-blend-mode: screen;
-            opacity: 0.8;
-        }
-
-        /* Gentle diagonal sheen to mimic refractive streaks */
-        &::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            pointer-events: none;
-            background: linear-gradient( 160deg, transparent 30%, rgb(255 255 255 / 0.06) 45%, transparent 60% );
-            mix-blend-mode: screen;
-            opacity: 0.8;
-        }
-    }
-}
+@use "./liquid" as *;
 
 /* Glass Button Component */
 .glass-button {
-    @include glass-base;
+    @include liquid-glass-core;
+
+    &::before {
+        @include liquid-glass-before;
+    }
 
     display: inline-flex;
     align-items: center;
@@ -107,20 +24,9 @@
     text-decoration: none;
     transition: all var(--glass-transition-fast) var(--glass-easing);
     position: relative;
-        /* CSS-only implementation tuned to mimic WebGL rim/refraction */
-    &:hover {
-        background: linear-gradient(
-            135deg,
-            rgb(255 255 255 / var(--glass-hover-opacity)) 0%,
-            rgb(255 255 255 / calc(var(--glass-hover-opacity) * 0.7)) 50%,
-            rgb(255 255 255 / calc(var(--glass-hover-opacity) * 0.5)) 100%
-        );
-        transform: translateY(-1px);
-        box-shadow:
-            var(--glass-shadow-medium),
-            inset 0 1px 0
-                rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.8));
-    }
+
+    /* CSS-only implementation tuned to mimic WebGL rim/refraction */
+    // No hover motion or visual change
 
     &:active {
         transform: translateY(0) scale(0.98);

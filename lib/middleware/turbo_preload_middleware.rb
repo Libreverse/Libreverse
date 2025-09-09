@@ -20,13 +20,13 @@ class TurboPreloadMiddleware
 
     # Caching: Use Rails.cache to store processed HTML based on SHA1 hash of original
     # This saves unnecessary work for repeated identical responses (e.g., static pages)
-    unless response_body.empty?
+    if response_body.empty?
+      modified_body = response_body
+    else
       cache_key = "tp_html:#{::Digest::SHA1.hexdigest(response_body)}"
       modified_body = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
         add_turbo_preload(response_body)
       end
-    else
-      modified_body = response_body
     end
 
     # Update Content-Length header if necessary
