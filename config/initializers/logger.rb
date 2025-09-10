@@ -66,7 +66,14 @@ require "active_support/logger"
 
 # Create an ActiveSupport::Logger (not the standard Ruby Logger)
 # which automatically includes the silence method needed by ActiveRecord session store
-logger = ActiveSupport::Logger.new(Rails.root.join("log", "#{Rails.env}.log"))
+# In containers, write logs to STDOUT so the orchestrator captures them.
+io_target = if Rails.env.production?
+  $stdout
+else
+  Rails.root.join("log", "#{Rails.env}.log")
+end
+
+logger = ActiveSupport::Logger.new(io_target)
 
 # Ensure it has the LoggerSilencer module included (needed for the 'silence' method)
 logger.extend(ActiveSupport::LoggerSilencer) unless logger.respond_to?(:silence)
@@ -89,8 +96,8 @@ elsif Rails.env.test?
   # The log capture system in test_helper.rb will show logs for failed tests
   Rails.logger.level = Logger::ERROR
 else
-  # In production, we use the RAILS_LOG_LEVEL env var or default to info
-  level_str = ENV.fetch("RAILS_LOG_LEVEL") { "info" }
+  # In production, log as verbosely as development by default (override via RAILS_LOG_LEVEL)
+  level_str = ENV.fetch("RAILS_LOG_LEVEL") { "debug" }
   Rails.logger.level = Logger.const_get(level_str.upcase)
 end
 
