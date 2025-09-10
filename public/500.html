@@ -1,14 +1,650 @@
 <!doctype html>
-<html dir="ltr" lang="en">
+<html lang="en">
     <head>
-        <title>Houston, we have a problem. Error code 500.</title>
+        <title>Houston, we have a problem.</title>
         <meta charset="utf-8" />
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
+        <style>
+            /* Document
+            * ========================================================================== */
+
+            /**
+            * 1. Correct the line height in all browsers.
+            * 2. Prevent adjustments of font size after orientation changes in
+            *    IE on Windows Phone and in iOS.
+            */
+
+            html {
+            line-height: 1.15; /* 1 */
+            -ms-text-size-adjust: 100%; /* 2 */
+            -webkit-text-size-adjust: 100%; /* 2 */
+            }
+
+            /* Sections
+            * ========================================================================== */
+
+            /**
+            * Correct the font size and margin on `h1` elements within `section` and
+            * `article` contexts in Chrome, Edge, Firefox, and Safari.
+            */
+
+            h1 {
+            font-size: 2em;
+            margin: 0.67em 0;
+            }
+
+            /* Grouping content
+            * ========================================================================== */
+
+            /**
+            * Remove the margin on nested lists in Chrome, Edge, IE, and Safari.
+            */
+
+            dl dl,
+            dl ol,
+            dl ul,
+            ol dl,
+            ul dl {
+            margin: 0;
+            }
+
+            /**
+            * Remove the margin on nested lists in Edge 18- and IE.
+            */
+
+            ol ol,
+            ol ul,
+            ul ol,
+            ul ul {
+            margin: 0;
+            }
+
+            /**
+            * 1. Add the correct box sizing in Firefox.
+            * 2. Correct the inheritance of border color in Firefox.
+            * 3. Show the overflow in Edge 18- and IE.
+            */
+
+            hr {
+            box-sizing: content-box; /* 1 */
+            color: inherit; /* 2 */
+            height: 0; /* 1 */
+            overflow: visible; /* 3 */
+            }
+
+            /**
+            * Add the correct display in IE.
+            */
+
+            main {
+            display: block;
+            }
+
+            /**
+            * 1. Correct the inheritance and scaling of font size in all browsers.
+            * 2. Correct the odd `em` font sizing in all browsers.
+            */
+
+            pre {
+            font-family: monospace, monospace; /* 1 */
+            font-size: 1em; /* 2 */
+            }
+
+            /* Text-level semantics
+            * ========================================================================== */
+
+            /**
+            * Remove the gray background on active links in IE 10.
+            */
+
+            a {
+            background-color: transparent;
+            }
+
+            /**
+            * Add the correct text decoration in Edge 18-, IE, and Safari.
+            */
+
+            abbr[title] {
+            text-decoration: underline;
+            text-decoration: underline dotted;
+            }
+
+            /**
+            * Add the correct font weight in Chrome, Edge, and Safari.
+            */
+
+            b,
+            strong {
+            font-weight: bolder;
+            }
+
+            /**
+            * 1. Correct the inheritance and scaling of font size in all browsers.
+            * 2. Correct the odd `em` font sizing in all browsers.
+            */
+
+            code,
+            kbd,
+            samp {
+            font-family: monospace, monospace; /* 1 */
+            font-size: 1em; /* 2 */
+            }
+
+            /**
+            * Add the correct font size in all browsers.
+            */
+
+            small {
+            font-size: 80%;
+            }
+
+            /* Embedded content
+            * ========================================================================== */
+
+            /**
+            * Add the correct display in IE 9-.
+            */
+
+            audio,
+            video {
+            display: inline-block;
+            }
+
+            /**
+            * Add the correct display in iOS 4-7.
+            */
+
+            audio:not([controls]) {
+            display: none;
+            height: 0;
+            }
+
+            /**
+            * Remove the border on images within links in IE 10-.
+            */
+
+            img {
+            border-style: none;
+            }
+
+            /**
+            * Hide the overflow in IE.
+            */
+
+            svg:not(:root) {
+            overflow: hidden;
+            }
+
+            /* Tabular data
+            * ========================================================================== */
+
+            /**
+            * 1. Correct table border color inheritance in all Chrome, Edge, and Safari.
+            * 2. Remove text indentation from table contents in Chrome, Edge, and Safari.
+            */
+
+            table {
+            border-color: inherit; /* 1 */
+            text-indent: 0; /* 2 */
+            }
+
+            /* Forms
+            * ========================================================================== */
+
+            /**
+            * Remove the margin on controls in Safari.
+            */
+
+            button,
+            input,
+            select {
+            margin: 0;
+            }
+
+            /**
+            * 1. Show the overflow in IE.
+            * 2. Remove the inheritance of text transform in Edge 18-, Firefox, and IE.
+            */
+
+            button {
+            overflow: visible; /* 1 */
+            text-transform: none; /* 2 */
+            }
+
+            /**
+            * Correct the inability to style buttons in iOS and Safari.
+            */
+
+            button,
+            [type="button"],
+            [type="reset"],
+            [type="submit"] {
+            -webkit-appearance: button;
+            }
+
+            /**
+            * Correct the padding in Firefox.
+            */
+
+            fieldset {
+            padding: 0.35em 0.75em 0.625em;
+            }
+
+            /**
+            * Show the overflow in Edge 18- and IE.
+            */
+
+            input {
+            overflow: visible;
+            }
+
+            /**
+            * 1. Correct the text wrapping in Edge 18- and IE.
+            * 2. Correct the color inheritance from `fieldset` elements in IE.
+            */
+
+            legend {
+            box-sizing: border-box; /* 1 */
+            color: inherit; /* 2 */
+            display: table; /* 1 */
+            max-width: 100%; /* 1 */
+            white-space: normal; /* 1 */
+            }
+
+            /**
+            * 1. Add the correct display in Edge 18- and IE.
+            * 2. Add the correct vertical alignment in Chrome, Edge, and Firefox.
+            */
+
+            progress {
+            display: inline-block; /* 1 */
+            vertical-align: baseline; /* 2 */
+            }
+
+            /**
+            * Remove the inheritance of text transform in Firefox.
+            */
+
+            select {
+            text-transform: none;
+            }
+
+            /**
+            * 1. Remove the margin in Firefox and Safari.
+            * 2. Remove the default vertical scrollbar in IE.
+            */
+
+            textarea {
+            margin: 0; /* 1 */
+            overflow: auto; /* 2 */
+            }
+
+            /**
+            * 1. Add the correct box sizing in IE 10-.
+            * 2. Remove the padding in IE 10-.
+            */
+
+            [type="checkbox"],
+            [type="radio"] {
+            box-sizing: border-box; /* 1 */
+            padding: 0; /* 2 */
+            }
+
+            /**
+            * 1. Correct the odd appearance in Chrome, Edge, and Safari.
+            * 2. Correct the outline style in Safari.
+            */
+
+            [type="search"] {
+            -webkit-appearance: textfield; /* 1 */
+            outline-offset: -2px; /* 2 */
+            }
+
+            /**
+            * Correct the cursor style of increment and decrement buttons in Safari.
+            */
+
+            ::-webkit-inner-spin-button,
+            ::-webkit-outer-spin-button {
+            height: auto;
+            }
+
+            /**
+            * Correct the text style of placeholders in Chrome, Edge, and Safari.
+            */
+
+            ::-webkit-input-placeholder {
+            color: inherit;
+            opacity: 0.54;
+            }
+
+            /**
+            * Remove the inner padding in Chrome, Edge, and Safari on macOS.
+            */
+
+            ::-webkit-search-decoration {
+            -webkit-appearance: none;
+            }
+
+            /**
+            * 1. Correct the inability to style upload buttons in iOS and Safari.
+            * 2. Change font properties to `inherit` in Safari.
+            */
+
+            ::-webkit-file-upload-button {
+            -webkit-appearance: button; /* 1 */
+            font: inherit; /* 2 */
+            }
+
+            /**
+            * Remove the inner border and padding of focus outlines in Firefox.
+            */
+
+            ::-moz-focus-inner {
+            border-style: none;
+            padding: 0;
+            }
+
+            /**
+            * Restore the focus outline styles unset by the previous rule in Firefox.
+            */
+
+            :-moz-focusring {
+            outline: 1px dotted ButtonText;
+            }
+
+            /**
+            * Remove the additional :invalid styles in Firefox.
+            */
+
+            :-moz-ui-invalid {
+            box-shadow: none;
+            }
+
+            /* Interactive
+            * ========================================================================== */
+
+            /*
+            * Add the correct display in Edge 18- and IE.
+            */
+
+            details {
+            display: block;
+            }
+
+            /*
+            * Add the correct styles in Edge 18-, IE, and Safari.
+            */
+
+            dialog {
+            background-color: white;
+            border: solid;
+            color: black;
+            display: block;
+            height: -moz-fit-content;
+            height: -webkit-fit-content;
+            height: fit-content;
+            left: 0;
+            margin: auto;
+            padding: 1em;
+            position: absolute;
+            right: 0;
+            width: -moz-fit-content;
+            width: -webkit-fit-content;
+            width: fit-content;
+            }
+
+            dialog:not([open]) {
+            display: none;
+            }
+
+            /*
+            * Add the correct display in all browsers.
+            */
+
+            summary {
+            display: list-item;
+            }
+
+            /* Scripting
+            * ========================================================================== */
+
+            /**
+            * Add the correct display in IE 9-.
+            */
+
+            canvas {
+            display: inline-block;
+            }
+
+            /**
+            * Add the correct display in IE.
+            */
+
+            template {
+            display: none;
+            }
+
+            /* User interaction
+            * ========================================================================== */
+
+            /**
+            * Add the correct display in IE 10-.
+            */
+
+            [hidden] {
+            display: none;
+            }
+            html, body {
+                height: 100%;
+            }
+            body {
+                margin: 0;
+                min-height: 100vh;
+                background: #111; /* ensure no white bleed outside filtered area */
+            }
+            #content {
+                display: flex;
+                flex-direction: column;
+                -webkit-animation-direction: alternate;
+                -moz-animation-direction: alternate;
+                -o-animation-direction: alternate;
+                animation-direction: alternate;
+                -webkit-animation-duration: 0.01s;
+                -moz-animation-duration: 0.01s;
+                -o-animation-duration: 0.01s;
+                animation-duration: 0.01s;
+                -webkit-animation-iteration-count: infinite;
+                -moz-animation-iteration-count: infinite;
+                -o-animation-iteration-count: infinite;
+                animation-iteration-count: infinite;
+                -webkit-animation-name: textflicker;
+                -moz-animation-name: textflicker;
+                -o-animation-name: textflicker;
+                animation-name: textflicker;
+                background: #111;
+                color: #eee;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 1em;
+                letter-spacing: 0.125em;
+                line-height: 1;
+                /* vertical | horizontal (increased) */
+                padding: clamp(4rem, 8vw, 12rem) clamp(8rem, 16vw, 24rem);
+                text-shadow:
+                    0.06rem 0 0.06rem #ea36af,
+                    -0.125rem 0 0.06rem #75fa69;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                box-sizing: border-box;
+            }
+            #content > :first-child { margin-top: 0; }
+            #content > :last-child { margin-bottom: 0; }
+            h1 {
+                font-size: 5em;
+                text-align: center;
+            }
+            a {
+                color: #fff;
+            }
+            @media screen and (min-width: 1200px) {
+                #content { margin-left: 0; margin-right: 0; }
+            }
+            @media screen and (min-width: 600px) {
+                #content { margin-left: 0; margin-right: 0; }
+            }
+            @-webkit-keyframes textflicker {
+                0% {
+                    text-shadow:
+                        1px 0 0 #ea36af,
+                        -2px 0 0 #75fa69;
+                }
+                to {
+                    text-shadow:
+                        2px 0.5px 2px #ea36af,
+                        -1px -0.5px 2px #75fa69;
+                }
+            }
+            @-moz-keyframes textflicker {
+                0% {
+                    text-shadow:
+                        1px 0 0 #ea36af,
+                        -2px 0 0 #75fa69;
+                }
+                to {
+                    text-shadow:
+                        2px 0.5px 2px #ea36af,
+                        -1px -0.5px 2px #75fa69;
+                }
+            }
+            @-o-keyframes textflicker {
+                0% {
+                    text-shadow:
+                        1px 0 0 #ea36af,
+                        -2px 0 0 #75fa69;
+                }
+                to {
+                    text-shadow:
+                        2px 0.5px 2px #ea36af,
+                        -1px -0.5px 2px #75fa69;
+                }
+            }
+            @keyframes textflicker {
+                0% {
+                    text-shadow:
+                        1px 0 0 #ea36af,
+                        -2px 0 0 #75fa69;
+                }
+                to {
+                    text-shadow:
+                        2px 0.5px 2px #ea36af,
+                        -1px -0.5px 2px #75fa69;
+                }
+            }
+
+            /* Disable motion for users who prefer reduced motion */
+            @media (prefers-reduced-motion: reduce) {
+                #content {
+                    -webkit-animation: none !important;
+                    -moz-animation: none !important;
+                    -o-animation: none !important;
+                    animation: none !important;
+                }
+            }
+
+            .scanlines {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 2; /* overlay above content */
+                pointer-events: none;
+                background-image: repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 1px,
+                    rgba(0, 0, 0, 0.15) 1px,
+                    rgba(0, 0, 0, 0.15) 2px
+                );
+            }
+        </style>
     </head>
     <body>
-        <h1>Houston, we have a problem. Error code 500.</h1>
+        <div class="scanlines"></div>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none"
+         style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+            <defs>
+                <filter id="barrel" x="-30%" y="-30%" width="160%" height="160%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feImage id="filter-image" x="-30%" y="-30%" width="160%" height="160%" preserveAspectRatio="none" result="barrelImage"/>
+                    <feGaussianBlur in="barrelImage" stdDeviation="0.35" result="barrel"/>
+                    <feDisplacementMap in="SourceGraphic" in2="barrel" scale="50" xChannelSelector="R" yChannelSelector="G" edgeMode="duplicate" x="-30%" y="-30%" width="160%" height="160%"/>
+                </filter>
+            </defs>
+            <g filter="url(#barrel)">
+                <foreignObject x="-10%" y="-10%" width="120%" height="120%">
+                    <div id="content" xmlns="http://www.w3.org/1999/xhtml">
+                        <h1>Houston, we have a problem.</h1>
+                        <p>You have encountered a glitch.</p>
+                        <p>If you are in the know, the HTTP status code is 500.</p>
+                        <p>
+                            This page uses the
+                            <a href="https://github.com/d3nn7/crt-css" rel="noopener">crt.css</a>
+                            stylesheet.
+                        </p>
+                        <br />
+                        <p><a href="/" rel="noopener">Go Back Home</a></p>
+                    </div>
+                </foreignObject>
+            </g>
+        </svg>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <script>
+            'use strict';
+            var canvas = document.getElementById('canvas');
+            var barrel = document.getElementById('filter-image');
+            var displacement = document.querySelector('feDisplacementMap');
+            var size = 1024; // higher-res displacement texture to avoid sampling artifacts
+            canvas.width = size;
+            canvas.height = size;
+            var c = size / 2;
+            var ctx = canvas.getContext('2d');
+            for (var y = 0; y < size; y++) {
+                for (var x = 0; x < size; x++) {
+                    var dx = x - c;
+                    var dy = y - c;
+                    var l = Math.sqrt(dx * dx + dy * dy);
+                    var norm_l = l / c;
+                    // Monotonic radial factor (r^2) to avoid foldovers/tears; tuned constant for curvature
+                    var factor = Math.pow(Math.min(norm_l, 1), 2) * 0.35;
+                    var delta_x = dx * factor;
+                    var delta_y = dy * factor;
+                    var r = 128 + delta_x;
+                    var g = 128 + delta_y;
+                    r = Math.max(0, Math.min(255, r));
+                    g = Math.max(0, Math.min(255, g));
+                    var o = 1;
+                    ctx.fillStyle = `rgba(${Math.floor(r)},${Math.floor(g)},0,${o})`;
+                    ctx.fillRect(x, y, 1, 1);
+                }
+            }
+            // Set both href and xlink:href for compatibility (SVG2 and legacy)
+            var dataUrl = canvas.toDataURL();
+            barrel.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataUrl);
+            barrel.setAttribute('href', dataUrl);
+            function updateScale() {
+                var base_size = size; // align with displacement texture resolution
+                var base_scale = 64;
+                var strength = 0.95; // slightly stronger curvature
+                var current_scale = base_scale * (window.innerWidth / base_size) * strength;
+                displacement.setAttribute('scale', current_scale);
+            }
+            updateScale();
+            window.addEventListener('resize', updateScale);
+        </script>
     </body>
 </html>

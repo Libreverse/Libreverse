@@ -252,6 +252,23 @@
         transform: rotate(-4deg);
         filter: invert(0.25);
     }
+
+    .article-date {
+        position: absolute;
+        top: 1.25rem;
+        left: 2rem; // align with paper-container horizontal padding
+        font-family: inherit;
+        font-size: 25px; // a bit bigger
+        color: #2c2c2d;
+        background: none;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+        transform: none;
+        opacity: 1;
+        pointer-events: none;
+        user-select: none;
+    }
 }
 
 .pre-book h1 {
@@ -262,6 +279,17 @@
     text-rendering: optimizelegibility;
 }
 
+.pre-book .subtitle {
+    font-family: inherit;
+    color: #3a3a3b;
+    font-size: 28px;
+    line-height: 1.2;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    letter-spacing: 0.02rem;
+    text-shadow: 0 1px 0 rgb(255 255 255 / 50%);
+}
+
 .pre-book p {
     color: #2c2c2d;
     margin-bottom: 1.5rem;
@@ -270,6 +298,16 @@
     text-rendering: optimizelegibility;
     letter-spacing: 0.02rem;
     word-spacing: 0.0005rem;
+}
+
+.pre-book .byline {
+    font-family: inherit;
+    font-size: 30px; // match regular paragraph size
+    color: #555556;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    top: -0.5rem; // nudge upward slightly
 }
 
 .new-hp-bg {
