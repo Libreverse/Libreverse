@@ -100,6 +100,11 @@ RUN printf '%s\n' \
     'passenger_log_file /dev/stderr;' \
     'passenger_file_descriptor_log_file /dev/stderr;' \
     > /etc/nginx/conf.d/10-passenger-base.conf
+    
+# Create temp directories for NGINX and Passenger buffering
+RUN mkdir -p /home/app/webapp/tmp/nginx_body /home/app/webapp/tmp/passenger /home/app/webapp/tmp/modsec \
+    && chown -R app:app /home/app/webapp/tmp \
+    && chmod -R 750 /home/app/webapp/tmp
 
 # Install CrowdSec (LAPI + agent) from official repo and NGINX bouncer Lua component
 RUN set -eux; \
