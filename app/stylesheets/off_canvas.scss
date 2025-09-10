@@ -63,8 +63,10 @@
     /* Remove rounded corners */
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+
     /* No need to clip contents when not rounded */
     overflow: visible;
+
     // Solid background instead of glass effect
     background-image: linear-gradient(
         135deg,
