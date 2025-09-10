@@ -2,40 +2,40 @@
 
 = render "layouts/leniswrapper" do
   = render "layouts/navigationshortcutswrapper" do
-      .new-hp-bg{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
-          - wood_img = bitmap_image_data_url("images/wood")
-          - paper_img = bitmap_image_data_url("images/paper")
-          = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-          = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-          = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
-      .pre-book{itemscope: "itemscope", itemtype: "https://schema.org/Article"}
-          .paper-container
-              = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
-              = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
-              = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
-              .article-date{itemprop: "datePublished"}= t('homepage.index.article.date_published')
-              %h1{itemprop: "headline"}= t('homepage.index.article.title')
-              %h2.subtitle{itemprop: "alternativeHeadline"}= t('homepage.index.article.subtitle')
-              %p{itemprop: "description"}= t('homepage.index.article.description')
-              %p= t('homepage.index.article.p1')
-              %p= t('homepage.index.article.p2')
-              %p= t('homepage.index.article.p3')
-              %p= t('homepage.index.article.p4')
-              %p= t('homepage.index.article.p5')
-              %p= t('homepage.index.article.p6')
-              %p= t('homepage.index.article.p7')
-              %p= t('homepage.index.article.p8')
-              %p= t('homepage.index.article.p9')
-              %p= t('homepage.index.article.p10')
-              %p.byline{itemprop: "author", itemscope: true, itemtype: "https://schema.org/Person"}
-                  %span{itemprop: "name"}= t('homepage.index.article.byline', project: t('homepage.index.brand'), author: t('homepage.index.article.author_name'))
-                  %a{itemprop: "url", href: "https://geor.me", rel: "me", hidden: true}= t('homepage.index.article.author_url_label')
-      .cta-container-container
-          .cta-xai-particles{"data-controller" => "cta-particles"}
-          .cta-xai-effect
-          .cta-container{"data-controller" => "hyperspace"}
-              %h2= t('homepage.index.take_control')
-              %p= t('homepage.index.help_build_alternative')
-              %form{ action: "/create-account", method: "get"}
-                  %button.action{ type: "submit", "data-hyperspace-target" => "button", "data-action" => "click->hyperspace#toggle" }= t('homepage.index.create_account')  .cta-xai-particles
+    .new-hp-bg{"data-controller" => "parallax-background", "data-scroll" => "", "data-scroll-speed" => "-3"}
+      - wood_img = bitmap_image_data_url("images/wood")
+      - paper_img = bitmap_image_data_url("images/paper")
+      = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+      = image_tag(wood_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1")
+    .pre-book{itemscope: "itemscope", itemtype: "https://schema.org/Article"}
+      .paper-container
+        = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
+        = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
+        = image_tag(paper_img['.avif'], loading: "eager", decoding: "async", fetchpriority: "high", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")
+        .article-date{itemprop: "datePublished"}= t('homepage.index.article.date_published')
+        %h1{itemprop: "headline"}= t('homepage.index.article.title')
+        %h2.subtitle{itemprop: "subtitle"}= t('homepage.index.article.subtitle')
+        %p{itemprop: "description"}= t('homepage.index.article.description')
+        %p= t('homepage.index.article.p1')
+        %p= t('homepage.index.article.p2')
+        %p= t('homepage.index.article.p3')
+        %p= t('homepage.index.article.p4')
+        %p= t('homepage.index.article.p5')
+        %p= t('homepage.index.article.p6')
+        %p= t('homepage.index.article.p7')
+        %p= t('homepage.index.article.p8')
+        %p= t('homepage.index.article.p9')
+        %p= t('homepage.index.article.p10')
+        %p.byline{itemprop: "author", itemscope: true, itemtype: "https://schema.org/Person"}
+          %span{itemprop: "name"}= t('homepage.index.article.byline', project: t('homepage.index.brand'), author: t('homepage.index.article.author_name'))
+          %a{itemprop: "url", href: "https://geor.me", rel: "me", hidden: true}= t('homepage.index.article.author_url_label')
+    .cta-container-container
+      .cta-xai-particles{"data-controller" => "cta-particles"}
+      .cta-xai-effect
+      .cta-container{"data-controller" => "hyperspace"}
+        %h2= t('homepage.index.take_control')
+        %p= t('homepage.index.help_build_alternative')
+        %form{ action: "/create-account", method: "get"}
+          %button.action{ type: "submit", "data-hyperspace-target" => "button", "data-action" => "click->hyperspace#toggle" }= t('homepage.index.create_account')
 .cta-xai-particles
