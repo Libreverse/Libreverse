@@ -300,16 +300,16 @@ export default function typehints(options = {}) {
                         // Add JSDoc (preserved by terser via /*! ... */; single-line to minimize size)
                         const parameterDocumentation = path.node.params.map(
                             (parameter, index) =>
-                                `@param {${parameterTypes[index] || "any"}} ${getParameterName(parameter)}`
+                                `@param {${parameterTypes[index] || "any"}} ${getParameterName(parameter)}`,
                         );
-                        const document_ = `! ${[...parameterDocumentation, `@returns {${returnType}}`].join(' ')}`;
+                        const document_ = `! ${[...parameterDocumentation, `@returns {${returnType}}`].join(" ")}`;
                         // Only add once
                         const existingLead = path.node.leadingComments || [];
                         const alreadyHasJSDocument = existingLead.some(
                             (c) =>
                                 c.type === "CommentBlock" &&
                                 (c.value.includes("@returns") ||
-                                    c.value.startsWith("!"))
+                                    c.value.startsWith("!")),
                         );
                         if (!alreadyHasJSDocument) {
                             path.addComment("leading", document_, false); // false => block comment => /*! ... */

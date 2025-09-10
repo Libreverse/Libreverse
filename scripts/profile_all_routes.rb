@@ -174,12 +174,15 @@ sorted = frames.values
                .first(30)
 
 puts "\nTop 30 methods by samples (#{total_samples} total):"
-sorted.each_with_index do |f, i|
+i = 0
+while i < sorted.length
+  f = sorted[i]
   name = f[:name]
   samples = f[:samples]
   loc = f[:file] && f[:line] ? "#{f[:file]}:#{f[:line]}" : ""
   pct = total_samples.positive? ? (100.0 * samples / total_samples) : 0
   puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i + 1, name, samples, pct, loc)
+  i += 1
 end
 
 # Controller actions breakdown (averages)
@@ -233,12 +236,15 @@ app_sorted = frames.values
                    .first(30)
 
 puts "\nTop 30 methods by samples (app/ & lib/ only):"
-app_sorted.each_with_index do |f, i|
+i2 = 0
+while i2 < app_sorted.length
+  f = app_sorted[i2]
   name = f[:name]
   samples = f[:samples]
   loc = f[:file] && f[:line] ? "#{f[:file]}:#{f[:line]}" : ""
   pct = total_samples.positive? ? (100.0 * samples / total_samples) : 0
-  puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i + 1, name, samples, pct, loc)
+  puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i2 + 1, name, samples, pct, loc)
+  i2 += 1
 end
 
 by_module = Hash.new(0)
@@ -251,9 +257,13 @@ frames.each_value do |f|
 end
 
 puts "\nTop 20 modules/classes by samples:"
-by_module.sort_by { |_, s| -s }.first(20).each_with_index do |(mod, s), i|
+mod_list = by_module.sort_by { |_, s| -s }.first(20)
+i3 = 0
+while i3 < mod_list.length
+  mod, s = mod_list[i3]
   pct = total_samples.positive? ? (100.0 * s / total_samples) : 0
-  puts format("%2d. %-40s %8d samples  %5.1f%%", i + 1, mod, s, pct)
+  puts format("%2d. %-40s %8d samples  %5.1f%%", i3 + 1, mod, s, pct)
+  i3 += 1
 end
 
 if FLAME_FILE && !FLAME_FILE.strip.empty?

@@ -55,12 +55,15 @@ sorted = frames.values
                .first(25)
 
 puts "\nTop 25 methods by samples (#{total_samples} total):"
-sorted.each_with_index do |f, i|
+i = 0
+while i < sorted.length
+  f = sorted[i]
   name = f[:name]
   samples = f[:samples]
   loc = f[:file] && f[:line] ? "#{f[:file]}:#{f[:line]}" : ""
   pct = total_samples.positive? ? (100.0 * samples / total_samples) : 0
   puts format("%2d. %-60s %8d samples  %5.1f%%  %s", i + 1, name, samples, pct, loc)
+  i += 1
 end
 
 # Aggregate by module/class prefix: split on # or . and use the left side
@@ -76,9 +79,12 @@ end
 mod_sorted = by_module.sort_by { |_, s| -s }.first(20)
 
 puts "\nTop 20 modules/classes by samples:"
-mod_sorted.each_with_index do |(mod, s), i|
+i2 = 0
+while i2 < mod_sorted.length
+  mod, s = mod_sorted[i2]
   pct = total_samples.positive? ? (100.0 * s / total_samples) : 0
-  puts format("%2d. %-40s %8d samples  %5.1f%%", i + 1, mod, s, pct)
+  puts format("%2d. %-40s %8d samples  %5.1f%%", i2 + 1, mod, s, pct)
+  i2 += 1
 end
 
 if FLAME && !FLAME.strip.empty?

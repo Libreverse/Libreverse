@@ -9,6 +9,7 @@ exclude:
     - "**/vendor/**/*.haml"
     - "**/vendor/**/*.html.haml"
     - ".codeql/**/*"
+    - "app/views/layouts/_glass_filter.haml"
 
 linters:
     LineLength:

@@ -7,9 +7,9 @@ use File::Spec;
 use Encode qw(decode encode);
 
 # Options
-my $root = File::Spec->rel2abs('.');
-my $dry_run = 0;
-my $verbose = 0;
+my $root        = File::Spec->rel2abs('.');
+my $dry_run     = 0;
+my $verbose     = 0;
 my @include_ext = qw(.scss .css);
 
 GetOptions(
@@ -40,7 +40,7 @@ sub should_skip_dir {
   my ($dir) = @_;
   # Normalize to relative path from root
   my $rel = File::Spec->abs2rel($dir, $root);
-  return 0 if $rel =~ m{\.\.(?:/|\\)}; # outside root
+  return 0 if $rel =~ m{\.\.(?:/|\\)};    # outside root
   return 1 if exists $skip_dirs{$rel};
   # Skip any path component that matches skip list
   for my $k (keys %skip_dirs) {
@@ -58,18 +58,18 @@ sub has_wanted_ext {
 }
 
 sub strip_important_stream {
-  my ($s) = @_;
-  my $out = '';
-  my $len = length $s;
-  my $i = 0;
-  my $removed = 0; # track if we removed any !important
+  my ($s)     = @_;
+  my $out     = '';
+  my $len     = length $s;
+  my $i       = 0;
+  my $removed = 0;           # track if we removed any !important
 
   my $STATE_CODE = 0;
   my $STATE_STR  = 1;
-  my $STATE_BCMT = 2; # /* */
-  my $STATE_LCMT = 3; # // ...\n
-  my $state = $STATE_CODE;
-  my $quote = undef;
+  my $STATE_BCMT = 2;             # /* */
+  my $STATE_LCMT = 3;             # // ...\n
+  my $state      = $STATE_CODE;
+  my $quote      = undef;
 
   while ($i < $len) {
     my $ch = substr($s, $i, 1);
@@ -97,7 +97,7 @@ sub strip_important_stream {
         $i += 2;
         next;
       }
-      # Detect and remove !important (with optional whitespace) case-insensitively
+    # Detect and remove !important (with optional whitespace) case-insensitively
       if ($ch eq '!') {
         my $j = $i + 1;
         # Skip whitespace
@@ -109,10 +109,10 @@ sub strip_important_stream {
         my $remaining = substr($s, $j);
         if ($remaining =~ /^important\b/i) {
           # Remove any trailing part of 'important'
-          my $skip = 9; # length('important')
-          # Advance index to just after the 'important' token
+          my $skip = 9;    # length('important')
+                           # Advance index to just after the 'important' token
           $i = $j + $skip;
-      $removed++;
+          $removed++;
           next;
         }
       }
@@ -125,7 +125,7 @@ sub strip_important_stream {
     if ($state == $STATE_STR) {
       $out .= $ch;
       $i++;
-      if ($ch eq '\\' && $i < $len) { # escape next char
+      if ($ch eq '\\' && $i < $len) {    # escape next char
         $out .= substr($s, $i, 1);
         $i++;
         next;
@@ -169,13 +169,13 @@ sub process_file {
     warn "Could not read $path: $!\n" if $verbose;
     return 0;
   };
-  local $/; # slurp
+  local $/;    # slurp
   my $raw = <$fh> // '';
   close $fh;
 
   # Assume UTF-8 text files (common for CSS/SCSS)
   my $text = eval { decode('UTF-8', $raw, 1) };
-  $text = $raw unless defined $text; # fall back if not UTF-8
+  $text = $raw unless defined $text;    # fall back if not UTF-8
 
   my ($processed, $modified) = strip_important_stream($text);
 
@@ -200,23 +200,25 @@ sub process_file {
 }
 
 find({
-  wanted => sub {
-    return if -d $_;
-    my $path = $File::Find::name;
-    # Skip directories in our skip list
-    if ($File::Find::dir && should_skip_dir($File::Find::dir)) {
-      $File::Find::prune = 1;
-      return;
-    }
-    return unless has_wanted_ext($path);
-    $changed_files += process_file($path);
+    wanted => sub {
+      return if -d $_;
+      my $path = $File::Find::name;
+      # Skip directories in our skip list
+      if ($File::Find::dir && should_skip_dir($File::Find::dir)) {
+        $File::Find::prune = 1;
+        return;
+      }
+      return unless has_wanted_ext($path);
+      $changed_files += process_file($path);
+    },
+    no_chdir => 1,
   },
-  no_chdir => 1,
-}, $root);
+  $root
+);
 
-print sprintf("Scanned %d files. %s %d file(s).\n",
-  $scanned_files,
-  ($dry_run ? 'Would modify' : 'Modified'),
+print sprintf(
+  "Scanned %d files. %s %d file(s).\n",
+  $scanned_files, ($dry_run ? 'Would modify' : 'Modified'),
   $changed_files,
 );
 
