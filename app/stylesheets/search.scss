@@ -323,6 +323,7 @@
     // When upgraded to glass card base via HAML, ensure compatibility
     &.glass.glass-card-base {
         border-left: 4px solid variables.$sp-primary;
+
         /* Preserve original spacing and layout */
         padding: 1.5rem;
     }

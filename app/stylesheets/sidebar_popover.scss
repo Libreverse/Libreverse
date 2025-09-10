@@ -155,8 +155,8 @@
 // Foundation tooltip overrides for sidebar popovers
 .tooltip.sidebar-popover {
     // Override Foundation's default tooltip styling
-    background: transparent ;
-    color: inherit ;
+    background: transparent;
+    color: inherit;
 
     // Ensure proper positioning
     pointer-events: none;
@@ -165,7 +165,7 @@
     // Remove Foundation's default arrow
     &::before,
     &::after {
-        display: none ;
+        display: none;
     }
 }
 

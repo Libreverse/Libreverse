@@ -8,20 +8,20 @@
     .glass-sidebar,
     .glass-drawer,
     .glass-nav {
-        background: white ;
-        backdrop-filter: none ;
-        box-shadow: 0 0 0 1px #ccc ;
-        border: 1px solid #ccc ;
+        background: white;
+        backdrop-filter: none;
+        box-shadow: 0 0 0 1px #ccc;
+        border: 1px solid #ccc;
     }
 
     .glass-sidebar {
         border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0 ;
+            var(--sidebar-border-radius) 0;
     }
 
     .glass-button {
-        border: 1px solid #333 ;
-        background: transparent ;
+        border: 1px solid #333;
+        background: transparent;
     }
 }
 
@@ -148,19 +148,19 @@
     .glass-sidebar,
     .glass-drawer,
     .glass-nav {
-        background: white ;
-        backdrop-filter: none ;
-        box-shadow: 0 0 0 1px #ccc ;
-        border: 1px solid #ccc ;
+        background: white;
+        backdrop-filter: none;
+        box-shadow: 0 0 0 1px #ccc;
+        border: 1px solid #ccc;
     }
 
     .glass-sidebar {
         border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0 ;
+            var(--sidebar-border-radius) 0;
     }
 
     .glass-button {
-        border: 1px solid #333 ;
-        background: transparent ;
+        border: 1px solid #333;
+        background: transparent;
     }
 }

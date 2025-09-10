@@ -16,7 +16,7 @@ if Rails.env.development?
   # Persistent storage in Redis when available, else memory
   begin
     require "redis"
-    url = ENV.fetch("REDIS_URL", "redis://127.0.0.1:6379/0")
+  url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
     Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
     Rack::MiniProfiler.config.storage_options = { url: url }
   rescue LoadError

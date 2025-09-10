@@ -96,17 +96,17 @@
     .glass-button,
     .glass-card,
     .glass-drawer {
-        transition: none ;
-        animation: none ;
+        transition: none;
+        animation: none;
     }
 
     .glass-button:hover,
     .glass-card:hover {
-        transform: none ;
+        transform: none;
     }
 
     .glass-loading::after {
-        animation: none ;
+        animation: none;
     }
 }
 

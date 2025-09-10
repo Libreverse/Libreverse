@@ -1,4 +1,4 @@
-import CoffeeScript from 'coffeescript';
+import CoffeeScript from "coffeescript";
 
 /**
  * Vite plugin to compile .coffee files.
@@ -13,19 +13,20 @@ export default function coffeescript(userOptions = {}) {
     };
 
     return {
-        name: 'coffeescript',
-        enforce: 'pre',
+        name: "coffeescript",
+        enforce: "pre",
         transform(code, id) {
-            if (!id.endsWith('.coffee')) return;
+            if (!id.endsWith(".coffee")) return;
 
             const options = { ...baseOptions, ...userOptions, filename: id };
 
             try {
                 const compiled = CoffeeScript.compile(code, options);
-                if (typeof compiled === 'string') {
+                if (typeof compiled === "string") {
                     return { code: compiled, map: undefined };
                 }
-                const map = compiled.v3SourceMap || compiled.sourceMap || undefined;
+                const map =
+                    compiled.v3SourceMap || compiled.sourceMap || undefined;
                 return { code: compiled.js, map };
             } catch (error) {
                 this.error(error);
