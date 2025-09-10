@@ -173,12 +173,17 @@
 .sidebar-link,
 .sidebar-logout-button {
     &[aria-describedby] {
-        // Remove background and just keep the scale effect and subtle glow
-        background: transparent ;
-        transform: scale(1.02) ;
+        // Keep popovers but remove any visual change on the icon/button
+        background: transparent !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
 
-        // Keep a minimal glow effect without background
-        box-shadow: 0 0 0 1px rgb(255 255 255 / 10%) ;
+    // Remove all hover effects on sidebar icons/buttons
+    &:hover {
+        background: transparent !important;
+        transform: none !important;
+        box-shadow: none !important;
     }
 }
 
