@@ -3,16 +3,21 @@
 
 # Common pool size calculation
 <%
-  require 'etc'
-    nproc = Etc.respond_to?(:nprocessors) ? Etc.nprocessors : 5
-    # Prefer thread budget values when present; otherwise fall back to legacy heuristics
-    pool_size = Integer(ENV.fetch('APP_THREADS_BUDGET', '0'))
-    if pool_size <= 0
-        pool_size = [(nproc / 2) * 2 - 4, 5].max
+    # Use centralized ThreadBudget for consistent sizing across app, DB, and workers
+    begin
+        require './config/thread_budget'
+    rescue LoadError
+        # ignore; fallback below
     end
-    # SQLite threads derived from budget if present, else fallback
-    sqlite_threads = Integer(ENV.fetch('SQLITE_THREADS_BUDGET', '0'))
-    if sqlite_threads <= 0
+
+    if defined?(ThreadBudget)
+        b = ThreadBudget.compute
+        pool_size = b[:app_threads]
+        sqlite_threads = b[:sqlite_threads]
+    else
+        require 'etc'
+        nproc = Etc.respond_to?(:nprocessors) ? Etc.nprocessors : 2
+        pool_size = [(nproc / 2) * 2 - 4, 5].max
         sqlite_threads = [nproc, 2].max
     end
 %>
