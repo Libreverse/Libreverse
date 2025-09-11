@@ -163,7 +163,8 @@ ENV DISABLE_AGENT=true
 # Non-sensitive runtime defaults (baked into the image)
 ENV RAILS_ENV=production \
     RACK_ENV=production \
-    BUNDLE_GEMFILE=/home/app/webapp/Gemfile
+    BUNDLE_GEMFILE=/home/app/webapp/Gemfile \
+    GRPC_ALLOW_INSECURE=true
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
 
 # Expose application ports
