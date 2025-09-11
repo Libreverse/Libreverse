@@ -27,8 +27,8 @@ production:
       batch_size: 500
   workers:
     - queues: "*"
-    # Sizing comes from ThreadBudget.export_env! (SOLID_QUEUE_THREADS_PER_PROCESS)
-    threads: <%= Integer(ENV.fetch("SOLID_QUEUE_THREADS_PER_PROCESS", "1")) %>
+      # Sizing comes from ThreadBudget.export_env! (SOLID_QUEUE_THREADS_PER_PROCESS)
+      threads: <%= Integer(ENV.fetch("SOLID_QUEUE_THREADS_PER_PROCESS", "1")) %>
   # Optional: if running an external supervisor, it can read processes from here
   processes: <%= Integer(ENV.fetch("SOLID_QUEUE_PROCESSES", "1")) %>
   scheduler:
