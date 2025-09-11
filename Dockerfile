@@ -98,7 +98,6 @@ COPY docker/nginx-libreverse.conf /etc/nginx/conf.d/20-libreverse.conf
 RUN printf '%s\n' \
     '# Send Passenger logs to container stderr so they are captured by the orchestrator' \
     'passenger_log_file /dev/stderr;' \
-    'passenger_file_descriptor_log_file /dev/stderr;' \
     > /etc/nginx/conf.d/10-passenger-base.conf
     
 # Create temp directories for NGINX and Passenger buffering
@@ -161,6 +160,10 @@ RUN mkdir -p /home/app/webapp/log && \
 
 # Use baseimage-docker's init process, but override to use jemalloc for app
 ENV DISABLE_AGENT=true
+# Non-sensitive runtime defaults (baked into the image)
+ENV RAILS_ENV=production \
+    RACK_ENV=production \
+    BUNDLE_GEMFILE=/home/app/webapp/Gemfile
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
 
 # Expose application ports
