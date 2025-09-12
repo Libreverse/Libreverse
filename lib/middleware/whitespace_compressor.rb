@@ -7,9 +7,9 @@ require "digest/sha1"
 class WhitespaceCompressor
     def initialize(app)
         @app = app
-        # Note: We don't pre-split or exclude tags like <pre>, <textarea>, or <script>.
-        # minify_html is spec-aware and preserves content of rawtext/RCDATA elements safely,
-        # so an explicit "preserve" regex is unnecessary and can introduce edge-case bugs.
+      # NOTE: We don't pre-split or exclude tags like <pre>, <textarea>, or <script>.
+      # minify_html is spec-aware and preserves content of rawtext/RCDATA elements safely,
+      # so an explicit "preserve" regex is unnecessary and can introduce edge-case bugs.
     end
 
     def call(env)
@@ -19,7 +19,7 @@ class WhitespaceCompressor
         # Debug: Log that middleware is running
         Rails.logger.debug "WhitespaceCompressor: Processing HTML response"
 
-    # Step 1: Assemble HTML efficiently
+        # Step 1: Assemble HTML efficiently
         chunks = []
         body.each { |chunk| chunks << chunk.encode("UTF-8", invalid: :replace, undef: :replace) }
         html = chunks.join
