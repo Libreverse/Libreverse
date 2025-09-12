@@ -264,8 +264,8 @@ jobs:
         steps:
             - name: Check out code
               uses: actions/checkout@v4
-
             - name: Bypass Cloudflare for Github Action
+              if: false
               uses: ./.github/actions/bypass-cloudflare
               with:
                   cf_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
