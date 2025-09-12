@@ -36,8 +36,8 @@ export BUNDLE_GEMFILE=/home/app/webapp/Gemfile
 
 # Propagate env to all child processes managed by my_init (phusion baseimage)
 mkdir -p /etc/container_environment
-printf %s "$BUNDLE_GEMFILE" > /etc/container_environment/BUNDLE_GEMFILE
-printf %s "${RAILS_ENV:-production}" > /etc/container_environment/RAILS_ENV
+printf %s "$BUNDLE_GEMFILE" >/etc/container_environment/BUNDLE_GEMFILE
+printf %s "${RAILS_ENV:-production}" >/etc/container_environment/RAILS_ENV
 
 # passenger_file_descriptor_log_file is no longer configured in the image; nothing to strip here
 

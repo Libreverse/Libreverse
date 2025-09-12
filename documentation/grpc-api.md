@@ -198,7 +198,7 @@ For HTTP-based gRPC, these are mapped to appropriate HTTP status codes.
 
 ### Ruby Native gRPC Client
 
-```ruby
+````ruby
 require 'grpc'
 require_relative 'libreverse_pb'
 require_relative 'libreverse_services_pb'
@@ -210,9 +210,9 @@ stub = Libreverse::Grpc::LibreverseService::Stub.new(
 )
 For proxied HTTP/2 gRPC, platform clients will surface native gRPC status codes.
 # Get all experiences
- 
- 
- 
+
+
+
 Use native gRPC clients targeting `https://<host>/api/grpc` over HTTP/2.
 
 ```javascript
@@ -237,7 +237,7 @@ client.getAllExperiences({}, (error, response) => {
         console.log("Experiences:", response.experiences);
     }
 });
-```
+````
 
 ## HTTP-based gRPC (via Rails)
 
