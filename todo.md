@@ -6,6 +6,8 @@ add thredded for forum feature
 use <https://github.com/slimtoolkit/slim> to optimise the docker image
 add <https://github.com/trailblazer/trailblazer> and adopt it for future logic
 replace locotmotive scroll with lenis
+turbo service worker for offline that mirrors the turbo cache
+action cable cable shared worker
 
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] clear up attribution for images
