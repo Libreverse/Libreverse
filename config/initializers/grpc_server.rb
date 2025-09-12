@@ -13,9 +13,19 @@ Rails.application.configure do
         end
 
         # Only start gRPC when running the Rails web server. Skip for runner/console/rake.
-        server_context = defined?(Rails::Server) || defined?(PhusionPassenger) || ENV["GRPC_START_IN_NON_SERVER"] == "true"
+        # Avoid starting under Passenger by default due to stability issues with the gRPC C-extension.
+        # You can opt-in explicitly by setting GRPC_ENABLE_INTEGRATED=true.
+        passenger_present = defined?(PhusionPassenger)
+        integrated_opt_in = ENV["GRPC_ENABLE_INTEGRATED"] == "true"
+        server_context = (defined?(Rails::Server) && !passenger_present) || integrated_opt_in || ENV["GRPC_START_IN_NON_SERVER"] == "true"
+
         unless server_context
             Rails.logger.debug "Skipping gRPC server start (not a Rails::Server context)"
+            next
+        end
+
+        if passenger_present && !integrated_opt_in
+            Rails.logger.info "Skipping integrated gRPC under Passenger. Set GRPC_ENABLE_INTEGRATED=true to force, or run gRPC as a separate process."
             next
         end
 

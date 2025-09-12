@@ -1,27 +1,14 @@
 # Libreverse gRPC API Documentation
 
-This document describes the gRPC API for Libreverse, providing both native gRPC and HTTP-based access to the same functionality as the XML-RPC API.
+This document describes the native gRPC API for Libreverse and how it is exposed behind NGINX at `/api/grpc` over HTTP/2.
 
 ## Overview
 
-The Libreverse gRPC API provides type-safe, efficient remote procedure calls using Protocol Buffers (protobuf) for serialization. It offers two access methods:
-
-1. **Native gRPC**: Direct gRPC connections for maximum performance and type safety
-2. **HTTP-based gRPC**: JSON over HTTP for easier integration from web applications
+The Libreverse gRPC API provides type-safe, efficient remote procedure calls using Protocol Buffers (protobuf) for serialization. It is exposed via native gRPC over HTTP/2 and proxied by NGINX on `/api/grpc`.
 
 ## Integration (server)
 
-Libreverse no longer runs an internal standalone gRPC server. Instead, it exposes the same functionality over an HTTP bridge route in Rails. If you operate a separate gRPC server, client examples below still apply to that external service, but this app only provides the HTTP endpoint.
-
-HTTP bridge:
-
-```javascript
-await fetch("/api/grpc", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ method: "GetAllExperiences", request: {} }),
-});
-```
+Rails no longer offers a JSON-over-HTTP bridge for gRPC. Instead, NGINX proxies `/api/grpc` (HTTP/2) directly to the internal gRPC server.
 
 ## Authentication
 
@@ -40,27 +27,13 @@ metadata = { "session-id" => "your_session_id" }
 client.get_all_experiences(request, metadata: metadata)
 ```
 
-### HTTP-based gRPC Authentication
-
-For HTTP-based calls, use headers:
-
-```bash
-curl -X POST https://localhost:3000/api/grpc \
-    -H "Content-Type: application/json" \
-    -H "X-Session-ID: your_session_id" \
-    -d '{"method": "GetAllExperiences", "request": {}}'
-```
+Note: If you terminate TLS at a reverse proxy in front of NGINX, ensure it forwards HTTP/2 for `/api/grpc`.
 
 ## Endpoints
 
-### Native gRPC Server
+### Native gRPC Endpoint (via NGINX)
 
-Not provided by this Rails app. If you deploy a separate gRPC server, configure clients to connect to that service.
-
-### HTTP-based gRPC Endpoint
-
-- **URL**: `POST /api/grpc`
-- **Content-Type**: `application/json`
+- URL: `https://<host>/api/grpc` (HTTP/2)
 
 ## Security Measures
 
@@ -235,36 +208,12 @@ stub = Libreverse::Grpc::LibreverseService::Stub.new(
   'localhost:50051',
   :this_channel_is_insecure
 )
-
+For proxied HTTP/2 gRPC, platform clients will surface native gRPC status codes.
 # Get all experiences
-request = Libreverse::Grpc::GetAllExperiencesRequest.new
-response = stub.get_all_experiences(request)
-puts response.experiences
-```
-
-### HTTP-based gRPC with curl
-
-```bash
-# Get all experiences
-curl -X POST https://localhost:3000/api/grpc \
-    -H "Content-Type: application/json" \
-    -d '{"method": "GetAllExperiences", "request": {}}'
-
-# Create experience
-curl -X POST https://localhost:3000/api/grpc \
-    -H "Content-Type: application/json" \
-    -H "X-Session-ID: your_session_id" \
-    -d '{
-    "method": "CreateExperience",
-    "request": {
-      "title": "My Experience",
-      "description": "Description here",
-      "author": "Author Name"
-    }
-  }'
-```
-
-### JavaScript/Node.js Example
+ 
+ 
+ 
+Use native gRPC clients targeting `https://<host>/api/grpc` over HTTP/2.
 
 ```javascript
 const grpc = require("@grpc/grpc-js");

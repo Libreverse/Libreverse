@@ -46,11 +46,14 @@ module Libreverse
             private_key = File.read(ssl_key)
             GRPC::Core::ServerCredentials.new(nil, [ { private_key: private_key, cert_chain: cert_chain } ], false)
           else
-            msg = "gRPC SSL cert/key missing – aborting startup (set GRPC_ALLOW_INSECURE=true to override)"
-            raise msg unless ENV["GRPC_ALLOW_INSECURE"] == "true"
-
-              Rails.logger.error "#{msg} (CONTINUING WITH INSECURE CHANNEL)"
+            msg = "gRPC SSL cert/key missing"
+            if ENV["GRPC_ALLOW_INSECURE"] == "true"
+              Rails.logger.error "#{msg} – CONTINUING WITH INSECURE CHANNEL (GRPC_ALLOW_INSECURE=true)"
               :this_port_is_insecure
+            else
+              Rails.logger.warn "#{msg} – disabling gRPC server (set GRPC_ALLOW_INSECURE=true to allow insecure or configure GRPC_SSL_CERT_PATH/GRPC_SSL_KEY_PATH)"
+              nil
+            end
 
           end
         else

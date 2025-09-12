@@ -41,7 +41,6 @@ Rails.application.routes.draw do
   # XML-RPC API endpoint
   namespace :api do
     post "xmlrpc", to: "xmlrpc#endpoint"
-    post "grpc", to: "grpc#endpoint"
     get "json/:method", to: "json#endpoint"
     post "json/:method", to: "json#endpoint"
     post "json", to: "json#endpoint" # For method specified in body
