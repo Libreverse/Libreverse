@@ -1,7 +1,11 @@
 # To-do
 
-replace locotmotive scroll with lenis
 mimalloc
+finish blog and add commontator
+add thredded for forum feature
+use https://github.com/slimtoolkit/slim to optimise the docker image
+add https://github.com/trailblazer/trailblazer and adopt it for future logic
+replace locotmotive scroll with lenis
 
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] clear up attribution for images
