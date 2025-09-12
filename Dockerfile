@@ -138,6 +138,11 @@ RUN mkdir -p /etc/service/crowdsec
 COPY docker/crowdsec-run.sh /etc/service/crowdsec/run
 RUN chmod +x /etc/service/crowdsec/run
 
+# Create runit service for gRPC server (standalone)
+RUN mkdir -p /etc/service/grpc
+COPY docker/grpc-run.sh /etc/service/grpc/run
+RUN chmod +x /etc/service/grpc/run
+
 # Add a one-shot runit service to wait for LAPI and then bootstrap the bouncer
 RUN mkdir -p /etc/service/crowdsec-bootstrap
 COPY docker/wait-for-lapi.sh /etc/service/crowdsec-bootstrap/run
@@ -164,11 +169,12 @@ ENV DISABLE_AGENT=true
 ENV RAILS_ENV=production \
     RACK_ENV=production \
     BUNDLE_GEMFILE=/home/app/webapp/Gemfile \
+    GRPC_HOST=127.0.0.1 \
     GRPC_ALLOW_INSECURE=true
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
 
-# Expose application ports
-EXPOSE 3000
+# Expose application ports (HTTP and gRPC)
+EXPOSE 3000 50051
 
 # Create volume for logs to make them accessible from host
 VOLUME ["/home/app/webapp/log"]
