@@ -20,7 +20,8 @@ while :; do
                 continue
             fi
         fi
-        exec chpst -u app:app bundle exec rails runner 'Libreverse::GrpcServer.new.start'
+    # Require the gRPC server file explicitly since app/grpc is excluded from autoload paths
+    exec chpst -u app:app bundle exec rails runner 'require Rails.root.join("app/grpc/grpc_server"); Libreverse::GrpcServer.new.start'
     fi
     echo "[runit/grpc] gRPC disabled by instance setting; sleeping before retry"
     sleep 30
