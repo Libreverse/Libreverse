@@ -19,7 +19,7 @@ run_cmd('Normalizing translations', %w[bundle exec i18n-tasks normalize])
 # Remove unused keys non-interactively to avoid HighLine confirmation in non-TTY
 # Equivalent to: i18n-tasks unused -f yaml | i18n-tasks data-remove
 puts "\n=== Removing unused keys ==="
-unused_yaml_stdout, unused_yaml_stderr, unused_status = Open3.capture3(*%w[bundle exec i18n-tasks unused -f yaml])
+unused_yaml_stdout, unused_yaml_stderr, = Open3.capture3(*%w[bundle exec i18n-tasks unused -f yaml])
 puts unused_yaml_stderr unless unused_yaml_stderr.empty?
 
 # i18n-tasks sometimes prints a banner line that breaks YAML; strip it out.
