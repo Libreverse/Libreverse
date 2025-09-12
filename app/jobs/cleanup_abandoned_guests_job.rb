@@ -12,7 +12,7 @@ class CleanupAbandonedGuestsJob < ApplicationJob
 
   # Find abandoned guest accounts (Sequel expression syntax)
   abandoned_guests = AccountSequel.where(guest: true)
-                  .where { created_at < cutoff_date }
+                                  .where { created_at < cutoff_date }
 
     count = abandoned_guests.count
     Rails.logger.info "Found #{count} abandoned guest accounts to clean up"
