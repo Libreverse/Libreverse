@@ -7,8 +7,9 @@ require "digest/sha1"
 class WhitespaceCompressor
     def initialize(app)
         @app = app
-        # Preserve pattern for splitting (using Ruby regex for split compatibility)
-        @preserve_pattern = %r{(<textarea>(?:[^<]|<(?!/textarea>))*</textarea>|<pre>(?:[^<]|<(?!/pre>))*</pre>|<script>(?:[^<]|<(?!/script>))*</script>|<iframe>(?:[^<]|<(?!/iframe>))*</iframe>)}
+        # Note: We don't pre-split or exclude tags like <pre>, <textarea>, or <script>.
+        # minify_html is spec-aware and preserves content of rawtext/RCDATA elements safely,
+        # so an explicit "preserve" regex is unnecessary and can introduce edge-case bugs.
     end
 
     def call(env)
@@ -18,10 +19,12 @@ class WhitespaceCompressor
         # Debug: Log that middleware is running
         Rails.logger.debug "WhitespaceCompressor: Processing HTML response"
 
-        # Step 1: Assemble HTML efficiently
+    # Step 1: Assemble HTML efficiently
         chunks = []
         body.each { |chunk| chunks << chunk.encode("UTF-8", invalid: :replace, undef: :replace) }
         html = chunks.join
+    # We replace the body, so close the original to avoid leaks
+    body.close if body.respond_to?(:close)
 
         # Debug: Log original HTML length
         Rails.logger.debug "WhitespaceCompressor: Original HTML length: #{html.length}"
@@ -45,9 +48,9 @@ class WhitespaceCompressor
                   keep_html_and_head_opening_tags: false,              # Omit if no attributes
                   keep_input_type_text_attr: false,                    # Omit default type=text
                   keep_ssi_comments: false,                            # Remove SSI comments
-                  minify_css: false, # CSS already minified before inclusion
+                  minify_css: true,                                    # This will catch the experiences css
                   minify_doctype: true,                                # Minify DOCTYPE
-                  minify_js: false,                                    # JS already minified before inclusion
+                  minify_js: true,                                     # This will catch the experiences js
                   preserve_brace_template_syntax: false,               # Don't preserve unless using {{ }} templates
                   preserve_chevron_percent_template_syntax: false,     # Don't preserve unless using <% %> templates
                   remove_bangs: true,                                  # Remove bangs
