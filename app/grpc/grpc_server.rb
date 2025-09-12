@@ -42,7 +42,7 @@ module Libreverse
       Rails.logger.info "SSL: #{credentials == :this_port_is_insecure ? 'disabled' : 'enabled'}"
       begin
         @server.run_till_terminated_or_interrupted([ 1, "int", "SIGTERM" ])
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "gRPC server crashed: #{e.class}: #{e.message}"
         Rails.logger.error e.backtrace.join("\n") if e.backtrace
       end
