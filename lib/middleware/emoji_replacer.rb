@@ -4,6 +4,7 @@
 class EmojiReplacer
   require "unicode"
   require "nokogiri"
+  require "digest/sha1"
 
   EMOJI_REGEX =
     /(?:\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
@@ -35,27 +36,25 @@ class EmojiReplacer
     status, headers, body = @app.call(env)
 
     if headers["Content-Type"]&.include?("text/html")
-      # Rails.logger.debug "EmojiReplacer: Detected text/html content type"
+      # Assemble full HTML to process once and allow caching
+      chunks = []
+      body.each { |part| chunks << part }
+      original_html = chunks.join
+      body.close if body.respond_to?(:close)
 
-      new_body = ""
-      body.each do |part|
-        # Process HTML with Nokogiri to exclude certain elements
-        new_part = if @exclude_selectors.any? && part.include?("<html")
-                     process_with_nokogiri(part)
+      # Cache the processed HTML to avoid repeated work on identical responses
+      cache_key = "emoji_html:#{::Digest::SHA1.hexdigest(original_html)}"
+      processed_html = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+        if @exclude_selectors.any? && original_html.include?("<html")
+          process_with_nokogiri(original_html)
         else
-                     replace_emojis(part)
+          replace_emojis(original_html)
         end
-
-        new_body += new_part
       end
 
       # Update the body and Content-Length
-      body = [ new_body ]
-      headers["Content-Length"] = new_body.bytesize.to_s
-
-      # Rails.logger.debug do
-      #   "EmojiReplacer: Completed emoji replacement. Updated Content-Length to #{new_body.bytesize}."
-      # end
+      body = [ processed_html ]
+      headers["Content-Length"] = processed_html.bytesize.to_s
     end
 
     # Return the modified response

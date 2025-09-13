@@ -69,12 +69,14 @@ sed -i "/^HCAPTCHA_/d" "$CONF" 2>/dev/null || true
 sed -i "/^BOUNCER_MODE=/d" "$CONF" 2>/dev/null || true
 sed -i "/^DISABLE_CAPTCHA=/d" "$CONF" 2>/dev/null || true
 grep -q '^CAPTCHA_PROVIDER=' "$CONF" 2>/dev/null && sed -i 's/^CAPTCHA_PROVIDER=.*/CAPTCHA_PROVIDER=none/' "$CONF" || echo 'CAPTCHA_PROVIDER=none' >>"$CONF"
+grep -q '^DISABLE_CAPTCHA=' "$CONF" 2>/dev/null && sed -i 's/^DISABLE_CAPTCHA=.*/DISABLE_CAPTCHA=true/' "$CONF" || echo 'DISABLE_CAPTCHA=true' >>"$CONF"
 grep -q '^FALLBACK_REMEDIATION=' "$CONF" 2>/dev/null && sed -i 's/^FALLBACK_REMEDIATION=.*/FALLBACK_REMEDIATION=ban/' "$CONF" || echo 'FALLBACK_REMEDIATION=ban' >>"$CONF"
 grep -q '^ALWAYS_SEND_TO_APPSEC=' "$CONF" 2>/dev/null && sed -i 's/^ALWAYS_SEND_TO_APPSEC=.*/ALWAYS_SEND_TO_APPSEC=false/' "$CONF" || echo 'ALWAYS_SEND_TO_APPSEC=false' >>"$CONF"
 grep -q '^APPSEC_URL=' "$CONF" 2>/dev/null && sed -i 's#^APPSEC_URL=.*#APPSEC_URL=#' "$CONF" || echo 'APPSEC_URL=' >>"$CONF"
 grep -q '^REDIRECT_LOCATION=' "$CONF" 2>/dev/null && sed -i 's#^REDIRECT_LOCATION=.*#REDIRECT_LOCATION=#' "$CONF" || echo 'REDIRECT_LOCATION=' >>"$CONF"
 grep -q '^ENABLED=' "$CONF" 2>/dev/null && sed -i 's/^ENABLED=.*/ENABLED=true/' "$CONF" || echo 'ENABLED=true' >>"$CONF"
-grep -q '^MODE=' "$CONF" 2>/dev/null && sed -i 's/^MODE=.*/MODE=stream/' "$CONF" || echo 'MODE=stream' >>"$CONF"
+# Prefer live mode to avoid timer-based stream errors until LAPI is healthy
+grep -q '^MODE=' "$CONF" 2>/dev/null && sed -i 's/^MODE=.*/MODE=live/' "$CONF" || echo 'MODE=live' >>"$CONF"
 
 # Wait for LAPI to be ready (up to ~30s)
 for i in $(seq 1 30); do

@@ -2,6 +2,7 @@
 
 require "rack"
 require "zstd-ruby"
+require "digest/sha1"
 
 module Rack
   # Rack middleware to compress HTTP responses using Zstandard.
@@ -37,7 +38,19 @@ module Rack
         body = +""
         response.each { |chunk| body << chunk }
 
-        compressed = compress(body)
+        # Cache compressed bytes based on original body and compression options
+        opts = @options
+        level_sig = opts.key?(:level) ? opts[:level].to_s : "nil"
+        dict_sig  = if opts.key?(:dict)
+                       # Avoid storing dict in key; use a hash of its content/identity
+                       Digest::SHA1.hexdigest(opts[:dict].to_s)
+                     else
+                       "nil"
+                     end
+        cache_key = "zstd_body:#{Digest::SHA1.hexdigest(body)}:lvl:#{level_sig}:dict:#{dict_sig}"
+        compressed = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+          compress(body)
+        end
 
         # Log once when compression is used
         unless self.class.logged_compression
