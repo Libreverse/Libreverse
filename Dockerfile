@@ -64,8 +64,13 @@ COPY Gemfile Gemfile.lock ./
 ## Ensure vendored path gems are present before bundle install
 COPY vendor/gems/google_robotstxt_parser ./vendor/gems/google_robotstxt_parser
 
-## Install production gems (exclude development & test groups)
-RUN bash -lc 'rvm --default use ruby-3.4.2 && bundle config set without "development test" && bundle install --jobs=$(nproc) --retry 3'
+## Install production gems (exclude development & test groups) with verbose logs
+## and verify the vendored gem is present and loadable
+RUN bash -lc 'rvm --default use ruby-3.4.2 \
+    && bundle config set without "development test" \
+    && bundle install --jobs=$(nproc) --retry 3 --verbose \
+    && bundle info google_robotstxt_parser \
+    && ruby -e "require \"bundler/setup\"; require \"google_robotstxt_parser\"; puts(\"Robotstxt loaded: #{!!defined?(Robotstxt)}\")"'
 
 # Copy package.json and bun.lock for JS dependencies
 COPY package.json bun.lock ./
