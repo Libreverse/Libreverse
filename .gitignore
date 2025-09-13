@@ -31,3 +31,16 @@ coverage/
 # CodeQL local analysis files
 .codeql/
 /vendor/bundle/
+
+# Native extension (google_robotstxt_parser) build outputs and sources
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/c-build/
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/cmake-src/
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/mkmf.log
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/Makefile
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/*.bundle
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/*.so
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/*.o
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/*.a
+
+# If abseil-cpp is vendored as a clone (not submodule), ignore it
+/vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp/

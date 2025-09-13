@@ -1,3 +1,8 @@
+PATH
+  remote: vendor/gems/google_robotstxt_parser
+  specs:
+    google_robotstxt_parser (0.0.6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -474,7 +479,7 @@ GEM
       premailer (~> 1.7, >= 1.7.9)
     prettier_print (1.2.1)
     prettyprint (0.2.0)
-    prism (1.5.0)
+    prism (1.5.1)
     propshaft (1.2.1)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -590,7 +595,6 @@ GEM
       io-console (~> 0.5)
     rexml (3.4.4)
     rinku (2.0.6)
-    robots (0.10.1)
     roda (3.96.0)
       rack
     rodauth (2.40.0)
@@ -855,6 +859,7 @@ DEPENDENCIES
   fiddle
   flamegraph
   foreman
+  google_robotstxt_parser!
   graphql_rails
   grpc
   grpc-tools
@@ -887,7 +892,6 @@ DEPENDENCIES
   rails-controller-testing
   re2
   redis
-  robots
   rodauth-guest
   rodauth-i18n
   rodauth-model
