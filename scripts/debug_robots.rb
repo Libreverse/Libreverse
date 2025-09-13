@@ -4,8 +4,9 @@
 # Debug script for robots.txt parsing
 # Usage: rails runner scripts/debug_robots.rb
 
+require 'bundler/setup'
 puts "=== Robots.txt Debug ==="
-puts "Current time: #{Time.current}"
+puts "Current time: #{(Time.respond_to?(:current) ? Time.current : Time.now)}"
 puts
 
 # Test The Sandbox robots.txt parsing specifically
@@ -28,9 +29,13 @@ begin
     puts "=" * 50
     puts
 
-    # Test with the robots gem directly
-    puts "Testing with Robots gem:"
-    robots = Robots.new("LibreverseIndexer")
+    # Test with the vendored google_robotstxt_parser
+    require 'google_robotstxt_parser'
+    robots = Module.new do
+      def self.allowed?(content, ua, url)
+        Robotstxt.allowed_by_robots(content, ua, url)
+      end
+    end
 
     test_urls = [
       "https://www.sandbox.game/__sitemap__/experiences.xml",
@@ -41,7 +46,7 @@ begin
     ]
 
     test_urls.each do |test_url|
-      allowed = robots.allowed?(test_url)
+  allowed = robots.allowed?(response.body, "LibreverseIndexer", test_url)
       puts "  #{test_url}"
       puts "    #{allowed ? 'ALLOWED' : 'BLOCKED'}"
     end
