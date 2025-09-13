@@ -61,8 +61,12 @@ WORKDIR /home/app/webapp
 ## Copy Gemfile and Gemfile.lock first for efficient caching
 COPY Gemfile Gemfile.lock ./
 
-## Ensure vendored path gems are present before bundle install
+## Copy .gitmodules and initialize submodules, then copy vendored gem
+COPY .gitmodules ./
 COPY vendor/gems/google_robotstxt_parser ./vendor/gems/google_robotstxt_parser
+
+## Initialize and update submodules to populate robotstxt and abseil-cpp sources
+RUN git submodule update --init --recursive vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp
 
 ## Install production gems (exclude development & test groups) with verbose logs
 ## and verify the vendored gem is present and loadable
