@@ -13,6 +13,7 @@ class CleanupAbandonedGuestsJob < ApplicationJob
   # Find abandoned guest accounts (Sequel expression syntax)
   abandoned_guests = AccountSequel.where(guest: true)
                                   .where { created_at < cutoff_date }
+                                  .order(:created_at, :id)
 
     count = abandoned_guests.count
     Rails.logger.info "Found #{count} abandoned guest accounts to clean up"
@@ -20,14 +21,29 @@ class CleanupAbandonedGuestsJob < ApplicationJob
     # Delete the accounts and their associated preferences
     return unless count.positive?
 
-    # To ensure proper cleanup, use a transaction and iterate efficiently
-    AccountSequel.transaction do
-      abandoned_guests.each do |account|
+    # To ensure proper cleanup, use a transaction on the Sequel DB and iterate efficiently
+    DB.transaction do
+      iterator = abandoned_guests
+      processed = 0
+
+      if iterator.respond_to?(:paged_each)
+        iterator.paged_each(rows_per_fetch: 1000) do |account|
+          # Log the account being deleted
+          Rails.logger.info "Cleaning up guest account #{account.id} created at #{account.created_at}"
+
+          # Delete the account and its associated preferences
+          account.destroy
+          processed += 1
+        end
+      else
+        iterator.each do |account|
         # Log the account being deleted
         Rails.logger.info "Cleaning up guest account #{account.id} created at #{account.created_at}"
 
-        # Delete the account and its associated preferences
-        account.destroy
+          # Delete the account and its associated preferences
+          account.destroy
+          processed += 1
+        end
       end
     end
 
