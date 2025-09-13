@@ -44,9 +44,10 @@ class GoogleRobotsParser
     values = {}
     # Parse Crawl-delay (case-insensitive). Prefer the first occurrence.
     @robots_content.each_line do |line|
-      next if line.lstrip.start_with?('#')
+      next if line.lstrip.start_with?("#")
+
       if (m = line.match(/\A\s*crawl-delay\s*:\s*([0-9]+(?:\.[0-9]+)?)\s*$/i))
-        values['crawl-delay'] = m[1]
+        values["crawl-delay"] = m[1]
         break
       end
     end
@@ -57,7 +58,8 @@ class GoogleRobotsParser
   def disallowed_paths
     paths = []
     @robots_content.each_line do |line|
-      next if line.lstrip.start_with?('#')
+      next if line.lstrip.start_with?("#")
+
       if (m = line.match(/\A\s*disallow\s*:\s*(\S*)\s*$/i))
         paths << m[1]
       end
