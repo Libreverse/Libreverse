@@ -65,8 +65,21 @@ COPY Gemfile Gemfile.lock ./
 COPY .gitmodules ./
 COPY vendor/gems/google_robotstxt_parser ./vendor/gems/google_robotstxt_parser
 
-## Initialize and update submodules to populate robotstxt and abseil-cpp sources
-RUN git submodule update --init --recursive vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp
+## Populate google/robotstxt and abseil-cpp sources without requiring a git repo context
+RUN set -eux; \
+        # Clone robotstxt at pinned commit if sources are missing
+        if [ ! -f vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt/robots.cc ]; then \
+            rm -rf vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt; \
+            git clone https://github.com/google/robotstxt vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt; \
+            git -C vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt checkout 86d5836ba2d5a0b6b938ab49501be0e09d9c276c; \
+            rm -rf vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt/.git; \
+        fi; \
+        # Clone abseil-cpp at LTS tag 20250127.1 if sources are missing
+        if [ ! -f vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp/CMakeLists.txt ]; then \
+            rm -rf vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp; \
+            git clone --branch 20250127.1 --depth 1 https://github.com/abseil/abseil-cpp vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp; \
+            rm -rf vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp/.git; \
+        fi
 
 ## Install production gems (exclude development & test groups) with verbose logs
 ## and verify the vendored gem is present and loadable
