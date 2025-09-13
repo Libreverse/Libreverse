@@ -2,7 +2,7 @@
 
 require "capybara"
 require "selenium-webdriver"
-require "robots"
+require "google_robotstxt_parser"
 require "net/http"
 require "digest"
 require "openssl"
@@ -22,6 +22,47 @@ class FallbackRobotsParser
 
   def other_values(_url)
     {}
+  end
+end
+
+# Wrapper around the vendored google_robotstxt_parser C-extension that provides
+# a Robots-like interface compatible with the rest of this class.
+class GoogleRobotsParser
+  def initialize(user_agent, robots_content)
+    @user_agent = user_agent
+    @robots_content = robots_content.to_s
+  end
+
+  # Returns true if the URL is allowed for the configured user-agent
+  def allowed?(url)
+    ::Robotstxt.allowed_by_robots(@robots_content, @user_agent, url)
+  end
+
+  # Extracts additional directives we care about (e.g., crawl-delay)
+  # Returns a Hash with string keys, similar to prior usage.
+  def other_values(_url)
+    values = {}
+    # Parse Crawl-delay (case-insensitive). Prefer the first occurrence.
+    @robots_content.each_line do |line|
+      next if line.lstrip.start_with?('#')
+      if (m = line.match(/\A\s*crawl-delay\s*:\s*([0-9]+(?:\.[0-9]+)?)\s*$/i))
+        values['crawl-delay'] = m[1]
+        break
+      end
+    end
+    values
+  end
+
+  # Best-effort list of Disallow paths for logging.
+  def disallowed_paths
+    paths = []
+    @robots_content.each_line do |line|
+      next if line.lstrip.start_with?('#')
+      if (m = line.match(/\A\s*disallow\s*:\s*(\S*)\s*$/i))
+        paths << m[1]
+      end
+    end
+    paths
   end
 end
 
@@ -685,9 +726,9 @@ class BaseIndexer
 
     user_agent = "LibreverseIndexerFor#{extract_instance_domain}"
 
-    # No caching for robots parser: build fresh each time
-    log_debug "Creating new robots parser for #{domain}"
-    parser = Robots.new(user_agent)
+    # Build a new parser instance backed by google_robotstxt_parser C-ext
+    log_debug "Creating new robots parser for #{domain} (vendored C-ext)"
+    parser = GoogleRobotsParser.new(user_agent, response.body)
     # Smoke test to ensure parser is functional
     test_result = parser.allowed?("#{domain}/")
     log_debug "Robots parser test for #{domain}: #{test_result}"
