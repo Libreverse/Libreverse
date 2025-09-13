@@ -183,7 +183,7 @@ ENV RAILS_ENV=production \
 CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
 
 # Expose application ports (HTTP and gRPC)
-EXPOSE 3000 50051
+EXPOSE 3000
 
 # Create volume for logs to make them accessible from host
 VOLUME ["/home/app/webapp/log"]
