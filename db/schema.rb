@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_30_172257) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_13_213500) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "session_id", null: false
@@ -76,6 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_172257) do
     t.string "provider_uid"
     t.index ["admin"], name: "index_accounts_on_admin"
     t.index ["federated_id"], name: "index_accounts_on_federated_id"
+    t.index ["guest", "created_at"], name: "index_accounts_on_guest_and_created_at"
     t.index ["provider", "provider_uid"], name: "index_accounts_on_provider_and_provider_uid", unique: true
     t.index ["username"], name: "index_accounts_on_username", unique: true
   end
@@ -140,7 +141,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_172257) do
 
   create_table "active_storage_db_files", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "ref", null: false
-    t.binary "data", null: false
+    t.binary "data", size: :long, null: false
     t.datetime "created_at", null: false
     t.index ["ref"], name: "index_active_storage_db_files_on_ref", unique: true
   end
@@ -707,7 +708,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_172257) do
 
   create_table "solid_queue_failed_executions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.bigint "job_id", null: false
+    t.text "error"
+    t.index ["job_id"], name: "index_solid_queue_failed_executions_on_job_id", unique: true
   end
 
   create_table "solid_queue_jobs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -839,6 +842,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_172257) do
   add_foreign_key "oauth_grants", "oauth_applications"
   add_foreign_key "oauth_pushed_requests", "oauth_applications"
   add_foreign_key "oauth_saml_settings", "oauth_applications"
+  add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
