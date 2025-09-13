@@ -1,0 +1,6 @@
+[submodule "vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt"]
+	path = vendor/gems/google_robotstxt_parser/ext/robotstxt/robotstxt
+	url = https://github.com/google/robotstxt
+[submodule "vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp"]
+	path = vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp
+	url = https://github.com/abseil/abseil-cpp
