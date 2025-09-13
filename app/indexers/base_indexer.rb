@@ -589,7 +589,7 @@ class BaseIndexer
       domain = "#{uri.scheme}://#{uri.host}"
       domain += ":#{uri.port}" if uri.port && ![ 80, 443 ].include?(uri.port)
 
-      robots_parser = get_robots_parser(domain)
+  robots_parser = get_robots_parser(domain)
 
       # If we got a fallback parser, it means robots.txt was inaccessible
       # In that case, we should be conservative and disallow access
@@ -613,11 +613,7 @@ class BaseIndexer
       enforce_crawl_delay(url, robots_parser)
 
       allowed
-  rescue StandardError => e
-      log_warn "Failed to check robots.txt for #{url}: #{e.message}"
-      # If we can't check robots.txt at all, be conservative and disallow
-      log_info "Being conservative - disallowing access when robots.txt check fails"
-      false
+    # Allow unexpected errors (e.g., parser load failure) to propagate and crash, per policy
   end
 
   # Enforce crawl-delay directive from robots.txt
@@ -689,21 +685,13 @@ class BaseIndexer
 
     user_agent = "LibreverseIndexerFor#{extract_instance_domain}"
 
-    # Use FunctionCache to cache the parser for 24 hours
-    begin
-      FunctionCache.instance.cache(:robots_parser, domain, ttl: 24.hours) do
-        log_debug "Creating new robots parser for #{domain}"
-        parser = Robots.new(user_agent)
-        # Smoke test to ensure parser is functional
-        test_result = parser.allowed?("#{domain}/")
-        log_debug "Robots parser test for #{domain}: #{test_result}"
-        parser
-      end
-    rescue StandardError => e
-      log_warn "Failed to create/cache robots parser for #{domain}: #{e.message}"
-      log_info "Being conservative - will disallow access when robots parser fails"
-      create_fallback_robots_parser
-    end
+    # No caching for robots parser: build fresh each time
+    log_debug "Creating new robots parser for #{domain}"
+    parser = Robots.new(user_agent)
+    # Smoke test to ensure parser is functional
+    test_result = parser.allowed?("#{domain}/")
+    log_debug "Robots parser test for #{domain}: #{test_result}"
+    parser
   end
 
   def create_fallback_robots_parser
