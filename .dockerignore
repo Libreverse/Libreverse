@@ -36,6 +36,9 @@
 !/app/assets/builds/.keep
 /public/assets
 
+# Keep vendored native gem sources for build
+!/vendor/gems/google_robotstxt_parser/**
+
 # Ignore CI service files.
 /.github
 
