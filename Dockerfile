@@ -9,6 +9,7 @@ RUN set -eux; \
         rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock || true; \
         apt-get update; \
         DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential cmake git \
             libjemalloc2 libjemalloc-dev libsnappy-dev libtool automake autoconf \
             libmodsecurity3 libnginx-mod-http-modsecurity modsecurity-crs \
             shared-mime-info coreutils imagemagick unzip \
@@ -57,10 +58,13 @@ RUN rm -f /etc/service/nginx/down
 # Set working directory for app
 WORKDIR /home/app/webapp
 
-# Copy Gemfile and Gemfile.lock first for efficient caching
+## Copy Gemfile and Gemfile.lock first for efficient caching
 COPY Gemfile Gemfile.lock ./
 
-# Install production gems (exclude development & test groups)
+## Ensure vendored path gems are present before bundle install
+COPY vendor/gems/google_robotstxt_parser ./vendor/gems/google_robotstxt_parser
+
+## Install production gems (exclude development & test groups)
 RUN bash -lc 'rvm --default use ruby-3.4.2 && bundle config set without "development test" && bundle install --jobs=$(nproc) --retry 3'
 
 # Copy package.json and bun.lock for JS dependencies
