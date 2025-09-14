@@ -9,7 +9,7 @@ class AccountSequel < Sequel::Model(:accounts)
   plugin :validation_helpers
 
   # Sequel associations
-  one_to_many :user_preferences, key: :account_id
+  one_to_many :user_preferences, key: :account_id, dependent: :delete
   one_to_many :experiences, key: :account_id
 
   # Content moderation validation for usernames
