@@ -44,9 +44,9 @@ module Rack
         dict_sig  = if opts.key?(:dict)
                        # Avoid storing dict in key; use a hash of its content/identity
                        Digest::SHA1.hexdigest(opts[:dict].to_s)
-                     else
+        else
                        "nil"
-                     end
+        end
         cache_key = "zstd_body:#{Digest::SHA1.hexdigest(body)}:lvl:#{level_sig}:dict:#{dict_sig}"
         compressed = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
           compress(body)

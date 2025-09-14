@@ -36,9 +36,9 @@ if [ -n "$MIMALLOC_PATH" ]; then
     export MIMALLOC_EAGER_COMMIT=1
     export MIMALLOC_SEGMENT_CACHE=1
     {
-      echo "MIMALLOC_LARGE_OS_PAGES=$MIMALLOC_LARGE_OS_PAGES"
-      echo "MIMALLOC_EAGER_COMMIT=$MIMALLOC_EAGER_COMMIT"
-      echo "MIMALLOC_SEGMENT_CACHE=$MIMALLOC_SEGMENT_CACHE"
+        echo "MIMALLOC_LARGE_OS_PAGES=$MIMALLOC_LARGE_OS_PAGES"
+        echo "MIMALLOC_EAGER_COMMIT=$MIMALLOC_EAGER_COMMIT"
+        echo "MIMALLOC_SEGMENT_CACHE=$MIMALLOC_SEGMENT_CACHE"
     } >>/etc/environment
 
     # Ensure env vars propagate to runit services via my_init
