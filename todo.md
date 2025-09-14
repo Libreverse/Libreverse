@@ -1,6 +1,5 @@
 # To-do
 
-mimalloc
 finish blog and add commontator
 add thredded for forum feature
 use <https://github.com/slimtoolkit/slim> to optimise the docker image
