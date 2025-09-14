@@ -3,18 +3,26 @@
 # Use phusion/passenger-full as base image for a smaller image.
 FROM phusion/passenger-ruby34:latest
 
-# Install jemalloc for improved memory management (with dev headers for optimization)
+# Install mimalloc for improved memory management (with dev headers for optimization)
 # Also install and configure ModSecurity (with OWASP CRS) for WAF protection
 RUN set -eux; \
         rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock || true; \
         apt-get update; \
         DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             build-essential cmake git \
-            libjemalloc2 libjemalloc-dev libsnappy-dev libtool automake autoconf \
+            libsnappy-dev libtool automake autoconf \
             libmodsecurity3 libnginx-mod-http-modsecurity modsecurity-crs \
             shared-mime-info coreutils imagemagick unzip \
             libnginx-mod-http-ndk libnginx-mod-http-lua lua5.1 lua-cjson luarocks gettext-base sudo \
         ; \
+        # Install the correct mimalloc runtime shared library for this Ubuntu release
+        if apt-cache show libmimalloc3 >/dev/null 2>&1; then \
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libmimalloc3; \
+        elif apt-cache show libmimalloc2.1 >/dev/null 2>&1; then \
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libmimalloc2.1; \
+        else \
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libmimalloc2.0; \
+        fi; \
         mkdir -p /etc/modsecurity; \
         ln -sf /usr/share/modsecurity-crs/rules /etc/modsecurity/rules || true; \
         (ln -sf /usr/share/nginx/modules-available/mod-http-modsecurity.conf /etc/nginx/modules-enabled/50-mod-http-modsecurity.conf || true); \
@@ -179,16 +187,16 @@ RUN chmod +x /home/app/webapp/docker/crowdsec-bootstrap.sh || true
 # Clean up APT when done
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Add entrypoint script to launch app with jemalloc and run migrations, then exec my_init
-COPY docker/entrypoint-with-jemalloc.sh /usr/local/bin/entrypoint-with-jemalloc.sh
-RUN chmod +x /usr/local/bin/entrypoint-with-jemalloc.sh
+# Add entrypoint script to launch app with mimalloc and run migrations, then exec my_init
+COPY docker/entrypoint-with-mimalloc.sh /usr/local/bin/entrypoint-with-mimalloc.sh
+RUN chmod +x /usr/local/bin/entrypoint-with-mimalloc.sh
 
 # Create log directory and ensure proper permissions for volume mounting
 RUN mkdir -p /home/app/webapp/log && \
     chown -R app:app /home/app/webapp/log && \
     chmod -R 755 /home/app/webapp/log
 
-# Use baseimage-docker's init process, but override to use jemalloc for app
+# Use baseimage-docker's init process, but override to use mimalloc for app
 ENV DISABLE_AGENT=true
 
 ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-disable --yjit-stats=quiet"
@@ -199,7 +207,7 @@ ENV RAILS_ENV=production \
     BUNDLE_GEMFILE=/home/app/webapp/Gemfile \
     GRPC_HOST=127.0.0.1 \
     GRPC_ALLOW_INSECURE=true
-CMD ["/usr/local/bin/entrypoint-with-jemalloc.sh"]
+CMD ["/usr/local/bin/entrypoint-with-mimalloc.sh"]
 
 # Expose application ports (HTTP and gRPC)
 EXPOSE 3000
