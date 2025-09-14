@@ -31,14 +31,20 @@ if [ -n "$MIMALLOC_PATH" ]; then
     # Also write to /etc/environment for system-wide availability
     echo "LD_PRELOAD=$MIMALLOC_PATH" >>/etc/environment
 
-    # Configure mimalloc for optimal performance as requested
+    # Configure mimalloc for optimal performance
+    # User-requested variables (kept for compatibility):
     export MIMALLOC_LARGE_OS_PAGES=1
     export MIMALLOC_EAGER_COMMIT=1
     export MIMALLOC_SEGMENT_CACHE=1
+    # Canonical/current variables per upstream docs:
+    export MIMALLOC_ALLOW_LARGE_OS_PAGES=1
+    export MIMALLOC_ARENA_EAGER_COMMIT=1
     {
       echo "MIMALLOC_LARGE_OS_PAGES=$MIMALLOC_LARGE_OS_PAGES"
       echo "MIMALLOC_EAGER_COMMIT=$MIMALLOC_EAGER_COMMIT"
       echo "MIMALLOC_SEGMENT_CACHE=$MIMALLOC_SEGMENT_CACHE"
+      echo "MIMALLOC_ALLOW_LARGE_OS_PAGES=$MIMALLOC_ALLOW_LARGE_OS_PAGES"
+      echo "MIMALLOC_ARENA_EAGER_COMMIT=$MIMALLOC_ARENA_EAGER_COMMIT"
     } >>/etc/environment
 
     # Ensure env vars propagate to runit services via my_init
@@ -47,6 +53,8 @@ if [ -n "$MIMALLOC_PATH" ]; then
     printf %s "$MIMALLOC_LARGE_OS_PAGES" >/etc/container_environment/MIMALLOC_LARGE_OS_PAGES
     printf %s "$MIMALLOC_EAGER_COMMIT" >/etc/container_environment/MIMALLOC_EAGER_COMMIT
     printf %s "$MIMALLOC_SEGMENT_CACHE" >/etc/container_environment/MIMALLOC_SEGMENT_CACHE
+    printf %s "$MIMALLOC_ALLOW_LARGE_OS_PAGES" >/etc/container_environment/MIMALLOC_ALLOW_LARGE_OS_PAGES
+    printf %s "$MIMALLOC_ARENA_EAGER_COMMIT" >/etc/container_environment/MIMALLOC_ARENA_EAGER_COMMIT
 
     echo "✓ mimalloc enabled system-wide: $MIMALLOC_PATH"
 else
@@ -66,8 +74,6 @@ export BUNDLE_GEMFILE=/home/app/webapp/Gemfile
 mkdir -p /etc/container_environment
 printf %s "$BUNDLE_GEMFILE" >/etc/container_environment/BUNDLE_GEMFILE
 printf %s "${RAILS_ENV:-production}" >/etc/container_environment/RAILS_ENV
-
-# passenger_file_descriptor_log_file is no longer configured in the image; nothing to strip here
 
 # Function to run migrations safely with comprehensive error handling
 run_migrations() {
@@ -121,7 +127,7 @@ check_migration_status() {
     local command=$1
     local description=$2
 
-    echo "  📋 Checking $description migration status..."
+    echo "  🔎 Checking $description migration status..."
     local status_output
     status_output=$(bin/rails $command 2>&1)
 
