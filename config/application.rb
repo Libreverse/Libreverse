@@ -13,6 +13,7 @@ require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/turbo_preload_middleware"
+require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
 
 module LibreverseInstance
@@ -29,6 +30,7 @@ module LibreverseInstance
       d = ThreadBudget.details
       Rails.logger.info "App threads: #{d[:app][:threads]}"
       Rails.logger.info "SQLite threads: #{d[:sqlite][:threads]}"
+      Rails.logger.info "Web split: total=#{d[:web][:total]} (Passenger=#{d[:web][:passenger_procs]}, Nginx=#{d[:web][:nginx_workers]})" if d[:web]
       sq = d[:solid_queue]
       Rails.logger.info "Solid Queue: #{sq[:total_threads]} total (#{sq[:processes]} procs x #{sq[:threads_per_process]} threads)"
 
@@ -60,6 +62,8 @@ module LibreverseInstance
     zstd_search_log = 9
     zstd_min_match = 3
     zstd_strategy = :btultra2
+
+    config.middleware.use OobGcMiddleware
 
     config.middleware.use Rack::Zstd,
                           window_log: zstd_window_log,

@@ -8,8 +8,9 @@ import coffeescript from "./plugins/coffeescript.js";
 import postcssUrl from "postcss-url";
 import typehints from "./plugins/typehints.js";
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
     const isDevelopment = mode === "development";
+    const isProdBuild = command === "build" && mode === "production";
 
     return {
         esbuild: {
@@ -228,7 +229,7 @@ export default defineConfig(({ mode }) => {
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),
             stimulusHMR(),
-            typehints(),
+            ...(isProdBuild ? [typehints()] : []),
         ],
     };
 });

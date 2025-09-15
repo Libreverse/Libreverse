@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_14_091000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_091000) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "session_id", null: false
@@ -368,11 +368,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_14_091000) do
     t.string "metaverse_platform"
     t.text "metaverse_coordinates"
     t.text "metaverse_metadata"
+    t.string "slug"
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
     t.index ["approved"], name: "index_experiences_on_approved"
     t.index ["indexed_content_id"], name: "index_experiences_on_indexed_content_id"
     t.index ["metaverse_platform"], name: "index_experiences_on_metaverse_platform"
+    t.index ["slug"], name: "index_experiences_on_slug", unique: true
     t.index ["source_type", "metaverse_platform"], name: "index_experiences_on_source_type_and_metaverse_platform"
     t.index ["source_type"], name: "index_experiences_on_source_type"
   end
@@ -463,6 +465,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_14_091000) do
     t.index ["activitypub_uri"], name: "index_federated_announcements_on_activitypub_uri", unique: true
     t.index ["announced_at"], name: "index_federated_announcements_on_announced_at"
     t.index ["source_domain"], name: "index_federated_announcements_on_source_domain"
+  end
+
+  create_table "friendly_id_slugs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "slug", null: false
+    t.integer "sluggable_id", null: false
+    t.string "sluggable_type", limit: 50
+    t.string "scope"
+    t.datetime "created_at"
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+    t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
+    t.index ["sluggable_type", "scope"], name: "index_friendly_id_slugs_on_sluggable_type_and_scope"
   end
 
   create_table "indexed_content_vectors", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

@@ -54,13 +54,27 @@ module ThreadBudget
         # Threads per SQ process (at least 1), rounded down
         sq_threads_per_proc = [ (sq_total / sq_processes), 1 ].max
 
+                # Split the web-facing budget (previously all Passenger) between Passenger processes
+                # and Nginx worker_processes. Default to a 50/50 split with minimums of 1.
+                web_total = app_threads
+                passenger_pct = begin
+                                  Integer(ENV.fetch("THREAD_BUDGET_PASSENGER_PCT") { "50" })
+                rescue StandardError
+                                  50
+                end
+                passenger_procs = [ (web_total * passenger_pct / 100.0).floor, 1 ].max
+                nginx_workers   = [ web_total - passenger_procs, 1 ].max
+
         {
           total: total,
           app_threads: app_threads,
           sqlite_threads: sqlite_threads,
           sq_total_threads: sq_total,
           sq_processes: sq_processes,
-          sq_threads_per_process: sq_threads_per_proc
+          sq_threads_per_process: sq_threads_per_proc,
+          web_total: web_total,
+          passenger_procs: passenger_procs,
+          nginx_workers: nginx_workers
         }
     end
 
@@ -87,6 +101,11 @@ module ThreadBudget
           total_threads: b[:total],
           app: { threads: b[:app_threads] },
           sqlite: { threads: b[:sqlite_threads] },
+          web: {
+            total: b[:web_total],
+            passenger_procs: b[:passenger_procs],
+            nginx_workers: b[:nginx_workers]
+          },
           solid_queue: {
             total_threads: b[:sq_total_threads],
             processes: b[:sq_processes],
@@ -114,6 +133,9 @@ module ThreadBudget
         ENV["SOLID_QUEUE_THREADS_TOTAL"]       = b[:sq_total_threads].to_s
         ENV["SOLID_QUEUE_PROCESSES"]           = b[:sq_processes].to_s
         ENV["SOLID_QUEUE_THREADS_PER_PROCESS"] = b[:sq_threads_per_process].to_s
+        ENV["WEB_TOTAL_THREADS"]               = b[:web_total].to_s
+        ENV["PASSENGER_PROCESSES_TARGET"]      = b[:passenger_procs].to_s
+        ENV["NGINX_WORKER_PROCESSES"]          = b[:nginx_workers].to_s
 
         # Common hints some libraries read
         ENV["RAILS_MAX_THREADS"] ||= b[:app_threads].to_s

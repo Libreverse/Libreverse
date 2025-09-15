@@ -55,9 +55,10 @@ module Admin
 
     # Finds the Experience based on the ID parameter.
     def set_experience
-      @experience = Experience.find(params[:id])
+      @experience = Experience.friendly.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      redirect_to admin_experiences_path, alert: "Experience not found."
+      @experience = Experience.find_by(id: params[:id])
+      redirect_to admin_experiences_path, alert: "Experience not found." unless @experience
     end
   end
 end
