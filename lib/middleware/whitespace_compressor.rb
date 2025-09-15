@@ -3,7 +3,7 @@
 require "json"
 require "minify_html"
 require "digest/sha1"
-require "re2"
+require "nokogiri"
 
 class WhitespaceCompressor
   def initialize(app)
@@ -21,8 +21,10 @@ class WhitespaceCompressor
     Rails.logger.debug "WhitespaceCompressor: Processing HTML response"
 
     # Step 1: Assemble HTML efficiently
+    return [ status, headers, body ] unless body.respond_to?(:each)
+
     chunks = []
-    body.each { |chunk| chunks << chunk.encode("UTF-8", invalid: :replace, undef: :replace) }
+    body.each { |chunk| chunks << chunk.to_s.encode("UTF-8", invalid: :replace, undef: :replace) }
     html = chunks.join
     # We replace the body, so close the original to avoid leaks
     body.close if body.respond_to?(:close)
@@ -35,11 +37,11 @@ class WhitespaceCompressor
     unless html.empty?
       cache_key = "wc_html:#{::Digest::SHA1.hexdigest(html)}"
       html = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
-        # Step 1.5: Minify JSON-LD scripts before other processing
-        html = minify_jsonld_scripts(html)
+        # Step 1.5: Minify JSON-LD scripts before other processing (Nokogiri-based)
+        html = minify_jsonld_scripts_with_nokogiri(html)
 
-        # Step 1.6: Minify iframe srcdoc content
-        html = minify_srcdoc_iframes(html)
+        # Step 1.6: Minify iframe srcdoc content (Nokogiri-based)
+        html = minify_srcdoc_iframes_with_nokogiri(html)
 
         # Step 2: Apply minify_html for efficient whitespace and comment removal
         # Configure minify_html options for optimal minification
@@ -62,7 +64,7 @@ class WhitespaceCompressor
         }
 
         # Always apply minify_html for optimal compression - it's more effective than HAML's whitespace removal
-        html = MinifyHtml.minify(html, minify_config)
+        html = ::MinifyHtml.minify(html, minify_config)
 
         # Return the fully processed HTML
         html
@@ -72,98 +74,72 @@ class WhitespaceCompressor
     # Debug: Log minified HTML length
     Rails.logger.debug "WhitespaceCompressor: Minified HTML length: #{html.length}"
 
-    # Step 3: Update headers and return response
+    [ status, headers, [ html ] ]
     headers["Content-Length"] = html.bytesize.to_s
     headers.delete("Content-Encoding")
     [ status, headers, [ html ] ]
-  end
 
-  private
+  # Minify JSON-LD scripts by parsing and re-serializing JSON content (no regex lookaheads/backrefs)
+  def minify_jsonld_scripts_with_nokogiri(html)
+    doc = Nokogiri::HTML4.parse(html)
+    doc.css('script').each do |node|
+      type = node["type"]
+      next unless type && type.to_s.downcase.strip == "application/ld+json"
 
-  # Minify JSON-LD scripts by parsing and re-serializing JSON content
-  def minify_jsonld_scripts(html)
-    jsonld_pattern = RE2::Regexp.new('<script[^>]*type=["\']application/ld\+json["\'][^>]*>((?:[^<]|<(?!/script>))*)</script>', options: { casefold: true })
-    # Enhanced pattern to match JSON-LD scripts with various formats - fixed for ReDoS prevention
-    html.gsub(jsonld_pattern) do
-      full_match = Regexp.last_match(0)
-      json_content = Regexp.last_match(1)
-      script_opening_pattern = RE2::Regexp.new("<script[^>]*>", options: { casefold: true })
-      script_opening = full_match[script_opening_pattern]
-      script_closing = "</script>"
+      raw = node.children.to_s
+      # Strip CDATA if present
+      cleaned = raw.sub(/^\s*<!\[CDATA\[/, "").sub(/\]\]>\s*$/, "").strip
+      next unless cleaned.start_with?("{", "[")
 
       begin
-        # Remove CDATA wrapper if present
-        cdata_pattern = RE2::Regexp.new('^\s*<!\[CDATA\[(.*?)\]\]>\s*$', options: { multiline: true })
-        clean_content = json_content.gsub(cdata_pattern, '\1')
-
-        # Clean up the content - remove extra whitespace but preserve the JSON structure
-        clean_content = clean_content.strip
-
-        # Only process if it looks like JSON (starts with { or [)
-        if clean_content.start_with?("{", "[")
-          # Parse and re-serialize JSON to remove whitespace
-          parsed_json = JSON.parse(clean_content)
-          minified_json = JSON.generate(parsed_json)
-
-          # Return the complete script tag with minified JSON
-          "#{script_opening}#{minified_json}#{script_closing}"
-        else
-          # If it doesn't look like JSON, return original
-          full_match
-        end
+        minified = JSON.generate(JSON.parse(cleaned))
+        node.children = Nokogiri::XML::Text.new(minified, doc)
       rescue JSON::ParserError
-        # If JSON is invalid, return original script tag unchanged
-        full_match
+        # ignore invalid JSON
       end
     end
+    doc.to_html
+  rescue StandardError => e
+    Rails.logger.warn "WhitespaceCompressor: Failed JSON-LD minify: #{e.class}: #{e.message}"
+    html
   end
 
-  # Minify inline HTML in iframe srcdoc attributes
-  def minify_srcdoc_iframes(html)
-    srcdoc_pattern = RE2::Regexp.new('(<iframe[^>]*srcdoc=(["\'])(.*?)\2([^>]*>))', options: { casefold: true, multiline: true })
-    # Pattern to match iframe tags with srcdoc, handling double or single quotes safely
-    # Assumes srcdoc content uses entity-escaped quotes (&quot; or &#39;) if needed
-    html.gsub(srcdoc_pattern) do
-      prefix = ::Regexp.last_match(1)       # Everything up to srcdoc=
-      quote = ::Regexp.last_match(2)        # The opening quote (" or ')
-      content = ::Regexp.last_match(3)      # The inline HTML content
-      suffix = ::Regexp.last_match(4)       # The rest of the tag after the closing quote
+  # Minify inline HTML in iframe[srcdoc] attributes using Nokogiri
+  def minify_srcdoc_iframes_with_nokogiri(html)
+    doc = Nokogiri::HTML4.parse(html)
+    doc.css('iframe[srcdoc]').each do |node|
+      content = node["srcdoc"].to_s
+      next if content.strip.empty?
+      next unless content.lstrip.start_with?("<")
 
       begin
-        # Only process if content looks like HTML (non-empty and starts with <)
-        if content.strip.start_with?("<") && !content.empty?
-          # Config for srcdoc: only enable JS and CSS minification, preserve HTML structure
-          minify_config_srcdoc = {
-            allow_noncompliant_unquoted_attribute_values: false,
-            allow_optimal_entities: false,
-            allow_removing_spaces_between_attributes: false,
-            keep_closing_tags: true,
-            keep_comments: true,
-            keep_html_and_head_opening_tags: true,
-            keep_input_type_text_attr: true,
-            keep_ssi_comments: true,
-            minify_css: true,
-            minify_doctype: false,
-            minify_js: true,
-            preserve_brace_template_syntax: true,
-            preserve_chevron_percent_template_syntax: true,
-            remove_bangs: false,
-            remove_processing_instructions: false
-          }
-
-          # Minify the srcdoc content with the targeted config
-          minified_content = MinifyHtml.minify(content, minify_config_srcdoc)
-
-          # Reassemble the tag with minified srcdoc
-          "#{prefix}#{quote}#{minified_content}#{quote}#{suffix}"
-        else
-          # If not valid HTML-like, return original match
-          ::Regexp.last_match(0)
-        end
+        minified_content = ::MinifyHtml.minify(content, {
+          allow_noncompliant_unquoted_attribute_values: false,
+          allow_optimal_entities: false,
+          allow_removing_spaces_between_attributes: false,
+          keep_closing_tags: true,
+          keep_comments: true,
+          keep_html_and_head_opening_tags: true,
+          keep_input_type_text_attr: true,
+          keep_ssi_comments: true,
+          minify_css: true,
+          minify_doctype: false,
+          minify_js: true,
+          preserve_brace_template_syntax: true,
+          preserve_chevron_percent_template_syntax: true,
+          remove_bangs: false,
+          remove_processing_instructions: false
+        })
+        node["srcdoc"] = minified_content
       rescue StandardError => e
-        # If minification fails (e.g., invalid HTML), log and return original
         Rails.logger.warn "WhitespaceCompressor: Failed to minify srcdoc: #{e.message}"
-        ::Regexp.last_match(0)
+      end
+    end
+    doc.to_html
+  rescue StandardError => e
+    Rails.logger.warn "WhitespaceCompressor: Failed srcdoc pass: #{e.class}: #{e.message}"
+    html
+  end
       end
     end
   end
