@@ -10,10 +10,10 @@ class ExperiencesController < ApplicationController
                     timestamp_threshold: 3 # Stricter timing for experience submissions
 
   # CanCanCan authorization
-  load_and_authorize_resource except: %i[index display]
+  load_and_authorize_resource except: %i[index display show]
 
   # Enhanced authentication - require non-guest users for CRUD operations
-  before_action :require_authenticated_user, except: %i[index display]
+  before_action :require_authenticated_user, except: %i[index display show]
   before_action :check_enhanced_spam_protection, only: %i[create update]
   before_action :set_experience, only: %i[show edit update destroy display approve]
   before_action :check_ownership, only: %i[edit update destroy]
@@ -50,6 +50,9 @@ class ExperiencesController < ApplicationController
 
   # GET /experiences/1
   def show
+    # If accessed via numeric ID, redirect directly to canonical display path with slug
+    return redirect_to display_experience_path(@experience), status: :moved_permanently if params[:id].to_s == @experience.id.to_s && @experience.slug.present?
+
     redirect_to display_experience_path(@experience)
   end
 
@@ -100,6 +103,9 @@ class ExperiencesController < ApplicationController
   end
 
   def display
+    # Canonicalize: ensure slug in URL for SEO/back-compat
+    return redirect_to display_experience_path(@experience), status: :moved_permanently if params[:id].to_s == @experience.id.to_s && @experience.slug.present?
+
     # Handle both local experiences and federated experience URIs
     if params[:federated_uri].present?
       # This is a federated experience - validate and redirect to the original instance
@@ -186,12 +192,18 @@ class ExperiencesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_experience
-    @experience = Experience.find_by(id: params[:id])
-    return if @experience
+    identifier = params[:id].to_s
+    # Prefer numeric id when the param is strictly digits to preserve old-link semantics
+    if identifier.match?(/\A\d+\z/)
+      @experience = Experience.find_by(id: identifier)
+      return if @experience
+    end
 
+    # Otherwise resolve via FriendlyId (slug)
+    @experience = Experience.friendly.find(identifier)
+  rescue ActiveRecord::RecordNotFound
     flash[:alert] = "Experience not found."
     redirect_to experiences_path
-    false
   end
 
   # Only allow a list of trusted parameters through.

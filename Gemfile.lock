@@ -231,6 +231,8 @@ GEM
     foreman (0.90.0)
       thor (~> 1.4)
     foundation_emails (2.2.1.0)
+    friendly_id (5.5.1)
+      activerecord (>= 4.0.0)
     fugit (1.11.2)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -256,7 +258,7 @@ GEM
       rake (>= 13)
     googleapis-common-protos-types (1.21.0)
       google-protobuf (~> 4.26)
-    graphql (2.5.11)
+    graphql (2.5.12)
       base64
       fiber-storage
       logger
@@ -418,17 +420,17 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.9-aarch64-linux-gnu)
+    nokogiri (1.18.10-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.9-aarch64-linux-musl)
+    nokogiri (1.18.10-aarch64-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.18.9-arm64-darwin)
+    nokogiri (1.18.10-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.9-x86_64-darwin)
+    nokogiri (1.18.10-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.9-x86_64-linux-gnu)
+    nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.9-x86_64-linux-musl)
+    nokogiri (1.18.10-x86_64-linux-musl)
       racc (~> 1.4)
     nokogiri-html5-inference (0.3.0)
       nokogiri (~> 1.14)
@@ -590,7 +592,7 @@ GEM
       redis-client (>= 0.22.0)
     redis-client (0.25.3)
       connection_pool
-    regexp_parser (2.11.2)
+    regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
     rexml (3.4.4)
@@ -831,6 +833,7 @@ PLATFORMS
   aarch64-linux-musl
   arm64-darwin
   x86_64-darwin
+  x86_64-darwin-21
   x86_64-linux
   x86_64-linux-gnu
   x86_64-linux-musl
@@ -859,6 +862,7 @@ DEPENDENCIES
   fiddle
   flamegraph
   foreman
+  friendly_id
   google_robotstxt_parser!
   graphql_rails
   grpc

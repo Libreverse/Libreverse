@@ -3,6 +3,7 @@
 require "active_storage_validations"
 
 class Experience < ApplicationRecord
+  extend FriendlyId
   include ActiveStorageValidations::Model
   include GraphqlRails::Model
   include FederatableExperience
@@ -66,6 +67,8 @@ class Experience < ApplicationRecord
   # Only trigger if key attributes changed or it's a new record to avoid redundant job enqueues
   after_commit :schedule_vectorization, on: %i[create update], if: :should_vectorize?
 
+  friendly_id :slug_candidates, use: %i[slugged finders history]
+
   def assign_owner
     # Use Current.account set by Reflex or fallback to Rodauth
     self.account_id ||= Current.account&.id || nil
@@ -77,6 +80,17 @@ class Experience < ApplicationRecord
 
   def html_file?
     html_file.attached?
+  end
+
+  def slug_candidates
+    [
+      :title,
+      [ :title, SecureRandom.hex(3) ]
+    ]
+  end
+
+  def should_generate_new_friendly_id?
+    slug.blank? || will_save_change_to_title?
   end
 
   # Check if this experience needs vectorization
