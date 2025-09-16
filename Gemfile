@@ -43,6 +43,7 @@ gem "propshaft"
 gem "rack-attack"
 gem "rack-brotli"
 gem "rack-cors"
+  gem "rack-mini-profiler"
 gem "rails"
 gem "rails-controller-testing"
 gem "re2"
@@ -94,17 +95,16 @@ group :development do
   gem "erb-formatter"
   gem "erb_lint"
   gem "fasterer"
-  gem "flamegraph", require: false
+  gem "flamegraph"
   gem "grpc-tools"
   gem "haml-lint"
   gem "i18n-tasks"
-  gem "rack-mini-profiler", require: false
-  gem "redis", require: false
+  gem "redis"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "spring"
-  gem "stackprof", require: false
+  gem "stackprof"
   gem "web-console"
 end
 
