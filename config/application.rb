@@ -12,7 +12,6 @@ Bundler.require(*Rails.groups)
 require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
-require_relative "../lib/middleware/turbo_preload_middleware"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
 
