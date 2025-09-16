@@ -63,6 +63,7 @@ module LibreverseInstance
     zstd_min_match = 3
     zstd_strategy = :btultra2
 
+    # Out-of-band garbage collection middleware to reduce latency spikes
     config.middleware.use OobGcMiddleware
 
     config.middleware.use Rack::Zstd,
@@ -88,7 +89,7 @@ module LibreverseInstance
     config.middleware.use WhitespaceCompressor
 
     # Add TurboPreloadMiddleware to handle HTML responses and add data-turbo-preload attributes
-    # config.middleware.use TurboPreloadMiddleware if Rails.env.production?
+    config.middleware.use TurboPreloadMiddleware if Rails.env.production?
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
