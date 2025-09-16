@@ -51,10 +51,10 @@ RUN set -eux; \
 # Fetch full upstream unicode.mapping (rather than storing a local stub)
 RUN curl -fsSL https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -o /etc/modsecurity/unicode.mapping
 
-# Set optimization and security flags
-ENV CFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
-ENV CXXFLAGS="-O3 -fno-fast-math -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -fPIC -Wformat -Wformat-security"
-ENV LDFLAGS="-Wl,-z,relro -Wl,-z,now"
+# Better optimisation flags
+ENV CFLAGS="-O3 -march=native -pipe -flto"
+ENV CXXFLAGS="-O3 -march=native -pipe -flto"
+ENV LDFLAGS="-flto -Wl,-O3 -Wl,-Bsymbolic-functions -Wl,--as-needed"
 
 # Set correct environment variables.
 ENV HOME=/root
