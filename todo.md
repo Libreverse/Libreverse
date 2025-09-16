@@ -1,12 +1,13 @@
 # To-do
 
+add a cache preloading job
 finish blog and add commontator
 add thredded for forum feature
 use <https://github.com/slimtoolkit/slim> to optimise the docker image
 add <https://github.com/trailblazer/trailblazer> and adopt it for future logic
 replace locotmotive scroll with lenis
 action cable cable shared worker
-the mnify_htmk shou,dn't remove comments
+minify_html shouldn't remove comments
 
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] clear up attribution for images
