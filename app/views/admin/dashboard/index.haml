@@ -32,3 +32,23 @@
         %div
           %p Welcome to the Libreverse Admin Panel
           %p Use the links above to navigate to different administrative functions. More features will be added as the platform grows.
+
+        -# Profiling Controls (admin-only, production-safe)
+        %div
+          %h2 Performance Profiling
+          - if profiling_enabled?
+            %p
+              Profiling is currently ENABLED#{Rails.env.production? && current_account&.admin? ? " (default for admins)" : ""}.
+            = form_with url: disable_admin_profiling_path, method: :post, local: true do |f|
+              %label{ for: "ttl-disable" } Temporarily disable (minutes, 1-60)
+              %input#ttl-disable{ type: "number", name: "ttl", min: 1, max: 60, value: 15 }
+              %br/
+              = f.submit "Disable Profiling", class: "btn btn-warning", data: { turbo_confirm: "Temporarily disable profiling for this session?" }
+          - else
+            %p
+              Enable rack-mini-profiler for a short time to inspect performance. Visible only to your session.
+            = form_with url: enable_admin_profiling_path, method: :post, local: true do |f|
+              %label{ for: "ttl" } Duration (minutes, 1-60)
+              %input#ttl{ type: "number", name: "ttl", min: 1, max: 60, value: 15 }
+              %br/
+              = f.submit "Enable Profiling", class: "btn btn-primary"

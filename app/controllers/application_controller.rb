@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_account, :current_ability, :user_signed_in?, :authenticated_user?, :guest_user?, :can_create_content?
   helper_method :privacy_policy_path, :blog_url, :recent_blog_posts
+  helper_method :profiling_enabled?
 
   # Protection from CSRF
   protect_from_forgery with: :exception
@@ -76,6 +77,30 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+    # Whether rack-mini-profiler is enabled for the current session.
+    # In production, admins have it on by default unless they explicitly
+    # force-disable it for their session. Non-admins can enable it temporarily
+    # via the Admin::ProfilingController (TTL based).
+    def profiling_enabled?
+      data = session[:profiling]
+      if data.is_a?(Hash)
+        # Force-disabled override (with TTL)
+        if data[:force_disabled]
+          exp = data[:expires_at]
+          return false if exp && Time.now.to_i < exp.to_i
+        end
+
+        # Explicit enablement (with TTL)
+        if data[:enabled]
+          exp = data[:expires_at]
+          return true if exp && Time.now.to_i < exp.to_i
+        end
+      end
+
+      # Default-on for admins in production
+      Rails.env.production? && current_account&.admin? ? true : false
+    end
 
     def privacy_policy_path
       privacy_path
