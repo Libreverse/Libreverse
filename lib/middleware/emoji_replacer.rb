@@ -31,12 +31,12 @@ class EmojiReplacer
 
     return @app.call(env) if request_is_binary?(env)
 
-    # Rails.logger.debug { "EmojiReplacer: Processing request for #{env['PATH_INFO']}" }
+  # Rails.logger.debug { "EmojiReplacer: Processing request for #{env['PATH_INFO']}" }
 
   status, headers, body = @app.call(env)
 
     if headers["Content-Type"]&.include?("text/html")
-      # Assemble full HTML to process once and allow caching
+  # Assemble full HTML to process once and allow caching
   chunks = []
   body.each { |part| chunks << part.to_s }
       original_html = chunks.join
@@ -62,10 +62,10 @@ class EmojiReplacer
   rescue StandardError => e
     Rails.logger.error "EmojiReplacer: Error processing request: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    safe_status = (defined?(status) && status.to_i > 0) ? status.to_i : 500
+    safe_status = defined?(status) && status.to_i.positive? ? status.to_i : 500
     safe_headers = headers.is_a?(Hash) ? headers : {}
     safe_headers["Content-Type"] ||= "text/plain"
-    safe_body = (body.respond_to?(:each) && body) ? body : [ "Internal Server Error" ]
+    safe_body = body.respond_to?(:each) && body ? body : [ "Internal Server Error" ]
     [ safe_status, safe_headers, safe_body ]
   end
 
