@@ -74,6 +74,13 @@ Rails.application.routes.draw do
     resources :dashboard, only: [ :index ]
     root to: "dashboard#index"
 
+    # Admin-only production profiling controls
+    resource :profiling, only: [] do
+      post :enable
+      post :disable
+      post :force_disable
+    end
+
     # ActiveHashcash monitoring dashboard - admin only
     mount ActiveHashcash::Engine, at: "hashcash"
 
