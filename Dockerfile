@@ -3,6 +3,12 @@
 # Use phusion/passenger-full as base image for a smaller image.
 FROM phusion/passenger-ruby34:latest
 
+# Better optimisation flags
+ENV CFLAGS="-O3 -march=native -pipe -flto"
+ENV CXXFLAGS="-O3 -march=native -pipe -flto"
+ENV LDFLAGS="-flto -Wl,-O3 -Wl,-Bsymbolic-functions -Wl,--as-needed"
+ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-disable --yjit-stats=quiet"
+
 # Install mimalloc for improved memory management (with dev headers for optimization)
 # Also install and configure ModSecurity (with OWASP CRS) for WAF protection
 RUN set -eux; \
@@ -50,11 +56,6 @@ RUN set -eux; \
         fi
 # Fetch full upstream unicode.mapping (rather than storing a local stub)
 RUN curl -fsSL https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -o /etc/modsecurity/unicode.mapping
-
-# Better optimisation flags
-ENV CFLAGS="-O3 -march=native -pipe -flto"
-ENV CXXFLAGS="-O3 -march=native -pipe -flto"
-ENV LDFLAGS="-flto -Wl,-O3 -Wl,-Bsymbolic-functions -Wl,--as-needed"
 
 # Set correct environment variables.
 ENV HOME=/root
@@ -198,8 +199,6 @@ RUN mkdir -p /home/app/webapp/log && \
 
 # Use baseimage-docker's init process, but override to use mimalloc for app
 ENV DISABLE_AGENT=true
-
-ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-disable --yjit-stats=quiet"
 
 # Non-sensitive runtime defaults (baked into the image)
 ENV RAILS_ENV=production \

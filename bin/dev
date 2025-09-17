@@ -1,11 +1,19 @@
 #!/usr/bin/env sh
 
-if gem list --no-installed --exact --silent foreman; then
+# Ensure foreman is available
+if ! command -v foreman >/dev/null 2>&1; then
     echo "Installing foreman..."
-    gem install foreman
+    gem install foreman >/dev/null
 fi
 
 # Default to port 3000 if not specified
 export PORT="${PORT:-3000}"
 
-exec foreman start -f Procfile.dev --env /dev/null "$@"
+# Prefer Procfile.dev if present, otherwise use the root Procfile
+if [ -f "Procfile.dev" ]; then
+    PROCFILE="Procfile.dev"
+else
+    PROCFILE="Procfile"
+fi
+
+exec foreman start -f "$PROCFILE" --env /dev/null "$@"

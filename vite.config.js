@@ -7,10 +7,10 @@ import cssnano from "cssnano";
 import coffeescript from "./plugins/coffeescript.js";
 import postcssUrl from "postcss-url";
 import typehints from "./plugins/typehints.js";
+import preserveAllComments from "./plugins/preserveallcomments.js";
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
-    const isProdBuild = command === "build" && mode === "production";
 
     return {
         esbuild: {
@@ -229,7 +229,8 @@ export default defineConfig(({ command, mode }) => {
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),
             stimulusHMR(),
-            ...(isProdBuild ? [typehints()] : []),
+            typehints(),
+            preserveAllComments()
         ],
     };
 });
