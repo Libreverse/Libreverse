@@ -106,10 +106,11 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # so that clients don't attempt HTTP/2/3 upgrades against localhost.
   remove_alt_svc = Class.new do
     def initialize(app) = (@app = app)
+
     def call(env)
       status, headers, body = @app.call(env)
       headers.delete("Alt-Svc")
-      [status, headers, body]
+      [ status, headers, body ]
     end
   end
   config.middleware.insert_before 0, remove_alt_svc

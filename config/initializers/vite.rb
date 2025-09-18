@@ -22,9 +22,7 @@ if Rails.env.development?
     config.https = false
     config.auto_build = false
     # Also set via Ruby API for good measure
-    if config.respond_to?(:dev_server_connect_timeout=)
-      config.dev_server_connect_timeout = 2.5
-    end
+    config.dev_server_connect_timeout = 2.5 if config.respond_to?(:dev_server_connect_timeout=)
     # We're using Bun for JS package management in this project
     config.package_manager = :bun if config.respond_to?(:package_manager=)
   end

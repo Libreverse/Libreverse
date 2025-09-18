@@ -19,7 +19,7 @@ if Rails.env.development? || Rails.env.production?
     %r{\A/vite/},
     %r{\A/node_modules/},
     %r{\A/\+virtual/},
-    %r{\A/rails/active_storage/},
+    %r{\A/rails/active_storage/}
   ]
 
   # In production, enable the profiler by default for admin users.
@@ -84,7 +84,7 @@ if Rails.env.development? || Rails.env.production?
   # only do this when running the web server (not for jobs/console/rake).
   if defined?(Rails::Server)
     stack = Rails.application.config.middleware
-    unless ENV['RACK_MINI_PROFILER_INSERTED'] == '1'
+    unless ENV["RACK_MINI_PROFILER_INSERTED"] == "1"
       begin
         if defined?(ViteRuby::DevServerProxy)
           # Ensure Mini Profiler runs after Vite Ruby's dev server proxy
@@ -97,7 +97,7 @@ if Rails.env.development? || Rails.env.production?
         # As a last resort, append
         stack.use Rack::MiniProfiler
       end
-      ENV['RACK_MINI_PROFILER_INSERTED'] = '1'
+      ENV["RACK_MINI_PROFILER_INSERTED"] = "1"
     end
   end
 end

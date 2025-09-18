@@ -197,6 +197,7 @@ end
 ## When to Use Trailblazer
 
 Use Operations for:
+
 - Complex multi-step business processes
 - Workflows requiring validation, authorization, and callbacks
 - Replacing fat controllers or service objects
@@ -208,7 +209,7 @@ Keep simple CRUD in controllers for straightforward cases.
 
 Place operations in `app/operations/` with namespacing:
 
-```
+```text
 app/operations/
   user/
     create.rb

@@ -2,6 +2,7 @@
 
 finish blog and add commontator
 add thredded for forum feature
+add libreverse metaverse map
 use <https://github.com/slimtoolkit/slim> to optimise the docker image
 replace locotmotive scroll with lenis
 action cable cable shared worker

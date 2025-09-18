@@ -1,4 +1,5 @@
 import ApplicationController from "./application_controller"
+import Cookies from "js-cookie"
 
 ###*
  * Controls dismissible elements (like banners, tutorials).
@@ -9,6 +10,9 @@ export default class extends ApplicationController
 
   connect: ->
     super.connect()
+    # Check if already dismissed via cookie
+    if @keyValue and Cookies.get("dismissed_#{@keyValue}")
+      @element.style.display = 'none'
     return
 
   ###*
@@ -17,6 +21,10 @@ export default class extends ApplicationController
   ###
   dismiss: (event) ->
     event.preventDefault()
+
+    # Set cookie to remember dismissal
+    if @keyValue
+      Cookies.set("dismissed_#{@keyValue}", "true", { expires: 30 })
 
     # Call the server-side Reflex method to handle dismissal logic
     @stimulate "DismissibleReflex#dismiss", @element
