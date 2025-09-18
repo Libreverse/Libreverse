@@ -93,7 +93,68 @@ module ApplicationHelper
 
   # --- End SEO Asset Path Helpers ---
 
+  # --- Request/Context Helpers for Asset Inlining Optimizations ---
+  # Detect Turbo visit/frame requests so we can skip inlining on Turbo navigations
+  def turbo_request?
+    request.headers["X-Turbo-Request-Id"].present?
+  end
+
+  # True if the HTTP Referer is from the same site (host and port match)
+  # Treats a missing/blank referrer as external (returns false)
+  def same_site_referrer?
+    ref = request.referer
+    return false if ref.blank?
+
+    begin
+      uri = URI.parse(ref)
+      ref_host = uri.host
+      ref_scheme = uri.scheme
+      ref_port = uri.port || (ref_scheme == "https" ? 443 : 80)
+      ref_host == request.host && ref_port == request.port
+    rescue URI::InvalidURIError
+      false
+    end
+  end
+
+  # We inline assets only when:
+  # - production environment
+  # - NOT a Turbo request (full document load only)
+  # - referrer is not same-site (including when blank)
+  def should_inline_assets?
+    Rails.env.production? && !turbo_request? && !same_site_referrer?
+  end
+  # --- End Request/Context Helpers ---
+
   # --- Vite Asset Inlining Helpers ---
+  # Emit a <link rel="modulepreload"> for a Vite JS entry; useful when we inline JS but still want the browser to fetch/cache the file
+  def vite_modulepreload_link(entry_path)
+    href = vite_asset_path(entry_path)
+    # rel=modulepreload should also set as=script and crossorigin for proper semantics
+    tag.link(rel: "modulepreload", href: href, as: "script", crossorigin: "")
+  end
+
+  # Generate <link rel="stylesheet"> tags for the CSS extracted from a given JS entry
+  # Uses the Vite manifest to find associated stylesheets.
+  def vite_stylesheet_links_for_entry(name_with_prefix, **options)
+    if Rails.env.development? || Rails.env.test?
+      # In dev/test fall back to a direct stylesheet tag for the scss entry if present
+      return vite_stylesheet_tag("~/stylesheets/application.scss", **options)
+    end
+
+    manifest_key = name_with_prefix.sub(%r{^~/}, "")
+    css_paths = Array(ViteRuby.instance.manifest.resolve_entries(manifest_key)[:stylesheets])
+    return "" if css_paths.empty?
+
+    public_dir = ViteRuby.instance.config.public_output_dir
+    links = css_paths.map do |css_path|
+      # css_path may include the public dir; normalize to "/<public_dir>/<rel_path>"
+      rel_path = css_path.sub(%r{^/?#{Regexp.escape(public_dir)}/}, "")
+      href = File.join("/", public_dir, rel_path)
+      tag.link({ rel: "stylesheet", href: href }.merge(options))
+    end
+    safe_join(links)
+  end
+
   # Email-specific helper to inline Foundation for Emails styles
   def inline_email_styles
     inline_vite_stylesheet("~/emails.css")

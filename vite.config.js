@@ -176,7 +176,9 @@ export default defineConfig(({ mode }) => {
             // Keep Vite on the same host/port as Vite Ruby expects
             port: 3001,
             strictPort: true,
-            hmr: { host: "127.0.0.1", port: 3001, overlay: true }, // Enable error overlay in development
+            // Force HTTP/1.1 in dev: no TLS here and plain WS for HMR
+            https: false,
+            hmr: { protocol: "ws", host: "127.0.0.1", port: 3001, overlay: true }, // Enable error overlay in development
             headers: isDevelopment
                 ? {
                       "Cache-Control":

@@ -1,9 +1,15 @@
 /# Shared assets partial for app and CMS
 = vite_client_tag data: { turbo_track: "reload" }
 - if Rails.env.production?
-  / Use single entrypoint in production
-  = inline_vite_stylesheet "~/javascript/application.js"
-  = inline_vite_javascript "~/javascript/application.js"
+  / In production, always link assets; optionally inline for first-time/external, non-Turbo requests.
+  = vite_stylesheet_links_for_entry "~/javascript/application.js", data: { turbo_track: "reload" }
+  - if should_inline_assets?
+    / For external referrers and full document loads, inline to avoid pop-in and extra RTTs
+    = vite_modulepreload_link "~/javascript/application.js"
+    = inline_vite_stylesheet "~/javascript/application.js"
+    = inline_vite_javascript "~/javascript/application.js"
+  - else
+    = vite_javascript_tag "~/javascript/application.js", data: { turbo_track: "reload" }
 - else
   / In development and test, load only the JS entry; it imports application.scss
   = vite_javascript_tag "~/javascript/application.js", data: { turbo_track: "reload" }

@@ -14,6 +14,7 @@ require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
+require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -73,6 +74,8 @@ module LibreverseInstance
                           min_match: zstd_min_match,
                           strategy: zstd_strategy,
                           sync: false
+
+    config.middleware.use TurboPreload
 
     config.after_initialize do
       Rails.logger.info "Zstandard compression middleware configured for maximum compression (forced):"
