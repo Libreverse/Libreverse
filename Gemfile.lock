@@ -110,9 +110,9 @@ GEM
     base64 (0.3.0)
     bcp47_spec (0.2.1)
     benchmark (0.4.1)
-    better_html (2.1.1)
-      actionview (>= 6.0)
-      activesupport (>= 6.0)
+    better_html (2.2.0)
+      actionview (>= 7.0)
+      activesupport (>= 7.0)
       ast (~> 2.0)
       erubi (~> 1.4)
       parser (>= 2.4)
@@ -342,7 +342,7 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    json (2.13.2)
+    json (2.14.1)
     json-canonicalization (1.0.0)
     json-jwt (1.17.0)
       activesupport (>= 4.2)
@@ -392,7 +392,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.4)
+    marcel (1.1.0)
     matrix (0.4.3)
     mimemagic (0.4.3)
       nokogiri (~> 1)
@@ -469,7 +469,7 @@ GEM
     parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
-    passenger (6.0.27)
+    passenger (6.1.0)
       rack (>= 1.6.13)
       rackup (>= 1.0.1)
       rake (>= 12.3.3)

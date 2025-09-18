@@ -5,6 +5,7 @@ import "./libs/foundation.js";
 import "./libs/websocket_p2p_frame.coffee";
 import "what-input";
 import { load } from "@fingerprintjs/botd";
+import "./libs/cookies.js";
 
 // GDPR-Compliant Error Tracking Setup
 import * as Sentry from "@sentry/browser";
@@ -78,6 +79,7 @@ const BOTD_TTL_MIN = 60; // Cookie lifetime
                 `expires=${expires}`,
                 "path=/",
                 "SameSite=Lax", // add 'Secure' if your site is HTTPS-only
+                globalThis.location.protocol === "https:" ? "Secure" : "",
             ].join("; ");
         })
         .catch((error) => {

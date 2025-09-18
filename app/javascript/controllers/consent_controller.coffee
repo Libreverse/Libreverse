@@ -1,14 +1,25 @@
 import * as Turbo from "@hotwired/turbo"
 import ApplicationController from "./application_controller"
 import { get, post } from "@rails/request.js"
+import Cookies from "js-cookie"
 
 # ConsentController: handles UX and triggers ConsentReflex
 export default class extends ApplicationController
   @targets = ["checkbox", "form"]
 
+  connect: ->
+    super.connect()
+    # Check if consent already given via cookie (for UI purposes)
+    if Cookies.get("consent_ui_preference") == "accepted"
+      @hideConsentUI()
+    return
+
   accept: (event) ->
     event.preventDefault()
     rememberOptIn = if @hasCheckboxTarget and @checkboxTarget.checked then "1" else "0"
+
+    # Set client-side cookie for immediate UI feedback
+    Cookies.set("consent_ui_preference", "accepted", { expires: 365 })
 
     # Collect invisible captcha data
     captchaData = @getCaptchaData()
@@ -25,6 +36,9 @@ export default class extends ApplicationController
   decline: (event) ->
     event.preventDefault()
 
+    # Set client-side cookie for declined
+    Cookies.set("consent_ui_preference", "declined", { expires: 30 })
+
     # Collect invisible captcha data
     captchaData = @getCaptchaData()
 
@@ -40,6 +54,11 @@ export default class extends ApplicationController
       responseKind: "turbo-stream"
     }).then (response) =>
       if response.ok then response.html.then (html) => Turbo.renderStreamMessage html
+
+  hideConsentUI: ->
+    # Hide consent UI elements if already accepted
+    consentElements = document.querySelectorAll('.consent-overlay, .consent-banner')
+    consentElements.forEach (el) -> el.style.display = 'none'
 
   # Collect invisible captcha data from the current page
   getCaptchaData: ->

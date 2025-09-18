@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
         if forked && defined?(RubyVM::YJIT)
@@ -7,10 +9,10 @@ if defined?(PhusionPassenger)
             begin
                 if RubyVM::YJIT.respond_to?(:runtime_stats)
                     stats = RubyVM::YJIT.runtime_stats
-                    inline = stats[:inline_code_size] || stats['inline_code_size'] || 0
-                    outlined = stats[:outlined_code_size] || stats['outlined_code_size'] || 0
+                    inline = stats[:inline_code_size] || stats["inline_code_size"] || 0
+                    outlined = stats[:outlined_code_size] || stats["outlined_code_size"] || 0
                     code_size = inline + outlined
-                    compiled_iseqs = stats[:compiled_iseq_count] || stats['compiled_iseq_count']
+                    compiled_iseqs = stats[:compiled_iseq_count] || stats["compiled_iseq_count"]
                 end
             rescue StandardError => e
                 Rails.logger.debug "YJIT runtime_stats unavailable: #{e.class}: #{e.message}"
@@ -23,7 +25,7 @@ if defined?(PhusionPassenger)
                 log_message += " - Compiled ISeqs: #{compiled_iseqs}" if compiled_iseqs
                 Rails.logger.info log_message
             else
-                Rails.logger.info 'YJIT enabled in forked worker process'
+                Rails.logger.info "YJIT enabled in forked worker process"
             end
         end
     end

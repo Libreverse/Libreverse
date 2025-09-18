@@ -22,6 +22,7 @@
         "foundation-sites": "^6.9.0",
         "hotkeys-js": "^3.13.15",
         "jquery": "^3.7.1",
+        "js-cookie": "https://github.com/js-cookie/js-cookie",
         "locomotive-scroll": "^4.1.4",
         "p2p": "file:vendor/javascript/p2p",
         "sassy-lists": "^3.0.1",
@@ -1212,6 +1213,8 @@
     "jest-worker": ["jest-worker@29.7.0", "", { "dependencies": { "@types/node": "*", "jest-util": "^29.7.0", "merge-stream": "^2.0.0", "supports-color": "^8.0.0" } }, "sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw=="],
 
     "jquery": ["jquery@3.7.1", "", {}, "sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg=="],
+
+    "js-cookie": ["js-cookie@github:js-cookie/js-cookie#ea7f9b2", {}, "js-cookie-js-cookie-ea7f9b2"],
 
     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
 
