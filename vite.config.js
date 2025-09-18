@@ -171,7 +171,12 @@ export default defineConfig(({ mode }) => {
             },
         },
         server: {
-            hmr: { overlay: true }, // Enable error overlay in development
+            // Bind explicitly to IPv4 to match Rails proxy expectations and avoid ::1-only binding
+            host: "127.0.0.1",
+            // Keep Vite on the same host/port as Vite Ruby expects
+            port: 3001,
+            strictPort: true,
+            hmr: { host: "127.0.0.1", port: 3001, overlay: true }, // Enable error overlay in development
             headers: isDevelopment
                 ? {
                       "Cache-Control":
