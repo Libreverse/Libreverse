@@ -3,7 +3,6 @@
 finish blog and add commontator
 add thredded for forum feature
 use <https://github.com/slimtoolkit/slim> to optimise the docker image
-add <https://github.com/trailblazer/trailblazer> and adopt it for future logic
 replace locotmotive scroll with lenis
 action cable cable shared worker
 
@@ -23,7 +22,6 @@ action cable cable shared worker
 - [ ] (feature) Add Telegram search bot
 - [ ] (feature) Add x.com search bot
 - [ ] (feature) add litestream back for optional cache backups
-      move glitchtip back to local
 
 ---
 

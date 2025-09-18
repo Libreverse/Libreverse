@@ -38,6 +38,7 @@
 - [Sentry Use](sentry-use.md)
 - [Spring Setup](spring-setup.md)
 - [Text Glow Effects](text-glow-effects.md)
+- [Trailblazer Integration](trailblazer-integration.md)
 - [TOMs](toms.md)
 - [Umami Analytics](umami-analytics.md)
 - [User Preferences](user-preferences.md)

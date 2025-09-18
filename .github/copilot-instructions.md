@@ -66,6 +66,7 @@ Code Style and Structure
 - Prefer iteration and modularization over code duplication.
 - Use descriptive variable and method names (e.g., user_signed_in?, calculate_total).
 - Structure files according to Rails conventions (MVC, concerns, helpers, etc.).
+- The trailblazer and reform gems are installed and should be used wherever it would make things simpler/cleaner.
 
 Naming Conventions
 
