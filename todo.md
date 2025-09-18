@@ -1,9 +1,5 @@
 # To-do
 
-optimisation where we only embed js and css when the referrer isn't from the same site, linking always. Idea going that their browser will have downloaded and cached the files so there won't be a pop-in and we can send a slimmer html over the wire.
-  def turbo_request?
-    request.headers["X-Turbo-Request-Id"].present?
-  end
 finish blog and add commontator
 add thredded for forum feature
 use <https://github.com/slimtoolkit/slim> to optimise the docker image
