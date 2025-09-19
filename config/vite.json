@@ -6,16 +6,18 @@
             "~/emoji/**/*",
             "~/fonts/**/*",
             "~/icons/**/*",
-            "~/static/**/*"
+            "~/static/**/*",
+            "~/stylesheets/application.scss"
         ]
     },
     "development": {
-        "autoBuild": false,
+        "autoBuild": true,
         "publicOutputDir": "vite-dev",
-        "port": 3001
+        "port": 3001,
+        "skipProxy": true
     },
     "test": {
-        "autoBuild": false,
+        "autoBuild": true,
         "publicOutputDir": "vite-test",
         "port": 3002
     }

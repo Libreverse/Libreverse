@@ -137,8 +137,8 @@ module ApplicationHelper
   # Uses the Vite manifest to find associated stylesheets.
   def vite_stylesheet_links_for_entry(name_with_prefix, **options)
     if Rails.env.development? || Rails.env.test?
-      # In dev/test fall back to a direct stylesheet tag for the scss entry if present
-      return vite_stylesheet_tag("~/stylesheets/application.scss", **options)
+      # In dev/test we rely on the JS entry importing the SCSS; no separate tags required.
+      return ""
     end
 
     manifest_key = name_with_prefix.sub(%r{^~/}, "")

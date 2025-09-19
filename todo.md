@@ -1,11 +1,11 @@
 # To-do
 
+- [ ] (feature) replace sqlite cache with mariadb in memory table
 - [ ] (feature) Finish blog and add commontator
 - [ ] (feature) Add thredded for forum feature
 - [ ] (feature) Add libreverse metaverse map
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (feature) Replace locotmotive scroll with lenis
-- [ ] (feature) Action cable cable shared worker
 
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (feature) Clear up attribution for images
