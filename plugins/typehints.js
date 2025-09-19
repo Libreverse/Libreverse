@@ -140,6 +140,11 @@ export default function typehints(options = {}) {
         includeNodeModules = true,
         enableCoercions = true,
         processEverything = true,
+        // Preferred option names (backward compatible mapping applied below)
+        variableDocumentation = options.variableDocumentation ?? options.variableDocs ?? true,
+        objectShapeDocumentation = options.objectShapeDocumentation ?? options.objectShapeDocs ?? true,
+        maxObjectProperties = options.maxObjectProperties ?? options.maxObjectProps ?? 8,
+        parameterHoistCoercions = options.parameterHoistCoercions ?? options.paramHoistCoercions ?? false,
     } = options;
 
     // Track if we're in build mode to fail builds on errors
@@ -229,6 +234,79 @@ export default function typehints(options = {}) {
 
                 // Step 3: Traverse Babel AST and infer/add hints using TS checker
                 // Note: Map Babel nodes to TS nodes via positions for getTypeAtLocation
+                // Utility: create /*! ... */ style block comment only once
+                function addBlockDocument(pathOrNode, text) {
+                    if (!text) return;
+                    const node = pathOrNode.node || pathOrNode; // accept path or node
+                    const existing = (node.leadingComments || []).some(
+                        (c) =>
+                            c.type === 'CommentBlock' &&
+                            (c.value.includes('@type') || c.value.includes('@returns')),
+                    );
+                    if (existing) return;
+                    if (pathOrNode.addComment) {
+                        pathOrNode.addComment('leading', `! ${text}`, false);
+                    } else {
+                        // Fallback: push into leadingComments manually
+                        node.leadingComments = [
+                            ...(node.leadingComments || []),
+                            { type: 'CommentBlock', value: `! ${text}` },
+                        ];
+                    }
+                }
+
+                // Heuristic object literal shape inference (Babel node based to stay fast)
+                function inferObjectShape(babelObjectExpr) {
+                    if (!objectShapeDocumentation) return;
+                    if (!t.isObjectExpression(babelObjectExpr)) return;
+                    const properties = babelObjectExpr.properties.filter((p) =>
+                        t.isObjectProperty(p) && (t.isIdentifier(p.key) || t.isStringLiteral(p.key)),
+                    );
+                    if (properties.length === 0 || properties.length > maxObjectProperties) return;
+                    const parts = [];
+                    for (const property of properties) {
+                        const key = t.isIdentifier(property.key) ? property.key.name : property.key.value;
+                        let valueNode = property.value;
+                        let typePart = 'any';
+                        if (t.isNumericLiteral(valueNode)) typePart = 'number';
+                        else if (t.isStringLiteral(valueNode)) typePart = 'string';
+                        else if (t.isBooleanLiteral(valueNode)) typePart = 'boolean';
+                        else if (t.isNullLiteral(valueNode)) typePart = 'any';
+                        else if (t.isArrayExpression(valueNode)) {
+                            // Simple uniform primitive detection
+                            if (valueNode.elements.length === 0) typePart = 'any[]';
+                            else {
+                                const first = valueNode.elements[0];
+                                if (t.isNumericLiteral(first)) typePart = 'number[]';
+                                else if (t.isStringLiteral(first)) typePart = 'string[]';
+                                else if (t.isBooleanLiteral(first)) typePart = 'boolean[]';
+                                else typePart = 'any[]';
+                            }
+                        } else if (t.isObjectExpression(valueNode)) typePart = 'object';
+                        else if (t.isTemplateLiteral(valueNode)) typePart = 'string';
+                        else if (t.isUnaryExpression(valueNode) && valueNode.operator === '+') typePart = 'number';
+                        else if (t.isBinaryExpression(valueNode) && ['+', '-', '*', '/', '%', '|', '&', '^', '<<', '>>', '>>>'].includes(valueNode.operator)) typePart = 'number';
+                        else if (t.isCallExpression(valueNode)) {
+                            // Heuristic: Math.* => number, String/Number/Boolean constructors
+                            if (
+                                t.isMemberExpression(valueNode.callee) &&
+                                t.isIdentifier(valueNode.callee.object, { name: 'Math' })
+                            ) typePart = 'number';
+                            else if (
+                                t.isIdentifier(valueNode.callee, { name: 'Number' })
+                            ) typePart = 'number';
+                            else if (t.isIdentifier(valueNode.callee, { name: 'String' })) typePart = 'string';
+                            else if (t.isIdentifier(valueNode.callee, { name: 'Boolean' })) typePart = 'boolean';
+                        }
+                        parts.push(`${key}: ${typePart}`);
+                    }
+                    if (parts.length === 0) return;
+                    return `{ ${parts.join(', ')} }`;
+                }
+
+                // Track variable types by identifier name (best-effort) for later param coercion decisions
+                const inferredVariableTypes = new Map();
+
                 traverse(babelAst, {
                     FunctionDeclaration(path) {
                         if (!path.node.id) return;
@@ -316,6 +394,24 @@ export default function typehints(options = {}) {
                             didChange = true;
                         }
 
+                        // Optional: Inject param coercions at top of function body if enabled
+                        if (enableCoercions && parameterHoistCoercions && path.node.body && Array.isArray(path.node.params)) {
+                            const coercionStatements = [];
+                            let index = 0;
+                            for (const p of path.node.params) {
+                                if (parameterTypes[index] === 'number' && t.isIdentifier(p)) {
+                                    coercionStatements.push(
+                                        template.statement(`${p.name} = (${p.name}) | 0;`)(),
+                                    );
+                                }
+                                index += 1;
+                            }
+                            if (coercionStatements.length > 0) {
+                                path.node.body.body.unshift(...coercionStatements);
+                                didChange = true;
+                            }
+                        }
+
                         // Coerce params/returns if number
                         if (enableCoercions) {
                             path.traverse({
@@ -364,6 +460,37 @@ export default function typehints(options = {}) {
                             checker,
                             variableType,
                         );
+                        if (t.isIdentifier(path.node.id)) {
+                            inferredVariableTypes.set(path.node.id.name, typeString);
+                        }
+                        // Add variable level JSDoc if enabled & meaningful
+                        if (variableDocumentation && t.isIdentifier(path.node.id)) {
+                            let documentType = typeString;
+                            // Refine for object literal when generic 'object'
+                            if (
+                                documentType === 'object' &&
+                                objectShapeDocumentation &&
+                                t.isObjectExpression(path.node.init)
+                            ) {
+                                const shape = inferObjectShape(path.node.init);
+                                if (shape) documentType = shape;
+                            }
+                            // Refine for arrays of simple primitives from literal
+                            if (t.isArrayExpression(path.node.init)) {
+                                if (path.node.init.elements.length === 0) documentType = 'any[]';
+                                else {
+                                    const first = path.node.init.elements[0];
+                                    if (t.isNumericLiteral(first)) documentType = 'number[]';
+                                    else if (t.isStringLiteral(first)) documentType = 'string[]';
+                                    else if (t.isBooleanLiteral(first)) documentType = 'boolean[]';
+                                    else documentType = 'any[]';
+                                }
+                            }
+                            if (documentType && documentType !== 'any') {
+                                addBlockDocument(path, `@type {${documentType}}`);
+                                didChange = true;
+                            }
+                        }
                         if (
                             enableCoercions &&
                             typeString === "number" &&
