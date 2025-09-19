@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import path from 'node:path';
 import rubyPlugin from "vite-plugin-ruby";
 import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
@@ -8,6 +9,22 @@ import coffeescript from "./plugins/coffeescript.js";
 import postcssUrl from "postcss-url";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
+
+function withInstrumentation(p) {
+  let modified = 0;
+  return {
+    ...p,
+    async transform(code, id) {
+      const out = await p.transform.call(this, code, id);
+      if (out && out.code && out.code !== code) modified += 1;
+      return out;
+    },
+    buildEnd() {
+      this.info(`[typehints] Files modified: ${modified}`);
+      if (p.buildEnd) return p.buildEnd.call(this);
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
@@ -21,6 +38,12 @@ export default defineConfig(({ mode }) => {
         },
         resolve: {
             extensions: [".js", ".json", ".coffee", ".scss"],
+            // Workaround for js-cookie packaging (dist folder not present in installed copy under bun)
+            // Map to ESM source file so Vite can bundle successfully
+            alias: {
+                // Use explicit path into node_modules since package exports field hides src/*
+                'js-cookie': path.resolve(process.cwd(), 'node_modules/js-cookie/src/api.mjs'),
+            },
         },
         build: {
             cache: isDevelopment, // Enable cache in development for faster rebuilds
@@ -236,7 +259,13 @@ export default defineConfig(({ mode }) => {
             rubyPlugin(),
             fullReload(["config/routes.rb", "app/views/**/*"]),
             stimulusHMR(),
-            typehints(),
+            withInstrumentation(typehints({
+                variableDocumentation: true,
+                objectShapeDocumentation: true,
+                maxObjectProperties: 6,
+                enableCoercions: true,
+                parameterHoistCoercions: false, // set true for more aggressive int specialization
+            })),
             preserveAllComments()
         ],
     };
