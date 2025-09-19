@@ -23,8 +23,21 @@ Rails.application.configure do
     # Dev-only extra allowances (eval + websocket)
     if Rails.env.development?
       policy.script_src(*policy.script_src, :unsafe_eval)
-      policy.connect_src(*policy.connect_src, "ws://#{ViteRuby.config.host_with_port}")
       policy.worker_src(*policy.worker_src, :unsafe_eval)
+
+      # When skipProxy=true the Vite dev server is a different origin (port 3001) so :self no longer matches.
+      # Allow both localhost and 127.0.0.1 variants to cover host customizations applied later in init order.
+      vite_dev_ports = [ 3001 ]
+      vite_hosts = %w[localhost 127.0.0.1]
+      vite_http_origins = vite_hosts.product(vite_dev_ports).map { |h, p| "http://#{h}:#{p}" }
+
+      # Script + style tags, dynamic module fetches, CSS HMR, and source map fetches
+      policy.script_src(*policy.script_src, *vite_http_origins)
+      policy.style_src(*policy.style_src, *vite_http_origins)
+
+      # connect-src needs HTTP (module preloads / import analysis requests) and WS for HMR
+      policy.connect_src(*policy.connect_src, *vite_http_origins)
+      policy.connect_src(*policy.connect_src, *vite_http_origins.map { |o| o.sub("http://", "ws://") })
     end
 
     # Allow generic WebSocket scheme (ws:) so localhost or custom ports work when not using SSL

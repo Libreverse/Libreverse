@@ -12,6 +12,11 @@ if Rails.env.development?
   end
   ENV["VITE_RUBY_DEV_SERVER_CONNECT_TIMEOUT"] = "2.5" if timeout <= 0.1
 
+  # Force skipping the Rack proxy layer so we avoid HTTP/1.1 downgrade / 426 issues.
+  # Mirrors the JSON config (config/vite.json -> development.skipProxy = true)
+  # but we also export the env var early so any pre-initialization hooks see it.
+  ENV["VITE_RUBY_SKIP_PROXY"] = "true"
+
   # Apply explicit configuration so the middleware proxy is reliable.
   ViteRuby.configure do |config|
     config.mode = :development
@@ -20,10 +25,12 @@ if Rails.env.development?
   config.host = "127.0.0.1"
     config.port = 3001
     config.https = false
-    config.auto_build = false
+    config.auto_build = true
     # Also set via Ruby API for good measure
     config.dev_server_connect_timeout = 2.5 if config.respond_to?(:dev_server_connect_timeout=)
     # We're using Bun for JS package management in this project
     config.package_manager = :bun if config.respond_to?(:package_manager=)
+    # Some newer vite_ruby versions expose a skip_proxy flag (guard in case of older gem)
+    config.skip_proxy = true if config.respond_to?(:skip_proxy=)
   end
 end
