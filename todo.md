@@ -2,6 +2,7 @@
 
 add commontator
 mariadb for cache
+also solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails
 

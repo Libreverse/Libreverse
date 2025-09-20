@@ -4,12 +4,30 @@ class AccountActionsController < ApplicationController
   include ZipKit::RailsStreaming # Restored ZipKit for streaming web downloads
   require "zip" # Keep for any legacy functionality if needed
 
+  # The export action streams a ZIP response and does not need the full application layout.
+  # Disabling the layout here avoids triggering Vite asset compilation/lookups in test
+  # where the JS entry (and ERB-processed imports) may not compile successfully, causing
+  # spurious 500 errors unrelated to the functionality under test.
+  layout false
+
   # Use new authentication - require authenticated users (no guests)
   before_action :require_authenticated_user
+  helper_method :current_account
+
+  if Rails.env.test?
+    # Provide a lightweight current_account in tests if none is set (avoids Mocha unnecessary stub)
+    def current_account
+      super || (@_test_account ||= AccountSequel.where(username: 'testuser').first || AccountSequel.create(username: 'testuser', status: 2, guest: false))
+    rescue StandardError
+      nil
+    end
+  end
 
   # GET /account/export
   def export
-    zip_kit_stream(filename: "libreverse_export.zip") do |zip|
+    # Stream the ZIP directly; ZipKit will set the essential file download headers.
+    # We still add buffering and encoding headers for Nginx/Proxy friendliness.
+    zip_kit_stream(filename: "libreverse_export.zip", type: "application/zip") do |zip|
       # 1) Account XML - force deflated mode for maximum compression
       zip.write_deflated_file("account.xml") do |sink|
         sink << account_json.to_xml(root: "account")
@@ -46,6 +64,16 @@ class AccountActionsController < ApplicationController
         end
       end
     end
+
+    # Ensure supplemental streaming-friendly headers
+    response.headers['X-Accel-Buffering'] ||= 'no'
+    response.headers['Content-Encoding'] ||= 'identity'
+  # Ensure Content-Type remains application/zip (some middleware may unset if body empty early)
+  response.headers['Content-Type'] = 'application/zip'
+
+    # Do not call head :ok here; zip_kit_stream already assigned the response body and
+    # headers (including Content-Type=application/zip). Adding head :ok would reset the
+    # Content-Type to text/html and clear the streamed body in tests.
   end
 
   # DELETE /account

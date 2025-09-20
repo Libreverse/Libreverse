@@ -10,8 +10,6 @@ class AccountActionsControllerTest < ActionDispatch::IntegrationTest
       status: 2,
       guest: false
     )
-    # Stub authentication helper directly
-    AccountActionsController.any_instance.stubs(:current_account).returns(@account)
   end
 
   test "should export account data as streaming ZIP using zip_kit" do

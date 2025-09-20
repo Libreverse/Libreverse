@@ -57,10 +57,12 @@ Rails.application.routes.draw do
         patch "approve"
       end
     end
-    # Account actions (export & delete)
-    get "account/export", to: "account_actions#export", as: :account_export
+    # Account delete (requires authentication)
     delete "account", to: "account_actions#destroy", as: :account_destroy
   end
+
+  # Account export placed outside Rodauth constraint; controller handles auth.
+  get "account/export", to: "account_actions#export", as: :account_export
 
   # ===== Admin Namespace =====
   namespace :admin do
