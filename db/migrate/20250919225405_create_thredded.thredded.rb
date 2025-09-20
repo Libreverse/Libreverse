@@ -3,8 +3,6 @@
 # This migration comes from thredded (originally 20160329231848)
 require 'thredded/base_migration'
 
-# rubocop:disable Metrics/ClassLength
-# rubocop:disable Metrics/MethodLength
 class CreateThredded < Thredded::BaseMigration
   def change
     unless table_exists?(:friendly_id_slugs)
@@ -34,16 +32,16 @@ class CreateThredded < Thredded::BaseMigration
               name: :index_thredded_categories_on_messageboard_id_and_slug,
               unique: true,
               length: { slug: max_key_length }
-      t.index [:messageboard_id], name: :index_thredded_categories_on_messageboard_id
+      t.index [ :messageboard_id ], name: :index_thredded_categories_on_messageboard_id
     end
     # Skip DbTextSearch for Trilogy adapter
-    unless /trilogy/i.match?(connection.adapter_name)
+    if /trilogy/i.match?(connection.adapter_name)
+      # Fallback for Trilogy: create a regular case-insensitive index
+      add_index :thredded_categories, :name, name: :thredded_categories_name_ci
+    else
       DbTextSearch::CaseInsensitive.add_index connection, :thredded_categories, :name,
                                               name: :thredded_categories_name_ci,
                                               **(max_key_length ? { length: max_key_length } : {})
-    else
-      # Fallback for Trilogy: create a regular case-insensitive index
-      add_index :thredded_categories, :name, name: :thredded_categories_name_ci
     end
 
     create_table :thredded_messageboards do |t|
@@ -57,8 +55,8 @@ class CreateThredded < Thredded::BaseMigration
       t.references :messageboard_group, index: false
       t.timestamps null: false
       t.boolean :locked, null: false, default: false
-      t.index [:messageboard_group_id], name: :index_thredded_messageboards_on_messageboard_group_id
-      t.index [:slug],
+      t.index [ :messageboard_group_id ], name: :index_thredded_messageboards_on_messageboard_group_id
+      t.index [ :slug ],
               name: :index_thredded_messageboards_on_slug,
               unique: true,
               length: { slug: max_key_length }
@@ -74,18 +72,18 @@ class CreateThredded < Thredded::BaseMigration
       t.timestamps null: false
       t.index %i[moderation_state updated_at],
               order: { updated_at: :asc },
-              name:  :index_thredded_posts_for_display
-      t.index [:messageboard_id], name: :index_thredded_posts_on_messageboard_id
-      t.index [:postable_id], name: :index_thredded_posts_on_postable_id
+              name: :index_thredded_posts_for_display
+      t.index [ :messageboard_id ], name: :index_thredded_posts_on_messageboard_id
+      t.index [ :postable_id ], name: :index_thredded_posts_on_postable_id
       t.index %i[postable_id created_at], name: :index_thredded_posts_on_postable_id_and_created_at
-      t.index [:user_id], name: :index_thredded_posts_on_user_id
+      t.index [ :user_id ], name: :index_thredded_posts_on_user_id
     end
     # Skip DbTextSearch for Trilogy adapter
-    unless /trilogy/i.match?(connection.adapter_name)
-      DbTextSearch::FullText.add_index connection, :thredded_posts, :content, name: :thredded_posts_content_fts
-    else
+    if /trilogy/i.match?(connection.adapter_name)
       # Fallback for Trilogy: create a regular index (full-text search won't work)
       add_index :thredded_posts, :content, name: :thredded_posts_content_idx, length: 255
+    else
+      DbTextSearch::FullText.add_index connection, :thredded_posts, :content, name: :thredded_posts_content_fts
     end
 
     create_table :thredded_private_posts do |t|
@@ -105,9 +103,9 @@ class CreateThredded < Thredded::BaseMigration
       t.string :hash_id, limit: 20, null: false
       t.datetime :last_post_at
       t.timestamps null: false
-      t.index [:last_post_at], name: :index_thredded_private_topics_on_last_post_at
-      t.index [:hash_id], name: :index_thredded_private_topics_on_hash_id
-      t.index [:slug],
+      t.index [ :last_post_at ], name: :index_thredded_private_topics_on_last_post_at
+      t.index [ :hash_id ], name: :index_thredded_private_topics_on_hash_id
+      t.index [ :slug ],
               name: :index_thredded_private_topics_on_slug,
               unique: true,
               length: { slug: max_key_length }
@@ -117,15 +115,17 @@ class CreateThredded < Thredded::BaseMigration
       t.references :private_topic, index: false
       t.references :user, type: user_id_type, index: false
       t.timestamps null: false
-      t.index [:private_topic_id], name: :index_thredded_private_users_on_private_topic_id
-      t.index [:user_id], name: :index_thredded_private_users_on_user_id
+      t.index [ :private_topic_id ], name: :index_thredded_private_users_on_private_topic_id
+      t.index [ :user_id ], name: :index_thredded_private_users_on_user_id
     end
 
     create_table :thredded_topic_categories do |t|
       t.references :topic, null: false, index: false
       t.references :category, null: false, index: false
-      t.index [:category_id], name: :index_thredded_topic_categories_on_category_id
-      t.index [:topic_id], name: :index_thredded_topic_categories_on_topic_id
+      # Added per Rubocop Rails/CreateTableWithTimestamps
+      t.timestamps null: false
+      t.index [ :category_id ], name: :index_thredded_topic_categories_on_category_id
+      t.index [ :topic_id ], name: :index_thredded_topic_categories_on_topic_id
     end
 
     create_table :thredded_topics do |t|
@@ -143,22 +143,22 @@ class CreateThredded < Thredded::BaseMigration
       t.timestamps null: false
       t.index %i[moderation_state sticky updated_at],
               order: { sticky: :desc, updated_at: :desc },
-              name:  :index_thredded_topics_for_display
-      t.index [:last_post_at], name: :index_thredded_topics_on_last_post_at
-      t.index [:hash_id], name: :index_thredded_topics_on_hash_id
-      t.index [:slug],
+              name: :index_thredded_topics_for_display
+      t.index [ :last_post_at ], name: :index_thredded_topics_on_last_post_at
+      t.index [ :hash_id ], name: :index_thredded_topics_on_hash_id
+      t.index [ :slug ],
               name: :index_thredded_topics_on_slug,
               unique: true,
               length: { slug: max_key_length }
-      t.index [:messageboard_id], name: :index_thredded_topics_on_messageboard_id
-      t.index [:user_id], name: :index_thredded_topics_on_user_id
+      t.index [ :messageboard_id ], name: :index_thredded_topics_on_messageboard_id
+      t.index [ :user_id ], name: :index_thredded_topics_on_user_id
     end
     # Skip DbTextSearch for Trilogy adapter
-    unless /trilogy/i.match?(connection.adapter_name)
-      DbTextSearch::FullText.add_index connection, :thredded_topics, :title, name: :thredded_topics_title_fts
-    else
+    if /trilogy/i.match?(connection.adapter_name)
       # Fallback for Trilogy: create a regular index (full-text search won't work)
       add_index :thredded_topics, :title, name: :thredded_topics_title_idx, length: 191
+    else
+      DbTextSearch::FullText.add_index connection, :thredded_topics, :title, name: :thredded_topics_title_fts
     end
 
     create_table :thredded_user_details do |t|
@@ -181,6 +181,8 @@ class CreateThredded < Thredded::BaseMigration
       t.references :thredded_user_detail, null: false, index: false
       t.references :thredded_messageboard, null: false, index: false
       t.datetime :last_seen_at, null: false
+      # Added per Rubocop Rails/CreateTableWithTimestamps
+      t.timestamps null: false
       t.index %i[thredded_messageboard_id thredded_user_detail_id],
               name: :index_thredded_messageboard_users_primary,
               unique: true
@@ -197,7 +199,7 @@ class CreateThredded < Thredded::BaseMigration
       t.boolean :follow_topics_on_mention, default: true, null: false
       t.boolean :auto_follow_topics, default: false, null: false
       t.timestamps null: false
-      t.index [:user_id], name: :index_thredded_user_preferences_on_user_id, unique: true
+      t.index [ :user_id ], name: :index_thredded_user_preferences_on_user_id, unique: true
     end
 
     create_table :thredded_user_messageboard_preferences do |t|
@@ -220,6 +222,8 @@ class CreateThredded < Thredded::BaseMigration
         t.integer :unread_posts_count, default: 0, null: false
         t.integer :read_posts_count, :integer, default: 0, null: false
         t.timestamp :read_at, null: false
+        # Added per Rubocop Rails/CreateTableWithTimestamps
+        t.timestamps null: false
         t.index %i[user_id postable_id], name: :"#{table_name}_user_postable", unique: true
       end
     end
@@ -249,16 +253,19 @@ class CreateThredded < Thredded::BaseMigration
       t.references :moderator, index: false, type: user_id_type
       t.integer :moderation_state, null: false
       t.integer :previous_moderation_state, null: false
-      t.timestamp :created_at, null: false
+      # Replaced single created_at with full timestamps per Rubocop recommendation
+      t.timestamps null: false
       t.index %i[messageboard_id created_at],
               order: { created_at: :desc },
-              name:  :index_thredded_moderation_records_for_display
+              name: :index_thredded_moderation_records_for_display
     end
 
     create_table :thredded_notifications_for_private_topics do |t|
       t.references :user, null: false, index: false, type: user_id_type
       t.string :notifier_key, null: false, limit: 90
       t.boolean :enabled, default: true, null: false
+      # Added per Rubocop Rails/CreateTableWithTimestamps
+      t.timestamps null: false
       t.index %i[user_id notifier_key],
               name: 'thredded_notifications_for_private_topics_unique', unique: true
     end
@@ -266,6 +273,8 @@ class CreateThredded < Thredded::BaseMigration
       t.references :user, null: false, index: false, type: user_id_type
       t.string :notifier_key, null: false, limit: 90
       t.boolean :enabled, default: true, null: false
+      # Added per Rubocop Rails/CreateTableWithTimestamps
+      t.timestamps null: false
       t.index %i[user_id notifier_key],
               name: 'thredded_notifications_for_followed_topics_unique', unique: true
     end
@@ -274,6 +283,8 @@ class CreateThredded < Thredded::BaseMigration
       t.references :messageboard, null: false, index: false
       t.string :notifier_key, null: false, limit: 90
       t.boolean :enabled, default: true, null: false
+      # Added per Rubocop Rails/CreateTableWithTimestamps
+      t.timestamps null: false
       t.index %i[user_id messageboard_id notifier_key],
               name: 'thredded_messageboard_notifications_for_followed_topics_unique', unique: true
     end
@@ -282,6 +293,8 @@ class CreateThredded < Thredded::BaseMigration
       t.references :user, null: false, index: false, type: user_id_type
       t.references :post, null: false, index: false
       t.datetime :notified_at, null: false
+      # Added per Rubocop Rails/CreateTableWithTimestamps
+      t.timestamps null: false
       t.index :post_id, name: :index_thredded_user_post_notifications_on_post_id
       t.index %i[user_id post_id], name: :index_thredded_user_post_notifications_on_user_id_and_post_id, unique: true
     end

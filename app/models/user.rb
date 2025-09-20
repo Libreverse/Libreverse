@@ -4,11 +4,12 @@ class User < ApplicationRecord
   # Thredded requires an ActiveRecord user model
   # This model wraps the Sequel Account model for Thredded compatibility
 
-  self.table_name = 'accounts' # Use the same table as Sequel Account
+  self.table_name = "accounts" # Use the same table as Sequel Account
 
   # Find user by Sequel account
   def self.from_account(account)
     return nil unless account
+
     find_by(id: account.id)
   end
 
@@ -47,6 +48,7 @@ class User < ApplicationRecord
 
   def thredded_can_moderate_messageboards
     return Thredded::Messageboard.none unless thredded_admin?
+
     Thredded::Messageboard.all
   end
 
@@ -56,7 +58,7 @@ class User < ApplicationRecord
   end
 
   # Class methods for Thredded
-  def self.thredded_messageboards_readers(messageboards)
+  def self.thredded_messageboards_readers(_messageboards)
     # Return all users for now - customize as needed
     User.all
   end

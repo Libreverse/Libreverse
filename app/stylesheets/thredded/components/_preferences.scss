@@ -1,19 +1,20 @@
 .thredded--preferences--title {
-  @extend %thredded--heading;
-  font-size: 1.5rem; // 24px
+    @extend %thredded--heading;
+
+    font-size: 1.5rem; // 24px
 }
 
 .thredded--preferences--form {
-  padding-bottom: $thredded-base-spacing;
+    padding-bottom: $thredded-base-spacing;
 }
 
 .thredded--preferences--messageboards-nav {
-  border-top: $thredded-base-border;
-  padding-top: $thredded-base-spacing;
+    border-top: $thredded-base-border;
+    padding-top: $thredded-base-spacing;
 }
 
 .thredded--preferences--messageboards-nav--item {
-  &.thredded--messageboard {
-    padding: $thredded-small-spacing;
-  }
+    &.thredded--messageboard {
+        padding: $thredded-small-spacing;
+    }
 }

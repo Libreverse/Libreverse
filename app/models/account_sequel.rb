@@ -50,6 +50,7 @@ begin
     def validate_username_moderation
       return if username.blank?
       return unless ModerationService.contains_inappropriate_content?(username)
+
       violations = ModerationService.get_violation_details(username)
       log_moderation_violation("username", username, violations)
       errors.add(:username, "contains inappropriate content and cannot be saved")

@@ -134,7 +134,7 @@ Rails.application.routes.draw do
   get "cookies", to: "policies#cookies", as: :cookie_policy
 
   # Mount Thredded forum engine
-  mount Thredded::Engine => '/forum'
+  mount Thredded::Engine => "/forum"
 
   # Mount Federails engine at root for ActivityPub federation
   mount Federails::Engine => "/"

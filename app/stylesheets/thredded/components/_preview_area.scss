@@ -1,11 +1,11 @@
 .thredded--preview-area {
-  display: none;
+    display: none;
 
-  &--title {
-    @extend %thredded--heading;
-  }
+    &--title {
+        @extend %thredded--heading;
+    }
 
-  &--post {
-    margin-bottom: $thredded-base-spacing;
-  }
+    &--post {
+        margin-bottom: $thredded-base-spacing;
+    }
 }

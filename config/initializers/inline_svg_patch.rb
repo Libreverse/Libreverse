@@ -22,9 +22,7 @@
 if defined?(InlineSvg::PropshaftAssetFinder)
   InlineSvg::PropshaftAssetFinder.class_eval do
     # Keep a reference to the original implementation (only once) so we can call it when safe.
-    unless method_defined?(:__original_pathname)
-      alias_method :__original_pathname, :pathname
-    end
+    alias_method :__original_pathname, :pathname unless method_defined?(:__original_pathname)
 
     # Accept variable args to be resilient if the gem changes invocation style.
     def pathname(*args)
@@ -34,21 +32,21 @@ if defined?(InlineSvg::PropshaftAssetFinder)
       filename = args.first
       env = ::Rails.application.assets
 
-      begin
-        if env && env.respond_to?(:load_path)
-          # Delegate with original arity/args only if environment supports expected API.
-            return args.length == 1 ? __original_pathname(filename) : __original_pathname(*args)
-        end
-      rescue NoMethodError, ArgumentError
-        # Fall through to fallback search.
+    begin
+      if env.respond_to?(:load_path)
+        # Delegate with original arity/args only if environment supports expected API.
+        return args.length == 1 ? __original_pathname(filename) : __original_pathname(*args)
       end
+    rescue ArgumentError
+      # Fall through to fallback search.
+    end
 
       # Fallback: search a curated list of asset directories.
       candidate_dirs = [
-        ::Rails.root.join('app', 'assets', 'images'),
-        ::Rails.root.join('app', 'icons'),
-        ::Rails.root.join('app', 'emoji'),
-        ::Rails.root.join('public', 'images')
+        ::Rails.root.join("app/assets/images"),
+        ::Rails.root.join("app/icons"),
+        ::Rails.root.join("app/emoji"),
+        ::Rails.root.join("public/images")
       ].select { |p| Dir.exist?(p) }
 
       candidate_dirs.each do |base|
