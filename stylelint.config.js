@@ -6,6 +6,8 @@ export default {
         "**/gems/**",
         "vendor/**",
         ".codeql/**",
+        "node_modules/**",
+        "app/stylesheets/thredded/**",
     ],
     rules: {
         "no-empty-source": undefined,

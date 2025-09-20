@@ -71,6 +71,7 @@ gem "stimulus-rails"
 gem "stimulus_reflex", "3.5.3"
 gem "sys-filesystem"
 gem "thor", ">= 1.4.0"
+gem "thredded", "~> 1.2"
 gem "tilt"
 gem "trailblazer"
 gem "trilogy"
@@ -85,7 +86,6 @@ gem "voight_kampff"
 gem "y-rb_actioncable"
 gem "zip_kit"
 gem "zstd-ruby"
-gem "thredded", "~> 1.2"
 
 group :development, :test do
   gem "debug"
@@ -117,7 +117,8 @@ group :test do
 end
 
 gem "chunky_png", "~> 1.4"
-
+gem "gemoji", "~> 4.1"
 gem "image_processing", "~> 1.14"
 
-gem "gemoji", "~> 4.1"
+gem "thredded-markdown_coderay", "~> 1.0"
+gem "thredded-markdown_katex", "~> 1.0"

@@ -7,7 +7,7 @@ import coffeescript from "./plugins/coffeescript.js";
 import postcssUrl from "postcss-url";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
-import Erb from 'vite-plugin-erb'
+import Erb from "vite-plugin-erb";
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => {
             rollupOptions: {
                 input: {
                     application: "app/javascript/application.js",
-                    emails: "app/stylesheets/emails.scss"
+                    emails: "app/stylesheets/emails.scss",
                 },
                 output: {
                     minifyInternalExports: true,
@@ -278,11 +278,6 @@ export default defineConfig(({ mode }) => {
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
-        plugins: [
-            Erb(),
-            coffeescript(),
-            rubyPlugin(),
-            ...conditionalPlugins,
-        ],
+        plugins: [Erb(), coffeescript(), rubyPlugin(), ...conditionalPlugins],
     };
 });

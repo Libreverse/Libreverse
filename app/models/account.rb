@@ -102,7 +102,7 @@ class Account < ApplicationRecord
         raise e
       end
 
-      private
+  private
 
       def username_moderation
         return if username.blank?
@@ -172,17 +172,33 @@ class Account < ApplicationRecord
         !federated?
       end
 
-      public # Ensure subsequent Thredded permission methods are public
+  public # Ensure subsequent Thredded permission methods are public
 
       # ==> Thredded Permission Methods
       # These methods are required by Thredded for user permissions
 
       def thredded_can_read_messageboards
-        defined?(Thredded::Messageboard) ? Thredded::Messageboard.all : (self.class.none rescue [])
+        if defined?(Thredded::Messageboard)
+  Thredded::Messageboard.all
+        else
+  begin
+                                                                          self.class.none
+  rescue StandardError
+                                                                          []
+  end
+        end
       end
 
       def thredded_can_write_messageboards
-        defined?(Thredded::Messageboard) ? Thredded::Messageboard.all : (self.class.none rescue [])
+        if defined?(Thredded::Messageboard)
+  Thredded::Messageboard.all
+        else
+  begin
+                                                                          self.class.none
+  rescue StandardError
+                                                                          []
+  end
+        end
       end
 
       def thredded_can_message_users
@@ -192,7 +208,16 @@ class Account < ApplicationRecord
 
       def thredded_can_moderate_messageboards
         return Thredded::Messageboard.none if defined?(Thredded::Messageboard) && !admin?
-        defined?(Thredded::Messageboard) ? Thredded::Messageboard.all : (self.class.none rescue [])
+
+        if defined?(Thredded::Messageboard)
+  Thredded::Messageboard.all
+        else
+  begin
+                                                                          self.class.none
+  rescue StandardError
+                                                                          []
+  end
+        end
       end
 
       def thredded_admin?
@@ -201,16 +226,26 @@ class Account < ApplicationRecord
 
       # Thredded class-level helpers for scoping
       def self.thredded_messageboards_readable_by(_user)
-        defined?(Thredded::Messageboard) ? Thredded::Messageboard.all : (Thredded::Messageboard.none rescue [])
+        if defined?(Thredded::Messageboard)
+  Thredded::Messageboard.all
+        else
+  begin
+                                                                          Thredded::Messageboard.none
+  rescue StandardError
+                                                                          []
+  end
+        end
       end
 
       def self.thredded_messageboards_writable_by(user)
         return thredded_messageboards_readable_by(user) unless defined?(Thredded::Messageboard)
+
         Thredded::Messageboard.all
       end
 
       def self.thredded_messageboards_moderatable_by(user)
         return Thredded::Messageboard.none unless defined?(Thredded::Messageboard)
+
         user&.admin? ? Thredded::Messageboard.all : Thredded::Messageboard.none
       end
 end

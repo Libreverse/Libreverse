@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+/* global process */
 /**
  * Verify that the typehints plugin actually injected annotations into the built output.
  * Strategy:
@@ -11,22 +12,22 @@
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join, extname } from "node:path";
+import path from "node:path";
 
-const distDir = process.env.TYPEHINTS_BUILD_DIR || "public";
+const distributionDirectory = process.env.TYPEHINTS_BUILD_DIR || "public";
 const minFunctionHints = Number(process.env.MIN_FUNCTION_HINTS || "1");
 const minVariableHints = Number(process.env.MIN_VARIABLE_HINTS || "0");
 const verbose = process.env.VERBOSE === "1";
 
-function gatherFiles(dir) {
+function gatherFiles(directory) {
     const out = [];
-    for (const entry of readdirSync(dir)) {
-        const full = join(dir, entry);
+    for (const entry of readdirSync(directory)) {
+        const full = path.join(directory, entry);
         const st = statSync(full);
         if (st.isDirectory()) out.push(...gatherFiles(full));
         else if (
             st.isFile() &&
-            [".js", ".mjs", ".cjs"].includes(extname(entry))
+            [".js", ".mjs", ".cjs"].includes(path.extname(entry))
         )
             out.push(full);
     }
@@ -52,12 +53,12 @@ function analyzeFile(path) {
 function main() {
     let files;
     try {
-        files = gatherFiles(distDir);
+        files = gatherFiles(distributionDirectory);
     } catch {
         console.error(
             JSON.stringify({
                 ok: false,
-                error: `Output directory '${distDir}' not found. Run the build first.`,
+                error: `Output directory '${distributionDirectory}' not found. Run the build first.`,
             }),
         );
         process.exit(2);
@@ -82,7 +83,7 @@ function main() {
     }
     const summary = {
         ok: sumFunction >= minFunctionHints && sumVariable >= minVariableHints,
-        distDir,
+        distDir: distributionDirectory,
         functionHints: sumFunction,
         variableHints: sumVariable,
         minFunctionHints,
@@ -92,11 +93,11 @@ function main() {
     };
     if (!summary.ok) {
         summary.error = `Thresholds not met (have fn=${sumFunction}, var=${sumVariable}; expected fn>=${minFunctionHints}, var>=${minVariableHints})`;
-        console.error(JSON.stringify(summary, null, 2));
+        console.error(JSON.stringify(summary, undefined, 2));
         process.exit(1);
     }
     if (verbose) summary.details = perFile;
-    console.log(JSON.stringify(summary, null, 2));
+    console.log(JSON.stringify(summary, undefined, 2));
 }
 
 main();

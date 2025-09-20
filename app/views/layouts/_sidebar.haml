@@ -18,14 +18,14 @@
     if rodauth_obj.guest_logged_in?
       # Guest users: show dashboard but not experiences, no logout
       guest_auth_items = [
-        { path: dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your limited dashboard with account upgrade options' }
+        { path: main_app.dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your limited dashboard with account upgrade options' }
       ]
       nav_items.concat(guest_auth_items)
     else
       # Regular authenticated users: show full features and logout
       auth_items = [
-        { path: dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' },
-        { path: experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }
+        { path: main_app.dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' },
+        { path: main_app.experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }
       ]
       nav_items.concat(auth_items)
       # Add logout for non-guest users only
@@ -65,7 +65,7 @@
 
   -# Navigation for regular users only
   - if rodauth_obj.logged_in? && !guest_user?
-    - auth_links = [{ path: dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' }, { path: experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }]
+    - auth_links = [{ path: main_app.dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' }, { path: main_app.experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }]
     - auth_links.each do |item|
       - item_is_current = (current_path == item[:path])
       = link_to item[:path],
@@ -82,13 +82,13 @@
       = sidebar_icon(svg_icon_data_url('logout'))
   - else
     -# For guests and unauthenticated users, show dashboard, experiences, login, and signup
-    - guest_links = [{ path: dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View the dashboard and analytics (limited features for guests)' }, { path: experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Browse all public experiences and discussions' }, { path: rodauth_obj.login_path, icon: 'login', label: 'login page', popover: 'Sign in to your account to access full features' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page', popover: 'Create a new account to start building experiences' }]
+    - guest_links = [{ path: main_app.dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View the dashboard and analytics (limited features for guests)' }, { path: main_app.experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Browse all public experiences and discussions' }, { path: rodauth_obj.login_path, icon: 'login', label: 'login page', popover: 'Sign in to your account to access full features' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page', popover: 'Create a new account to start building experiences' }]
     - guest_links.each do |item|
       - item_is_current = (current_path == item[:path])
       = link_to item[:path],
-        class: "sidebar-link#{' sidebar-current' if item_is_current}",
-        aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
-        data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover] } do
+                class: "sidebar-link#{' sidebar-current' if item_is_current}",
+                aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") },
+                data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover] } do
         = sidebar_icon(svg_icon_data_url(item[:icon]), (item_is_current ? 'sidebar-current' : ''))
 
   -# More menu button at the bottom

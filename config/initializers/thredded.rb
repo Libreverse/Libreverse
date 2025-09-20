@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require 'chunky_png'
-require 'base64'
+
+require "chunky_png"
+require "base64"
 
 # Thredded configuration
 
@@ -10,7 +11,7 @@ require 'base64'
 # so point Thredded at that instead of the default `User`.
 # Use the ActiveRecord Account model directly so current_account (Rodauth) remains compatible.
 # A separate User wrapper exists but is not required; keeping Account avoids extra conversions.
-Thredded.user_class = 'Account'
+Thredded.user_class = "Account"
 
 # User name column, used in @mention syntax and *must* be unique.
 # This is the column used to search for users' names if/when someone is @ mentioned.
@@ -27,7 +28,7 @@ Thredded.user_display_name_method = :display_username
 # Link to a profile path if/when we add one. For now we leverage the existing
 # `profile_url` method on Account. If that method returns nil (e.g. guest), Thredded
 # will fall back to a span.
-Thredded.user_path = ->(user) {
+Thredded.user_path = lambda { |user|
   user.respond_to?(:profile_url) ? user.profile_url : nil
 }
 
@@ -35,16 +36,16 @@ Thredded.user_path = ->(user) {
 # Rodauth helper in our app exposes `current_account`.
 Thredded.current_user_method = :current_account
 
-Thredded.avatar_url = ->(user) do
+Thredded.avatar_url = lambda { |user|
   # Unique cache key for the user (change to taste)
   cache_key = "thredded-avatar-v1-#{user.id}-#{user.updated_at.to_i}"
 
   Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-    require 'digest'  # Ensure Digest is available
+    require "digest" # Ensure Digest is available
 
     # Generate MD5 hash of user ID for determinism
     md5_hex = Digest::MD5.hexdigest(user.id.to_s)
-    digest = Digest::MD5.digest(user.id.to_s)  # Binary for bits
+    digest = Digest::MD5.digest(user.id.to_s) # Binary for bits
 
     # Foreground color based on first three bytes of hash
     r = md5_hex[0..1].hex
@@ -58,10 +59,10 @@ Thredded.avatar_url = ->(user) do
 
     # Distinct pattern: 5x5 asymmetric grid (no mirroring)
     sprite_size = 5
-    pixel_size = 12  # 5 * 12 = 60 pixels, centered in 64x64
-    offset = (64 - sprite_size * pixel_size) / 2  # 2
+    pixel_size = 12 # 5 * 12 = 60 pixels, centered in 64x64
+    offset = (64 - sprite_size * pixel_size) / 2 # 2
 
-    i = 0  # Bit position counter
+    i = 0 # Bit position counter
     (0...sprite_size).each do |row|
       (0...sprite_size).each do |col|
         # Use bit from hash: 1 if set, for "on" pixel
@@ -80,19 +81,19 @@ Thredded.avatar_url = ->(user) do
     end
 
     # Save PNG to a temp file
-    require 'tempfile'
-    temp_png = Tempfile.new(['avatar', '.png'])
+    require "tempfile"
+    temp_png = Tempfile.new([ "avatar", ".png" ])
     temp_png.binmode
     temp_png.write(img.to_blob)
     temp_png.rewind
 
     # Process with ImageProcessing to convert to AVIF
-    require 'image_processing'
+    require "image_processing"
     processed = ImageProcessing::MiniMagick
-        .source(temp_png.path)
-        .resize_to_limit(64, 64)  # Keep original size or adjust as needed
-        .convert("avif")
-        .call
+                .source(temp_png.path)
+                .resize_to_limit(64, 64) # Keep original size or adjust as needed
+                .convert("avif")
+                .call
 
     # Read the processed AVIF file
     avif_data = File.read(processed.path)
@@ -104,11 +105,11 @@ Thredded.avatar_url = ->(user) do
     processed.unlink
 
     # Encode to data URL
-    require 'base64'
+    require "base64"
     data = Base64.strict_encode64(avif_data)
     "data:image/avif;base64,#{data}"
   end
-end
+}
 
 # ==> Permissions Configuration
 # By default, thredded uses a simple permission model, where all the users can post to all message boards,
@@ -134,13 +135,13 @@ Thredded.content_visible_while_pending_moderation = true
 Thredded.messageboards_order = :position
 
 # Whether admin users see button to delete entire messageboards on the messageboard edit page.
-Thredded.show_messageboard_delete_button = false
+Thredded.show_messageboard_delete_button = true
 
 # Whether MessageboardGroup show page is enabled.
 Thredded.show_messageboard_group_page = true
 
 # Whether users that are following a topic are listed on the topic page.
-Thredded.show_topic_followers = false
+Thredded.show_topic_followers = true
 
 # Whether the list of users who are currently online is displayed.
 Thredded.currently_online_enabled = true
@@ -154,14 +155,14 @@ Thredded.topics_per_page = 50
 # The number of posts to display per page in a topic.
 Thredded.posts_per_page = 25
 
-# Use main application layout so forum inherits global navigation & glass styling.
-Thredded.layout = 'application'
+# Use a custom forum layout that injects the global sidebar & navigation wrappers.
+Thredded.layout = "forum"
 
 # We can still override / add view partials under app/views/thredded/**/* when needed.
 
 # ==> Email Configuration
 # Email "From:" field will use the following
-# (this is also used as the "To" address for both email notifcations, as all the recipients are on bcc)
+# (this is also used as the "To" address for both email notifications, as all the recipients are on bcc)
 # Thredded.email_from = 'no-reply@example.com'
 
 # Emails going out will prefix the "Subject:" with the following string
@@ -277,3 +278,16 @@ Thredded.notifiers = []
 
 # Performance: current DB (TiDB via Trilogy) doesn't support MySQL FULLTEXT indexes identically.
 # The migration already fell back to regular indexes; search will be substring based.
+
+# Monkey patch to fix compatibility issue with Rails 8 and Ruby 3.4
+# The deprecated whitelist method tries to call ActiveSupport::Deprecation.warn
+# which is now private. Override it to avoid the error.
+module Thredded
+  class ContentFormatter
+    class << self
+      def whitelist
+        allowlist
+      end
+    end
+  end
+end
