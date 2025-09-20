@@ -27,7 +27,8 @@ ComfortableMediaSurfer.configure do |config|
     "layouts/site_footer",
     "layouts/drawer",
     "layouts/development_headers",
-    "layouts/app_assets"
+    "layouts/app_assets",
+    "layouts/paper_background"
   ]
 
   # Allow helpers used in CMS layouts
@@ -38,6 +39,7 @@ ComfortableMediaSurfer.configure do |config|
     inline_vite_stylesheet
     inline_vite_javascript
     csrf_meta_tags
+    blog_post_list
   ]
 
   # Sofa allows you to setup entire site from files. Database is updated with each

@@ -1,0 +1,7 @@
+- paper_img = bitmap_image_data_url("images/paper")
+- if paper_img.present?
+  - chosen = paper_img['.avif'] || paper_img['.webp'] || paper_img['.png'] || paper_img['.jpg'] || paper_img['.jpeg'] || paper_img['.gif']
+  - if chosen
+    = image_tag(chosen, loading: "lazy", decoding: "async", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "before")
+    = image_tag(chosen, loading: "lazy", decoding: "async", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "main")
+    = image_tag(chosen, loading: "lazy", decoding: "async", draggable: "false", aria: { hidden: true }, tabindex: "-1", class: "after")

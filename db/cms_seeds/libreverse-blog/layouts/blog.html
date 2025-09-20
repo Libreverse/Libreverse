@@ -22,38 +22,7 @@
                 >
                     <div class="blog-main">
                         <div class="cms-content">
-                            {% for post in cms:page.children.published %}
-                            <article class="blog-post">
-                                <h2>
-                                    <a
-                                        href="{{ post.full_path }}"
-                                        class="text-decoration-none"
-                                        >{{ post.label }}</a
-                                    >
-                                </h2>
-                                {% if post.fragments['published_at'] %}
-                                <div class="post-meta mb-3">
-                                    <span class="text-muted"
-                                        >{{
-                                        post.fragments['published_at'].content
-                                        }}</span
-                                    >
-                                </div>
-                                {% endif %} {% if
-                                post.fragments['meta_description'] %}
-                                <p class="lead">
-                                    {{
-                                    post.fragments['meta_description'].content
-                                    }}
-                                </p>
-                                {% endif %}
-                                <a
-                                    href="{{ post.full_path }}"
-                                    class="btn btn-primary"
-                                    >Read more</a
-                                >
-                            </article>
-                            {% endfor %}
+                            {{ cms:helper blog_post_list }}
                         </div>
                     </div>
                 </section>

@@ -392,6 +392,9 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
+    kaminari-i18n (0.5.0)
+      kaminari
+      rails
     katex (0.10.0)
       execjs (~> 2.8)
     kramdown (2.5.1)
@@ -992,6 +995,7 @@ DEPENDENCIES
   inky-rb
   invisible_captcha
   jbuilder
+  kaminari-i18n (~> 0.5.0)
   listen
   lockbox
   minify_html (= 0.16.4)
@@ -1011,6 +1015,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails
   rails-controller-testing
+  rails-i18n (~> 8.0)
   re2
   redis
   reform

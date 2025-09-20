@@ -62,13 +62,13 @@ class Ability
       end
 
     # Non-logged in users
-    else
+  else
       # Very basic permissions for completely unauthenticated users
       can :read, :public_content
       can :create, :account  # Allow account creation
       can :create, :session  # Allow login
       cannot :access, :user_area
       cannot :access, :admin_area
-    end
+  end
   end
 end
