@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-# Separated Sequel model to avoid interfering with ActiveRecord autoload (Zeitwerk)
-# Loaded only when DB exists and not during early db:create tasks.
-return if defined?(Rake) && defined?(Rake.application) && Rake.application.top_level_tasks.any? { |t| t.start_with?("db:") }
+# Primary Sequel-backed Account model (authoritative store). ActiveRecord `Account`
+# exists only for libraries that require AR models.
 
 require "sequel/model"
 require_relative "../services/moderation_service"

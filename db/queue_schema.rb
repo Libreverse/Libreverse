@@ -11,6 +11,14 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
+  # Disable FK checks for MySQL/TiDB during load to avoid drop/create order issues
+  begin
+    if connection.adapter_name.downcase.include?("mysql")
+      execute 'SET FOREIGN_KEY_CHECKS=0'
+    end
+  rescue StandardError => e
+    warn "[queue_schema] Could not disable FK checks: #{e.class}: #{e.message}" if ENV['VERBOSE_BOOT']
+  end
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "session_id", null: false
@@ -1096,4 +1104,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
   add_foreign_key "thredded_user_post_notifications", "accounts", column: "user_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "user_preferences", "accounts", on_delete: :cascade
+  begin
+    if connection.adapter_name.downcase.include?("mysql")
+      execute 'SET FOREIGN_KEY_CHECKS=1'
+    end
+  rescue StandardError => e
+    warn "[queue_schema] Could not re-enable FK checks: #{e.class}: #{e.message}" if ENV['VERBOSE_BOOT']
+  end
 end

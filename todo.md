@@ -3,6 +3,7 @@
 add commontator
 mariadb for cache
 libreverse ai with api calls
+adopt cucumber rails
 
 - [ ] (feature) Add libreverse metaverse map
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
