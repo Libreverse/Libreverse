@@ -85,6 +85,7 @@ gem "voight_kampff"
 gem "y-rb_actioncable"
 gem "zip_kit"
 gem "zstd-ruby"
+gem "thredded", "~> 1.2"
 
 group :development, :test do
   gem "debug"
@@ -114,3 +115,9 @@ group :test do
   gem "mocha"
   gem "mysql2"
 end
+
+gem "chunky_png", "~> 1.4"
+
+gem "image_processing", "~> 1.14"
+
+gem "gemoji", "~> 4.1"

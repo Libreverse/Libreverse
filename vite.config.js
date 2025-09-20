@@ -1,14 +1,13 @@
 import { defineConfig } from "vite";
 import path from "node:path";
 import rubyPlugin from "vite-plugin-ruby";
-import fullReload from "vite-plugin-full-reload";
-import stimulusHMR from "vite-plugin-stimulus-hmr";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import coffeescript from "./plugins/coffeescript.js";
 import postcssUrl from "postcss-url";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
+import Erb from 'vite-plugin-erb'
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -280,10 +279,9 @@ export default defineConfig(({ mode }) => {
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
         plugins: [
+            Erb(),
             coffeescript(),
             rubyPlugin(),
-            fullReload(["config/routes.rb", "app/views/**/*"]),
-            stimulusHMR(),
             ...conditionalPlugins,
         ],
     };
