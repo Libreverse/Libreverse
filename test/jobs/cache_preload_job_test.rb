@@ -14,16 +14,16 @@ class CachePreloadJobTest < ActiveJob::TestCase
     # Stub base_url for the job instance(s)
     CachePreloadJob.any_instance.stubs(:base_url).returns("https://example.com")
 
-    # Stub robots to have no sitemap, so it falls back to /sitemap.xml
-    robots_resp = stub(code: 200, body: "")
-    HTTParty.stubs(:get).with("https://example.com/robots.txt", kind_of(Hash)).returns(robots_resp)
+  # Stub robots to have no sitemap, so it falls back to /sitemap.xml
+  robots_resp = OpenStruct.new(code: 200, body: "")
+  HTTParty.stubs(:get).with("https://example.com/robots.txt", kind_of(Hash)).returns(robots_resp)
 
-    # Stub sitemap.xml
-    sm_resp = stub(code: 200, body: sitemap_xml, headers: {})
-    HTTParty.stubs(:get).with("https://example.com/sitemap.xml", kind_of(Hash)).returns(sm_resp)
+  # Stub sitemap.xml
+  sm_resp = OpenStruct.new(code: 200, body: sitemap_xml, headers: {})
+  HTTParty.stubs(:get).with("https://example.com/sitemap.xml", kind_of(Hash)).returns(sm_resp)
 
-    # Expect GETs to each page URL
-    page_resp = stub(code: 200, body: "")
+  # Expect GETs to each page URL
+  page_resp = OpenStruct.new(code: 200, body: "")
     HTTParty.expects(:get).with("https://example.com/", kind_of(Hash)).returns(page_resp)
     HTTParty.expects(:get).with("https://example.com/about", kind_of(Hash)).returns(page_resp)
 

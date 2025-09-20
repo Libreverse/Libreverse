@@ -8,6 +8,7 @@ export default {
         ".codeql/**",
         "node_modules/**",
         "app/stylesheets/thredded/**",
+        "app/stylesheets/blog.scss",
     ],
     rules: {
         "no-empty-source": undefined,

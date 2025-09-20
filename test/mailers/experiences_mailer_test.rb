@@ -30,8 +30,8 @@ class ExperiencesMailerTest < ActionMailer::TestCase
       end
     end
 
-    # Verify expected files are present
-    assert_includes files_found, "test_experience.html"
+  # Verify expected files are present
+  assert_includes files_found, "test_experience.html"
     assert_includes files_found, "README.txt"
     assert_includes files_found, "metadata.json"
   end

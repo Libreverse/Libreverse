@@ -24,6 +24,13 @@ begin
     def closed? = status == 3
     def guest? = guest == true
     def admin? = admin == true
+    # Provide parity with ActiveRecord Account interface
+    def effective_user? = !guest?
+
+    # Some tests expect an email attribute. If column absent, expose nil (or derive later)
+    def email
+      values.key?(:email) ? self[:email] : nil
+    end
 
     # Permissions mirrored for parity (Thredded uses AR Account, but keep here if reused)
     def thredded_can_read_messageboards = !guest?

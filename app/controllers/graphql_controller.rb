@@ -65,8 +65,12 @@ class GraphqlController < ApplicationController
   # data defined here will be accessible via `graphql_request.context`
   # in GraphqlRails::Controller instances
   def graphql_context
+    acc = current_account
+    safe_account = acc.respond_to?(:effective_user?) ? acc : nil
     {
-      current_account: current_account,
+      current_account: safe_account,
+      authenticated?: safe_account&.effective_user?,
+      admin?: safe_account&.admin?,
       request: request
     }
   end

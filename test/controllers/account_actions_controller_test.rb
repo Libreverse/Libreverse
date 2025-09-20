@@ -5,19 +5,17 @@ require "test_helper"
 class AccountActionsControllerTest < ActionDispatch::IntegrationTest
   setup do
     # Create a test account
-    @account = Account.create!(
+    @account = AccountSequel.create(
       username: "testuser",
-      email: "test@example.com",
-      password: "password123",
-      status: 2 # verified
+      status: 2,
+      guest: false
     )
-    # Simulate login by setting the session
-    post rodauth.login_path, params: { email: @account.email, password: "password123" }
-    follow_redirect!
+    # Stub authentication helper directly
+    AccountActionsController.any_instance.stubs(:current_account).returns(@account)
   end
 
   test "should export account data as streaming ZIP using zip_kit" do
-    get "/account/export"
+  get "/account/export"
 
     assert_response :success
     assert_equal "application/zip", response.content_type
@@ -33,7 +31,7 @@ class AccountActionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should include account data in export" do
-    get "/account/export"
+  get "/account/export"
 
     # We can't easily test the internal structure of a streaming ZIP
     # but we can verify the response is successful and has the right format

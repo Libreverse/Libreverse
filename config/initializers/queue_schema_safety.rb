@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Test/schema load safety shim: avoid FK constraint errors when loading db/queue_schema.rb
 # without modifying the auto-generated queue_schema file itself.
 #
@@ -63,18 +64,14 @@ if Rails.env.test?
 
   ActiveSupport.on_load(:active_record) do
     adapter_class = ActiveRecord::Base.connection.class
-    unless adapter_class < QueueSchemaSafety
-      adapter_class.prepend(QueueSchemaSafety)
-    end
+    adapter_class.prepend(QueueSchemaSafety) unless adapter_class < QueueSchemaSafety
   rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished
     # Connection may not be established yet; patch after connect
     ActiveSupport::Notifications.subscribe("!queue_schema_safety.post_connect") do
-      begin
         adapter_class = ActiveRecord::Base.connection.class
         adapter_class.prepend(QueueSchemaSafety) unless adapter_class < QueueSchemaSafety
-      rescue StandardError
-        # swallow; test boot will raise real errors if still broken
-      end
+    rescue StandardError
+      # swallow; test boot will raise real errors if still broken
     end
   end
 end

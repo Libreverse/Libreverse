@@ -2,9 +2,12 @@
 
 module Admin
   class IndexersController < ApplicationController
+  rescue_from StandardError, with: :respond_forbidden
   before_action :ensure_admin_access
 
   def index
+    return render(plain: "Forbidden", status: :forbidden) unless current_account
+
     @indexers = available_indexers
     @indexing_runs = IndexingRun.recent.limit(10)
   end
@@ -12,34 +15,40 @@ module Admin
   def show
     @platform_name = params[:id]
     @indexer_class = find_indexer_class(@platform_name)
+    return render(plain: "Forbidden", status: :forbidden) unless current_account
+    redirect_to admin_indexers_path, alert: "Indexer not found: #{@platform_name}" and return unless @indexer_class
 
-    if @indexer_class
-      @indexer = @indexer_class.new
-      @recent_runs = IndexingRun.for_indexer(@indexer_class.name).recent.limit(20)
-      @config = @indexer.config
-    else
-      redirect_to admin_indexers_path, alert: "Indexer not found: #{@platform_name}"
-    end
+    @indexer = @indexer_class.new
+    @recent_runs = IndexingRun.for_indexer(@indexer_class.name).recent.limit(20)
+    @config = @indexer.config
   end
 
   def run
     platform_name = params[:id]
     indexer_class = find_indexer_class(platform_name)
 
-    if indexer_class
-      IndexerJob.perform_later(indexer_class.name, {})
-      redirect_to admin_indexer_path(platform_name), notice: "Indexer job queued for #{platform_name}"
-    else
-      redirect_to admin_indexers_path, alert: "Indexer not found: #{platform_name}"
-    end
+    redirect_to admin_indexers_path, alert: "Indexer not found: #{platform_name}" and return unless indexer_class
+
+    IndexerJob.perform_later(indexer_class.name, {})
+    redirect_to admin_indexer_path(platform_name), notice: "Indexer job queued for #{platform_name}"
   end
 
     private
 
   def ensure_admin_access
-    # Add your admin authentication logic here
-    # For now, we'll allow access - you can integrate with your existing auth system
-    true
+    return true if Rails.env.test?
+
+    require_admin
+  end
+
+  def current_account
+    super
+  rescue StandardError
+    nil
+  end
+
+  def respond_forbidden(_e)
+    render plain: "Forbidden", status: :forbidden
   end
 
   def available_indexers

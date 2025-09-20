@@ -109,13 +109,13 @@ IMPLEMENTATION ORDER SUGGESTION
 
 QUICK METRICS / CHECKLIST
 -------------------------
-[ ] Account has email accessible (schema or virtual).
-[ ] effective_user? provided to GraphQL & controllers.
-[ ] Admin indexing endpoints return non-500 when unauthenticated.
-[ ] Experience transliteration handles binary input.
-[ ] Export ZIP filenames standardized (documented).
-[ ] CachePreloadJobTest passes without Mocha warning.
-[ ] Trilogy patch environment toggle added.
+[x] Account has email accessible (schema or virtual).
+[x] effective_user? provided to GraphQL & controllers.
+[x] Admin indexing endpoints return non-500 when unauthenticated.
+[x] Experience transliteration handles binary input.
+[x] Export ZIP filenames standardized (documented).
+[x] CachePreloadJobTest passes without Mocha warning.
+[x] Trilogy patch environment toggle added.
 [ ] ExperienceSearchService tests assert expected ordering.
 [ ] GraphQL auth errors standardized.
 
