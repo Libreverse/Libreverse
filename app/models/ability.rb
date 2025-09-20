@@ -13,8 +13,10 @@ class Ability
     # Basic permissions that all visitors get (even non-logged in)
     can :read, :public_content
 
-    # Guest users (logged in but with guest account)
-    if !user.new? && user.guest?
+  # Guest users (logged in but with guest account)
+  # NOTE: ActiveRecord models expose new_record?/persisted? (not new?).
+  # An unsaved placeholder Account (user=nil case) will have persisted? == false.
+  if user.persisted? && user.guest?
       # Limited permissions for guest accounts
       can :read, :public_content
       can :create, :guest_session
@@ -30,7 +32,7 @@ class Ability
       cannot :export, :account_data
 
     # Regular authenticated users (non-guest)
-    elsif !user.new? && user.has_role?(:user)
+  elsif user.persisted? && user.has_role?(:user)
       # Full user permissions
       can :manage, Account, id: user.id # Can manage their own account
       can :read, :all
