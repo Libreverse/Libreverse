@@ -50,7 +50,7 @@ development:
         port: 4000
     queue:
         <<: *default
-        database: libreverse_development
+        database: libreverse_development_queue
         username: root
         password: 
         host: 127.0.0.1
@@ -87,14 +87,29 @@ development:
 
 test:
     primary:
-    <<: *default
-    database: libreverse_test
-    username: <%= ENV["TIDB_USERNAME"] %>
-    password: <%= ENV["TIDB_PASSWORD"] %>
-    host: <%= ENV["TIDB_HOST"] %>
-    port: 4000
-    ssl_mode: VERIFY_IDENTITY
-    sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+        <<: *default
+        database: libreverse_test
+        username: <%= ENV["TIDB_USERNAME"] %>
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: <%= ENV.fetch("TIDB_HOST", "127.0.0.1") %>
+        port: 4000
+        ssl_mode: VERIFY_IDENTITY
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
+    queue:
+        adapter: sqlite3
+        encoding: utf8
+        database: db/queue_test.sqlite3
+        pool: <%= pool_size %>
+        migrations_paths: db/queue_migrate
+        schema_dump: false
+        database_tasks: false
+        pragmas:
+            journal_mode: 'WAL'
+            synchronous: 0
+            cache_size: -8000
+            foreign_keys: 0
+            temp_store: 2
+            wal_autocheckpoint: 1000
     cache:
         adapter: sqlite3
         encoding: utf8

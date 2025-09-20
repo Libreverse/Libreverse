@@ -8,6 +8,7 @@ require "sequel/core"
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     # List of authentication features that are loaded.
+    # Core features that do not require Rodauth OAuth tables during boot
     enable :create_account,
            :login, :logout, :remember,
            :change_password, :change_login,
@@ -17,19 +18,34 @@ class RodauthMain < Rodauth::Rails::Auth
            :update_password_hash,
            :guest, # anonymous auth
            :internal_request,
-           :i18n,
-           :oauth_authorization_code_grant,
-           :oidc,
-           :omniauth
+           :i18n
+
+    # Conditionally enable OAuth / OIDC / OmniAuth features only if their tables exist
+    oauth_features = %i[oauth_authorization_code_grant oidc omniauth]
+    begin
+      if (!Rails.env.test? || (db.table_exists?(:oauth_grants) rescue false) || ENV["ENABLE_OAUTH_IN_TEST"])
+        oauth_features.each { |f| enable f }
+      else
+        Rails.logger.warn "[RodauthMain] Skipping OAuth features during test boot (tables not yet loaded)"
+      end
+    rescue Sequel::DatabaseError => e
+      Rails.logger.warn "[RodauthMain] Skipping OAuth features due to DB error: #{e.class}: #{e.message}"
+    end
 
     rails_account_model AccountSequel
 
     # ==> OAuth Configuration
     # Configure OAuth scopes for this instance
-    oauth_application_scopes %w[openid profile email]
+      oauth_enabled = false
+      if (!Rails.env.test? || (db.table_exists?(:oauth_grants) rescue false) || ENV["ENABLE_OAUTH_IN_TEST"])
+        oauth_enabled = true
+      end
 
-    # Configure default OAuth response modes (prevents nil errors)
-    oauth_response_mode "query"
+      if oauth_enabled
+        # ==> OAuth Configuration (only safe when feature modules loaded)
+        oauth_application_scopes %w[openid profile email]
+        oauth_response_mode "query"
+      end
 
     # Configure this instance as an OIDC provider
     # oidc_issuer will be configured properly after we determine the correct method
@@ -118,7 +134,7 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # ==> General
     # Initialize Sequel and have it reuse Active Record's database connection.
-    db Sequel.connect(adapter: (ENV["RAILS_ENV"] == "test" ? :mysql2 : :trilogy), test: false, extensions: :activerecord_connection, keep_reference: false)
+  db Sequel.connect(adapter: :trilogy, test: false, extensions: :activerecord_connection, keep_reference: false)
     # Avoid DB query that checks accounts table schema at boot time.
     convert_token_id_to_integer? { Account.columns_hash["id"].type == :integer }
 
