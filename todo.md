@@ -1,16 +1,9 @@
 # To-do
 
+add commontator
+mariadb for cache
 libreverse ai with api calls
 
-- [ ] (feature) replace sqlite cache with mariadb in memory table
-- [ ] (feature) Finish blog and add commontator
-- [x] (feature) Add thredded for forum feature - Basic setup complete, database migration pending
-    - [x] Fix Trilogy adapter compatibility with db_text_search gem
-    - [x] Complete database migrations for Thredded tables
-    - [x] Configure Thredded user permissions for Rodauth integration
-    - [x] Create sample messageboard
-    - [x] Add forum navigation link
-    - [x] Include Thredded styles and JavaScript
 - [ ] (feature) Add libreverse metaverse map
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (feature) Replace locotmotive scroll with lenis
