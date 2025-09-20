@@ -35,7 +35,8 @@ class AccountActionsController < ApplicationController
         # Use deflated mode for maximum compression of HTML content
         if exp.html_file.attached?
           filename = exp.html_file.filename.to_s.presence || "experience_#{exp.id}.html"
-          zip.write_deflated_file("experiences/#{exp.id}/#{filename}") do |sink|
+          normalized = filename.downcase.gsub(/[^a-z0-9_.-]/, "_")
+          zip.write_deflated_file("experiences/#{exp.id}/#{normalized}") do |sink|
               # Stream the file directly using Active Storage's streaming capabilities
               exp.html_file.download { |chunk| sink << chunk }
           rescue StandardError => e

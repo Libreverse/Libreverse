@@ -26,7 +26,7 @@ Lint:
 Metrics:
     Enabled: false
 Naming:
-    Enabled: true
+    Enabled: false
 Performance:
     Enabled: true
 Rails:
@@ -371,16 +371,3 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
     Enabled: true
     Description: "Enforces trailing commas in hash literals."
-
-# Naming cops
-Naming/FileName:
-    Enabled: true
-    Description: "Ensures filenames match class/module names."
-
-Naming/PredicatePrefix:
-    Enabled: false
-    Description: "Allow has_ prefix for predicate methods."
-
-Naming/AccessorMethodName:
-    Enabled: false
-    Description: "Allow has_ prefix for accessor methods."

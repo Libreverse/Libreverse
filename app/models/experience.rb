@@ -7,6 +7,7 @@ class Experience < ApplicationRecord
   include ActiveStorageValidations::Model
   include GraphqlRails::Model
   include FederatableExperience
+  include EncodingNormalizer
 
   graphql do |c|
     c.attribute(:id, type: "ID!")
@@ -41,6 +42,11 @@ class Experience < ApplicationRecord
 
   # Content moderation validation
   validate :content_moderation
+
+  # Force UTF-8 encoding prior to other validations (defensive for binary fixtures)
+  before_validation :force_utf8_encoding, prepend: true
+  # Normalize encoding for user-provided textual fields to avoid transliteration errors
+  normalize_encoding_for :title, :description, :author
 
   # Ensure an owner is always associated
   before_validation :assign_owner, on: :create
@@ -207,5 +213,22 @@ class Experience < ApplicationRecord
     end
   rescue StandardError => e
     Rails.logger.error "Failed to schedule vectorization for experience #{id}: #{e.message}"
+  end
+
+  def force_utf8_encoding
+    %i[title description author].each do |attr|
+      val = self[attr]
+      next unless val.is_a?(String)
+
+      next if val.encoding == Encoding::UTF_8 && val.valid_encoding?
+
+      begin
+        coerced = val.dup.force_encoding(Encoding::UTF_8)
+        coerced = coerced.encode(Encoding::UTF_8, invalid: :replace, undef: :replace, replace: "") unless coerced.valid_encoding?
+        self[attr] = coerced
+      rescue StandardError
+        self[attr] = val.to_s.encode(Encoding::UTF_8, invalid: :replace, undef: :replace, replace: "")
+      end
+    end
   end
 end

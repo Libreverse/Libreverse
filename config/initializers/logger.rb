@@ -123,7 +123,10 @@ class RequestIdMiddleware
 
   def call(env)
     request_id = env["action_dispatch.request_id"]
-    Thread.current[:request_id] = request_id if request_id
+    # Ensure request_id is a simple string; some test helpers pass a Hash as headers
+    request_id = request_id["id"] || request_id[:id] || "no_request_id" if request_id.is_a?(Hash)
+    request_id = request_id.to_s
+    Thread.current[:request_id] = request_id if request_id.present?
     @app.call(env)
   ensure
     Thread.current[:request_id] = nil

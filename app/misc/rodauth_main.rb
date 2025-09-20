@@ -23,7 +23,13 @@ class RodauthMain < Rodauth::Rails::Auth
     # Conditionally enable OAuth / OIDC / OmniAuth features only if their tables exist
     oauth_features = %i[oauth_authorization_code_grant oidc omniauth]
     begin
-      if (!Rails.env.test? || (db.table_exists?(:oauth_grants) rescue false) || ENV["ENABLE_OAUTH_IN_TEST"])
+      # Enable OAuth-related features unless we're in test without tables present.
+      # Parentheses ensure the rescue only applies to the table existence check.
+      if !Rails.env.test? || begin
+                               db.table_exists?(:oauth_grants)
+      rescue StandardError
+                               false
+      end || ENV["ENABLE_OAUTH_IN_TEST"]
         oauth_features.each { |f| enable f }
       else
         Rails.logger.warn "[RodauthMain] Skipping OAuth features during test boot (tables not yet loaded)"
@@ -34,12 +40,14 @@ class RodauthMain < Rodauth::Rails::Auth
 
     rails_account_model AccountSequel
 
-    # ==> OAuth Configuration
-    # Configure OAuth scopes for this instance
+      # ==> OAuth Configuration
+      # Configure OAuth scopes for this instance
       oauth_enabled = false
-      if (!Rails.env.test? || (db.table_exists?(:oauth_grants) rescue false) || ENV["ENABLE_OAUTH_IN_TEST"])
-        oauth_enabled = true
-      end
+      oauth_enabled = true if !Rails.env.test? || begin
+                                                     db.table_exists?(:oauth_grants)
+      rescue StandardError
+                                                     false
+      end || ENV["ENABLE_OAUTH_IN_TEST"]
 
       if oauth_enabled
         # ==> OAuth Configuration (only safe when feature modules loaded)
@@ -132,8 +140,8 @@ class RodauthMain < Rodauth::Rails::Auth
       Rails.logger.info "[Rodauth][before_delete_guest] Data transfer completed for guest account #{guest_account_id}"
     end
 
-    # ==> General
-    # Initialize Sequel and have it reuse Active Record's database connection.
+  # ==> General
+  # Initialize Sequel and have it reuse Active Record's database connection.
   db Sequel.connect(adapter: :trilogy, test: false, extensions: :activerecord_connection, keep_reference: false)
     # Avoid DB query that checks accounts table schema at boot time.
     convert_token_id_to_integer? { Account.columns_hash["id"].type == :integer }
