@@ -29,6 +29,9 @@
 @use "blog";
 @use "glass_overrides";
 
+// Thredded styles (copied locally) - use relative import chain entry point
+@import "thredded/thredded";
+
 html,
 body {
     width: 100%;

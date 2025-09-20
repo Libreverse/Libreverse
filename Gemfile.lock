@@ -107,6 +107,12 @@ GEM
       rinku
       rouge
       turbo-rails
+    autoprefixer-rails (10.4.21.0)
+      execjs (~> 2)
+    babel-source (5.8.35)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     base64 (0.3.0)
     bcp47_spec (0.2.1)
     benchmark (0.4.1)
@@ -143,6 +149,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    chunky_png (1.4.0)
     comfortable_media_surfer (3.1.4)
       active_link_to (~> 1.0, >= 1.0.5)
       comfy_bootstrap_form (~> 4.0, >= 4.0.0)
@@ -169,6 +176,8 @@ GEM
       addressable
     csv (3.3.5)
     date (3.4.1)
+    db_text_search (1.0.0)
+      activerecord (>= 4.1.15)
     debug (1.11.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
@@ -197,6 +206,7 @@ GEM
     erubi (1.13.1)
     et-orbi (1.3.0)
       tzinfo
+    execjs (2.10.0)
     faraday (2.13.4)
       faraday-net_http (>= 2.0, < 3.5)
       json
@@ -240,6 +250,7 @@ GEM
     fugit (1.11.2)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
+    gemoji (4.1.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (4.32.1-aarch64-linux-gnu)
@@ -308,6 +319,9 @@ GEM
     highline (3.1.2)
       reline
     hirb (0.7.3)
+    html-pipeline (2.14.3)
+      activesupport (>= 2)
+      nokogiri (>= 1.4)
     htmlentities (4.3.4)
     httparty (0.23.1)
       csv
@@ -332,6 +346,9 @@ GEM
     inky-rb (1.4.2.1)
       foundation_emails (~> 2)
       nokogiri
+    inline_svg (1.10.0)
+      activesupport (>= 3.0)
+      nokogiri (>= 1.6)
     invisible_captcha (2.3.0)
       rails (>= 5.2)
     io-console (0.8.1)
@@ -376,6 +393,8 @@ GEM
     kaminari-core (1.2.2)
     kramdown (2.5.1)
       rexml (>= 3.3.9)
+    kramdown-parser-gfm (1.1.0)
+      kramdown (~> 2.0)
     language_server-protocol (3.17.0.5)
     link_header (0.0.8)
     lint_roller (1.1.0)
@@ -411,6 +430,7 @@ GEM
     multi_json (1.17.0)
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
+    mustache (1.1.1)
     mutex_m (0.3.0)
     mysql2 (0.5.6)
     net-http (0.6.0)
@@ -447,6 +467,13 @@ GEM
     omniauth_openid_connect (0.8.0)
       omniauth (>= 1.9, < 3)
       openid_connect (~> 2.2)
+    onebox (2.2.19)
+      addressable (~> 2.8.0)
+      htmlentities (~> 4.3)
+      multi_json (~> 1.11)
+      mustache
+      nokogiri (~> 1.7)
+      sanitize
     openid_connect (2.3.1)
       activemodel
       attr_required (>= 1.0.0)
@@ -559,6 +586,8 @@ GEM
     rails-i18n (8.0.2)
       i18n (>= 0.7, < 2)
       railties (>= 8.0.0, < 9)
+    rails_gravatar (1.0.4)
+      actionview
     railties (8.0.2.1)
       actionpack (= 8.0.2.1)
       activesupport (= 8.0.2.1)
@@ -671,6 +700,9 @@ GEM
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     rubyzip (3.1.0)
+    sanitize (7.0.0)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.16.8)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
@@ -723,6 +755,10 @@ GEM
       concurrent-ruby (~> 1.0)
       logger
       rack (>= 2.2.4, < 4)
+    sprockets-es6 (0.9.2)
+      babel-source (>= 5.8.11)
+      babel-transpiler
+      sprockets (>= 3.0.0)
     sprockets-rails (3.5.2)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
@@ -763,7 +799,27 @@ GEM
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.4.0)
     thread-local (1.1.0)
+    thredded (1.2.1)
+      autoprefixer-rails
+      db_text_search
+      friendly_id
+      html-pipeline (>= 2.14.1, < 3)
+      htmlentities
+      inline_svg (>= 1.6.0)
+      kaminari
+      kramdown (>= 2.0.0)
+      kramdown-parser-gfm
+      nokogiri
+      onebox (>= 1.8.99)
+      pundit (>= 1.1.0)
+      rails (>= 7.0)
+      rails_gravatar
+      rinku
+      sanitize
+      sprockets-es6
+      timeago_js (>= 3.0.2.2)
     tilt (2.6.1)
+    timeago_js (3.0.2.2)
     timeout (0.4.3)
     trailblazer (2.1.3)
       trailblazer-activity-dsl-linear (>= 1.2.3, < 1.3.0)
@@ -874,6 +930,7 @@ PLATFORMS
   aarch64-linux-gnu
   aarch64-linux-musl
   arm64-darwin
+  arm64-darwin-24
   x86_64-darwin
   x86_64-darwin-21
   x86_64-linux
@@ -892,6 +949,7 @@ DEPENDENCIES
   brakeman
   cancancan
   capybara
+  chunky_png (~> 1.4)
   comfortable_media_surfer
   console1984
   debug
@@ -905,6 +963,7 @@ DEPENDENCIES
   flamegraph
   foreman
   friendly_id
+  gemoji (~> 4.1)
   google_robotstxt_parser!
   graphql_rails
   grpc
@@ -914,6 +973,7 @@ DEPENDENCIES
   haml-rails
   httparty
   i18n-tasks
+  image_processing (~> 1.14)
   inky-rb
   invisible_captcha
   jbuilder
@@ -967,6 +1027,7 @@ DEPENDENCIES
   stimulus_reflex (= 3.5.3)
   sys-filesystem
   thor (>= 1.4.0)
+  thredded (~> 1.2)
   tilt
   trailblazer
   trilogy

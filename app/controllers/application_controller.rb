@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
     return nil unless account_id
 
     account = FunctionCache.instance.cache(:account_by_id, account_id, ttl: 300) do
-      AccountSequel.where(id: account_id).first
+      Account.find(account_id)
     end
 
     unless account
