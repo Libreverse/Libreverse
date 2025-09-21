@@ -229,6 +229,11 @@
             font-weight: 500;
         }
     }
+    transition: transform 0.1s ease;
+
+    &:active {
+        transform: scale(0.95);
+    }
 }
 
 .sp-bg {

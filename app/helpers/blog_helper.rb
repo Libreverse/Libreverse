@@ -93,14 +93,14 @@ module BlogHelper
     end
 
     content_tag(:article, class: "blog-post") do
+      # Entire card is a single interactive element. Use a block link.
+      link_to("/blog#{page.full_path}", class: "blog-post__link", 'aria-label': title) do
         safe_join([
-          content_tag(:h2) do
-            link_to(title, "/blog#{page.full_path}", class: "text-decoration-none")
-          end,
+          content_tag(:h2, title, class: "blog-post__title"),
           (content_tag(:div, class: "post-meta mb-3") { content_tag(:span, published_at, class: "text-muted") } if published_at.present?),
-          (content_tag(:p, meta_desc, class: "lead") if meta_desc.present?),
-          link_to("Read more", "/blog#{page.full_path}", class: "btn btn-primary")
+          (content_tag(:p, meta_desc, class: "lead") if meta_desc.present?)
         ].compact)
+      end
     end
   end
 end
