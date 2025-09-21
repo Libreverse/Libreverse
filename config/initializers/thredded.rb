@@ -121,7 +121,7 @@ Thredded.moderator_column = :admin
 Thredded.admin_column = :admin
 
 # Whether posts and topics pending moderation are visible to regular users.
-Thredded.content_visible_while_pending_moderation = true
+Thredded.content_visible_while_pending_moderation = false
 
 # This model can be customized further by overriding a handful of methods on the User model.
 # For more information, see app/models/thredded/user_extender.rb.

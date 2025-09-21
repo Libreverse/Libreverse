@@ -27,6 +27,8 @@
 @use "fonts";
 @use "site_footer";
 @use "blog";
+@use "comments";
+@use "admin_comments";
 @use "glass_overrides";
 
 // Thredded styles (copied locally) - use relative import chain entry point

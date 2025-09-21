@@ -15,15 +15,17 @@ if Rails.env.test?
     module TagHelpers
       def vite_javascript_tag(*names, **options)
         super
-      rescue => e
+      rescue StandardError => e
         # Suppress only if it's a missing entry scenario or the constant itself is undefined.
         missing_constant = e.is_a?(NameError) && e.message.include?("ViteRuby::MissingEntryError")
-        missing_entry = e.class.name == 'ViteRuby::MissingEntryError' rescue false
-        if missing_constant || missing_entry
-          if names.any? { |n| n.include?("application") }
+        missing_entry = begin
+                          e.instance_of?(::ViteRuby::MissingEntryError)
+        rescue StandardError
+                          false
+        end
+        if (missing_constant || missing_entry) && names.any? { |n| n.include?("application") }
             Rails.logger.warn("[Test] Suppressing missing Vite entry error: #{e.message}")
-            return ''.html_safe
-          end
+            return "".html_safe
         end
         raise
       end

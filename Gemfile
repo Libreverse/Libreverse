@@ -125,3 +125,5 @@ gem "thredded-markdown_katex", "~> 1.0"
 
 gem "kaminari-i18n", "~> 0.5.0"
 gem "rails-i18n", "~> 8.0"
+
+gem "rspec", "~> 3.13"

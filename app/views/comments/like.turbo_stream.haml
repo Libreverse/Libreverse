@@ -1,0 +1,3 @@
+%turbo-stream{ action: 'replace', target: "comment-#{@comment.id}" }
+  %template
+    = render partial: 'comments/comment', formats: [:html], locals: { comment: @comment }

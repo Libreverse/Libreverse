@@ -189,6 +189,16 @@ if ($codeql_setup_exit == 0) {
 }
 push @sequential_tools, "CodeQL Setup";
 
+# Run CodeQL analyses sequentially (moved from disabled parallel section)
+run_command(
+    "CodeQL Ruby",  "scripts/codeql-local.sh",
+    "--language",   "ruby"
+);
+run_command(
+    "CodeQL JavaScript", "scripts/codeql-local.sh",
+    "--language",        "javascript"
+);
+
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1);    # Auto-cleanup
 # print "(Storing parallel task logs in $log_dir)\n";
@@ -243,8 +253,7 @@ sub run_in_background {
 }
 
 # --- Define and run parallel commands ---
-@parallel_tools = ("Fasterer", "Typos", "Jest", "Brakeman");
-# TEMPORARILY DISABLED: "CodeQL Ruby", "CodeQL JavaScript"
+@parallel_tools = ("Fasterer", "Typos", "Jest", "Brakeman", "Rails Tests");
 my $num_tools = scalar @parallel_tools;
 
 for my $i (0 .. $num_tools - 1) {
@@ -269,6 +278,12 @@ for my $i (0 .. $num_tools - 1) {
     @cmd = (
       "brakeman", "-A",           "--except", "WeakHash",
       "--quiet",  "--no-summary", "--no-pager"
+    );
+  } elsif ($tool_name eq "Rails Tests") {
+    # Prefer RSpec if spec directory exists, else use rails test
+    @cmd = (
+      'sh', '-c',
+"if [ -d spec ]; then bundle exec rspec --format progress --color; else bundle exec rails test; fi"
     );
 # TEMPORARILY DISABLED - CodeQL local analysis needs fixes
 # } elsif ($tool_name eq "CodeQL Ruby") {

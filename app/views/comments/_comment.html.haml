@@ -1,0 +1,21 @@
+-# Single comment
+.comment{ id: "comment-#{comment.id}" , data: { controller: 'comment', comment_id: comment.id } }
+  .meta
+    %span.author= comment.account_id
+    - unless comment.approved?
+      %span.badge.pending{ class: "badge-#{comment.moderation_state}" }= comment.moderation_state.titleize
+    %span.likes Likes: #{comment.likes_count}
+    = button_to 'Like', like_comment_path(comment, commontable_type: comment.thread.commontable_type, commontable_id: comment.thread.commontable_id), method: :post, form: { data: { turbo_stream: true } }
+    %button.reply{ type: 'button', data: { action: 'click->comment#showReply' } } Reply
+  .body= simple_format h(comment.body)
+  .reply-form.hidden{ data: { comment_target: 'replyForm' } }
+    = form_with model: [comment.thread, Comment.new], url: comments_path(commontable_type: comment.thread.commontable_type, commontable_id: comment.thread.commontable_id), data: { controller: 'comment-form' } do |f|
+      = f.hidden_field :parent_id, value: comment.id
+      .field
+        = f.textarea :body, rows: 2, placeholder: 'Reply…'
+      .actions
+        = f.submit 'Post Reply', class: 'button'
+  - if comment.children.any?
+    .children
+      - comment.children.visible.where(moderation_state: 'approved').ordered_by_likes.each do |child|
+        = render partial: 'comments/comment', locals: { comment: child }
