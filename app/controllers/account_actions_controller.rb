@@ -17,7 +17,7 @@ class AccountActionsController < ApplicationController
   if Rails.env.test?
     # Provide a lightweight current_account in tests if none is set (avoids Mocha unnecessary stub)
     def current_account
-      super || (@_test_account ||= AccountSequel.where(username: 'testuser').first || AccountSequel.create(username: 'testuser', status: 2, guest: false))
+      super || (@_test_account ||= AccountSequel.where(username: "testuser").first || AccountSequel.create(username: "testuser", status: 2, guest: false))
     rescue StandardError
       nil
     end
@@ -66,10 +66,10 @@ class AccountActionsController < ApplicationController
     end
 
     # Ensure supplemental streaming-friendly headers
-    response.headers['X-Accel-Buffering'] ||= 'no'
-    response.headers['Content-Encoding'] ||= 'identity'
+    response.headers["X-Accel-Buffering"] ||= "no"
+    response.headers["Content-Encoding"] ||= "identity"
   # Ensure Content-Type remains application/zip (some middleware may unset if body empty early)
-  response.headers['Content-Type'] = 'application/zip'
+  response.headers["Content-Type"] = "application/zip"
 
     # Do not call head :ok here; zip_kit_stream already assigned the response body and
     # headers (including Content-Type=application/zip). Adding head :ok would reset the
