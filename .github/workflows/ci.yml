@@ -224,8 +224,6 @@ jobs:
     testing:
         name: ${{ matrix.test-suite }}
         runs-on: ubuntu-22.04
-        # Temporarily disabled
-        if: false
         permissions:
             contents: read
         env:

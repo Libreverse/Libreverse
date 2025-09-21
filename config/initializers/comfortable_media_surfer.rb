@@ -28,7 +28,8 @@ ComfortableMediaSurfer.configure do |config|
     "layouts/drawer",
     "layouts/development_headers",
     "layouts/app_assets",
-    "layouts/paper_background"
+    "layouts/paper_background",
+    "shared/blog_comments"
   ]
 
   # Allow helpers used in CMS layouts

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_183000) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "session_id", null: false
@@ -302,6 +302,46 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.index ["is_published"], name: "index_comfy_cms_translations_on_is_published"
     t.index ["locale"], name: "index_comfy_cms_translations_on_locale"
     t.index ["page_id"], name: "index_comfy_cms_translations_on_page_id"
+  end
+
+  create_table "comment_likes", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "comment_id", null: false
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id", "account_id"], name: "index_comment_likes_on_comment_id_and_account_id", unique: true
+    t.index ["comment_id"], name: "index_comment_likes_on_comment_id"
+  end
+
+  create_table "comment_threads", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "commontable_type", null: false
+    t.bigint "commontable_id", null: false
+    t.integer "comments_count", default: 0, null: false
+    t.datetime "locked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commontable_type", "commontable_id"], name: "idx_comment_threads_poly", unique: true
+  end
+
+  create_table "comments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "comment_thread_id", null: false
+    t.bigint "account_id", null: false
+    t.bigint "parent_id"
+    t.text "body", null: false
+    t.json "mentions_cache", null: false
+    t.integer "likes_count", default: 0, null: false
+    t.datetime "deleted_at"
+    t.datetime "edited_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "moderation_state", default: "pending", null: false
+    t.datetime "approved_at"
+    t.bigint "approved_by_id"
+    t.json "moderation_flags"
+    t.index ["account_id"], name: "index_comments_on_account_id"
+    t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
+    t.index ["moderation_state"], name: "index_comments_on_moderation_state"
+    t.index ["parent_id"], name: "index_comments_on_parent_id"
   end
 
   create_table "console1984_commands", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -844,6 +884,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.bigint "messageboard_id", null: false
     t.string "notifier_key", limit: 90, null: false
     t.boolean "enabled", default: true, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id", "messageboard_id", "notifier_key"], name: "thredded_messageboard_notifications_for_followed_topics_unique", unique: true
   end
 
@@ -851,6 +893,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.bigint "thredded_user_detail_id", null: false
     t.bigint "thredded_messageboard_id", null: false
     t.datetime "last_seen_at", precision: nil, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["thredded_messageboard_id", "last_seen_at"], name: "index_thredded_messageboard_users_for_recently_active"
     t.index ["thredded_messageboard_id", "thredded_user_detail_id"], name: "index_thredded_messageboard_users_primary", unique: true
     t.index ["thredded_user_detail_id"], name: "fk_rails_06e42c62f5"
@@ -876,6 +920,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.bigint "user_id", null: false
     t.string "notifier_key", limit: 90, null: false
     t.boolean "enabled", default: true, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_followed_topics_unique", unique: true
   end
 
@@ -883,6 +929,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.bigint "user_id", null: false
     t.string "notifier_key", limit: 90, null: false
     t.boolean "enabled", default: true, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_private_topics_unique", unique: true
   end
 
@@ -895,7 +943,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.bigint "moderator_id"
     t.integer "moderation_state", null: false
     t.integer "previous_moderation_state", null: false
-    t.timestamp "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["messageboard_id", "created_at"], name: "index_thredded_moderation_records_for_display"
   end
 
@@ -952,6 +1001,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
   create_table "thredded_topic_categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "topic_id", null: false
     t.bigint "category_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["category_id"], name: "index_thredded_topic_categories_on_category_id"
     t.index ["topic_id"], name: "index_thredded_topic_categories_on_topic_id"
   end
@@ -1008,6 +1059,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.bigint "user_id", null: false
     t.bigint "post_id", null: false
     t.datetime "notified_at", precision: nil, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["post_id"], name: "index_thredded_user_post_notifications_on_post_id"
     t.index ["user_id", "post_id"], name: "index_thredded_user_post_notifications_on_user_id_and_post_id", unique: true
   end
@@ -1028,6 +1081,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.integer "read_posts_count", default: 0, null: false
     t.integer "integer", default: 0, null: false
     t.timestamp "read_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id", "postable_id"], name: "thredded_user_private_topic_read_states_user_postable", unique: true
   end
 
@@ -1047,6 +1102,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
     t.integer "read_posts_count", default: 0, null: false
     t.integer "integer", default: 0, null: false
     t.timestamp "read_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["messageboard_id"], name: "index_thredded_user_topic_read_states_on_messageboard_id"
     t.index ["user_id", "messageboard_id"], name: "thredded_user_topic_read_states_user_messageboard"
     t.index ["user_id", "postable_id"], name: "thredded_user_topic_read_states_user_postable", unique: true
@@ -1073,6 +1130,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_19_225405) do
   add_foreign_key "account_verification_keys", "accounts", column: "id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "comment_likes", "comments"
+  add_foreign_key "comments", "comment_threads"
   add_foreign_key "experience_vectors", "experiences"
   add_foreign_key "experiences", "accounts"
   add_foreign_key "experiences", "indexed_contents"

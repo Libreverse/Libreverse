@@ -66,6 +66,13 @@ Rails.application.routes.draw do
 
   # ===== Admin Namespace =====
   namespace :admin do
+    resources :comments, only: %i[index] do
+      post :bulk, on: :collection
+      member do
+        post :approve
+        post :reject
+      end
+    end
     resources :indexing_runs, only: %i[index show]
     resources :indexers, only: %i[index show] do
       member do
@@ -140,4 +147,9 @@ Rails.application.routes.draw do
 
   # Mount Federails engine at root for ActivityPub federation
   mount Federails::Engine => "/"
+  resources :comments, only: [ :create ] do
+    post :like, on: :member
+    post :approve, on: :member
+    post :reject, on: :member
+  end
 end
