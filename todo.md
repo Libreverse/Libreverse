@@ -1,5 +1,6 @@
 # To-do
 
+now we know the vite issue was caused by the wrong rails env, we can do back to the old vite setup
 mariadb for cache
 also solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls

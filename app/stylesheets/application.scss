@@ -29,6 +29,7 @@
 @use "blog";
 @use "comments";
 @use "admin_comments";
+@use "components/_metaverse_map";
 @use "glass_overrides";
 
 // Thredded styles (copied locally) - use relative import chain entry point

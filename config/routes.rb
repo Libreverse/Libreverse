@@ -142,6 +142,10 @@ Rails.application.routes.draw do
   get "privacy", to: "policies#privacy", as: :privacy
   get "cookies", to: "policies#cookies", as: :cookie_policy
 
+  # Metaverse synthetic map
+  get "map", to: "map#index"
+  get "map/data", to: "map#data", defaults: { format: :json }
+
   # Mount Thredded forum engine
   mount Thredded::Engine => "/forum"
 
