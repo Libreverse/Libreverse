@@ -32,8 +32,8 @@ class MetaverseMapBuilder
       meta: {
         generated_at: Time.current.iso8601,
         provider_count: providers.size,
-        total_width: (providers.last&.dig(:bbox, :x_max) || 1000),
-        total_height: (providers.map { |p| p[:bbox][:y_max] }.max || 600)
+        total_width: providers.last&.dig(:bbox, :x_max) || 1000,
+        total_height: providers.map { |p| p[:bbox][:y_max] }.max || 600
       },
       providers: providers,
       experiences: experiences_payload
@@ -62,11 +62,11 @@ class MetaverseMapBuilder
   # Mutates each provider hash adding :bbox with layout coordinates
   def layout_providers!(providers)
     cursor_x = 0.0
-    max_continent_height = providers.map { |p| (p[:raw_bounds][:max_y] - p[:raw_bounds][:min_y]).abs }.max || 1
+    providers.map { |p| (p[:raw_bounds][:max_y] - p[:raw_bounds][:min_y]).abs }.max || 1
     providers.each do |p|
       raw = p[:raw_bounds]
-      internal_width  = [(raw[:max_x] - raw[:min_x]).abs, 1].max
-      internal_height = [(raw[:max_y] - raw[:min_y]).abs, 1].max
+      internal_width  = [ (raw[:max_x] - raw[:min_x]).abs, 1 ].max
+      internal_height = [ (raw[:max_y] - raw[:min_y]).abs, 1 ].max
       box_width  = internal_width  + (MARGIN * 2)
       box_height = internal_height + (MARGIN * 2)
       p[:bbox] = {
@@ -109,6 +109,7 @@ class MetaverseMapBuilder
     experiences.each do |exp|
       c = parse_coords(exp)
       next unless c[:x] || c[:y]
+
       xs << c[:x] if c[:x]
       ys << c[:y] if c[:y]
     end
@@ -122,21 +123,28 @@ class MetaverseMapBuilder
 
   def parse_coords(exp)
     return {} if exp.metaverse_coordinates.blank?
-    json = JSON.parse(exp.metaverse_coordinates) rescue {}
+
+    json = begin
+             JSON.parse(exp.metaverse_coordinates)
+    rescue StandardError
+             {}
+    end
     {
-      x: extract_number(json['x']),
-      y: extract_number(json['y'])
+      x: extract_number(json["x"]),
+      y: extract_number(json["y"])
     }
   end
 
   def extract_number(v)
     case v
     when String
-      Float(v) rescue nil
+      begin
+        Float(v)
+      rescue StandardError
+        nil
+      end
     when Integer, Float
       v.to_f
-    else
-      nil
     end
   end
 
