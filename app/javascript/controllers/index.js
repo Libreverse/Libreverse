@@ -71,3 +71,6 @@ application.register("toast", ToastController);
 
 import WebsocketP2pController from "./websocket_p2p_controller";
 application.register("websocket-p2p", WebsocketP2pController);
+
+import MetaverseMapController from "./metaverse_map_controller.coffee";
+application.register("metaverse-map", MetaverseMapController);

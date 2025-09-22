@@ -24,6 +24,7 @@
         "hotkeys-js": "^3.13.15",
         "jquery": "^3.7.1",
         "js-cookie": "^3.0.5",
+        "leaflet": "^1.9.4",
         "locomotive-scroll": "^4.1.4",
         "p2p": "file:vendor/javascript/p2p",
         "sassy-lists": "^3.0.1",
@@ -66,7 +67,7 @@
         "postcss-cli": "^11.0.1",
         "postcss-flexbugs-fixes": "^5.0.2",
         "postcss-inline-rtl": "^0.9.8",
-        "postcss-preset-env": "^10.3.1",
+        "postcss-preset-env": "^10.4.0",
         "postcss-url": "^10.1.3",
         "prettier": "^3.6.2",
         "rolldown": "^1.0.0-beta.9-commit.d91dfb5",
@@ -1252,6 +1253,8 @@
     "kleur": ["kleur@3.0.3", "", {}, "sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w=="],
 
     "known-css-properties": ["known-css-properties@0.37.0", "", {}, "sha512-JCDrsP4Z1Sb9JwG0aJ8Eo2r7k4Ou5MwmThS/6lcIe1ICyb7UBJKGRIUUdqc2ASdE/42lgz6zFUnzAIhtXnBVrQ=="],
+
+    "leaflet": ["leaflet@1.9.4", "", {}, "sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA=="],
 
     "lethargy": ["lethargy@1.0.9", "", {}, "sha512-nFM8blpCF9rqIL5mRAaTGc78W8oQixVtsD86jbEPvcI13+lDUYJf3R7DZQQL7tCiBpbGpGKMX2gwJFO9hiaOkg=="],
 

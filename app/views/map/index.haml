@@ -1,0 +1,9 @@
+= render "layouts/sidebar"
+
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    %section.metaverse-map-section
+      %h1 Metaverse Map
+      %p.lead Visual aggregation of indexed metaverse experiences. Each provider is rendered as a synthetic continent.
+      #metaverse-map{ data: { controller: 'metaverse-map', 'metaverse-map-data-url-value': map_data_path } }
+    
