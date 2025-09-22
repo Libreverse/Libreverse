@@ -190,14 +190,9 @@ if ($codeql_setup_exit == 0) {
 push @sequential_tools, "CodeQL Setup";
 
 # Run CodeQL analyses sequentially (moved from disabled parallel section)
-run_command(
-    "CodeQL Ruby",  "scripts/codeql-local.sh",
-    "--language",   "ruby"
-);
-run_command(
-    "CodeQL JavaScript", "scripts/codeql-local.sh",
-    "--language",        "javascript"
-);
+run_command("CodeQL Ruby", "scripts/codeql-local.sh", "--language", "ruby");
+run_command("CodeQL JavaScript",
+  "scripts/codeql-local.sh", "--language", "javascript");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1);    # Auto-cleanup
