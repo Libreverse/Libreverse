@@ -12,6 +12,52 @@
     border-radius: 8px;
     position: relative;
     overflow: hidden;
+        &.fullscreen,
+        .metaverse-map-fullscreen & {
+            height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            border: 0;
+        }
+}
+
+.metaverse-map-fullscreen {
+    position: relative;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background: #2c2c2d;
+    color: #f0f0f1;
+    > #metaverse-map { flex: 1 1 auto; }
+    .metaverse-map__container, .leaflet-container {
+        background: #2c2c2d !important;
+        color: #f0f0f1;
+    }
+    .leaflet-control-container .leaflet-control {
+        background: rgba(58,58,60,0.85);
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+    .leaflet-control a, .leaflet-control span { color: #f4f4f5; }
+    .leaflet-bar a {
+        background: transparent;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        &:hover { background: rgba(255,255,255,0.08); }
+    }
+    .leaflet-bar a:last-child { border-bottom: 0; }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: #3a3a3c;
+        color: #f0f0f1;
+    }
+    .leaflet-top.leaflet-right { top: 0.75rem; right: 0.75rem; }
+    .leaflet-top.leaflet-right .leaflet-control-zoom {
+        border-radius: 8px;
+        overflow: hidden;
+    }
 }
 
 .metaverse-map__legend {
@@ -30,4 +76,37 @@
     margin-right: 4px;
     border-radius: 2px;
     box-shadow: 0 0 0 1px rgb(0 0 0 / 20%);
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+}
+
+// Provider labels (always-visible)
+.metaverse-provider-label {
+    pointer-events: none;
+    font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-weight: 600;
+    font-size: clamp(0.8rem, 0.9vw, 1.05rem);
+    text-align: center;
+    white-space: nowrap;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
+    position: relative;
+    .metaverse-provider-label__inner {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--provider-color) 18%, #000);
+        color: #fff;
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+        backdrop-filter: blur(2px) brightness(1.05);
+        border: 1px solid rgba(255,255,255,0.18);
+        position: relative;
+    }
+    .metaverse-provider-label__inner::after { display: none; }
 }
