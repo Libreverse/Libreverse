@@ -1,6 +1,7 @@
 # To-do
 
-now we know the vite issue was caused by the wrong rails env, we can do back to the old vite setup
+
+use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath -ffp-contract=off
 mariadb for cache
 also solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls

@@ -8,6 +8,8 @@ import postcssUrl from "postcss-url";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
 import Erb from "vite-plugin-erb";
+import fullReload from "vite-plugin-full-reload";
+import stimulusHMR from "vite-plugin-stimulus-hmr";
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -27,21 +29,15 @@ function withInstrumentation(p) {
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
-    const conditionalPlugins = [];
-    if (!isDevelopment) {
-        conditionalPlugins.push(
-            withInstrumentation(
-                typehints({
-                    variableDocumentation: true,
-                    objectShapeDocumentation: true,
-                    maxObjectProperties: 6,
-                    enableCoercions: true,
-                    parameterHoistCoercions: false,
-                }),
-            ),
-            preserveAllComments(),
-        );
-    }
+    const typehintPlugin = withInstrumentation(
+        typehints({
+            variableDocumentation: true,
+            objectShapeDocumentation: true,
+            maxObjectProperties: 6,
+            enableCoercions: true,
+            parameterHoistCoercions: false,
+        }),
+    );
 
     return {
         esbuild: {
@@ -213,26 +209,15 @@ export default defineConfig(({ mode }) => {
                   },
         },
         server: {
-            // Bind explicitly to IPv4 to match Rails proxy expectations and avoid ::1-only binding
             host: "127.0.0.1",
-            // Keep Vite on the same host/port as Vite Ruby expects
             port: 3001,
             strictPort: true,
-            // Force HTTP/1.1 in dev: no TLS here and plain WS for HMR
             https: false,
-            hmr: {
-                protocol: "ws",
-                host: "127.0.0.1",
-                port: 3001,
-                overlay: true,
-            }, // Enable error overlay in development
+            hmr: { overlay: true }, // Allow Vite to infer host/protocol
             headers: isDevelopment
-                ? {
-                      "Cache-Control":
-                          "no-store, no-cache, must-revalidate, max-age=0",
-                  }
+                ? { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" }
                 : {},
-            fs: { strict: false }, // More lenient file system access for development
+            fs: { strict: false },
         },
         css: {
             preprocessorOptions: {
@@ -278,6 +263,14 @@ export default defineConfig(({ mode }) => {
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
-        plugins: [Erb(), coffeescript(), rubyPlugin(), ...conditionalPlugins],
+        plugins: [
+            Erb(),
+            coffeescript(),
+            rubyPlugin(),
+            stimulusHMR(),
+            fullReload(["config/routes.rb", "app/views/**/*"]),
+            typehintPlugin,
+            preserveAllComments(),
+        ],
     };
 });

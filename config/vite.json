@@ -11,13 +11,12 @@
         ]
     },
     "development": {
-        "autoBuild": true,
-        "publicOutputDir": "vite-dev",
-        "port": 3001,
-        "skipProxy": true
+        "autoBuild": false,
+        "publicOutputDir": "vite",
+        "port": 3001
     },
     "test": {
-        "autoBuild": true,
+        "autoBuild": false,
         "publicOutputDir": "vite-test",
         "port": 3002
     }
