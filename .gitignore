@@ -44,3 +44,13 @@ coverage/
 
 # If abseil-cpp is vendored as a clone (not submodule), ignore it
 /vendor/gems/google_robotstxt_parser/ext/robotstxt/abseil-cpp/
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Generated React on Rails packs
+**/generated/**
