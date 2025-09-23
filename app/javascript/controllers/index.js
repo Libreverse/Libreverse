@@ -74,3 +74,6 @@ application.register("websocket-p2p", WebsocketP2pController);
 
 import MetaverseMapController from "./metaverse_map_controller.coffee";
 application.register("metaverse-map", MetaverseMapController);
+
+import MetaversePanelSwitchController from "./metaverse_panel_switch_controller.coffee";
+application.register("metaverse-panel-switch", MetaversePanelSwitchController);

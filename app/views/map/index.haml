@@ -2,7 +2,16 @@
 
 = render "layouts/leniswrapper" do
   = render "layouts/navigationshortcutswrapper" do
-    .metaverse-map-fullscreen
+    .metaverse-map-fullscreen.metaverse-map-panels{ data: { controller: 'metaverse-panel-switch' } }
       / Accessible off-screen heading for screen readers
       %h1.visually-hidden Metaverse Map
-      #metaverse-map{ data: { controller: 'metaverse-map', 'metaverse-map-data-url-value': map_data_path } }
+      .metaverse-mode-switch{ data: { 'metaverse-panel-switch-target': 'toggle' } }
+        %button{ type: 'button', data: { action: 'metaverse-panel-switch#show2d', 'metaverse-panel-switch-target': 'btn2d' } } 2D Map
+        %button{ type: 'button', data: { action: 'metaverse-panel-switch#show3d', 'metaverse-panel-switch-target': 'btn3d' } } 3D (Preview)
+      .metaverse-panels-track{ data: { 'metaverse-panel-switch-target': 'track' } }
+        .metaverse-panel.is-active{ data: { 'metaverse-panel-switch-target': 'panel2d' } }
+          #metaverse-map{ data: { controller: 'metaverse-map', 'metaverse-map-data-url-value': map_data_path } }
+        .metaverse-panel.is-inactive{ data: { 'metaverse-panel-switch-target': 'panel3d' } }
+          .metaverse-panel__placeholder
+            %p 3D view coming soon.
+            %p This placeholder will be replaced by the immersive 3D experience.
