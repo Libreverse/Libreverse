@@ -1,12 +1,28 @@
 # To-do
 
 
-use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath -ffp-contract=off
-mariadb for cache
+use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath
+bring in worker killer
+
+```ruby
+require 'worker_killer/middleware'
+
+killer = WorkerKiller::Killer::Passenger.new
+
+middleware.insert_before(
+  Rack::Runtime,
+  WorkerKiller::Middleware::OOMLimiter,
+  killer: killer,
+  min: 2_516_582_400, # 2.4GB in bytes
+  max: 2_724_659_200, # 2.6GB in bytes
+  check_cycle: 16     # check every 16 requests (default is fine)
+)
+```
+
+move to postgres for cache (<https://andyatkinson.com/solid-cache-rails-postgresql>)
 also solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails for future tests
-adopt reactionview
 
 - [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image

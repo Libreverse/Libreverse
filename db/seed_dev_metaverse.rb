@@ -6,7 +6,10 @@ return unless Rails.env.development?
 puts '[DevSeed][Metaverse] Creating sample experiences...'
 
 # Use or create a throwaway account as owner
-account = Account.first || Account.create!(email: "dev-seed@example.test", username: "devseed", password: SecureRandom.hex(8))
+# Create or reuse a simple guest/dev account. The Account model stores password hashes in
+# password_hash via Rodauth; we avoid manual password handling here. For development sample
+# data we only need an owning account, so a guest or basic account is sufficient.
+account = Account.first || Account.create!(username: 'devseed', guest: true)
 
 platforms = {
   'HoloWorld' => 20,

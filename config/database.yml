@@ -48,6 +48,8 @@ development:
         password: 
         host: 127.0.0.1
         port: 4000
+        # Explicitly disable SSL for local TiDB/MySQL dev instance
+        ssl_mode: DISABLED
     queue:
         <<: *default
         database: libreverse_development_queue
@@ -55,6 +57,7 @@ development:
         password: 
         host: 127.0.0.1
         port: 4000
+        ssl_mode: DISABLED
         migrations_paths: db/queue_migrate
     cache:
         adapter: sqlite3
@@ -93,7 +96,12 @@ test:
         password: <%= ENV["TIDB_PASSWORD"] %>
         host: <%= ENV.fetch("TIDB_HOST", "127.0.0.1") %>
         port: 4000
-        ssl_mode: VERIFY_IDENTITY
+        # SSL is required in CI/production-like test runs when TIDB_TEST_SSL_MODE is set.
+        # For local development the default is DISABLED to avoid
+        # "SSL required, not supported by server" errors when TiDB/MySQL was started without TLS.
+        # Accepted values (MySQL/TiDB): DISABLED, PREFERRED, REQUIRED, VERIFY_CA, VERIFY_IDENTITY
+        ssl_mode: <%= ENV.fetch("TIDB_TEST_SSL_MODE", ENV.fetch("TIDB_SSL_MODE", "DISABLED")) %>
+        # sslca always provided; adapter will use it only if ssl_mode requires validation
         sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
     queue:
         adapter: sqlite3
