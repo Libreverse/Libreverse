@@ -1,3 +1,5 @@
+@use 'spin.js/spin.css';
+
 .metaverse-map-section {
     padding: 1rem 0 2rem;
     margin-left: 10%;
@@ -109,4 +111,10 @@
         position: relative;
     }
     .metaverse-provider-label__inner::after { display: none; }
+}
+
+.sleep-note {
+    border: 2px solid #f0f0f1 !important;
+    background: #f0f0f1 !important;
+    color: #111111 !important;
 }

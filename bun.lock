@@ -26,8 +26,11 @@
         "js-cookie": "^3.0.5",
         "leaflet": "^1.9.4",
         "leaflet-ajax": "^2.1.0",
+        "leaflet-sleep": "^0.5.2",
         "leaflet-spin": "^1.1.2",
+        "leaflet.a11y": "^0.6.0",
         "leaflet.offline": "^3.1.0",
+        "leaflet.translate": "^0.6.0",
         "locomotive-scroll": "^4.1.4",
         "p2p": "file:vendor/javascript/p2p",
         "sassy-lists": "^3.0.1",
@@ -1267,9 +1270,15 @@
 
     "leaflet-ajax": ["leaflet-ajax@2.1.0", "", { "dependencies": { "lie": "^3.0.1" } }, "sha512-5Acw/C+27nZPd4PM4bH6eO7GDwj54RsQnJ3E4+LKQ9nva9qp57D6/b5inQfyzaZoU+r6/HgrsMv4AjjrnM1Wlg=="],
 
+    "leaflet-sleep": ["leaflet-sleep@0.5.2", "", {}, "sha512-Los9EAa3PJi9syu9aX579U5YWv8ESl/OpzUv04wMgHiaUmmTRcUtcxrjCm0WgzvOBAN1cBV7gGw2zMgVzD0ZFg=="],
+
     "leaflet-spin": ["leaflet-spin@1.1.2", "", { "dependencies": { "spin.js": "^2.3.1" }, "peerDependencies": { "leaflet": "<=1" } }, "sha512-OLpeDrrAv1YY8NVSnOP0YfICFFm+IFauL77erXH87ZiTIXl3aPwUJXOd336DrQCe4aFsY+F3oG/1+aXyjqKV2w=="],
 
+    "leaflet.a11y": ["leaflet.a11y@0.6.0", "", { "peerDependencies": { "leaflet": "^1.0.0" } }, "sha512-CRc1VJl9//pHOkCezNWxruN7w5hKA378mnYCa5Y2o34ku/gCfmS/Pd3k+t98lU6BhBernOPy3fGr28BOQZC51A=="],
+
     "leaflet.offline": ["leaflet.offline@3.1.0", "", { "dependencies": { "idb": "^7.1.1", "leaflet": "^1.6.0" } }, "sha512-dl3mzTEl1SnmzvJtJ0hVFLvlFX2wut/srvRAZ3A3g7Ee/RQkOo5zQ6tfVNhKe8N+adGXqcdEqEY9kgUxXCnEAw=="],
+
+    "leaflet.translate": ["leaflet.translate@0.6.0", "", { "peerDependencies": { "leaflet": "^1.0.0" } }, "sha512-Gb9iIFejdu+Ko67NQSMUmywe6k1YTdOWCKO9Kp7TXy7U+LnPYBRBEHChwhdaTAoxHunXKbnpSsXBvstu1jiQTg=="],
 
     "lethargy": ["lethargy@1.0.9", "", {}, "sha512-nFM8blpCF9rqIL5mRAaTGc78W8oQixVtsD86jbEPvcI13+lDUYJf3R7DZQQL7tCiBpbGpGKMX2gwJFO9hiaOkg=="],
 

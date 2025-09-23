@@ -4,8 +4,9 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet.offline'
 import 'leaflet-ajax'
 import 'leaflet-spin'
-import 'spin.js/spin.css'
-# Note: accessibility plugin collection (leaflet.plugins) not added; add packages explicitly if needed later.
+import 'leaflet-sleep'
+import 'leaflet.a11y'
+import 'leaflet.translate'
 
 # Controller responsible for rendering the synthetic metaverse map using locally bundled Leaflet (CRS.Simple)
 export default class extends ApplicationController
@@ -29,6 +30,16 @@ export default class extends ApplicationController
             wheelPxPerZoomLevel: 80
             attributionControl: false
             zoomControl: false
+            # Leaflet.Sleep options
+            sleep: true
+            sleepTime: 750
+            wakeTime: 750
+            sleepNote: true
+            hoverToWake: true
+            wakeMessage: 'The map is getting some much needed Zzz. Click or Hover to Wake it up.'
+            sleepOpacity: 0.7
+            # Leaflet.a11y enable plugin features
+            a11yPlugin: true
         )
         try
             if L.tileLayer?.offline?
@@ -43,6 +54,19 @@ export default class extends ApplicationController
                 console.info('[MetaverseMap] leaflet.offline not available (no offline layer created)')
         catch err
             console.warn('[MetaverseMap] Offline layer setup failed', err)
+
+        # Locale / translation loading (execute regardless of offline layer outcome)
+        langParam = new URLSearchParams(window.location.search).get('lang')
+        htmlLang = document?.documentElement?.lang
+        chosen = langParam or htmlLang
+        normalize = (loc) ->
+            return null unless loc?
+            loc.toString().trim().toLowerCase().split(/[-_]/)[0]
+        if chosen? and L.translate?.load?
+            L.translate.load(normalize(chosen)).catch (e) -> console.warn('[MetaverseMap] Translation load failed', chosen, e)
+        else if L.translate?.fromUrl?
+            L.translate.fromUrl.load().catch (e) -> console.warn('[MetaverseMap] Auto translation load failed', e)
+
         fetch(@dataUrlValue, { headers: { 'Accept': 'application/json' } })
             .then (r) => r.json()
             .then (data) => @renderData(data)
