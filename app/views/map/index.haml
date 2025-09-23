@@ -13,5 +13,6 @@
           #metaverse-map{ data: { controller: 'metaverse-map', 'metaverse-map-data-url-value': map_data_path } }
         .metaverse-panel.is-inactive{ data: { 'metaverse-panel-switch-target': 'panel3d' } }
           .metaverse-panel__placeholder
-            %p 3D view coming soon.
-            %p This placeholder will be replaced by the immersive 3D experience.
+            -# Server-rendered React component (MetaversePreview) via React on Rails
+            = react_component('MetaversePreview', props: { name: current_account&.username || 'Guest' }, prerender: true)
+            %p.small-note The above block is rendered by React on Rails (SSR) and hydrated on the client.

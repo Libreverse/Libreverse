@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  get 'hello_world', to: 'hello_world#index'
   # CMS Admin routes (secured with Rodauth)
   comfy_route :cms_admin, path: "/cms-admin"
 
