@@ -40,7 +40,16 @@ const configureServer = () => {
         if (typeof item === 'string') testValue = item; else if (typeof item.loader === 'string') testValue = item.loader;
         return testValue.includes('css-loader');
       });
-      if (cssLoader && cssLoader.options) cssLoader.options.modules = { exportOnlyLocals: true };
+      if (cssLoader && cssLoader.options) {
+        // Preserve any existing css-loader modules configuration (like namedExport / localIdentName)
+        // and simply add exportOnlyLocals for the server bundle so the same shape of exports is kept.
+        const priorModules = cssLoader.options.modules;
+        if (priorModules && typeof priorModules === 'object') {
+          cssLoader.options.modules = { ...priorModules, exportOnlyLocals: true };
+        } else {
+          cssLoader.options.modules = { exportOnlyLocals: true };
+        }
+      }
     } else if (rule.use && (rule.use.loader === 'url-loader' || rule.use.loader === 'file-loader')) {
       rule.use.options.emitFile = false;
     }
