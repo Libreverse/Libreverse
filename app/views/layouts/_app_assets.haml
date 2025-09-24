@@ -1,4 +1,9 @@
-/# Shared assets partial for app and CMS
+/ Rely on ReactOnRails auto_load_bundle for component packs; avoid manual inclusion to prevent duplicate chunk errors.
+/ The turbo bridge is imported by the MetaversePreview pack.
+/ Component packs are auto-injected by ReactOnRails when auto_load_bundle is true.
+
+- if content_for?(:force_metaverse_preview_pack)
+  = javascript_pack_tag('generated/MetaversePreview.js', defer: true, data: { turbo_track: 'reload' })
 - if Rails.env.test?
   / Skip Vite asset tags entirely in test to avoid build/manifest overhead for backend-focused tests.
   / (application.js bundle not required for controller/streaming specs.)
