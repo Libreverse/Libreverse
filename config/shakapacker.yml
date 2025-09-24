@@ -80,7 +80,11 @@ development:
     port: 3035
     # Hot Module Replacement updates modules while the application is running without a full reload
     # Used instead of the `hot` key in https://webpack.js.org/configuration/dev-server/#devserverhot
-    hmr: false
+    # Enable Hot Module Replacement so React Refresh (Fast Refresh) can work properly.
+    # This was previously false, which caused the warning:
+    #   [ReactRefreshPlugin] Hot Module Replacement (HMR) is not enabled!
+    # After changing this, restart bin/shakapacker-dev-server.
+    hmr: true
     # If HMR is on, CSS will be inlined by delivering it as part of the script payload via style-loader. Be sure
     # that you add style-loader to your project dependencies.
     #

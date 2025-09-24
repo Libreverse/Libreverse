@@ -23,6 +23,8 @@ move to postgres for cache (<https://andyatkinson.com/solid-cache-rails-postgres
 also solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails for future tests
+make vite split js again
+better use of leaflet offline plugin
 
 - [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image

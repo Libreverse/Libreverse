@@ -1,5 +1,6 @@
 import React from 'react';
-import styles from './MetaversePreview.module.css';
+// Import the CSS module as a namespace to avoid needing a default export.
+import * as styles from './MetaversePreview.module.css';
 
 const MetaversePreview = (props) => {
   return (

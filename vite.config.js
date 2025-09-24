@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
                 // Use explicit path into node_modules since package exports field hides src/*
                 "js-cookie": path.resolve(
                     process.cwd(),
-                    "node_modules/js-cookie/src/api.mjs",
+                    "node_modules/js-cookie/index.js",
                 ),
             },
         },
@@ -259,6 +259,8 @@ export default defineConfig(({ mode }) => {
                 "foundation-sites",
                 "what-input",
                 "@fingerprintjs/botd",
+                "@rails/ujs",
+                "js-cookie"
             ],
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
