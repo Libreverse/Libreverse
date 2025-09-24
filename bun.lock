@@ -49,6 +49,7 @@
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
         "react-on-rails": "16.0.0",
+        "react_on_rails": "^2.0.0-rc.2",
         "sassy-lists": "^3.0.1",
         "shakapacker": "8.4.0",
         "spin.js": "^4.1.2",
@@ -1996,6 +1997,8 @@
     "react-on-rails": ["react-on-rails@16.0.0", "", { "peerDependencies": { "react": ">= 16", "react-dom": ">= 16", "react-on-rails-rsc": "19.0.2" }, "optionalPeers": ["react-on-rails-rsc"] }, "sha512-FGeqtHWhcprJeOZWlpJdT2izhJj54CRNgo8avwdZI/JwPqT34kZNEPX70nX6oHqZ2QWkXOJNA5wfCYct6v32tg=="],
 
     "react-refresh": ["react-refresh@0.17.0", "", {}, "sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ=="],
+
+    "react_on_rails": ["react_on_rails@2.0.0-rc.2", "", {}, "sha512-1yY49Ax3L7L35fp8E7L4w4B0x4+j4LEwdZywDgZLvPIWW2lBrRpd24zjpLH7sAkA/FvjjAZiZhRhpMK31LU4IA=="],
 
     "read-cache": ["read-cache@1.0.0", "", { "dependencies": { "pify": "^2.3.0" } }, "sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA=="],
 
