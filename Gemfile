@@ -88,6 +88,15 @@ gem "voight_kampff"
 gem "y-rb_actioncable"
 gem "zip_kit"
 gem "zstd-ruby"
+gem "chunky_png"
+gem "gemoji"
+gem "image_processing"
+gem "thredded-markdown_coderay"
+gem "thredded-markdown_katex"
+gem "kaminari-i18n"
+gem "rails-i18n"
+gem "rspec"
+gem "reactionview"
 
 group :development, :test do
   gem "debug"
@@ -117,17 +126,3 @@ group :test do
   gem "mocha"
   gem "mysql2"
 end
-
-gem "chunky_png", "~> 1.4"
-gem "gemoji", "~> 4.1"
-gem "image_processing", "~> 1.14"
-
-gem "thredded-markdown_coderay", "~> 1.0"
-gem "thredded-markdown_katex", "~> 1.0"
-
-gem "kaminari-i18n", "~> 0.5.0"
-gem "rails-i18n", "~> 8.0"
-
-gem "rspec", "~> 3.13"
-
-gem "reactionview", "~> 0.1.2"

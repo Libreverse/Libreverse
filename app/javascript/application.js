@@ -89,41 +89,6 @@ const BOTD_TTL_MIN = 60; // Cookie lifetime
         });
 })();
 
-// Add Foundation debugging in development
-if (import.meta.env.MODE === "development") {
-    // Simple Foundation status checker
-    function checkFoundation() {
-        console.group("Foundation Status Check");
-
-        import("foundation-sites")
-            .then(() => {
-                console.log("✅ Foundation imported successfully");
-
-                const offCanvasElements =
-                    document.querySelectorAll("[data-off-canvas]");
-                console.log(
-                    `📋 Found ${offCanvasElements.length} off-canvas elements`,
-                );
-
-                if (globalThis.Stimulus) {
-                    console.log("✅ Stimulus available");
-                } else {
-                    console.warn("⚠️ Stimulus not available");
-                }
-
-                console.groupEnd();
-            })
-            .catch((error) => {
-                console.error("❌ Foundation import failed:", error);
-                console.groupEnd();
-            });
-    }
-
-    // Check Foundation status after DOM loads
-    document.addEventListener("DOMContentLoaded", checkFoundation);
-    document.addEventListener("turbo:load", checkFoundation);
-}
-
 // Initialize debounced library with custom options
 debounced.initialize(debounced.defaultEventNames, {
     wait: 300, // Default wait time in milliseconds

@@ -11,12 +11,10 @@ export default class extends Controller
   }
 
   initialize: ->
-    console.log "[SidebarPopoverController] initialized"
     @hoverTimers = new Map()
     @activePopover = null
 
   connect: ->
-    console.log "[SidebarPopoverController] Connected to sidebar popover"
     @setupPopovers()
 
   disconnect: ->
@@ -25,7 +23,6 @@ export default class extends Controller
 
   # Set up popovers for all sidebar items
   setupPopovers: ->
-    console.log "[SidebarPopoverController] Setting up popovers for #{@itemTargets.length} items"
     @itemTargets.forEach (item) =>
       @setupItemPopover(item)
 
@@ -34,8 +31,6 @@ export default class extends Controller
     # Get popover content from data attribute
     content = item.dataset.popoverContent
     return unless content
-
-    console.log "[SidebarPopoverController] Setting up popover for:", item.dataset.sidebarItem, "with content:", content
 
     # Add event listeners
     item.addEventListener("mouseenter", @handleMouseEnter.bind(@, item))
@@ -88,7 +83,6 @@ export default class extends Controller
     @activePopover = tooltip
     # Add highlight to item and accessibility
     item.setAttribute('aria-describedby', tooltip.id)
-    console.log "[SidebarPopoverController] Showed popover for:", item.dataset.sidebarItem
 
   # Position tooltip relative to item
   positionTooltip: (tooltip, item) ->
@@ -137,6 +131,5 @@ export default class extends Controller
 
   # Refresh popovers (useful when sidebar items change)
   refresh: ->
-    console.log "[SidebarPopoverController] Refreshing popovers"
     @disconnect()
     @connect()
