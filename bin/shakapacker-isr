@@ -4,6 +4,5 @@ set -e
 sleep 10
 bin/shakapacker
 while true; do
-    sleep 1
     bin/shakapacker > /dev/null 2>&1
 done

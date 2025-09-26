@@ -1,0 +1,8 @@
+# This is just a procfile named differently
+web: cd .. && bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2
+vite: cd .. && bin/vite dev
+webpack-client: cd .. && bin/shakapacker-dev-server
+shakapacker-isr: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
+webpack-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
+jobs: cd .. && bundle exec bin/jobs
+mailhog: cd .. && mailhog

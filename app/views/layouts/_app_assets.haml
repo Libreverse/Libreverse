@@ -1,10 +1,10 @@
 / Load the Metaverse preview pack synchronously so ReactOnRails is ready before hydration.
 / The turbo bridge dependency is bundled with this pack.
 / Additional component packs can be appended with append_javascript_pack_tag in views.
-= javascript_pack_tag 'generated/MetaversePreview', defer: false, data: { turbo_track: 'reload' }
+= javascript_pack_tag 'generated/MetaversePreview'
 = stylesheet_pack_tag
-= vite_client_tag data: { turbo_track: "reload" }
-= vite_javascript_tag "~/javascript/application.js", data: { turbo_track: "reload" }
+= vite_client_tag
+= vite_javascript_tag "~/javascript/application.js"
 - if Rails.env.production?
     = inline_vite_stylesheet "~/javascript/application.js"
 - else
