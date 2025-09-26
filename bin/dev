@@ -1,3 +1,12 @@
-#!/usr/bin/env sh
-# Start overmind with environment variables
-exec env OVERMIND_SOCKET=/tmp/overmind.sock OVERMIND_TMUX_CONFIG=/config/overmind-tmux.conf overmind start -f config/dev-processes.yml "$@"
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+# Set environment variables for Overmind
+$ENV{OVERMIND_SOCKET}        = '/tmp/overmind.sock';
+$ENV{OVERMIND_TMUX_CONFIG}   = '/config/overmind-tmux.conf';
+$ENV{OVERMIND_RESTART}       = join(',', qw(vite webpack-code-server webpack-client webpack-server solid-queue mailhog));
+$ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
+
+# Start Overmind with the specified process file and any additional arguments
+exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

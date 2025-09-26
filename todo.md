@@ -25,6 +25,8 @@ adopt cucumber rails for future tests
 make vite split js again
 better use of leaflet offline plugin
 https://github.com/hadolint/hadolint
+https://github.com/ruby-next/freezolite
+https://evilmartians.com/opensource/visibility-js
 
 - [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
