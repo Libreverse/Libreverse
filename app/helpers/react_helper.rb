@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ReactHelper
   # Wrapper for react_component with sensible defaults and optional diagnostics.
   # Usage: = ror_component 'MetaversePreview', props: { name: 'Guest' }

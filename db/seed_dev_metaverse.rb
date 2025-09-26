@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 # Development-only: synthetic sample data to drive Metaverse map UI.
 # This file is loaded from seeds.rb only in development.
 return unless Rails.env.development?
 
-puts '[DevSeed][Metaverse] Creating sample experiences...'
+Rails.logger.debug '[DevSeed][Metaverse] Creating sample experiences...'
 
 # Use or create a throwaway account as owner
 # Create or reuse a simple guest/dev account. The Account model stores password hashes in
@@ -18,13 +19,13 @@ platforms = {
 }
 
 # Simple helper to generate bounded pseudo-random coordinate JSON
-random_coord = ->(scale = 1000.0) do
+random_coord = lambda do |scale = 1000.0|
   { x: (rand * scale).round(2), y: (rand * scale).round(2) }.to_json
 end
 
 platforms.each do |platform, count|
   existing = Experience.where(metaverse_platform: platform).count
-  needed = [count - existing, 0].max
+  needed = [ count - existing, 0 ].max
   next if needed.zero?
 
   needed.times do |i|
@@ -52,9 +53,9 @@ platforms.each do |platform, count|
   end
 end
 
-puts '[DevSeed][Metaverse] Sample experiences present:'
-platforms.keys.each do |p|
-  puts "  - #{p}: #{Experience.where(metaverse_platform: p).count} experiences"
+Rails.logger.debug '[DevSeed][Metaverse] Sample experiences present:'
+platforms.each_key do |p|
+  Rails.logger.debug "  - #{p}: #{Experience.where(metaverse_platform: p).count} experiences"
 end
 
-puts '[DevSeed][Metaverse] Done.'
+Rails.logger.debug '[DevSeed][Metaverse] Done.'

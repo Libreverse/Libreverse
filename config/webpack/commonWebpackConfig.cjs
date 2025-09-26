@@ -1,14 +1,15 @@
 // Common configuration applying to client and server configuration (CommonJS version)
-const { generateWebpackConfig, merge } = require('shakapacker');
+const { generateWebpackConfig, merge } = require("shakapacker");
 
 const baseClientWebpackConfig = generateWebpackConfig();
 
 const commonOptions = {
-  resolve: {
-    extensions: ['.css', '.ts', '.tsx'],
-  },
+    resolve: {
+        extensions: [".css", ".ts", ".tsx"],
+    },
 };
 
-const commonWebpackConfig = () => merge({}, baseClientWebpackConfig, commonOptions);
+const commonWebpackConfig = () =>
+    merge({}, baseClientWebpackConfig, commonOptions);
 
 module.exports = commonWebpackConfig;
