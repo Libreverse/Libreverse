@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 # Start overmind with environment variables
-exec env OVERMIND_SOCKET=/tmp/overmind.sock OVERMIND_TMUX_CONFIG=/config/overmind-tmux.conf overmind start "$@"
+exec env OVERMIND_SOCKET=/tmp/overmind.sock OVERMIND_TMUX_CONFIG=/config/overmind-tmux.conf overmind start -f config/dev-processes.yml "$@"

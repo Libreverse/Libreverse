@@ -13,4 +13,4 @@
           #metaverse-map{ data: { controller: 'metaverse-map', 'metaverse-map-data-url-value': map_data_path } }
         .metaverse-panel.is-inactive{ data: { 'metaverse-panel-switch-target': 'panel3d' } }
           .metaverse-panel__placeholder<
-            = ror_component 'MetaversePreview', props: { name: current_account&.username || 'Guest' }, prerender: true
+            = ror_component 'MetaversePreview', props: { name: current_account&.username || 'Guest' }
