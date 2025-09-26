@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import "./MetaversePreview.module.css";
 
 const MetaversePreview = (props) => {
     const [hydrated, setHydrated] = useState(false);
