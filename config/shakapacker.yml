@@ -84,7 +84,7 @@ development:
         # This was previously false, which caused the warning:
         #   [ReactRefreshPlugin] Hot Module Replacement (HMR) is not enabled!
         # After changing this, restart bin/shakapacker-dev-server.
-        hmr: true
+        hmr: false
         # If HMR is on, CSS will be inlined by delivering it as part of the script payload via style-loader. Be sure
         # that you add style-loader to your project dependencies.
         #
@@ -94,7 +94,8 @@ development:
         # mini-css-extract-plugin is a required dependency in both cases.
         inline_css: true
         # Defaults to the inverse of hmr. Uncomment to manually set this.
-        # live_reload: true
+        live_reload: true
+
         client:
             # Should we show a full-screen overlay in the browser when there are compiler errors or warnings?
             overlay: true
@@ -104,11 +105,11 @@ development:
             #  pathname: '/ws'
             #  port: 8080
         # Should we use gzip compression?
-        compress: true
+        compress: false
         # Note that apps that do not check the host are vulnerable to DNS rebinding attacks
         allowed_hosts: "auto"
         # Shows progress and colorizes output of bin/shakapacker[-dev-server]
-        pretty: true
+        pretty: false
         headers:
             "Access-Control-Allow-Origin": "*"
         static:

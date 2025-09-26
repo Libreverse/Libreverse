@@ -244,8 +244,6 @@ GEM
     fiber-storage (1.0.1)
     fiddle (1.1.8)
     flamegraph (0.9.5)
-    foreman (0.90.0)
-      thor (~> 1.4)
     foundation_emails (2.2.1.0)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
@@ -508,6 +506,10 @@ GEM
       validate_url
       webfinger (~> 2.0)
     ostruct (0.6.3)
+    overmind (2.5.1)
+    overmind (2.5.1-aarch64-linux)
+    overmind (2.5.1-arm64-darwin)
+    overmind (2.5.1-x86_64-darwin)
     p2p_streams_channel (0.0.3)
       rails
       stimulus-rails
@@ -712,7 +714,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.6)
-    rubocop (1.81.0)
+    rubocop (1.81.1)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -764,10 +766,10 @@ GEM
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
     semantic_range (3.1.0)
-    sentry-rails (5.27.1)
+    sentry-rails (5.28.0)
       railties (>= 5.0)
-      sentry-ruby (~> 5.27.1)
-    sentry-ruby (5.27.1)
+      sentry-ruby (~> 5.28.0)
+    sentry-ruby (5.28.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     sequel (5.96.0)
@@ -909,7 +911,7 @@ GEM
     trailblazer-option (0.1.2)
     trilogy (2.9.0)
     tsort (0.2.0)
-    turbo-rails (2.0.16)
+    turbo-rails (2.0.17)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
     turbo_power (0.7.0)
@@ -1008,7 +1010,7 @@ DEPENDENCIES
   brakeman
   cancancan
   capybara
-  chunky_png (~> 1.4)
+  chunky_png
   comfortable_media_surfer
   console1984
   debug
@@ -1020,9 +1022,8 @@ DEPENDENCIES
   federails-moderation
   fiddle
   flamegraph
-  foreman
   friendly_id
-  gemoji (~> 4.1)
+  gemoji
   google_robotstxt_parser!
   graphql_rails
   grpc
@@ -1032,11 +1033,11 @@ DEPENDENCIES
   haml-rails
   httparty
   i18n-tasks
-  image_processing (~> 1.14)
+  image_processing
   inky-rb
   invisible_captcha
   jbuilder
-  kaminari-i18n (~> 0.5.0)
+  kaminari-i18n
   listen
   lockbox
   minify_html (= 0.16.4)
@@ -1045,6 +1046,7 @@ DEPENDENCIES
   nokogiri
   omniauth_openid_connect
   ostruct
+  overmind
   p2p_streams_channel
   passenger (>= 6.0.20)
   permessage_deflate
@@ -1056,10 +1058,10 @@ DEPENDENCIES
   rack-mini-profiler
   rails
   rails-controller-testing
-  rails-i18n (~> 8.0)
+  rails-i18n
   re2
   react_on_rails (= 16.0)
-  reactionview (~> 0.1.2)
+  reactionview
   redis
   reform
   rodauth-guest
@@ -1070,7 +1072,7 @@ DEPENDENCIES
   rodauth-pwned
   rodauth-rails
   rolify
-  rspec (~> 3.13)
+  rspec
   rubocop
   rubocop-performance
   rubocop-rails
@@ -1093,8 +1095,8 @@ DEPENDENCIES
   sys-filesystem
   thor (>= 1.4.0)
   thredded (~> 1.2)
-  thredded-markdown_coderay (~> 1.0)
-  thredded-markdown_katex (~> 1.0)
+  thredded-markdown_coderay
+  thredded-markdown_katex
   tilt
   trailblazer
   trilogy
