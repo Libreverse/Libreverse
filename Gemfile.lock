@@ -316,12 +316,12 @@ GEM
       rubocop (>= 1.0)
       sysexits (~> 1.1)
     hashie (5.0.0)
-    herb (0.7.3-aarch64-linux-gnu)
-    herb (0.7.3-aarch64-linux-musl)
-    herb (0.7.3-arm64-darwin)
-    herb (0.7.3-x86_64-darwin)
-    herb (0.7.3-x86_64-linux-gnu)
-    herb (0.7.3-x86_64-linux-musl)
+    herb (0.7.4-aarch64-linux-gnu)
+    herb (0.7.4-aarch64-linux-musl)
+    herb (0.7.4-arm64-darwin)
+    herb (0.7.4-x86_64-darwin)
+    herb (0.7.4-x86_64-linux-gnu)
+    herb (0.7.4-x86_64-linux-musl)
     highline (3.1.2)
       reline
     hirb (0.7.3)
@@ -984,7 +984,7 @@ GEM
       y-rb (>= 0.4.5)
     zeitwerk (2.7.3)
     zip_kit (6.3.3)
-    zstd-ruby (1.5.7.0)
+    zstd-ruby (2.0.0)
 
 PLATFORMS
   aarch64-linux

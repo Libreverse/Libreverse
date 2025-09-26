@@ -215,7 +215,10 @@ export default defineConfig(({ mode }) => {
             https: false,
             hmr: { overlay: true }, // Allow Vite to infer host/protocol
             headers: isDevelopment
-                ? { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" }
+                ? {
+                      "Cache-Control":
+                          "no-store, no-cache, must-revalidate, max-age=0",
+                  }
                 : {},
             fs: { strict: false },
         },
@@ -260,7 +263,7 @@ export default defineConfig(({ mode }) => {
                 "what-input",
                 "@fingerprintjs/botd",
                 "@rails/ujs",
-                "js-cookie"
+                "js-cookie",
             ],
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
