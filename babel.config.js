@@ -1,39 +1,48 @@
-// The source code including full typescript support is available at: 
+// The source code including full typescript support is available at:
 // https://github.com/shakacode/react_on_rails_demo_ssr_hmr/blob/master/babel.config.js
 
-import { createRequire } from 'module'
-const req = createRequire(import.meta.url)
+import { createRequire } from "module";
+const req = createRequire(import.meta.url);
 
 export default function (api) {
-  const defaultConfigFunc = req('shakapacker/package/babel/preset.js')
-  const resultConfig = defaultConfigFunc(api)
-  const isProductionEnv = api.env('production')
+    const defaultConfigFunc = req("shakapacker/package/babel/preset.js");
+    const resultConfig = defaultConfigFunc(api);
+    const isProductionEnv = api.env("production");
 
-  const changesOnDefault = {
-    presets: [
-      [
-        '@babel/preset-react',
-        {
-          development: !isProductionEnv,
-          useBuiltIns: true,
-          runtime: 'automatic'
-        }
-      ]
-    ].filter(Boolean),
-    plugins: [
-      // Enable React Refresh (Fast Refresh) only when webpack-dev-server is running (HMR mode)
-      // This prevents React Refresh from trying to connect when using static compilation
-      !isProductionEnv && process.env.WEBPACK_SERVE && 'react-refresh/babel',
-      isProductionEnv && ['babel-plugin-transform-react-remove-prop-types',
-        {
-          removeImport: true
-        }
-      ]
-    ].filter(Boolean),
-  }
+    const changesOnDefault = {
+        presets: [
+            [
+                "@babel/preset-react",
+                {
+                    development: !isProductionEnv,
+                    useBuiltIns: true,
+                    runtime: "automatic",
+                },
+            ],
+        ].filter(Boolean),
+        plugins: [
+            // Enable React Refresh (Fast Refresh) only when webpack-dev-server is running (HMR mode)
+            // This prevents React Refresh from trying to connect when using static compilation
+            !isProductionEnv &&
+                process.env.WEBPACK_SERVE &&
+                "react-refresh/babel",
+            isProductionEnv && [
+                "babel-plugin-transform-react-remove-prop-types",
+                {
+                    removeImport: true,
+                },
+            ],
+        ].filter(Boolean),
+    };
 
-  resultConfig.presets = [...resultConfig.presets, ...changesOnDefault.presets]
-  resultConfig.plugins = [...resultConfig.plugins, ...changesOnDefault.plugins ]
+    resultConfig.presets = [
+        ...resultConfig.presets,
+        ...changesOnDefault.presets,
+    ];
+    resultConfig.plugins = [
+        ...resultConfig.plugins,
+        ...changesOnDefault.plugins,
+    ];
 
-  return resultConfig
+    return resultConfig;
 }

@@ -1,4 +1,4 @@
-@use 'spin.js/spin.css';
+@use "spin.js/spin.css";
 
 .metaverse-map-section {
     padding: 1rem 0 2rem;
@@ -14,13 +14,14 @@
     border-radius: 8px;
     position: relative;
     overflow: hidden;
-        &.fullscreen,
-        .metaverse-map-fullscreen & {
-            height: 100vh;
-            margin: 0;
-            border-radius: 0;
-            border: 0;
-        }
+
+    &.fullscreen,
+    .metaverse-map-fullscreen & {
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+        border: 0;
+    }
 }
 
 .metaverse-map-fullscreen {
@@ -33,29 +34,53 @@
     display: flex;
     background: #2c2c2d;
     color: #f0f0f1;
-    > #metaverse-map { flex: 1 1 auto; }
-    .metaverse-map__container, .leaflet-container {
+
+    > #metaverse-map {
+        flex: 1 1 auto;
+    }
+
+    .metaverse-map__container,
+    .leaflet-container {
         background: #2c2c2d !important;
         color: #f0f0f1;
     }
+
     .leaflet-control-container .leaflet-control {
-        background: rgba(58,58,60,0.85);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgb(58 58 60 / 85%);
+        border: 1px solid rgb(255 255 255 / 8%);
         backdrop-filter: blur(4px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        box-shadow: 0 2px 4px rgb(0 0 0 / 40%);
     }
-    .leaflet-control a, .leaflet-control span { color: #f4f4f5; }
+
+    .leaflet-control a,
+    .leaflet-control span {
+        color: #f4f4f5;
+    }
+
     .leaflet-bar a {
         background: transparent;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        &:hover { background: rgba(255,255,255,0.08); }
+        border-bottom: 1px solid rgb(255 255 255 / 6%);
+
+        &:hover {
+            background: rgb(255 255 255 / 8%);
+        }
     }
-    .leaflet-bar a:last-child { border-bottom: 0; }
-    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+
+    .leaflet-bar a:last-child {
+        border-bottom: 0;
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
         background: #3a3a3c;
         color: #f0f0f1;
     }
-    .leaflet-top.leaflet-right { top: 0.75rem; right: 0.75rem; }
+
+    .leaflet-top.leaflet-right {
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+
     .leaflet-top.leaflet-right .leaflet-control-zoom {
         border-radius: 8px;
         overflow: hidden;
@@ -75,12 +100,13 @@
     left: 50%;
     transform: translateX(-50%);
     display: inline-flex;
-    background: rgba(34,34,36,0.65);
+    background: rgb(34 34 36 / 65%);
     backdrop-filter: blur(8px) saturate(1.3);
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 999px;
-    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.45);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 45%);
     padding: 2px;
+
     button {
         appearance: none;
         border: 0;
@@ -94,15 +120,26 @@
         cursor: pointer;
         position: relative;
         transition: color 0.3s ease;
-        &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-        &.is-current { color: #111; }
+
+        &:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+
+        &.is-current {
+            color: #111;
+        }
+
         &.is-current::before {
-            content: '';
-            position: absolute; inset: 2px;
-            background: linear-gradient(145deg,#fff,#d7d7d9);
+            content: "";
+            position: absolute;
+            inset: 2px;
+            background: linear-gradient(145deg, #fff, #d7d7d9);
             border-radius: inherit;
             z-index: -1;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.25) inset;
+            box-shadow:
+                0 1px 2px rgb(0 0 0 / 35%),
+                0 0 0 1px rgb(0 0 0 / 25%) inset;
         }
     }
 }
@@ -113,7 +150,7 @@
     display: flex;
     width: 100%; // natural width grows with children (2 panels => effectively 200%)
     height: 100%;
-    transition: transform 0.65s cubic-bezier(.76,.01,.24,1);
+    transition: transform 0.65s cubic-bezier(0.76, 0.01, 0.24, 1);
     will-change: transform;
     backface-visibility: hidden;
 }
@@ -124,11 +161,16 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    &.is-inactive { pointer-events: none; }
+
+    &.is-inactive {
+        pointer-events: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .metaverse-panels-track { transition: none; }
+    .metaverse-panels-track {
+        transition: none;
+    }
 }
 
 .metaverse-panel__placeholder {
@@ -136,19 +178,35 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    align-items: center; justify-content: center;
+    align-items: center;
+    justify-content: center;
     gap: 1rem;
-    font-family: system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
     text-align: center;
     padding: 2rem;
     color: #d0d0d5;
-    background: radial-gradient(circle at 30% 35%,rgba(255,255,255,0.06),rgba(0,0,0,0.6));
-    &::after { content: '⏳'; font-size: 2.5rem; opacity: 0.6; animation: pulse 2.8s ease-in-out infinite; }
+    background-color: black;
 }
 
 @keyframes pulse {
-  0%,100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.12); opacity: 0.9; }
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.12);
+        opacity: 0.9;
+    }
 }
 
 .metaverse-map__legend {
@@ -171,22 +229,35 @@
 
 .visually-hidden {
     position: absolute !important;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0 0 0 0);
-    white-space: nowrap; border: 0;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 // Provider labels (always-visible)
 .metaverse-provider-label {
     pointer-events: none;
-    font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
     font-weight: 600;
     font-size: clamp(0.8rem, 0.9vw, 1.05rem);
     text-align: center;
     white-space: nowrap;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 55%));
     position: relative;
+
     .metaverse-provider-label__inner {
         display: inline-block;
         padding: 0.25rem 0.6rem;
@@ -196,14 +267,17 @@
         letter-spacing: 0.5px;
         line-height: 1.1;
         backdrop-filter: blur(2px) brightness(1.05);
-        border: 1px solid rgba(255,255,255,0.18);
+        border: 1px solid rgb(255 255 255 / 18%);
         position: relative;
     }
-    .metaverse-provider-label__inner::after { display: none; }
+
+    .metaverse-provider-label__inner::after {
+        display: none;
+    }
 }
 
 .sleep-note {
     border: 2px solid #f0f0f1 !important;
     background: #f0f0f1 !important;
-    color: #111111 !important;
+    color: #111 !important;
 }

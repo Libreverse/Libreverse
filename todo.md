@@ -1,6 +1,5 @@
 # To-do
 
-
 use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath
 bring in worker killer
 
