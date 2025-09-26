@@ -9,6 +9,8 @@
     content: "";
     position: fixed; /* Cover the entire viewport */
     inset: 0;
+    background: rgba(0, 0, 0, 0.3); /* Semi-transparent dark overlay */
+    backdrop-filter: blur(3px); /* Subtle blur effect */
     cursor: wait; /* Displays the wait cursor */
     pointer-events: auto; /* Allows pseudo-element to show cursor */
     z-index: 9999; /* Ensures it’s on top */

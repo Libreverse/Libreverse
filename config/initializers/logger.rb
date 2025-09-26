@@ -6,21 +6,20 @@
 
 # Create a custom formatter that preserves TaggedLogging functionality
 module CustomTaggedFormatter
-  # ANSI color codes for colorized output
-  COLORS = {
-    reset: "\033[0m",
-    bold: "\033[1m",
-    red: "\033[31m",
-    green: "\033[32m",
-    yellow: "\033[33m",
-    blue: "\033[34m",
-    magenta: "\033[35m",
-    cyan: "\033[36m",
-    light_blue: "\033[94m",
-    light_cyan: "\033[96m",
-    light_gray: "\033[37m",
-    dark_gray: "\033[90m"
-  }.freeze
+    COLORS = {
+        reset: "\033[0m",
+        bold: "\033[1m",
+        red: "\033[38;5;174m",
+        green: "\033[38;5;150m",
+        yellow: "\033[38;5;150m",
+        blue: "\033[38;5;182m",
+        magenta: "\033[38;5;182m",
+        cyan: "\033[38;5;115m",
+        light_blue: "\033[38;5;182m",
+        light_cyan: "\033[38;5;115m",
+        light_gray: "\033[38;5;224m",
+        dark_gray: "\033[38;5;110m"
+        }.freeze
 
   # Get color for severity level
   def color_for_severity(severity)
@@ -35,8 +34,16 @@ module CustomTaggedFormatter
   end
 
   def call(severity, timestamp, _progname, msg)
+    message_string = msg.to_s
+
     # Silence specific SolidCable DEBUG messages
-    return nil if severity == "DEBUG" && msg.to_s.include?("SolidCable::Message Insert")
+    return nil if severity == "DEBUG" && message_string.include?("SolidCable::Message Insert")
+
+    message = if defined?(LogFormatting)
+      LogFormatting.truncate(message_string)
+    else
+      message_string
+    end
 
     # Always use colors in development, regardless of TTY
     use_colors = Rails.env.development?
@@ -52,10 +59,10 @@ module CustomTaggedFormatter
       request_id_colored = "#{COLORS[:light_blue]}[#{request_id}]#{COLORS[:reset]}"
       tags_colored = current_tags.any? ? "#{COLORS[:magenta]}#{tags_text}#{COLORS[:reset]}" : ""
 
-      "#{timestamp_colored} #{severity_colored} #{request_id_colored} #{tags_colored}#{msg}\n"
+      "#{timestamp_colored} #{severity_colored} #{request_id_colored} #{tags_colored}#{message}\n"
     else
       # Plain version (for production or non-TTY output)
-      "[#{time_format}] [#{severity}] [#{request_id}] #{tags_text}#{msg}\n"
+      "[#{time_format}] [#{severity}] [#{request_id}] #{tags_text}#{message}\n"
     end
   end
 end

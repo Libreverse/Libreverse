@@ -4,3 +4,4 @@
 Rails.application.config.after_initialize do
   SolidCache::Record.connects_to database: { writing: :cache, reading: :cache } if defined?(SolidCache::Record)
 end
+
