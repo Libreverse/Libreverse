@@ -15,8 +15,6 @@ export default class extends Controller {
     };
 
     connect() {
-        console.log("[OffCanvasController] Connecting to:", this.element);
-
         // Initialize Foundation's jQuery integration
         FoundationUtils.initializeFoundation();
 
@@ -35,8 +33,6 @@ export default class extends Controller {
     }
 
     disconnect() {
-        console.log("[OffCanvasController] Disconnecting from:", this.element);
-
         // Clean up Foundation instance
         if (this.offCanvasInstance) {
             this.offCanvasInstance.destroy();
@@ -49,10 +45,6 @@ export default class extends Controller {
     }
 
     handleTurboLoad() {
-        // Reinitialize after Turbo navigation
-        console.log(
-            "[OffCanvasController] Reinitializing after Turbo navigation",
-        );
         this.initializeOffCanvas();
     }
 
@@ -85,10 +77,6 @@ export default class extends Controller {
         import("foundation-sites").then(({ Foundation }) => {
             this.offCanvasInstance = new Foundation.OffCanvas(
                 $(targetElement),
-                options,
-            );
-            console.log(
-                "[OffCanvasController] Initialized off-canvas with options:",
                 options,
             );
         });
