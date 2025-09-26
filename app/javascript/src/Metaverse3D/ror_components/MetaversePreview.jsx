@@ -12,6 +12,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon";
 import { Grid } from "@react-three/drei";
 import * as THREE from "three";
+import { EffectComposer, SSAO, Bloom, DepthOfField, ChromaticAberration, Vignette, Noise } from "@react-three/postprocessing";
 
 const initialKeys = Object.freeze({
     w: false,
@@ -120,7 +121,7 @@ const Floor = () => {
     }));
 
     return (
-        <mesh ref={ref} receiveShadow>
+        <mesh ref={ref} receiveShadow visible={false}>
             <planeGeometry args={[FLOOR_SIZE, FLOOR_SIZE]} />
             <meshStandardMaterial
                 color="#111118"
@@ -294,20 +295,21 @@ const Scene = () => {
             </Physics>
 
             <Grid
-                position={[0, -0.01, 0]}
-                args={[60, 60]}
-                cellSize={0.75}
-                cellThickness={0.6}
-                cellColor="#2e2e33"
-                sectionSize={4}
-                sectionThickness={1.2}
-                sectionColor="#3f3f46"
-                fadeDistance={35}
-                fadeStrength={1}
                 infiniteGrid
+                cellSize={1}
+                sectionSize={3}
+                fadeDistance={1000}
+                fadeStrength={1}
             />
 
-            <MouseControls />
+            <EffectComposer enableNormalPass depthBuffer multisampling={0}>
+                <SSAO />
+                <DepthOfField focusDistance={0.01} focalLength={0.2} bokehScale={3} height={480} />
+                <Bloom intensity={0.5} />
+                <ChromaticAberration offset={[0.002, 0.002]} />
+                <Vignette offset={0.1} darkness={0.5} />
+                <Noise opacity={0.025} />
+            </EffectComposer>
         </>
     );
 };
