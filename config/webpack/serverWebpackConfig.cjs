@@ -64,10 +64,13 @@ const configureServer = () => {
                 // Preserve any existing css-loader modules configuration (like namedExport / localIdentName)
                 // and simply add exportOnlyLocals for the server bundle so the same shape of exports is kept.
                 const priorModules = cssLoader.options.modules;
-                cssLoader.options.modules = priorModules && typeof priorModules === "object" ? {
-                        ...priorModules,
-                        exportOnlyLocals: true,
-                    } : { exportOnlyLocals: true };
+                cssLoader.options.modules =
+                    priorModules && typeof priorModules === "object"
+                        ? {
+                              ...priorModules,
+                              exportOnlyLocals: true,
+                          }
+                        : { exportOnlyLocals: true };
             }
         } else if (
             rule.use &&

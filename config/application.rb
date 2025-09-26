@@ -54,6 +54,9 @@ module LibreverseInstance
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks middleware haml_lint])
 
+    # Encourage execjs to be fast
+    ExecJS.runtime = ExecJS::Runtimes::Bun
+
     # Zstandard compression middleware - force maximum compression regardless of cores
     zstd_window_log = 27
     zstd_chain_log = 27

@@ -17,7 +17,7 @@ const MetaversePreview = (props) => {
                     fontWeight: "bold",
                 }}
             >
-                {hydrated ? "Hydrated ✅" : "Server Rendered"}
+                {hydrated ? "Hydrated ✅ +hmr" : "Server Rendered"}
             </p>
         </div>
     );
