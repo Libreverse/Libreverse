@@ -12,7 +12,14 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon";
 import { Grid, Text } from "@react-three/drei";
 import * as THREE from "three";
-import { EffectComposer, SSAO, Bloom, DepthOfField, Vignette, Noise } from "@react-three/postprocessing";
+import {
+    EffectComposer,
+    SSAO,
+    Bloom,
+    DepthOfField,
+    Vignette,
+    Noise,
+} from "@react-three/postprocessing";
 
 const initialKeys = Object.freeze({
     w: false,
@@ -128,7 +135,8 @@ const DynamicBox = ({ color, position, scale = 1 }) => {
         position,
         args: [scale, scale, scale],
         collisionFilterGroup: OBJECT_GROUP,
-        collisionFilterMask: PLAYER_GROUP | GROUND_GROUP | PROVIDER_GROUP | OBJECT_GROUP,
+        collisionFilterMask:
+            PLAYER_GROUP | GROUND_GROUP | PROVIDER_GROUP | OBJECT_GROUP,
         material: DEFAULT_MATERIAL,
         allowSleep: true,
         sleepSpeedLimit: 0.1,
@@ -155,7 +163,8 @@ const FloatingSphere = ({ position }) => {
         position,
         args: [0.6],
         collisionFilterGroup: OBJECT_GROUP,
-        collisionFilterMask: PLAYER_GROUP | GROUND_GROUP | PROVIDER_GROUP | OBJECT_GROUP,
+        collisionFilterMask:
+            PLAYER_GROUP | GROUND_GROUP | PROVIDER_GROUP | OBJECT_GROUP,
         material: { friction: 0.4, restitution: 0.4 },
         allowSleep: true,
         sleepSpeedLimit: 0.1,
@@ -270,11 +279,7 @@ const Scene = () => {
             />
             <ambientLight intensity={0.08} />
 
-            <Grid
-                position={[0, -0.01, 0]}
-                args={[60, 60]}
-                color="#d3d3d3"
-            />
+            <Grid position={[0, -0.01, 0]} args={[60, 60]} color="#d3d3d3" />
 
             <Physics
                 gravity={[0, -9.81, 0]}
@@ -287,7 +292,12 @@ const Scene = () => {
             </Physics>
             <EffectComposer enableNormalPass depthBuffer multisampling={0}>
                 <SSAO />
-                <DepthOfField focusDistance={0.01} focalLength={0.2} bokehScale={3} height={480} />
+                <DepthOfField
+                    focusDistance={0.01}
+                    focalLength={0.2}
+                    bokehScale={3}
+                    height={480}
+                />
                 <Bloom intensity={0.5} />
                 <Vignette offset={0.1} darkness={0.5} />
                 <Noise opacity={0.025} />
@@ -302,15 +312,19 @@ const MouseControls = () => {
     const canvas = gl.domElement;
 
     useEffect(() => {
-        camera.rotation.order = 'YXZ';
+        camera.rotation.order = "YXZ";
     }, [camera]);
 
     useEffect(() => {
         const handlePointerLockChange = () => {
             setIsLocked(document.pointerLockElement === canvas);
         };
-        document.addEventListener('pointerlockchange', handlePointerLockChange);
-        return () => document.removeEventListener('pointerlockchange', handlePointerLockChange);
+        document.addEventListener("pointerlockchange", handlePointerLockChange);
+        return () =>
+            document.removeEventListener(
+                "pointerlockchange",
+                handlePointerLockChange,
+            );
     }, [canvas]);
 
     useEffect(() => {
@@ -320,10 +334,14 @@ const MouseControls = () => {
                 const movementY = e.movementY || 0;
                 camera.rotation.y -= movementX * 0.002;
                 camera.rotation.x -= movementY * 0.001;
-                camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+                camera.rotation.x = Math.max(
+                    -Math.PI / 2,
+                    Math.min(Math.PI / 2, camera.rotation.x),
+                );
             };
-            document.addEventListener('mousemove', handleMouseMove);
-            return () => document.removeEventListener('mousemove', handleMouseMove);
+            document.addEventListener("mousemove", handleMouseMove);
+            return () =>
+                document.removeEventListener("mousemove", handleMouseMove);
         }
     }, [isLocked, camera]);
 
@@ -342,18 +360,22 @@ const MetaversePreview = () => {
         const canvas = canvasRef.current;
         if (canvas) {
             const handleMouseMove = (e) => {
-                canvas.style.pointerEvents = 'none';
+                canvas.style.pointerEvents = "none";
                 const under = document.elementFromPoint(e.clientX, e.clientY);
-                canvas.style.pointerEvents = 'auto';
-                const panel = under.closest('.metaverse-panel');
-                if (under.closest('.metaverse-mode-switch') || (panel && !panel.classList.contains('is-active'))) {
-                    canvas.style.pointerEvents = 'none';
+                canvas.style.pointerEvents = "auto";
+                const panel = under.closest(".metaverse-panel");
+                if (
+                    under.closest(".metaverse-mode-switch") ||
+                    (panel && !panel.classList.contains("is-active"))
+                ) {
+                    canvas.style.pointerEvents = "none";
                 } else {
-                    canvas.style.pointerEvents = 'auto';
+                    canvas.style.pointerEvents = "auto";
                 }
             };
-            document.addEventListener('mousemove', handleMouseMove);
-            return () => document.removeEventListener('mousemove', handleMouseMove);
+            document.addEventListener("mousemove", handleMouseMove);
+            return () =>
+                document.removeEventListener("mousemove", handleMouseMove);
         }
     }, []);
 
@@ -367,8 +389,11 @@ const MetaversePreview = () => {
                     shadows
                     camera={{ position: [0, 1.75, 6], fov: 70 }}
                     dpr={[1, 1.75]}
-                    gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
-                    style={{ width: '100%', height: '100%' }}
+                    gl={{
+                        antialias: true,
+                        toneMapping: THREE.ACESFilmicToneMapping,
+                    }}
+                    style={{ width: "100%", height: "100%" }}
                     onClick={() => {
                         if (canvasRef.current && !document.pointerLockElement) {
                             canvasRef.current.requestPointerLock();
@@ -396,8 +421,8 @@ const MapData = () => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        fetch('/map/data')
-            .then(res => res.json())
+        fetch("/map/data")
+            .then((res) => res.json())
             .then(setData)
             .catch(console.error);
     }, []);
@@ -412,10 +437,14 @@ const MapDataInner = ({ data }) => {
         <>
             {/* Providers as ground squares */}
             {data.providers?.map((provider, index) => {
-                const width = (provider.bbox.x_max - provider.bbox.x_min) * 0.01;
-                const depth = (provider.bbox.y_max - provider.bbox.y_min) * 0.01;
-                const centerX = (provider.bbox.x_min + provider.bbox.x_max) * 0.005 - 18.8;
-                const centerZ = (provider.bbox.y_min + provider.bbox.y_max) * 0.005 - 5.8;
+                const width =
+                    (provider.bbox.x_max - provider.bbox.x_min) * 0.01;
+                const depth =
+                    (provider.bbox.y_max - provider.bbox.y_min) * 0.01;
+                const centerX =
+                    (provider.bbox.x_min + provider.bbox.x_max) * 0.005 - 18.8;
+                const centerZ =
+                    (provider.bbox.y_min + provider.bbox.y_max) * 0.005 - 5.8;
                 const [planeRef] = usePlane(() => ({
                     position: [centerX, 0, centerZ],
                     rotation: [-Math.PI / 2, 0, 0],
@@ -424,7 +453,12 @@ const MapDataInner = ({ data }) => {
                     collisionFilterMask: OBJECT_GROUP,
                 }));
                 return (
-                    <mesh key={`provider-${index}`} ref={planeRef} position={[centerX, 0.01, centerZ]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <mesh
+                        key={`provider-${index}`}
+                        ref={planeRef}
+                        position={[centerX, 0.01, centerZ]}
+                        rotation={[-Math.PI / 2, 0, 0]}
+                    >
                         <planeGeometry args={[width, depth]} />
                         <meshStandardMaterial color={provider.color} />
                     </mesh>

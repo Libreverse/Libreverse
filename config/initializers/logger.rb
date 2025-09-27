@@ -7,19 +7,19 @@
 # Create a custom formatter that preserves TaggedLogging functionality
 module CustomTaggedFormatter
     COLORS = {
-        reset: "\033[0m",
-        bold: "\033[1m",
-        red: "\033[38;5;174m",
-        green: "\033[38;5;150m",
-        yellow: "\033[38;5;150m",
-        blue: "\033[38;5;182m",
-        magenta: "\033[38;5;182m",
-        cyan: "\033[38;5;115m",
-        light_blue: "\033[38;5;182m",
-        light_cyan: "\033[38;5;115m",
-        light_gray: "\033[38;5;224m",
-        dark_gray: "\033[38;5;110m"
-        }.freeze
+      reset: "\033[0m",
+      bold: "\033[1m",
+      red: "\033[38;5;174m",
+      green: "\033[38;5;150m",
+      yellow: "\033[38;5;150m",
+      blue: "\033[38;5;182m",
+      magenta: "\033[38;5;182m",
+      cyan: "\033[38;5;115m",
+      light_blue: "\033[38;5;182m",
+      light_cyan: "\033[38;5;115m",
+      light_gray: "\033[38;5;224m",
+      dark_gray: "\033[38;5;110m"
+    }.freeze
 
   # Get color for severity level
   def color_for_severity(severity)

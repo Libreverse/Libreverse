@@ -1,37 +1,17 @@
 # To-do
 
-add redis-alpine to dev procfile
-
 use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath
-
-bring in worker killer
-
-```ruby
-require 'worker_killer/middleware'
-
-killer = WorkerKiller::Killer::Passenger.new
-
-middleware.insert_before(
-  Rack::Runtime,
-  WorkerKiller::Middleware::OOMLimiter,
-  killer: killer,
-  min: 2_516_582_400, # 2.4GB in bytes
-  max: 2_724_659_200, # 2.6GB in bytes
-  check_cycle: 16     # check every 16 requests (default is fine)
-)
-```
-
 solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails for future tests
-make vite split js again
+find a better solution to state on the map page
+fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin
-https://github.com/hadolint/hadolint
-https://github.com/ruby-next/freezolite
-https://evilmartians.com/opensource/visibility-js
+<https://github.com/hadolint/hadolint>
+<https://github.com/ruby-next/freezolite>
+<https://evilmartians.com/opensource/visibility-js>
 selenium +firefox = faster
-make redis in the procfile
-make tidb in the procfile too
+move to postgres for cache
 
 - [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image

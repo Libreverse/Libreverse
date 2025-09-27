@@ -15,5 +15,6 @@ export default {
         "scss/at-extend-no-missing-placeholder": undefined,
         "no-descending-specificity": undefined,
         "media-feature-name-no-unknown": null,
+        "selector-class-pattern": null,
     },
 };

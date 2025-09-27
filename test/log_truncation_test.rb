@@ -13,7 +13,7 @@ class LogTruncationTest < ActiveSupport::TestCase
       assert_includes formatted, "[cut]"
 
       body = extract_body(formatted, "prog")
-      refute_nil body
+      assert_not_nil body
 
       assert_equal 32, body.length
       assert body.end_with?("[cut]")
@@ -25,11 +25,11 @@ class LogTruncationTest < ActiveSupport::TestCase
 
     with_log_truncation(max_length: 40, omission: "…") do
       formatter = ActiveSupport::Logger::SimpleFormatter.new
-      payload = "SELECT * FROM users WHERE bio = '" + "x" * 200 + "'"
+      payload = "SELECT * FROM users WHERE bio = '#{'x' * 200}'"
       formatted = formatter.call("INFO", Time.utc(2024, 1, 1), "ActiveRecord", payload)
 
       body = extract_body(formatted, "ActiveRecord")
-      refute_nil body
+      assert_not_nil body
 
       assert_operator body.length, :<=, 40
       assert body.end_with?("…")
@@ -43,12 +43,12 @@ class LogTruncationTest < ActiveSupport::TestCase
       formatted = formatter.call("INFO", Time.utc(2024, 1, 1), "prog", payload)
 
       body = extract_body(formatted, "prog")
-      refute_nil body
+      assert_not_nil body
 
       assert_equal payload, body
     end
   end
-  
+
   test "custom tagged formatter truncates messages" do
     skip "CustomTaggedFormatter not available" unless defined?(CustomTaggedFormatter)
 
@@ -57,11 +57,11 @@ class LogTruncationTest < ActiveSupport::TestCase
       formatter = ActiveSupport::TaggedLogging.new(base_logger).formatter
       formatter.extend(CustomTaggedFormatter)
 
-      payload = "SQL " + "x" * 256
+      payload = "SQL #{'x' * 256}"
       formatted = formatter.call("INFO", Time.utc(2024, 1, 1), "ActiveRecord", payload)
 
       body = extract_body(formatted, "ActiveRecord")
-      refute_nil body
+      assert_not_nil body
 
       assert body.end_with?("[snip]")
       assert_operator body.length, :<=, 48
@@ -81,13 +81,9 @@ class LogTruncationTest < ActiveSupport::TestCase
   end
 
   def extract_body(formatted, progname)
-    if formatted.include?(" -- #{progname}: ")
-      return formatted.split(" -- #{progname}: ", 2).last&.delete_suffix("\n")
-    end
+    return formatted.split(" -- #{progname}: ", 2).last&.delete_suffix("\n") if formatted.include?(" -- #{progname}: ")
 
-    if formatted.include?(" #{progname} -- ")
-      return formatted.split(" #{progname} -- ", 2).last&.delete_suffix("\n")
-    end
+    return formatted.split(" #{progname} -- ", 2).last&.delete_suffix("\n") if formatted.include?(" #{progname} -- ")
 
     if formatted.start_with?("[")
       body = formatted.split("] ", 4).last

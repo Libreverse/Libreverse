@@ -1,1 +1,1 @@
-//null file to satify thredded sprockets dependency
+//null file to satisfy thredded sprockets dependency
