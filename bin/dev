@@ -7,6 +7,8 @@ $ENV{OVERMIND_SOCKET}        = '/tmp/.overmind.sock';
 $ENV{OVERMIND_TMUX_CONFIG}   = '/config/overmind-tmux.conf';
 $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
+$ENV{OVERMIND_ENV}           = 'RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=10 --yjit-call-threshold=15 --yjit-disable --yjit-stats=quiet"';
+$ENV{OVERMIND_CAN_DIE}       = 'rails-db-creator';
 
 # Start Overmind with the specified process file and any additional arguments
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

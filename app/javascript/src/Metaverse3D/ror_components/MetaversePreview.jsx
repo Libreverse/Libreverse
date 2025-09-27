@@ -10,9 +10,9 @@ import {
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon";
-import { Grid } from "@react-three/drei";
+import { Grid, Text } from "@react-three/drei";
 import * as THREE from "three";
-import { EffectComposer, SSAO, Bloom, DepthOfField, ChromaticAberration, Vignette, Noise } from "@react-three/postprocessing";
+import { EffectComposer, SSAO, Bloom, DepthOfField, Vignette, Noise } from "@react-three/postprocessing";
 
 const initialKeys = Object.freeze({
     w: false,
@@ -99,24 +99,14 @@ const HotKeysProvider = ({ children }) => {
 };
 
 const FLOOR_SIZE = 200;
-const BOXES = Object.freeze([
-    { position: [2.75, 1.5, -3], color: "#22d3ee", scale: 1.4 },
-    { position: [-3.5, 0.9, -4.5], color: "#f97316", scale: 1.8 },
-    { position: [-1.25, 0.6, 2.5], color: "#a855f7", scale: 1.2 },
-    { position: [4.2, 1.1, 1.2], color: "#facc15", scale: 1 },
-]);
-
-const SPHERES = Object.freeze([
-    { position: [1.2, 1.2, -2.4] },
-    { position: [-2.4, 1.5, -1.8] },
-    { position: [0.8, 2.1, 1.6] },
-]);
 
 const Floor = () => {
     const [ref] = usePlane(() => ({
         rotation: [-Math.PI / 2, 0, 0],
         position: [0, 0, 0],
         type: "Static",
+        collisionFilterGroup: GROUND_GROUP,
+        collisionFilterMask: PLAYER_GROUP | OBJECT_GROUP,
         material: { friction: 0.9, restitution: 0.1 },
     }));
 
@@ -137,7 +127,9 @@ const DynamicBox = ({ color, position, scale = 1 }) => {
         mass: 2,
         position,
         args: [scale, scale, scale],
-        material: { friction: 0.6, restitution: 0.2 },
+        collisionFilterGroup: OBJECT_GROUP,
+        collisionFilterMask: PLAYER_GROUP | GROUND_GROUP | PROVIDER_GROUP | OBJECT_GROUP,
+        material: DEFAULT_MATERIAL,
         allowSleep: true,
         sleepSpeedLimit: 0.1,
         sleepTimeLimit: 1,
@@ -162,6 +154,8 @@ const FloatingSphere = ({ position }) => {
         mass: 1,
         position,
         args: [0.6],
+        collisionFilterGroup: OBJECT_GROUP,
+        collisionFilterMask: PLAYER_GROUP | GROUND_GROUP | PROVIDER_GROUP | OBJECT_GROUP,
         material: { friction: 0.4, restitution: 0.4 },
         allowSleep: true,
         sleepSpeedLimit: 0.1,
@@ -198,8 +192,10 @@ const Player = () => {
         allowSleep: true,
         sleepSpeedLimit: 0.1,
         sleepTimeLimit: 1,
-        linearDamping: 0.2,
+        linearDamping: 0.1,
         angularDamping: 0.2,
+        collisionFilterGroup: PLAYER_GROUP,
+        collisionFilterMask: GROUND_GROUP | OBJECT_GROUP,
         material: { friction: 0.4, restitution: 0.05 },
         onCollideBegin: () => setGrounded(true),
         onCollideEnd: () => setGrounded(false),
@@ -240,7 +236,7 @@ const Player = () => {
 
         let verticalVelocity = velocity.current[1];
         if (keys.space && grounded) {
-            verticalVelocity = 7;
+            verticalVelocity = 10;
             setGrounded(false);
         }
 
@@ -274,6 +270,12 @@ const Scene = () => {
             />
             <ambientLight intensity={0.08} />
 
+            <Grid
+                position={[0, -0.01, 0]}
+                args={[60, 60]}
+                color="#d3d3d3"
+            />
+
             <Physics
                 gravity={[0, -9.81, 0]}
                 iterations={12}
@@ -281,32 +283,12 @@ const Scene = () => {
             >
                 <Floor />
                 <Player />
-                {BOXES.map(({ position, color, scale }, index) => (
-                    <DynamicBox
-                        key={`box-${index}`}
-                        position={position}
-                        color={color}
-                        scale={scale}
-                    />
-                ))}
-                {SPHERES.map(({ position }, index) => (
-                    <FloatingSphere key={`sphere-${index}`} position={position} />
-                ))}
+                <MapData />
             </Physics>
-
-            <Grid
-                infiniteGrid
-                cellSize={1}
-                sectionSize={3}
-                fadeDistance={1000}
-                fadeStrength={1}
-            />
-
             <EffectComposer enableNormalPass depthBuffer multisampling={0}>
                 <SSAO />
                 <DepthOfField focusDistance={0.01} focalLength={0.2} bokehScale={3} height={480} />
                 <Bloom intensity={0.5} />
-                <ChromaticAberration offset={[0.002, 0.002]} />
                 <Vignette offset={0.1} darkness={0.5} />
                 <Noise opacity={0.025} />
             </EffectComposer>
@@ -404,3 +386,75 @@ const MetaversePreview = () => {
 };
 
 export default MetaversePreview;
+
+const PLAYER_GROUP = 1;
+const GROUND_GROUP = 2;
+const OBJECT_GROUP = 4;
+const PROVIDER_GROUP = 8;
+
+const MapData = () => {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        fetch('/map/data')
+            .then(res => res.json())
+            .then(setData)
+            .catch(console.error);
+    }, []);
+
+    if (!data) return null;
+
+    return <MapDataInner data={data} />;
+};
+
+const MapDataInner = ({ data }) => {
+    return (
+        <>
+            {/* Providers as ground squares */}
+            {data.providers?.map((provider, index) => {
+                const width = (provider.bbox.x_max - provider.bbox.x_min) * 0.01;
+                const depth = (provider.bbox.y_max - provider.bbox.y_min) * 0.01;
+                const centerX = (provider.bbox.x_min + provider.bbox.x_max) * 0.005 - 18.8;
+                const centerZ = (provider.bbox.y_min + provider.bbox.y_max) * 0.005 - 5.8;
+                const [planeRef] = usePlane(() => ({
+                    position: [centerX, 0, centerZ],
+                    rotation: [-Math.PI / 2, 0, 0],
+                    type: "Static",
+                    collisionFilterGroup: PROVIDER_GROUP,
+                    collisionFilterMask: OBJECT_GROUP,
+                }));
+                return (
+                    <mesh key={`provider-${index}`} ref={planeRef} position={[centerX, 0.01, centerZ]} rotation={[-Math.PI / 2, 0, 0]}>
+                        <planeGeometry args={[width, depth]} />
+                        <meshStandardMaterial color={provider.color} />
+                    </mesh>
+                );
+            })}
+            {/* Experiences as cubes with labels */}
+            {data.experiences?.map((experience, index) => {
+                const x = experience.mapped_x * 0.01 - 18.8;
+                const z = experience.mapped_y * 0.01 - 5.8;
+                const y = 0.05;
+                return (
+                    <group key={`experience-${index}`}>
+                        <mesh position={[x, y, z]} castShadow receiveShadow>
+                            <boxGeometry args={[0.1, 0.1, 0.1]} />
+                            <meshStandardMaterial color={experience.color} />
+                        </mesh>
+                        <Text
+                            position={[x, y + 0.15, z]}
+                            fontSize={0.05}
+                            color="white"
+                            anchorX="center"
+                            anchorY="middle"
+                            outlineWidth={0.002}
+                            outlineColor="black"
+                        >
+                            {experience.title}
+                        </Text>
+                    </group>
+                );
+            })}
+        </>
+    );
+};

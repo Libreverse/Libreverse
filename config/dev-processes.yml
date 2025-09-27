@@ -1,8 +1,10 @@
 # This is just a procfile named differently
-web: cd .. && bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=5
+web: cd .. && bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2 --min-instances=2
 vite: cd .. && bin/vite dev
 webpack-code-server: cd .. && bin/shakapacker-dev-server
 webpack-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
 webpack-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
-solid-queue: cd .. && bundle exec bin/jobs
+solid-queue: cd .. && sleep 10 && bundle exec bin/jobs
 mailhog: cd .. && mailhog
+tidb: docker run -p 4000:4000 --rm --name tidb pingcap/tidb:latest > /dev/null 2>&1
+rails-db-creator: cd .. && bin/rails db:create db:migrate db:seed
