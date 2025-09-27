@@ -177,6 +177,10 @@ run_command("bun update",    "bun",    "update");
 # run_command("Haml Validation", "rake", "haml:check");
 run_command("i18n Validation", "ruby", "scripts/i18n_validate.rb");
 
+# Run hadolint for Dockerfile linting
+run_command("hadolint", "sh", "-c",
+  "command -v hadolint >/dev/null && hadolint Dockerfile");
+
 # # CodeQL automatic setup and database creation (sequential - ensures setup is ready)
 # print "CodeQL Setup [RUNNING]\n";
 # my $codeql_setup_exit = system("scripts/codeql-local.sh", "--setup-only");

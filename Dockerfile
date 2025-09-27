@@ -4,10 +4,10 @@
 FROM phusion/passenger-ruby34:latest
 
 # Better optimisation flags
-ENV CFLAGS="-O3 -march=native -pipe -flto"
-ENV CXXFLAGS="-O3 -march=native -pipe -flto"
+ENV CFLAGS="-O3 -march=native -pipe -flto -fno-fastmath"
+ENV CXXFLAGS="-O3 -march=native -pipe -flto -fno-fastmath"
 ENV LDFLAGS="-flto -Wl,-O3 -Wl,-Bsymbolic-functions -Wl,--as-needed"
-ENV RUBYOPT="--yjit --yjit-exec-mem-size=200 --yjit-mem-size=256 --yjit-call-threshold=20 --yjit-disable --yjit-stats=quiet"
+ENV RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc"
 
 # Install mimalloc for improved memory management (with dev headers for optimization)
 # Also install and configure ModSecurity (with OWASP CRS) for WAF protection

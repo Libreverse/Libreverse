@@ -129,7 +129,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [i18n-validation, erb-lint]
+                tool: [i18n-validation, erb-lint, hadolint]
 
         steps:
             - name: Check out code
@@ -147,6 +147,12 @@ jobs:
               if: matrix.tool == 'erb-lint'
               shell: bash
               run: bundle exec erblint --config .erb-lint.yml app/views
+
+            - name: Run Hadolint
+              if: matrix.tool == 'hadolint'
+              uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  recursive: true
 
     # Security analysis (runs in parallel)
     security-analysis:
