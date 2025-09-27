@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Profiler provides richer profiling helpers in development, including StackProf and Flamegraph.
 module Profiler
   def self.stackprof(mode: :wall, out: "tmp/stackprof.dump", &block)

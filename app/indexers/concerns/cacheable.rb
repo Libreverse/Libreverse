@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Concern for caching API responses in indexers
 module Cacheable
   extend ActiveSupport::Concern

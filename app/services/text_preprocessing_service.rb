@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TextPreprocessingService
   # Common English stop words
   STOP_WORDS = %w[

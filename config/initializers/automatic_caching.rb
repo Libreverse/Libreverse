@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Automatic caching configuration for ApplicationController
 Rails.application.configure do
   # Configure automatic caching behavior

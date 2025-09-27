@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Admin
   # Controller for managing Experiences within the Admin namespace.
   class ExperiencesController < BaseController

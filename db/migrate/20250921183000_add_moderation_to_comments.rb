@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddModerationToComments < ActiveRecord::Migration[7.1]
   def change
     change_table :comments, bulk: true do |t|

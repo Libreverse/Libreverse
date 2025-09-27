@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CollaborativeDocumentUpdate < ApplicationRecord
   belongs_to :collaborative_document
 

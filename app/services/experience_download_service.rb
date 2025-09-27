@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "zip"
 
 # Service to find and prepare experiences for offline download

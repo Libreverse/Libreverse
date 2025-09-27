@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class InstanceSetting < ApplicationRecord
   # Encrypt sensitive values
   encrypts :value, deterministic: true, downcase: false

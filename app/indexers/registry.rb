@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Registry for managing and discovering indexers
 class IndexerRegistry
   class << self

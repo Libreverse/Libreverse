@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Ensure custom middleware constant is loaded before we reference it below
 require Rails.root.join("lib/ip_anonymizer")
 require "re2"

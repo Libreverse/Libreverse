@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module EmailEmojiHelper
   # Common emojis used in emails with their SVG equivalents
   EMOJI_SVG_MAP = {

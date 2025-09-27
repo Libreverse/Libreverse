@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from federails (originally 20250122160618)
 class AddExtensionsToFederailsActors < ActiveRecord::Migration[7.1]
   def change

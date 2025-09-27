@@ -292,8 +292,8 @@ Style/FormatStringToken:
     Description: "Disables checks for format string token usage."
 
 Style/FrozenStringLiteralComment:
-    Enabled: true
-    Description: "Enforces frozen string literal comments for performance."
+    Enabled: false
+    Description: "We do this using frezolite instead. Cleaner and contains more complex optimisations."
 
 Style/GlobalVars:
     Enabled: false

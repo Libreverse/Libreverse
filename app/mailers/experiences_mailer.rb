@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Mailer for delivering offline HTML files of experiences via email
 class ExperiencesMailer < ApplicationMailer
   include EmailHelper

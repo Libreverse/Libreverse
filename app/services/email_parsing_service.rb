@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Service to parse incoming emails and extract the relevant content
 class EmailParsingService
   def self.extract_search_query(email_body, email_subject = nil)

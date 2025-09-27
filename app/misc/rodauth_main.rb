@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "../models/account"
 require_relative "../services/moderation_service"
 require "rodauth/model"

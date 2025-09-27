@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Emoji
   module Renderer
     module_function
@@ -13,7 +11,7 @@ module Emoji
     # Matches standard emojis, including sequences with ZWJ and skin tone modifiers. Note that it's an exception to the general re2 use rule as the identifiers it needs aren't supported by RE2.
     EMOJI_REGEX = /(?:\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?(?:\u{200D}\p{Extended_Pictographic}(?:\p{Emoji_Modifier})?(?:\u{FE0F})?)*)|[\u{1F1E6}-\u{1F1FF}]{2}/
 
-    DEFAULT_CACHE_EXPIRY = 1.week
+    DEFAULT_CACHE_EXPIRY = 1.week.to_i
 
     # Public: Replaces any emoji characters found in +input+ with inline SVG <img> tags.
     # Returns the processed String (not HTML-safe).

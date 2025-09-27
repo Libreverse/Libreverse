@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class FixUserPreferencesEncryption < ActiveRecord::Migration[7.1]
   def up
     # Re-add unencrypted_value column temporarily

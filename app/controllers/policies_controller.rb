@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 class PoliciesController < ApplicationController
   skip_before_action :_enforce_privacy_consent
 
-  DISCLAIMER = <<~HTML
+  DISCLAIMER = <<~HTML.freeze
     This Privacy Policy and Cookie Policy are provided in English due to resource constraints.
   HTML
 

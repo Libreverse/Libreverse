@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddFederatedAuthToAccounts < ActiveRecord::Migration[8.0]
   def change
     add_column :accounts, :federated_id, :string

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ReencryptUserPreferencesWithDeterministicEncryption < ActiveRecord::Migration[7.1]
   def up
     # Add a temporary column to store the decrypted values

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CollaborativeDocument < ApplicationRecord
   has_many :collaborative_document_updates, dependent: :destroy
 

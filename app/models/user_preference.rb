@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UserPreference < ApplicationRecord
   include GraphqlRails::Model
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FriendlyId.defaults do |config|
   config.use :slugged
   # Reserve common paths to avoid conflicts

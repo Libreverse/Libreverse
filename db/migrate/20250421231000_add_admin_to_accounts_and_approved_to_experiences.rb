@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddAdminToAccountsAndApprovedToExperiences < ActiveRecord::Migration[7.1]
   def change
     add_column :accounts, :admin, :boolean, null: false, default: false

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "chunky_png"
 require "base64"
 

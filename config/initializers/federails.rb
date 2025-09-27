@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Federails Configuration
 # Consolidated federation configuration in the initializer instead of YAML
 

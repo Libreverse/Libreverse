@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "voight_kampff"
 
 # Enhanced spam protection concern that combines invisible_captcha and ActiveHashcash

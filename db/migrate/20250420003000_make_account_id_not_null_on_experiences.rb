@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class MakeAccountIdNotNullOnExperiences < ActiveRecord::Migration[8.0]
   def up
     # Find or create a guest account without triggering callbacks or role assignment

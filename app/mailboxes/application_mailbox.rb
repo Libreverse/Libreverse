@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ApplicationMailbox < ActionMailbox::Base
   # Route emails to appropriate mailboxes
   # Route search emails

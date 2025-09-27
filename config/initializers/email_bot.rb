@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Action Mailbox configuration that integrates with Libreverse's InstanceSetting system
 Rails.application.configure do
   # Configure Action Mailbox IMAP settings using InstanceSetting values with intelligent defaults

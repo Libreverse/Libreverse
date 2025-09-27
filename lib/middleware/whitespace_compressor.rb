@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "json"
 require "minify_html"
 require "digest/sha1"

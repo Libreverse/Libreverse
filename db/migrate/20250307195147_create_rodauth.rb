@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateRodauth < ActiveRecord::Migration[8.0]
   def change
     # TiDB/MySQL compatibility - using string with length limit instead of text for indexed columns

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddIdPkToSolidQueueScheduledExecutions < ActiveRecord::Migration[8.0]
   def up
     # TiDB/MySQL: Some locking queries require a primary key/unique key.

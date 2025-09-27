@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 # Admin service for monitoring spam detection metrics
 class SpamMonitoringService
-  METRICS_CACHE_KEY = "spam_monitoring:metrics"
-  RECENT_ATTEMPTS_KEY = "spam_monitoring:recent_attempts"
+  METRICS_CACHE_KEY = "spam_monitoring:metrics".freeze
+  RECENT_ATTEMPTS_KEY = "spam_monitoring:recent_attempts".freeze
 
   def self.record_spam_attempt(type, ip, details = {})
     # Update metrics

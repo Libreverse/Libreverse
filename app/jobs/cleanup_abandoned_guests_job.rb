@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CleanupAbandonedGuestsJob < ApplicationJob
   queue_as :default
 
@@ -22,7 +20,7 @@ class CleanupAbandonedGuestsJob < ApplicationJob
     return unless count.positive?
 
     # To ensure proper cleanup, use a transaction on the Sequel DB and iterate efficiently
-    DB.transaction do
+    Sequel::DB.transaction do
       iterator = abandoned_guests
       processed = 0
 

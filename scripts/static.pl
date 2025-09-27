@@ -117,6 +117,9 @@ if ($prettier_exit_code != 0) {
 }
 push @sequential_status, $prettier_status;
 
+# Run scripts/remove_frozen.pl before Rubocop
+run_command("Remove Frozen", "perl", "scripts/remove_frozen.pl");
+
 # Run other sequential commands
 run_command("Rubocop", "bundle", "exec", "rubocop", "-A");
 run_command("HAML Whitespace Cleanup", "sh", "-c",
@@ -138,15 +141,15 @@ run_command(
   "sh",
   "-c",
 q{if find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
-                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
-                                        find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
-                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
-                                                | xargs -0 perltidy -pro=.perltidyrc -b; status=$?;
-                                        find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true;
-                                        exit $status;
-                         else
-                                        exit 0;
-                         fi}
+                                                                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
+                                                                                find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
+                                                                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                                                                                                | xargs -0 perltidy -pro=.perltidyrc -b; status=$?;
+                                                                                find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true;
+                                                                                exit $status;
+                                                 else
+                                                                                exit 0;
+                                                 fi}
 );
 
 # Shell formatting (shfmt) — required (fail if missing); rely on .editorconfig
@@ -155,12 +158,12 @@ run_command(
   "sh",
   "-c",
 q{if find . -type f -name '*.sh' -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
-                         find . -type f -name '*.sh' \
-                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
-                                | xargs -0 shfmt -w;
-                 else
-                         exit 0;
-                 fi}
+                                                 find . -type f -name '*.sh' \
+                                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                                                                | xargs -0 shfmt -w;
+                                 else
+                                                 exit 0;
+                                 fi}
 );
 
 run_command("eslint", "bun", "eslint", ".", "--fix");

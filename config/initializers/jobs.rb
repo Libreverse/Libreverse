@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Jobs Configuration
 # This file configures background job processing with Solid Queue
 

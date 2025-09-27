@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Configure Inky for Foundation for Emails templates
 require "inky"
 

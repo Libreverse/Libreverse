@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Concern for progress tracking and logging in indexers
 module ProgressTrackable
   extend ActiveSupport::Concern

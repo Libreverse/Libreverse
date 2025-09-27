@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Model for tracking blocked federated experiences
 class BlockedExperience < ApplicationRecord
   validates :activitypub_uri, presence: true, uniqueness: true

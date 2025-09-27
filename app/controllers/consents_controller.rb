@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ConsentsController < ApplicationController
   skip_before_action :_enforce_privacy_consent
   skip_forgery_protection only: %i[accept decline]

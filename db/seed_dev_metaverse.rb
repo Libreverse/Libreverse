@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Development-only: synthetic sample data to drive Metaverse map UI.
 # This file is loaded from seeds.rb only in development.
 return unless Rails.env.development?

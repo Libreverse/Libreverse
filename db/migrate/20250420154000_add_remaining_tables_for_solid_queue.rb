@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddRemainingTablesForSolidQueue < ActiveRecord::Migration[8.0]
   def change
     # Only add the tables if they do not already exist to keep the migration idempotent

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ExperienceVector < ApplicationRecord
   belongs_to :experience
 

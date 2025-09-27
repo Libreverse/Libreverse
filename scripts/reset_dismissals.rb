@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # This script resets all dismissal preferences in the application
 # Run with: rails runner script/reset_dismissals.rb

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # gRPC Configuration for Libreverse
 module Libreverse
   module GrpcConfig

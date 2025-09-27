@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Configure Premailer for CSS inlining in emails
 Rails.application.configure do
   # Enable CSS inlining in all environments for consistent email rendering

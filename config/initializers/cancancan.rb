@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # CanCanCan configuration
 
 # Handle authorization failures

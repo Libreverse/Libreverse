@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from federails_moderation (originally 20241127105043)
 class CreateFederailsModerationReports < ActiveRecord::Migration[7.0]
   def change

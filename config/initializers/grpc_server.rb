@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # gRPC Server Integration for Rails
 # This initializer starts the gRPC server within the main Rails process
 

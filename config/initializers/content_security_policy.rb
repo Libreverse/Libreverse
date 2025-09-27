@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Content Security Policy Configuration
 Rails.application.configure do
   config.content_security_policy do |policy|

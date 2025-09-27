@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # Test script to verify zip_kit uses maximum compression
 # Run with: ruby test/zip_kit_max_compression_test.rb

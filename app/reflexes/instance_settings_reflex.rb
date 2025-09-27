@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class InstanceSettingsReflex < ApplicationReflex
   before_reflex :ensure_admin
 

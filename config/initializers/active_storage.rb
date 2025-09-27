@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Rails.application.reloader.to_prepare do
   # Patch all relevant ActiveStorage controllers to set strict private download headers
   [

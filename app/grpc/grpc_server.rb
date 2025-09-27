@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "grpc"
 require_relative "libreverse_service"
 

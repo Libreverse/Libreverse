@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IpAnonymizer
   # Masks IP addresses so logs/controllers see an anonymised value
   # but leaves the original address intact for earlier middleware (Rack::Attack).

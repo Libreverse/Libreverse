@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SetExampleExperiencesToNotFederate < ActiveRecord::Migration[8.0]
   def up
     # Update existing example experiences to not federate

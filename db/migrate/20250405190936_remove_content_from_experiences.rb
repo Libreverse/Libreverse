@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class RemoveContentFromExperiences < ActiveRecord::Migration[8.0]
   def change
     remove_column :experiences, :content, :text

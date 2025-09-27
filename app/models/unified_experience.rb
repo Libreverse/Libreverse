@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Unified interface for both local and federated experiences
 # This allows us to treat them the same in search results and UI
 class UnifiedExperience

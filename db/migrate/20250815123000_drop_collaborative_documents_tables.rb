@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class DropCollaborativeDocumentsTables < ActiveRecord::Migration[7.1]
   def up
   # This migration originally removed the collaborative documents feature.

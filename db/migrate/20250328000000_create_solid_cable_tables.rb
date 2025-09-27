@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateSolidCableTables < ActiveRecord::Migration[8.0]
   def change
     create_table "solid_cable_messages", force: :cascade do |t|

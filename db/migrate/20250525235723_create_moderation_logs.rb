@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateModerationLogs < ActiveRecord::Migration[8.0]
   def change
     create_table :moderation_logs do |t|

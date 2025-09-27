@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Generate separate keys for primary and deterministic encryption
 key_generator = ActiveSupport::KeyGenerator.new(
   Rails.application.secret_key_base, iterations: 1000

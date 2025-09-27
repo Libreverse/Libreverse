@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Comment < ApplicationRecord
   belongs_to :thread, class_name: "CommentThread", foreign_key: :comment_thread_id, counter_cache: true
   begin

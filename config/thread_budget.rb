@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Centralized thread budgeting to avoid overcommitting cores between components.
 # Strategy: define percentage budgets per component, compute integer thread counts
 # by rounding down for safety, and expose them via ENV for ERB configs to consume.

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module FederatedAuthHelper
   def parse_identifier(identifier)
     return nil, nil unless identifier&.include?("@")

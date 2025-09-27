@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Yjs synchronization channel using yrb-actioncable gem
 class SyncChannel < ApplicationCable::Channel
   include Y::Actioncable::Sync

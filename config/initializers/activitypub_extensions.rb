@@ -1,19 +1,17 @@
-# frozen_string_literal: true
-
 # ActivityPub extensions for Libreverse-specific metadata
 module LibreverseActivityPub
-  NAMESPACE = "https://libreverse.org/ns#"
+  NAMESPACE = "https://libreverse.org/ns#".freeze
 
   CUSTOM_FIELDS = {
-    "experienceType" => "#{NAMESPACE}experienceType",
-    "author" => "#{NAMESPACE}author",
-    "approved" => "#{NAMESPACE}approved",
-    "htmlContent" => "#{NAMESPACE}htmlContent",
-    "searchVector" => "#{NAMESPACE}searchVector",
-    "moderationStatus" => "#{NAMESPACE}moderationStatus",
-    "interactionCapabilities" => "#{NAMESPACE}interactionCapabilities",
-    "instanceDomain" => "#{NAMESPACE}instanceDomain",
-    "creatorAccount" => "#{NAMESPACE}creatorAccount",
-    "tags" => "#{NAMESPACE}tags"
+    "experienceType" => "#{NAMESPACE}experienceType".freeze,
+    "author" => "#{NAMESPACE}author".freeze,
+    "approved" => "#{NAMESPACE}approved".freeze,
+    "htmlContent" => "#{NAMESPACE}htmlContent".freeze,
+    "searchVector" => "#{NAMESPACE}searchVector".freeze,
+    "moderationStatus" => "#{NAMESPACE}moderationStatus".freeze,
+    "interactionCapabilities" => "#{NAMESPACE}interactionCapabilities".freeze,
+    "instanceDomain" => "#{NAMESPACE}instanceDomain".freeze,
+    "creatorAccount" => "#{NAMESPACE}creatorAccount".freeze,
+    "tags" => "#{NAMESPACE}tags".freeze
   }.freeze
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CommentThread < ApplicationRecord
   belongs_to :commontable, polymorphic: true
   has_many :comments, dependent: :destroy

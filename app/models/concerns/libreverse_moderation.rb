@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Module for handling Libreverse-specific moderation features
 module LibreverseModeration
   module_function

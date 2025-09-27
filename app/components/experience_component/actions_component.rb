@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ExperienceComponent
   class ActionsComponent < ViewComponent::Base
     attr_reader :experience

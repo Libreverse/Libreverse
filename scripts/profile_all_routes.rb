@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Profiles (most) GET routes automatically and prints a breakdown by method and module/class.
 # Writes a StackProf dump you can re-analyze, and optionally a flamegraph HTML.
 #

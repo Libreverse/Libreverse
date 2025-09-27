@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AccountActionsController < ApplicationController
   include ZipKit::RailsStreaming # Restored ZipKit for streaming web downloads
   require "zip" # Keep for any legacy functionality if needed

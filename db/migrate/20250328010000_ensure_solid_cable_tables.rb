@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class EnsureSolidCableTables < ActiveRecord::Migration[8.0]
   def change
     # Only create the table if it doesn't exist

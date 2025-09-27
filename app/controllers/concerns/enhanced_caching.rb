@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Enhanced caching concern with better HTTP caching strategies
 module EnhancedCaching
   extend ActiveSupport::Concern

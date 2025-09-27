@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class WebsocketP2pChannel < ApplicationCable::Channel
   # Alpha: stripped down to peer roster + generic messaging.
 

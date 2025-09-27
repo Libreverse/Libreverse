@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class VectorEmbeddingService
   # Default embedding dimensions (adjust based on requirements)
   DEFAULT_DIMENSIONS = 384

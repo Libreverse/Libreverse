@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class LanguagePickerReflex < ApplicationReflex
   # List of locales that require right-to-left direction.
   RTL_LOCALES = %w[ar he fa ur].freeze

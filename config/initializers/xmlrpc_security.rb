@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # XMLRPC Security Configuration
 Rails.application.config.after_initialize do
   if defined?(XMLRPC)

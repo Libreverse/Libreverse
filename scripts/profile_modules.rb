@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Standalone profiler for development: runs StackProf over configured routes,
 # prints top methods and per-module breakdown, and optionally emits a flamegraph.
 #

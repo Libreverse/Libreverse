@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # Verification script for account export with maximum compression
 # This simulates the account export functionality to verify compression

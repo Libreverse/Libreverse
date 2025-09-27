@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SearchResultsMailer < ApplicationMailer
   def search_results(sender_email, sender_name, query, results, options = {})
     @sender_name = sender_name

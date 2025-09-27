@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Configuration loader for YAML configuration files
 Rails.application.configure do
     # Load SEO configuration

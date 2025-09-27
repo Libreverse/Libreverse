@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module CommentsHelper
   def render_comment_thread(commontable)
     thread = CommentThread.find_or_create_by!(commontable: commontable)

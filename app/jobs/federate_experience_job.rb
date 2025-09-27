@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Job to handle federating experience activities via ActivityPub
 class FederateExperienceJob < ApplicationJob
   queue_as :federation

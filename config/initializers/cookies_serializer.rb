@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Cookie and Session Security Configuration
 Rails.application.config.action_dispatch.cookies_serializer = :json
 Rails.application.config.action_dispatch.signed_cookie_digest = "SHA256"

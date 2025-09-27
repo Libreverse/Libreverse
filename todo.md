@@ -4,12 +4,8 @@ use edge for all gems that allow it to force bundler to build stuff use -fno-fas
 solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails for future tests
-find a better solution to state on the map page
 fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin
-<https://github.com/hadolint/hadolint>
-<https://github.com/ruby-next/freezolite>
-<https://evilmartians.com/opensource/visibility-js>
 selenium +firefox = faster
 move to postgres for cache
 

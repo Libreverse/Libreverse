@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
 # app/services/function_cache.rb
 require "digest"
 
 class FunctionCache
-  NAMESPACE = "function_cache:v1"
+  NAMESPACE = "function_cache:v1".freeze
 
   def initialize(default_ttl: nil, max_size: 1000)
     @default_ttl = default_ttl

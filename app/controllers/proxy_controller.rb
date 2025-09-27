@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # ProxyController handles proxying of external analytics scripts
 # This allows us to serve analytics scripts from our own domain
 # improving privacy, performance, and avoiding ad blockers

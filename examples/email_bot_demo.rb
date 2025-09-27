@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # Demo script for testing Libreverse email automation
 # This script demonstrates the email bot functionality

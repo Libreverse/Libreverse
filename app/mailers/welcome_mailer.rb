@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Example mailer demonstrating CSS inlining for emails
 class WelcomeMailer < ApplicationMailer
   include EmailHelper

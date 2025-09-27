@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ExperiencesMailbox < ApplicationMailbox
   def process
     # Only process if email bot is enabled

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SystemNotificationChannel < ApplicationCable::Channel
   def subscribed
     # Subscribe to system notifications for this connection

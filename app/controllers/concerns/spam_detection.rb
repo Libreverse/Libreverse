@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Comprehensive spam detection concern integrating invisible_captcha gem with advanced detection
 module SpamDetection
   extend ActiveSupport::Concern

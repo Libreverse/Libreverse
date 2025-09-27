@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "boot"
 
 require "rails/all"
@@ -7,6 +5,16 @@ require "rails/all"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+
+require "freezolite"
+Freezolite.experimental_freeze_constants = true
+Freezolite.setup(
+  patterns: [ "**/*.rb" ],
+  exclude_patterns: [
+    "config/initializers/routing_patch.rb",
+    "**/gems/**"
+  ]
+)
 
 # Load custom middleware
 require_relative "../lib/middleware/whitespace_compressor"

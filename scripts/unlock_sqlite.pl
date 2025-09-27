@@ -3,8 +3,8 @@
 use strict;
 use warnings;
 
-my @db_paths =
-  ("db/libreverse_development.sqlite3", "db/libreverse_test.sqlite3");
+# Get all .sqlite3 files in the db directory
+my @db_paths = glob("db/*.sqlite3");
 
 foreach my $db_path (@db_paths) {
   my $journal_file = "${db_path}-journal";

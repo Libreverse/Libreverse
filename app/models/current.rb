@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Provides thread-isolated attributes for storing global request data,
 # such as the current account.
 # See: https://api.rubyonrails.org/classes/ActiveSupport/CurrentAttributes.html

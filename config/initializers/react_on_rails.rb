@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # See https://github.com/shakacode/react_on_rails/blob/master/docs/guides/configuration.md
 # for many more options.
 

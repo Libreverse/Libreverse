@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from active_storage_db (originally 20200702202022)
 class CreateActiveStorageDBFiles < ActiveRecord::Migration[6.0]
   def change

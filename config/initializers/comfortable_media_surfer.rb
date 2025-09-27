@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Load custom authentication module
 require_relative "../../app/lib/cms_rodauth_authentication"
 

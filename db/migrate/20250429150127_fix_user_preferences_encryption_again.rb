@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class FixUserPreferencesEncryptionAgain < ActiveRecord::Migration[7.1]
   def up
     # Find all UserPreference records

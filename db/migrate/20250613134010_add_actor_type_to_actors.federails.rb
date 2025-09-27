@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from federails (originally 20250329123939)
 class AddActorTypeToActors < ActiveRecord::Migration[7.2]
   def change

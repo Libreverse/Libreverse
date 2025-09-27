@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
 module Metaverse
   # Indexer for Spatial.io metaverse content
   # Fetches space data directly from the Spatial.io sitemap
   class SpatialIndexer < BaseIndexer
-    SITEMAP_URL = "https://www.spatial.io/root.xml"
+    SITEMAP_URL = "https://www.spatial.io/root.xml".freeze
 
     # Spatial.io doesn't have a robots.txt file, so skip robots.txt checking
     def requires_robots_txt_check?
