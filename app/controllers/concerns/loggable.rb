@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # A concern to easily include standardized logging capabilities in any class
 # Usage: include Loggable in your class, then use log_* methods
 module Loggable

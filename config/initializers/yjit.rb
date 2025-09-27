@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
         if forked && defined?(RubyVM::YJIT)

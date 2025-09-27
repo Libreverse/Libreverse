@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module EmailHelper
   # Main email CSS inlining method that works in all environments
   def inline_email_css(css_entry = "~/stylesheets/emails.scss")

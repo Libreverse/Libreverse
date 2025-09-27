@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TestMailer < ApplicationMailer
   def test_email(to_email = "test@example.com")
     @message = "This is a test email from LibreVerse!"

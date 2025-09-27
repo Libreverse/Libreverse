@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IncreaseMetadataColumnSize < ActiveRecord::Migration[8.0]
   def up
     # Change metadata column from TEXT to LONGTEXT to handle large Decentraland scene metadata

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SearchReflex < ApplicationReflex
   def perform(_options = {})
       query = element[:value].to_s.strip

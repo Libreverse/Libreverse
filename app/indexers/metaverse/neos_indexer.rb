@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
 module Metaverse
   # Indexer for NeosVR metaverse content
   # Fetches public sessions (worlds) from the NeosVR API
   # Note: API is currently broken but indexer is ready for when it comes back online
   class NeosIndexer < BaseIndexer
-    API_BASE_URL = "https://api.neos.com"
+    API_BASE_URL = "https://api.neos.com".freeze
     SESSIONS_ENDPOINT = "#{API_BASE_URL}/api/sessions".freeze
 
     def requires_robots_txt_check?

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateCollaborativeDocuments < ActiveRecord::Migration[7.1]
   def change
     create_table :collaborative_documents do |t|

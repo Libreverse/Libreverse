@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Consolidate and apply all security headers at once
 base_headers = {
   "X-Frame-Options" => "SAMEORIGIN",

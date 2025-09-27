@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # InlineSvg + Propshaft compatibility / defensive patch
 #
 # We are seeing the following error coming from the middleware (EmojiReplacer):

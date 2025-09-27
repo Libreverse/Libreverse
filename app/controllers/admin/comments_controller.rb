@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Admin
   class CommentsController < BaseController
     before_action :set_comment, only: %i[approve reject]

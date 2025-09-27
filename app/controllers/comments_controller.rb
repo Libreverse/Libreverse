@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CommentsController < ApplicationController
   before_action :require_account!
   before_action :reject_guest!
@@ -99,14 +97,14 @@ class CommentsController < ApplicationController
     end
   end
 
-  RATE_LIMIT_WINDOW = 10.minutes
+  RATE_LIMIT_WINDOW_SECONDS = 10 * 60
   RATE_LIMIT_MAX = 5
 
   def enforce_rate_limit
     return if current_account.respond_to?(:admin?) && current_account.admin?
 
     recent_count = Comment.where(account_id: current_account.id)
-                          .where("created_at >= ?", RATE_LIMIT_WINDOW.ago)
+                          .where("created_at >= ?", RATE_LIMIT_WINDOW_SECONDS.seconds.ago)
                           .count
     return unless recent_count >= RATE_LIMIT_MAX
 

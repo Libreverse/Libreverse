@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # A helper module for standardized logging throughout the application
 # Usage: include LoggingHelper in your class, then use the log_* methods
 module LoggingHelper

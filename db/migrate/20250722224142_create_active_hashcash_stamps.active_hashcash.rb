@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from active_hashcash (originally 20240215143453)
 # Successful hashcash stamp are stored in the database.
 # This migration creates the table for the model ActiveHashcash::Stamp.

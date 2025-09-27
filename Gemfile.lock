@@ -245,6 +245,8 @@ GEM
     fiddle (1.1.8)
     flamegraph (0.9.5)
     foundation_emails (2.2.1.0)
+    freezolite (0.6.0)
+      require-hooks (~> 0.2)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
     fugit (1.11.2)
@@ -674,6 +676,7 @@ GEM
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
+    require-hooks (0.2.2)
     rexml (3.4.4)
     rinku (2.0.6)
     roda (3.96.0)
@@ -1027,6 +1030,7 @@ DEPENDENCIES
   federails-moderation
   fiddle
   flamegraph
+  freezolite
   friendly_id
   gemoji
   google_robotstxt_parser!
@@ -1114,7 +1118,7 @@ DEPENDENCIES
   vite_rails
   voight_kampff
   web-console
-  worker_killer (~> 1.1)
+  worker_killer
   y-rb_actioncable
   zip_kit
   zstd-ruby

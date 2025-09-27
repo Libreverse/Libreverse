@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Admin
   class IndexersController < ApplicationController
   rescue_from StandardError, with: :respond_forbidden

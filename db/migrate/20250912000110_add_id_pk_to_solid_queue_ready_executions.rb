@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddIdPkToSolidQueueReadyExecutions < ActiveRecord::Migration[8.0]
   def up
     unless column_exists?(:solid_queue_ready_executions, :id)

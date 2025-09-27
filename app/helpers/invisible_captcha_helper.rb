@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module InvisibleCaptchaHelper
   # Override the invisible_captcha helper to ensure proper HTML structure
   def invisible_captcha(options = {})

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Service for adding example experiences to Libreverse
 # Based on the rails runner script for creating sample experiences
 class ExampleExperiencesService

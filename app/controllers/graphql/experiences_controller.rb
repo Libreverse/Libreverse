@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Graphql
   class ExperiencesController < GraphqlApplicationController
     model("Experience")

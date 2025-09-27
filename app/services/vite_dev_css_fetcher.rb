@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Service to fetch CSS from Vite development server
 class ViteDevCssFetcher
   include Singleton

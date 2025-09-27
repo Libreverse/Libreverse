@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SpamDetectionService
   SUSPICIOUS_PATTERNS = [
     # Common spam patterns
@@ -14,8 +12,8 @@ class SpamDetectionService
     /!{3,}/
   ].freeze
 
-  SUSPICIOUS_IPS_CACHE_KEY = "spam_detection:suspicious_ips"
-  RATE_LIMIT_CACHE_KEY = "spam_detection:rate_limit"
+  SUSPICIOUS_IPS_CACHE_KEY = "spam_detection:suspicious_ips".freeze
+  RATE_LIMIT_CACHE_KEY = "spam_detection:rate_limit".freeze
 
   def initialize(request, params = {})
     @request = request

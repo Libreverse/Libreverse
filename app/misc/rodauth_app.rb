@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class RodauthApp < Rodauth::Rails::App
   configure RodauthMain
 

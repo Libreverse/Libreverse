@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Service to handle incoming ActivityPub reports about federated content
 class LibreverseReportHandler
   def initialize(report)

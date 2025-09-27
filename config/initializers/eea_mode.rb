@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # EEA Mode Initializer
 # --------------------
 # This file enables "EEA mode" (additional GDPR/ePrivacy safeguards) when the
@@ -24,19 +22,21 @@
 
 module EEAMode
   # Compliance verification constants
-  COMPLIANCE = {
-    required: {
-      all_paths_require_consent: true,
-      secure_cookies: true,
-      policy_exemptions: %w[consent privacy cookies]
-    },
-    cookie_settings: {
-      httponly: true,
-      secure: -> { Rails.application.config.force_ssl },
-      same_site: :strict,
-      expiration: 1.year
-    }
-  }.freeze
+  def self.compliance
+    {
+      required: {
+        all_paths_require_consent: true,
+        secure_cookies: true,
+        policy_exemptions: %w[consent privacy cookies]
+      },
+      cookie_settings: {
+        httponly: true,
+        secure: Rails.application.config.force_ssl,
+        same_site: :strict,
+        expiration: 1.year
+      }
+    }.freeze
+  end
 
   # ---------------------------------------------------------------------
   # Configuration via ENV variable only
@@ -60,7 +60,7 @@ module EEAMode
   end
 
   def self.verify_compliance
-    COMPLIANCE[:required].each do |key, value|
+    compliance[:required].each do |key, value|
       raise "EEA Compliance Violation: #{key} not configured properly" unless value
     end
     true

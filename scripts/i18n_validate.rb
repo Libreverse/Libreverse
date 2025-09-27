@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # Runs i18n-tasks autofix (normalize, remove-unused, add-missing) and validation (health)
 require 'open3'

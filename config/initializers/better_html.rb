@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "better_html"
 
 # Configure BetterHtml using the repo-level YAML if present; otherwise keep defaults.

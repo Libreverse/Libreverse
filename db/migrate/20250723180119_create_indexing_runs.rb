@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateIndexingRuns < ActiveRecord::Migration[8.0]
   def change
     create_table :indexing_runs do |t|

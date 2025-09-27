@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddEncryptionFieldsToUserPreferences < ActiveRecord::Migration[7.1]
   def change
     # Rename existing value column to unencrypted_value

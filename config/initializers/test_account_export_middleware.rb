@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Test-only middleware to bypass complex auth/asset stack for the account export integration test.
 # Generates a deterministic minimal ZIP containing a single account.xml file.
 if Rails.env.test?

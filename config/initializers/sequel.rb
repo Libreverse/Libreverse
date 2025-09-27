@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "sequel"
 require "sequel/extensions/activerecord_connection"
 
@@ -10,4 +8,4 @@ Sequel::Model.require_valid_table = false
 adapter = :trilogy
 
 # Use the same TiDB connection as ActiveRecord
-DB = Sequel.connect(adapter: adapter, test: false, extensions: :activerecord_connection)
+Sequel.connect(adapter: adapter, test: false, extensions: :activerecord_connection)

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Concern for rate limiting API requests in indexers
 module RateLimitable
   extend ActiveSupport::Concern

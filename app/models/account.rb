@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "../services/moderation_service"
 
 # ActiveRecord primary model (must always be defined for Zeitwerk autoloading)

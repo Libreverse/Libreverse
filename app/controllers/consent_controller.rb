@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ConsentController < ApplicationController
     include Turbo::Streams::ActionHelper
 

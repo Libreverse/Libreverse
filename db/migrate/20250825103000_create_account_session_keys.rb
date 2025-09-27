@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateAccountSessionKeys < ActiveRecord::Migration[8.0]
   def change
     create_table :account_session_keys, id: false do |t|

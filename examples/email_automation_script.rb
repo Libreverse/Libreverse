@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # Email Automation Script for Libreverse
 # This script demonstrates how to hook into the email system to send automated emails

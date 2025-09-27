@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IndexedContentVector < ApplicationRecord
   belongs_to :indexed_content
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Test-only patches to stabilize TiDB/Trilogy interactions during fixture loading.
 # Goal: avoid protocol-level TRILOGY_TRUNCATED_PACKET errors caused by batch execution
 # and SET OPTION commands when loading large fixture sets.

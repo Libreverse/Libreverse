@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "re2"
 require "unidecoder"
 require "yaml"
@@ -170,59 +168,70 @@ class ModerationService
   end
 
   # Precompiled regex patterns
-  CACHED_PROFANITY_REGEXES = compile_profanity_regexes
-  CACHED_SPAM_REGEXES = compile_spam_regexes
+  def self.cached_profanity_regexes
+    @cached_profanity_regexes ||= compile_profanity_regexes
+  end
+
+  def self.cached_spam_regexes
+    @cached_spam_regexes ||= compile_spam_regexes
+  end
 
   # RE2 regex patterns for PII detection
-  PII_PATTERNS = [
-    # Email addresses
-    RE2::Regexp.new('(?i)\\b[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}\\b'),
+  def self.pii_patterns
+    @pii_patterns ||= [
+      # Email addresses
+      RE2::Regexp.new('(?i)\\b[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}\\b'),
 
-    # Phone numbers (various formats)
-    RE2::Regexp.new('\\b(?:\\+?1[-\\.\\s]?)?\\(?[0-9]{3}\\)?[-\\.\\s]?[0-9]{3}[-\\.\\s]?[0-9]{4}\\b'),
+      # Phone numbers (various formats)
+      RE2::Regexp.new('\\b(?:\\+?1[-\\.\\s]?)?\\(?[0-9]{3}\\)?[-\\.\\s]?[0-9]{3}[-\\.\\s]?[0-9]{4}\\b'),
 
-    # Credit card numbers (basic pattern)
-    RE2::Regexp.new('\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3[0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})\\b'),
+      # Credit card numbers (basic pattern)
+      RE2::Regexp.new('\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3[0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})\\b'),
 
-    # Social Security Numbers (US format)
-    RE2::Regexp.new('\\b[0-9]{3}-?[0-9]{2}-?[0-9]{4}\\b'),
+      # Social Security Numbers (US format)
+      RE2::Regexp.new('\\b[0-9]{3}-?[0-9]{2}-?[0-9]{4}\\b'),
 
-    # IP addresses
-    RE2::Regexp.new('\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b'),
+      # IP addresses
+      RE2::Regexp.new('\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b'),
 
-    # Postal codes (US and international)
-    RE2::Regexp.new('(?i)\\b[0-9]{5}(?:-[0-9]{4})?\\b|\\b[A-Z][0-9][A-Z]\\s?[0-9][A-Z][0-9]\\b')
-  ].freeze
+      # Postal codes (US and international)
+      RE2::Regexp.new('(?i)\\b[0-9]{5}(?:-[0-9]{4})?\\b|\\b[A-Z][0-9][A-Z]\\s?[0-9][A-Z][0-9]\\b')
+    ].freeze
+  end
 
   # RE2 regex patterns for spam detection
-  SPAM_PATTERNS = [
-    # Multiple URLs (simplified)
-    RE2::Regexp.new('https?://\\S+.*https?://\\S+'),
+  def self.spam_patterns
+    @spam_patterns ||= [
+      # Multiple URLs (simplified)
+      RE2::Regexp.new('https?://\\S+.*https?://\\S+'),
 
-    # Excessive capitalization
-    RE2::Regexp.new("[A-Z]{10,}"),
+      # Excessive capitalization
+      RE2::Regexp.new("[A-Z]{10,}"),
 
-    # Excessive exclamation marks
-    RE2::Regexp.new("!{5,}"),
+      # Excessive exclamation marks
+      RE2::Regexp.new("!{5,}"),
 
-    # Excessive repetition of characters (simplified patterns)
-    RE2::Regexp.new("(a{5,}|b{5,}|c{5,}|d{5,}|e{5,}|f{5,}|g{5,}|h{5,}|i{5,}|j{5,}|k{5,}|l{5,}|m{5,}|n{5,}|o{5,}|p{5,}|q{5,}|r{5,}|s{5,}|t{5,}|u{5,}|v{5,}|w{5,}|x{5,}|y{5,}|z{5,})"),
+      # Excessive repetition of characters (simplified patterns)
+      RE2::Regexp.new("(a{5,}|b{5,}|c{5,}|d{5,}|e{5,}|f{5,}|g{5,}|h{5,}|i{5,}|j{5,}|k{5,}|l{5,}|m{5,}|n{5,}|o{5,}|p{5,}|q{5,}|r{5,}|s{5,}|t{5,}|u{5,}|v{5,}|w{5,}|x{5,}|y{5,}|z{5,})"),
 
-    # Common spam phrases
-    RE2::Regexp.new('(?i)\\b(?:click here|buy now|limited time|act now|free money|no cost|risk free)\\b'),
+      # Common spam phrases
+      RE2::Regexp.new('(?i)\\b(?:click here|buy now|limited time|act now|free money|no cost|risk free)\\b'),
 
-    # Suspicious patterns
-    RE2::Regexp.new('(?i)\\b(?:call now|order today|don\'t delay|hurry|urgent|immediate)\\b')
-  ].freeze
+      # Suspicious patterns
+      RE2::Regexp.new('(?i)\\b(?:call now|order today|don\'t delay|hurry|urgent|immediate)\\b')
+    ].freeze
+  end
 
   # Additional suspicious patterns
-  SUSPICIOUS_PATTERNS = [
-    # Excessive use of symbols
-    RE2::Regexp.new('[!@#$%^&*()_+={}\\[\\]:";\'<>?,./]{10,}'),
+  def self.suspicious_patterns
+    @suspicious_patterns ||= [
+      # Excessive use of symbols
+      RE2::Regexp.new('[!@#$%^&*()_+={}\\[\\]:";\'<>?,./]{10,}'),
 
-    # Base64-like patterns (potential encoded content)
-    RE2::Regexp.new('\\b[A-Za-z0-9+/]{20,}={0,2}\\b')
-  ].freeze
+      # Base64-like patterns (potential encoded content)
+      RE2::Regexp.new('\\b[A-Za-z0-9+/]{20,}={0,2}\\b')
+    ].freeze
+  end
 
   class << self
     # Main method to check content across all categories
@@ -282,7 +291,7 @@ class ModerationService
       end
 
       # Check using cached creative pattern regexes
-      CACHED_PROFANITY_REGEXES.each_value do |regex|
+      cached_profanity_regexes.each_value do |regex|
         if debug_logging_enabled?
           # rails.logger.debug "  DEBUG: checking bad_word = '#{bad_word_str}'"
           match_result_norm = regex.match?(normalized_text)
@@ -305,7 +314,7 @@ class ModerationService
       # Ensure UTF-8 encoding
       text = ensure_utf8_encoding(text)
 
-      PII_PATTERNS.any? { |pattern| pattern.match?(text) }
+      pii_patterns.any? { |pattern| pattern.match?(text) }
     end
 
     # Pure spam detection with patterns and creative matching
@@ -315,7 +324,7 @@ class ModerationService
       # Ensure UTF-8 encoding
       text = ensure_utf8_encoding(text)
 
-      return true if SPAM_PATTERNS.any? { |pattern| pattern.match?(text) } # RE2 part
+      return true if spam_patterns.any? { |pattern| pattern.match?(text) } # RE2 part
 
       # Ruby Regexp part for curated spam words with creative patterns
       normalized_text = text.to_ascii.downcase
@@ -367,7 +376,7 @@ class ModerationService
       end
 
       # Check using cached creative pattern regexes for spam
-      CACHED_SPAM_REGEXES.each_value do |regex|
+      cached_spam_regexes.each_value do |regex|
         if debug_logging_enabled?
           # # rails.logger.debug "  DEBUG (spam): checking spam_word = '#{spam_word_str}'"
           match_result_norm = regex.match?(normalized_text)
@@ -390,7 +399,7 @@ class ModerationService
       # Ensure UTF-8 encoding
       text = ensure_utf8_encoding(text)
 
-      SUSPICIOUS_PATTERNS.any? { |pattern| pattern.match?(text) }
+      suspicious_patterns.any? { |pattern| pattern.match?(text) }
     end
 
     # Get specific violation details for logging/debugging
@@ -412,7 +421,7 @@ class ModerationService
         collapsed_text = normalized_text.gsub(/(.)\1+/, '\1')
 
         # Check for creative pattern matches using cached regexes
-        CACHED_PROFANITY_REGEXES.each do |bad_word_str, regex|
+        cached_profanity_regexes.each do |bad_word_str, regex|
           if (match_data = regex.match(normalized_text))
             violated_words << "#{match_data[0]} (creative match for: #{bad_word_str})"
           elsif (match_data = regex.match(spaced_text))
@@ -426,15 +435,15 @@ class ModerationService
       end
 
       index = 0
-      while index < PII_PATTERNS.length
-        pattern = PII_PATTERNS[index]
+      while index < pii_patterns.length
+        pattern = pii_patterns[index]
         violations << { type: "pii", pattern_index: index, pattern_type: pii_pattern_type(index) } if pattern.match?(text)
         index += 1
       end
 
       index = 0
-      while index < SPAM_PATTERNS.length
-        pattern = SPAM_PATTERNS[index]
+      while index < spam_patterns.length
+        pattern = spam_patterns[index]
         violations << { type: "spam", pattern_index: index, pattern_type: spam_pattern_type(index) } if pattern.match?(text)
         index += 1
       end
@@ -449,7 +458,7 @@ class ModerationService
         spaced_text = normalized_text.gsub(/[_\-.\s]/, "")
         collapsed_text = normalized_text.gsub(/(.)\1+/, '\1')
 
-        CACHED_SPAM_REGEXES.each do |spam_word_str, regex|
+        cached_spam_regexes.each do |spam_word_str, regex|
           if (match_data = regex.match(normalized_text))
             violated_spam_words << "#{match_data[0]} (creative match for: #{spam_word_str})"
           elsif (match_data = regex.match(spaced_text))
@@ -463,8 +472,8 @@ class ModerationService
       end
 
       index = 0
-      while index < SUSPICIOUS_PATTERNS.length
-        pattern = SUSPICIOUS_PATTERNS[index]
+      while index < suspicious_patterns.length
+        pattern = suspicious_patterns[index]
         violations << { type: "suspicious", pattern_index: index, pattern_type: suspicious_pattern_type(index) } if pattern.match?(text)
         index += 1
       end

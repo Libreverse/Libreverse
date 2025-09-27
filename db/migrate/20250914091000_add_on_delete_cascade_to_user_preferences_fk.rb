@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddOnDeleteCascadeToUserPreferencesFk < ActiveRecord::Migration[8.0]
   def up
     # Only proceed if the FK exists with a different on_delete behavior

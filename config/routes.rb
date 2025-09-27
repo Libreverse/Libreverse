@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Rails.application.routes.draw do
   # CMS Admin routes (secured with Rodauth)
   comfy_route :cms_admin, path: "/cms-admin"

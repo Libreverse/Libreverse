@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateCms < ActiveRecord::Migration[5.2]
   LIMIT = 16_777_215
 

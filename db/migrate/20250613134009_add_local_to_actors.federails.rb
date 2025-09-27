@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from federails (originally 20250301082500)
 class AddLocalToActors < ActiveRecord::Migration[7.0]
   def change

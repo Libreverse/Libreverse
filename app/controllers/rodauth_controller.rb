@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "voight_kampff"
 
 class RodauthController < ApplicationController

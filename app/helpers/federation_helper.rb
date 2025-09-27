@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Helper module for federation-related functionality
 module FederationHelper
   # Check if a domain is a Libreverse instance by calling its discovery endpoint

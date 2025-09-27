@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class VectorSimilarityService
   class << self
     # Calculate cosine similarity between two vectors

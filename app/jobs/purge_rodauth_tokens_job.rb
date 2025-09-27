@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PurgeRodauthTokensJob < ApplicationJob
   queue_as :maintenance
 

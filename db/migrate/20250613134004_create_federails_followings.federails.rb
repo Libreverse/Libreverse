@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This migration comes from federails (originally 20200712143127)
 class CreateFederailsFollowings < ActiveRecord::Migration[7.0]
   def change

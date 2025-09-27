@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateIndexedContentVectors < ActiveRecord::Migration[8.0]
   def change
     create_table :indexed_content_vectors do |t|

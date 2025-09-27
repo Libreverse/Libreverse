@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 =begin
 
 # Rails Initializer for Memory Locking in Phusion Passenger Environments

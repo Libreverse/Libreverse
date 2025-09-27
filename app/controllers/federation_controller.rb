@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Controller for ActivityPub federation endpoints and discovery
 class FederationController < ApplicationController
   before_action :set_activitypub_headers

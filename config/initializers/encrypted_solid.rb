@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Apply Active Record Encryption to SolidCache and SolidCable data.
 # This ensures cached values and ActionCable payloads are stored encrypted
 # at rest, mirroring the protection we added for Rodauth-related tables.

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Filter Sensitive Parameters from Logs
 # See ActiveSupport::ParameterFilter documentation for supported patterns.
 # Credentials and authentication: secret, token, _key, crypt, salt, certificate, otp, ssn

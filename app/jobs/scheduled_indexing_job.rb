@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Background job for running all enabled indexers on a schedule
 class ScheduledIndexingJob < ApplicationJob
   queue_as :default

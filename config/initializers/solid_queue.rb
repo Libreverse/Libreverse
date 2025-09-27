@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Solid Queue runtime tuning and safety for TiDB
 Rails.application.configure do
   # Disable SKIP LOCKED to avoid TiDB protocol errors with locking reads.
@@ -10,7 +8,6 @@ Rails.application.configure do
       Rails.logger.warn("SolidQueue.use_skip_locked setup failed: #{e.class}: #{e.message}")
   end
 end
-# frozen_string_literal: true
 
 # Use the main Rails logger (STDOUT with our custom formatter)
 Rails.application.config.solid_queue.logger = Rails.logger

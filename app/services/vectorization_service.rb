@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class VectorizationService
   # Field weights for different parts of experience content
   FIELD_WEIGHTS = {

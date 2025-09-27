@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Example: Settings Controller with Role-Based Access
 
 class SettingsController < ApplicationController

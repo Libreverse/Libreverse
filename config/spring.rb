@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Spring configuration for Libreverse application
 
 # Watch additional configuration files that should trigger a restart

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IndexingRun < ApplicationRecord
   # JSON serialization for TiDB compatibility (MySQL-compatible distributed database)
   serialize :configuration, coder: JSON

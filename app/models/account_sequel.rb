@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Primary Sequel-backed Account model (authoritative store). ActiveRecord `Account`
 # exists only for libraries that require AR models.
 

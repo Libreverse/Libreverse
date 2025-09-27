@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Custom Inflection Rules
 # Use this block to add or modify inflection rules per locale.
 ActiveSupport::Inflector.inflections(:en) do |inflect|

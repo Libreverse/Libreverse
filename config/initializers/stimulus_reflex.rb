@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # StimulusReflex Configuration
 StimulusReflex.configure do |config|
   # Enable/disable exiting / warning when the sanity checks fail:

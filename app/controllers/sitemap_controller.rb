@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "digest"
 require "stringio"
 
@@ -120,7 +118,9 @@ class SitemapController < ApplicationController
 
   private
 
-  SITEMAP_MUTEX = Mutex.new
+  def self.sitemap_mutex
+    @sitemap_mutex ||= Mutex.new
+  end
 
    def generate_dynamic_sitemap(host)
      Rails.logger.info "Generating dynamic sitemap for host: #{host}"
@@ -131,7 +131,7 @@ class SitemapController < ApplicationController
      original_compress = SitemapGenerator::Sitemap.compress
 
      begin
-      SITEMAP_MUTEX.synchronize do
+      self.class.sitemap_mutex.synchronize do
         Rails.logger.debug "Acquired sitemap mutex lock"
 
         SitemapGenerator::Sitemap.default_host = host

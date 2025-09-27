@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateBlockedDomains < ActiveRecord::Migration[8.0]
   def change
     create_table :blocked_domains do |t|

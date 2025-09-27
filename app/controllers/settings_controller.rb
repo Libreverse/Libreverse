@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SettingsController < ApplicationController
   # Allow both guests and users to access settings (for language, basic preferences)
   before_action :require_authentication

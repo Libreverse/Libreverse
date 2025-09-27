@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # GDPR-Compliant Error Tracking Configuration
 # This configuration minimizes personal data collection while maintaining debugging capability
 Sentry.init do |config|

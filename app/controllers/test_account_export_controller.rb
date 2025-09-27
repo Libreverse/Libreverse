@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 # Test-only minimal implementation of account export to isolate ZIP streaming
 # from authentication, Rodauth constraints, and Vite asset compilation. Loaded

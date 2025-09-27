@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Concern for standardized error handling in indexers
 module ErrorHandler
   extend ActiveSupport::Concern

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Service that constructs a synthetic 2D map layout for metaverse Experiences.
 # Each distinct `metaverse_platform` is treated as a separate "continent" laid out horizontally
 # in a simple CRS coordinate space consumed by Leaflet (using L.CRS.Simple on the frontend).
