@@ -6,7 +6,6 @@ libreverse ai with api calls
 adopt cucumber rails for future tests
 fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin
-selenium +firefox = faster
 move to postgres for cache
 
 - [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
