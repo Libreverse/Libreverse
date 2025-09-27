@@ -1,5 +1,7 @@
 # To-do
 
+also make threading budget controlledly oversubscribe by 10
+
 use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath
 bring in worker killer
 
@@ -18,8 +20,7 @@ middleware.insert_before(
 )
 ```
 
-move to postgres for cache (<https://andyatkinson.com/solid-cache-rails-postgresql>)
-also solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
+solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails for future tests
 make vite split js again
@@ -29,6 +30,7 @@ https://github.com/ruby-next/freezolite
 https://evilmartians.com/opensource/visibility-js
 selenium +firefox = faster
 make redis in the procfile
+make tidb in the procfile too
 
 - [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image

@@ -91,8 +91,8 @@ module LibreverseInstance
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
 
-    # Preload html over the wire with turbo
-    config.middleware.use TurboPreload
+    # Preload html over the wire with turbo - can't decide whether this improves things or not
+    # config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
@@ -110,7 +110,7 @@ module LibreverseInstance
     config.i18n.default_locale = :en
     config.i18n.available_locales = %i[en zh es hi ar pt fr ru de ja]
 
-    # I prefer this. It's just nicer, somehow.
+    # This tends to work better
     config.active_record.schema_format = :ruby
 
     # Email bot configuration using Action Mailbox
