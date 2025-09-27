@@ -553,9 +553,9 @@ The :class attribute may be used in conjunction with an object reference. The co
 
 - user = User.find(1)
   %p[user]{:class => 'alpha bravo'}
-  <p id="user_1" class="alpha bravo user"></p>
-  Doctype: !!!
-  When describing HTML documents with Haml, you can have a document type or XML prolog generated automatically by including the characters !!!. For example:
+      <p id="user_1" class="alpha bravo user"></p>
+      Doctype: !!!
+      When describing HTML documents with Haml, you can have a document type or XML prolog generated automatically by including the characters !!!. For example:
 
 !!! XML
 !!!
