@@ -464,22 +464,34 @@ class BaseIndexer
   def setup_capybara
     return if @capybara_setup
 
-    driver_name = :"#{platform_name}_chrome"
+    driver_name = :"#{platform_name}_firefox"
 
     Capybara.register_driver driver_name do |app|
-      options = Selenium::WebDriver::Chrome::Options.new
+      options = Selenium::WebDriver::Firefox::Options.new
 
       # Be honest about what we are - a legitimate indexer
       options.add_argument("--headless")
-      options.add_argument("--no-sandbox")
-      options.add_argument("--disable-dev-shm-usage")
-      options.add_argument("--disable-gpu")
       options.add_argument("--window-size=1920,1080")
+
+      # Performance optimizations for headless Firefox
+      options.add_argument("--no-remote")
+      options.add_argument("--disable-gpu")
+      options.add_argument("--disable-extensions")
+      options.add_argument("--purgecaches")
+
+      # Firefox preferences for optimization
+      options.add_preference("permissions.default.image", 2)
+      options.add_preference("dom.webnotifications.enabled", false)
+      options.add_preference("network.http.pipelining", true)
+      options.add_preference("layers.acceleration.disabled", true)
+      options.add_preference("javascript.options.mem.gc_incremental", false)
+      options.add_preference("media.autoplay.default", 5)
+      options.add_preference("privacy.trackingprotection.enabled", true)
 
       # Set a proper user agent that identifies this specific instance
       options.add_argument("--user-agent=#{libreverse_user_agent}")
 
-      Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+      Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
     end
 
     Capybara.default_max_wait_time = config.fetch("timeout") { 30 }.to_i
