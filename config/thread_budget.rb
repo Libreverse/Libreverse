@@ -37,7 +37,7 @@ module ThreadBudget
         end
 
         def compute
-                total = total_threads
+                total = total_threads * 10
                 pct   = percentages
 
                 # Convert percentages to integer thread counts, rounding down for safety
