@@ -6,6 +6,7 @@ ue = "ue"
 thr = "thr"
 lod = "lod"
 LOD = "LOD"
+metalness = "metalness"
 
 [files]
 extend-exclude = [

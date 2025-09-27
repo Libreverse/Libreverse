@@ -103,6 +103,19 @@ module LibreverseInstance
       ]
     }
 
+    require "worker_killer/middleware"
+
+    killer = WorkerKiller::Killer::Passenger.new
+
+    middleware.insert_before(
+      Rack::Runtime,
+      WorkerKiller::Middleware::OOMLimiter,
+      killer: killer,
+      min: 2_516_582_400, # 2.4GB in bytes
+      max: 2_724_659_200, # 2.6GB in bytes
+      check_cycle: 16     # check every 16 requests (default is fine)
+    )
+
     # Add this to make prod healthcheck pass correctly
     config.hosts << "localhost:3000"
 

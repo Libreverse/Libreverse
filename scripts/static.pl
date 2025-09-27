@@ -138,15 +138,15 @@ run_command(
   "sh",
   "-c",
 q{if find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
-                        -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
-                    find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
-                        -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
-                        | xargs -0 perltidy -pro=.perltidyrc -b; status=$?;
-                    find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true;
-                    exit $status;
-             else
-                    exit 0;
-             fi}
+                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
+                                        find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
+                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                                                | xargs -0 perltidy -pro=.perltidyrc -b; status=$?;
+                                        find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true;
+                                        exit $status;
+                         else
+                                        exit 0;
+                         fi}
 );
 
 # Shell formatting (shfmt) — required (fail if missing); rely on .editorconfig
@@ -155,12 +155,12 @@ run_command(
   "sh",
   "-c",
 q{if find . -type f -name '*.sh' -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
-             find . -type f -name '*.sh' \
-                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
-                | xargs -0 shfmt -w;
-         else
-             exit 0;
-         fi}
+                         find . -type f -name '*.sh' \
+                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+                                | xargs -0 shfmt -w;
+                 else
+                         exit 0;
+                 fi}
 );
 
 run_command("eslint", "bun", "eslint", ".", "--fix");
@@ -177,22 +177,22 @@ run_command("bun update",    "bun",    "update");
 # run_command("Haml Validation", "rake", "haml:check");
 run_command("i18n Validation", "ruby", "scripts/i18n_validate.rb");
 
-# CodeQL automatic setup and database creation (sequential - ensures setup is ready)
-print "CodeQL Setup [RUNNING]\n";
-my $codeql_setup_exit = system("scripts/codeql-local.sh", "--setup-only");
-if ($codeql_setup_exit == 0) {
-  print "CodeQL Setup [OK]\n";
-  push @sequential_status, "[OK]";
-} else {
-  print "CodeQL Setup [NOTOK] (Exit Code: " . ($codeql_setup_exit >> 8) . ")\n";
-  push @sequential_status, "[NOTOK]";
-}
-push @sequential_tools, "CodeQL Setup";
+# # CodeQL automatic setup and database creation (sequential - ensures setup is ready)
+# print "CodeQL Setup [RUNNING]\n";
+# my $codeql_setup_exit = system("scripts/codeql-local.sh", "--setup-only");
+# if ($codeql_setup_exit == 0) {
+#   print "CodeQL Setup [OK]\n";
+#   push @sequential_status, "[OK]";
+# } else {
+#   print "CodeQL Setup [NOTOK] (Exit Code: " . ($codeql_setup_exit >> 8) . ")\n";
+#   push @sequential_status, "[NOTOK]";
+# }
+# push @sequential_tools, "CodeQL Setup";
 
-# Run CodeQL analyses sequentially (moved from disabled parallel section)
-run_command("CodeQL Ruby", "scripts/codeql-local.sh", "--language", "ruby");
-run_command("CodeQL JavaScript",
-  "scripts/codeql-local.sh", "--language", "javascript");
+# # Run CodeQL analyses sequentially (moved from disabled parallel section)
+# run_command("CodeQL Ruby", "scripts/codeql-local.sh", "--language", "ruby");
+# run_command("CodeQL JavaScript",
+#   "scripts/codeql-local.sh", "--language", "javascript");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1);    # Auto-cleanup

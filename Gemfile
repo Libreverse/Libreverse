@@ -126,3 +126,5 @@ group :test do
   gem "mocha"
   gem "mysql2"
 end
+
+gem "worker_killer", "~> 1.1"

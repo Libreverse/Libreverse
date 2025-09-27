@@ -35,7 +35,7 @@ class TurboPreload
         [ status, headers, [ modified_body ] ]
     end
 
-    private
+  private
 
     def html_response?(headers)
         headers["Content-Type"]&.include?("text/html")
@@ -79,6 +79,7 @@ class TurboPreload
     def dynamic_route?(href)
         # Ignore any URL containing '/display' anywhere in it
         return true if href.include?("/display")
+
         # Customize this to match your dynamic routes (e.g., user-specific, carts, etc.)
         %w[/cart /login /profile /checkout /api /export].any? { |pattern| href.match?(pattern) }
     end

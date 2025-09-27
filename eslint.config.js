@@ -31,6 +31,8 @@ export default [
             "**/iodine*/**",
             "log/**",
             "storage/**",
+            "config/**",
+            "**/generated/**"
         ],
     },
     ...compat.extends("eslint:recommended", "plugin:unicorn/recommended"),

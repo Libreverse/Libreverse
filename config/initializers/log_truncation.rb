@@ -5,7 +5,7 @@ require "active_support/logger"
 require "active_support/tagged_logging"
 
 module LogFormatting
-  DEFAULT_OMISSION = "…(truncated)".freeze
+  DEFAULT_OMISSION = "…(truncated)"
 
   class << self
     attr_reader :max_message_length, :omission
@@ -41,7 +41,7 @@ module LogFormatting
     end
 
     def default_length
-      return 2000
+      2000
     end
 
     def update_rails_configuration!
@@ -82,10 +82,6 @@ end
 
 LogFormatting::FormatterPrepend.prepend_truncation!(Logger::Formatter)
 
-if defined?(ActiveSupport::Logger::SimpleFormatter)
-  LogFormatting::FormatterPrepend.prepend_truncation!(ActiveSupport::Logger::SimpleFormatter)
-end
+LogFormatting::FormatterPrepend.prepend_truncation!(ActiveSupport::Logger::SimpleFormatter) if defined?(ActiveSupport::Logger::SimpleFormatter)
 
-if defined?(ActiveSupport::TaggedLogging::Formatter)
-  LogFormatting::FormatterPrepend.prepend_truncation!(ActiveSupport::TaggedLogging::Formatter)
-end
+LogFormatting::FormatterPrepend.prepend_truncation!(ActiveSupport::TaggedLogging::Formatter) if defined?(ActiveSupport::TaggedLogging::Formatter)

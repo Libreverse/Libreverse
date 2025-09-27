@@ -7,7 +7,7 @@
 require "etc"
 
 module ThreadBudget
-    module_function
+  module_function
 
         def total_threads
                 # Use logical processors; safe default of 2
@@ -28,9 +28,9 @@ module ThreadBudget
                 # Normalize if sum > 100 or 0
                 sum = 100 if sum <= 0
                 {
-                    app: (app_pct * 100.0 / sum),
-                    sqlite: (sqlite_pct * 100.0 / sum),
-                    sq: (sq_pct * 100.0 / sum)
+                  app: (app_pct * 100.0 / sum),
+                  sqlite: (sqlite_pct * 100.0 / sum),
+                  sq: (sq_pct * 100.0 / sum)
                 }
         rescue StandardError
                 { app: 50.0, sqlite: 30.0, sq: 10.0 }
@@ -66,15 +66,15 @@ module ThreadBudget
                                 nginx_workers   = [ web_total - passenger_procs, 1 ].max
 
                 {
-                    total: total,
-                    app_threads: app_threads,
-                    sqlite_threads: sqlite_threads,
-                    sq_total_threads: sq_total,
-                    sq_processes: sq_processes,
-                    sq_threads_per_process: sq_threads_per_proc,
-                    web_total: web_total,
-                    passenger_procs: passenger_procs,
-                    nginx_workers: nginx_workers
+                  total: total,
+                  app_threads: app_threads,
+                  sqlite_threads: sqlite_threads,
+                  sq_total_threads: sq_total,
+                  sq_processes: sq_processes,
+                  sq_threads_per_process: sq_threads_per_proc,
+                  web_total: web_total,
+                  passenger_procs: passenger_procs,
+                  nginx_workers: nginx_workers
                 }
         end
 
@@ -98,19 +98,19 @@ module ThreadBudget
         def details
                 b = compute
                 {
-                    total_threads: b[:total],
-                    app: { threads: b[:app_threads] },
-                    sqlite: { threads: b[:sqlite_threads] },
-                    web: {
-                        total: b[:web_total],
-                        passenger_procs: b[:passenger_procs],
-                        nginx_workers: b[:nginx_workers]
-                    },
-                    solid_queue: {
-                        total_threads: b[:sq_total_threads],
-                        processes: b[:sq_processes],
-                        threads_per_process: b[:sq_threads_per_process]
-                    }
+                  total_threads: b[:total],
+                  app: { threads: b[:app_threads] },
+                  sqlite: { threads: b[:sqlite_threads] },
+                  web: {
+                    total: b[:web_total],
+                    passenger_procs: b[:passenger_procs],
+                    nginx_workers: b[:nginx_workers]
+                  },
+                  solid_queue: {
+                    total_threads: b[:sq_total_threads],
+                    processes: b[:sq_processes],
+                    threads_per_process: b[:sq_threads_per_process]
+                  }
                 }
         end
 
@@ -145,4 +145,3 @@ module ThreadBudget
 end
 
 ThreadBudget.export_env!
-

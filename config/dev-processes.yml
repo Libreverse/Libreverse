@@ -1,12 +1,12 @@
 # This is just a procfile named differently
-phusion-passenger: cd .. && bash scripts/wait_for_db.sh RUBYOPT="--yjit --yjit-exec-mem-size=10 --yjit-mem-size=15 --yjit-call-threshold=1 --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2
+phusion-passenger: cd .. && bash scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2
 vite: cd .. && sleep 0.5 && bin/vite dev
 shakapacker-asset-server: cd .. && bin/shakapacker-dev-server
 shapakacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
 shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
-solid-queue: cd .. && bash scripts/wait_for_db.sh RUBYOPT="--yjit --yjit-exec-mem-size=10 --yjit-mem-size=15 --yjit-call-threshold=1" bundle exec bin/jobs > /dev/null 2>&1
+solid-queue: cd .. && bash scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc" bundle exec bin/jobs > /dev/null 2>&1
 mailhog: cd .. && mailhog
 tidb: docker run -p 4000:4000 --rm --name libreverse-dev-tidb pingcap/tidb:latest > /dev/null 2>&1
-rails-db-creator: cd .. && sleep 0.5 && RUBYOPT="--yjit --yjit-exec-mem-size=10 --yjit-mem-size=15 --yjit-call-threshold=1" bin/rails db:create db:migrate db:seed && touch /tmp/.db_creator_done.txt && sleep 3 && rm /tmp/.db_creator_done.txt > /dev/null 2>&1
-startup-message: cd .. && perl scripts/startup_message.pl
-detaching-dragonflydb: docker run -p 6379:6379 --detach --name libreverse-dev-detached-dragonflydb --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly > /dev/null 2>&1
+rails-db-creator: cd .. && sleep 0.5 && RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc" bin/rails db:create db:migrate db:seed && touch /tmp/.db_creator_done.txt && sleep 3 && rm /tmp/.db_creator_done.txt > /dev/null 2>&1 && echo "This process has done the one time task it needs to do. Exit code zero and overmind continuing is normal."
+startup-message: cd .. && perl scripts/startup_message.pl && echo "This process has done the one time task it needs to do. Exit code zero and overmind continuing is normal."
+dragonflydb: if ! nc -z localhost 6379 2>/dev/null; then docker run -p 6379:6379 --detach --name libreverse-dev-detached-dragonflydb --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly > /dev/null 2>&1; fi && echo "DragonflyDB detached or already running. Exit code zero and overmind continuing is normal."
