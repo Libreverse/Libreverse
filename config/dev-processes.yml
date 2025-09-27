@@ -1,10 +1,12 @@
 # This is just a procfile named differently
-web: cd .. && bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2 --min-instances=2
-vite: cd .. && bin/vite dev
-webpack-code-server: cd .. && bin/shakapacker-dev-server
-webpack-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
-webpack-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
-solid-queue: cd .. && sleep 10 && bundle exec bin/jobs
+phusion-passenger: cd .. && bash scripts/wait_for_db.sh RUBYOPT="--yjit --yjit-exec-mem-size=10 --yjit-mem-size=15 --yjit-call-threshold=1 --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2
+vite: cd .. && sleep 0.5 && bin/vite dev
+shakapacker-asset-server: cd .. && bin/shakapacker-dev-server
+shapakacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
+shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
+solid-queue: cd .. && bash scripts/wait_for_db.sh RUBYOPT="--yjit --yjit-exec-mem-size=10 --yjit-mem-size=15 --yjit-call-threshold=1" bundle exec bin/jobs > /dev/null 2>&1
 mailhog: cd .. && mailhog
-tidb: docker run -p 4000:4000 --rm --name tidb pingcap/tidb:latest > /dev/null 2>&1
-rails-db-creator: cd .. && bin/rails db:create db:migrate db:seed
+tidb: docker run -p 4000:4000 --rm --name libreverse-dev-tidb pingcap/tidb:latest > /dev/null 2>&1
+rails-db-creator: cd .. && sleep 0.5 && RUBYOPT="--yjit --yjit-exec-mem-size=10 --yjit-mem-size=15 --yjit-call-threshold=1" bin/rails db:create db:migrate db:seed && touch /tmp/.db_creator_done.txt && sleep 3 && rm /tmp/.db_creator_done.txt > /dev/null 2>&1
+startup-message: cd .. && perl scripts/startup_message.pl
+detaching-dragonflydb: docker run -p 6379:6379 --detach --name libreverse-dev-detached-dragonflydb --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly > /dev/null 2>&1

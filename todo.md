@@ -1,8 +1,9 @@
 # To-do
 
-also make threading budget controlledly oversubscribe by 10
+add redis-alpine to dev procfile
 
 use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath
+
 bring in worker killer
 
 ```ruby
