@@ -103,9 +103,8 @@ group :development, :test do
   gem "debug"
   gem "dotenv-rails"
   gem "listen"
-  gem 'spring-commands-rubocop'
-  gem 'parallel_tests'
-  gem 'spring-commands-parallel-tests'
+  gem "parallel_tests"
+  gem "spring-commands-parallel-tests"
 end
 
 group :development do
