@@ -8,6 +8,7 @@ begin
   class AccountSequel < Sequel::Model(:accounts)
     plugin :timestamps, update_on_create: true
     plugin :validation_helpers
+    plugin :instance_hooks
 
     one_to_many :user_preferences, key: :account_id, dependent: :delete
     one_to_many :experiences, key: :account_id

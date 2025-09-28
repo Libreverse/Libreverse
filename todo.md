@@ -6,8 +6,6 @@ adopt cucumber rails for future tests
 fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin
 move to postgres for cache
-paralell-test gem with spring integration
-also rubocop spring integration
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
