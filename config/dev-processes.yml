@@ -1,12 +1,12 @@
 # This is just a procfile named differently
-phusion-passenger: cd .. && perl scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=2
-vite: cd .. && sleep 0.5 && bin/vite dev | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g'
+phusion-passenger: cd .. && perl scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=10
+vite: cd .. && perl scripts/wait_for_db.pl bin/rails runner '' && bin/vite dev | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g'
 shakapacker-asset-server: cd .. && bin/shakapacker-dev-server
-shapakacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
+shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
 shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
 solid-queue: cd .. && perl scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc" bundle exec bin/jobs > /dev/null 2>&1
-mailhog: cd .. && mailhog
-tidb: docker rm -f libreverse-dev-tidb > /dev/null 2>&1; docker run -p 4000:4000 --rm --name libreverse-dev-tidb pingcap/tidb:latest > /dev/null 2>&1
-rails-db-creator: cd .. && sleep 0.5 && RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc" bin/rails db:create db:migrate db:seed && counter=0; basefile="/tmp/.db_creator_done"; filename="${basefile}.txt"; while [ -f "$filename" ]; do counter=$((counter+1)); filename="${basefile}_${counter}.txt"; done && touch "$filename" && sleep 3 && rm "$filename" > /dev/null 2>&1 && echo "This process has done the one time task it needs to do. Exit code zero and overmind continuing is normal."
+mailhog: cd .. && mailhog | grep -v "\[APIv1\] KEEPALIVE /api/v1/events"
+tidb: docker run -p 4000:4000 --rm --name libreverse-dev-tidb pingcap/tidb:latest > /dev/null 2>&1
+rails-db-creator: cd .. && while ! nc -z localhost 4000 2>/dev/null; do sleep 1; done && RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc" bin/rails db:create db:migrate db:seed && counter=0; basefile="/tmp/.db_creator_done"; filename="${basefile}.txt"; while [ -f "$filename" ]; do counter=$((counter+1)); filename="${basefile}_${counter}.txt"; done && touch "$filename" && sleep 3 && rm "$filename" > /dev/null 2>&1 && echo "This process has done the one time task it needs to do. Exit code zero and overmind continuing is normal."
 startup-message: cd .. && perl scripts/startup_message.pl && echo "This process has done the one time task it needs to do. Exit code zero and overmind continuing is normal."
 dragonflydb-detached: if ! nc -z localhost 6379 2>/dev/null; then docker run -p 6379:6379 --detach --name libreverse-dev-detached-dragonflydb --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly > /dev/null 2>&1; fi && echo "This process has done the one time task it needs to do. Exit code zero and overmind continuing is normal."
