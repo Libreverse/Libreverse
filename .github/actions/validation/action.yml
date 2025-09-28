@@ -6,8 +6,8 @@ runs:
     steps:
         - name: Run Haml validation
           shell: bash
-          run: bundle exec rake haml:check
+          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bundle exec rake haml:check
 
         - name: Run i18n validation
           shell: bash
-          run: bundle exec rake i18n:validate_keys
+          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bundle exec rake i18n:validate_keys

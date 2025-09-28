@@ -28,10 +28,11 @@ runs:
               upload: ${{ inputs.upload-results }}
               output: sarif-results
 
-        - name: Upload CodeQL results as artifact
-          if: inputs.upload-results == 'false'
-          uses: actions/upload-artifact@v4
-          with:
-              name: codeql-results-${{ inputs.language }}
-              path: sarif-results
-              retention-days: 30
+        - name: Fail if CodeQL found issues
+          shell: bash
+          run: |
+              sarif_file=$(find sarif-results -name "*.sarif" | head -1)
+              if [ -n "$sarif_file" ] && jq -e '.runs[0].results | length > 0' "$sarif_file" > /dev/null 2>&1; then
+                echo "CodeQL found security issues"
+                exit 1
+              fi
