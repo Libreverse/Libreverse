@@ -6,20 +6,15 @@ runs:
     steps:
         - name: Run Prettier
           shell: bash
-          run: |
-              set -e
-              timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
-                echo "Prettier failed or timed out, but continuing..."
-                exit 0
-              }
+          run:  bun prettier --write . --ignore-path .prettierignore --log-level warn
 
         - name: Run Rubocop
           shell: bash
-          run: bundle exec rubocop -A
+          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bin/rubocop -A
 
         - name: Run haml-lint
           shell: bash
-          run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
+          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
 
         - name: Run ESLint
           shell: bash

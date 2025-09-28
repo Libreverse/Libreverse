@@ -17,8 +17,4 @@ runs:
         - name: Run Rails tests
           if: inputs.test-suite == 'rails-test'
           shell: bash
-          run: |
-              echo "Setting up test database..."
-              RAILS_ENV=test bundle exec rails db:test:prepare
-              echo "Running Rails tests..."
-              bundle exec rails test
+          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' RAILS_ENV=test bundle exec rails db:test:prepare && RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bin/parallel_test

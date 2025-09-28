@@ -48,32 +48,22 @@ jobs:
             - name: Run Prettier
               if: matrix.tool == 'prettier'
               shell: bash
-              run: |
-                  set -e
-                  timeout 60s bun prettier --write . --ignore-path .prettierignore --log-level warn || {
-                  echo "Prettier failed or timed out, but continuing..."
-                  exit 0
-                  }
+              run: bun prettier --write . --ignore-path .prettierignore --log-level warn
 
             - name: Run Rubocop
               if: matrix.tool == 'rubocop'
               shell: bash
-              run: bundle exec rubocop -A
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bin/rubocop -A
 
             - name: Run haml-lint
               if: matrix.tool == 'haml-lint'
               shell: bash
-              run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bundle exec haml-lint --auto-correct
 
             - name: Run ERB Formatter
               if: matrix.tool == 'erb-format'
               shell: bash
-              run: |
-                  set -euo pipefail
-                  # Exclude problematic template that crashes erb-formatter
-                  find app -type f -name '*.erb' \
-                    -not -path 'app/views/layouts/mailer.html.erb' -print0 \
-                    | xargs -0 -r bundle exec erb-format --write
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bundle exec erb-format --write
 
             - name: Run perltidy
               if: matrix.tool == 'perltidy'
@@ -141,12 +131,12 @@ jobs:
             - name: Run i18n validation
               if: matrix.tool == 'i18n-validation'
               shell: bash
-              run: ruby scripts/i18n_validate.rb
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' ruby scripts/i18n_validate.rb
 
             - name: Run ERB Lint
               if: matrix.tool == 'erb-lint'
               shell: bash
-              run: bundle exec erblint --config .erb-lint.yml app/views
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc' bundle exec erblint --config .erb-lint.yml app/views
 
             - name: Run Hadolint
               if: matrix.tool == 'hadolint'
@@ -169,8 +159,6 @@ jobs:
                         brakeman,
                         bundle-audit,
                         npm-audit,
-                        # codeql-ruby,     # Temporarily disabled
-                        # codeql-javascript, # Temporarily disabled
                     ]
 
         steps:
@@ -186,19 +174,6 @@ jobs:
               uses: ./.github/actions/security-analysis
               with:
                   tool: ${{ matrix.tool }}
-
-            # Temporarily disabled CodeQL steps
-            # - name: Run CodeQL Analysis (Ruby)
-            #   if: matrix.tool == 'codeql-ruby'
-            #   uses: ./.github/actions/codeql-analysis
-            #   with:
-            #       language: ruby
-
-            # - name: Run CodeQL Analysis (JavaScript)
-            #   if: matrix.tool == 'codeql-javascript'
-            #   uses: ./.github/actions/codeql-analysis
-            #   with:
-            #       language: javascript-typescript
 
     # Code quality analysis (runs in parallel)
     code-quality:
