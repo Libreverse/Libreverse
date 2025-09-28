@@ -1,13 +1,14 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use File::Glob 'bsd_glob';
 
-# Kill any existing Overmind processes
 system('pkill overmind > /dev/null 2>&1');
 system('cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1');
-
-# Attempt to remove the Overmind socket file, ignoring if it doesn't exist
+system('docker rm -f libreverse-dev-tidb > /dev/null 2>&1; ');
+system('fuser -k -TERM 3000/tcp > /dev/null 2>&1');
 unlink '/tmp/.overmind.sock';
+system('cd .. && spring stop > /dev/null 2>&1');
 
 # Set environment variables for Overmind
 $ENV{OVERMIND_SOCKET}        = '/tmp/.overmind.sock';
@@ -15,6 +16,16 @@ $ENV{OVERMIND_TMUX_CONFIG}   = '/config/overmind-tmux.conf';
 $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
 $ENV{OVERMIND_CAN_DIE}       = 'rails-db-creator, startup-message, dragonflydb-detached';
+
+# Fork the overmind watcher
+my $watcher_pid = fork();
+if ($watcher_pid == 0) {
+    # Watcher process
+    waitpid(getppid(), 0);  # Wait for parent (overmind) to exit
+    sleep(0.2);             # Wait 0.2 seconds
+    system('pkill ruby > /dev/null 2>&1');  # Kill all ruby processes
+    exit(0);
+}
 
 # Start Overmind with the specified process file and any additional arguments
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

@@ -32,3 +32,8 @@
 .turbo-submitting {
     pointer-events: none;
 }
+
+.turbo-progress-bar {
+    display: none !important;
+    will-change: width, opacity;
+}

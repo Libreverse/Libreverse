@@ -1,17 +1,15 @@
 # To-do
 
-use edge for all gems that allow it to force bundler to build stuff use -fno-fastmath
 solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
 libreverse ai with api calls
 adopt cucumber rails for future tests
 fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin
 move to postgres for cache
+paralell-test gem with spring integration
+also rubocop spring integration
 
-- [ ] (feature) Add libreverse metaverse 3d experience picker where you pick by clicking blocks. base it on the libreverse 3d experience template
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
-- [ ] (feature) Replace locotmotive scroll with lenis
-
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (feature) Clear up attribution for images
 
@@ -33,10 +31,8 @@ move to postgres for cache
 
 ## JavaScript Optimizations
 
-- [ ] (feature) Implement Macro Expansion: Evaluate build-time macros to inline or transform code at compile time
 - [ ] (feature) Integrate babel-plugin-fast-async: Compile async/await to efficient Promises via Nodent
 - [ ] (feature) Integrate babel-plugin-transform-for-of: Optimize for-of to for loops on arrays
-- [ ] (feature) Integrate babel-plugin-macros: Enable build-time transformations for custom macros
 - [ ] (feature) Integrate babel-react-optimize preset: Inline elements, constants, remove propTypes in production
 - [ ] (feature) Integrate babel-plugin-transform-react-constant-elements: Hoist static JSX to constants
 - [ ] (feature) Integrate babel-plugin-transform-react-inline-elements: Inline simple JSX to skip createElement calls
