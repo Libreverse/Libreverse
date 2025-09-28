@@ -9,8 +9,7 @@ use Cwd        qw(abs_path);
 use IPC::Open3;
 use Symbol qw(gensym);
 
-# Arrays to store status for the (now removed) summary
-# We keep them to track status internally if needed later, but don't display summary
+# Arrays to store status for internal tracking
 my @sequential_status;
 my @sequential_tools;
 my @parallel_tools;
@@ -20,6 +19,9 @@ my @parallel_status;
 my @pids;
 
 print "Running static analysis tasks...\n";
+
+# Define RUBYOPT for reuse
+my $rubyopt = "--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc";
 
 # --- Sequential Tasks --- Function to run and check command
 sub run_command {
@@ -44,8 +46,6 @@ sub run_command {
   }
 
   # Read output from both handles
-  # This simple read assumes output is not excessively large and won't deadlock
-  # More complex scenarios might require non-blocking reads or select()
   my $stdout_content = do { local $/; <$stdout_fh> };
   my $stderr_content = do { local $/; <$stderr_fh> };
   push @output, $stdout_content if defined $stdout_content;
@@ -57,11 +57,9 @@ sub run_command {
 
   if ($exit_code != 0) {
     print "$tool_name [NOTOK] (Exit Code: $exit_code)\n";
-    # Only print output if there was any captured
     if (@output) {
       print "--- Output for $tool_name ---\n";
-      print @output;    # Print combined STDOUT and STDERR
-                        # Ensure newline if output doesn't end with one
+      print @output;
       print "\n" unless $output[-1] =~ /\n$/;
       print "--- End Output for $tool_name ---\n";
     }
@@ -73,7 +71,7 @@ sub run_command {
   push @sequential_status, $status;
 }
 
-# Run Prettier first
+# Run Prettier first (without timeout)
 my $prettier_tool_name = "Prettier";
 push @sequential_tools, $prettier_tool_name;
 my $prettier_status = "[OK]";
@@ -83,9 +81,7 @@ my $prettier_cmd = ["bun", "prettier", "--write", "."];
 my $prettier_exit_code;
 my @prettier_raw_output;
 
-# Set timeout using Perl's alarm (basic timeout)
-local $SIG{ALRM} = sub { die "Prettier timeout\n" };
-alarm(30);    # 30 second timeout
+# Removed alarm timeout
 eval {
   open(my $prettier_out_fh, "-|", @$prettier_cmd)
     or die "Failed to run Prettier: $!";
@@ -93,11 +89,10 @@ eval {
   close $prettier_out_fh;
   $prettier_exit_code = $? >> 8;
 };
-alarm(0);     # Cancel alarm
 
-if ($@) {    # Check if eval died (e.g., timeout or execution failure)
+if ($@) {
   warn "$@";
-  $prettier_exit_code = 1;    # Mark as failed
+  $prettier_exit_code = 1;
 }
 
 # Filter output
@@ -120,26 +115,25 @@ push @sequential_status, $prettier_status;
 # Run scripts/remove_frozen.pl before Rubocop
 run_command("Remove Frozen", "perl", "scripts/remove_frozen.pl");
 
-# Run other sequential commands
-run_command("Rubocop", "bundle", "exec", "rubocop", "-A");
+# Run other sequential commands with RUBYOPT for Ruby commands
+run_command("Rubocop", "sh", "-c",
+  "RUBYOPT='$rubyopt' bin/rubocop -A");
+
 run_command("HAML Whitespace Cleanup", "sh", "-c",
-"find . -name '*.haml' -not -path './node_modules/*' -not -path './.git/*' -exec sed -i '' 's/[[:space:]]*\$//' {} +"
-);
-run_command("haml-lint", "bundle", "exec", "haml-lint", "--auto-correct", ".");
+  "find . -name '*.haml' -not -path './node_modules/*' -not -path './.git/*' -exec sed -i '' 's/[[:space:]]*\$//' {} +");
 
-# New: ERB formatting and linting (guarded)
+run_command("haml-lint", "sh", "-c",
+  "RUBYOPT='$rubyopt' bundle exec haml-lint --auto-correct .");
+
+# ERB formatting and linting with RUBYOPT
 run_command("ERB Format", "sh", "-c",
-"command -v bundle >/dev/null && bundle exec erb-format --help >/dev/null 2>&1 && find app -name '*.erb' -not -path 'app/views/layouts/mailer.html.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true"
-);
-run_command("ERB Lint", "sh", "-c",
-"command -v bundle >/dev/null && bundle exec erblint --version >/dev/null 2>&1 && bundle exec erblint --config .erb-lint.yml app/views || true"
-);
+  "command -v bundle >/dev/null && bundle exec erb-format --help >/dev/null 2>&1 && RUBYOPT='$rubyopt' find app -name '*.erb' -not -path 'app/views/layouts/mailer.html.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true");
 
-run_command(
-  "Perltidy",
-  "sh",
-  "-c",
-q{if find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
+run_command("ERB Lint", "sh", "-c",
+  "command -v bundle >/dev/null && bundle exec erblint --version >/dev/null 2>&1 && RUBYOPT='$rubyopt' bundle exec erblint --config .erb-lint.yml app/views || true");
+
+run_command("Perltidy", "sh", "-c",
+  q{if find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
                      -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
     find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) \
            -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
@@ -147,68 +141,37 @@ q{if find . -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.p
     exit $?;
 else
     exit 0;
-fi}
-);
-# Shell formatting (shfmt) — required (fail if missing); rely on .editorconfig
-run_command(
-  "shfmt",
-  "sh",
-  "-c",
-q{if find . -type f -name '*.sh' -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
-                                                 find . -type f -name '*.sh' \
-                                                                -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
-                                                                | xargs -0 shfmt -w;
-                                 else
-                                                 exit 0;
-                                 fi}
-);
+fi});
+
+run_command("shfmt", "sh", "-c",
+  q{if find . -type f -name '*.sh' -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print -quit | grep -q .; then
+    find . -type f -name '*.sh' \
+           -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' -print0 \
+           | xargs -0 shfmt -w;
+else
+    exit 0;
+fi});
 
 run_command("eslint", "bun", "eslint", ".", "--fix");
+
 run_command("Stylelint", "sh", "-c", "bun stylelint '**/*.scss' --fix");
+
 run_command("Coffeelint Fix", "sh", "-c",
-"command -v bun >/dev/null && bun coffeelint --help >/dev/null 2>&1 && find . -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true"
-);
+  "command -v bun >/dev/null && bun coffeelint --help >/dev/null 2>&1 && find . -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true");
+
 run_command("markdownlint", "sh", "-c",
-"bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc"
-);
-run_command("bundle update", "bundle", "update");
-run_command("bun update",    "bun",    "update");
-# Remove manual Haml Validation and replace i18n validation
-# run_command("Haml Validation", "rake", "haml:check");
-run_command("i18n Validation", "ruby", "scripts/i18n_validate.rb");
+  "bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc");
 
-# Run hadolint for Dockerfile linting
-run_command("hadolint", "sh", "-c",
-  "command -v hadolint >/dev/null && hadolint Dockerfile");
+run_command("bundle update", "sh", "-c",
+  "RUBYOPT='$rubyopt' bundle update");
 
-# # CodeQL automatic setup and database creation (sequential - ensures setup is ready)
-# print "CodeQL Setup [RUNNING]\n";
-# my $codeql_setup_exit = system("scripts/codeql-local.sh", "--setup-only");
-# if ($codeql_setup_exit == 0) {
-#   print "CodeQL Setup [OK]\n";
-#   push @sequential_status, "[OK]";
-# } else {
-#   print "CodeQL Setup [NOTOK] (Exit Code: " . ($codeql_setup_exit >> 8) . ")\n";
-#   push @sequential_status, "[NOTOK]";
-# }
-# push @sequential_tools, "CodeQL Setup";
+run_command("bun update", "bun", "update");
 
-# # Run CodeQL analyses sequentially (moved from disabled parallel section)
-# run_command("CodeQL Ruby", "scripts/codeql-local.sh", "--language", "ruby");
-# run_command("CodeQL JavaScript",
-#   "scripts/codeql-local.sh", "--language", "javascript");
+run_command("i18n Validation", "sh", "-c",
+  "RUBYOPT='$rubyopt' ruby scripts/i18n_validate.rb");
 
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1);    # Auto-cleanup
-# print "(Storing parallel task logs in $log_dir)\n";
-
-# Use a hash for storing PIDs and related info
-my %child_info;
-
-# END block for cleanup (though File::Temp handles the dir)
-END {
-  # print "Cleaning up temporary log directory: $log_dir\n";
-}
 
 # Function to run a command in the background and log output
 sub run_in_background {
@@ -236,7 +199,6 @@ sub run_in_background {
     print STDOUT "--- $tool_name Results ---\n";
     print STDOUT "--------------------------------------------------\n";
 
-    # Use system for simplicity, exec is also an option
     system(@cmd);
     my $child_exit_code = $? >> 8;
 
@@ -245,14 +207,14 @@ sub run_in_background {
       "--- End of $tool_name Results (Exit Code: $child_exit_code) ---\n";
     print STDOUT "--------------------------------------------------\n";
 
-    exit $child_exit_code;    # Exit child with the command's exit code
+    exit $child_exit_code;
   }
   # Parent process
   $pids[$tool_index] = $pid;
 }
 
 # --- Define and run parallel commands ---
-@parallel_tools = ("Fasterer", "Typos", "Jest", "Brakeman", "Rails Tests");
+@parallel_tools = ("Fasterer", "Typos", "Jest", "Brakeman", "Rails Tests", "hadolint");
 my $num_tools = scalar @parallel_tools;
 
 for my $i (0 .. $num_tools - 1) {
@@ -262,10 +224,7 @@ for my $i (0 .. $num_tools - 1) {
 
   my @cmd;
   if ($tool_name eq "Fasterer") {
-    @cmd = ("fasterer");
-  } elsif ($tool_name eq "UNUSED_PLACEHOLDER")
-  {    # placeholder to keep elsif structure consistent if needed later
-    @cmd = ("true");
+    @cmd = ("sh", "-c", "RUBYOPT='$rubyopt' fasterer");
   } elsif ($tool_name eq "Typos") {
     @cmd = ("typos");
   } elsif ($tool_name eq "Jest") {
@@ -275,20 +234,19 @@ for my $i (0 .. $num_tools - 1) {
     );
   } elsif ($tool_name eq "Brakeman") {
     @cmd = (
-      "brakeman", "-A",           "--except", "WeakHash",
-      "--quiet",  "--no-summary", "--no-pager"
+      "sh", "-c",
+      "RUBYOPT='$rubyopt' brakeman -A --except WeakHash --quiet --no-summary --no-pager"
     );
   } elsif ($tool_name eq "Rails Tests") {
-    # Prefer RSpec if spec directory exists, else use rails test
     @cmd = (
-      'sh', '-c',
-"if [ -d spec ]; then bundle exec rspec --format progress --color; else bundle exec rails test; fi"
+      "sh", "-c",
+      "RUBYOPT='$rubyopt' bin/parallel_test"
     );
-# TEMPORARILY DISABLED - CodeQL local analysis needs fixes
-# } elsif ($tool_name eq "CodeQL Ruby") {
-#     @cmd = ("scripts/codeql-local.sh", "--language", "ruby", "--no-summary", "--no-create-db");
-# } elsif ($tool_name eq "CodeQL JavaScript") {
-#     @cmd = ("scripts/codeql-local.sh", "--language", "javascript", "--no-summary", "--no-create-db");
+  } elsif ($tool_name eq "hadolint") {
+    @cmd = (
+      "sh", "-c",
+      "command -v hadolint >/dev/null && hadolint Dockerfile || true"
+    );
   }
 
   run_in_background($i, $tool_name, @cmd);
@@ -327,7 +285,6 @@ for my $i (0 .. $num_tools - 1) {
   my $exit_code = $tool_exit_codes[$i];
   my $pid       = $pids[$i];
 
-# Only print log if the task actually ran (pid defined and != 0) AND failed (exit_code != 0)
   if (defined $pid && $pid != 0 && defined $exit_code && $exit_code != 0) {
     if (-f $log_file) {
       print "\n--- Log for $tool_name --- (Exit Code: $exit_code)\n";
