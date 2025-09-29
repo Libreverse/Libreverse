@@ -651,7 +651,7 @@ GEM
     re2 (2.20.0-x86_64-darwin)
     re2 (2.20.0-x86_64-linux-gnu)
     re2 (2.20.0-x86_64-linux-musl)
-    react_on_rails (16.0.0)
+    react_on_rails (16.1.1)
       addressable
       connection_pool
       execjs (~> 2.5)
@@ -1074,7 +1074,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-i18n
   re2
-  react_on_rails (= 16.0)
+  react_on_rails (= 16.1.1)
   reactionview
   redis
   reform
