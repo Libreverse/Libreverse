@@ -1,31 +1,5 @@
 # Libreverse
 
-## Development profiling
-
-We ship with rack-mini-profiler enabled in development. It appears as a small badge in the top-right. Click it to toggle.
-
-- Toggle visibility: the badge controls the panel; it starts hidden by default.
-- Skips assets requests to reduce noise.
-- Uses Redis for persistence when available (set REDIS_URL or default redis://127.0.0.1:6379/0).
-
-Inline steps:
-
-Use `DevProfiler.profile("Step name") { ... }` inside hotspots. Steps show up nested in the profiler UI.
-
-Deeper profiles:
-
-- StackProf sampling (wall/cpu/objects) with raw dumps you can analyze later:
-    - `Profiler.stackprof(mode: :wall, out: "tmp/stackprof.dump") { do_work }`
-- Flamegraph HTML output for visual call graphs:
-    - `Profiler.flamegraph(out: "tmp/flamegraph.html") { do_work }`
-
-Analyze StackProf dumps:
-
-```sh
-stackprof tmp/stackprof.dump --method --limit 20
-stackprof tmp/stackprof.dump --json > tmp/stackprof.json
-```
-
 Libreverse is a privacy‑centric application for curating and sharing interactive "experiences" (self‑contained HTML documents). Powered by Hotwire, it delivers a seamless, single‑page‑application (SPA) experience entirely within the Ruby on Rails ecosystem while keeping all data on whatever instance you choose to use.
 
 > **Alpha release** – this version is under active development. Expect breaking changes, incomplete features, and occasional rough edges. Planned work is tracked in our [road‑map](todo.md).
