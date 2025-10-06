@@ -996,7 +996,7 @@ GEM
       y-rb (>= 0.4.5)
     zeitwerk (2.7.3)
     zip_kit (6.3.3)
-    zstd-ruby (2.0.0)
+    zstd-ruby (2.0.1)
 
 PLATFORMS
   aarch64-linux
