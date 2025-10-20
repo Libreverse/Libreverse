@@ -1,9 +1,6 @@
 @use "variables";
 
 .sidebar {
-    border-radius: 0 12px 12px 0 !important;
-    border-left: none !important;
-
     // Include base glass styles directly instead of extending
     background: linear-gradient(
         135deg,
@@ -13,17 +10,7 @@
     );
     backdrop-filter: blur(var(--glass-blur-radius))
         saturate(var(--glass-saturation));
-
-    /* Borders: top/right/bottom only; keep screen-edge (left) clean */
-    border: none;
-    border-top: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-    border-right: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-    border-bottom: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-
-    /* Logical props for RTL too */
-    border-block-start: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-    border-block-end: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
-    border-inline-end: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
+    border: 1px solid rgb(255 255 255 / var(--glass-border-opacity));
     box-shadow:
         var(--glass-shadow-light),
         inset 0 1px 0 rgb(255 255 255 / calc(var(--glass-border-opacity) * 0.6)),
@@ -42,20 +29,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 0;
-
-    /* No border on the screen edge */
+    border-left: none;
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
     overflow: hidden;
-
-    /* Rely on border-radius instead of clipping to avoid cutting the stroke */
-
-    /* Removing clip-path prevents the border from being sheared at corners */
-
-    /* Keep background confined to padding box so it doesn't bleed under border */
-    background-clip: padding-box;
-
-    /* Fallback/ridge cases */
-    border-top-right-radius: var(--sidebar-border-radius);
-    border-bottom-right-radius: var(--sidebar-border-radius);
     transition: all var(--glass-transition-medium) var(--glass-easing);
 
     // Ensure border-radius is applied consistently across all states
@@ -63,28 +39,7 @@
     &::before,
     &::after {
         border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0;
-    }
-
-    /* Remove overlay (after) border on the screen edge without clipping corners */
-    &::after {
-        border-left: 0;
-        border-inline-start: 0;
-
-        /* Ensure overlays respect the rounding and don't create square edges */
-        border-radius: inherit;
-        box-shadow: none;
-
-        /* Avoid clip-path/masks that can shear borders at radii */
-        mask-image: none;
-    }
-
-    /* Match rounding on any displaced layer, without clipping */
-    &::before {
-        border-radius: inherit;
-        border-top-right-radius: var(--sidebar-border-radius);
-        border-bottom-right-radius: var(--sidebar-border-radius);
-        mask-image: none;
+            var(--sidebar-border-radius) 0 !important;
     }
 
     // Content positioning
@@ -92,6 +47,8 @@
         position: relative;
         z-index: 1;
     }
+
+    // WebGL enhanced state removed - CSS-only implementation
 
     // Responsive width
     width: var(--sidebar-width-medium);
@@ -106,9 +63,6 @@
 
     // Override any specific behaviors not covered by the glass system
     pointer-events: auto;
-
-    /* Absolutely forbid a left/inline-start border on the sidebar */
-    border-inline-start: 0;
 
     // Base link styling using glass system
     .sidebar-link,
@@ -180,24 +134,24 @@
 .sidebar.glass-sidebar,
 .sidebar.glass-component {
     // Force our responsive widths over the mixin defaults with highest specificity
-    width: inherit;
+    width: inherit !important;
 
     @media (width <= 600px) {
-        width: 48px;
-        min-width: 48px;
-        max-width: 48px;
+        width: 48px !important;
+        min-width: 48px !important;
+        max-width: 48px !important;
     }
 
     @media (width >= 601px) and (width <= 1500px) {
-        width: 56px;
-        min-width: 56px;
-        max-width: 56px;
+        width: 56px !important;
+        min-width: 56px !important;
+        max-width: 56px !important;
     }
 
     @media (width >= 1501px) {
-        width: 64px;
-        min-width: 64px;
-        max-width: 64px;
+        width: 64px !important;
+        min-width: 64px !important;
+        max-width: 64px !important;
     }
 }
 

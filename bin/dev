@@ -1,14 +1,103 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use FindBin;
 use File::Glob 'bsd_glob';
+use Term::ANSIColor;  # For colored output
+require "$FindBin::Bin/../tui/twemoji.pm";  # Loads the exact file
+Twemoji->import(qw(twemoji));  # Manually import the function
+use utf8;  # Enable UTF-8 for Unicode
+binmode STDOUT, ':encoding(UTF-8)';  # Set output encoding to UTF-8
 
-system('pkill overmind > /dev/null 2>&1');
-system('cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1');
-system('docker rm -f libreverse-dev-tidb > /dev/null 2>&1; ');
-system('fuser -k -TERM 3000/tcp > /dev/null 2>&1');
+# Get terminal width
+my $width = `tput cols` || 80;  # Default to 80 if tput fails
+chomp $width;
+my $box_width = 78;  # Fixed box width for better fit
+my $line = "═" x ($box_width);  # Unicode double line for polished look
+
+# Overmind color palette (256-color indices)
+my @overmind_colors = qw(224 111 150 182 186 147 216 110 174 115 175 116 218 217);
+my $color_index = 0;  # To cycle through colors
+
+# ANSI helpers for 256-color foreground and reset
+my $RESET = "\e[0m";
+sub _ansi_fg { my ($n) = @_; return sprintf("\e[38;5;%dm", $n); }
+
+# Define fixed colors for different message types
+my $header_color = _ansi_fg(182);
+my $message_color = _ansi_fg(147);
+
+# Function to get next color escape sequence
+sub get_next_color {
+    my $code = $overmind_colors[$color_index % @overmind_colors];
+    $color_index++;
+    return _ansi_fg($code);
+}
+
+# Clear screen for a fresh start
+system('clear');
+
+# Define banner lines
+my @banner = (
+    "  / /(_) |__  _ __ _____   _____ _ __ ___  ___ ",
+    " / / | | '_ \\| '__/ _ \\ \\ / / _ \\ '__/ __|/ _ \\",
+    "/ /__| | |_) | | |  __/\\ V /  __/ |  \\__ \\  __/",
+    "\\____/_|_.__/|_|  \\___| \\_/ \\___|_|  |___/\\___|"
+);
+
+# Print header with banner
+print $header_color;
+print "╔$line╗\n";
+foreach my $banner_line (@banner) {
+    my $len = length($banner_line);
+    my $side_spaces = int(($box_width - ($len + 1)) / 2);
+    print "║", " " x $side_spaces, $banner_line, " " x $side_spaces, " ║\n";
+}
+print "╚$line╝\n";
+print $RESET;
+
+# Render a Twemoji brain emoji after the banner for flair
+# print twemoji('🧠');
+
+# Function to display a task with status
+sub run_task {
+    my ($message, $command) = @_;
+    print $message_color, twemoji('▶'), " $message", $RESET, "\n";
+    system($command) == 0 or warn "Command failed: $command\n";
+    print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
+}
+
+# Function to display a spinner during tasks
+sub show_spinner {
+    my ($message) = @_;
+    print $message_color, "  ", twemoji('⏳'), " $message", $RESET;
+    my @spinner = ('|', '/', '-', '\\');
+    for (1..10) {
+        print "\r", $message_color, "  ", twemoji('⏳'), " $message ", $spinner[$_ % 4], $RESET;
+        select(undef, undef, undef, 0.1);  # Brief delay
+    }
+    print "\r", " " x ($width - 2), "\r";  # Clear line
+}
+
+# Run tasks with visual feedback
+show_spinner("Killing other overmind instances...");
+run_task("Killing other overmind instances...", "pkill overmind > /dev/null 2>&1");
+
+show_spinner("Unlinking the overmind socket...");
 unlink '/tmp/.overmind.sock';
-system('cd .. && spring stop > /dev/null 2>&1');
+print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
+
+show_spinner("Killing anything using the development SQLite database...");
+run_task("Killing anything using the development SQLite database...", "cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1");
+
+show_spinner("Removing any stray libreverse-dev-tidb containers...");
+run_task("Removing any stray libreverse-dev-tidb containers...", "timeout 10 docker rm -f libreverse-dev-tidb > /dev/null 2>&1");
+
+show_spinner("Killing anything on port 3000...");
+run_task("Killing anything on port 3000...", "fuser -k -TERM 3000/tcp > /dev/null 2>&1");
+
+show_spinner("Restarting spring...");
+run_task("Restarting spring...", "cd .. && spring stop > /dev/null 2>&1");
 
 # Set environment variables for Overmind
 $ENV{OVERMIND_SOCKET}        = '/tmp/.overmind.sock';
@@ -17,15 +106,4 @@ $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
 $ENV{OVERMIND_CAN_DIE}       = 'rails-db-creator, startup-message, dragonflydb-detached';
 
-# Fork the overmind watcher
-my $watcher_pid = fork();
-if ($watcher_pid == 0) {
-    # Watcher process
-    waitpid(getppid(), 0);  # Wait for parent (overmind) to exit
-    sleep(0.2);             # Wait 0.2 seconds
-    system('pkill ruby > /dev/null 2>&1');  # Kill all ruby processes
-    exit(0);
-}
-
-# Start Overmind with the specified process file and any additional arguments
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

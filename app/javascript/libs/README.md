@@ -1,51 +1,373 @@
-# Glass CSS System (CSS-only)
+# 🍎 Liquid Glass (CSS)
 
-Production-ready frosted glass effects using modern CSS. No WebGL, no html2canvas.
+## Apple Liquid Glass-inspired glass effects using modern CSS
 
-## Features
+### CSS-only glass utilities for consistent frosted UI components
 
-- Utility classes: `.glass`, `.glass-sm`, `.glass-md`, `.glass-lg`
-- Component bases: `.glass-sidebar-base`, `.glass-drawer-base`, `.glass-card-base`, `.glass-nav-base`, `.glass-button`
-- Tunable via CSS custom properties: `--glass-*`
-- Responsive and accessible fallbacks
-- Optional Stimulus `glass` controller to toggle classes dynamically
+**[🌐 Live Demo](https://dashersw.github.io/liquid-glass-js/)** | **[📚 Documentation](#-api-reference)** | **[🚀 Quick Start](#-quick-start)**
 
-## Quick start
+![Demo](demo.gif)
 
-Add the `glass` class to any element and adjust CSS variables as needed, or use component base classes for common layouts.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+![CSS](https://img.shields.io/badge/CSS-backdrop--filter-blue)
 
-Example:
+</div>
 
-```haml
-.glass.glass-md
-    %h3 Title
-    %p Content inside a frosted card
+---
+
+## ✨ Features
+
+- 🎯 **Utility Classes**: `.glass`, size variants, and component bases (sidebar, drawer, card)
+- 🔍 **Frosted Glass**: Backdrop-filter blur with tasteful gradients and shadows
+- 📱 **Responsive Design**: CSS variables for sizes and breakpoints
+- 🎨 **Customizable Tinting**: CSS custom properties (`--glass-*`) per component
+- 🌐 **Cross-browser**: Works on modern browsers; degrades gracefully without backdrop-filter
+- 📦 **Zero JS Required**: Optional Stimulus controller toggles classes
+
+## 🚀 Quick Start
+
+Add the `glass` class to any element. Control look via CSS variables or utility classes like `.glass-sm`, `.glass-md`, `.glass-lg`.
+
+Stimulus users can attach `data-controller="glass"` to toggle the effect based on configuration.
+
+### Container with Nested Glass
+
+```javascript
+// Create a glass container
+const container = new Container({
+    borderRadius: 24,
+    type: "pill",
+    tintOpacity: 0.3,
+});
+
+// Add glass buttons to container
+const button1 = new Button({
+    text: "Action",
+    size: 24,
+    type: "pill",
+});
+
+const button2 = new Button({
+    text: "✓",
+    size: 24,
+    type: "circle",
+});
+
+container.addChild(button1);
+container.addChild(button2);
+document.body.appendChild(container.element);
 ```
 
-Using the Stimulus controller:
+## 📚 API Reference
 
-```html
-<div
-    data-controller="glass"
-    data-glass-component-type-value="sidebar"
-    data-glass-border-radius-value="16"
-    data-glass-tint-opacity-value="0.12"
-></div>
+### Container Class
+
+#### Constructor Options
+
+| Option         | Type     | Default     | Description                                      |
+| -------------- | -------- | ----------- | ------------------------------------------------ |
+| `borderRadius` | `number` | `48`        | Corner radius in pixels                          |
+| `type`         | `string` | `'rounded'` | Shape type: `'rounded'`, `'circle'`, or `'pill'` |
+| `tintOpacity`  | `number` | `0.2`       | Tint overlay opacity (0-1)                       |
+
+#### Methods
+
+```javascript
+// Add child element (enables nested glass)
+container.addChild(childElement);
+
+// Remove child element
+container.removeChild(childElement);
+
+// Force size update from DOM
+container.updateSizeFromDOM();
 ```
 
-## Files
+### Button Class
+
+Extends `Container` with button-specific functionality.
+
+#### Button Options
+
+| Option        | Type       | Default     | Description                                      |
+| ------------- | ---------- | ----------- | ------------------------------------------------ |
+| `text`        | `string`   | `'Button'`  | Button text content                              |
+| `size`        | `number`   | `48`        | Font size in pixels                              |
+| `type`        | `string`   | `'rounded'` | Shape type: `'rounded'`, `'circle'`, or `'pill'` |
+| `onClick`     | `function` | `null`      | Click event handler                              |
+| `warp`        | `boolean`  | `false`     | Enable center distortion effect                  |
+| `tintOpacity` | `number`   | `0.2`       | Tint overlay opacity (0-1)                       |
+
+#### Example
+
+```javascript
+const button = new Button({
+    text: "Save Changes",
+    size: 28,
+    type: "pill",
+    tintOpacity: 0.4,
+    warp: true,
+    onClick: (text) => {
+        console.log(`${text} was clicked!`);
+    },
+});
+```
+
+## 🎛️ Glass Effect Parameters
+
+The library provides fine-grained control over glass rendering:
+
+| Parameter          | Range    | Description                        |
+| ------------------ | -------- | ---------------------------------- |
+| **Edge Intensity** | 0-0.1    | Refraction strength at shape edges |
+| **Rim Intensity**  | 0-0.2    | Intensity of rim lighting effects  |
+| **Base Intensity** | 0-0.05   | Center distortion strength         |
+| **Edge Distance**  | 0.05-0.5 | Falloff curve for edge effects     |
+| **Rim Distance**   | 0.1-2.0  | Falloff curve for rim effects      |
+| **Base Distance**  | 0.05-0.3 | Falloff curve for base effects     |
+| **Corner Boost**   | 0-0.1    | Additional corner enhancement      |
+| **Ripple Effect**  | 0-0.5    | Surface texture simulation         |
+| **Blur Radius**    | 1-15     | Background blur amount             |
+| **Tint Opacity**   | 0-1.0    | Gradient overlay strength          |
+
+## 🔧 Advanced Usage
+
+### Custom Glass Controls
+
+```javascript
+// Global glass parameters
+window.glassControls = {
+    edgeIntensity: 0.02,
+    rimIntensity: 0.08,
+    blurRadius: 7.0,
+    tintOpacity: 0.3,
+};
+
+// Update all instances
+function updateAllGlassInstances() {
+    Container.instances.forEach((instance) => {
+        if (instance.gl_refs && instance.gl_refs.gl) {
+            const gl = instance.gl_refs.gl;
+            gl.uniform1f(
+                instance.gl_refs.edgeIntensityLoc,
+                window.glassControls.edgeIntensity,
+            );
+            // ... update other uniforms
+            if (instance.render) instance.render();
+        }
+    });
+}
+```
+
+### Shape Types
+
+#### Rounded Rectangle
+
+```javascript
+const rounded = new Button({
+    type: "rounded",
+    borderRadius: 16, // Custom radius
+});
+```
+
+#### Perfect Circle
+
+```javascript
+const circle = new Button({
+    type: "circle",
+    size: 32, // Determines circle diameter
+});
+```
+
+#### Pill/Capsule
+
+```javascript
+const pill = new Button({
+    type: "pill",
+    text: "Elongated Button", // Auto-sizing
+});
+```
+
+## 🎨 Styling
+
+### CSS Classes
+
+The library provides semantic CSS classes:
+
+```css
+/* Glass containers */
+.glass-container {
+    /* Base container styles */
+}
+.glass-container-circle {
+    /* Circle-specific styles */
+}
+.glass-container-pill {
+    /* Pill-specific styles */
+}
+
+/* Glass buttons */
+.glass-button {
+    /* Base button styles */
+}
+.glass-button-circle {
+    /* Circle button styles */
+}
+.glass-button-text {
+    /* Button text overlay */
+}
+```
+
+### Custom Themes
+
+```css
+/* Dark theme example */
+.glass-button {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+.glass-button-text {
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+```
+
+## 🏗️ Architecture
+
+### WebGL Implementation
+
+- **Multi-layer refraction**: Separate edge, rim, and base calculations
+- **Shape-aware normals**: Different algorithms per shape type
+- **Gaussian blur sampling**: 13×13 adaptive kernel
+- **Real-time page capture**: html2canvas integration
+- **Dynamic uniforms**: Live parameter updates
+
+### File Structure
 
 ```text
-libs/
-├── simplified_glass.js  # CSS-only helpers
-├── foundation.js        # Foundation integration utilities
-└── button.js            # Optional button helpers (CSS-based)
+liquid-glass-js/
+├── container.js      # Core Container class
+├── button.js         # Button class (extends Container)
+├── demo.js          # Demo setup and controls
+├── styles.css       # Base styling
+├── glass.css        # Glass component styles
+├── demo.css         # Demo layout styles
+├── controls.css     # Control panel styles
+└── index.html       # Demo page
 ```
 
-## Browser support
+## 🌐 Browser Support
 
-Modern evergreen browsers. Fallbacks provided for `backdrop-filter` via `_fallbacks.scss`.
+| Browser | Version | Status          |
+| ------- | ------- | --------------- |
+| Chrome  | 80+     | ✅ Full support |
+| Firefox | 75+     | ✅ Full support |
+| Safari  | 14+     | ✅ Full support |
+| Edge    | 80+     | ✅ Full support |
 
-## License
+**Requirements:**
 
-MIT
+- WebGL 2.0 support
+- ES6+ JavaScript features
+- HTML5 Canvas API
+
+## 🛠️ Development
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/liquid-glass-js.git
+cd liquid-glass-js
+
+# Open in browser (requires local server for WebGL)
+# For example, using serve
+npx serve .
+```
+
+### Building
+
+No build step required! The library uses vanilla JavaScript and can be used directly.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Follow existing code style
+- Add comments for complex WebGL operations
+- Test across different browsers
+- Update documentation for new features
+
+## 📖 Examples
+
+### Navigation Bar
+
+```javascript
+const navContainer = new Container({
+    type: "rounded",
+    borderRadius: 20,
+    tintOpacity: 0.1,
+});
+
+["Home", "About", "Contact"].forEach((text) => {
+    const navButton = new Button({
+        text: text,
+        size: 16,
+        type: "pill",
+        onClick: (text) => navigate(text),
+    });
+    navContainer.addChild(navButton);
+});
+```
+
+### Control Panel
+
+```javascript
+const controlPanel = new Container({
+    type: "rounded",
+    borderRadius: 12,
+    tintOpacity: 0.6,
+});
+
+const playButton = new Button({
+    text: "▶",
+    size: 24,
+    type: "circle",
+    onClick: () => player.play(),
+});
+
+controlPanel.addChild(playButton);
+```
+
+## 🔮 Roadmap
+
+- [ ] Bundle for NPM
+- [ ] TypeScript rewrite
+- [ ] React/Vue component wrappers
+- [ ] Animation system
+- [ ] Accessibility improvements
+- [ ] Performance optimizations
+- [ ] Mobile touch optimizations
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by Apple's Liquid Glass design language
+- WebGL techniques from various computer graphics resources
+- html2canvas library for page capture functionality
+
+---
+
+## Built with ❤️ for the future of web interfaces
+
+[Demo](https://your-demo-url.com) • [Issues](https://github.com/your-username/liquid-glass-js/issues) • [Discussions](https://github.com/your-username/liquid-glass-js/discussions)

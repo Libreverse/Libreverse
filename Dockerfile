@@ -103,7 +103,7 @@ COPY package.json bun.lock ./
 # Install Bun (for JS package management and build only)
 ENV BUN_INSTALL=/usr/local/bun
 ENV PATH=/usr/local/bun/bin:$PATH
-RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v1.2.5"
+RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v1.3.0"
 
 # Copy the rest of the application code (including vendor/)
 COPY . .

@@ -101,7 +101,6 @@ gem "zstd-ruby"
 
 group :development, :test do
   gem "debug"
-  gem "dotenv-rails"
   gem "listen"
   gem "parallel_tests"
   gem "spring-commands-parallel-tests"

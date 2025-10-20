@@ -2,11 +2,12 @@ import "../stylesheets/application.scss";
 import "./libs/hashcash.js"; // ActiveHashcash proof-of-work for bot protection
 import debounced from "debounced";
 import "./libs/foundation.js";
+import jquery from "jquery";
+globalThis.$ = jquery;
+globalThis.jQuery = jquery;
 import "./libs/websocket_p2p_frame.coffee";
 import "what-input";
 import { load } from "@fingerprintjs/botd";
-import "./libs/cookies.js";
-import "./thredded/thredded_imports.js.erb";
 
 // GDPR-Compliant Error Tracking Setup
 import * as Sentry from "@sentry/browser";
@@ -80,7 +81,6 @@ const BOTD_TTL_MIN = 60; // Cookie lifetime
                 `expires=${expires}`,
                 "path=/",
                 "SameSite=Lax", // add 'Secure' if your site is HTTPS-only
-                globalThis.location.protocol === "https:" ? "Secure" : "",
             ].join("; ");
         })
         .catch((error) => {
@@ -88,6 +88,41 @@ const BOTD_TTL_MIN = 60; // Cookie lifetime
             console.error("[BotD] detection error:", error);
         });
 })();
+
+// Add Foundation debugging in development
+if (import.meta.env.MODE === "development") {
+    // Simple Foundation status checker
+    function checkFoundation() {
+        console.group("Foundation Status Check");
+
+        import("foundation-sites")
+            .then(() => {
+                console.log("✅ Foundation imported successfully");
+
+                const offCanvasElements =
+                    document.querySelectorAll("[data-off-canvas]");
+                console.log(
+                    `📋 Found ${offCanvasElements.length} off-canvas elements`,
+                );
+
+                if (globalThis.Stimulus) {
+                    console.log("✅ Stimulus available");
+                } else {
+                    console.warn("⚠️ Stimulus not available");
+                }
+
+                console.groupEnd();
+            })
+            .catch((error) => {
+                console.error("❌ Foundation import failed:", error);
+                console.groupEnd();
+            });
+    }
+
+    // Check Foundation status after DOM loads
+    document.addEventListener("DOMContentLoaded", checkFoundation);
+    document.addEventListener("turbo:load", checkFoundation);
+}
 
 // Initialize debounced library with custom options
 debounced.initialize(debounced.defaultEventNames, {
@@ -110,7 +145,7 @@ debounced.register(["resize"], {
     trailing: true,
 });
 
-// WebGL and html2canvas removed; CSS-only glass requires no globals
+// WebGL glass entirely removed; CSS-only glass requires no globals
 
 import * as Turbo from "@hotwired/turbo";
 import TurboPower from "turbo_power";
@@ -263,3 +298,60 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
         }
     });
 })();
+
+function attachScrollbarEvents() {
+  const scrollbar = document.querySelector('.c-scrollbar');
+  
+  if (scrollbar) {
+    const targetElement = document.body; // Or '.scroll-container' for scoped disabling
+    
+    // Check if listeners are already attached using a data attribute
+    if (scrollbar.dataset.listenersAttached) {
+      return true; // Already attached, exit early
+    }
+    
+    // Mouse events
+    scrollbar.addEventListener('mouseenter', () => {
+      targetElement.classList.add('noselect');
+    }, { passive: true });
+    
+    scrollbar.addEventListener('mouseleave', () => {
+      targetElement.classList.remove('noselect');
+    }, { passive: true });
+    
+    // Touch events for mobile
+    scrollbar.addEventListener('touchstart', () => {
+      targetElement.classList.add('noselect');
+    }, { passive: true });
+    
+    scrollbar.addEventListener('touchend', () => {
+      targetElement.classList.remove('noselect');
+    }, { passive: true });
+    
+    // Mark as attached
+    scrollbar.dataset.listenersAttached = 'true';
+    
+    return true; // Found and attached
+  }
+  
+  return false; // Not found
+}
+
+// Initial check
+if (!attachScrollbarEvents()) {
+  // Watch for dynamic additions
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        if (attachScrollbarEvents()) {
+          observer.disconnect(); // Stop observing once attached
+        }
+      }
+    });
+  });
+  
+  observer.observe(document.body, { 
+    childList: true, 
+    subtree: true
+  });
+}

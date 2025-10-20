@@ -1,12 +1,8 @@
-import { env } from "shakapacker";
-import { existsSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+const { env } = require("shakapacker");
+const { existsSync } = require("node:fs");
+const path = require("node:path");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const environmentSpecificConfig = async () => {
+const environmentSpecificConfig = () => {
     const extension = ".cjs";
     const configPath = path.resolve(__dirname, `${env.nodeEnv}${extension}`);
     if (!existsSync(configPath)) {
@@ -17,8 +13,7 @@ const environmentSpecificConfig = async () => {
     console.log(
         `Loading ENV specific webpack configuration file ${configPath}`,
     );
-    const module_ = await import(pathToFileURL(configPath));
-    return module_.default || module_;
+    return require(configPath);
 };
 
-export default await environmentSpecificConfig();
+module.exports = environmentSpecificConfig();

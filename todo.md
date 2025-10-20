@@ -6,6 +6,12 @@ adopt cucumber rails for future tests
 fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin
 move to postgres for cache
+remove local codeql
+facial age estimation using zkml for osa pycall and ezkl
+https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender
+https://github.com/justadudewhohacks/face-api.js-models
+https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript
+https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html for server side inference with hugging face transformers
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded

@@ -144,6 +144,9 @@ Rails.application.routes.draw do
   get "map", to: "map#index"
   get "map/data", to: "map#data", defaults: { format: :json }
 
+  # LLM page
+  get "lm", to: "lm#index"
+
   # Mount Thredded forum engine
   mount Thredded::Engine => "/forum"
 

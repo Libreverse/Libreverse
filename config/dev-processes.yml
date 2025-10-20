@@ -1,6 +1,6 @@
 # This is just a procfile named differently
-phusion-passenger: cd .. && perl scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --max-pool-size=10
-vite: cd .. && perl scripts/wait_for_db.pl bin/rails runner '' && bin/vite dev | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g'
+phusion-passenger: cd .. && perl scripts/wait_for_db.pl RUBYOPT="--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 --yjit-code-gc --yjit-disable --yjit-stats=quiet" bundle exec passenger start -a 127.0.0.1 -p 3000 --environment development --min-instances=0 --max-pool-size=20
+vite: cd .. && bin/vite dev | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g'
 shakapacker-asset-server: cd .. && bin/shakapacker-dev-server
 shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
 shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch

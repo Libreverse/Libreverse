@@ -1,6 +1,7 @@
 /.bundle
 /.env*
 !/.env*.erb
+.envrc
 /log/*
 /tmp/*
 !/log/.keep
