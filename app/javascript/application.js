@@ -89,8 +89,9 @@ const BOTD_TTL_MIN = 60; // Cookie lifetime
         });
 })();
 
+const DISABLE_FOUNDATION_DEBUGGER = true;
 // Add Foundation debugging in development
-if (import.meta.env.MODE === "development") {
+if (import.meta.env.MODE === "development" && !DISABLE_FOUNDATION_DEBUGGER) {
     // Simple Foundation status checker
     function checkFoundation() {
         console.group("Foundation Status Check");

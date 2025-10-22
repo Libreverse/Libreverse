@@ -85,6 +85,7 @@ export default class extends Controller {
     this.toxicPipeline = null;
     this.toxicClassifierLoading = false;
     this.toxicClassifierAbortController = null;
+    this.isSendingMessage = false;
   // Regulatory requirement: only allow message sends when an AI toxicity
   // classifier (ML-based) is available. If this is true, we will disable
   // user sending until the ML pipeline is initialized successfully.
@@ -506,7 +507,7 @@ export default class extends Controller {
     );
   }
 
-  sendMessage(ev) {
+  async sendMessage(ev) {
     console.log(`[Wllama] sendMessage called, modelLoaded: ${this.modelLoaded}, isStreaming: ${this.isStreaming}`);
     ev?.preventDefault();
     if (!this.modelLoaded) {
@@ -518,170 +519,106 @@ export default class extends Controller {
       console.warn("[Wllama] Already streaming");
       return;
     }
+    if (this.isSendingMessage) {
+      console.warn("[Wllama] Already sending message");
+      return;
+    }
+    this.isSendingMessage = true;
 
     const userContent = this.userInputTarget?.value?.trim() || "";
     console.log(`[Wllama] User input: '${userContent}' (length: ${userContent.length})`);
-    if (userContent.length === 0) return;
-
-    // Check for toxicity if classifier is available
-    if (this.toxicPipeline) {
-      console.log("[Wllama] Checking user input for toxicity...");
-      this.toxicPipeline(userContent)
-        .then((result) => {
-          const toxicityScore = result?.[0]?.score || 0;
-          console.log(`[Wllama] Toxicity score: ${toxicityScore}`);
-          if (toxicityScore > 0.95) { // High toxicity threshold
-            alert("Your message appears to contain inappropriate content. Please rephrase and try again.");
-            this.isStreaming = false;
-            return;
-          } else {
-            this.processUserMessage(userContent);
-          }
-        })
-        .catch((err) => {
-          console.warn("[Wllama] Toxicity check failed, proceeding anyway", err);
-          this.processUserMessage(userContent);
-        });
-    } else {
-      console.log("[Wllama] Toxicity classifier not available, proceeding without check");
-      this.processUserMessage(userContent);
+    if (userContent.length === 0) {
+      this.isSendingMessage = false;
+      return;
     }
-  }
 
-  processUserMessage(userContent) {
-    // Manage context before adding new message
+    // Add user message to context
+    this.messages.push({ role: "user", content: userContent });
+
+    // Update UI: clear input, show loading indicator, disable send button
+    this.userInputTarget.value = "";
+    if (this.hasLoadingIndicatorTarget) {
+      this.loadingIndicatorTarget.style.display = "block";
+      this.loadingIndicatorTarget.textContent = "Thinking...";
+    }
+    if (this.hasSendButtonTarget) {
+      this.sendButtonTarget.disabled = true;
+    }
+
+    // Manage context size: trim messages if too large
     this.manageContext();
 
-    console.log(`[Wllama] Messages before adding user: ${this.messages.length} total`);
-    // Push user message, show immediately
-    this.messages.push({ role: "user", content: userContent });
-    console.log(`[Wllama] Messages after adding user: ${this.messages.length} total`);
-    this.userInputTarget.value = "";
-    // Escape user content for safety (simple escape)
-    const safeUserHtml = document.createElement("div");
-    safeUserHtml.textContent = userContent;
-    this.renderChat(`<user>${safeUserHtml.innerHTML}</user>`);
-
-    // Cancel any previous completion in case (extra safety)
-    if (this.completionAbortController) {
-      try {
-        this.completionAbortController.abort();
-      } catch (err) {
-        console.debug("[Wllama] abort previous completion error", err);
-      }
-    }
-    this.completionAbortController = new AbortController();
-    const compSignal = this.completionAbortController.signal;
-
-    this.isStreaming = true;
     const start = performance.now();
-
-    // Adaptive nPredict: reduce default to avoid long, expensive runs
-    // Cap at 512 for typical usage and scale with message length (reduced for reasoning model)
-    const approxTokens = 128;
-    const nPredict = 64;
-
-    const onNewToken = (token, piece, currentText) => {
-      console.log(`[Wllama] STREAMING: New token received: '${token}' (total length: ${currentText?.length})`);
-      // Throttle DOM updates to avoid UI jank
-      const now = performance.now();
-      if (now - this.lastRenderTime > this.streamThrottleMs) {
-        this.lastRenderTime = now;
-        this.handleStreamingToken(token, currentText);
-      }
-    };
-
-    console.log(`[Wllama] About to call createChatCompletion with ${nPredict} nPredict`);
-    // Attach abort signal if createChatCompletion supports it; otherwise rely on controller state
-    this.instance.createChatCompletion(
-      this.messages,
-      {
-        nPredict: nPredict,
-        sampling: {
-          temp: 0.6, // Slightly lower temperature for reasoning model
-          top_p: 0.85, // Slightly lower top_p
-          top_k: 35, // Slightly lower top_k
-          repeat_penalty: 1.15, // Higher repeat penalty to prevent loops
-          repeat_last_n: 48, // Shorter repeat window
+    let completion;
+    try {
+      const prompt = this.messages.map(m => `${m.role}: ${m.content}`).join('\n') + '\nassistant: ';
+      // Streaming completion: onProgress will update UI with each chunk
+      completion = await this.instance.createCompletion(prompt, {
+        stream: true,
+        onProgress: (partial) => {
+          const content = partial.content || "";
+          this.appendChatMessage(content, true);
         },
-        onNewToken: onNewToken,
+      });
+
+      // For non-streaming, we would use:
+      // completion = await this.instance.createChatCompletion(this.messages, { stream: false });
+
+      console.log("[Wllama] Full completion received:", completion);
+      const firstChoice = completion.choices?.[0];
+      if (!firstChoice) {
+        throw new Error("No choices returned from model");
       }
-    ).then((finalReply) => {
-      console.log(`[Wllama] STREAMING COMPLETE: Final reply received (${finalReply?.length} chars)`);
-      const elapsed = Math.round(performance.now() - start);
-      console.info(`[Wllama] Completed in ${elapsed}ms, length=${finalReply?.length}`);
-      this.messages.push({ role: "assistant", content: finalReply });
-      this.isStreaming = false;
-      // Finalize last streaming message if needed
-      if (this.currentAssistantMessage) {
-        // Convert ChatML to safe HTML
-        const safe = document.createElement("div");
-        safe.textContent = finalReply || "";
-        this.currentAssistantMessage.innerHTML = this.transformChatMLToHTML(safe.innerHTML);
-        this.currentAssistantMessage = null;
+      const { delta, finish_reason } = firstChoice;
+      if (finish_reason !== "stop") {
+        console.warn("[Wllama] Stream did not end with 'stop': ", finish_reason);
       }
-    }).catch((err) => {
-      console.error("[Wllama] STREAMING FAILED:", err);
-      this.isStreaming = false;
-      // Optionally show message in UI
+
+      // Extract and return the full text response
+      const response = delta?.content || "";
+      this.messages.push({ role: "assistant", content: response });
+
+      // Log the usage of tokens (if available)
+      const totalTokens = completion.usage?.total_tokens || 0;
+      console.log(`[Wllama] Token usage: ${totalTokens} tokens`);
+
+      return response;
+    } catch (err) {
+      console.error("[Wllama] Error during message sending:", err);
+      this.showError("Error sending message. Please try again.");
+    } finally {
+      this.isSendingMessage = false;
       if (this.hasLoadingIndicatorTarget) {
-        this.loadingIndicatorTarget.textContent = "Generation failed or cancelled.";
+        this.loadingIndicatorTarget.style.display = "none";
       }
-    });
-  }
-
-  transformChatMLToHTML(chatml) {
-    // Basic transformations + safe handling: treat input as text first, then map tags
-    // Assume chatml is already escaped; if not, escape characters to avoid XSS
-    const node = document.createElement("div");
-    node.textContent = chatml;
-    let safe = node.innerHTML;
-    safe = safe
-      .replace(/&lt;think&gt;/g, '<div class="thinking-message">')
-      .replace(/&lt;\/think&gt;/g, '</div>')
-      .replace(/&lt;assistant&gt;/g, '<div class="assistant-message">')
-      .replace(/&lt;\/assistant&gt;/g, '</div>')
-      .replace(/&lt;user&gt;/g, '<div class="user-message">')
-      .replace(/&lt;\/user&gt;/g, '</div>');
-    return safe;
-  }
-
-  renderChat(htmlPiece) {
-    // Append HTML produced from transformChatMLToHTML (string)
-    const html = this.transformChatMLToHTML(htmlPiece);
-    this.chatDisplayTarget.insertAdjacentHTML("beforeend", html);
-    this.chatDisplayTarget.scrollTop = this.chatDisplayTarget.scrollHeight;
-  }
-
-  handleStreamingToken(token, currentText) {
-    const thinkMatches = currentText.match(/<think>/g);
-    if (thinkMatches && thinkMatches.length > 3 && currentText.length > 1000) {
-      console.warn(`[Wllama] Detected potential thinking loop, content length: ${currentText.length}`);
-      // Could add logic here to force completion or modify the prompt
+      if (this.hasSendButtonTarget) {
+        this.sendButtonTarget.disabled = false;
+      }
+      const duration = Math.round(performance.now() - start);
+      console.log(`[Wllama] Message processed in ${duration}ms`);
     }
-
-    // Create assistant container if not present
-    if (!this.currentAssistantMessage) {
-      console.log("[Wllama] Creating new assistant message container");
-      this.currentAssistantMessage = document.createElement("div");
-      this.currentAssistantMessage.className = "message assistant-message";
-      this.chatDisplayTarget.appendChild(this.currentAssistantMessage);
-    }
-
-    // Update content safely and efficiently
-    // We assume currentText is ChatML-like escaped; re-run transform for display
-    this.currentAssistantMessage.innerHTML = this.transformChatMLToHTML(currentText);
-    this.chatDisplayTarget.scrollTop = this.chatDisplayTarget.scrollHeight;
-    console.log("[Wllama] DOM UPDATE: Content updated and scrolled");
   }
 
-  updateChatDisplay(text) {
-    // Append plain text to last assistant div (used rarely)
-    const last = this.chatDisplayTarget.querySelector(".assistant-message:last-child");
-    if (last) {
-      last.insertAdjacentText("beforeend", text);
-    } else {
-      console.warn("[Wllama] no assistant message to update");
-    }
+  appendChatMessage(content, isUserMessage) {
+    const div = document.createElement("div");
+    div.className = isUserMessage ? "user-message" : "assistant-message";
+    div.innerHTML = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    this.chatDisplayTarget.appendChild(div);
+    this.scrollChatToBottom();
+  }
+
+  scrollChatToBottom() {
+    const chat = this.chatDisplayTarget;
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  showError(message) {
+    // Simple error display: prepend to chat as system message
+    this.messages.push({ role: "system", content: message });
+    const div = document.createElement("div");
+    div.className = "system-message error";
+    div.textContent = message;
+    this.chatDisplayTarget.insertBefore(div, this.chatDisplayTarget.firstChild);
+    this.scrollChatToBottom();
   }
 }

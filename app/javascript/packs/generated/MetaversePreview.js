@@ -1,12 +1,16 @@
+const DISABLE_LOGGING = true;
+
 import ReactOnRails from "react-on-rails/client";
 import MetaversePreview from "../../src/Metaverse3D/ror_components/MetaversePreview.jsx";
 
-console.info("[MetaverseHydration] pack evaluating", {
-    ReactOnRailsImported: typeof ReactOnRails,
-});
+if (!DISABLE_LOGGING) {
+    console.info("[MetaverseHydration] pack evaluating", {
+        ReactOnRailsImported: typeof ReactOnRails,
+    });
+}
 
 ReactOnRails.setOptions({
-    turbo: true,
+    turbo: false,
 });
 
 ReactOnRails.register({ MetaversePreview });
@@ -17,8 +21,10 @@ if (!globalThis.ReactOnRails) {
 
 const recordHydrationEvent = (event, payload = {}) => {
     const entry = { event, timestamp: Date.now(), ...payload };
-    (globalThis.__MetaverseHydrationLog ||= []).push(entry);
-    if (process.env.NODE_ENV !== "production") {
+    if (!DISABLE_LOGGING) {
+        (globalThis.__MetaverseHydrationLog ||= []).push(entry);
+    }
+    if (!DISABLE_LOGGING && process.env.NODE_ENV !== "production") {
         console.debug(`[MetaverseHydration] ${event}`, payload);
     }
 };
