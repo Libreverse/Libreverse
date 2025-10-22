@@ -12,6 +12,10 @@ https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender
 https://github.com/justadudewhohacks/face-api.js-models
 https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript
 https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html for server side inference with hugging face transformers
+finetune super small model like gpt2 or smth on a huge set of libreverse prompt/action examples from modern big llms like granite which is what we're currently using.
+add oj gem once we fix ruby shared libraries weirdness gem install oj -- --with-sse42
+fix ar doctor issues
+add ar doctor and ruumba to the ci
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
@@ -42,7 +46,8 @@ https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overvie
 - [ ] (feature) Integrate babel-plugin-transform-react-inline-elements: Inline simple JSX to skip createElement calls
 - [ ] (feature) Integrate babel-plugin-react-compiler: Auto-memoize components/hooks via static analysis (React Forget)
 - [ ] (feature) Integrate faster.js: Rewrite array methods to optimized loops for massive performance gains
-- [ ] (feature) Integrate Prepack: Partial evaluator that runs code at build time and serializes heap
+loop unrolling
+function inlining to bypass v8 inline size weirdness
 
 ## Infra
 

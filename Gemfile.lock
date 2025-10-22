@@ -54,6 +54,8 @@ GEM
     active_link_to (1.0.5)
       actionpack
       addressable
+    active_record_doctor (2.0.1)
+      activerecord (>= 7.0.0)
     active_storage_db (1.4.0)
       activestorage (>= 6.0)
       rails (>= 6.0)
@@ -172,6 +174,9 @@ GEM
       parser
       rails (>= 7.0)
       rainbow
+    counter_culture (3.11.2)
+      activerecord (>= 4.2)
+      activesupport (>= 4.2)
     crass (1.0.6)
     css_parser (1.21.1)
       addressable
@@ -614,6 +619,10 @@ GEM
       railties (>= 8.0.0, < 9)
     rails_gravatar (1.0.4)
       actionview
+    rails_http_preload (0.3.0)
+      actionpack
+      actionview
+      rails
     railties (8.0.3)
       actionpack (= 8.0.3)
       activesupport (= 8.0.3)
@@ -751,6 +760,8 @@ GEM
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     rubyzip (3.1.1)
+    ruumba (0.1.17)
+      rubocop
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
@@ -1008,6 +1019,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_hashcash
+  active_record_doctor
   active_storage_db
   active_storage_validations
   activerecord-enhancedsqlite3-adapter
@@ -1021,6 +1033,7 @@ DEPENDENCIES
   chunky_png
   comfortable_media_surfer
   console1984
+  counter_culture (~> 3.11)
   debug
   erb-formatter
   erb_lint
@@ -1045,6 +1058,7 @@ DEPENDENCIES
   inky-rb
   invisible_captcha
   jbuilder
+  json (~> 2.15)
   kaminari-i18n
   listen
   lockbox
@@ -1068,6 +1082,7 @@ DEPENDENCIES
   rails
   rails-controller-testing
   rails-i18n
+  rails_http_preload
   re2
   react_on_rails (= 16.0)
   reactionview
@@ -1086,6 +1101,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   rubyzip
+  ruumba
   selenium-webdriver
   sentry-rails
   sentry-ruby

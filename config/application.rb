@@ -100,7 +100,7 @@ module LibreverseInstance
     config.middleware.use WhitespaceCompressor
 
     # Preload html over the wire with turbo - can't decide whether this improves things or not
-    # config.middleware.use TurboPreload
+    config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
@@ -115,13 +115,23 @@ module LibreverseInstance
 
     killer = WorkerKiller::Killer::Passenger.new
 
+    # Your existing OOM limiter (unchanged)
     middleware.insert_before(
       Rack::Runtime,
       WorkerKiller::Middleware::OOMLimiter,
       killer: killer,
       min: 2_516_582_400, # 2.4GB in bytes
       max: 2_724_659_200, # 2.6GB in bytes
-      check_cycle: 16     # check every 16 requests (default is fine)
+      check_cycle: 16     # check every 16 requests
+    )
+
+    # New Requests limiter for stability
+    middleware.insert_before(
+      Rack::Runtime,
+      WorkerKiller::Middleware::RequestsLimiter,
+      killer: killer,
+      min: 3072,          # Start grace period here
+      max: 4096          # Kill after this many requests
     )
 
     # Add this to make prod healthcheck pass correctly

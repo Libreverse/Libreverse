@@ -530,7 +530,7 @@ export default class extends Controller {
         .then((result) => {
           const toxicityScore = result?.[0]?.score || 0;
           console.log(`[Wllama] Toxicity score: ${toxicityScore}`);
-          if (toxicityScore > 0.8) { // High toxicity threshold
+          if (toxicityScore > 0.95) { // High toxicity threshold
             alert("Your message appears to contain inappropriate content. Please rephrase and try again.");
             this.isStreaming = false;
             return;

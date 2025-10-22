@@ -1,0 +1,10 @@
+inherit_from: .rubocop.yml
+
+AllCops:
+  Include:
+    - '**/*.erb'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Layout:
+  Enabled: false

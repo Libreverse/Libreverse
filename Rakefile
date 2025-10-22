@@ -7,6 +7,15 @@ require_relative "config/application"
 
 Rails.application.load_tasks
 
+require 'ruumba/rake_task'
+
+Ruumba::RakeTask.new(:ruumba) do |t|
+  t.dir = %w[app/views]
+
+  # You can specify CLI options too:
+  t.options = { arguments: %w[-c /Users/george/Libreverse/.ruumba.yml], disable_rb_extension: true }
+end
+
 namespace :bundle do
   desc "Prune and enforce desired platforms (macOS arm/x86, Linux glibc arm64/x86_64, FreeBSD x86_64)"
   task enforce_platforms: :environment do

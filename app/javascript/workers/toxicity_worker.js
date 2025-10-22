@@ -2,8 +2,10 @@
 import tokenizerUrl from "~/client-ai-models/intel-toxic-prompt-roberta_tokenizer.json?url";
 import tokenizerConfigUrl from "~/client-ai-models/intel-toxic-prompt-roberta_tokenizer_config.json?url";
 import modelConfigUrl from "~/client-ai-models/intel-toxic-prompt-roberta_config.json?url";
+
 // Store the current ONNX data/blob URL for remapping
 let currentOnnxUrl = null;
+
 // Hack: Remap blob: and /models/blob: URLs to Vite-served URLs for transformers.js
 (function () {
   const BLOB_PREFIX = "/models/blob:";
@@ -48,7 +50,6 @@ let currentOnnxUrl = null;
   };
 })();
 
-
 import loadToxicityPipeline from "../libs/toxicity_classifier";
 
 let pipelineInstance = null;
@@ -81,7 +82,11 @@ self.onmessage = async (e) => {
         return;
       }
       try {
-        const res = await pipelineInstance(text);
+        let res = await pipelineInstance(text);
+        // Transform the score: score = (1 - score) / 0.05
+        if (res && typeof res.score === "number") {
+          res.score = (1 - res.score) / 0.05;
+        }
         postMessage({ type: "result", id, result: res });
       } catch (err) {
         postMessage({ type: "result-error", id, error: String(err) });

@@ -26,7 +26,7 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # since you don't have to restart the web server when you make code changes.
   config.enable_reloading = true
 
-  # Do not eager load code on boot.
+  # Do not eager load code on boot. Note that it will cause unexplaineable breakeage if you turn this on.
   config.eager_load = false
 
   # Show full error reports.

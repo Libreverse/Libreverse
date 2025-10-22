@@ -142,10 +142,10 @@ Thredded.show_messageboard_group_page = true
 Thredded.show_topic_followers = true
 
 # Whether the list of users who are currently online is displayed.
-Thredded.currently_online_enabled = true
+Thredded.currently_online_enabled = false
 
 # Whether private messaging functionality is enabled.
-Thredded.private_messaging_enabled = true
+Thredded.private_messaging_enabled = false
 
 # The number of topics to display per page.
 Thredded.topics_per_page = 50
