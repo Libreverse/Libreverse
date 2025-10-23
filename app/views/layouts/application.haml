@@ -5,6 +5,7 @@
     = render "layouts/app_assets"
     = render "layouts/meta_tags"
     = csrf_meta_tags
+    = csp_meta_tag
   %body
     = render "layouts/glass_filter"
     %noscript
@@ -61,5 +62,7 @@
           = render "layouts/flash_messages"
           #toast-container
           %main.content-wrapper
+            = render "layouts/underconstruction"
+            = render "layouts/oneko"
             = yield
           = render "layouts/site_footer"

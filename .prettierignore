@@ -14,3 +14,4 @@ coverage/**
 **/iodine*/**
 .codeql/**
 config/locales/**
+**.snappy

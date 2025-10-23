@@ -120,9 +120,9 @@ module LibreverseInstance
       Rack::Runtime,
       WorkerKiller::Middleware::OOMLimiter,
       killer: killer,
-      min: 2_516_582_400, # 2.4GB in bytes
-      max: 2_724_659_200, # 2.6GB in bytes
-      check_cycle: 16     # check every 16 requests
+      min: 419_430_400,
+      max: 524_288_000,
+      check_cycle: 1
     )
 
     # New Requests limiter for stability
@@ -130,8 +130,8 @@ module LibreverseInstance
       Rack::Runtime,
       WorkerKiller::Middleware::RequestsLimiter,
       killer: killer,
-      min: 3072,          # Start grace period here
-      max: 4096          # Kill after this many requests
+      min: 20,          # Start grace period here
+      max: 50          # Kill after this many requests
     )
 
     # Add this to make prod healthcheck pass correctly

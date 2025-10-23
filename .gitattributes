@@ -14,3 +14,4 @@ db/cache_development.sqlite3 filter=lfs diff=lfs merge=lfs -text
 log/development.log.0 filter=lfs diff=lfs merge=lfs -text
 .git/objects/pack/pack-722b41a5c9b161101b5bce88d0ce815fcb3af6d2.pack filter=lfs diff=lfs merge=lfs -text
 .git/objects/62/45a76ae4b74fde304f81d0aa712eaa7e4c7a7b filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/71/79/7179e86dbb1a070a713a6cc2d5f062404c58b950d59ad04f1b1da1b704544f16 filter=lfs diff=lfs merge=lfs -text

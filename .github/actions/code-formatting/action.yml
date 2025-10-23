@@ -6,7 +6,7 @@ runs:
     steps:
         - name: Run Prettier
           shell: bash
-          run:  bun prettier --write . --ignore-path .prettierignore --log-level warn
+          run: bun prettier --write . --ignore-path .prettierignore --log-level warn
 
         - name: Run Rubocop
           shell: bash

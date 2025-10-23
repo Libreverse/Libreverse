@@ -46,8 +46,8 @@ add ar doctor and ruumba to the ci
 - [ ] (feature) Integrate babel-plugin-transform-react-inline-elements: Inline simple JSX to skip createElement calls
 - [ ] (feature) Integrate babel-plugin-react-compiler: Auto-memoize components/hooks via static analysis (React Forget)
 - [ ] (feature) Integrate faster.js: Rewrite array methods to optimized loops for massive performance gains
-loop unrolling
-function inlining to bypass v8 inline size weirdness
+      loop unrolling
+      function inlining to bypass v8 inline size weirdness
 
 ## Infra
 

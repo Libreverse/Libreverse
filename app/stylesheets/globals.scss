@@ -1,7 +1,8 @@
 @use "variables";
 
 * {
-    text-rendering: geometricprecision;
+    text-rendering: optimizeSpeed;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
 }
 
 *.glass-active {
@@ -53,9 +54,87 @@ main.content-wrapper {
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Safari/Chrome */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* IE/Edge */
-  user-select: none;           /* Standard */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari/Chrome */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* Standard */
+}
+
+.underconstruction {
+  background-color: #fdf3dc;
+  color: #333;
+  padding: 15px;
+  top: 0;
+  z-index: 2137483645;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: top 0.3s;
+  border: 1px solid #c0b9a8;
+  position: sticky;
+}
+
+::selection {
+  background: #e45c9c; /* Pink highlight color */
+  color: #fff; /* White text for contrast */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+}
+
+.oneko {
+  width: 32px;
+  height: 32px;
+  position: fixed;
+  image-rendering: pixelated;
+  z-index: 2147483646;
+  background-image: url("~/images/oneko.gif");
+  background-repeat: no-repeat;
+
+  /* Optimize for constant position updates */
+  will-change: transform, background-position;
+}
+
+.oneko-hidden {
+  display: none;
+}
+
+// Oneko heart explosion styles
+@keyframes heart-burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.heart {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  animation: heart-burst 1s ease-out;
+  animation-fill-mode: forwards;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2147483648; // Number.MAX_VALUE equivalent
+  opacity: 0;
+
+  /* Optimize for animation */
+  will-change: transform, opacity;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+img:not(.emoji) {
+    user-select: none;
+}
+
+button {
+    user-select: none;
 }

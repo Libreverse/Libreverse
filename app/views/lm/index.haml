@@ -2,15 +2,9 @@
 
 = render "layouts/leniswrapper" do
   = render "layouts/navigationshortcutswrapper" do
-    #lm-chat{"data-controller" => "webllm"}
-      %h1.center Wllama Chat Interface
-
+    #lm-chat{"data-controller" => "llm"}
       .chat-container
-        #chat-display.chat-display{"data-webllm-target" => "chatDisplay"}
-          .message.system-message
-            %strong System:
-            Hello! I'm an IBM-Granite & Intel toxic-prompt-roberta powered AI assistant running directly in your browser that can take actions in libreverse on your behalf. Ask me anything!
-
+        #chat-display.chat-display{"data-llm-target" => "chatDisplay"}
         #chat-input-container.chat-input-container
-          %input#user-input{"data-webllm-target" => "userInput", type: "text", placeholder: "Type your message here..."}
-          %button#send-button{"data-webllm-target" => "sendButton", "data-action" => "click->webllm#sendMessage"} Send
+          %input#user-input{"data-llm-target" => "userInput", type: "text", placeholder: "Type your message here..."}
+          %button#send-button{"data-llm-target" => "sendButton", "data-action" => "click->llm#sendMessage"} Send

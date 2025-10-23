@@ -8,6 +8,7 @@ globalThis.jQuery = jquery;
 import "./libs/websocket_p2p_frame.coffee";
 import "what-input";
 import { load } from "@fingerprintjs/botd";
+import "./libs/cookies.js";
 
 // GDPR-Compliant Error Tracking Setup
 import * as Sentry from "@sentry/browser";
@@ -301,58 +302,74 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
 })();
 
 function attachScrollbarEvents() {
-  const scrollbar = document.querySelector('.c-scrollbar');
-  
-  if (scrollbar) {
-    const targetElement = document.body; // Or '.scroll-container' for scoped disabling
-    
-    // Check if listeners are already attached using a data attribute
-    if (scrollbar.dataset.listenersAttached) {
-      return true; // Already attached, exit early
+    const scrollbar = document.querySelector(".c-scrollbar");
+
+    if (scrollbar) {
+        const targetElement = document.body; // Or '.scroll-container' for scoped disabling
+
+        // Check if listeners are already attached using a data attribute
+        if (scrollbar.dataset.listenersAttached) {
+            return true; // Already attached, exit early
+        }
+
+        // Mouse events
+        scrollbar.addEventListener(
+            "mouseenter",
+            () => {
+                targetElement.classList.add("noselect");
+            },
+            { passive: true },
+        );
+
+        scrollbar.addEventListener(
+            "mouseleave",
+            () => {
+                targetElement.classList.remove("noselect");
+            },
+            { passive: true },
+        );
+
+        // Touch events for mobile
+        scrollbar.addEventListener(
+            "touchstart",
+            () => {
+                targetElement.classList.add("noselect");
+            },
+            { passive: true },
+        );
+
+        scrollbar.addEventListener(
+            "touchend",
+            () => {
+                targetElement.classList.remove("noselect");
+            },
+            { passive: true },
+        );
+
+        // Mark as attached
+        scrollbar.dataset.listenersAttached = "true";
+
+        return true; // Found and attached
     }
-    
-    // Mouse events
-    scrollbar.addEventListener('mouseenter', () => {
-      targetElement.classList.add('noselect');
-    }, { passive: true });
-    
-    scrollbar.addEventListener('mouseleave', () => {
-      targetElement.classList.remove('noselect');
-    }, { passive: true });
-    
-    // Touch events for mobile
-    scrollbar.addEventListener('touchstart', () => {
-      targetElement.classList.add('noselect');
-    }, { passive: true });
-    
-    scrollbar.addEventListener('touchend', () => {
-      targetElement.classList.remove('noselect');
-    }, { passive: true });
-    
-    // Mark as attached
-    scrollbar.dataset.listenersAttached = 'true';
-    
-    return true; // Found and attached
-  }
-  
-  return false; // Not found
+
+    return false; // Not found
 }
 
 // Initial check
 if (!attachScrollbarEvents()) {
-  // Watch for dynamic additions
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.type === 'childList') {
-        if (attachScrollbarEvents()) {
-          observer.disconnect(); // Stop observing once attached
-        }
-      }
+    // Watch for dynamic additions
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === "childList") {
+                if (attachScrollbarEvents()) {
+                    observer.disconnect(); // Stop observing once attached
+                }
+            }
+        });
     });
-  });
-  
-  observer.observe(document.body, { 
-    childList: true, 
-    subtree: true
-  });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
 }

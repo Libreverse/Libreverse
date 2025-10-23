@@ -5,6 +5,7 @@
 = stylesheet_pack_tag
 = vite_client_tag data: {turbo_track: "reload"}
 = vite_javascript_tag "~/javascript/application.js", data: {turbo_track: "reload"}
+= vite_javascript_tag "~/javascript/thredded/thredded_imports.js.erb", data: {turbo_track: "reload"}
 - if Rails.env.production?
     = inline_vite_stylesheet "~/javascript/application.js"
 - else

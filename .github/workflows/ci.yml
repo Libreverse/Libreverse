@@ -155,11 +155,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [
-                        brakeman,
-                        bundle-audit,
-                        npm-audit,
-                    ]
+                tool: [brakeman, bundle-audit, npm-audit]
 
         steps:
             - name: Check out code
