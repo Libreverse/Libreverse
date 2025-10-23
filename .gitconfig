@@ -1,0 +1,2 @@
+[diff "rails_credentials"]
+    textconv = bin/rails credentials:show

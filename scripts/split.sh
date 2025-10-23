@@ -3,10 +3,10 @@
 # Updated Script to build and split as root in Docker, then chown output to host user.
 # This fixes apt install perms while ensuring files are user-owned on host.
 
-INPUT_FILE="../../granite-3.3-2b-instruct-Q2_K.gguf"
+INPUT_FILE="../fastthink-0.5b-tiny-q2_k.gguf"
 SPLITS_DIR="./splits"
 MAX_SIZE="99M"
-MODEL_NAME="granite-3.3-2b"
+MODEL_NAME="fastthink-0.5b-tiny"
 
 # Create splits dir on host if needed
 mkdir -p "$SPLITS_DIR"
@@ -19,7 +19,7 @@ HOST_GID=$(id -g)
 
 docker run --rm \
   -v "$(pwd):/workspace" \
-  -w /workspace \
+  -w /workspace/scripts \
   "$IMAGE" \
   bash -c "
     apt-get update && apt-get install -y git build-essential cmake libcurl4-openssl-dev ccache
@@ -30,6 +30,7 @@ docker run --rm \
     cd llama.cpp
     git pull
 
+    rm -rf build
     mkdir -p build
     cd build
     cmake .. \
@@ -38,11 +39,13 @@ docker run --rm \
       -DLLAMA_BUILD_SERVER=OFF
     cmake --build . --parallel 1 --config Release
 
+    cd /workspace/scripts
+
     # Ensure output dir exists
     mkdir -p $SPLITS_DIR
 
     # Run the split with explicit prefix to ./splits/
-    ./bin/llama-gguf-split --split --split-max-size $MAX_SIZE $INPUT_FILE ./splits/$MODEL_NAME
+    ./llama.cpp/build/bin/llama-gguf-split --split --split-max-size $MAX_SIZE $INPUT_FILE ./splits/$MODEL_NAME
 
     # Chown the splits dir to host user
     chown -R $HOST_UID:$HOST_GID $SPLITS_DIR

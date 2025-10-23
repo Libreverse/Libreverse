@@ -13,6 +13,21 @@ if ! bunx socket optimize; then
   exit 1
 fi
 
+# New: detect files >100MB and track them with Git LFS (if git-lfs is available)
+printf '%s\n' "Detecting files >100MB and tracking with Git LFS (if available)..."
+if git lfs version >/dev/null 2>&1; then
+  # Find files >100MB and run `git lfs track` per file (handles spaces/newlines in names).
+  # If none are found, xargs will simply do nothing.
+  find . -type f -size +100M -print0 | xargs -0 -n 1 git lfs track || true
+
+  # Stage .gitattributes so tracked patterns are included in the commit.
+  if [ -f .gitattributes ]; then
+    git add .gitattributes || true
+  fi
+else
+  printf '%s\n' "git-lfs not installed or not available. Skipping LFS tracking."
+fi
+
 # stage any changes produced by the optimizer so they're included in the commit
 # (this ensures generated/modified files are integrated into the commit)
 printf '%s\n' "Staging changes produced by optimizer..."
