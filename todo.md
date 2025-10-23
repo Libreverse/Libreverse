@@ -15,7 +15,7 @@ https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overvie
 finetune super small model like gpt2 or smth on a huge set of libreverse prompt/action examples from modern big llms like granite which is what we're currently using.
 add oj gem once we fix ruby shared libraries weirdness gem install oj -- --with-sse42
 fix ar doctor issues
-add ar doctor and ruumba to the ci
+add ar doctor and ruumba to the ci and zeitwerk check
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
