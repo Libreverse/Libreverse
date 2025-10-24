@@ -1,6 +1,7 @@
-# Apply Active Record Encryption to SolidCache and SolidCable data.
-# This ensures cached values and ActionCable payloads are stored encrypted
-# at rest, mirroring the protection we added for Rodauth-related tables.
+# Apply Active Record Encryption to Solid Cable and Solid Queue data.
+# Note: Solid Cache entries are now encrypted using Solid Cache's built-in encryption feature.
+# This ensures ActionCable payloads and job data are stored encrypted at rest,
+# mirroring the protection we added for Rodauth-related tables.
 
 module EncryptionHelper
   def self.column?(model_class, column_name)
@@ -25,13 +26,8 @@ module EncryptionHelper
 end
 
 Rails.application.config.to_prepare do
-  # Encrypt SolidCache entries (value column contains cached object)
-  if defined?(SolidCache::Entry) && EncryptionHelper.column?(SolidCache::Entry, :value)
-    SolidCache::Entry.class_eval do
-      # Randomized encryption is fine – we never query by value contents
-      encrypts :value
-    end
-  end
+  # Note: SolidCache::Entry encryption is now handled by Solid Cache's built-in encryption feature
+  # enabled in config/cache.yml with encrypt: true
 
   # Encrypt SolidCable messages (payload column contains serialized data)
   if defined?(SolidCable::Message) && EncryptionHelper.column?(SolidCable::Message, :payload)

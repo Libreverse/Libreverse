@@ -1,7 +1,7 @@
 # To-do
 
 solid cache has native encryption and compression which contain micro optimisations. We should use these native features over our own hacks.
-libreverse ai with api calls
+finish libreverse ai with api calls
 adopt cucumber rails for future tests
 fix map 3d performance being rubbish with million.js, terser and babel react optims
 better use of leaflet offline plugin

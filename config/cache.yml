@@ -29,6 +29,7 @@ default: &default
     # Excludes any *.sqlite3 files from the adjusted free space calculation.
     max_size: <%= computed_max_size %>
     namespace: <%= Rails.env %>
+  encrypt: true
 
 development:
   <<: *default

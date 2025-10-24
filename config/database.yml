@@ -60,33 +60,15 @@ development:
         ssl_mode: DISABLED
         migrations_paths: db/queue_migrate
     cache:
-        adapter: sqlite3
+        adapter: postgresql
         encoding: utf8
-        database: db/cache_development.sqlite3
+        database: libreverse_cache_development
+        username: 
+        password: 
+        host: localhost
+        port: 5432
         pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
-        pragmas:
-            cache_size: -20000
-            cache_spill: 0
-            cell_size_check: 0
-            checkpoint_fullfsync: 0
-            foreign_keys: 0
-            fullfsync: 0
-            journal_mode: 'WAL'
-            journal_size_limit: 1000000
-            wal_checkpoint: 'PASSIVE'
-            locking_mode: 'NORMAL'
-            mmap_size: 268435456
-            page_size: 4096
-            secure_delete: 'ON'
-            synchronous: 0
-            temp_store: 2
-            threads: <%= sqlite_threads %>
-            incremental_vacuum: 0
-            read_uncommitted: 1
-            trusted_schema: 'OFF'
-            wal_autocheckpoint: 1000
-            auto_vacuum: 'NONE'
 
 test:
     primary:
@@ -119,33 +101,15 @@ test:
             temp_store: 2
             wal_autocheckpoint: 1000
     cache:
-        adapter: sqlite3
+        adapter: postgresql
         encoding: utf8
-        database: db/cache_test.sqlite3
+        database: libreverse_cache_test
+        username: 
+        password: 
+        host: localhost
+        port: 5432
         pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
-        pragmas:
-            cache_size: -20000
-            cache_spill: 0
-            cell_size_check: 0
-            checkpoint_fullfsync: 0
-            foreign_keys: 0
-            fullfsync: 0
-            journal_mode: 'WAL'
-            journal_size_limit: 1000000
-            wal_checkpoint: 'PASSIVE'
-            locking_mode: 'NORMAL'
-            mmap_size: 268435456
-            page_size: 4096
-            secure_delete: 'ON'
-            synchronous: 0
-            temp_store: 2
-            threads: <%= sqlite_threads %>
-            incremental_vacuum: 0
-            read_uncommitted: 1
-            trusted_schema: 'OFF'
-            wal_autocheckpoint: 1000
-            auto_vacuum: 'NONE'
 
 production:
     primary:
@@ -168,40 +132,12 @@ production:
         sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/queue_migrate
     cache:
-        adapter: sqlite3
+        adapter: postgresql
         encoding: utf8
-        database: db/cache_production.sqlite3
+        database: libreverse_cache_production
+        username: <%= ENV["POSTGRESQL_USERNAME"] || "" %>
+        password: <%= ENV["POSTGRESQL_PASSWORD"] || "" %>
+        host: <%= ENV["POSTGRESQL_HOST"] || "localhost" %>
+        port: <%= ENV["POSTGRESQL_PORT"] || 5432 %>
         pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
-        pragmas:
-            cache_size: -20000
-            cache_spill: 0
-            cell_size_check: 0
-            checkpoint_fullfsync: 0
-            foreign_keys: 0
-            fullfsync: 0
-            journal_mode: 'WAL'
-            journal_size_limit: 1000000
-            wal_checkpoint: 'PASSIVE'
-            locking_mode: 'NORMAL'
-            mmap_size: 268435456
-            page_size: 4096
-            secure_delete: 'ON'
-            synchronous: 0
-            temp_store: 2
-            threads: <%= sqlite_threads %>
-            incremental_vacuum: 0
-            read_uncommitted: 1
-            trusted_schema: 'OFF'
-            wal_autocheckpoint: 1000
-            auto_vacuum: 'NONE'
-    cable:
-        <<: *default
-        database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] %>
-        password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] %>
-        port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-        migrations_paths: db/cable_migrate

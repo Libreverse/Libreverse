@@ -532,6 +532,12 @@ GEM
       rackup (>= 1.0.1)
       rake (>= 12.3.3)
     permessage_deflate (0.1.4)
+    pg (1.6.2-aarch64-linux)
+    pg (1.6.2-aarch64-linux-musl)
+    pg (1.6.2-arm64-darwin)
+    pg (1.6.2-x86_64-darwin)
+    pg (1.6.2-x86_64-linux)
+    pg (1.6.2-x86_64-linux-musl)
     pp (0.6.2)
       prettyprint
     premailer (1.27.0)
@@ -1074,6 +1080,7 @@ DEPENDENCIES
   parallel_tests
   passenger (>= 6.0.20)
   permessage_deflate
+  pg
   premailer-rails
   propshaft
   rack-attack (>= 6.8.0)

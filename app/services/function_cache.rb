@@ -34,17 +34,38 @@ class FunctionCache
       return value
     end
 
-    # Shared cache path (serializes value), appropriate for simple objects
+    # Shared cache path using Solid Cache (serializes value), appropriate for simple objects
     expires_in = ttl&.to_f&.positive? ? ttl.to_f : nil
-    Rails.cache.fetch(key_str, expires_in: expires_in, &block)
+
+    # Use Solid Cache-specific options for better performance
+    cache_options = {
+      expires_in: expires_in,
+      # Disable ActiveRecord instrumentation for function cache to reduce overhead
+      active_record_instrumentation: false
+    }
+
+    # Add error handling for Solid Cache operations
+    begin
+      Rails.cache.fetch(key_str, **cache_options, &block)
+    rescue => e
+      # Log cache errors but don't fail the operation
+      Rails.logger.warn("FunctionCache: Cache operation failed for #{function_name}: #{e.class}: #{e.message}")
+      # Fall back to computing the value without caching
+      yield
+    end
   end
 
   # Delete a cached value for a specific function/args
   def delete(function_name, *args)
     key = build_key(function_name, args)
-    Rails.cache.delete(key)
-    @local_store.delete(key)
-    true
+    begin
+      Rails.cache.delete(key)
+      @local_store.delete(key)
+      true
+    rescue => e
+      Rails.logger.warn("FunctionCache: Delete operation failed for #{function_name}: #{e.class}: #{e.message}")
+      false
+    end
   end
 
   # Clear the cache
@@ -52,6 +73,30 @@ class FunctionCache
     # We cannot efficiently clear only our namespace without a key index; clear local store only
     @local_store.clear
     false
+  end
+
+  # Clear all Solid Cache entries (use with caution - clears entire cache)
+  def clear_all!
+    begin
+      Rails.cache.clear
+      @local_store.clear
+      true
+    rescue => e
+      Rails.logger.warn("FunctionCache: Clear all operation failed: #{e.class}: #{e.message}")
+      false
+    end
+  end
+
+  # Get cache statistics (Solid Cache specific)
+  def stats
+    return {} unless Rails.cache.respond_to?(:stats)
+
+    begin
+      Rails.cache.stats
+    rescue => e
+      Rails.logger.warn("FunctionCache: Stats operation failed: #{e.class}: #{e.message}")
+      {}
+    end
   end
 
   # Close the store
@@ -67,7 +112,19 @@ class FunctionCache
   private
 
   def build_key(function_name, args)
-    digest = Digest::SHA256.hexdigest(Marshal.dump(args))
-    "#{NAMESPACE}:#{function_name}:#{digest}"
+    # Use a more efficient key building approach
+    # Convert args to a stable string representation
+    args_str = args.map do |arg|
+      case arg
+      when String, Symbol, Integer, Float, TrueClass, FalseClass, NilClass
+        arg.to_s
+      else
+        # For complex objects, use a hash of their string representation
+        # This is more stable than Marshal.dump for cache keys
+        Digest::SHA256.hexdigest(arg.inspect)[0..15] # First 16 chars of hash
+      end
+    end.join('|')
+
+    "#{NAMESPACE}:#{function_name}:#{args_str}"
   end
 end
