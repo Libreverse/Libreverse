@@ -7,3 +7,6 @@ saveTextLockfile = false
 scanner = "@socketsecurity/bun-security-scanner"
 [run]
 bun = true
+[install.cache]
+disable = true
+disableManifest = true

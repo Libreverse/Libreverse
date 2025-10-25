@@ -1,6 +1,7 @@
 @use "variables";
 
 * {
+    cursor: url("~/icons/cursor.svg") 8 8, auto !important;
     text-rendering: optimizeSpeed;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
 }
@@ -72,7 +73,6 @@ main.content-wrapper {
   align-items: center;
   transition: top 0.3s;
   border: 1px solid #c0b9a8;
-  position: sticky;
 }
 
 ::selection {
@@ -89,6 +89,7 @@ main.content-wrapper {
   z-index: 2147483646;
   background-image: url("~/images/oneko.gif");
   background-repeat: no-repeat;
+  transition: background-position 0.1s steps(4) ease;
 
   /* Optimize for constant position updates */
   will-change: transform, background-position;
@@ -137,4 +138,40 @@ img:not(.emoji) {
 
 button {
     user-select: none;
+}
+
+/* Custom Cursor Styles */
+.custom-cursor-circle.initializing {
+  opacity: 0 !important;
+  transition: opacity 0.3s ease;
+}
+.custom-cursor-circle.no-transition {
+  transition: none !important;
+}
+/* Outer Circle */
+.custom-cursor-circle {
+  --translate-x: 0px;
+  --translate-y: 0px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #e5e4da;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(var(--translate-x), var(--translate-y))
+    translate(-50%, -50%) scale(1);
+  transition:
+    transform 0.1s ease,
+    opacity 0.3s ease;
+  z-index: 2147483644;
+  opacity: 1;
+  /* will-change is now managed dynamically via JavaScript */
+}
+/* Shrink Effect on Click (applied only to the circle) */
+.custom-cursor-circle.shrink {
+  transform: translate(var(--translate-x), var(--translate-y))
+    translate(-50%, -50%) scale(0.7);
+  /* Ensure the transform transition is smooth */
 }

@@ -22,6 +22,9 @@ application.register("consent", ConsentController)
 import CtaParticlesController from "./cta_particles_controller"
 application.register("cta-particles", CtaParticlesController)
 
+import CursorController from "./cursor_controller"
+application.register("cursor", CursorController)
+
 import DismissibleController from "./dismissible_controller"
 application.register("dismissible", DismissibleController)
 

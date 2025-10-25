@@ -39,9 +39,8 @@ class FunctionCache
 
     # Use Solid Cache-specific options for better performance
     cache_options = {
-      expires_in: expires_in,
-      # Disable ActiveRecord instrumentation for function cache to reduce overhead
-      active_record_instrumentation: false
+      expires_in: expires_in
+      # Note: active_record_instrumentation is now disabled globally in config/cache.yml
     }
 
     # Add error handling for Solid Cache operations

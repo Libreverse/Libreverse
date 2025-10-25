@@ -162,6 +162,10 @@ export default class extends Controller
       @mousePosX = event.clientX
       @mousePosY = event.clientY
 
+    document.addEventListener "wheel", (event) =>
+      @nekoPosY -= event.deltaY / 10
+      @updatePos()
+
   loop: (timestamp) =>
     return unless @running
     # Safety check - stop if neko element is removed from DOM
@@ -196,9 +200,8 @@ export default class extends Controller
     @nekoPosY -= (diffY / distance) * @nekoSpeed
     @nekoPosX = Math.min Math.max(16, @nekoPosX), window.innerWidth - 16
     @nekoPosY = Math.min Math.max(16, @nekoPosY), window.innerHeight - 16
-    @nekoEl.style.left = "#{@nekoPosX - 16}px"
-    @nekoEl.style.top = "#{@nekoPosY - 16}px"
-    
+    @updatePos()
+
     # Throttled save - only save state occasionally to avoid performance issues
     @lastSaveTime = 0 unless @lastSaveTime?
     currentTime = Date.now()
@@ -237,6 +240,10 @@ export default class extends Controller
   resetIdleAnimation: =>
     @idleAnimation = undefined
     @idleAnimationFrame = 0
+
+  updatePos: =>
+    @nekoEl.style.left = "#{@nekoPosX - 16}px"
+    @nekoEl.style.top = "#{@nekoPosY - 16}px"
 
   # Heart explosion effect when neko is clicked
   explodeHearts: =>

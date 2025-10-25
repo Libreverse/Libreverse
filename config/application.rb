@@ -22,7 +22,6 @@ require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
-require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -99,9 +98,6 @@ module LibreverseInstance
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
 
-    # Preload html over the wire with turbo - can't decide whether this improves things or not
-    config.middleware.use TurboPreload
-
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
     config.middleware.use EmojiReplacer, {
@@ -123,15 +119,6 @@ module LibreverseInstance
       min: 419_430_400,
       max: 524_288_000,
       check_cycle: 1
-    )
-
-    # New Requests limiter for stability
-    middleware.insert_before(
-      Rack::Runtime,
-      WorkerKiller::Middleware::RequestsLimiter,
-      killer: killer,
-      min: 20,          # Start grace period here
-      max: 50          # Kill after this many requests
     )
 
     # Add this to make prod healthcheck pass correctly

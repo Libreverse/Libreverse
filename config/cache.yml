@@ -29,6 +29,10 @@ default: &default
     # Excludes any *.sqlite3 files from the adjusted free space calculation.
     max_size: <%= computed_max_size %>
     namespace: <%= Rails.env %>
+    # Lower batch size for more frequent but smaller cleanup operations
+    expiry_batch_size: 50
+    # Disable ActiveRecord instrumentation to reduce overhead
+    active_record_instrumentation: false
   encrypt: true
 
 development:

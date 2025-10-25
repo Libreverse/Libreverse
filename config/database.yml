@@ -63,12 +63,15 @@ development:
         adapter: postgresql
         encoding: utf8
         database: libreverse_cache_development
-        username: 
-        password: 
+        username: postgres
+        password: password
         host: localhost
         port: 5432
         pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
+        variables:
+            # Optimize for SSD storage (default was for HDDs)
+            random_page_cost: 1.1
 
 test:
     primary:
@@ -104,12 +107,15 @@ test:
         adapter: postgresql
         encoding: utf8
         database: libreverse_cache_test
-        username: 
-        password: 
+        username: postgres
+        password: password
         host: localhost
         port: 5432
         pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
+        variables:
+            # Optimize for SSD storage (default was for HDDs)
+            random_page_cost: 1.1
 
 production:
     primary:
@@ -141,3 +147,6 @@ production:
         port: <%= ENV["POSTGRESQL_PORT"] || 5432 %>
         pool: <%= pool_size %>
         migrations_paths: db/cache_migrate
+        variables:
+            # Optimize for SSD storage (default was for HDDs)
+            random_page_cost: 1.1
