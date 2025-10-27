@@ -11,6 +11,7 @@ lerp = (start, end, amt) ->
 export default class extends Controller
   connect: ->
     @circle = @element.querySelector(".custom-cursor-circle")
+    @dot = @element.querySelector(".cursor-dot")
     
     # Bind methods
     @handleMouseMove = @handleMouseMove.bind(@)
@@ -36,6 +37,8 @@ export default class extends Controller
     @isShrinking = false
     @circleX = window.innerWidth / 2
     @circleY = window.innerHeight / 2
+    @dotX = @circleX - 8
+    @dotY = @circleY - 8
     @targetX = @circleX
     @targetY = @circleY
     
@@ -67,19 +70,28 @@ export default class extends Controller
   # Finish initialization immediately using current position data
   finishInitialization: ->
     if @isInitializing
-      # Set position with no transition
+      # Set ring position with no transition
       @circle?.style.setProperty("--translate-x", "#{@circleX}px")
       @circle?.style.setProperty("--translate-y", "#{@circleY}px")
       
+      # Set dot position with no transition
+      @dot?.style.setProperty("--translate-x", "#{@dotX}px")
+      @dot?.style.setProperty("--translate-y", "#{@dotY}px")
+      
       # Force browser to apply position before making visible
-      window.getComputedStyle(@circle).opacity
+      if @circle
+        window.getComputedStyle(@circle).opacity
+      if @dot
+        window.getComputedStyle(@dot).opacity
       
       # Make visible with no transition
       @isInitializing = false
       @circle?.classList.remove("initializing")
+      @dot?.classList.remove("initializing")
       
       # Remove no-transition class immediately
       @circle?.classList.remove("no-transition")
+      @dot?.classList.remove("no-transition")
 
   # Handles mouse movement by updating CSS variables for the circle's position.
   # @param {MouseEvent} event - The mousemove event object.
@@ -90,9 +102,11 @@ export default class extends Controller
     prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches
     if prefersReducedMotion
       @circle?.style.display = "none"
+      @dot?.style.display = "none"
       return
     else
       @circle?.style.display = "block"
+      @dot?.style.display = "block"
 
     # Get current mouse position
     x = event.clientX
@@ -104,20 +118,28 @@ export default class extends Controller
       @targetY = y
       @circleX = x
       @circleY = y
+      @dotX = x - 8
+      @dotY = y - 8
       
       # Ensure no transition for initial positioning
       @circle?.classList.add("no-transition")
+      @dot?.classList.add("no-transition")
       @finishInitialization()
     else
       # Normal behavior after initialization
       @targetX = x
       @targetY = y
+      # Update dot position immediately (exact follow)
+      @dotX = x - 8
+      @dotY = y - 8
+      @dot?.style.setProperty("--translate-x", "#{@dotX}px")
+      @dot?.style.setProperty("--translate-y", "#{@dotY}px")
 
-  # Animates the circle to follow the target position with easing.
+  # Animates the ring to follow the target position with easing.
   animateCursor: ->
     # Only animate if we're not initializing and have a mouse position
     if !@isInitializing
-      # Only animate when cursor is visible (after initialization)
+      # Only animate ring when cursor is visible (after initialization)
       deltaX = @targetX - @circleX
       deltaY = @targetY - @circleY
       distance = Math.hypot(deltaX, deltaY)
@@ -131,7 +153,7 @@ export default class extends Controller
         @circleX = lerp(@circleX, @targetX, easingAmount)
         @circleY = lerp(@circleY, @targetY, easingAmount)
         
-        # Update position
+        # Update ring position
         @circle?.style.setProperty("--translate-x", "#{@circleX}px")
         @circle?.style.setProperty("--translate-y", "#{@circleY}px")
       else
@@ -140,19 +162,19 @@ export default class extends Controller
         @circleX = @targetX
         @circleY = @targetY
         
-        # Update position
+        # Update ring position
         @circle?.style.setProperty("--translate-x", "#{@circleX}px")
         @circle?.style.setProperty("--translate-y", "#{@circleY}px")
 
     requestAnimationFrame(@animateCursor)
 
-  # Handles mouse down events by adding the shrink class to the circle.
+  # Handles mouse down events by adding the shrink class to the ring.
   handleMouseDown: (event) ->
     if event.button is 0 and @circle and not @isShrinking
       @isShrinking = true
       @circle.classList.add("shrink")
 
-  # Handles mouse up events by removing the shrink class from the circle.
+  # Handles mouse up events by removing the shrink class from the ring.
   handleMouseUp: (event) ->
     if event.button is 0 and @circle and @isShrinking
       @circle.classList.remove("shrink")
@@ -163,6 +185,8 @@ export default class extends Controller
     cursorState = {
       circleX: @circleX
       circleY: @circleY
+      dotX: @dotX
+      dotY: @dotY
       targetX: @targetX
       targetY: @targetY
       isShrinking: @isShrinking
@@ -190,11 +214,15 @@ export default class extends Controller
         @circleY = state.circleY
         @targetX = state.targetX
         @targetY = state.targetY
+        @dotX = @targetX - 8
+        @dotY = @targetY - 8
         @isShrinking = state.isShrinking
         
-        # Apply position immediately
+        # Apply positions immediately
         @circle?.style.setProperty("--translate-x", "#{@circleX}px")
         @circle?.style.setProperty("--translate-y", "#{@circleY}px")
+        @dot?.style.setProperty("--translate-x", "#{@dotX}px")
+        @dot?.style.setProperty("--translate-y", "#{@dotY}px")
         
         # Make cursor visible immediately for smooth page transitions
         @finishInitialization()

@@ -10,6 +10,13 @@ import Erb from "vite-plugin-erb";
 import coffeescript from "./plugins/coffeescript.js";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
+import postcssClassNameShortener from 'postcss-class-name-shortener';
+import postcssRemoveRoot from 'postcss-remove-root';
+import cssMqpacker from 'css-mqpacker';
+import stylehacks from 'stylehacks';
+import postcssMqOptimize from 'postcss-mq-optimize';
+import autoprefixer from 'autoprefixer';
+import removePrefix from "./plugins/postcss-remove-prefix.js";
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -230,25 +237,52 @@ export default defineConfig(({ mode }) => {
             },
             postcss: {
                 plugins: [
-                    postcssUrl({ url: "inline", maxSize: 2147483647 }),
+                    removePrefix(),
+                    stylehacks({lint: false}),
                     postcssInlineRtl(),
+                    postcssUrl([
+                        {
+                            filter: '**/*.woff2',
+                            url: 'inline',
+                            encodeType: 'base64',
+                            maxSize: 2147483647
+                        },
+                        {
+                            url: 'inline',
+                            maxSize: 2147483647,
+                            encodeType: 'encodeURIComponent',
+                            optimizeSvgEncode: true,
+                            ignoreFragmentWarning: true
+                        }
+                    ]),
                     cssnano({
-                        preset: [
-                            "advanced",
-                            {
-                                autoprefixer: true,
-                                discardComments: {
-                                    removeAllButCopyright: true,
-                                },
-                                normalizeString: true,
-                                normalizeUrl: true,
-                                normalizeCharset: true,
-                            },
-                        ],
+                    preset: [
+                        "advanced",
+                        {
+                        autoprefixer: false,
+                        discardComments: {
+                            removeAllButCopyright: true,
+                        },
+                        discardUnused: true,
+                        reduceIdents: true,
+                        mergeIndents: true,
+                        zindex: true,
+                        },
+                    ],
                     }),
-                ],
+                    postcssClassNameShortener({
+                        outputMapCallback: (map) => console.log(JSON.stringify(map)),
+                        disable: process.env.NODE_ENV === 'development'
+                    }),
+                    postcssRemoveRoot(),
+                    cssMqpacker({
+                    sort: true
+                    }),
+                    postcssMqOptimize(),
+                    autoprefixer(),
+                ]
+                }
             },
-        },
         define: {
             global: "globalThis",
         },

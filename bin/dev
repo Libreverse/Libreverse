@@ -121,6 +121,9 @@ run_task("Killing anything using the development SQLite database...", "cd .. && 
 show_spinner("Removing any stray libreverse-dev-tidb containers...");
 run_task("Removing any stray libreverse-dev-tidb containers...", "timeout 10 docker rm -f libreverse-dev-tidb > /dev/null 2>&1");
 
+show_spinner("Removing any stray libreverse-dev-postgres containers...");
+run_task("Removing any stray libreverse-dev-postgres containers...", "timeout 10 docker rm -f libreverse-dev-postgres > /dev/null 2>&1");
+
 show_spinner("Killing anything on port 3000...");
 run_task("Killing anything on port 3000...", "fuser -k -TERM 3000/tcp > /dev/null 2>&1");
 

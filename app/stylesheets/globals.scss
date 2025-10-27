@@ -1,8 +1,9 @@
 @use "variables";
+@use "templates/administrative";
 
 * {
-    cursor: url("~/icons/cursor.svg") 8 8, auto !important;
-    text-rendering: optimizeSpeed;
+    cursor: none !important;
+    text-rendering: optimizeLegibility;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
 }
 
@@ -10,10 +11,6 @@
     *:not(.glass-container) {
         position: relative;
     }
-}
-
-.turbo-progress-bar {
-    will-change: width, opacity;
 }
 
 .noscript-message {
@@ -86,10 +83,9 @@ main.content-wrapper {
   height: 32px;
   position: fixed;
   image-rendering: pixelated;
-  z-index: 2147483646;
-  background-image: url("~/images/oneko.gif");
+  z-index: 1111;
   background-repeat: no-repeat;
-  transition: background-position 0.1s steps(4) ease;
+  transition: all 0.1s ease;
 
   /* Optimize for constant position updates */
   will-change: transform, background-position;
@@ -102,12 +98,17 @@ main.content-wrapper {
 // Oneko heart explosion styles
 @keyframes heart-burst {
   0% {
-    transform: scale(0);
+    transform: translate(-50%, -50%) rotate3d(1, 0.5, 0, var(--start-rot, 0deg)) scale(0);
     opacity: 1;
   }
 
+  60% {
+    transform: translate(calc(-50% + var(--burst-x, 0px)), calc(-50% + var(--burst-y, 0px))) rotate3d(1, 0.5, 0, calc(var(--start-rot, 0deg) + var(--rot-range, 10deg))) scale(0.8);
+    opacity: 0.5;
+  }
+
   100% {
-    transform: scale(1);
+    transform: translate(calc(-50% + var(--burst-x, 0px)), calc(-50% + var(--burst-y, 0px))) rotate3d(1, 0.5, 0, calc(var(--start-rot, 0deg) + var(--rot-range, 20deg))) scale(1);
     opacity: 0;
   }
 }
@@ -116,12 +117,17 @@ main.content-wrapper {
   position: absolute;
   width: 32px;
   height: 32px;
-  animation: heart-burst 1s ease-out;
+  animation: 
+    /* burst (scale + fade out + rotate) */
+    heart-burst 1s ease-in-out forwards;
   animation-fill-mode: forwards;
   pointer-events: none;
   user-select: none;
-  z-index: 2147483648; // Number.MAX_VALUE equivalent
+  z-index: 2147483648;
   opacity: 0;
+  transform-origin: center center;
+  filter: drop-shadow(0 0 4px #f7b6d1) blur(0.5px);
+  box-shadow: 0 0 8px 2px #f7b6d1cc;
 
   /* Optimize for animation */
   will-change: transform, opacity;
@@ -129,6 +135,8 @@ main.content-wrapper {
   svg {
     width: 100%;
     height: 100%;
+    fill: #e45c9c; /* Pink heart color */
+    filter: blur(1px);
   }
 }
 
@@ -174,4 +182,19 @@ button {
   transform: translate(var(--translate-x), var(--translate-y))
     translate(-50%, -50%) scale(0.7);
   /* Ensure the transform transition is smooth */
+}
+
+// Oneko skin picker styles
+.oneko-skin-picker-board {
+    @extend %administrative-card-hoverless;
+    padding: 1.5rem;
+}
+
+.cursor-dot {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999; /* Ensure it's on top */
+  transform: translate(var(--translate-x, 0px), var(--translate-y, 0px));
+  opacity: 1;
+  transition: all ease 0.01s; /* Instant movement to follow cursor exactly */
 }

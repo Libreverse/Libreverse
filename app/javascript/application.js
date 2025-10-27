@@ -9,6 +9,7 @@ import "./libs/websocket_p2p_frame.coffee";
 import "what-input";
 import { load } from "@fingerprintjs/botd";
 import "./libs/cookies.js";
+import "stimulus_reflex";
 
 // GDPR-Compliant Error Tracking Setup
 import * as Sentry from "@sentry/browser";

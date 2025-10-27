@@ -30,17 +30,9 @@
     align-items: center;
     padding: 0;
     border-left: none;
-    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0 !important;
+    border-radius: 0px 15px 15px 0px !important;
     overflow: hidden;
     transition: all var(--glass-transition-medium) var(--glass-easing);
-
-    // Ensure border-radius is applied consistently across all states
-    &,
-    &::before,
-    &::after {
-        border-radius: 0 var(--sidebar-border-radius)
-            var(--sidebar-border-radius) 0 !important;
-    }
 
     // Content positioning
     > * {

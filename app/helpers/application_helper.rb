@@ -858,3 +858,35 @@ end
 
     "#{p.mtime.to_i}-#{p.size}"
   end
+
+  def current_oneko_skin
+    return 'default' unless current_account&.id
+
+    UserPreference.get(current_account.id, 'oneko-skin') || 'default'
+  end
+
+  def oneko_skin_asset_url
+    skin = current_oneko_skin
+    filename = case skin
+               when 'black' then 'oneko_black.gif'
+               when 'gray' then 'oneko_gray.gif'
+               when 'default' then 'oneko.gif'
+               else "#{skin}.gif"
+               end
+    vite_asset_path("images/#{filename}")
+  end
+
+  def oneko_skin_urls
+    skins = %w[default black gray pride valentine fox bunny ghost spirit silver trans]
+    urls = {}
+    skins.each do |skin|
+      filename = case skin
+                 when 'black' then 'oneko_black.gif'
+                 when 'gray' then 'oneko_gray.gif'
+                 when 'default' then 'oneko.gif'
+                 else "#{skin}.gif"
+                 end
+      urls[skin] = vite_asset_path("images/#{filename}")
+    end
+    urls
+  end

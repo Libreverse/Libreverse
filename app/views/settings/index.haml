@@ -15,3 +15,11 @@
           - is_current = I18n.locale == locale
           %span.language-flag{ data: { action: 'click->language-picker#select', locale: locale }, class: (is_current ? 'selected' : '') }
             = flag
+      .oneko-skin-picker-board.glass.glass-card-base{ data: { controller: 'oneko-skin-picker' } }
+        %h3.section-title= t('settings.index.oneko_skin')
+        - available_skins = %w[default black gray pride valentine fox bunny ghost spirit silver trans]
+        - current_skin = current_oneko_skin
+        - available_skins.each do |skin|
+          - is_current = current_skin == skin
+          %span.oneko-skin-option{ data: { action: 'click->oneko-skin-picker#select', skin: skin }, class: (is_current ? 'selected' : '') }
+            = skin.titleize

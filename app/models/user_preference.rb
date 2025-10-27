@@ -28,6 +28,7 @@ class UserPreference < ApplicationRecord
     feature-announcement
     theme-selection
     locale
+    oneko-skin
   ].freeze
 
   validate :key_must_be_allowed

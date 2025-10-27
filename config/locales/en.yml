@@ -225,6 +225,7 @@ en:
     index:
       description: Manage your preferences.
       language: Language
+      oneko_skin: Oneko Skin
       title: Settings
   spam_protection:
     bot_detected: Automated behavior detected. Please try again.

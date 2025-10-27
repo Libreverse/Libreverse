@@ -7,7 +7,7 @@
     background-color: variables.$glass;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px variables.$box-shadow;
-    border-radius: 15px;
+    border-radius: 15px !important;
 }
 
 %administrative-container {

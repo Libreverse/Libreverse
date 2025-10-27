@@ -3,8 +3,7 @@ telemetry = false
 [install]
 exact = true
 saveTextLockfile = false
-[install.security]
-scanner = "@socketsecurity/bun-security-scanner"
+
 [run]
 bun = true
 [install.cache]

@@ -73,6 +73,9 @@ application.register("off-canvas", OffCanvasController)
 import OnekoController from "./oneko_controller"
 application.register("oneko", OnekoController)
 
+import OnekoSkinPickerController from "./oneko_skin_picker_controller"
+application.register("oneko-skin-picker", OnekoSkinPickerController)
+
 import ParallaxBackgroundController from "./parallax_background_controller"
 application.register("parallax-background", ParallaxBackgroundController)
 
