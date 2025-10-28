@@ -3,7 +3,7 @@
 # Based on: https://www.crunchydata.com/blog/solid-cache-for-rails-and-postgresql
 
 Rails.application.config.after_initialize do
-  if defined?(SolidCache::Record) && ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'
+  if defined?(SolidCache::Record) && ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
     # Pre-warm the cache table into PostgreSQL's buffer cache for faster access
     # This is especially beneficial for dedicated cache servers
     begin
@@ -12,7 +12,7 @@ Rails.application.config.after_initialize do
     rescue ActiveRecord::StatementInvalid => e
       # pg_prewarm extension might not be available, log but don't fail
       Rails.logger.warn "pg_prewarm extension not available: #{e.message}"
-    rescue => e
+    rescue StandardError => e
       Rails.logger.warn "Failed to pre-warm Solid Cache table: #{e.message}"
     end
   end

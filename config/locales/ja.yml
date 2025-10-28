@@ -203,6 +203,7 @@ ja:
     index:
       description: 設定を管理します。
       language: 言語
+      oneko_skin: Oneko Skin
       title: 設定
   spam_protection:
     bot_detected: Automated behavior detected. Please try again.

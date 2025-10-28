@@ -9,9 +9,4 @@ StimulusReflex.initialize(application, {
 });
 
 // Development-specific configuration
-if (import.meta.env.MODE === "development") {
-    StimulusReflex.debug = true;
-}
-else {
-    StimulusReflex.debug = false;
-}
+StimulusReflex.debug = import.meta.env.MODE === "development" ? true : false;

@@ -13,7 +13,7 @@ if defined?(SolidCache::Record)
     # Patch Solid Cache to use optimized PostgreSQL transaction settings
     module TransactionOptimizations
       def transaction(**options, &block)
-        if connection.adapter_name == 'PostgreSQL' && options[:requires_new].nil?
+        if connection.adapter_name == "PostgreSQL" && options[:requires_new].nil?
           # Use local synchronous_commit for better performance on cache operations
           # This provides local durability but reduces network overhead for replication
           connection.execute("SET LOCAL synchronous_commit = 'local'")

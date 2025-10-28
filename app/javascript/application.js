@@ -360,13 +360,11 @@ function attachScrollbarEvents() {
 if (!attachScrollbarEvents()) {
     // Watch for dynamic additions
     const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === "childList") {
-                if (attachScrollbarEvents()) {
+        for (const mutation of mutations) {
+            if (mutation.type === "childList" && attachScrollbarEvents()) {
                     observer.disconnect(); // Stop observing once attached
                 }
-            }
-        });
+        }
     });
 
     observer.observe(document.body, {

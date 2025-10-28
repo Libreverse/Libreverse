@@ -4,7 +4,8 @@ class OptimizeSolidCacheTable < ActiveRecord::Migration[8.0]
     # Based on: https://www.crunchydata.com/blog/solid-cache-for-rails-and-postgresql
 
     # Only apply optimizations if we're using PostgreSQL
-    if connection.adapter_name == 'PostgreSQL'
+    return unless connection.adapter_name == 'PostgreSQL'
+
       # Disable WAL for the cache table to reduce write IO
       # Cache data can be lost and repopulated, so durability guarantees are less critical
       execute "ALTER TABLE solid_cache_entries SET UNLOGGED;"
@@ -23,14 +24,14 @@ class OptimizeSolidCacheTable < ActiveRecord::Migration[8.0]
       # Default was designed for HDDs, reduce it to favor index scans
       execute "ALTER DATABASE #{connection.current_database} SET random_page_cost = 1.1;"
 
-      # Note: synchronous_commit optimization is applied at transaction level
-      # in the Solid Cache initializer, not at table level
-    end
+    # NOTE: synchronous_commit optimization is applied at transaction level
+    # in the Solid Cache initializer, not at table level
   end
 
   def down
     # Revert optimizations if we're using PostgreSQL
-    if connection.adapter_name == 'PostgreSQL'
+    return unless connection.adapter_name == 'PostgreSQL'
+
       # Re-enable WAL logging
       execute "ALTER TABLE solid_cache_entries SET LOGGED;"
 
@@ -45,6 +46,5 @@ class OptimizeSolidCacheTable < ActiveRecord::Migration[8.0]
 
       # Reset random_page_cost to default value
       execute "ALTER DATABASE #{connection.current_database} RESET random_page_cost;"
-    end
   end
 end

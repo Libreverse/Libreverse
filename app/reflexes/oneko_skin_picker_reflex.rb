@@ -8,7 +8,7 @@ class OnekoSkinPickerReflex < ApplicationReflex
       default black gray spirit asexual silver trans valentine fox maia mike pride bisexual genderfluid silversky esmeralda jess calico agender snuupy lesbian maria kina eevee onekoslvt bunny gay lucy nonbinary ace tora ghost
     ]
 
-    if available_skins.include?(skin) || skin == 'default'
+    if available_skins.include?(skin) || skin == "default"
       # Persist user preference
       if current_account&.id
         Rails.logger.info "[OnekoSkinPickerReflex] Setting oneko-skin preference for account #{current_account.id} to: #{skin}"
@@ -20,10 +20,9 @@ class OnekoSkinPickerReflex < ApplicationReflex
         .dispatch_event(name: "oneko:skin-changed", detail: { skin: skin })
         .broadcast
 
-      morph :nothing
     else
       Rails.logger.warn "[OnekoSkinPickerReflex] Invalid skin selected: #{skin}"
-      morph :nothing
     end
+morph :nothing
   end
 end

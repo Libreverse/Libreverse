@@ -8,7 +8,7 @@
 # Snappy: Fast, low-ratio compression (~1.5-2x on binaries); no config options
 # Decompress: Use python-snappy or libsnappy tools (e.g., snzip if installed)
 
-set -e  # Exit on error
+set -e # Exit on error
 
 # Parse arguments
 DIR="${1:-.}"
@@ -23,10 +23,10 @@ python3 -m venv "$VENV_DIR"
 # Activate and install
 source "$VENV_DIR/bin/activate"
 pip install --upgrade pip
-pip install python-snappy  # Correct package for Snappy compression bindings
+pip install python-snappy # Correct package for Snappy compression bindings
 
 # Write Python script for compression
-cat > "$PY_SCRIPT" << 'EOF'
+cat >"$PY_SCRIPT" <<'EOF'
 import os
 import sys
 import snappy

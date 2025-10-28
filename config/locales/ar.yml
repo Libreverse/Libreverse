@@ -220,6 +220,7 @@ ar:
     index:
       description: إدارة تفضيلاتك.
       language: اللغة
+      oneko_skin: Oneko Skin
       title: الإعدادات
   spam_protection:
     bot_detected: Automated behavior detected. Please try again.

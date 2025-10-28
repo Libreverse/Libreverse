@@ -34,21 +34,21 @@ export default async function loadToxicityPipeline(
         try {
             const text = await modelConfigFile.text();
             options.config = JSON.parse(text);
-        } catch (err) {
-            console.warn("[toxicity] failed to parse model config", err);
+        } catch (error) {
+            console.warn("[toxicity] failed to parse model config", error);
             return null;
         }
         try {
             options.tokenizer = { file: tokenizerFile };
-        } catch (err) {
-            console.warn("[toxicity] failed to attach tokenizer file", err);
+        } catch (error) {
+            console.warn("[toxicity] failed to attach tokenizer file", error);
             return null;
         }
         try {
             const text = await tokenizerConfigFile.text();
             options.tokenizer_config = JSON.parse(text);
-        } catch (err) {
-            console.warn("[toxicity] failed to parse tokenizer_config", err);
+        } catch (error) {
+            console.warn("[toxicity] failed to parse tokenizer_config", error);
             return null;
         }
 
@@ -63,23 +63,23 @@ export default async function loadToxicityPipeline(
                 );
                 try {
                     URL.revokeObjectURL(blobUrl);
-                } catch (e) {}
+                } catch {}
                 return pipe;
-            } catch (innerErr) {
+            } catch (error) {
                 console.warn(
                     "[toxicity] Local ONNX pipeline attempt via blob URL failed",
-                    innerErr,
+                    error,
                 );
                 try {
                     URL.revokeObjectURL(blobUrl);
-                } catch (e) {}
+                } catch {}
                 // Try data: URL
                 try {
                     const arrayBuffer = await customModel.file.arrayBuffer();
                     const uint8 = new Uint8Array(arrayBuffer);
                     let binary = "";
-                    for (let i = 0; i < uint8.length; i++)
-                        binary += String.fromCharCode(uint8[i]);
+                    for (let index = 0; index < uint8.length; index++)
+                        binary += String.fromCharCode(uint8[index]);
                     const base64 = btoa(binary);
                     const dataUrl = `data:application/octet-stream;base64,${base64}`;
                     const pipe = await pipeline(
@@ -88,10 +88,10 @@ export default async function loadToxicityPipeline(
                         options,
                     );
                     return pipe;
-                } catch (dataErr) {
+                } catch (error) {
                     console.warn(
                         "[toxicity] Local ONNX pipeline attempt via data: URL failed",
-                        dataErr,
+                        error,
                     );
                 }
                 // Last-ditch: try File object
@@ -102,15 +102,15 @@ export default async function loadToxicityPipeline(
                         options,
                     );
                     return pipe;
-                } catch (innerErr2) {
+                } catch (error) {
                     console.warn(
                         "[toxicity] Local ONNX pipeline attempt via File failed",
-                        innerErr2,
+                        error,
                     );
                 }
             }
-        } catch (err) {
-            console.warn("[toxicity] Local ONNX pipeline failed", err);
+        } catch (error) {
+            console.warn("[toxicity] Local ONNX pipeline failed", error);
         }
 
         // Never try remote model id
@@ -118,8 +118,8 @@ export default async function loadToxicityPipeline(
             "[toxicity] ML pipelines failed; returning null to enforce ML-only policy",
         );
         return null;
-    } catch (err) {
-        console.error("[toxicity] Unexpected error initializing pipeline", err);
+    } catch (error) {
+        console.error("[toxicity] Unexpected error initializing pipeline", error);
         return null;
     }
 }

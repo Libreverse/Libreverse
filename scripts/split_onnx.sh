@@ -2,8 +2,8 @@
 
 # Configuration
 INPUT_FILE="/Users/george/libreverse/app/client-ai-models/intel-toxic-prompt-roberta.onnx" # Path to your ONNX file
-OUTPUT_DIR="/Users/george/libreverse/app/client-ai-models/"                              # Directory to save .onnx.part files
-MAX_CHUNK_SIZE=$((95*1024*1024))                                                        # 95MB in bytes
+OUTPUT_DIR="/Users/george/libreverse/app/client-ai-models/"                                # Directory to save .onnx.part files
+MAX_CHUNK_SIZE=$((95 * 1024 * 1024))                                                       # 95MB in bytes
 
 # Derive base filename (without path or extension)
 BASE_NAME=$(basename "$INPUT_FILE" .onnx)
@@ -46,23 +46,24 @@ for chunk in "$OUTPUT_DIR/${BASE_NAME}_"*; do
 done
 
 # Generate metadata JSON
-metadata=$(cat <<EOF
+metadata=$(
+    cat <<EOF
 {
     "original_filename": "$(basename "$INPUT_FILE")",
     "mime_type": "application/octet-stream",
     "chunk_count": ${#chunks[@]},
     "chunks": [
 $(for i in "${!chunks[@]}"; do
-    chunk_size=$(stat -f %z "$OUTPUT_DIR/${chunks[$i]}" 2>/dev/null || stat -c %s "$OUTPUT_DIR/${chunks[$i]}" 2>/dev/null)
-    echo "        {\"index\": $i, \"filename\": \"${chunks[$i]}\", \"size\": $chunk_size}$( [ $i -lt $((${#chunks[@]}-1)) ] && echo "," )"
-done)
+        chunk_size=$(stat -f %z "$OUTPUT_DIR/${chunks[$i]}" 2>/dev/null || stat -c %s "$OUTPUT_DIR/${chunks[$i]}" 2>/dev/null)
+        echo "        {\"index\": $i, \"filename\": \"${chunks[$i]}\", \"size\": $chunk_size}$([ $i -lt $((${#chunks[@]} - 1)) ] && echo ",")"
+    done)
     ]
 }
 EOF
 )
 
 # Save metadata
-echo "$metadata" > "$METADATA_FILE"
+echo "$metadata" >"$METADATA_FILE"
 if [ $? -eq 0 ]; then
     echo "Metadata saved to $METADATA_FILE"
 else

@@ -230,6 +230,7 @@ de:
     index:
       description: Verwalten Sie Ihre Einstellungen.
       language: Sprache
+      oneko_skin: Oneko Skin
       title: Einstellungen
   spam_protection:
     bot_detected: Automated behavior detected. Please try again.

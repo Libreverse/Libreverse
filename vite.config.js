@@ -3,7 +3,7 @@ import path from "node:path";
 import rubyPlugin from "vite-plugin-ruby";
 import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
-import babel from 'vite-plugin-babel';
+import babel from "vite-plugin-babel";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import postcssUrl from "postcss-url";
@@ -11,15 +11,15 @@ import Erb from "vite-plugin-erb";
 import coffeescript from "./plugins/coffeescript.js";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
-import postcssClassNameShortener from 'postcss-class-name-shortener';
-import postcssRemoveRoot from 'postcss-remove-root';
-import cssMqpacker from 'css-mqpacker';
-import stylehacks from 'stylehacks';
-import postcssMqOptimize from 'postcss-mq-optimize';
-import autoprefixer from 'autoprefixer';
+import postcssClassNameShortener from "postcss-class-name-shortener";
+import postcssRemoveRoot from "postcss-remove-root";
+import cssMqpacker from "css-mqpacker";
+import stylehacks from "stylehacks";
+import postcssMqOptimize from "postcss-mq-optimize";
+import autoprefixer from "autoprefixer";
 import removePrefix from "./plugins/postcss-remove-prefix.js";
 import nodePolyfills from "rollup-plugin-polyfill-node";
-import { ViteTips } from 'vite-plugin-tips';
+import { ViteTips } from "vite-plugin-tips";
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -241,51 +241,52 @@ export default defineConfig(({ mode }) => {
             postcss: {
                 plugins: [
                     removePrefix(),
-                    stylehacks({lint: false}),
+                    stylehacks({ lint: false }),
                     postcssInlineRtl(),
                     postcssUrl([
                         {
-                            filter: '**/*.woff2',
-                            url: 'inline',
-                            encodeType: 'base64',
-                            maxSize: 2147483647
+                            filter: "**/*.woff2",
+                            url: "inline",
+                            encodeType: "base64",
+                            maxSize: 2147483647,
                         },
                         {
-                            url: 'inline',
+                            url: "inline",
                             maxSize: 2147483647,
-                            encodeType: 'encodeURIComponent',
+                            encodeType: "encodeURIComponent",
                             optimizeSvgEncode: true,
-                            ignoreFragmentWarning: true
-                        }
+                            ignoreFragmentWarning: true,
+                        },
                     ]),
                     cssnano({
-                    preset: [
-                        "advanced",
-                        {
-                        autoprefixer: false,
-                        discardComments: {
-                            removeAllButCopyright: true,
-                        },
-                        discardUnused: true,
-                        reduceIdents: true,
-                        mergeIndents: true,
-                        zindex: true,
-                        },
-                    ],
+                        preset: [
+                            "advanced",
+                            {
+                                autoprefixer: false,
+                                discardComments: {
+                                    removeAllButCopyright: true,
+                                },
+                                discardUnused: true,
+                                reduceIdents: true,
+                                mergeIndents: true,
+                                zindex: true,
+                            },
+                        ],
                     }),
                     postcssClassNameShortener({
-                        outputMapCallback: (map) => console.log(JSON.stringify(map)),
-                        disable: process.env.NODE_ENV === 'development'
+                        outputMapCallback: (map) =>
+                            console.log(JSON.stringify(map)),
+                        disable: process.env.NODE_ENV === "development",
                     }),
                     postcssRemoveRoot(),
                     cssMqpacker({
-                    sort: true
+                        sort: true,
                     }),
                     postcssMqOptimize(),
                     autoprefixer(),
-                ]
-                }
+                ],
             },
+        },
         define: {
             global: "globalThis",
         },
@@ -335,11 +336,19 @@ export default defineConfig(({ mode }) => {
             babel({
                 filter: (id) => {
                     // Skip processing for hotwired/stimulus and for the prebuilt textconvert.min.js bundle (case-insensitive)
-                    const base = path.basename(id || '').toLowerCase();
-                    if (base === 'textcomplete.min.js' || base === 'ort-web.min.js') {
+                    const base = path.basename(id || "").toLowerCase();
+                    if (
+                        base === "textcomplete.min.js" ||
+                        base === "ort-web.min.js"
+                    ) {
                         return false;
                     }
-                    return !id.includes('@hotwired/stimulus') && !id.includes('@huggingface/jinja') && !id.includes('onnxruntime-web') && /\.(js|coffee)$/.test(id);
+                    return (
+                        !id.includes("@hotwired/stimulus") &&
+                        !id.includes("@huggingface/jinja") &&
+                        !id.includes("onnxruntime-web") &&
+                        /\.(js|coffee)$/.test(id)
+                    );
                 },
                 enforce: "post",
                 babelConfig: {
@@ -352,11 +361,11 @@ export default defineConfig(({ mode }) => {
                         [
                             "object-to-json-parse",
                             {
-                                "minJSONStringSize": 1024
-                            }
-                        ]
-                    ]
-                }
+                                minJSONStringSize: 1024,
+                            },
+                        ],
+                    ],
+                },
             }),
             rubyPlugin(),
             stimulusHMR(),

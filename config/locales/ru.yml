@@ -223,6 +223,7 @@ ru:
     index:
       description: Управляйте своими предпочтениями.
       language: Язык
+      oneko_skin: Oneko Skin
       title: Настройки
   spam_protection:
     bot_detected: Automated behavior detected. Please try again.

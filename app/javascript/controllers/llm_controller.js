@@ -33,13 +33,13 @@ const MODEL_CONFIG_JSON = import.meta.glob(
 const snappyUncompress =
     typeof snappy === "function"
         ? snappy
-        : snappy?.uncompress
+        : (snappy?.uncompress
           ? snappy.uncompress
           : (() => {
                 throw new Error(
                     "snappyjs module did not expose an uncompress function",
                 );
-            })();
+            })());
 
 function resolveModelParts() {
     return Object.keys(MODEL_PARTS)
@@ -67,7 +67,7 @@ function resolveOnnxParts() {
 
 async function loadLocalJsonFile(collection, defaultName, signal) {
     const entries = Object.keys(collection);
-    if (entries.length === 0) return Promise.resolve(null);
+    if (entries.length === 0) return null;
     const source = collection[entries[0]];
     const response = await fetch(source, { signal });
     if (!response.ok) {
@@ -115,7 +115,7 @@ export default class extends Controller {
                 modelLoaded: this.modelLoaded,
                 streaming: this.isStreaming,
             });
-        }, 10000);
+        }, 10_000);
 
         // UI initial state
         if (this.hasSendButtonTarget) {
@@ -169,22 +169,22 @@ export default class extends Controller {
         if (this.loadAbortController) {
             try {
                 this.loadAbortController.abort();
-            } catch (err) {
-                console.debug("[Wllama] load abort error", err);
+            } catch (error) {
+                console.debug("[Wllama] load abort error", error);
             }
         }
         if (this.completionAbortController) {
             try {
                 this.completionAbortController.abort();
-            } catch (err) {
-                console.debug("[Wllama] completion abort error", err);
+            } catch (error) {
+                console.debug("[Wllama] completion abort error", error);
             }
         }
         if (this.toxicClassifierAbortController) {
             try {
                 this.toxicClassifierAbortController.abort();
-            } catch (err) {
-                console.debug("[Wllama] toxic abort error", err);
+            } catch (error) {
+                console.debug("[Wllama] toxic abort error", error);
             }
         }
         // Clear instance to free WASM worker if supported
@@ -193,8 +193,8 @@ export default class extends Controller {
                 if (this.instance.destroy) {
                     this.instance.destroy();
                 }
-            } catch (err) {
-                console.debug("[Wllama] instance destroy failed", err);
+            } catch (error) {
+                console.debug("[Wllama] instance destroy failed", error);
             }
         }
     }
@@ -222,7 +222,7 @@ export default class extends Controller {
 
         // Set n_threads adaptively; keep context reasonable to avoid huge memory
         this.n_ctx = 1028; // Further increased context window for very long conversations
-        const n_ctx = this.n_ctx;
+        const n_context = this.n_ctx;
         const n_threads = this.preferredThreads;
 
         const start = performance.now();
@@ -241,13 +241,13 @@ export default class extends Controller {
                 files.map((f) => ({ name: f.name, size: f.size })),
             );
             await this.instance.loadModel(files, {
-                n_ctx: n_ctx,
+                n_ctx: n_context,
                 n_threads: n_threads,
             });
 
             const loadTime = Math.round(performance.now() - start);
             console.info(
-                `[Wllama] Model loaded in ${loadTime}ms (n_ctx=${n_ctx}, n_threads=${n_threads})`,
+                `[Wllama] Model loaded in ${loadTime}ms (n_ctx=${n_context}, n_threads=${n_threads})`,
             );
             this.modelLoaded = true;
             if (this.hasLoadingIndicatorTarget) {
@@ -268,11 +268,11 @@ export default class extends Controller {
             try {
                 await this.instance.createCompletion(" ", { nPredict: 2 });
                 console.debug("[Wllama] Warm-up completed");
-            } catch (warmErr) {
-                console.debug("[Wllama] Warm-up failed, continuing", warmErr);
+            } catch (error) {
+                console.debug("[Wllama] Warm-up failed, continuing", error);
             }
-        } catch (err) {
-            console.error("[Wllama] Model load failed:", err);
+        } catch (error) {
+            console.error("[Wllama] Model load failed:", error);
             if (this.hasLoadingIndicatorTarget) {
                 this.loadingIndicatorTarget.textContent =
                     "Failed to load model. Check console for details.";
@@ -281,7 +281,7 @@ export default class extends Controller {
         } finally {
             try {
                 files = null;
-            } catch (e) {}
+            } catch {}
         }
     }
 
@@ -297,7 +297,7 @@ export default class extends Controller {
             }
             const current = index;
             index += 1;
-            if (current >= total) return Promise.resolve();
+            if (current >= total) return;
             const file = await this.fetchAndDecompressPart(
                 parts[current],
                 current,
@@ -309,7 +309,7 @@ export default class extends Controller {
         }
 
         const workers = [];
-        for (let i = 0; i < limit; i++) {
+        for (let index_ = 0; index_ < limit; index_++) {
             workers.push(worker.call(this));
         }
 
@@ -346,14 +346,14 @@ export default class extends Controller {
             }
 
             const totalBytes = arrays.reduce(
-                (sum, arr) => sum + arr.byteLength,
+                (sum, array) => sum + array.byteLength,
                 0,
             );
             const combined = new Uint8Array(totalBytes);
             let offset = 0;
-            for (const arr of arrays) {
-                combined.set(arr, offset);
-                offset += arr.byteLength;
+            for (const array of arrays) {
+                combined.set(array, offset);
+                offset += array.byteLength;
             }
 
             const baseName =
@@ -391,13 +391,13 @@ export default class extends Controller {
             if (this._toxicityWorker)
                 try {
                     this._toxicityWorker.terminate();
-                } catch (e) {}
+                } catch {}
             this._toxicityWorker = new Worker(
                 new URL("../workers/toxicity_worker.js", import.meta.url),
                 { type: "module" },
             );
-            this._toxicityWorker.onmessage = (ev) =>
-                this._handleToxicWorkerMessage(ev.data);
+            this._toxicityWorker.onmessage = (event_) =>
+                this._handleToxicWorkerMessage(event_.data);
 
             // Send init payload; pass File objects (they are structured-cloneable in modern browsers)
             this._toxicityWorker.postMessage({
@@ -421,7 +421,7 @@ export default class extends Controller {
                     if (this._toxicityWorker) {
                         try {
                             this._toxicityWorker.terminate();
-                        } catch (e) {}
+                        } catch {}
                         this._toxicityWorker = null;
                     }
                     // keep ML-only policy: leave toxicPipeline null and disable send
@@ -438,24 +438,26 @@ export default class extends Controller {
                         this._toxicInitReject(new Error("Init timeout"));
                         this._toxicInitReject = null;
                     }
-                }, 40000);
+                }, 40_000);
 
                 // store timeout so handler can clear it
                 this._toxicityInitTimeout = initTimeout;
             });
-        } catch (err) {
+        } catch (error) {
             if (signal?.aborted) {
                 this.toxicClassifierLoading = false;
                 this.toxicClassifierAbortController = null;
                 if (this._toxicInitReject) {
-                    this._toxicInitReject(new DOMException("Aborted", "AbortError"));
+                    this._toxicInitReject(
+                        new DOMException("Aborted", "AbortError"),
+                    );
                     this._toxicInitReject = null;
                 }
                 return;
             }
             console.error(
                 "[Wllama] Failed to download toxicity classifier parts",
-                err,
+                error,
             );
             // Try fallback: attempt to initialize remote toxicity pipeline (no customModel)
             try {
@@ -479,10 +481,10 @@ export default class extends Controller {
                     );
                     this.toxicPipeline = createRuleBasedPipeline();
                 }
-            } catch (fallbackErr) {
+            } catch (error) {
                 console.error(
                     "[Wllama] Remote toxicity pipeline fallback failed",
-                    fallbackErr,
+                    error,
                 );
                 this.toxicPipeline = null;
             }
@@ -521,9 +523,10 @@ export default class extends Controller {
         }
     }
 
-    _handleToxicWorkerMessage(msg) {
-        const { type } = msg || {};
-        if (type === "init-success") {
+    _handleToxicWorkerMessage(message) {
+        const { type } = message || {};
+        switch (type) {
+        case "init-success": {
             if (this._toxicityInitTimeout) {
                 clearTimeout(this._toxicityInitTimeout);
                 this._toxicityInitTimeout = null;
@@ -539,9 +542,9 @@ export default class extends Controller {
                             action: "classify",
                             payload: { id, text },
                         });
-                    } catch (err) {
+                    } catch (error) {
                         this._toxicityCallbacks.delete(id);
-                        reject(err);
+                        reject(error);
                     }
                 });
             };
@@ -556,16 +559,19 @@ export default class extends Controller {
                 this._toxicInitResolve();
                 this._toxicInitResolve = null;
             }
-        } else if (type === "init-failed") {
+        
+        break;
+        }
+        case "init-failed": {
             if (this._toxicityInitTimeout) {
                 clearTimeout(this._toxicityInitTimeout);
                 this._toxicityInitTimeout = null;
             }
-            console.warn("[toxicity] Worker init failed", msg.error);
+            console.warn("[toxicity] Worker init failed", message.error);
             if (this._toxicityWorker) {
                 try {
                     this._toxicityWorker.terminate();
-                } catch (e) {}
+                } catch {}
             }
             this._toxicityWorker = null;
             this.toxicPipeline = null; // ML-only enforcement
@@ -577,25 +583,38 @@ export default class extends Controller {
                         "Safety classifier unavailable - sending disabled";
             }
             if (this._toxicInitReject) {
-                this._toxicInitReject(new Error(msg.error));
+                this._toxicInitReject(new Error(message.error));
                 this._toxicInitReject = null;
             }
-        } else if (type === "result") {
-            const { id, result } = msg;
-            const cb = this._toxicityCallbacks.get(id);
-            if (cb) {
-                cb.resolve(result);
+        
+        break;
+        }
+        case "result": {
+            const { id, result } = message;
+            const callback = this._toxicityCallbacks.get(id);
+            if (callback) {
+                callback.resolve(result);
                 this._toxicityCallbacks.delete(id);
             }
-        } else if (type === "result-error") {
-            const { id, error } = msg;
-            const cb = this._toxicityCallbacks.get(id);
-            if (cb) {
-                cb.reject(new Error(error));
+        
+        break;
+        }
+        case "result-error": {
+            const { id, error } = message;
+            const callback = this._toxicityCallbacks.get(id);
+            if (callback) {
+                callback.reject(new Error(error));
                 this._toxicityCallbacks.delete(id);
             }
-        } else if (type === "worker-error") {
-            console.error("[toxicity] worker error", msg.error);
+        
+        break;
+        }
+        case "worker-error": {
+            console.error("[toxicity] worker error", message.error);
+        
+        break;
+        }
+        // No default
         }
     }
 
@@ -666,7 +685,7 @@ export default class extends Controller {
 
         // Rough token estimation: ~4 chars per token
         const totalChars = this.messages.reduce(
-            (sum, msg) => sum + (msg.content?.length || 0),
+            (sum, message) => sum + (message.content?.length || 0),
             0,
         );
         const estimatedTokens = Math.ceil(totalChars / 4);
@@ -715,11 +734,11 @@ export default class extends Controller {
         );
     }
 
-    async sendMessage(ev) {
+    async sendMessage(event_) {
         console.log(
             `[Wllama] sendMessage called, modelLoaded: ${this.modelLoaded}, isStreaming: ${this.isStreaming}`,
         );
-        ev?.preventDefault();
+        event_?.preventDefault();
         if (this.isStreaming) {
             console.warn("[Wllama] Already streaming");
             return;
@@ -750,30 +769,40 @@ export default class extends Controller {
         }
         if (this.hasLoadingIndicatorTarget) {
             this.loadingIndicatorTarget.style.display = "block";
-            this.loadingIndicatorTarget.textContent = this.modelLoaded ? "Thinking..." : "Loading AI...";
+            this.loadingIndicatorTarget.textContent = this.modelLoaded
+                ? "Thinking..."
+                : "Loading AI...";
         }
 
         // Manage context size: trim messages if too large
         this.manageContext();
 
         // Lazy load if needed
-        if (!this.modelLoaded || (this.requiresToxicPipeline && !this.toxicPipeline)) {
+        if (
+            !this.modelLoaded ||
+            (this.requiresToxicPipeline && !this.toxicPipeline)
+        ) {
             console.info("[Wllama] Lazy loading models...");
             const loadingStart = performance.now();
             try {
                 await Promise.all([
                     this.initWllamaAsync(),
-                    this.initToxicClassifier()
+                    this.initToxicClassifier(),
                 ]);
                 const loadTime = Math.round(performance.now() - loadingStart);
                 console.info(`[Wllama] Lazy load completed in ${loadTime}ms`);
                 // Update loading text to Thinking... after load
-                if (this.hasLoadingIndicatorTarget && this.loadingIndicatorTarget.textContent === "Loading AI...") {
+                if (
+                    this.hasLoadingIndicatorTarget &&
+                    this.loadingIndicatorTarget.textContent === "Loading AI..."
+                ) {
                     this.loadingIndicatorTarget.textContent = "Thinking...";
                 }
-            } catch (loadErr) {
-                console.error("[Wllama] Lazy load failed:", loadErr);
-                this.showError("Unable to load AI. Please refresh and try again.");
+            } catch (error) {
+                console.error("[Wllama] Lazy load failed:", error);
+                this.showError(
+                    "Unable to load AI. Please refresh and try again.",
+                );
                 this.isSendingMessage = false;
                 if (this.hasSendButtonTarget) {
                     this.sendButtonTarget.disabled = false;
@@ -785,8 +814,13 @@ export default class extends Controller {
             }
 
             // Safety check
-            if (!this.modelLoaded || (this.requiresToxicPipeline && !this.toxicPipeline)) {
-                console.warn("[Wllama] Load succeeded but components not ready");
+            if (
+                !this.modelLoaded ||
+                (this.requiresToxicPipeline && !this.toxicPipeline)
+            ) {
+                console.warn(
+                    "[Wllama] Load succeeded but components not ready",
+                );
                 this.showError("AI not fully ready. Please try again.");
                 this.isSendingMessage = false;
                 if (this.hasSendButtonTarget) {
@@ -802,7 +836,7 @@ export default class extends Controller {
         const assistantDiv = document.createElement("div");
         assistantDiv.className = "assistant-message";
         assistantDiv.innerHTML = "";
-        this.chatDisplayTarget.appendChild(assistantDiv);
+        this.chatDisplayTarget.append(assistantDiv);
         this.scrollChatToBottom();
         try {
             const prompt =
@@ -813,7 +847,9 @@ export default class extends Controller {
                 stream: true,
                 onProgress: (partial) => {
                     const content = partial.content || "";
-                    assistantDiv.innerHTML += content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    assistantDiv.innerHTML += content
+                        .replaceAll('<', "&lt;")
+                        .replaceAll('>', "&gt;");
                     this.scrollChatToBottom();
                 },
             });
@@ -829,7 +865,7 @@ export default class extends Controller {
             const { delta, finish_reason } = firstChoice;
             if (finish_reason !== "stop") {
                 console.warn(
-                    "[Wllama] Stream did not end with 'stop': ",
+                    "[Wllama] Stream did not end with 'stop':",
                     finish_reason,
                 );
             }
@@ -843,8 +879,8 @@ export default class extends Controller {
             console.log(`[Wllama] Token usage: ${totalTokens} tokens`);
 
             return response;
-        } catch (err) {
-            console.error("[Wllama] Error during message sending:", err);
+        } catch (error) {
+            console.error("[Wllama] Error during message sending:", error);
             this.showError("Error sending message. Please try again.");
         } finally {
             this.isSendingMessage = false;
@@ -862,8 +898,8 @@ export default class extends Controller {
     appendChatMessage(content, isUserMessage) {
         const div = document.createElement("div");
         div.className = isUserMessage ? "user-message" : "assistant-message";
-        div.innerHTML = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        this.chatDisplayTarget.appendChild(div);
+        div.innerHTML = content.replaceAll('<', "&lt;").replaceAll('>', "&gt;");
+        this.chatDisplayTarget.append(div);
         this.scrollChatToBottom();
     }
 

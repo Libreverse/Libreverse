@@ -40,13 +40,13 @@ class FunctionCache
     # Use Solid Cache-specific options for better performance
     cache_options = {
       expires_in: expires_in
-      # Note: active_record_instrumentation is now disabled globally in config/cache.yml
+      # NOTE: active_record_instrumentation is now disabled globally in config/cache.yml
     }
 
     # Add error handling for Solid Cache operations
     begin
       Rails.cache.fetch(key_str, **cache_options, &block)
-    rescue => e
+    rescue StandardError => e
       # Log cache errors but don't fail the operation
       Rails.logger.warn("FunctionCache: Cache operation failed for #{function_name}: #{e.class}: #{e.message}")
       # Fall back to computing the value without caching
@@ -61,7 +61,7 @@ class FunctionCache
       Rails.cache.delete(key)
       @local_store.delete(key)
       true
-    rescue => e
+    rescue StandardError => e
       Rails.logger.warn("FunctionCache: Delete operation failed for #{function_name}: #{e.class}: #{e.message}")
       false
     end
@@ -76,14 +76,12 @@ class FunctionCache
 
   # Clear all Solid Cache entries (use with caution - clears entire cache)
   def clear_all!
-    begin
       Rails.cache.clear
       @local_store.clear
       true
-    rescue => e
+  rescue StandardError => e
       Rails.logger.warn("FunctionCache: Clear all operation failed: #{e.class}: #{e.message}")
       false
-    end
   end
 
   # Get cache statistics (Solid Cache specific)
@@ -92,7 +90,7 @@ class FunctionCache
 
     begin
       Rails.cache.stats
-    rescue => e
+    rescue StandardError => e
       Rails.logger.warn("FunctionCache: Stats operation failed: #{e.class}: #{e.message}")
       {}
     end
@@ -122,7 +120,7 @@ class FunctionCache
         # This is more stable than Marshal.dump for cache keys
         Digest::SHA256.hexdigest(arg.inspect)[0..15] # First 16 chars of hash
       end
-    end.join('|')
+    end.join("|")
 
     "#{NAMESPACE}:#{function_name}:#{args_str}"
   end

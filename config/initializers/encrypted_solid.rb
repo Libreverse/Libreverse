@@ -26,7 +26,7 @@ module EncryptionHelper
 end
 
 Rails.application.config.to_prepare do
-  # Note: SolidCache::Entry encryption is now handled by Solid Cache's built-in encryption feature
+  # NOTE: SolidCache::Entry encryption is now handled by Solid Cache's built-in encryption feature
   # enabled in config/cache.yml with encrypt: true
 
   # Encrypt SolidCable messages (payload column contains serialized data)

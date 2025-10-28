@@ -18,10 +18,10 @@ HOST_UID=$(id -u)
 HOST_GID=$(id -g)
 
 docker run --rm \
-  -v "$(pwd):/workspace" \
-  -w /workspace/scripts \
-  "$IMAGE" \
-  bash -c "
+    -v "$(pwd):/workspace" \
+    -w /workspace/scripts \
+    "$IMAGE" \
+    bash -c "
     apt-get update && apt-get install -y git build-essential cmake libcurl4-openssl-dev ccache
 
     if [ ! -d 'llama.cpp' ]; then

@@ -860,19 +860,19 @@ end
   end
 
   def current_oneko_skin
-    return 'default' unless current_account&.id
+    return "default" unless current_account&.id
 
-    UserPreference.get(current_account.id, 'oneko-skin') || 'default'
+    UserPreference.get(current_account.id, "oneko-skin") || "default"
   end
 
   def oneko_skin_asset_url
     skin = current_oneko_skin
     filename = case skin
-               when 'black' then 'oneko_black.gif'
-               when 'gray' then 'oneko_gray.gif'
-               when 'default' then 'oneko.gif'
-               else "#{skin}.gif"
-               end
+    when "black" then "oneko_black.gif"
+    when "gray" then "oneko_gray.gif"
+    when "default" then "oneko.gif"
+    else "#{skin}.gif"
+    end
     vite_asset_path("images/#{filename}")
   end
 
@@ -881,11 +881,11 @@ end
     urls = {}
     skins.each do |skin|
       filename = case skin
-                 when 'black' then 'oneko_black.gif'
-                 when 'gray' then 'oneko_gray.gif'
-                 when 'default' then 'oneko.gif'
-                 else "#{skin}.gif"
-                 end
+      when "black" then "oneko_black.gif"
+      when "gray" then "oneko_gray.gif"
+      when "default" then "oneko.gif"
+      else "#{skin}.gif"
+      end
       urls[skin] = vite_asset_path("images/#{filename}")
     end
     urls

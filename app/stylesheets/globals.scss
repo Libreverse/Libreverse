@@ -4,12 +4,12 @@
 
 * {
     cursor: none !important;
-    text-rendering: optimizeLegibility;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+    text-rendering: optimizelegibility;
+    text-shadow: 1px 1px 2px rgb(0 0 0 / 50%); /* Subtle text shadow */
 }
 
 body {
-  font-family: Hack;
+    font-family: Hack;
 }
 
 *.glass-active {
@@ -58,91 +58,112 @@ main.content-wrapper {
 
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari/Chrome */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* Safari/Chrome */
+    user-select: none; /* Firefox */
+    user-select: none; /* IE/Edge */
     user-select: none; /* Standard */
 }
 
 .underconstruction {
-  background-color: #fdf3dc;
-  color: #333;
-  padding: 15px;
-  top: 0;
-  z-index: 2137483645;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: top 0.3s;
-  border: 1px solid #c0b9a8;
+    background-color: #fdf3dc;
+    color: #333;
+    padding: 15px;
+    top: 0;
+    z-index: 2137483645;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: top 0.3s;
+    border: 1px solid #c0b9a8;
 }
 
 ::selection {
-  background: #e45c9c; /* Pink highlight color */
-  color: #fff; /* White text for contrast */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+    background: #e45c9c; /* Pink highlight color */
+    color: #fff; /* White text for contrast */
+    text-shadow: 1px 1px 2px rgb(0 0 0 / 50%); /* Subtle text shadow */
 }
 
 .oneko {
-  width: 32px;
-  height: 32px;
-  position: fixed;
-  image-rendering: pixelated;
-  z-index: 1111;
-  background-repeat: no-repeat;
-  transition: all 0.1s ease;
+    width: 32px;
+    height: 32px;
+    position: fixed;
+    image-rendering: pixelated;
+    z-index: 1111;
+    background-repeat: no-repeat;
+    transition: all 0.1s ease;
 
-  /* Optimize for constant position updates */
-  will-change: transform, background-position;
+    /* Optimize for constant position updates */
+    will-change: transform, background-position;
 }
 
 .oneko-hidden {
-  display: none;
+    display: none;
 }
 
 // Oneko heart explosion styles
 @keyframes heart-burst {
-  0% {
-    transform: translate(-50%, -50%) rotate3d(1, 0.5, 0, var(--start-rot, 0deg)) scale(0);
-    opacity: 1;
-  }
+    0% {
+        transform: translate(-50%, -50%)
+            rotate3d(1, 0.5, 0, var(--start-rot, 0deg)) scale(0);
+        opacity: 1;
+    }
 
-  60% {
-    transform: translate(calc(-50% + var(--burst-x, 0px)), calc(-50% + var(--burst-y, 0px))) rotate3d(1, 0.5, 0, calc(var(--start-rot, 0deg) + var(--rot-range, 10deg))) scale(0.8);
-    opacity: 0.5;
-  }
+    60% {
+        transform: translate(
+                calc(-50% + var(--burst-x, 0px)),
+                calc(-50% + var(--burst-y, 0px))
+            )
+            rotate3d(
+                1,
+                0.5,
+                0,
+                calc(var(--start-rot, 0deg) + var(--rot-range, 10deg))
+            )
+            scale(0.8);
+        opacity: 0.5;
+    }
 
-  100% {
-    transform: translate(calc(-50% + var(--burst-x, 0px)), calc(-50% + var(--burst-y, 0px))) rotate3d(1, 0.5, 0, calc(var(--start-rot, 0deg) + var(--rot-range, 20deg))) scale(1);
-    opacity: 0;
-  }
+    100% {
+        transform: translate(
+                calc(-50% + var(--burst-x, 0px)),
+                calc(-50% + var(--burst-y, 0px))
+            )
+            rotate3d(
+                1,
+                0.5,
+                0,
+                calc(var(--start-rot, 0deg) + var(--rot-range, 20deg))
+            )
+            scale(1);
+        opacity: 0;
+    }
 }
 
 .heart {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  animation: 
-    /* burst (scale + fade out + rotate) */
-    heart-burst 1s ease-in-out forwards;
-  animation-fill-mode: forwards;
-  pointer-events: none;
-  user-select: none;
-  z-index: 2147483648;
-  opacity: 0;
-  transform-origin: center center;
-  filter: drop-shadow(0 0 4px #f7b6d1) blur(0.5px);
-  box-shadow: 0 0 8px 2px #f7b6d1cc;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    animation: 
+    /* burst (scale + fade out + rotate) */ heart-burst 1s
+        ease-in-out forwards;
+    animation-fill-mode: forwards;
+    pointer-events: none;
+    user-select: none;
+    z-index: 2147483648;
+    opacity: 0;
+    transform-origin: center center;
+    filter: drop-shadow(0 0 4px #f7b6d1) blur(0.5px);
+    box-shadow: 0 0 8px 2px #f7b6d1cc;
 
-  /* Optimize for animation */
-  will-change: transform, opacity;
+    /* Optimize for animation */
+    will-change: transform, opacity;
 
-  svg {
-    width: 100%;
-    height: 100%;
-    fill: #e45c9c; /* Pink heart color */
-    filter: blur(1px);
-  }
+    svg {
+        width: 100%;
+        height: 100%;
+        fill: #e45c9c; /* Pink heart color */
+        filter: blur(1px);
+    }
 }
 
 img:not(.emoji) {
@@ -155,51 +176,58 @@ button {
 
 /* Custom Cursor Styles */
 .custom-cursor-circle.initializing {
-  opacity: 0 !important;
-  transition: opacity 0.3s ease;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease;
 }
+
 .custom-cursor-circle.no-transition {
-  transition: none !important;
+    transition: none !important;
 }
+
 /* Outer Circle */
 .custom-cursor-circle {
-  --translate-x: 0px;
-  --translate-y: 0px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 40px;
-  border: 2px solid #e5e4da;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(var(--translate-x), var(--translate-y))
-    translate(-50%, -50%) scale(1);
-  transition:
-    transform 0.1s ease,
-    opacity 0.3s ease;
-  z-index: 2147483644;
-  opacity: 1;
-  /* will-change is now managed dynamically via JavaScript */
+    --translate-x: 0px;
+    --translate-y: 0px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e5e4da;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(var(--translate-x), var(--translate-y))
+        translate(-50%, -50%) scale(1);
+    transition:
+        transform 0.1s ease,
+        opacity 0.3s ease;
+    z-index: 2147483644;
+    opacity: 1;
+
+    /* will-change is now managed dynamically via JavaScript */
 }
+
 /* Shrink Effect on Click (applied only to the circle) */
 .custom-cursor-circle.shrink {
-  transform: translate(var(--translate-x), var(--translate-y))
-    translate(-50%, -50%) scale(0.7);
-  /* Ensure the transform transition is smooth */
+    transform: translate(var(--translate-x), var(--translate-y))
+        translate(-50%, -50%) scale(0.7);
+
+    /* Ensure the transform transition is smooth */
 }
 
 // Oneko skin picker styles
 .oneko-skin-picker-board {
     @extend %administrative-card-hoverless;
+
     padding: 1.5rem;
 }
 
 .cursor-dot {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999; /* Ensure it's on top */
-  transform: translate(var(--translate-x, 0px), var(--translate-y, 0px));
-  opacity: 1;
-  transition: none;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999; /* Ensure it's on top */
+    transform: translate(var(--translate-x, 0), var(--translate-y, 0));
+    opacity: 1;
+    transition: none;
 }

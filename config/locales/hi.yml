@@ -226,6 +226,7 @@ hi:
     index:
       description: अपनी वरीयताएँ प्रबंधित करें।
       language: भाषा
+      oneko_skin: Oneko Skin
       title: सेटिंग्स
   spam_protection:
     bot_detected: Automated behavior detected. Please try again.

@@ -52,7 +52,7 @@ import loadToxicityPipeline from "../libs/toxicity_classifier";
 
 let pipelineInstance = null;
 
-self.onmessage = async (e) => {
+globalThis.onmessage = async (e) => {
     const { action, payload } = e.data || {};
     try {
         if (action === "init") {
@@ -85,8 +85,8 @@ self.onmessage = async (e) => {
                 }
                 pipelineInstance = pipe;
                 postMessage({ type: "init-success" });
-            } catch (err) {
-                postMessage({ type: "init-failed", error: String(err) });
+            } catch (error) {
+                postMessage({ type: "init-failed", error: String(error) });
             }
         } else if (action === "classify") {
             const { id, text } = payload || {};
@@ -101,11 +101,11 @@ self.onmessage = async (e) => {
             try {
                 const res = await pipelineInstance(text);
                 postMessage({ type: "result", id, result: res });
-            } catch (err) {
-                postMessage({ type: "result-error", id, error: String(err) });
+            } catch (error) {
+                postMessage({ type: "result-error", id, error: String(error) });
             }
         }
-    } catch (err) {
-        postMessage({ type: "worker-error", error: String(err) });
+    } catch (error) {
+        postMessage({ type: "worker-error", error: String(error) });
     }
 };
