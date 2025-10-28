@@ -526,95 +526,95 @@ export default class extends Controller {
     _handleToxicWorkerMessage(message) {
         const { type } = message || {};
         switch (type) {
-        case "init-success": {
-            if (this._toxicityInitTimeout) {
-                clearTimeout(this._toxicityInitTimeout);
-                this._toxicityInitTimeout = null;
+            case "init-success": {
+                if (this._toxicityInitTimeout) {
+                    clearTimeout(this._toxicityInitTimeout);
+                    this._toxicityInitTimeout = null;
+                }
+                console.info("[toxicity] Worker init success");
+                // mark pipeline as available (worker will be used to classify)
+                this.toxicPipeline = (text) => {
+                    return new Promise((resolve, reject) => {
+                        const id = ++this._toxicityRequestId;
+                        this._toxicityCallbacks.set(id, { resolve, reject });
+                        try {
+                            this._toxicityWorker.postMessage({
+                                action: "classify",
+                                payload: { id, text },
+                            });
+                        } catch (error) {
+                            this._toxicityCallbacks.delete(id);
+                            reject(error);
+                        }
+                    });
+                };
+                this.toxicClassifierLoading = false;
+                this.toxicClassifierAbortController = null;
+                if (this.hasSendButtonTarget) {
+                    this.sendButtonTarget.disabled = false;
+                    if (this.hasLoadingIndicatorTarget)
+                        this.loadingIndicatorTarget.style.display = "none";
+                }
+                if (this._toxicInitResolve) {
+                    this._toxicInitResolve();
+                    this._toxicInitResolve = null;
+                }
+
+                break;
             }
-            console.info("[toxicity] Worker init success");
-            // mark pipeline as available (worker will be used to classify)
-            this.toxicPipeline = (text) => {
-                return new Promise((resolve, reject) => {
-                    const id = ++this._toxicityRequestId;
-                    this._toxicityCallbacks.set(id, { resolve, reject });
+            case "init-failed": {
+                if (this._toxicityInitTimeout) {
+                    clearTimeout(this._toxicityInitTimeout);
+                    this._toxicityInitTimeout = null;
+                }
+                console.warn("[toxicity] Worker init failed", message.error);
+                if (this._toxicityWorker) {
                     try {
-                        this._toxicityWorker.postMessage({
-                            action: "classify",
-                            payload: { id, text },
-                        });
-                    } catch (error) {
-                        this._toxicityCallbacks.delete(id);
-                        reject(error);
-                    }
-                });
-            };
-            this.toxicClassifierLoading = false;
-            this.toxicClassifierAbortController = null;
-            if (this.hasSendButtonTarget) {
-                this.sendButtonTarget.disabled = false;
-                if (this.hasLoadingIndicatorTarget)
-                    this.loadingIndicatorTarget.style.display = "none";
+                        this._toxicityWorker.terminate();
+                    } catch {}
+                }
+                this._toxicityWorker = null;
+                this.toxicPipeline = null; // ML-only enforcement
+                this.toxicClassifierLoading = false;
+                if (this.hasSendButtonTarget) {
+                    this.sendButtonTarget.disabled = true;
+                    if (this.hasLoadingIndicatorTarget)
+                        this.loadingIndicatorTarget.textContent =
+                            "Safety classifier unavailable - sending disabled";
+                }
+                if (this._toxicInitReject) {
+                    this._toxicInitReject(new Error(message.error));
+                    this._toxicInitReject = null;
+                }
+
+                break;
             }
-            if (this._toxicInitResolve) {
-                this._toxicInitResolve();
-                this._toxicInitResolve = null;
+            case "result": {
+                const { id, result } = message;
+                const callback = this._toxicityCallbacks.get(id);
+                if (callback) {
+                    callback.resolve(result);
+                    this._toxicityCallbacks.delete(id);
+                }
+
+                break;
             }
-        
-        break;
-        }
-        case "init-failed": {
-            if (this._toxicityInitTimeout) {
-                clearTimeout(this._toxicityInitTimeout);
-                this._toxicityInitTimeout = null;
+            case "result-error": {
+                const { id, error } = message;
+                const callback = this._toxicityCallbacks.get(id);
+                if (callback) {
+                    callback.reject(new Error(error));
+                    this._toxicityCallbacks.delete(id);
+                }
+
+                break;
             }
-            console.warn("[toxicity] Worker init failed", message.error);
-            if (this._toxicityWorker) {
-                try {
-                    this._toxicityWorker.terminate();
-                } catch {}
+            case "worker-error": {
+                console.error("[toxicity] worker error", message.error);
+
+                break;
             }
-            this._toxicityWorker = null;
-            this.toxicPipeline = null; // ML-only enforcement
-            this.toxicClassifierLoading = false;
-            if (this.hasSendButtonTarget) {
-                this.sendButtonTarget.disabled = true;
-                if (this.hasLoadingIndicatorTarget)
-                    this.loadingIndicatorTarget.textContent =
-                        "Safety classifier unavailable - sending disabled";
-            }
-            if (this._toxicInitReject) {
-                this._toxicInitReject(new Error(message.error));
-                this._toxicInitReject = null;
-            }
-        
-        break;
-        }
-        case "result": {
-            const { id, result } = message;
-            const callback = this._toxicityCallbacks.get(id);
-            if (callback) {
-                callback.resolve(result);
-                this._toxicityCallbacks.delete(id);
-            }
-        
-        break;
-        }
-        case "result-error": {
-            const { id, error } = message;
-            const callback = this._toxicityCallbacks.get(id);
-            if (callback) {
-                callback.reject(new Error(error));
-                this._toxicityCallbacks.delete(id);
-            }
-        
-        break;
-        }
-        case "worker-error": {
-            console.error("[toxicity] worker error", message.error);
-        
-        break;
-        }
-        // No default
+            // No default
         }
     }
 
@@ -848,8 +848,8 @@ export default class extends Controller {
                 onProgress: (partial) => {
                     const content = partial.content || "";
                     assistantDiv.innerHTML += content
-                        .replaceAll('<', "&lt;")
-                        .replaceAll('>', "&gt;");
+                        .replaceAll("<", "&lt;")
+                        .replaceAll(">", "&gt;");
                     this.scrollChatToBottom();
                 },
             });
@@ -898,7 +898,7 @@ export default class extends Controller {
     appendChatMessage(content, isUserMessage) {
         const div = document.createElement("div");
         div.className = isUserMessage ? "user-message" : "assistant-message";
-        div.innerHTML = content.replaceAll('<', "&lt;").replaceAll('>', "&gt;");
+        div.innerHTML = content.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         this.chatDisplayTarget.append(div);
         this.scrollChatToBottom();
     }

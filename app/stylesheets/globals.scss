@@ -57,10 +57,7 @@ main.content-wrapper {
 }
 
 .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-    user-select: none; /* Safari/Chrome */
-    user-select: none; /* Firefox */
-    user-select: none; /* IE/Edge */
+    -webkit-touch-callout: none; /* iOS Safari */ /* Safari/Chrome */ /* Firefox */ /* IE/Edge */
     user-select: none; /* Standard */
 }
 

@@ -2,7 +2,9 @@
 var _class,
     boundMethodCheck = function (instance, Constructor) {
         if (!(instance instanceof Constructor)) {
-            throw new TypeError("Bound instance method accessed before binding");
+            throw new TypeError(
+                "Bound instance method accessed before binding",
+            );
         }
     };
 
@@ -497,7 +499,9 @@ export default _class = function () {
             skin = skin || "default";
             urls = JSON.parse(this.element.dataset.skinUrls);
             url = urls[skin];
-            return url ? (this.nekoEl.style.backgroundImage = `url('${url}')`) : console.warn(`No URL for skin ${skin}`);
+            return url
+                ? (this.nekoEl.style.backgroundImage = `url('${url}')`)
+                : console.warn(`No URL for skin ${skin}`);
         }
 
         explodeHearts() {
@@ -523,8 +527,8 @@ export default _class = function () {
             results = [];
             if (!this._heartMap) this._heartMap = new WeakMap();
             document.addEventListener("turbo:before-cache", () => {
-                for (const heart of document
-                    .querySelectorAll(".heart")) heart.remove();
+                for (const heart of document.querySelectorAll(".heart"))
+                    heart.remove();
                 this._heartMap = null; // Optional: Reset for next session (WeakMap auto-GCs)
             });
             for (index = index_ = 0; index_ < 20; index = ++index_) {

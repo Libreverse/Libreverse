@@ -25,8 +25,9 @@ try {
         is_development =
             import.meta == undefined
                 ? false
-                : ((reference = import.meta.env) == undefined ? void 0 : reference.MODE) ===
-                  "development";
+                : ((reference = import.meta.env) == undefined
+                      ? void 0
+                      : reference.MODE) === "development";
     }
 } catch (error_) {
     error = error_;

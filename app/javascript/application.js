@@ -362,8 +362,8 @@ if (!attachScrollbarEvents()) {
     const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
             if (mutation.type === "childList" && attachScrollbarEvents()) {
-                    observer.disconnect(); // Stop observing once attached
-                }
+                observer.disconnect(); // Stop observing once attached
+            }
         }
     });
 

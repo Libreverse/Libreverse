@@ -119,7 +119,10 @@ export default async function loadToxicityPipeline(
         );
         return null;
     } catch (error) {
-        console.error("[toxicity] Unexpected error initializing pipeline", error);
+        console.error(
+            "[toxicity] Unexpected error initializing pipeline",
+            error,
+        );
         return null;
     }
 }
