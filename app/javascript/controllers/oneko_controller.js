@@ -424,7 +424,7 @@ export default _class = (function() {
         document.querySelectorAll('.heart').forEach(heart => heart.remove());
         this._heartMap = null; // Optional: Reset for next session (WeakMap auto-GCs)
       });
-      for (i = j = 0; j < 10; i = ++j) {
+      for (i = j = 0; j < 20; i = ++j) {
         heart = document.createElement('div');
         heart.className = 'heart';
         // Use custom SVG heart instead of text emoji

@@ -21,10 +21,13 @@ export default class extends Controller
     @saveCursorState = @saveCursorState.bind(@)
     @loadCursorState = @loadCursorState.bind(@)
     @finishInitialization = @finishInitialization.bind(@)
+    @handleMouseLeave = @handleMouseLeave.bind(@)
+    @handleMouseEnter = @handleMouseEnter.bind(@)
     
     # Track initialization state
     @isInitializing = true
     @hasUserMovedMouse = false
+    @isMouseInWindow = true
 
     # Add event listeners
     globalThis.addEventListener("mousemove", @handleMouseMove)
@@ -32,6 +35,8 @@ export default class extends Controller
     globalThis.addEventListener("mouseup", @handleMouseUp)
     document.addEventListener("turbo:before-visit", @saveCursorState)
     document.addEventListener("turbo:load", @loadCursorState)
+    document.addEventListener("mouseleave", @handleMouseLeave)
+    document.addEventListener("mouseenter", @handleMouseEnter)
 
     # Set default values (a reasonable but arbitrary position)
     @isShrinking = false
@@ -66,7 +71,9 @@ export default class extends Controller
     globalThis.removeEventListener("mouseup", @handleMouseUp)
     document.removeEventListener("turbo:before-visit", @saveCursorState)
     document.removeEventListener("turbo:load", @loadCursorState)
-    
+    document.removeEventListener("mouseleave", @handleMouseLeave)
+    document.removeEventListener("mouseenter", @handleMouseEnter)
+
   # Finish initialization immediately using current position data
   finishInitialization: ->
     if @isInitializing
@@ -93,6 +100,69 @@ export default class extends Controller
       @circle?.classList.remove("no-transition")
       @dot?.classList.remove("no-transition")
 
+  # Saves cursor state to localStorage when page changes
+  saveCursorState: ->
+    cursorState = {
+      circleX: @circleX
+      circleY: @circleY
+      dotX: @dotX
+      dotY: @dotY
+      targetX: @targetX
+      targetY: @targetY
+      isShrinking: @isShrinking
+      isMouseInWindow: @isMouseInWindow
+      timestamp: Date.now()
+    }
+    localStorage.setItem('cursorState', JSON.stringify(cursorState))
+
+  # Loads cursor state from localStorage if available
+  loadCursorState: ->
+    cursorState = JSON.parse(localStorage.getItem('cursorState'))
+    if cursorState
+      # Use the saved position
+      @circleX = cursorState.circleX
+      @circleY = cursorState.circleY
+      @targetX = cursorState.targetX
+      @targetY = cursorState.targetY
+      @dotX = @targetX - 8
+      @dotY = @targetY - 8
+      
+      # Check if the state is recent (within 5 minutes)
+      isRecent = (Date.now() - cursorState.timestamp) < 5 * 60 * 1000
+
+      if isRecent
+        @isShrinking = cursorState.isShrinking
+        @isMouseInWindow = cursorState.isMouseInWindow ? true
+
+        # Apply loaded positions immediately
+        @circle?.style.setProperty("--translate-x", "#{@circleX}px")
+        @circle?.style.setProperty("--translate-y", "#{@circleY}px")
+        @dot?.style.setProperty("--translate-x", "#{@dotX}px")
+        @dot?.style.setProperty("--translate-y", "#{@dotY}px")
+      else
+        # State is old, just load the shrink state and wait for mouse move
+        @isShrinking = cursorState.isShrinking
+        @isMouseInWindow = false
+
+    # Apply shrinking state if needed
+    if @isShrinking
+      @circle?.classList.add("shrink")
+    else
+      @circle?.classList.remove("shrink")
+      
+    # Apply visibility based on mouse in window and reduced motion
+    prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if @isMouseInWindow and not prefersReducedMotion
+      @circle?.style.display = "block"
+      @dot?.style.display = "block"
+    else
+      @circle?.style.display = "none"
+      @dot?.style.display = "none"
+      
+    # Finish initialization if mouse is in window
+    if @isMouseInWindow
+      @finishInitialization()
+
   # Handles mouse movement by updating CSS variables for the circle's position.
   # @param {MouseEvent} event - The mousemove event object.
   handleMouseMove: (event) ->
@@ -100,7 +170,7 @@ export default class extends Controller
     @hasUserMovedMouse = true
     
     prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if prefersReducedMotion
+    if prefersReducedMotion or not @isMouseInWindow
       @circle?.style.display = "none"
       @dot?.style.display = "none"
       return
@@ -180,58 +250,16 @@ export default class extends Controller
       @circle.classList.remove("shrink")
       @isShrinking = false
       
-  # Saves cursor state to localStorage when page changes
-  saveCursorState: ->
-    cursorState = {
-      circleX: @circleX
-      circleY: @circleY
-      dotX: @dotX
-      dotY: @dotY
-      targetX: @targetX
-      targetY: @targetY
-      isShrinking: @isShrinking
-      timestamp: Date.now()
-    }
-    localStorage.setItem('cursorState', JSON.stringify(cursorState))
+  # Handles mouse leave events by hiding the cursor elements.
+  handleMouseLeave: (event) ->
+    @isMouseInWindow = false
+    @circle?.style.display = "none"
+    @dot?.style.display = "none"
     
-  # Loads cursor state from localStorage
-  loadCursorState: ->
-    savedState = localStorage.getItem('cursorState')
-    
-    if savedState
-      state = JSON.parse(savedState)
-      
-      # Get the timestamp of the saved state
-      timestamp = state.timestamp || 0
-      currentTime = Date.now()
-      timeDifference = currentTime - timestamp
-      
-      # If the saved state is recent (less than 2 seconds old), use it
-      # This likely means we're navigating between pages on the site
-      if timeDifference < 2000
-        # Use the saved position
-        @circleX = state.circleX
-        @circleY = state.circleY
-        @targetX = state.targetX
-        @targetY = state.targetY
-        @dotX = @targetX - 8
-        @dotY = @targetY - 8
-        @isShrinking = state.isShrinking
-        
-        # Apply positions immediately
-        @circle?.style.setProperty("--translate-x", "#{@circleX}px")
-        @circle?.style.setProperty("--translate-y", "#{@circleY}px")
-        @dot?.style.setProperty("--translate-x", "#{@dotX}px")
-        @dot?.style.setProperty("--translate-y", "#{@dotY}px")
-        
-        # Make cursor visible immediately for smooth page transitions
-        @finishInitialization()
-      else
-        # State is old, just load the shrink state and wait for mouse move
-        @isShrinking = state.isShrinking
-    
-    # Apply shrinking state if needed
-    if @isShrinking
-      @circle?.classList.add("shrink")
-    else
-      @circle?.classList.remove("shrink")
+  # Handles mouse enter events by showing the cursor elements if appropriate.
+  handleMouseEnter: (event) ->
+    @isMouseInWindow = true
+    prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if not prefersReducedMotion
+      @circle?.style.display = "block"
+      @dot?.style.display = "block"

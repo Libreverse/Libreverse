@@ -25,7 +25,7 @@ export default class extends Controller
         repeat: true,
         gestureDirection: 'vertical',
         reloadOnContextChange: false,
-        resetNativeScroll: false,
+        resetNativeScroll: true,
         smartphone: {
           smooth: true
         },

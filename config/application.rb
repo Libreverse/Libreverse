@@ -65,34 +65,18 @@ module LibreverseInstance
     # Encourage execjs to be fast
     ExecJS.runtime = ExecJS::Runtimes::Bun
 
-    # Zstandard compression middleware - force maximum compression regardless of cores
-    zstd_window_log = 27
-    zstd_chain_log = 27
-    zstd_hash_log = 25
-    zstd_search_log = 9
-    zstd_min_match = 3
-    zstd_strategy = :btultra2
+    # Zstandard compression middleware - use normal/default settings (moderate compression)
+    zstd_level = 3
 
     # Out-of-band garbage collection middleware to reduce latency spikes
     config.middleware.use OobGcMiddleware
 
-    config.middleware.use Rack::Zstd,
-                          window_log: zstd_window_log,
-                          chain_log: zstd_chain_log,
-                          hash_log: zstd_hash_log,
-                          search_log: zstd_search_log,
-                          min_match: zstd_min_match,
-                          strategy: zstd_strategy,
-                          sync: false
+    # Only pass supported/simple options (level); lower CPU cost & sensible defaults
+    config.middleware.use Rack::Zstd, level: zstd_level, sync: false
 
     config.after_initialize do
-      Rails.logger.info "Zstandard compression middleware configured for maximum compression (forced):"
-      Rails.logger.info " - window_log: #{zstd_window_log}"
-      Rails.logger.info " - chain_log: #{zstd_chain_log}"
-      Rails.logger.info " - hash_log: #{zstd_hash_log}"
-      Rails.logger.info " - search_log: #{zstd_search_log}"
-      Rails.logger.info " - min_match: #{zstd_min_match}"
-      Rails.logger.info " - strategy: #{zstd_strategy}"
+      Rails.logger.info "Zstandard compression middleware configured with normal settings:"
+      Rails.logger.info " - level: #{zstd_level}"
     end
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
@@ -111,7 +95,11 @@ module LibreverseInstance
 
     killer = WorkerKiller::Killer::Passenger.new
 
-    # Your existing OOM limiter (unchanged)
+    middleware.insert_before(
+      Rack::Runtime,
+      WorkerKiller::Middleware::RequestsLimiter, killer: killer, min: 3072, max: 4096
+    )
+
     middleware.insert_before(
       Rack::Runtime,
       WorkerKiller::Middleware::OOMLimiter,

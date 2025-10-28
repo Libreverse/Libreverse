@@ -605,6 +605,10 @@ RainyDay.prototype.animateDrops = function () {
     if (this.addDropCallback) {
         this.addDropCallback();
     }
+    // Ensure this.drops is an array
+    if (!Array.isArray(this.drops)) {
+        this.drops = [];
+    }
     // |this.drops| array may be changed as we iterate over drops
     var dropsClone = [...this.drops];
     var newDrops = [];

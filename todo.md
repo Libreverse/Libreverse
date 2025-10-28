@@ -34,16 +34,11 @@ add ar doctor and ruumba to the ci and zeitwerk check
 - [ ] (feature) Add litestream back for optional cache backups
 
 ## JavaScript Optimizations
-
-- [ ] (feature) Integrate babel-plugin-fast-async: Compile async/await to efficient Promises via Nodent
-- [ ] (feature) Integrate babel-plugin-transform-for-of: Optimize for-of to for loops on arrays
+b
 - [ ] (feature) Integrate babel-react-optimize preset: Inline elements, constants, remove propTypes in production
 - [ ] (feature) Integrate babel-plugin-transform-react-constant-elements: Hoist static JSX to constants
 - [ ] (feature) Integrate babel-plugin-transform-react-inline-elements: Inline simple JSX to skip createElement calls
 - [ ] (feature) Integrate babel-plugin-react-compiler: Auto-memoize components/hooks via static analysis (React Forget)
-- [ ] (feature) Integrate faster.js: Rewrite array methods to optimized loops for massive performance gains
-      loop unrolling
-      function inlining to bypass v8 inline size weirdness
 
 ## Infra
 

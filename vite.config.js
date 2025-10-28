@@ -3,6 +3,7 @@ import path from "node:path";
 import rubyPlugin from "vite-plugin-ruby";
 import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
+import babel from 'vite-plugin-babel';
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import postcssUrl from "postcss-url";
@@ -17,6 +18,8 @@ import stylehacks from 'stylehacks';
 import postcssMqOptimize from 'postcss-mq-optimize';
 import autoprefixer from 'autoprefixer';
 import removePrefix from "./plugins/postcss-remove-prefix.js";
+import nodePolyfills from "rollup-plugin-polyfill-node";
+import { ViteTips } from 'vite-plugin-tips';
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -43,7 +46,7 @@ export default defineConfig(({ mode }) => {
             objectShapeDocumentation: true,
             maxObjectProperties: 6,
             enableCoercions: true,
-            parameterHoistCoercions: true,
+            parameterHoistCoercions: false,
         }),
     );
 
@@ -290,8 +293,6 @@ export default defineConfig(({ mode }) => {
             // Force inclusion of dependencies that might not be detected
             include: [
                 "debounced",
-                "@hotwired/turbo",
-
                 "foundation-sites",
                 "what-input",
                 "@fingerprintjs/botd",
@@ -315,12 +316,14 @@ export default defineConfig(({ mode }) => {
                 "leaflet.a11y",
                 "leaflet.translate",
                 "stimulus-use/hotkeys",
+                "jquery",
             ],
-            exclude: [],
+            exclude: ["@hotwired/turbo", "yjs"],
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
         plugins: [
+            nodePolyfills(),
             Erb({
                 env: {
                     RUBYOPT:
@@ -329,6 +332,32 @@ export default defineConfig(({ mode }) => {
                 },
             }),
             coffeescript(),
+            babel({
+                filter: (id) => {
+                    // Skip processing for hotwired/stimulus and for the prebuilt textconvert.min.js bundle (case-insensitive)
+                    const base = path.basename(id || '').toLowerCase();
+                    if (base === 'textcomplete.min.js' || base === 'ort-web.min.js') {
+                        return false;
+                    }
+                    return !id.includes('@hotwired/stimulus') && !id.includes('@huggingface/jinja') && !id.includes('onnxruntime-web') && /\.(js|coffee)$/.test(id);
+                },
+                enforce: "post",
+                babelConfig: {
+                    ignore: ["node_modules/locomotive-scroll"],
+                    babelrc: false,
+                    configFile: false,
+                    plugins: [
+                        ["closure-elimination"],
+                        ["module:faster.js"],
+                        [
+                            "object-to-json-parse",
+                            {
+                                "minJSONStringSize": 1024
+                            }
+                        ]
+                    ]
+                }
+            }),
             rubyPlugin(),
             stimulusHMR(),
             fullReload([
@@ -338,6 +367,7 @@ export default defineConfig(({ mode }) => {
             ]),
             typehintPlugin,
             preserveAllComments(),
+            ViteTips(),
         ],
     };
 });

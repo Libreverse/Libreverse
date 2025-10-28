@@ -12,3 +12,6 @@ StimulusReflex.initialize(application, {
 if (import.meta.env.MODE === "development") {
     StimulusReflex.debug = true;
 }
+else {
+    StimulusReflex.debug = false;
+}
