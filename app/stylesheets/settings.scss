@@ -38,6 +38,7 @@
 
 .oneko-skin-picker-board {
     @extend %administrative-card-hoverless;
+
     padding: 1.5rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -64,7 +65,7 @@
     &:hover {
         background: variables.$white-20;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
     }
 
     &.selected {
