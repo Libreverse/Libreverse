@@ -5,7 +5,7 @@ class OnekoSkinPickerReflex < ApplicationReflex
 
     # List of available skins
     available_skins = %w[
-      default black gray spirit asexual silver trans valentine fox maia mike pride bisexual genderfluid silversky esmeralda jess calico agender snuupy lesbian maria kina eevee onekoslvt bunny gay lucy nonbinary ace tora ghost
+      ace agender asexual bisexual black bunny calico eevee esmeralda fox gay genderfluid ghost gray jess kina lesbian lucy maia maria mike nonbinary oneko_black oneko_gray oneko onekoslvt pride silver silversky snuupy spirit tora trans valentine
     ]
 
     if available_skins.include?(skin) || skin == "default"
@@ -17,6 +17,7 @@ class OnekoSkinPickerReflex < ApplicationReflex
 
       # Broadcast the change to update the UI
       cable_ready
+        .redirect_to(url: controller.request.path)
         .dispatch_event(name: "oneko:skin-changed", detail: { skin: skin })
         .broadcast
 

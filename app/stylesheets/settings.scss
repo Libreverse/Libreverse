@@ -35,3 +35,58 @@
         box-shadow: 0 0 0 2px variables.$dashboard-primary;
     }
 }
+
+.oneko-skin-picker-board {
+    @extend %administrative-card-hoverless;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.oneko-skin-option {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: variables.$white-10;
+    color: variables.$dashboard-primary;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+        background: variables.$white-20;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.selected {
+        background: rgba(variables.$dashboard-primary, 0.15);
+        border-color: variables.$dashboard-primary;
+        box-shadow: 0 0 0 2px rgba(variables.$dashboard-primary, 0.3);
+        font-weight: 600;
+    }
+}
+
+.oneko-skin-preview {
+    width: 32px;
+    height: 32px;
+    background-repeat: no-repeat;
+    background-size: auto;
+    image-rendering: pixelated;
+    border-radius: 4px;
+    border: 1px solid variables.$white-20;
+}
+
+.oneko-skin-label {
+    font-size: 0.8rem;
+    margin: 0;
+    text-transform: capitalize;
+}

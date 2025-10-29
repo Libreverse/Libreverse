@@ -17,9 +17,11 @@
             = flag
       .oneko-skin-picker-board.glass.glass-card-base{ data: { controller: 'oneko-skin-picker' } }
         %h3.section-title= t('settings.index.oneko_skin')
-        - available_skins = %w[default black gray pride valentine fox bunny ghost spirit silver trans]
+        - skin_urls = oneko_skin_urls
+        - available_skins = %w[ace agender asexual bisexual black bunny calico eevee esmeralda fox gay genderfluid ghost gray jess kina lesbian lucy maia maria mike nonbinary oneko_black oneko_gray oneko onekoslvt pride silver silversky snuupy spirit tora trans valentine]
         - current_skin = current_oneko_skin
         - available_skins.each do |skin|
           - is_current = current_skin == skin
           %span.oneko-skin-option{ data: { action: 'click->oneko-skin-picker#select', skin: skin }, class: (is_current ? 'selected' : '') }
-            = skin.titleize
+            .oneko-skin-preview{ style: "background-image: url('#{skin_urls[skin]}'); background-position: -96px -96px;" }
+            .oneko-skin-label= skin.titleize

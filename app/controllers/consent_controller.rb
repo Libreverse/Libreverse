@@ -23,14 +23,14 @@ class ConsentController < ApplicationController
         # Set secure cookie with all recommended settings
         cookies.signed[EEAMode::CONSENT_COOKIE_KEY] = {
           value: "1",
-          expires: EEAMode::COMPLIANCE[:cookie_settings][:expiration].from_now,
-          same_site: EEAMode::COMPLIANCE[:cookie_settings][:same_site],
-          secure: if EEAMode::COMPLIANCE[:cookie_settings][:secure].is_a?(Proc)
-                        EEAMode::COMPLIANCE[:cookie_settings][:secure].call
+          expires: EEAMode.compliance[:cookie_settings][:expiration].from_now,
+          same_site: EEAMode.compliance[:cookie_settings][:same_site],
+          secure: if EEAMode.compliance[:cookie_settings][:secure].is_a?(Proc)
+                        EEAMode.compliance[:cookie_settings][:secure].call
                   else
-                        EEAMode::COMPLIANCE[:cookie_settings][:secure]
+                        EEAMode.compliance[:cookie_settings][:secure]
                   end,
-          httponly: EEAMode::COMPLIANCE[:cookie_settings][:httponly]
+          httponly: EEAMode.compliance[:cookie_settings][:httponly]
         }
 
         if remember_opt_in

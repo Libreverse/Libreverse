@@ -877,7 +877,7 @@ end
   end
 
   def oneko_skin_urls
-    skins = %w[default black gray pride valentine fox bunny ghost spirit silver trans]
+    skins = %w[default black gray spirit asexual silver trans valentine fox maia mike pride bisexual genderfluid silversky esmeralda jess calico agender]
     urls = {}
     skins.each do |skin|
       filename = case skin
