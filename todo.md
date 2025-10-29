@@ -1,5 +1,16 @@
 # To-do
 
+finish blocklist series from https://github.com/yokoffing/filterlists
+
+finish adding useful electron bits from 
+https://github.com/sindresorhus/electron-is-dev?tab=readme-ov-file
+https://github.com/sindresorhus/fix-path
+https://github.com/doyensec/electronegativity?tab=readme-ov-file
+https://github.com/sindresorhus/electron-context-menu
+https://github.com/rhysd/electron-about-window
+https://github.com/sindresorhus/electron-store
+
+
 finish libreverse ai with api calls
 adopt cucumber rails for future tests
 fix map 3d performance being rubbish with million.js, terser and babel react optims
@@ -13,6 +24,32 @@ facial age estimation using zkml for osa pycall and ezkl
 add oj gem once we fix ruby shared libraries weirdness gem install oj -- --with-sse42
 add ar doctor and ruumba to the ci and zeitwerk check
 fix vite plugin tips
+Flags to research more:
+All of the internal policy options
+The integrated dark mode option, although perhaps something like dark reader is better.
+Disable crash reports because fuck google
+https://www.antixforum.com/forums/topic/chromium-switches-and-flags/
+https://github.com/RKNF404/chromium-hardening-guide
+Privacy Guides Reddit Thread (Community-vetted flags for Chromium):
+https://www.reddit.com/r/PrivacyGuides/comments/pzs6lz/which_chrome_flags_should_i_mess_around_with/
+Recommended privacy flags:
+	•	#enable-webrtc-hide-local-ips-with-mdns: Enabled – Hides local IPs in WebRTC (reduces fingerprinting).
+	•	#reduce-user-agent: Enabled – Trims User-Agent string to hinder tracking.
+	•	#block-insecure-private-network-requests: Enabled – Blocks insecure private network access.
+	•	#strict-origin-isolation: Enabled – Enforces stricter origin isolation.
+	•	#force-punycode: Enabled – Displays IDNs as Punycode (anti-phishing/privacy).Users note these work on stock Chromium without issues.
+—enable-features
+The leak detection flag in dev maybe?
+--enable-optimization-guide-debug-logs in dev
+Unsure as to whether we should use  --in-process-broker --in-process-gpu and --instant-process  as they comp isolation
+--isolation-by-default
+
+
+
+
+
+
+
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded

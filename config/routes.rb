@@ -24,6 +24,10 @@ Rails.application.routes.draw do
   # Analytics proxy routes for privacy-focused tracking
   get "umami/script.js", to: "proxy#umami_script"
 
+  # Filter lists and userscripts proxy routes
+  get "proxy/electron-filterlists", to: "proxy#electron_filterlists"
+  get "proxy/userscripts/:name.js", to: "proxy#userscript"
+
   # Mount Action Mailbox for email bot functionality
   mount ActionMailbox::Engine => "/rails/action_mailbox"
 
