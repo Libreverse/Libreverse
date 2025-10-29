@@ -3,7 +3,7 @@
 # improving privacy, performance, and avoiding ad blockers
 class ProxyController < ApplicationController
   # Skip CSRF protection for proxy endpoints since they don't modify data
-  skip_before_action :verify_authenticity_token, only: [ :umami_script, :electron_filterlists, :userscript ]
+  skip_before_action :verify_authenticity_token, only: %i[umami_script electron_filterlists userscript]
 
   # Proxy the Umami analytics script
   # GET /umami/script.js
@@ -34,9 +34,8 @@ class ProxyController < ApplicationController
   # Proxy compiled electron filterlists
   # GET /proxy/electron-filterlists
   def electron_filterlists
-    begin
       # Load filter list URLs from config
-      filter_config = YAML.load_file(Rails.root.join("config", "electron-filterlists.yaml"))
+      filter_config = YAML.load_file(Rails.root.join("config/electron-filterlists.yaml"))
       urls = filter_config["urls"] || []
 
       # Fetch and compile all filter lists
@@ -48,21 +47,19 @@ class ProxyController < ApplicationController
       response.headers["X-Content-Type-Options"] = "nosniff"
 
       render plain: compiled_filters
-    rescue StandardError => e
+  rescue StandardError => e
       # Log error and return 404
       Rails.logger.error "Failed to proxy electron filterlists: #{e.message}"
       head :not_found
-    end
   end
 
   # Proxy userscripts by name
   # GET /proxy/userscripts/:name.js
   def userscript
-    begin
       name = params[:name]
 
       # Load userscript URLs from config
-      userscript_config = YAML.load_file(Rails.root.join("config", "userscripts.yaml"))
+      userscript_config = YAML.load_file(Rails.root.join("config/userscripts.yaml"))
       urls = userscript_config["urls"] || []
 
       # Find the URL that matches the name
@@ -82,11 +79,10 @@ class ProxyController < ApplicationController
       response.headers["X-Content-Type-Options"] = "nosniff"
 
       render plain: script_response.body, status: script_response.code
-    rescue StandardError => e
+  rescue StandardError => e
       # Log error and return 404
       Rails.logger.error "Failed to proxy userscript #{params[:name]}: #{e.message}"
       head :not_found
-    end
   end
 
   private
@@ -103,13 +99,12 @@ class ProxyController < ApplicationController
   def fetch_and_compile_filters(urls)
     compiled = []
     urls.each do |url|
-      begin
         response = HTTParty.get(url,
-                               timeout: 30,
-                               open_timeout: 10,
-                               headers: {
-                                 "User-Agent" => "LibreverseProxy/1.0"
-                               })
+                                timeout: 30,
+                                open_timeout: 10,
+                                headers: {
+                                  "User-Agent" => "LibreverseProxy/1.0"
+                                })
         if response.success?
           compiled << "! #{url}"
           compiled << response.body
@@ -117,9 +112,8 @@ class ProxyController < ApplicationController
         else
           Rails.logger.warn "Failed to fetch filter list from #{url}: #{response.code}"
         end
-      rescue StandardError => e
+    rescue StandardError => e
         Rails.logger.warn "Error fetching filter list from #{url}: #{e.message}"
-      end
     end
     compiled.join("\n")
   end
