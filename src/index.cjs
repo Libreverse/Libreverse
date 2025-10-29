@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
-const { Menu } = require('electron');
 
-Menu.setApplicationMenu(null)
+// Set the app name early (before app.whenReady) for macOS dock, menus, etc.
+app.setName('Libreverse');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -35,6 +35,11 @@ const isDev = process.env.NODE_ENV === 'development';
 
 // This method will be called when Electron has finished initialization.
 app.whenReady().then(() => {
+  // Set macOS dock icon
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(path.join(__dirname, '../app/images/macos-icon.png'));
+  }
+
   const mainWindow = createWindow({ isDev, url: process.env.APP_URL || 'http://localhost:3000' });
 
   app.on('activate', () => {

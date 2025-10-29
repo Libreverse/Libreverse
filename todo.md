@@ -12,6 +12,7 @@ facial age estimation using zkml for osa pycall and ezkl
 <https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html> for server side inference with hugging face transformers
 add oj gem once we fix ruby shared libraries weirdness gem install oj -- --with-sse42
 add ar doctor and ruumba to the ci and zeitwerk check
+fix vite plugin tips
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
