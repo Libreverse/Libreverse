@@ -1,0 +1,91 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use FindBin;
+use File::Spec::Functions qw(catfile);
+use File::Glob 'bsd_glob';
+
+my $DRY_RUN = 0;
+my $PODMAN_ALL = 0;
+for my $arg (@ARGV) { $DRY_RUN = 1 if $arg eq '--dry-run' || $arg eq '-n'; $PODMAN_ALL = 1 if $arg eq '--podman'; }
+my $ME = $ENV{USER} || getpwuid($<) || '';
+
+# help
+if (grep { $_ eq '--help' || $_ eq '-h' } @ARGV) {
+    print <<'USAGE';
+Usage: bin/stop-dev [--dry-run|-n] [--podman] [--help|-h]
+
+--dry-run, -n: don't execute commands; just print what would be done
+--podman: also stop the podman machine (if podman is installed)
+--help, -h: show this help text
+USAGE
+    exit 0;
+}
+
+sub run {
+    my ($cmd, $msg) = @_;
+    $msg ||= $cmd;
+    print "$msg\n";
+    if ($DRY_RUN) { print "  (dry-run) $cmd\n"; return 0; }
+    my $rc = system($cmd);
+    if ($rc != 0) {
+        warn "Command failed (exit=$rc): $cmd\n";
+    }
+    return $rc;
+}
+
+sub cmd_exists { my ($c) = @_; return system("command -v $c >/dev/null 2>&1") == 0; }
+
+print "Stopping project dev services (safe cleanup)\n";
+
+# 1) Kill overmind and tmux sessions used by overmind
+run("pkill -u $ME -f 'tmux -C -L overmind-config' || true", 'Killing overmind-managed tmux sessions...');
+run("pkill -u $ME -f 'overmind start|overmind' || true", 'Killing overmind processes...');
+
+# 2) Kill Caddy instances started with the project Caddyfile
+run("pkill -u $ME -f 'caddy run --config Caddyfile' || true", 'Killing Caddy instances using the project Caddyfile...');
+
+# 3) Kill JS asset servers (bun/node/webpack/shakapacker/vite)
+run("pkill -u $ME -f 'bun run webpack' || true", 'Killing bun webpack processes...');
+run("pkill -u $ME -f 'webpack --watch' || true", 'Killing webpack --watch processes...');
+run("pkill -u $ME -f 'webpack serve' || true", 'Killing webpack serve processes...');
+run("pkill -u $ME -f 'shakapacker' || true", 'Killing shakapacker processes...');
+run("pkill -u $ME -f 'vite' || true", 'Killing vite processes (if any)...');
+
+# 4) Stop spring / rails related processes
+if (cmd_exists('spring')) {
+    run("spring stop || true", 'Stopping spring...');
+}
+run("pkill -u $ME -f 'ruby.*spring|spring server|spring app' || true", 'Killing spring-specific processes...');
+run("pkill -u $ME -f 'ruby|rails' || true", 'Killing ruby/rails processes (careful!)...');
+
+# 5) Stop Dev DB containers (podman/docker) named libreverse-dev-*
+if (cmd_exists('podman')) {
+    run('podman ps -a --format "{{.ID}} {{.Names}}" | egrep \'libreverse-dev\' | awk \'{print $1}\' | xargs -I{} podman rm -f {} || true', 'Removing podman containers named libreverse-dev-*...');
+}
+elsif (cmd_exists('docker')) {
+    run('docker ps -a --format "{{.ID}} {{.Names}}" | egrep \'libreverse-dev\' | awk \'{print $1}\' | xargs -I{} docker rm -f {} || true', 'Removing docker containers named libreverse-dev-*...');
+}
+
+# 6) Optionally stop the podman machine if passed in as --podman
+if ($PODMAN_ALL) {
+    if (cmd_exists('podman')) {
+        run('podman machine stop || true', 'Stopping podman machine (requested by --podman)...');
+    }
+}
+
+# 7) Cleanup sockets and pid files
+run("rm -f /tmp/.overmind.sock || true", 'Removing /tmp/.overmind.sock...');
+run("rm -f tmp/pids/* 2>/dev/null || true", 'Removing tmp/pids files...');
+run("rm -f tmp/sockets/* 2>/dev/null || true", 'Removing tmp/sockets files...');
+
+# 8) Remove overmind-config temp folders in /var/folders
+run("find /var/folders -type d -name 'overmind-config*' -maxdepth 5 -exec rm -rf {} + 2>/dev/null || true", 'Removing overmind-config temporary folders in /var/folders...');
+
+# 9) Re-run checks to show status
+run("pgrep -fl 'tmux -C -L overmind-config|overmind|caddy|bun run webpack|webpack --watch|webpack serve|spring server|spring app|ruby|rails|podman|docker' || true", 'Checking for remaining processes (grep results)...');
+run("lsof -iTCP -sTCP:LISTEN -Pn | egrep ':3000|:5173|:5432|:80|:443|:5174|:3080' || true", 'Listening ports that match dev services (should be nothing relevant)...');
+
+print "Done. If anything remains, run with --dry-run to see what would be killed and re-run with sudo if necessary.\n";
+
+__END__

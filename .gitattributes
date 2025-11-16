@@ -18,3 +18,4 @@ log/development.log.0 filter=lfs diff=lfs merge=lfs -text
 node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron[[:space:]]Framework.framework/Versions/A/Electron[[:space:]]Framework filter=lfs diff=lfs merge=lfs -text
 .git/objects/pack/pack-8eabcc0516097befe9538fec95df25e17649a099.pack filter=lfs diff=lfs merge=lfs -text
 .git/objects/pack/pack-f40bb0ea2271e557b425189df16a8fa3407b957e.pack filter=lfs diff=lfs merge=lfs -text
+log/development.log filter=lfs diff=lfs merge=lfs -text
