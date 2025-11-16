@@ -37,7 +37,11 @@ class ExperiencesController < ApplicationController
     # Extract timestamp from loaded collection to avoid additional query
     timestamps = @experiences.map(&:updated_at)
     timestamp = timestamps.any? ? timestamps.max.to_i : 0
-    user_role = current_account&.admin? ? "admin" : user_signed_in? ? "user_#{current_account.id}" : "guest"
+    user_role = if current_account&.admin?
+"admin"
+    else
+user_signed_in? ? "user_#{current_account.id}" : "guest"
+    end
     cache_key = "experiences_index/#{user_role}/#{@experiences.size}/#{timestamp}"
     etag = Digest::MD5.hexdigest(cache_key)
 
