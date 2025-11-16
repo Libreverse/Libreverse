@@ -8,15 +8,15 @@
         %h1.display-heading= t('settings.index.title')
         %p.header-description
           = t('settings.index.description')
-        %h3.section-title= t('settings.index.language')
+      %h3.section-title= t('settings.index.language')
       .language-picker-board.glass.glass-card-base{ data: { controller: 'language-picker' } }
         - I18n.available_locales.each do |locale|
           - flag = locale_flag_emoji(locale)
           - is_current = I18n.locale == locale
           %span.language-flag{ data: { action: 'click->language-picker#select', locale: locale }, class: (is_current ? 'selected' : '') }
             = flag
+      %h3.section-title= t('settings.index.oneko_skin')
       .oneko-skin-picker-board.glass.glass-card-base{ data: { controller: 'oneko-skin-picker' } }
-        %h3.section-title= t('settings.index.oneko_skin')
         - skin_urls = oneko_skin_urls
         - available_skins = %w[ace agender asexual bisexual black bunny calico eevee esmeralda fox gay genderfluid ghost gray jess kina lesbian lucy maia maria mike nonbinary oneko_black oneko_gray oneko onekoslvt pride silver silversky snuupy spirit tora trans valentine]
         - current_skin = current_oneko_skin

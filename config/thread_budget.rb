@@ -16,8 +16,8 @@ module ThreadBudget
 
         def percentages
                 # Allow overrides via env; otherwise use conservative defaults that sum <= 100
-                app_pct    = Integer(ENV.fetch("THREAD_BUDGET_APP_PCT") { "50" })
-                sqlite_pct = Integer(ENV.fetch("THREAD_BUDGET_SQLITE_PCT") { "30" })
+                app_pct    = Integer(ENV.fetch("THREAD_BUDGET_APP_PCT") { "89" })
+                sqlite_pct = Integer(ENV.fetch("THREAD_BUDGET_SQLITE_PCT") { "1" })
                 sq_pct     = Integer(ENV.fetch("THREAD_BUDGET_SOLID_QUEUE_PCT") { "10" })
 
                 sum = app_pct + sqlite_pct + sq_pct

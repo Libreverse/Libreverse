@@ -167,12 +167,6 @@
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .metaverse-panels-track {
-        transition: none;
-    }
-}
-
 .metaverse-panel__placeholder {
     position: absolute;
     inset: 0;

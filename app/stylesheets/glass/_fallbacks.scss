@@ -90,25 +90,6 @@
     }
 }
 
-/* Reduced Motion Fallbacks */
-@media (prefers-reduced-motion: reduce) {
-    .glass,
-    .glass-button,
-    .glass-card,
-    .glass-drawer {
-        transition: none;
-        animation: none;
-    }
-
-    .glass-button:hover,
-    .glass-card:hover {
-        transform: none;
-    }
-
-    .glass-loading::after {
-        animation: none;
-    }
-}
 
 /* Low-end Device Optimizations */
 @media (resolution <= 150dpi) {

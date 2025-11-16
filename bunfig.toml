@@ -8,3 +8,5 @@ bun = true
 [install.cache]
 disable = true
 disableManifest = true
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"

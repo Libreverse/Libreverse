@@ -107,7 +107,7 @@ class ProxyController < ApplicationController
                                 })
         if response.success?
           compiled << "! #{url}"
-          compiled << response.body
+          compiled << response.body.force_encoding("UTF-8").encode("UTF-8", invalid: :replace, undef: :replace)
           compiled << ""
         else
           Rails.logger.warn "Failed to fetch filter list from #{url}: #{response.code}"

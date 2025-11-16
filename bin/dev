@@ -116,13 +116,7 @@ unlink '/tmp/.overmind.sock';
 print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
 
 show_spinner("Killing anything using the development SQLite database...");
-run_task("Killing anything using the development SQLite database...", "cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1");
-
-show_spinner("Removing any stray libreverse-dev-tidb containers...");
-run_task("Removing any stray libreverse-dev-tidb containers...", "timeout 10 docker rm -f libreverse-dev-tidb > /dev/null 2>&1");
-
-show_spinner("Removing any stray libreverse-dev-postgres containers...");
-run_task("Removing any stray libreverse-dev-postgres containers...", "timeout 10 docker rm -f libreverse-dev-postgres > /dev/null 2>&1");
+run_task("Killing anything using the development SQLite database...", "cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1");;
 
 show_spinner("Killing anything on port 3000...");
 run_task("Killing anything on port 3000...", "fuser -k -TERM 3000/tcp > /dev/null 2>&1");
@@ -130,11 +124,75 @@ run_task("Killing anything on port 3000...", "fuser -k -TERM 3000/tcp > /dev/nul
 show_spinner("Restarting spring...");
 run_task("Restarting spring...", "cd .. && spring stop > /dev/null 2>&1");
 
-# Set environment variables for Overmind
+# Ensure mkcert root CA is installed and trusted (sudo once)
+show_spinner("Configuring certificates for local http/3...");
+run_task(
+    "Ensuring mkcert root CA is trusted",
+    q{mkcert -install >/dev/null 2>&1 || (command -v mkcert >/dev/null && mkcert -install)}
+);
+
+# ----------------------------------------------------------------------
+# 1. Clean up any stale containers first
+# ----------------------------------------------------------------------
+print $message_color, twemoji('Broom'), " Cleaning up any stale containers...", $RESET, "\n";
+system('podman rm -f libreverse-dev-tidb libreverse-dev-postgres libreverse-dev-dragonflydb libreverse-dev-detached-dragonflydb >/dev/null 2>&1');
+print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
+
+# ----------------------------------------------------------------------
+# 2. Test podman with the hello container
+# ----------------------------------------------------------------------
+print $message_color, "Testing podman...", $RESET, "\n";
+
+# First check if podman machine is running at all
+my $machine_running = system('podman machine info >/dev/null 2>&1') == 0;
+my $podman_ok = 0;
+
+if ($machine_running) {
+    # Machine is running, now test if containers work
+    $podman_ok = system('podman run --rm quay.io/podman/hello >/dev/null 2>&1') == 0;
+}
+
+if ($podman_ok) {
+    print $message_color, twemoji('Check Mark'), " podman works – skipping recreation steps.", $RESET, "\n\n";
+}
+else {
+    # ------------------------------------------------------------------
+    # 2. podman broken → ONE spinner for the whole recreation block
+    # ------------------------------------------------------------------
+    print $message_color, twemoji('Hourglass'), " podman failed. Recreating VM...", $RESET, "\n";
+
+    # Start the spinner (it will animate for ~30 s – enough for the whole block)
+    show_spinner("Making sure podman behaves...");
+
+    # ---- recreation steps (no individual spinners) -----------------
+    run_task("Stopping podman machine",    "podman machine stop 2>/dev/null || true");
+    run_task("Removing podman machine",    "podman machine rm -f 2>/dev/null || true");
+    run_task("Clearing out podman data",   "rm -rf ~/.local/share/containers ~/.config/containers 2>/dev/null || true");
+    run_task("Recreating podman VM",       "podman machine init --memory 2048 --cpus 1");
+    run_task("Starting podman VM",         "podman machine start");
+
+    # ------------------------------------------------------------------
+    # 3. Final verification (still under the same spinner)
+    # ------------------------------------------------------------------
+    print $message_color, twemoji('Magnifying Glass'), " Verifying podman after recreation...", $RESET, "\n";
+    if (system('podman run --rm quay.io/podman/hello >/dev/null 2>&1') == 0) {
+        print $message_color, twemoji('Check Mark'), " podman is now working!", $RESET, "\n\n";
+    }
+    else {
+        print $message_color, twemoji('Cross Mark'), " Still broken – check logs / permissions.", $RESET, "\n\n";
+    }
+
+    # Overwrite the spinner line with a final status
+    print "\r", " " x ($width - 2), "\r";               # clear spinner line
+    print $message_color, twemoji('Check Mark'), " Making sure podman behaves... Done", $RESET, "\n\n";
+}
+
+# Set environment variables for Overmind and all child processes
+$ENV{OBJC_DISABLE_INITIALIZE_FORK_SAFETY} = 'YES';
 $ENV{OVERMIND_SOCKET}        = '/tmp/.overmind.sock';
 $ENV{OVERMIND_TMUX_CONFIG}   = '/config/overmind-tmux.conf';
 $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
-$ENV{OVERMIND_CAN_DIE}       = 'rails-db-creator, startup-message, dragonflydb-detached';
+$ENV{OVERMIND_CAN_DIE}       = 'rails-db-creator, startup-message';
 
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

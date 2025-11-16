@@ -3,7 +3,6 @@
 @use "fonts";
 
 * {
-    cursor: none !important;
     text-rendering: optimizelegibility;
     text-shadow: 1px 1px 2px rgb(0 0 0 / 50%); /* Subtle text shadow */
 }
@@ -61,19 +60,6 @@ main.content-wrapper {
     user-select: none; /* Standard */
 }
 
-.underconstruction {
-    background-color: #fdf3dc;
-    color: #333;
-    padding: 15px;
-    top: 0;
-    z-index: 2137483645;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: top 0.3s;
-    border: 1px solid #c0b9a8;
-}
-
 ::selection {
     background: #e45c9c; /* Pink highlight color */
     color: #fff; /* White text for contrast */
@@ -85,7 +71,7 @@ main.content-wrapper {
     height: 32px;
     position: fixed;
     image-rendering: pixelated;
-    z-index: 1111;
+    z-index: 2147483646;
     background-repeat: no-repeat;
     transition: all 0.1s ease;
 
@@ -170,57 +156,4 @@ img:not(.emoji) {
 
 button {
     user-select: none;
-}
-
-/* Custom Cursor Styles */
-.custom-cursor-circle.initializing {
-    opacity: 0 !important;
-    transition: opacity 0.3s ease;
-}
-
-.custom-cursor-circle.no-transition {
-    transition: none !important;
-}
-
-/* Outer Circle */
-.custom-cursor-circle {
-    --translate-x: 0px;
-    --translate-y: 0px;
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 40px;
-    height: 40px;
-    border: 2px solid #e5e4da;
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(var(--translate-x), var(--translate-y))
-        translate(-50%, -50%) scale(1);
-    transition:
-        transform 0.1s ease,
-        opacity 0.3s ease;
-    z-index: 2147483644;
-    opacity: 1;
-    filter: drop-shadow(1px 1px 2px rgb(0 0 0 / 50%));
-
-    /* will-change is now managed dynamically via JavaScript */
-}
-
-/* Shrink Effect on Click (applied only to the circle) */
-.custom-cursor-circle.shrink {
-    transform: translate(var(--translate-x), var(--translate-y))
-        translate(-50%, -50%) scale(0.7);
-
-    /* Ensure the transform transition is smooth */
-}
-
-.cursor-dot {
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999; /* Ensure it's on top */
-    transform: translate(var(--translate-x, 0), var(--translate-y, 0));
-    opacity: 1;
-    transition: none;
-    filter: drop-shadow(1px 1px 2px rgb(0 0 0 / 50%));
 }

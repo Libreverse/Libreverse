@@ -21,7 +21,11 @@ class ExperiencesController < ApplicationController
   def index
     @experiences = if current_account&.admin?
       Experience.order(created_at: :desc)
+    elsif user_signed_in?
+      # Show only the current user's experiences
+      current_account.experiences.order(created_at: :desc)
     else
+      # Show approved experiences for guests
       Experience.approved.order(created_at: :desc)
     end
 
@@ -33,7 +37,7 @@ class ExperiencesController < ApplicationController
     # Extract timestamp from loaded collection to avoid additional query
     timestamps = @experiences.map(&:updated_at)
     timestamp = timestamps.any? ? timestamps.max.to_i : 0
-    user_role = current_account&.admin? ? "admin" : "user"
+    user_role = current_account&.admin? ? "admin" : user_signed_in? ? "user_#{current_account.id}" : "guest"
     cache_key = "experiences_index/#{user_role}/#{@experiences.size}/#{timestamp}"
     etag = Digest::MD5.hexdigest(cache_key)
 

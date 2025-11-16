@@ -7,7 +7,9 @@
     = csrf_meta_tags
     = csp_meta_tag
   %body
-    .titlebar{style: "-webkit-app-region: drag; height: 36px; width: 100%; position: fixed; top: 0; left: 0; z-index: 9999; background: transparent;"}
+    .titlebar{style: "-webkit-app-region: drag; height: 36px; width: 100%; position: fixed; top: 0; left: 0; z-index: 5; background: transparent;"}
+    = render "layouts/window_controls"
+    = render "layouts/oneko"
     = render "layouts/glass_filter"
     %noscript
       .noscript-message
@@ -63,7 +65,5 @@
           = render "layouts/flash_messages"
           #toast-container
           %main.content-wrapper
-            = render "layouts/oneko"
-            = render "layouts/cursor"
             = yield
           = render "layouts/site_footer"

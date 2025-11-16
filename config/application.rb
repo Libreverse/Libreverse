@@ -22,6 +22,7 @@ require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
+require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -81,6 +82,8 @@ module LibreverseInstance
 
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
+
+    # config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification

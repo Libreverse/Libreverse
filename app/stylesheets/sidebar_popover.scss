@@ -116,23 +116,6 @@
             inset 0 1px 0 rgb(255 255 255 / 15%);
     }
 
-    // High contrast mode support
-    @media (prefers-contrast: high) {
-        background: rgb(0 0 0 / 95%);
-        border: 2px solid white;
-        color: white;
-        backdrop-filter: none;
-    }
-
-    // Reduced motion support
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-
-        &.is-active {
-            transform: none;
-        }
-    }
-
     // Mobile responsiveness
     @media (width <= 600px) {
         font-size: 13px;

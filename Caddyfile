@@ -1,0 +1,14 @@
+{
+    auto_https off
+    # Enable HTTP/3 (QUIC) by default in Caddy
+    servers {
+        protocols h1 h2 h3
+    }
+}
+
+localhost:3000 {
+    tls /tmp/mkcert-dev-certs/localhost.pem /tmp/mkcert-dev-certs/localhost-key.pem
+    reverse_proxy localhost:3002
+    # Advertise HTTP/3 via Alt-Svc
+    header Alt-Svc "h3=\":3000\"; ma=86400"
+}

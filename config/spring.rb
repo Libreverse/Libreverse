@@ -1,5 +1,8 @@
 # Spring configuration for Libreverse application
 
+# Disable macOS fork safety check to prevent crashes
+ENV['OBJC_DISABLE_INITIALIZE_FORK_SAFETY'] = 'YES'
+
 # Watch additional configuration files that should trigger a restart
 Spring.watch(
   ".ruby-version",

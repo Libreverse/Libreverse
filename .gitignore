@@ -144,3 +144,5 @@ typings/
 
 # Electron-Forge
 out/
+
+*.pem.envrc.local

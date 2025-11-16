@@ -98,18 +98,8 @@ export default _class = function () {
         }
 
         startNeko() {
-            var isReducedMotion, reference;
             boundMethodCheck(this, _class);
             if (this.running) {
-                return;
-            }
-            isReducedMotion =
-                (reference = globalThis.matchMedia(
-                    "(prefers-reduced-motion: reduce)",
-                )) == undefined
-                    ? void 0
-                    : reference.matches;
-            if (isReducedMotion) {
                 return;
             }
             this.running = true;

@@ -586,31 +586,6 @@
     }
 }
 
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .glass-component {
-        transition: none;
-    }
-
-    .glass-overlay {
-        transition: none;
-    }
-}
-
-/* High contrast mode adjustments */
-@media (prefers-contrast: high) {
-    .glass-component {
-        border: 2px solid rgb(255 255 255 / 50%);
-        backdrop-filter: none;
-        background: rgb(0 0 0 / 80%);
-
-        &.glass-fallback {
-            border: 2px solid rgb(255 255 255 / 70%);
-            background: rgb(0 0 0 / 90%);
-        }
-    }
-}
-
 /* Enhanced hover states for interactive elements */
 .glass-component.glass-nav .nav-item,
 .glass-component.glass-sidebar .sidebar-link {

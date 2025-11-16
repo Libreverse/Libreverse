@@ -1,40 +1,37 @@
 urls:
-  # uBO Built-in Filter Lists URLs
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt  # uBlock filters
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/badware.txt  # uBlock badware
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt  # uBlock privacy
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/quickfixes.txt  # uBlock quick fixes
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/unbreak.txt  # uBlock unbreak
-  - https://easylist.to/easylist/easylist.txt  # EasyList
-  - https://filters.adtidy.org/extension/ublock/filters/2.txt  # AdGuard generic
-  - https://filters.adtidy.org/extension/ublock/filters/11.txt  # AdGuard mobile
-  - https://easylist.to/easylist/easyprivacy.txt  # EasyPrivacy
-  - https://filters.adtidy.org/extension/ublock/filters/14.txt  # AdGuard URL tracking protection (spyware-url) / cookies
-  - https://secure.fanboy.co.nz/fanboy-cookiemonster.txt  # Fanboy Cookie Monster
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/cookies_easylist.txt  # uBlock cookies EasyList
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/cookies_adguard.txt  # uBlock cookies AdGuard
-  - https://secure.fanboy.co.nz/fanboy-social.txt  # Fanboy social / third-party social
-  - https://filters.adtidy.org/extension/ublock/filters/15.txt  # AdGuard social
-  - https://easylist.to/easylist/easylistchat.txt  # EasyList chat
-  - https://easylist.to/easylist/easylistnewsletter.txt  # EasyList newsletters
-  - https://easylist.to/easylist/easylistnotifications.txt  # EasyList notifications
-  - https://easylist.to/easylist/easylistannoyance.txt  # EasyList annoyances
-  - https://filters.adtidy.org/extension/ublock/filters/17.txt  # AdGuard mobile app banners
-  - https://filters.adtidy.org/extension/ublock/filters/18.txt  # AdGuard other annoyances
-  - https://filters.adtidy.org/extension/ublock/filters/19.txt  # AdGuard popup overlays
-  - https://filters.adtidy.org/extension/ublock/filters/20.txt  # AdGuard widgets
-  - https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/annoyances.txt  # uBlock annoyances
+    # uBO Built-in Filter Lists URLs
+    - https://ublockorigin.github.io/uAssetsCDN/filters/filters.min.txt # uBlock filters
+    - https://ublockorigin.github.io/uAssetsCDN/filters/badware.txt # uBlock badware
+    - https://ublockorigin.github.io/uAssetsCDN/filters/privacy.min.txt # uBlock privacy
+    - https://ublockorigin.github.io/uAssetsCDN/filters/quick-fixes.txt # uBlock quick fixes
+    - https://ublockorigin.github.io/uAssetsCDN/filters/unbreak.txt # uBlock unbreak
+    - https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist.txt # EasyList
+    - https://filters.adtidy.org/extension/ublock/filters/2.txt # AdGuard generic
+    - https://filters.adtidy.org/extension/ublock/filters/11.txt # AdGuard mobile
+    - https://ublockorigin.github.io/uAssetsCDN/thirdparties/easyprivacy.txt # EasyPrivacy
+    - https://filters.adtidy.org/extension/ublock/filters/14.txt # AdGuard URL tracking protection (spyware-url) / cookies
+    - https://secure.fanboy.co.nz/fanboy-cookiemonster.txt # Fanboy Cookie Monster
+    - https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-cookies.txt # EasyList cookies
+    - https://filters.adtidy.org/extension/ublock/filters/3.txt # AdGuard annoyances cookies
+    - https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-social.txt # Fanboy social / third-party social
+    - https://filters.adtidy.org/extension/ublock/filters/15.txt # AdGuard social
+    - https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-annoyances.txt # EasyList annoyances
+    - https://filters.adtidy.org/extension/ublock/filters/17.txt # AdGuard mobile app banners
+    - https://filters.adtidy.org/extension/ublock/filters/18.txt # AdGuard other annoyances
+    - https://filters.adtidy.org/extension/ublock/filters/19.txt # AdGuard popup overlays
+    - https://filters.adtidy.org/extension/ublock/filters/20.txt # AdGuard widgets
+    - https://ublockorigin.github.io/uAssetsCDN/filters/annoyances.txt # uBlock annoyances
 
-  # Custom/External Lists from Config
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt  # ClearURLs
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt  # Legitimate URL Shortener
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt  # Browse without logging in
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Dandelion%20Sprout's%20Website%20Stretcher.txt  # Website Stretcher
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/EmptyPaddingRemover.txt  # Empty Padding Remover
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcher4K.txt  # Website Stretcher 4K
-  - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcherVertical.txt  # Website Stretcher Vertical
-  - https://raw.githubusercontent.com/iam-py-test/my_filters_001/main/duckduckgo_extra_clean.txt  # DuckDuckGo extra clean
-  - https://raw.githubusercontent.com/iam-py-test/my_filters_001/refs/heads/main/special_lists/anti-malware-ubo-extension.txt  # Anti-malware uBO extension
-  - https://raw.githubusercontent.com/yokoffing/filterlists/main/click2load.txt  # Click2Load
-  - https://raw.githubusercontent.com/yokoffing/filterlists/main/privacy_essentials.txt  # Privacy essentials
-  - https://filters.adtidy.org/extension/ublock/filters/3.txt  # AdGuard annoyances
+    # Custom/External Lists from Config
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt # ClearURLs
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt # Legitimate URL Shortener
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt # Browse without logging in
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Dandelion%20Sprout's%20Website%20Stretcher.txt # Website Stretcher
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/EmptyPaddingRemover.txt # Empty Padding Remover
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcher4K.txt # Website Stretcher 4K
+    - https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcherVertical.txt # Website Stretcher Vertical
+    - https://raw.githubusercontent.com/iam-py-test/my_filters_001/main/duckduckgo_extra_clean.txt # DuckDuckGo extra clean
+    - https://raw.githubusercontent.com/iam-py-test/my_filters_001/refs/heads/main/special_lists/anti-malware-ubo-extension.txt # Anti-malware uBO extension
+    - https://raw.githubusercontent.com/yokoffing/filterlists/main/click2load.txt # Click2Load
+    - https://raw.githubusercontent.com/yokoffing/filterlists/main/privacy_essentials.txt # Privacy essentials
+    - https://filters.adtidy.org/extension/ublock/filters/3.txt # AdGuard annoyances
