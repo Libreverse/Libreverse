@@ -1,22 +1,23 @@
 # To-do
 
-finish blocklist series from <https://github.com/yokoffing/filterlists>
+add global net blocklist using georlist once it's actually working. Perhaps move it's logic into the app natively
 
 finish adding useful electron bits from
 <https://github.com/doyensec/electronegativity?tab=readme-ov-file>
 
-finish libreverse ai with api calls
+finish libreverse ai with api calls - use python node calls to use llama cpp python
+
 adopt cucumber rails for future tests
-fix map 3d performance being rubbish with million.js, terser and babel react optims
-better use of leaflet offline plugin
-remove local codeql
+
+remove local codeql (not that deep)
+
 facial age estimation using zkml for osa pycall and ezkl
 <https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender>
 <https://github.com/justadudewhohacks/face-api.js-models>
 <https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript>
-<https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html> for server side inference with hugging face transformers
+
 add oj gem once we fix ruby shared libraries weirdness gem install oj -- --with-sse42
-add ar doctor and ruumba to the ci and zeitwerk check and caddy fmt --overwrite
+
 fix vite plugin tips
 
 Flags to research more:
@@ -28,7 +29,6 @@ Recommended privacy flags:
 • #strict-origin-isolation: Enabled – Enforces stricter origin isolation.
 • #force-punycode: Enabled – Displays IDNs as Punycode (anti-phishing/privacy).Users note these work on stock Chromium without issues.
 
-add turbo preload middleware back with self-signed http/3 caddy in dev
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
 - [ ] (bugfix) Sidebar moves down when sidebar expanded

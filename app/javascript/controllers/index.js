@@ -2,100 +2,100 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import ApplicationController from "./application_controller"
-application.register("application", ApplicationController)
+import ApplicationController from "./application_controller";
+application.register("application", ApplicationController);
 
-import CommentBulkController from "./comment_bulk_controller"
-application.register("comment-bulk", CommentBulkController)
+import CommentBulkController from "./comment_bulk_controller";
+application.register("comment-bulk", CommentBulkController);
 
-import CommentController from "./comment_controller"
-application.register("comment", CommentController)
+import CommentController from "./comment_controller";
+application.register("comment", CommentController);
 
-import CommentFormController from "./comment_form_controller"
-application.register("comment-form", CommentFormController)
+import CommentFormController from "./comment_form_controller";
+application.register("comment-form", CommentFormController);
 
-import ConsentController from "./consent_controller"
-application.register("consent", ConsentController)
+import ConsentController from "./consent_controller";
+application.register("consent", ConsentController);
 
-import CtaParticlesController from "./cta_particles_controller"
-application.register("cta-particles", CtaParticlesController)
+import CtaParticlesController from "./cta_particles_controller";
+application.register("cta-particles", CtaParticlesController);
 
-import DismissibleController from "./dismissible_controller"
-application.register("dismissible", DismissibleController)
+import DismissibleController from "./dismissible_controller";
+application.register("dismissible", DismissibleController);
 
-import EnhancedApplicationController from "./enhanced_application_controller"
-application.register("enhanced-application", EnhancedApplicationController)
+import EnhancedApplicationController from "./enhanced_application_controller";
+application.register("enhanced-application", EnhancedApplicationController);
 
-import ExperienceUploadController from "./experience_upload_controller"
-application.register("experience-upload", ExperienceUploadController)
+import ExperienceUploadController from "./experience_upload_controller";
+application.register("experience-upload", ExperienceUploadController);
 
-import FormAutoSubmitController from "./form_auto_submit_controller"
-application.register("form-auto-submit", FormAutoSubmitController)
+import FormAutoSubmitController from "./form_auto_submit_controller";
+application.register("form-auto-submit", FormAutoSubmitController);
 
-import FoundationController from "./foundation_controller"
-application.register("foundation", FoundationController)
+import FoundationController from "./foundation_controller";
+application.register("foundation", FoundationController);
 
-import HyperspaceController from "./hyperspace_controller"
-application.register("hyperspace", HyperspaceController)
+import HyperspaceController from "./hyperspace_controller";
+application.register("hyperspace", HyperspaceController);
 
-import InstanceSettingsController from "./instance_settings_controller"
-application.register("instance-settings", InstanceSettingsController)
+import InstanceSettingsController from "./instance_settings_controller";
+application.register("instance-settings", InstanceSettingsController);
 
-import LanguagePickerController from "./language_picker_controller"
-application.register("language-picker", LanguagePickerController)
+import LanguagePickerController from "./language_picker_controller";
+application.register("language-picker", LanguagePickerController);
 
-import LinkController from "./link_controller"
-application.register("link", LinkController)
+import LinkController from "./link_controller";
+application.register("link", LinkController);
 
-import LlmController from "./llm_controller"
-application.register("llm", LlmController)
+import LlmController from "./llm_controller";
+application.register("llm", LlmController);
 
-import LocomotiveScrollController from "./locomotive_scroll_controller"
-application.register("locomotive-scroll", LocomotiveScrollController)
+import LocomotiveScrollController from "./locomotive_scroll_controller";
+application.register("locomotive-scroll", LocomotiveScrollController);
 
-import MetaverseMapController from "./metaverse_map_controller"
-application.register("metaverse-map", MetaverseMapController)
+import MetaverseMapController from "./metaverse_map_controller";
+application.register("metaverse-map", MetaverseMapController);
 
-import MetaversePanelSwitchController from "./metaverse_panel_switch_controller"
-application.register("metaverse-panel-switch", MetaversePanelSwitchController)
+import MetaversePanelSwitchController from "./metaverse_panel_switch_controller";
+application.register("metaverse-panel-switch", MetaversePanelSwitchController);
 
-import NavigationShortcutsController from "./navigation_shortcuts_controller"
-application.register("navigation-shortcuts", NavigationShortcutsController)
+import NavigationShortcutsController from "./navigation_shortcuts_controller";
+application.register("navigation-shortcuts", NavigationShortcutsController);
 
-import OffCanvasController from "./off_canvas_controller"
-application.register("off-canvas", OffCanvasController)
+import OffCanvasController from "./off_canvas_controller";
+application.register("off-canvas", OffCanvasController);
 
-import OnekoController from "./oneko_controller"
-application.register("oneko", OnekoController)
+import OnekoController from "./oneko_controller";
+application.register("oneko", OnekoController);
 
-import OnekoSkinPickerController from "./oneko_skin_picker_controller"
-application.register("oneko-skin-picker", OnekoSkinPickerController)
+import OnekoSkinPickerController from "./oneko_skin_picker_controller";
+application.register("oneko-skin-picker", OnekoSkinPickerController);
 
-import ParallaxBackgroundController from "./parallax_background_controller"
-application.register("parallax-background", ParallaxBackgroundController)
+import ParallaxBackgroundController from "./parallax_background_controller";
+application.register("parallax-background", ParallaxBackgroundController);
 
-import RaindropController from "./raindrop_controller"
-application.register("raindrop", RaindropController)
+import RaindropController from "./raindrop_controller";
+application.register("raindrop", RaindropController);
 
-import SearchController from "./search_controller"
-application.register("search", SearchController)
+import SearchController from "./search_controller";
+application.register("search", SearchController);
 
-import SearchUrlUpdaterController from "./search_url_updater_controller"
-application.register("search-url-updater", SearchUrlUpdaterController)
+import SearchUrlUpdaterController from "./search_url_updater_controller";
+application.register("search-url-updater", SearchUrlUpdaterController);
 
-import SidebarPopoverController from "./sidebar_popover_controller"
-application.register("sidebar-popover", SidebarPopoverController)
+import SidebarPopoverController from "./sidebar_popover_controller";
+application.register("sidebar-popover", SidebarPopoverController);
 
-import SyncModeController from "./sync_mode_controller"
-application.register("sync-mode", SyncModeController)
+import SyncModeController from "./sync_mode_controller";
+application.register("sync-mode", SyncModeController);
 
-import ToastController from "./toast_controller"
-application.register("toast", ToastController)
+import ToastController from "./toast_controller";
+application.register("toast", ToastController);
 
-import WebsocketP2pController from "./websocket_p2p_controller"
-application.register("websocket-p2p", WebsocketP2pController)
+import WebsocketP2pController from "./websocket_p2p_controller";
+application.register("websocket-p2p", WebsocketP2pController);
 
-import YjsCollaborationController from "./yjs_collaboration_controller"
-application.register("yjs-collaboration", YjsCollaborationController)
+import YjsCollaborationController from "./yjs_collaboration_controller";
+application.register("yjs-collaboration", YjsCollaborationController);

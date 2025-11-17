@@ -1,18 +1,6 @@
 #!/usr/bin/env sh
 set -eu
 
-# run project's optimizer; fail on error
-printf '%s\n' "Running pre-commit optimizer: bunx socket optimize..."
-if ! command -v bunx >/dev/null 2>&1; then
-  printf '%s\n' "Error: bunx not found in PATH" >&2
-  exit 1
-fi
-
-if ! bunx socket optimize; then
-  printf '%s\n' "bunx socket optimize failed. Aborting commit." >&2
-  exit 1
-fi
-
 # New: detect files >100MB and track them with Git LFS (if git-lfs is available)
 printf '%s\n' "Detecting files >100MB and tracking with Git LFS (if available)..."
 if git lfs version >/dev/null 2>&1; then
@@ -28,9 +16,8 @@ else
   printf '%s\n' "git-lfs not installed or not available. Skipping LFS tracking."
 fi
 
-# stage any changes produced by the optimizer so they're included in the commit
-# (this ensures generated/modified files are integrated into the commit)
-printf '%s\n' "Staging changes produced by optimizer..."
+
+printf '%s\n' "Staging all changes..."
 git add -A
 
 printf '%s\n' "Pre-commit checks complete — continuing with commit."

@@ -36,6 +36,7 @@ jobs:
                         eslint,
                         stylelint,
                         markdownlint,
+                        caddy-fmt,
                     ]
 
         steps:
@@ -109,6 +110,27 @@ jobs:
               shell: bash
               run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
 
+            - name: Run markdownlint
+              if: matrix.tool == 'markdownlint'
+              shell: bash
+              run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
+
+            - name: Run Caddy Fmt
+              if: matrix.tool == 'caddy-fmt'
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if ! command -v caddy >/dev/null 2>&1; then
+                    echo "Installing caddy";
+                    sudo apt-get update -y >/dev/null 2>&1 || true
+                    sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl >/dev/null 2>&1 || true
+                    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg >/dev/null 2>&1 || true
+                    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null 2>&1 || true
+                    sudo apt-get update -y >/dev/null 2>&1 || true
+                    sudo apt-get install -y caddy >/dev/null 2>&1 || { echo "caddy apt install failed"; exit 0; }
+                  fi
+                  caddy fmt --overwrite Caddyfile
+
     # Validation tools (runs in parallel)
     validation:
         name: ${{ matrix.tool }}
@@ -119,7 +141,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [i18n-validation, erb-lint, hadolint]
+                tool: [i18n-validation, erb-lint, hadolint, active-record-doctor, ruumba, zeitwerk-check]
 
         steps:
             - name: Check out code
@@ -143,6 +165,21 @@ jobs:
               uses: hadolint/hadolint-action@v3.1.0
               with:
                   recursive: true
+
+            - name: Run Active Record Doctor
+              if: matrix.tool == 'active-record-doctor'
+              shell: bash
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec active_record_doctor
+
+            - name: Run Ruumba
+              if: matrix.tool == 'ruumba'
+              shell: bash
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec ruumba
+
+            - name: Run Zeitwerk Check
+              if: matrix.tool == 'zeitwerk-check'
+              shell: bash
+              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec rails zeitwerk:check
 
     # Security analysis (runs in parallel)
     security-analysis:
@@ -234,7 +271,7 @@ jobs:
             contents: read
             packages: write
         needs: [formatting, validation, security-analysis, code-quality] # removed testing
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, 'chore(')
 
         steps:
             - name: Check out code

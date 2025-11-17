@@ -148,11 +148,11 @@ const setupTrafficLights = () => {
     }
 
     // Check if already set up
-    if (trafficLights.dataset.setup === 'true') {
+    if (trafficLights.dataset.setup === "true") {
         console.log("Traffic lights already set up, skipping");
         return;
     }
-    trafficLights.dataset.setup = 'true';
+    trafficLights.dataset.setup = "true";
 
     // Inject CSS for traffic lights
     const style = document.createElement("style");
@@ -176,7 +176,10 @@ const setupTrafficLights = () => {
 
     // Position the traffic lights based on platform
     let positionStyle;
-    positionStyle = process.platform === "darwin" ? "left: 12px; top: 12px;" : "right: 12px; top: 12px;";
+    positionStyle =
+        process.platform === "darwin"
+            ? "left: 12px; top: 12px;"
+            : "right: 12px; top: 12px;";
     trafficLights.style.cssText += positionStyle;
 
     // Define colors based on platform
@@ -310,7 +313,8 @@ const setupTrafficLights = () => {
                 `Button ${img.id} mouseenter, hoverCount: ${hoverCount + 1}`,
             );
             hoverCount++;
-            for (const [index_, index__] of imgs.entries()) (index__.src = hoverSrcs[index_]);
+            for (const [index_, index__] of imgs.entries())
+                index__.src = hoverSrcs[index_];
         });
         img.addEventListener("mouseleave", () => {
             console.log(
@@ -318,7 +322,8 @@ const setupTrafficLights = () => {
             );
             hoverCount--;
             if (hoverCount === 0) {
-                for (const [index_, index__] of imgs.entries()) (index__.src = normalSrcs[index_]);
+                for (const [index_, index__] of imgs.entries())
+                    index__.src = normalSrcs[index_];
             }
         });
         img.addEventListener("mousedown", () => {
@@ -333,27 +338,28 @@ const setupTrafficLights = () => {
             console.log(`Button ${img.id} clicked`);
             if (globalThis.electronAPI) {
                 switch (img.id) {
-                case "close": {
-                globalThis.electronAPI.close();
-                break;
-                }
-                case "minimize": {
-                globalThis.electronAPI.minimize();
-                break;
-                }
-                case "maximize": { {
-                globalThis.electronAPI.maximize();
-                // No default
-                }
-                break;
-                }
+                    case "close": {
+                        globalThis.electronAPI.close();
+                        break;
+                    }
+                    case "minimize": {
+                        globalThis.electronAPI.minimize();
+                        break;
+                    }
+                    case "maximize": {
+                        {
+                            globalThis.electronAPI.maximize();
+                            // No default
+                        }
+                        break;
+                    }
                 }
             } else {
                 console.log("electronAPI not available");
             }
         });
     }
-    
+
     // Set initial state based on current window focus
     setTimeout(() => {
         const isFocused = document.hasFocus();

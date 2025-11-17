@@ -1,5 +1,5 @@
 # Disable macOS fork safety check to prevent crashes during development
-ENV['OBJC_DISABLE_INITIALIZE_FORK_SAFETY'] = 'YES'
+ENV["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
 
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 

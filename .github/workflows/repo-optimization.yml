@@ -1,0 +1,127 @@
+name: Safe Auto Repo Optimization with Conditional BFG
+
+on:
+  schedule:
+    - cron: '0 2 1 * *'  # Monthly on 1st at 2 AM UTC—safe, low-traffic time
+  workflow_dispatch:  # Still allows manual runs
+    inputs:
+      bfg_size_threshold:
+        description: 'BFG: Strip blobs larger than (e.g., 50M)—in MiB for check'
+        required: false
+        default: '50'
+      bfg_target_files:
+        description: 'BFG: Optional files to delete (e.g., *.log)'
+        required: false
+        default: ''
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for backup and pushes
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history required for checks/BFG
+
+      - name: Setup Git LFS (for existing LFS repos)
+        run: |
+          git lfs install --force
+          echo "LFS initialized. Pointers will be preserved."
+          git lfs ls-files --all | head -10  # Sample of tracked files
+
+      - name: Log initial repo stats
+        run: |
+          echo "=== Initial Repo Stats ==="
+          git count-objects -vH
+          du -sh .git
+
+      - name: Update rolling backup branch (ALWAYS first for safety)
+        run: |
+          BACKUP_BRANCH="backup-main"
+          echo "Updating rolling backup: ${BACKUP_BRANCH}"
+          git checkout main
+          git push origin main:${BACKUP_BRANCH} --force-with-lease
+          echo "Backup ready: https://github.com/${{ github.repository }}/tree/${BACKUP_BRANCH}"
+          echo "Revert tip: git fetch origin backup-main:main --force"
+
+      - name: Check for large blobs (skip BFG if none > threshold)
+        id: blob-check
+        run: |
+          THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
+          THRESHOLD_BYTES=$((THRESHOLD_MIB * 1024 * 1024))
+          echo "Threshold: ${THRESHOLD_MIB} MiB (${THRESHOLD_BYTES} bytes)"
+          
+          # Get largest blob size (in bytes)
+          LARGEST_BLOB=$(git rev-list --objects --all | \
+            git cat-file --batch-check='%(objecttype) %(objectsize)' | \
+            awk '/^blob/ {print $2}' | \
+            sort -n | tail -1 || echo 0)
+          
+          echo "Largest blob: ${LARGEST_BLOB} bytes"
+          
+          if [ "$LARGEST_BLOB" -gt "$THRESHOLD_BYTES" ]; then
+            echo "bfg_needed=true" >> $GITHUB_OUTPUT
+            echo "BFG will run—large files detected."
+          else
+            echo "bfg_needed=false" >> $GITHUB_OUTPUT
+            echo "No large blobs > threshold; skipping BFG for safety."
+          fi
+
+      - name: Download BFG Repo-Cleaner
+        if: steps.blob-check.outputs.bfg_needed == 'true'
+        run: |
+          curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar -o bfg.jar
+          echo "BFG downloaded (conditional)."
+
+      - name: Run BFG Repo-Cleaner (only if needed)
+        if: steps.blob-check.outputs.bfg_needed == 'true'
+        run: |
+          SIZE_THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
+          SIZE_THRESHOLD="${SIZE_THRESHOLD_MIB}M"
+          TARGET_FILES="${{ github.event.inputs.bfg_target_files }}"
+          echo "Running BFG: Strip > ${SIZE_THRESHOLD} (backup in place)"
+          if [ -n "$TARGET_FILES" ]; then
+            java -jar bfg.jar --delete-files "$TARGET_FILES" .
+          fi
+          java -jar bfg.jar --strip-blobs-bigger-than $SIZE_THRESHOLD .
+          echo "BFG done—history rewritten."
+
+      - name: Clean up after BFG (always, but skips if no BFG)
+        run: |
+          git reflog expire --expire=now --all
+          git gc --prune=now --aggressive
+          echo "Cleanup run."
+
+      - name: Simulate LFS Prune (dry-run only)
+        run: |
+          echo "Dry-run LFS prune:"
+          git lfs prune --dry-run
+          # No auto-prune for safety
+
+      - name: Configure and run Git maintenance (always safe)
+        run: |
+          git config maintenance.repack.enabled true
+          git config maintenance.gc.enabled true
+          git config maintenance.commit-graph.enabled true
+          git maintenance run --auto --tasks=gc,repack,commit-graph
+          echo "Maintenance complete."
+
+      - name: Log final repo stats
+        run: |
+          echo "=== Final Repo Stats ==="
+          git count-objects -vH
+          du -sh .git
+          echo "Optimization done! Changes pushed below if any."
+
+      - name: Push optimized main (safe force-with-lease; skips if no changes)
+        run: |
+          # Detect changes (BFG rewrites history, so always push if BFG ran; else check)
+          if [ "${{ steps.blob-check.outputs.bfg_needed }}" == "true" ] || ! git diff --quiet --exit-code origin/main; then
+            echo "Pushing changes (history rewrite or diffs detected)."
+            git push origin main --force-with-lease
+          else
+            echo "No changes to push."
+          fi

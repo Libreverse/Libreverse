@@ -88,6 +88,9 @@ jobs:
                     # markdownlint (Markdown)
                   bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc || true
 
+                  # Socket optimize (dependency optimization)
+                  bunx socket optimize || true
+
                   # Rubocop (Ruby)
                   if bundle exec rubocop -v >/dev/null 2>&1; then
                     bundle exec rubocop -A --force-exclusion || true

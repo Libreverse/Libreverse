@@ -1,7 +1,10 @@
 const { BrowserWindow, screen } = require("electron");
 const path = require("node:path");
 
-module.exports = ({ isDev: isDevelopment = false, url = "http://localhost:3000" } = {}) => {
+module.exports = ({
+    isDev: isDevelopment = false,
+    url = "http://localhost:3000",
+} = {}) => {
     const primary = screen.getPrimaryDisplay();
     const { width, height } = primary.size;
 
