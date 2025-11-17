@@ -1,4 +1,4 @@
-name: Safe Auto Repo Optimization with Conditional BFG
+name: Repo Optimization
 
 on:
   schedule:
@@ -59,11 +59,8 @@ jobs:
           LARGEST_BLOB=$(git rev-list --objects --all | \
             git cat-file --batch-check='%(objecttype) %(objectsize)' | \
             awk '/^blob/ {print $2}' | \
-            sort -n | tail -1)
-          LARGEST_BLOB="${LARGEST_BLOB:-0}"  # Default to 0 if empty (no blobs found)
-            git cat-file --batch-check='%(objecttype) %(objectsize)' | \
-            awk '/^blob/ {print $2}' | \
             sort -n | tail -1 || echo 0)
+          LARGEST_BLOB="${LARGEST_BLOB:-0}"  # Default to 0 if empty (no blobs found)
           
           echo "Largest blob: ${LARGEST_BLOB} bytes"
           
@@ -107,11 +104,10 @@ jobs:
           git gc --prune=now --aggressive
           echo "Cleanup run."
 
-      - name: Simulate LFS Prune (dry-run only)
+      - name: Prune LFS objects (safe operation)
         run: |
-          echo "Dry-run LFS prune:"
-          git lfs prune --dry-run
-          # No auto-prune for safety
+          echo "Pruning LFS objects..."
+          git lfs prune
 
       - name: Configure and run Git maintenance (always safe)
         run: |
