@@ -30,4 +30,6 @@ jobs:
           for pr in $prs; do
             echo "Approving PR #$pr"
             gh pr review $pr --approve
+            echo "Merging and cleaning up PR #$pr"
+            gh pr merge $pr --merge --delete-branch
           done
