@@ -31,5 +31,5 @@ jobs:
             echo "Approving PR #$pr"
             gh pr review $pr --approve
             echo "Merging and cleaning up PR #$pr"
-            gh pr merge $pr --merge --delete-branch
+            gh pr merge $pr --rebase --delete-branch || echo "Failed to merge PR #$pr (may be conflicting or in progress)"
           done
