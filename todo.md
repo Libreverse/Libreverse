@@ -1,6 +1,6 @@
 # To-do
 
-add global net blocklist using georlist once it's actually working. Perhaps move it's logic into the app natively
+add global net blocklist using georlist once it's actually working. Perhaps move its logic into the app natively
 
 finish adding useful electron bits from
 <https://github.com/doyensec/electronegativity?tab=readme-ov-file>
@@ -16,7 +16,7 @@ facial age estimation using zkml for osa pycall and ezkl
 <https://github.com/justadudewhohacks/face-api.js-models>
 <https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript>
 
-add oj gem once we fix ruby shared libraries weirdness gem install oj -- --with-sse42
+add oj gem once we fix ruby shared libraries issue (install via: `gem install oj -- --with-sse42`)
 
 fix vite plugin tips
 

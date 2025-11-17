@@ -105,10 +105,7 @@ jobs:
               shell: bash
               run: bun stylelint '**/*.scss' --fix
 
-            - name: Run markdownlint
-              if: matrix.tool == 'markdownlint'
-              shell: bash
-              run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
+
 
             - name: Run markdownlint
               if: matrix.tool == 'markdownlint'
@@ -271,7 +268,7 @@ jobs:
             contents: read
             packages: write
         needs: [formatting, validation, security-analysis, code-quality] # removed testing
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, 'chore(')
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !contains(github.event.head_commit.message, 'chore(')
 
         steps:
             - name: Check out code

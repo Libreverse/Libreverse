@@ -347,10 +347,7 @@ const setupTrafficLights = () => {
                         break;
                     }
                     case "maximize": {
-                        {
-                            globalThis.electronAPI.maximize();
-                            // No default
-                        }
+                        globalThis.electronAPI.maximize();
                         break;
                     }
                 }

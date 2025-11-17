@@ -42,7 +42,10 @@ jobs:
         run: |
           BACKUP_BRANCH="backup-main"
           echo "Updating rolling backup: ${BACKUP_BRANCH}"
-          git checkout main
+          if ! git checkout main; then
+            echo "ERROR: Failed to checkout main branch"
+            exit 1
+          fi
           git push origin main:${BACKUP_BRANCH} --force-with-lease
           echo "Backup ready: https://github.com/${{ github.repository }}/tree/${BACKUP_BRANCH}"
           echo "Revert tip: git fetch origin backup-main:main --force"
@@ -52,10 +55,12 @@ jobs:
         run: |
           THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
           THRESHOLD_BYTES=$((THRESHOLD_MIB * 1024 * 1024))
-          echo "Threshold: ${THRESHOLD_MIB} MiB (${THRESHOLD_BYTES} bytes)"
-          
-          # Get largest blob size (in bytes)
+          set -o pipefail  # Exit on any pipe component failure
           LARGEST_BLOB=$(git rev-list --objects --all | \
+            git cat-file --batch-check='%(objecttype) %(objectsize)' | \
+            awk '/^blob/ {print $2}' | \
+            sort -n | tail -1)
+          LARGEST_BLOB="${LARGEST_BLOB:-0}"  # Default to 0 if empty (no blobs found)
             git cat-file --batch-check='%(objecttype) %(objectsize)' | \
             awk '/^blob/ {print $2}' | \
             sort -n | tail -1 || echo 0)
@@ -74,7 +79,14 @@ jobs:
         if: steps.blob-check.outputs.bfg_needed == 'true'
         run: |
           curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar -o bfg.jar
-          echo "BFG downloaded (conditional)."
+          curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar.sha1 -o bfg.jar.sha1
+          DOWNLOADED_SHA=$(sha1sum bfg.jar | awk '{print $1}')
+          EXPECTED_SHA=$(cat bfg.jar.sha1)
+          if [ "$DOWNLOADED_SHA" != "$EXPECTED_SHA" ]; then
+            echo "SHA-1 mismatch! Downloaded: $DOWNLOADED_SHA, Expected: $EXPECTED_SHA"
+            exit 1
+          fi
+          echo "BFG downloaded and verified (conditional)."
 
       - name: Run BFG Repo-Cleaner (only if needed)
         if: steps.blob-check.outputs.bfg_needed == 'true'
@@ -84,7 +96,7 @@ jobs:
           TARGET_FILES="${{ github.event.inputs.bfg_target_files }}"
           echo "Running BFG: Strip > ${SIZE_THRESHOLD} (backup in place)"
           if [ -n "$TARGET_FILES" ]; then
-            java -jar bfg.jar --delete-files "$TARGET_FILES" .
+            java -jar bfg.jar --delete-files "$TARGET_FILES" . || { echo "ERROR: BFG delete-files failed"; exit 1; }
           fi
           java -jar bfg.jar --strip-blobs-bigger-than $SIZE_THRESHOLD .
           echo "BFG done—history rewritten."
@@ -119,7 +131,7 @@ jobs:
       - name: Push optimized main (safe force-with-lease; skips if no changes)
         run: |
           # Detect changes (BFG rewrites history, so always push if BFG ran; else check)
-          if [ "${{ steps.blob-check.outputs.bfg_needed }}" == "true" ] || ! git diff --quiet --exit-code origin/main; then
+          if [ "${{ steps.blob-check.outputs.bfg_needed }}" == "true" ] || (git rev-parse --verify origin/main >/dev/null 2>&1 && ! git diff --quiet --exit-code origin/main); then
             echo "Pushing changes (history rewrite or diffs detected)."
             git push origin main --force-with-lease
           else
