@@ -1,5 +1,10 @@
 name: CI/CD Pipeline
 
+# Cancel in-progress runs for the same branch/PR to save CI time
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Restrict workflow permissions for security
 permissions:
     contents: read
