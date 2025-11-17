@@ -101,7 +101,7 @@
         "stimulus-vite-helpers": "3.1.0",
         "stimulus_reflex": "3.5.3",
         "style-loader": "4.0.0",
-        "stylehacks": "7.0.6",
+        "stylehacks": "7.0.7",
         "swc-loader": "0.2.6",
         "terser-webpack-plugin": "5.3.14",
         "three": "0.177.0",
