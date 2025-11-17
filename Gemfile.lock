@@ -564,7 +564,7 @@ GEM
     pwned (2.4.1)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.1)
+    rack (3.2.3)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-brotli (2.0.0)
