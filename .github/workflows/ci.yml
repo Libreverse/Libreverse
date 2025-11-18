@@ -220,7 +220,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [fasterer, coffeelint, typos]
+                tool: [fasterer, coffeelint, typos, electronegativity]
 
         steps:
             - name: Check out code

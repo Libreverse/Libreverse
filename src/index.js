@@ -32,33 +32,13 @@ for (const f of flags) {
     else app.commandLine.appendSwitch(f);
 }
 
-// ensure single instance and focus existing window on second-instance
-const gotLock = app.requestSingleInstanceLock();
-if (!gotLock) {
-    app.quit();
-}
-app.on("second-instance", () => {
-    const win = BrowserWindow.getAllWindows()[0];
-    if (win) {
-        if (win.isMinimized()) win.restore();
-        win.focus();
-    }
-});
+const baseUrl = process.env.APP_URL || "https://localhost:3000";
+let mainWindow = null;
 
-// This method will be called when Electron has finished initialization.
-app.whenReady().then(async () => {
-    // Set macOS dock icon
-    if (process.platform === "darwin") {
-        app.dock.setIcon(path.join(__dirname, "../app/images/macos-icon.png"));
-    }
-
-    const mainWindow = createWindow({
-        isDev,
-        url: process.env.APP_URL || "https://localhost:3000",
-    });
-
+const attachContextMenu = (targetWindow) => {
+    if (!targetWindow) return;
     contextMenu({
-        window: mainWindow,
+        window: targetWindow,
         prepend: (defaultActions, parameters, browserWindow) => [],
         append: (defaultActions, parameters, browserWindow) => [],
         showLearnSpelling: false,
@@ -82,6 +62,69 @@ app.whenReady().then(async () => {
         onShow: (event) => {},
         onClose: (event) => {},
     });
+};
+
+const buildMainWindow = () => {
+    const window = createWindow({
+        isDev,
+        url: `${baseUrl}?platform=${process.platform}`,
+    });
+
+    attachContextMenu(window);
+
+    window.on("closed", () => {
+        if (mainWindow === window) {
+            mainWindow = null;
+        }
+    });
+
+    return window;
+};
+
+const ensureMainWindow = () => {
+    if (!mainWindow || mainWindow.isDestroyed()) {
+        mainWindow = buildMainWindow();
+    }
+    return mainWindow;
+};
+
+const focusWindow = (window) => {
+    if (!window) return;
+    if (window.isMinimized()) {
+        window.restore();
+    }
+    if (!window.isVisible()) {
+        window.show();
+    }
+    window.focus();
+};
+
+// ensure single instance and focus existing window on second-instance
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+    app.quit();
+}
+app.on("second-instance", () => {
+    if (!app.isReady()) {
+        app.whenReady().then(() => {
+            const win = ensureMainWindow();
+            focusWindow(win);
+        });
+        return;
+    }
+
+    const win = ensureMainWindow();
+    focusWindow(win);
+});
+
+// This method will be called when Electron has finished initialization.
+app.whenReady().then(async () => {
+    // Set macOS dock icon
+    if (process.platform === "darwin") {
+        app.dock.setIcon(path.join(__dirname, "../app/images/macos-icon.png"));
+    }
+
+    mainWindow = ensureMainWindow();
 
     // Create application menu
     const template = [
@@ -165,18 +208,12 @@ app.whenReady().then(async () => {
         write: fs.writeFile,
     });
     blocker.enableBlockingInSession(session.defaultSession);
+});
 
-    app.on("activate", () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow({
-                isDev,
-                url: process.env.APP_URL || "https://localhost:3000",
-            });
-        } else if (mainWindow && mainWindow.isMinimized()) {
-            mainWindow.restore();
-            mainWindow.focus();
-        }
-    });
+// Handle macOS dock icon click when no windows are open
+app.on("activate", () => {
+    const win = ensureMainWindow();
+    focusWindow(win);
 });
 
 // Quit when all windows are closed.

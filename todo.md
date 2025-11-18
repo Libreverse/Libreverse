@@ -2,9 +2,6 @@
 
 add global net blocklist using georlist once it's actually working. Perhaps move its logic into the app natively
 
-finish adding useful electron bits from
-<https://github.com/doyensec/electronegativity?tab=readme-ov-file>
-
 finish libreverse ai with api calls - use python node calls to use llama cpp python
 
 adopt cucumber rails for future tests
@@ -51,8 +48,6 @@ Recommended privacy flags:
 - [ ] (feature) Add litestream back for optional cache backups
 
 ## JavaScript Optimizations
-
-b
 
 - [ ] (feature) Integrate babel-react-optimize preset: Inline elements, constants, remove propTypes in production
 - [ ] (feature) Integrate babel-plugin-transform-react-constant-elements: Hoist static JSX to constants

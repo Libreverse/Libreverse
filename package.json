@@ -14,14 +14,15 @@
         "lint": "echo \"No linting configured\"",
         "build": "vite build --outDir public",
         "test": "NODE_OPTIONS=--experimental-vm-modules jest -i",
-        "verify:typehints": "bun run scripts/verify_typehints.mjs"
+        "typehints": "bun run scripts/verify_typehints.mjs",
+        "electronegativity": "electronegativity -i ."
     },
     "keywords": [],
     "author": {
         "name": "George Baskerville",
         "email": "148500997+georgebaskervil@users.noreply.github.com"
     },
-    "license": "MIT",
+    "license": "AGPL-3.0-only",
     "dependencies": {
         "@babel/generator": "7.28.5",
         "@babel/parser": "7.28.4",
@@ -130,6 +131,7 @@
         "@electron-forge/plugin-auto-unpack-natives": "7.10.2",
         "@electron-forge/plugin-fuses": "7.10.2",
         "@electron/fuses": "1.8.0",
+        "@doyensec/electronegativity": "^1.9.0",
         "@eslint/js": "9.37.0",
         "@socketsecurity/bun-security-scanner": "1.1.0",
         "@testing-library/dom": "10.4.1",

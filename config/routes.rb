@@ -66,6 +66,9 @@ Rails.application.routes.draw do
   # Account export placed outside Rodauth constraint; controller handles auth.
   get "account/export", to: "account_actions#export", as: :account_export
 
+  # Layout partials
+  get "sidebar", to: "layouts#sidebar"
+
   # ===== Admin Namespace =====
   namespace :admin do
     resources :comments, only: %i[index] do

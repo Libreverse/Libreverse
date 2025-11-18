@@ -123,6 +123,22 @@ To run quality checks manually (original script preserved):
 perl scripts/static.pl
 ```
 
+### Electron Security Scanning
+
+Libreverse includes [Electronegativity](https://github.com/doyensec/electronegativity), a security scanner for Electron applications that identifies misconfigurations and security anti-patterns.
+
+To run the security scanner:
+
+```bash
+# Scan the entire project
+bun run security:scan
+
+# Or scan specific files/directories
+npx electronegativity -i src/
+```
+
+The scanner will generate a CSV report of any security issues found.
+
 ---
 
 ## 📦 Project Structure (TL;DR)

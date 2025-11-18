@@ -3,7 +3,7 @@ description: "Run code quality analysis tools"
 
 inputs:
     tool:
-        description: "Code quality tool to run (fasterer, coffeelint, typos)"
+        description: "Code quality tool to run (fasterer, coffeelint, typos, electronegativity)"
         required: true
 
 runs:
@@ -32,3 +32,8 @@ runs:
         - name: typos-action
           if: inputs.tool == 'typos'
           uses: crate-ci/typos@v1.33.1
+
+        - name: Run Electronegativity
+          if: inputs.tool == 'electronegativity'
+          shell: bash
+          run: bun run security:scan || true

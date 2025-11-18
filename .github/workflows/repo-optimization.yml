@@ -50,8 +50,7 @@ jobs:
           echo "Backup ready: https://github.com/${{ github.repository }}/tree/${BACKUP_BRANCH}"
           echo "Revert tip: git fetch origin backup-main:main --force"
 
-      - name: Check for large blobs (skip BFG if none > threshold)
-        id: blob-check
+      - name: Check for large blobs (informational)
         run: |
           THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
           THRESHOLD_BYTES=$((THRESHOLD_MIB * 1024 * 1024))
@@ -62,18 +61,10 @@ jobs:
             sort -n | tail -1 || echo 0)
           LARGEST_BLOB="${LARGEST_BLOB:-0}"  # Default to 0 if empty (no blobs found)
           
-          echo "Largest blob: ${LARGEST_BLOB} bytes"
-          
-          if [ "$LARGEST_BLOB" -gt "$THRESHOLD_BYTES" ]; then
-            echo "bfg_needed=true" >> $GITHUB_OUTPUT
-            echo "BFG will run—large files detected."
-          else
-            echo "bfg_needed=false" >> $GITHUB_OUTPUT
-            echo "No large blobs > threshold; skipping BFG for safety."
-          fi
+          echo "Largest blob: ${LARGEST_BLOB} bytes (${THRESHOLD_MIB}MiB threshold)"
+          echo "BFG will run regardless of blob size."
 
       - name: Download BFG Repo-Cleaner
-        if: steps.blob-check.outputs.bfg_needed == 'true'
         run: |
           curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar -o bfg.jar
           curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar.sha1 -o bfg.jar.sha1
@@ -83,10 +74,9 @@ jobs:
             echo "SHA-1 mismatch! Downloaded: $DOWNLOADED_SHA, Expected: $EXPECTED_SHA"
             exit 1
           fi
-          echo "BFG downloaded and verified (conditional)."
+          echo "BFG downloaded and verified."
 
-      - name: Run BFG Repo-Cleaner (only if needed)
-        if: steps.blob-check.outputs.bfg_needed == 'true'
+      - name: Run BFG Repo-Cleaner
         run: |
           SIZE_THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
           SIZE_THRESHOLD="${SIZE_THRESHOLD_MIB}M"
@@ -98,7 +88,7 @@ jobs:
           java -jar bfg.jar --strip-blobs-bigger-than $SIZE_THRESHOLD .
           echo "BFG done—history rewritten."
 
-      - name: Clean up after BFG (always, but skips if no BFG)
+      - name: Clean up after BFG
         run: |
           git reflog expire --expire=now --all
           git gc --prune=now --aggressive
@@ -114,7 +104,7 @@ jobs:
           git config maintenance.repack.enabled true
           git config maintenance.gc.enabled true
           git config maintenance.commit-graph.enabled true
-          git maintenance run --auto --tasks=gc,repack,commit-graph
+          git maintenance run --auto --task=gc --task=repack --task=commit-graph
           echo "Maintenance complete."
 
       - name: Log final repo stats
@@ -124,12 +114,7 @@ jobs:
           du -sh .git
           echo "Optimization done! Changes pushed below if any."
 
-      - name: Push optimized main (safe force-with-lease; skips if no changes)
+      - name: Push optimized main (safe force-with-lease; BFG always rewrites history)
         run: |
-          # Detect changes (BFG rewrites history, so always push if BFG ran; else check)
-          if [ "${{ steps.blob-check.outputs.bfg_needed }}" == "true" ] || (git rev-parse --verify origin/main >/dev/null 2>&1 && ! git diff --quiet --exit-code origin/main); then
-            echo "Pushing changes (history rewrite or diffs detected)."
-            git push origin main --force-with-lease
-          else
-            echo "No changes to push."
-          fi
+          echo "Pushing changes (BFG always rewrites history)."
+          git push origin main --force-with-lease

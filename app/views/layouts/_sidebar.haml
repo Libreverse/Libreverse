@@ -80,7 +80,7 @@
                                 method: :post,
                                 class: 'sidebar-link sidebar-logout-button',
                                 aria: { label: 'Sign out' },
-                                data: { "sidebar-item": "logout", "sidebar-popover-target": "item", "popover-content": "Sign out of your current session" } do
+                                data: { "sidebar-item": "logout", "sidebar-popover-target": "item", "popover-content": "Sign out of your current session", turbo_stream: true } do
             = sidebar_icon(svg_icon_data_url('logout'))
     - else
         -# For guests and unauthenticated users, show dashboard, experiences, login, and signup

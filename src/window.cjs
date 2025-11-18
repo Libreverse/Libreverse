@@ -14,6 +14,9 @@ module.exports = ({
         frame: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
+            contextIsolation: true,
+            nodeIntegration: false,
+            enableRemoteModule: false,
         },
         show: false,
         title: "Libreverse Desktop",
@@ -23,6 +26,7 @@ module.exports = ({
 
     mainWindow.once("ready-to-show", () => {
         mainWindow.show();
+        mainWindow.focus();
 
         if (isDevelopment) {
             mainWindow.webContents.openDevTools({ mode: "right" });
