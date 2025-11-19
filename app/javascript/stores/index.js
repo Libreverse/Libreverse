@@ -49,7 +49,6 @@ export const instanceSettingsStore = createStore({
         eeaMode: false,
         forceSsl: false,
         noSsl: false,
-        grpc: false,
         railsLogLevel: "info",
         allowedHosts: "",
         corsOrigins: "",

@@ -51,10 +51,6 @@ module LibreverseInstance
     config.autoload_paths << "app/graphql"
     config.autoload_paths << "app/indexers"
 
-    # Exclude gRPC files from autoloading and eager loading to avoid boot issues
-    config.autoload_paths.delete("#{config.root}/app/grpc")
-    config.eager_load_paths.delete("#{config.root}/app/grpc")
-
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
@@ -162,10 +158,6 @@ module LibreverseInstance
 
     def self.eea_mode_enabled?
       LibreverseInstance.eea_mode_enabled?
-    end
-
-    def self.grpc_enabled?
-      LibreverseInstance.grpc_enabled?
     end
 
     def self.email_bot_enabled?
@@ -301,24 +293,6 @@ module LibreverseInstance
     end
   end
 
-  def self.grpc_enabled?
-    return @grpc_enabled if defined?(@grpc_enabled)
-
-    @grpc_enabled = if can_access_database?
-      setting = InstanceSetting.find_by(key: "grpc_enabled")
-      raw = setting&.value
-      # Enabled by default when no explicit setting is present
-      if raw.nil? || raw.to_s.strip.empty?
-        true
-      else
-        ActiveModel::Type::Boolean.new.cast(raw)
-      end
-    else
-      # No DB available yet — enable by default
-      true
-    end
-  end
-
   # Email bot configuration methods
   def self.email_bot_enabled?
     return @email_bot_enabled if defined?(@email_bot_enabled)
@@ -382,7 +356,6 @@ module LibreverseInstance
     remove_instance_variable(:@allowed_hosts) if defined?(@allowed_hosts)
     remove_instance_variable(:@force_ssl) if defined?(@force_ssl)
     remove_instance_variable(:@eea_mode_enabled) if defined?(@eea_mode_enabled)
-    remove_instance_variable(:@grpc_enabled) if defined?(@grpc_enabled)
 
     # Email bot configuration cache reset
     remove_instance_variable(:@email_bot_enabled) if defined?(@email_bot_enabled)

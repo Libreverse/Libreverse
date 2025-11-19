@@ -21,7 +21,6 @@ namespace :instance_settings do
         "EEA Mode" => LibreverseInstance::Application.eea_mode_enabled? ? "Enabled" : "Disabled",
         "Force SSL" => LibreverseInstance::Application.force_ssl? ? "Enabled" : "Disabled",
         "No SSL" => LibreverseInstance::Application.no_ssl? ? "Enabled" : "Disabled",
-        "gRPC Server" => LibreverseInstance::Application.grpc_enabled? ? "Enabled" : "Disabled",
         "CORS Origins" => LibreverseInstance::Application.cors_origins.join(", "),
         "Port" => LibreverseInstance::Application.port
       }
@@ -55,7 +54,6 @@ namespace :instance_settings do
       "EEA Mode Enabled" => LibreverseInstance::Application.eea_mode_enabled? ? "Yes" : "No",
       "Force SSL" => LibreverseInstance::Application.force_ssl? ? "Yes" : "No",
       "No SSL" => LibreverseInstance::Application.no_ssl? ? "Yes" : "No",
-      "gRPC Server Enabled" => LibreverseInstance::Application.grpc_enabled? ? "Yes" : "No",
       "CORS Origins" => LibreverseInstance::Application.cors_origins.join(", "),
       "Application Port" => LibreverseInstance::Application.port
     }
@@ -104,12 +102,6 @@ namespace :instance_settings do
     # Advanced settings validation (less critical)
     port = LibreverseInstance::Application.port
     warnings << "Application port is not using the standard 3000 (currently: #{port})" if port != 3000
-
-    # gRPC-specific validation
-    if LibreverseInstance::Application.grpc_enabled? && Rails.env.production? && !(ENV["GRPC_SSL_CERT_PATH"] && ENV["GRPC_SSL_KEY_PATH"])
-      warnings << "gRPC is enabled in production but may fail without proper SSL certificates"
-      # Standalone gRPC server has been removed; only HTTP-routed gRPC remains
-    end
 
     # Output results
     if errors.empty? && warnings.empty?
