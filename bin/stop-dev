@@ -52,11 +52,7 @@ run("pkill -u $ME -f 'webpack serve' || true", 'Killing webpack serve processes.
 run("pkill -u $ME -f 'shakapacker' || true", 'Killing shakapacker processes...');
 run("pkill -u $ME -f 'vite' || true", 'Killing vite processes (if any)...');
 
-# 4) Stop spring / rails related processes
-if (cmd_exists('spring')) {
-    run("spring stop || true", 'Stopping spring...');
-}
-run("pkill -u $ME -f 'ruby.*spring|spring server|spring app' || true", 'Killing spring-specific processes...');
+# 4) Stop rails related processes
 run("pkill -u $ME -f 'ruby|rails' || true", 'Killing ruby/rails processes (careful!)...');
 
 # 5) Stop Dev DB containers (podman/docker) named libreverse-dev-*

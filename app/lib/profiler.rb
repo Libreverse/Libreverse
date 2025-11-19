@@ -1,11 +1,11 @@
-# Profiler provides richer profiling helpers in development, including StackProf and Flamegraph.
+# Profiler provides richer profiling helpers in development, including Flamegraph.
 module Profiler
-  def self.stackprof(mode: :wall, out: "tmp/stackprof.dump", &block)
-    return yield unless Rails.env.development?
+  # def self.stackprof(mode: :wall, out: "tmp/stackprof.dump", &block)  # Removed for TruffleRuby compatibility
+  #   return yield unless Rails.env.development?
 
-    require "stackprof"
-    StackProf.run(mode: mode, out: out, raw: true, &block)
-  end
+  #   require "stackprof"
+  #   StackProf.run(mode: mode, out: out, raw: true, &block)
+  # end
 
   def self.flamegraph(out: "tmp/flamegraph.html", &block)
     return yield unless Rails.env.development?

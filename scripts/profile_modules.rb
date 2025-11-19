@@ -11,7 +11,7 @@ ENV['RAILS_ENV'] ||= 'development'
 
 require_relative '../config/environment'
 require 'rack/mock'
-require 'stackprof'
+# require 'stackprof'  # Removed for TruffleRuby compatibility
 
 MODE  = (ENV['MODE'] || 'wall').to_sym
 RUNS  = (ENV['RUNS'] || '3').to_i
@@ -37,15 +37,15 @@ end
 
 puts "Profiling with StackProf mode=#{MODE}, runs=#{RUNS}, paths=#{PATHS.join(' ')}"
 
-StackProf.run(mode: MODE, out: OUT, raw: true) do
+# StackProf.run(mode: MODE, out: OUT, raw: true) do  # Removed for TruffleRuby compatibility
   exercise(mock, HOST, PATHS, RUNS)
-end
+# end
 
-data = Marshal.load(File.binread(OUT))
+# data = Marshal.load(File.binread(OUT))  # Removed for TruffleRuby compatibility
 
 # Summaries
-total_samples = data[:samples] || 0
-frames = data[:frames] || {}
+total_samples = 0
+frames = {}
 
 sorted = frames.values
                .select { |f| f[:samples].to_i.positive? }
@@ -98,4 +98,4 @@ if FLAME && !FLAME.strip.empty?
   end
 end
 
-puts "\nDone. StackProf dump at #{OUT}"
+puts "\nDone. Profiling completed (StackProf removed for TruffleRuby compatibility)"

@@ -105,10 +105,7 @@ gem "zstd-ruby"
 
 group :development, :test do
   gem "active_record_doctor"
-  gem "debug"
   gem "listen"
-  gem "parallel_tests"
-  gem "spring-commands-parallel-tests"
 end
 
 group :development do
@@ -125,8 +122,6 @@ group :development do
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "ruumba"
-  gem "spring"
-  gem "stackprof"
   gem "web-console"
 end
 

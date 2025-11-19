@@ -12,7 +12,7 @@ ENV['RAILS_ENV'] ||= 'development'
 
 require_relative '../config/environment'
 require 'rack/mock'
-require 'stackprof'
+# require 'stackprof'  # Removed for TruffleRuby compatibility
 require 'active_support/notifications'
 require 'fileutils'
 
@@ -155,21 +155,16 @@ sub_sql = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name,
 end
 
 puts "Profiling with StackProf mode=#{MODE}, runs=#{RUNS}"
-StackProf.run(mode: MODE, out: OUT, raw: true) do
+# StackProf.run(mode: MODE, out: OUT, raw: true) do  # Removed for TruffleRuby compatibility
   exercise(mock, HOST, paths, RUNS)
-end
+# end
 
 ActiveSupport::Notifications.unsubscribe(sub_action)
 ActiveSupport::Notifications.unsubscribe(sub_sql)
 
-data = Marshal.load(File.binread(OUT))
-total_samples = data[:samples] || 0
-frames = data[:frames] || {}
-
-sorted = frames.values
-               .select { |f| f[:samples].to_i.positive? }
-               .sort_by { |f| -f[:samples].to_i }
-               .first(30)
+# StackProf profiling removed for TruffleRuby compatibility
+total_samples = 0
+sorted = []
 
 puts "\nTop 30 methods by samples (#{total_samples} total):"
 i = 0
@@ -280,4 +275,4 @@ if FLAME_FILE && !FLAME_FILE.strip.empty?
   end
 end
 
-puts "\nDone. StackProf dump at #{OUT}"
+puts "\nDone. Profiling completed (StackProf removed for TruffleRuby compatibility)"

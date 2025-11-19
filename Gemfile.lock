@@ -184,9 +184,6 @@ GEM
     date (3.4.1)
     db_text_search (1.0.0)
       activerecord (>= 4.1.15)
-    debug (1.11.0)
-      irb (~> 1.10)
-      reline (>= 0.3.8)
     declarative (0.0.20)
     diff-lcs (1.6.2)
     disposable (0.6.3)
@@ -483,8 +480,6 @@ GEM
       turbo-rails
     package_json (0.1.0)
     parallel (1.27.0)
-    parallel_tests (5.4.0)
-      parallel
     parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
@@ -786,9 +781,6 @@ GEM
       fugit (~> 1.11.0)
       railties (>= 7.1)
       thor (>= 1.3.1)
-    spring (4.4.0)
-    spring-commands-parallel-tests (1.0.1)
-      spring (>= 0.9.1)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -807,7 +799,6 @@ GEM
     sqlite3 (2.7.4-x86_64-darwin)
     sqlite3 (2.7.4-x86_64-linux-gnu)
     sqlite3 (2.7.4-x86_64-linux-musl)
-    stackprof (0.2.27)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stimulus_reflex (3.5.3)
@@ -1001,7 +992,6 @@ DEPENDENCIES
   comfortable_media_surfer
   console1984
   counter_culture
-  debug
   erb-formatter
   erb_lint
   fasterer
@@ -1035,7 +1025,6 @@ DEPENDENCIES
   ostruct
   overmind
   p2p_streams_channel
-  parallel_tests
   passenger (>= 6.0.20)
   permessage_deflate
   pg
@@ -1078,10 +1067,7 @@ DEPENDENCIES
   solid_cable
   solid_cache (>= 1.0.8)
   solid_queue
-  spring
-  spring-commands-parallel-tests
   sqlite3
-  stackprof
   stimulus-rails
   stimulus_reflex (= 3.5.3)
   sys-filesystem

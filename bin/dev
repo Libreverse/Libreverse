@@ -121,9 +121,6 @@ run_task("Killing anything using the development SQLite database...", "cd .. && 
 show_spinner("Killing anything on port 3000...");
 run_task("Killing anything on port 3000...", "fuser -k -TERM 3000/tcp > /dev/null 2>&1");
 
-show_spinner("Restarting spring...");
-run_task("Restarting spring...", "cd .. && spring stop > /dev/null 2>&1");
-
 # Ensure mkcert root CA is installed and trusted (sudo once)
 show_spinner("Configuring certificates for local http/3...");
 run_task(
