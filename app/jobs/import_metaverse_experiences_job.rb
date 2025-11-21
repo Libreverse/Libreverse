@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Background job to import indexed metaverse content as experiences
 class ImportMetaverseExperiencesJob < ApplicationJob
   queue_as :default

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateFriendlyIdSlugs < ActiveRecord::Migration[7.1]
   def change
     create_table :friendly_id_slugs do |t|

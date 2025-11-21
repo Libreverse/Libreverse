@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "better_html"
 
 # Configure BetterHtml using the repo-level YAML if present; otherwise keep defaults.

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Concern for caching API responses in indexers
 module Cacheable
   extend ActiveSupport::Concern

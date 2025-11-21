@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Primary Sequel-backed Account model (authoritative store). ActiveRecord `Account`
 # exists only for libraries that require AR models.
 

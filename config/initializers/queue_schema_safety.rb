@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Test/schema load safety shim: avoid FK constraint errors when loading db/queue_schema.rb
 # without modifying the auto-generated queue_schema file itself.
 #

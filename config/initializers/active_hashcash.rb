@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # ActiveHashcash configuration for additional bot protection
 # This works alongside invisible_captcha for comprehensive spam protection
 

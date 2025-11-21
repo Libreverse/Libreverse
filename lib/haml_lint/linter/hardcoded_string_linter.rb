@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # lib/haml_lint/linter/hardcoded_string_linter.rb
 
 require "yaml"
@@ -8,7 +11,7 @@ module HamlLint
   class HardcodedStringLinter < Linter
     include LinterRegistry
 
-    MSG = 'Hardcoded string "%s" should use i18n'.freeze
+    MSG = 'Hardcoded string "%s" should use i18n'
     NON_TEXT_TAGS = Set.new(%w[script style xmp iframe noembed noframes listing])
     NO_TRANSLATION_NEEDED = Set.new(%w[& < > " © ® ™ … — • " " ' ' ← → ↓ ↑ × » «]).freeze
 

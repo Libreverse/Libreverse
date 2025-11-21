@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Enhanced search service that searches both local experiences and indexed metaverse content
 class UnifiedSearchService
   DEFAULT_LIMIT = 100

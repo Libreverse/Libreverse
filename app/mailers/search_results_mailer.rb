@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class SearchResultsMailer < ApplicationMailer
   def search_results(sender_email, sender_name, query, results, options = {})
     @sender_name = sender_name

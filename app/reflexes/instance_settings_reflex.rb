@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class InstanceSettingsReflex < ApplicationReflex
   before_reflex :ensure_admin
 

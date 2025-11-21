@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class Instrumentation
   class << self
     # Record an error occurrence for monitoring/alerting

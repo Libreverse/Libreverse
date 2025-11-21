@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Configuration loader for YAML configuration files
 Rails.application.configure do
     # Load SEO configuration

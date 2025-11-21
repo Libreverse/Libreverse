@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddTimestampsToAccountsRoles < ActiveRecord::Migration[7.0]
   def up
     # Add timestamps without defaults first, then update them

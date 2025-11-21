@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Job to generate Federails actors for existing accounts that don't have them yet
 class GenerateMissingActorsJob < ApplicationJob
   queue_as :federation

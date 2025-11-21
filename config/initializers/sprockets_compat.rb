@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Compatibility shim: some gems (e.g., older Thredded templates) may call
 # `Rails.application.assets.load_path`, but Sprockets 4 exposes `paths` instead.
 # Provide a minimal `load_path` delegating to `paths` when missing.

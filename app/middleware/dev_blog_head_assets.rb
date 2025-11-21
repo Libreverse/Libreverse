@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Development/test middleware that guarantees /blog pages have CSS/JS tags
 # in <head> by injecting proxied Vite assets if they are missing.
 class DevBlogHeadAssets
-  CSS_TAG = %(<link rel="stylesheet" href="/vite-dev/stylesheets/application.scss" data-turbo-track="reload">).freeze
-  JS_TAG  = %(<script type="module" src="/vite-dev/javascript/application.js" data-turbo-track="reload"></script>).freeze
+  CSS_TAG = %(<link rel="stylesheet" href="/vite-dev/stylesheets/application.scss" data-turbo-track="reload">)
+  JS_TAG  = %(<script type="module" src="/vite-dev/javascript/application.js" data-turbo-track="reload"></script>)
 
   def initialize(app)
     @app = app

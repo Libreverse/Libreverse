@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Registry for managing and discovering indexers
 class IndexerRegistry
   class << self

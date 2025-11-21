@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Profiles (most) GET routes automatically and prints a breakdown by method and module/class.
 # Writes a StackProf dump you can re-analyze, and optionally a flamegraph HTML.
 #
@@ -155,7 +158,7 @@ sub_sql = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name,
 end
 
 puts "Profiling with StackProf mode=#{MODE}, runs=#{RUNS}"
-# StackProf.run(mode: MODE, out: OUT, raw: true) do  # Removed for TruffleRuby compatibility
+  # StackProf.run(mode: MODE, out: OUT, raw: true) do  # Removed for TruffleRuby compatibility
   exercise(mock, HOST, paths, RUNS)
 # end
 

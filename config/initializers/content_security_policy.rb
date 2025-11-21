@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Content Security Policy Configuration
 Rails.application.configure do
   config.content_security_policy do |policy|

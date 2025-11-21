@@ -1,8 +1,6 @@
-smol = true
 telemetry = false
 [install]
 exact = true
-saveTextLockfile = false
 [run]
 bun = true
 [install.cache]

@@ -25,7 +25,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 
 | Layer           | Technology                                   |
 | --------------- | -------------------------------------------- |
-| Language        | Ruby 3.4 (YJIT enabled)                      |
+| Language        | Ruby 3.4                                     |
 | Framework       | Rails 8.0.2 + Hotwire                        |
 | Database        | SQLite 3 (enhanced adapter)                  |
 | Build / Assets  | Vite 6 + Bun                                 |
@@ -58,6 +58,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 - Bun ≥ 1.2 (front‑end package manager)
 - SQLite ≥ 3.41 (compiled with FTS5 and JSON1)
 - ImageMagick (for Active Storage variants)
+- Overmind (process manager for development)
 
 Installation helpers:
 
@@ -65,10 +66,11 @@ Installation helpers:
 
 ```bash
 # macOS
-brew install ruby bun sqlite imagemagick
+brew install ruby bun sqlite imagemagick overmind
 
 # Ubuntu
 sudo apt install ruby-full bun curl sqlite3 libsqlite3-dev imagemagick
+# overmind can be installed from: https://github.com/DarthSim/overmind/releases
 ```
 
 ---

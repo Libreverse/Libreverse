@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class ApplicationMailbox < ActionMailbox::Base
   # Route emails to appropriate mailboxes
   # Route search emails

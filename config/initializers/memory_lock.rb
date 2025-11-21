@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 =begin
 
 # Rails Initializer for Memory Locking in Phusion Passenger Environments

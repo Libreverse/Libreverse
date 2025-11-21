@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Model for storing announcements of federated experiences (links only, no content)
 class FederatedAnnouncement < ApplicationRecord
   validates :activitypub_uri, presence: true, uniqueness: true

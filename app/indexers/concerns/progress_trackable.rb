@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Concern for progress tracking and logging in indexers
 module ProgressTrackable
   extend ActiveSupport::Concern

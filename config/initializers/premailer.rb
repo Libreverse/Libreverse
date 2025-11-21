@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Configure Premailer for CSS inlining in emails
 Rails.application.configure do
   # Enable CSS inlining in all environments for consistent email rendering

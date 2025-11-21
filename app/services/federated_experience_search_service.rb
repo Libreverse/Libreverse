@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Service for searching experiences across federated Libreverse instances
 # Uses link-exclusive federation for security
 class FederatedExperienceSearchService

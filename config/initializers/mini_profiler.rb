@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 if Rails.env.development? || Rails.env.production?
   require "rack-mini-profiler"
 

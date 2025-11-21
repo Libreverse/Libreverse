@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class OobGcMiddleware
   def initialize(app)
     @app = app

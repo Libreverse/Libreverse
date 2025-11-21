@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module Admin
   class IndexersController < ApplicationController
   rescue_from StandardError, with: :respond_forbidden

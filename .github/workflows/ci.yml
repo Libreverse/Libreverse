@@ -59,17 +59,17 @@ jobs:
             - name: Run Rubocop
               if: matrix.tool == 'rubocop'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bin/rubocop -A
+              run: bin/rubocop -A
 
             - name: Run haml-lint
               if: matrix.tool == 'haml-lint'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec haml-lint --auto-correct
+              run: bundle exec haml-lint --auto-correct
 
             - name: Run ERB Formatter
               if: matrix.tool == 'erb-format'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec erb-format --write
+              run: bundle exec erb-format --write
 
             - name: Run perltidy
               if: matrix.tool == 'perltidy'
@@ -155,12 +155,12 @@ jobs:
             - name: Run i18n validation
               if: matrix.tool == 'i18n-validation'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' ruby scripts/i18n_validate.rb
+              run: ruby scripts/i18n_validate.rb
 
             - name: Run ERB Lint
               if: matrix.tool == 'erb-lint'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec erblint --config .erb-lint.yml app/views
+              run: bundle exec erblint --config .erb-lint.yml app/views
 
             - name: Run Hadolint
               if: matrix.tool == 'hadolint'
@@ -171,17 +171,17 @@ jobs:
             - name: Run Active Record Doctor
               if: matrix.tool == 'active-record-doctor'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec active_record_doctor
+              run: bundle exec active_record_doctor
 
             - name: Run Ruumba
               if: matrix.tool == 'ruumba'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec ruumba
+              run: bundle exec ruumba
 
             - name: Run Zeitwerk Check
               if: matrix.tool == 'zeitwerk-check'
               shell: bash
-              run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec rails zeitwerk:check
+              run: bundle exec rails zeitwerk:check
 
     # Security analysis (runs in parallel)
     security-analysis:

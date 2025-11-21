@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # EEA Mode Initializer
 # --------------------
 # This file enables "EEA mode" (additional GDPR/ePrivacy safeguards) when the

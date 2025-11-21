@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # CableReady Configuration
 CableReady.configure do |config|
   # Enable/disable exiting / warning when the sanity checks fail options:

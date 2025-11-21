@@ -21,11 +21,6 @@ shared_tasks: &shared_tasks
         queue: default
         schedule: "0 */12 * * *" # Every 12 hours (more conservative)
 
-    cache_preload:
-        class: CachePreloadJob
-        queue: maintenance
-        schedule: every 2 hours
-
 production:
     <<: *shared_tasks
 

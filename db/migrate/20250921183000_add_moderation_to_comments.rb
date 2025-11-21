@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddModerationToComments < ActiveRecord::Migration[7.1]
   def change
     change_table :comments, bulk: true do |t|

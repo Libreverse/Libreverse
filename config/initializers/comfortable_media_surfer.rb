@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Load custom authentication module
 require_relative "../../app/lib/cms_rodauth_authentication"
 

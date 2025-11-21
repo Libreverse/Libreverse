@@ -55,12 +55,14 @@ run("pkill -u $ME -f 'vite' || true", 'Killing vite processes (if any)...');
 # 4) Stop rails related processes
 run("pkill -u $ME -f 'ruby|rails' || true", 'Killing ruby/rails processes (careful!)...');
 
-# 5) Stop Dev DB containers (podman/docker) named libreverse-dev-*
+# 5) Stop Dev DB containers (podman/docker) named libreverse-dev-* EXCEPT databases
 if (cmd_exists('podman')) {
-    run('podman ps -a --format "{{.ID}} {{.Names}}" | egrep \'libreverse-dev\' | awk \'{print $1}\' | xargs -I{} podman rm -f {} || true', 'Removing podman containers named libreverse-dev-*...');
+    # Keep tidb, postgres, and dragonflydb containers running - only stop non-database containers
+    run('podman ps -a --format "{{.ID}} {{.Names}}" | egrep \'libreverse-dev\' | egrep -v \'(tidb|postgres|dragonflydb)$\' | awk \'{print $1}\' | xargs -I{} podman rm -f {} || true', 'Removing podman containers named libreverse-dev-* (excluding databases)...');
 }
 elsif (cmd_exists('docker')) {
-    run('docker ps -a --format "{{.ID}} {{.Names}}" | egrep \'libreverse-dev\' | awk \'{print $1}\' | xargs -I{} docker rm -f {} || true', 'Removing docker containers named libreverse-dev-*...');
+    # Keep tidb, postgres, and dragonflydb containers running - only stop non-database containers
+    run('docker ps -a --format "{{.ID}} {{.Names}}" | egrep \'libreverse-dev\' | egrep -v \'(tidb|postgres|dragonflydb)$\' | awk \'{print $1}\' | xargs -I{} docker rm -f {} || true', 'Removing docker containers named libreverse-dev-* (excluding databases)...');
 }
 
 # 6) Optionally stop the podman machine if passed in as --podman

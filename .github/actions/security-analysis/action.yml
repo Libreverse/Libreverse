@@ -17,4 +17,4 @@ runs:
         - name: Run Brakeman
           if: inputs.tool == 'brakeman'
           shell: bash
-          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec brakeman -A --except WeakHash --quiet --no-summary --no-pager
+          run: bundle exec brakeman -A --except WeakHash --quiet --no-summary --no-pager

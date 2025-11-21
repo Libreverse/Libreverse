@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module CommentsHelper
   def render_comment_thread(commontable)
     thread = CommentThread.find_or_create_by!(commontable: commontable)

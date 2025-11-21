@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # This migration comes from federails (originally 20200712133150)
 class CreateFederailsActors < ActiveRecord::Migration[7.0]
   def change

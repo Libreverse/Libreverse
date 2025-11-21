@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require 'rails_helper'
 
 RSpec.describe Metaverse::SandboxIndexer, type: :model do

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "zip"
 
 # Service to find and prepare experiences for offline download

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "active_support/core_ext/integer/time"
 require "re2"
 
@@ -102,12 +105,7 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Active Job Queue Adapter Configuration
-  config.active_job.queue_adapter = :solid_queue
-  # Ensure Solid Queue uses the dedicated :queue database configuration
-  config.solid_queue.connects_to = { database: { writing: :queue } }
-  # TiDB compatibility: disable SKIP LOCKED which requires a suitable unique key pattern
-  # and has caused protocol errors in TiDB with Trilogy in our polling queries.
-  config.solid_queue.use_skip_locked = false
+  config.active_job.queue_adapter = :delayed_job
   # config.active_job.queue_name_prefix = "libreverse_instance_production"
 
   # I18n Fallbacks

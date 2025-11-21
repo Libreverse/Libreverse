@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Service to convert IndexedContent records to Experience records
 # This bridges the gap between metaverse indexer data and the existing Experience system
 class MetaverseExperienceImportService

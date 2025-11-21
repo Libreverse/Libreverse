@@ -12,7 +12,7 @@ runs:
         - name: Run Fasterer
           if: inputs.tool == 'fasterer'
           shell: bash
-          run: RUBYOPT='--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000 ' bundle exec fasterer
+          run: bundle exec fasterer
 
         - name: Run Coffeelint
           if: inputs.tool == 'coffeelint'

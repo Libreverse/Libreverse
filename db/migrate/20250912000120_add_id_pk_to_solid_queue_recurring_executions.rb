@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddIdPkToSolidQueueRecurringExecutions < ActiveRecord::Migration[8.0]
   def up
     unless column_exists?(:solid_queue_recurring_executions, :id)

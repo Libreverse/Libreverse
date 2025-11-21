@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require_relative "../services/moderation_service"
 
 # ActiveRecord primary model (must always be defined for Zeitwerk autoloading)

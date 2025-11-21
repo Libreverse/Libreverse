@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Background job for running individual indexers
 class IndexerJob < ApplicationJob
   queue_as :default

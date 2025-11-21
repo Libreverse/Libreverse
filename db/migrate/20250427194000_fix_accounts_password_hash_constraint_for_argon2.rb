@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class FixAccountsPasswordHashConstraintForArgon2 < ActiveRecord::Migration[8.0]
   def up
     return unless table_exists?(:accounts)

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Service for adding example experiences to Libreverse
 # Based on the rails runner script for creating sample experiences
 class ExampleExperiencesService

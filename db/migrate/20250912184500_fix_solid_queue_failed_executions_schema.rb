@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class FixSolidQueueFailedExecutionsSchema < ActiveRecord::Migration[8.0]
   def up
     unless table_exists?(:solid_queue_failed_executions)

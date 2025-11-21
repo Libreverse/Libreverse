@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
     # Identify the connection by the authenticated account ID found in the session

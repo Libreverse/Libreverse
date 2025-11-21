@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class EnforceUniqueSessionIdOnSessionFinalizations < ActiveRecord::Migration[7.1]
   def up
     return unless table_exists?(:session_finalizations)

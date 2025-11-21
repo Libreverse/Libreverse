@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # This migration comes from federails_moderation (originally 20241128115659)
 class CreateFederailsModerationDomainBlocks < ActiveRecord::Migration[7.0]
   def change

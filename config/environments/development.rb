@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -80,12 +83,8 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   config.action_cable.logger = ActiveSupport::Logger.new($stdout)
   config.action_cable.logger.level = Logger::ERROR
 
-  # Use Solid Queue for Active Job
-  config.active_job.queue_adapter = :solid_queue
-
-  # Configure Solid Queue for TiDB compatibility
-  config.solid_queue.connects_to = { database: { writing: :primary } }
-  config.solid_queue.use_skip_locked = false
+  # Use Delayed Job for Active Job
+  config.active_job.queue_adapter = :delayed_job
 
   # Email configuration for development (MailHog)
   config.action_mailer.delivery_method = :smtp

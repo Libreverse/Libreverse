@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class ExperienceSearchService
   # Minimum similarity threshold for results
   DEFAULT_SIMILARITY_THRESHOLD = 0.0

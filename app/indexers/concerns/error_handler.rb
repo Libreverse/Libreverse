@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Concern for standardized error handling in indexers
 module ErrorHandler
   extend ActiveSupport::Concern

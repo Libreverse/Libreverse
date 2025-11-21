@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Example: Settings Controller with Role-Based Access
 
 class SettingsController < ApplicationController

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddSlugToExperiences < ActiveRecord::Migration[7.1]
   disable_ddl_transaction!
 

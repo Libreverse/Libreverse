@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Application-wide Logging Configuration
 # This initializer ensures consistent logging across the application
 # by configuring the Rails logger and all related loggers properly.

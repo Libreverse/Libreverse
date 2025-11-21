@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Yjs synchronization channel using yrb-actioncable gem
 class SyncChannel < ApplicationCable::Channel
   include Y::Actioncable::Sync

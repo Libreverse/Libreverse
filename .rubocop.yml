@@ -1,4 +1,8 @@
 # Modified from rubocop-rails-omakase licensed under the MIT License
+
+require:
+    - ./lib/rubocop/shareable_constant_value_comment.rb
+
 plugins:
     - rubocop-rails
     - rubocop-performance
@@ -292,8 +296,8 @@ Style/FormatStringToken:
     Description: "Disables checks for format string token usage."
 
 Style/FrozenStringLiteralComment:
-    Enabled: false
-    Description: "We do this using frezolite instead. Cleaner and contains more complex optimisations."
+    Enabled: true
+    Description: "no longer done with freezolite because truffleruby doesn't let us configure such deep internals"
 
 Style/GlobalVars:
     Enabled: false
@@ -371,3 +375,8 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
     Enabled: true
     Description: "Enforces trailing commas in hash literals."
+
+# Custom cops
+Style/ShareableConstantValueComment:
+    Enabled: true
+    Description: "Requires # shareable_constant_value: literal magic comment."

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # ===== Emoji Replacement Middleware =====
 class EmojiReplacer
   require "unicode"

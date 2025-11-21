@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "json"
-require "minify_html"
+require "htmlcompressor"
 require "digest/sha1"
 require "nokogiri"
 
@@ -7,7 +10,7 @@ class WhitespaceCompressor
   def initialize(app)
     @app = app
     # NOTE: We don't pre-split or exclude tags like <pre>, <textarea>, or <script>.
-    # minify_html is spec-aware and preserves content of rawtext/RCDATA elements safely,
+    # htmlcompressor is spec-aware and preserves content of rawtext/RCDATA elements safely,
     # so an explicit "preserve" regex is unnecessary and can introduce edge-case bugs.
   end
 
@@ -39,49 +42,59 @@ class WhitespaceCompressor
         # Step 1.6: Minify iframe srcdoc content (Nokogiri-based)
         processed = minify_srcdoc_iframes_with_nokogiri(processed)
 
-        # Step 2: Apply minify_html for efficient whitespace and comment removal
-        # Configure minify_html options for optimal minification
+        # Step 2: Apply htmlcompressor for efficient whitespace and comment removal
+        # Configure htmlcompressor options for optimal minification
         minify_config = {
-          allow_noncompliant_unquoted_attribute_values: true, # Safe for modern browsers
-          allow_optimal_entities: true,                        # Safe optimizations
-          allow_removing_spaces_between_attributes: true,      # Safe space removal
-          keep_closing_tags: false,                            # Omit unnecessary closing tags
-          keep_comments: false,                                # Remove all comments
-          keep_html_and_head_opening_tags: false,              # Omit if no attributes
-          keep_input_type_text_attr: false,                    # Omit default type=text
-          keep_ssi_comments: false,                            # Remove SSI comments
-          minify_css: false,                                   # Skip since already minified
-          minify_doctype: true,                                # Minify DOCTYPE
-          minify_js: false,                                    # Skip since already minified
-          preserve_brace_template_syntax: false,               # Don't preserve unless using {{ }} templates
-          preserve_chevron_percent_template_syntax: false,     # Don't preserve unless using <% %> templates
-          remove_bangs: true,                                  # Remove bangs
-          remove_processing_instructions: true                 # Remove processing instructions
+          enabled: true,
+          remove_spaces_inside_tags: true,
+          remove_multi_spaces: true,
+          remove_comments: true,
+          remove_intertag_spaces: false,
+          remove_quotes: true,
+          compress_css: false,
+          compress_javascript: false,
+          simple_doctype: true,
+          remove_script_attributes: false,
+          remove_style_attributes: false,
+          remove_link_attributes: false,
+          remove_form_attributes: false,
+          remove_input_attributes: true,
+          remove_javascript_protocol: false,
+          remove_http_protocol: false,
+          remove_https_protocol: false,
+          preserve_line_breaks: false,
+          simple_boolean_attributes: false,
+          compress_js_templates: false
         }
 
-  # Always apply minify_html for optimal compression - it's more effective than HAML's whitespace removal
-  minify_html(processed, minify_config)
+  # Always apply htmlcompressor for optimal compression - it's more effective than HAML's whitespace removal
+  HtmlCompressor::Compressor.new(minify_config).compress(processed)
       end || begin
         # Fallback path when Rails.cache is unavailable
         processed = minify_jsonld_scripts_with_nokogiri(html)
         processed = minify_srcdoc_iframes_with_nokogiri(processed)
-        minify_html(processed, {
-                      allow_noncompliant_unquoted_attribute_values: true,
-                      allow_optimal_entities: true,
-                      allow_removing_spaces_between_attributes: true,
-                      keep_closing_tags: false,
-                      keep_comments: false,
-                      keep_html_and_head_opening_tags: false,
-                      keep_input_type_text_attr: false,
-                      keep_ssi_comments: false,
-                      minify_css: false,
-                      minify_doctype: true,
-                      minify_js: false,
-                      preserve_brace_template_syntax: false,
-                      preserve_chevron_percent_template_syntax: false,
-                      remove_bangs: true,
-                      remove_processing_instructions: true
-                    })
+        HtmlCompressor::Compressor.new({
+                                         enabled: true,
+                                         remove_spaces_inside_tags: true,
+                                         remove_multi_spaces: true,
+                                         remove_comments: true,
+                                         remove_intertag_spaces: false,
+                                         remove_quotes: true,
+                                         compress_css: false,
+                                         compress_javascript: false,
+                                         simple_doctype: true,
+                                         remove_script_attributes: false,
+                                         remove_style_attributes: false,
+                                         remove_link_attributes: false,
+                                         remove_form_attributes: false,
+                                         remove_input_attributes: true,
+                                         remove_javascript_protocol: false,
+                                         remove_http_protocol: false,
+                                         remove_https_protocol: false,
+                                         preserve_line_breaks: false,
+                                         simple_boolean_attributes: false,
+                                         compress_js_templates: false
+                                       }).compress(processed)
       end
     end
 
@@ -128,23 +141,28 @@ class WhitespaceCompressor
       next unless content.lstrip.start_with?("<")
 
       begin
-        minified_content = minify_html(content, {
-                                         allow_noncompliant_unquoted_attribute_values: true,
-                                         allow_optimal_entities: true,
-                                         allow_removing_spaces_between_attributes: true,
-                                         keep_closing_tags: false,
-                                         keep_comments: false,
-                                         keep_html_and_head_opening_tags: false,
-                                         keep_input_type_text_attr: false,
-                                         keep_ssi_comments: false,
-                                         minify_css: true,
-                                         minify_doctype: true,
-                                         minify_js: true,
-                                         preserve_brace_template_syntax: false,
-                                         preserve_chevron_percent_template_syntax: false,
-                                         remove_bangs: true,
-                                         remove_processing_instructions: true
-                                       })
+        minified_content = HtmlCompressor::Compressor.new({
+                                                            enabled: true,
+                                                            remove_spaces_inside_tags: true,
+                                                            remove_multi_spaces: true,
+                                                            remove_comments: true,
+                                                            remove_intertag_spaces: false,
+                                                            remove_quotes: true,
+                                                            compress_css: true,
+                                                            compress_javascript: true,
+                                                            simple_doctype: true,
+                                                            remove_script_attributes: false,
+                                                            remove_style_attributes: false,
+                                                            remove_link_attributes: false,
+                                                            remove_form_attributes: false,
+                                                            remove_input_attributes: true,
+                                                            remove_javascript_protocol: false,
+                                                            remove_http_protocol: false,
+                                                            remove_https_protocol: false,
+                                                            preserve_line_breaks: false,
+                                                            simple_boolean_attributes: false,
+                                                            compress_js_templates: false
+                                                          }).compress(content)
         node["srcdoc"] = minified_content
       rescue StandardError => e
         Rails.logger.warn "WhitespaceCompressor: Failed to minify srcdoc: #{e.message}" if defined?(Rails)

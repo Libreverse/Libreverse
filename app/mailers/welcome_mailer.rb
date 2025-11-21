@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Example mailer demonstrating CSS inlining for emails
 class WelcomeMailer < ApplicationMailer
   include EmailHelper

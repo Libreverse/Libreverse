@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module Metaverse
   # Indexer for Decentraland metaverse content
   # Queries the Decentraland subgraph for parcels and fetches scene data from IPFS

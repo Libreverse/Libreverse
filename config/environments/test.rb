@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "active_support/core_ext/integer/time"
 
 # The test environment is used exclusively to run your application's
@@ -73,8 +76,8 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store, { database: :cache }
   config.solid_cache.connects_to = { database: { writing: :cache, reading: :cache } }
 
-  # Use Solid Queue for Active Job (optional, typically not needed)
-  # config.active_job.queue_adapter = :solid_queue
+  # Use Delayed Job for Active Job (optional, typically not needed)
+  # config.active_job.queue_adapter = :delayed_job
 
   # Email configuration for test environment
   config.action_mailer.delivery_method = :test

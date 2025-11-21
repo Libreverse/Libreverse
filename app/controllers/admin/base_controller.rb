@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Base controller for all controllers in the Admin namespace.
 # Ensures that only authenticated administrators can access admin sections.
 module Admin

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class IndexedContent < ApplicationRecord
   # Associations
   has_one :indexed_content_vector, dependent: :destroy

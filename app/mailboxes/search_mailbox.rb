@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class SearchMailbox < ApplicationMailbox
   def process
     # Only process if email bot is enabled

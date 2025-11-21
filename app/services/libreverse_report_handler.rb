@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Service to handle incoming ActivityPub reports about federated content
 class LibreverseReportHandler
   def initialize(report)

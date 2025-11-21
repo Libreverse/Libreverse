@@ -1,3 +1,4 @@
+# shareable_constant_value: literal
 # STRING LITERALS CANNOT BE FROZEN HERE. IT WILL LEAD TO AN AMBIGUOUS ERROR.
 # frozen_string_literal: false
 

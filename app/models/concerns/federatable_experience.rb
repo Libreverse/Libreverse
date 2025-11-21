@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Concern to add ActivityPub federation capabilities to Experience model
 module FederatableExperience
   extend ActiveSupport::Concern

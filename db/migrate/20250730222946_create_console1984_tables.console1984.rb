@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # This migration comes from console1984 (originally 20210517203931)
 class CreateConsole1984Tables < ActiveRecord::Migration[7.0]
   def change

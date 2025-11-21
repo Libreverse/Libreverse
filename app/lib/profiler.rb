@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Profiler provides richer profiling helpers in development, including Flamegraph.
 module Profiler
   # def self.stackprof(mode: :wall, out: "tmp/stackprof.dump", &block)  # Removed for TruffleRuby compatibility

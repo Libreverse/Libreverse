@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Configure zip_kit to use maximum compression for streaming ZIPs
 # This overrides the default compression level in ZipKit::Streamer::DeflatedWriter
 

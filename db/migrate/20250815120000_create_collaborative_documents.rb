@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateCollaborativeDocuments < ActiveRecord::Migration[7.1]
   def change
     create_table :collaborative_documents do |t|

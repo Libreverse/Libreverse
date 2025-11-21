@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "active_support/ordered_options"
 require "active_support/logger"
 require "active_support/tagged_logging"
 
 module LogFormatting
-  DEFAULT_OMISSION = "…(truncated)".freeze
+  DEFAULT_OMISSION = "…(truncated)"
 
   class << self
     attr_reader :max_message_length, :omission

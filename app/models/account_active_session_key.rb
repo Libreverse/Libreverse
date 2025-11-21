@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Patch for Sequel direct inserts into account_active_session_keys
 if defined?(Sequel)
   class AccountActiveSessionKey < Sequel::Model(:account_active_session_keys)

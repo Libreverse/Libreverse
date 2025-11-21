@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddPasswordChangedAtToAccounts < ActiveRecord::Migration[8.0]
   def change
     add_column :accounts, :password_changed_at, :datetime

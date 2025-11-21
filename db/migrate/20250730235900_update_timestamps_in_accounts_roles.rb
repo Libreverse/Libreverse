@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class UpdateTimestampsInAccountsRoles < ActiveRecord::Migration[7.0]
   def change
     reversible do |dir|

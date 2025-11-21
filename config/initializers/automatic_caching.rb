@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Automatic caching configuration for ApplicationController
 Rails.application.configure do
   # Configure automatic caching behavior

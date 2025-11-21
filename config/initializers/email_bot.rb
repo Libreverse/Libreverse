@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Action Mailbox configuration that integrates with Libreverse's InstanceSetting system
 Rails.application.configure do
   # Configure Action Mailbox IMAP settings using InstanceSetting values with intelligent defaults

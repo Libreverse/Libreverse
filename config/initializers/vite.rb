@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 ## Vite Ruby initializer intentionally minimal.
 # All explicit compensatory overrides removed.
 # See config/vite.json (development.publicOutputDir = "vite").

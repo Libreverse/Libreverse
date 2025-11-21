@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 namespace :indexing do
   desc "Test progressive indexing for Decentraland"

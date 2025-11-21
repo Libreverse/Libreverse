@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Ensure ActiveStorage DB service can store files larger than 64KB on MySQL/TiDB
 # By default, `t.binary` maps to BLOB (64KB). We upgrade to MEDIUMBLOB (16MB).
 class ChangeActiveStorageDBFilesDataToMediumblob < ActiveRecord::Migration[8.0]

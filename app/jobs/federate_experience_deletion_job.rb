@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Job to handle federating experience deletion activities via ActivityPub
 class FederateExperienceDeletionJob < ApplicationJob
   queue_as :federation

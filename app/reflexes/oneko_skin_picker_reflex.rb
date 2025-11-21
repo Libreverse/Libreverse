@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class OnekoSkinPickerReflex < ApplicationReflex
   def select(skin)
     skin = skin.to_s

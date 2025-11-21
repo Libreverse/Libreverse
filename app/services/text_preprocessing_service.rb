@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class TextPreprocessingService
   # Common English stop words
   STOP_WORDS = %w[

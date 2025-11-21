@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CommentsController < ApplicationController
   before_action :require_account!
   before_action :reject_guest!

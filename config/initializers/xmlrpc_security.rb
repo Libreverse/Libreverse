@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # XMLRPC Security Configuration
 Rails.application.config.after_initialize do
   if defined?(XMLRPC)

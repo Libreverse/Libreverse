@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module Graphql
   class PreferencesController < GraphqlApplicationController
     model("UserPreference")

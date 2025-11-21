@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateSolidCacheEntries < ActiveRecord::Migration[8.0]
   def change
     create_table :solid_cache_entries do |t|

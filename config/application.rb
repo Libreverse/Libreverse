@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require_relative "boot"
 
 require "rails/all"
@@ -6,19 +9,8 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-require "freezolite"
-Freezolite.experimental_freeze_constants = true
-Freezolite.setup(
-  patterns: [ "**/*.rb" ],
-  exclude_patterns: [
-    "config/initializers/routing_patch.rb",
-    "**/gems/**"
-  ]
-)
-
 # Load custom middleware
 require_relative "../lib/middleware/whitespace_compressor"
-require_relative "../lib/middleware/zstd"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
@@ -26,24 +18,22 @@ require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
-    # Log thread budget
-    config.after_initialize do
-      total = ThreadBudget.total_threads
-      Rails.logger.info "Thread budget: #{total} total"
-      ThreadBudget.percentages.each do |component, percentage|
-        Rails.logger.info " - #{component}: #{percentage}% (#{ThreadBudget.allocated_threads(component)} threads)"
-      end
+=begin
+    require "worker_killer/middleware"
 
-      # Rich summary
-      d = ThreadBudget.details
-      Rails.logger.info "App threads: #{d[:app][:threads]}"
-      Rails.logger.info "SQLite threads: #{d[:sqlite][:threads]}"
-      Rails.logger.info "Web split: total=#{d[:web][:total]} (Passenger=#{d[:web][:passenger_procs]}, Nginx=#{d[:web][:nginx_workers]})" if d[:web]
-      sq = d[:solid_queue]
-      Rails.logger.info "Solid Queue: #{sq[:total_threads]} total (#{sq[:processes]} procs x #{sq[:threads_per_process]} threads)"
+    # Kill passenger workers that use excess memory.
+    # I don't believe there are memory leaks; this is for stability.
+    passenger_killer = WorkerKiller::Killer::Passenger.new
 
-      Rails.logger.warn "Thread budget oversubscribed: allocated #{ThreadBudget.allocation_sum} > total #{total}. This is intentional due to minimums." if ThreadBudget.oversubscribed?
-    end
+    middleware.insert_before(
+      Rack::Runtime,
+      WorkerKiller::Middleware::OOMLimiter,
+      killer: passenger_killer,
+      min: 419_430_400,
+      max: 524_288_000,
+      check_cycle: 16
+    )
+=end
 
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
@@ -62,24 +52,14 @@ module LibreverseInstance
     # Encourage execjs to be fast
     ExecJS.runtime = ExecJS::Runtimes::Bun
 
-    # Zstandard compression middleware - use normal/default settings (moderate compression)
-    zstd_level = 3
-
-    # Out-of-band garbage collection middleware to reduce latency spikes
-    config.middleware.use OobGcMiddleware
-
-    # Only pass supported/simple options (level); lower CPU cost & sensible defaults
-    config.middleware.use Rack::Zstd, level: zstd_level, sync: false
-
-    config.after_initialize do
-      Rails.logger.info "Zstandard compression middleware configured with normal settings:"
-      Rails.logger.info " - level: #{zstd_level}"
-    end
-
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
 
-    # config.middleware.use TurboPreload
+    # I am still unsure if this speeds thing up or not,
+    # but I'm just going to leave it here permanently
+    # because I keep adding and removing it otherwise.
+    # (we need haikubot for code comments lol)
+    config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
@@ -90,23 +70,8 @@ module LibreverseInstance
       ]
     }
 
-    require "worker_killer/middleware"
-
-    killer = WorkerKiller::Killer::Passenger.new
-
-    middleware.insert_before(
-      Rack::Runtime,
-      WorkerKiller::Middleware::RequestsLimiter, killer: killer, min: 3072, max: 4096
-    )
-
-    middleware.insert_before(
-      Rack::Runtime,
-      WorkerKiller::Middleware::OOMLimiter,
-      killer: killer,
-      min: 419_430_400,
-      max: 524_288_000,
-      check_cycle: 1
-    )
+    # Out-of-band garbage collection middleware to reduce latency spikes
+    config.middleware.use OobGcMiddleware
 
     # Add this to make prod healthcheck pass correctly
     config.hosts << "localhost:3000"

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "capybara"
 require "selenium-webdriver"
 require "google_robotstxt_parser"

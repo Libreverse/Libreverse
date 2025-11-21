@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class ApplicationController < ActionController::Base
   include CableReady::Broadcaster
   include PasswordSecurityEnforcer

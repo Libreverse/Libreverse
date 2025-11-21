@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class VectorizationService
   # Field weights for different parts of experience content
   FIELD_WEIGHTS = {

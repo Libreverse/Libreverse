@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class RolifyCreateRoles < ActiveRecord::Migration[8.0]
   def change
     create_table(:roles) do |t|

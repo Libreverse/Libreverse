@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Service to fetch CSS from Vite dev server during development
 # Handles both direct CSS files and CSS extracted from JavaScript modules
 class ViteCssFetcher

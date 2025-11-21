@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module ApplicationHelper
   include BetterHtml::Helpers
   include EmojiHelper # Include the new helper

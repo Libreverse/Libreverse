@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # ActivityPub extensions for Libreverse-specific metadata
 module LibreverseActivityPub
-  NAMESPACE = "https://libreverse.org/ns#".freeze
+  NAMESPACE = "https://libreverse.org/ns#"
 
   CUSTOM_FIELDS = {
     "experienceType" => "#{NAMESPACE}experienceType".freeze,

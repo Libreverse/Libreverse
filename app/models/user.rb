@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class User < ApplicationRecord
   # Thredded requires an ActiveRecord user model
   # This model wraps the Sequel Account model for Thredded compatibility

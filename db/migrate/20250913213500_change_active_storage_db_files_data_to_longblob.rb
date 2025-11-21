@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Upgrade ActiveStorage DB service storage to LONGBLOB (~4GB) for MySQL/TiDB
 class ChangeActiveStorageDBFilesDataToLongblob < ActiveRecord::Migration[8.0]
   def up

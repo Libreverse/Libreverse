@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # In test, we don't need the full JS bundle for controller responses that are
 # exercising streaming or backend-only functionality. The current Vite build
 # fails to generate a manifest entry for `javascript/application.js` (likely

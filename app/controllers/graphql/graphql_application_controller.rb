@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module Graphql
   # base class of all GraphqlControllers
   class GraphqlApplicationController < GraphqlRails::Controller

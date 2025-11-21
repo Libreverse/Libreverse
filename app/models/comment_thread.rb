@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CommentThread < ApplicationRecord
   belongs_to :commontable, polymorphic: true
   has_many :comments, dependent: :destroy

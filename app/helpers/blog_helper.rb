@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Helper methods for integrating ComfortableMediaSurfer blog with the main application
 module BlogHelper
   # Returns the URL for the blog homepage

@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # app/services/function_cache.rb
 require "digest"
 
 class FunctionCache
-  NAMESPACE = "function_cache:v1".freeze
+  NAMESPACE = "function_cache:v1"
 
   def initialize(default_ttl: nil, max_size: 1000)
     @default_ttl = default_ttl

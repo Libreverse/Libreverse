@@ -1,6 +1,9 @@
-# Apply Active Record Encryption to Solid Cable and Solid Queue data.
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
+# Apply Active Record Encryption to Solid Cable data.
 # Note: Solid Cache entries are now encrypted using Solid Cache's built-in encryption feature.
-# This ensures ActionCable payloads and job data are stored encrypted at rest,
+# This ensures ActionCable payloads are stored encrypted at rest,
 # mirroring the protection we added for Rodauth-related tables.
 
 module EncryptionHelper
@@ -33,35 +36,6 @@ Rails.application.config.to_prepare do
   if defined?(SolidCable::Message) && EncryptionHelper.column?(SolidCable::Message, :payload)
     SolidCable::Message.class_eval do
       encrypts :payload
-    end
-  end
-
-  # Encrypt SolidQueue job arguments and concurrency keys
-  if defined?(SolidQueue::Job)
-    SolidQueue::Job.class_eval do
-      encrypts :arguments if EncryptionHelper.column?(self, :arguments)
-      encrypts :concurrency_key if EncryptionHelper.column?(self, :concurrency_key)
-    end
-  end
-
-  # Encrypt concurrency_key on blocked executions if present
-  if defined?(SolidQueue::BlockedExecution)
-    SolidQueue::BlockedExecution.class_eval do
-      encrypts :concurrency_key if EncryptionHelper.column?(self, :concurrency_key)
-    end
-  end
-
-  # Encrypt process metadata
-  if defined?(SolidQueue::Process)
-    SolidQueue::Process.class_eval do
-      encrypts :metadata if EncryptionHelper.column?(self, :metadata)
-    end
-  end
-
-  # Encrypt SolidQueue recurring task arguments
-  if defined?(SolidQueue::RecurringTask)
-    SolidQueue::RecurringTask.class_eval do
-      encrypts :arguments if EncryptionHelper.column?(self, :arguments)
     end
   end
 

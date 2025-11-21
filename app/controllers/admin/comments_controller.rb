@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module Admin
   class CommentsController < BaseController
     before_action :set_comment, only: %i[approve reject]

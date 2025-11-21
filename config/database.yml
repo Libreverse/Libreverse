@@ -12,9 +12,9 @@
 
     if defined?(ThreadBudget)
         b = ThreadBudget.compute
-        # Ensure the DB pool can handle both web threads and Solid Queue worker threads
+        # Ensure the DB pool can handle both web threads and Delayed Job worker threads
         # Keep a small headroom of +1 for ActiveRecord maintenance threads
-        pool_size = [ b[:app_threads], (b[:sq_threads_per_process] rescue 1) + 1 ].max
+        pool_size = [ b[:app_threads], (b[:dj_threads_per_process] rescue 1) + 1 ].max
         sqlite_threads = b[:sqlite_threads]
     else
         require 'etc'

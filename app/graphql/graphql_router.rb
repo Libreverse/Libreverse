@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 GraphqlRouter = GraphqlRails::Router.draw do
   scope module: :graphql do
     # Experience operations

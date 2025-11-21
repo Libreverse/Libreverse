@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Helper module for federation-related functionality
 module FederationHelper
   # Check if a domain is a Libreverse instance by calling its discovery endpoint

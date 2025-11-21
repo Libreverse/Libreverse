@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "active_support/key_generator"
 
 InvisibleCaptcha.setup do |config|

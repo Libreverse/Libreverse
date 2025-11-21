@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Model for tracking blocked federation domains
 class BlockedDomain < ApplicationRecord
   before_validation { self.domain = domain&.downcase }

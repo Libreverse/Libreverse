@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module Admin
   # Controller for managing Experiences within the Admin namespace.
   class ExperiencesController < BaseController

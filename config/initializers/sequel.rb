@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "sequel"
 require "sequel/extensions/activerecord_connection"
 

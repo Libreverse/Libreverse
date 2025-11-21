@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 namespace :email_bot do
   desc "Send a search email for space-related experiences"
@@ -123,11 +124,11 @@ namespace :email_bot do
     puts "📊 Email Statistics:"
     puts "  Total Inbound Emails: #{ActionMailbox::InboundEmail.count}"
 
-    # Show recent jobs from Solid Queue if available
+    # Show recent jobs from Delayed Job if available
     begin
-      if defined?(SolidQueue::Job)
-        search_jobs = SolidQueue::Job.where(class_name: "ProcessSearchEmailJob").count
-        experience_jobs = SolidQueue::Job.where(class_name: "ProcessExperienceEmailJob").count
+      if defined?(Delayed::Job)
+        search_jobs = Delayed::Job.where("handler LIKE ?", "%ProcessSearchEmailJob%").count
+        experience_jobs = Delayed::Job.where("handler LIKE ?", "%ProcessExperienceEmailJob%").count
         puts "  Search Jobs (all time): #{search_jobs}"
         puts "  Experience Jobs (all time): #{experience_jobs}"
       else

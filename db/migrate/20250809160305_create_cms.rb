@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateCms < ActiveRecord::Migration[5.2]
   LIMIT = 16_777_215
 

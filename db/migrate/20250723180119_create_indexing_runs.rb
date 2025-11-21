@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateIndexingRuns < ActiveRecord::Migration[8.0]
   def change
     create_table :indexing_runs do |t|

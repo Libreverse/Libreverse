@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 namespace :solid_cache do
   desc "Sample Solid Cache entry sizes (compressed vs raw). ENV: LIMIT=100 LIKE='prefix%' SHOW=1"

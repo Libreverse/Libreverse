@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 ReActionView.configure do |config|
   # Intercept .html.erb templates and process them with `Herb::Engine` for enhanced features
   config.intercept_erb = true

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 namespace :users do
   desc "Create a test user with a known pwned password"

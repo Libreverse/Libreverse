@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateAccountActiveSessionKeys < ActiveRecord::Migration[8.0]
   def change
     create_table :account_active_session_keys, id: false do |t|

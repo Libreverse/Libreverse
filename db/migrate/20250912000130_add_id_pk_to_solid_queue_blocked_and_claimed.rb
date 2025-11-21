@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddIdPkToSolidQueueBlockedAndClaimed < ActiveRecord::Migration[8.0]
   TABLES = %i[
     solid_queue_blocked_executions

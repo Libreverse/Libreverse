@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+# shareable_constant_value: literal
 
 # Verification script for account export with maximum compression
 # This simulates the account export functionality to verify compression

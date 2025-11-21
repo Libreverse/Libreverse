@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "active_support/key_generator"
 
 # Derive a 32-byte key from Rails.application.secret_key_base

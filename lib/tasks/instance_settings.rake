@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 namespace :instance_settings do
   desc "Initialize default instance settings"

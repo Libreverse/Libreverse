@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Module for handling Libreverse-specific moderation features
 module LibreverseModeration
   module_function

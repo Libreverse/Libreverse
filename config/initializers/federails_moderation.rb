@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Configure Federails moderation for handling reports about federated content
 Federails::Moderation.configure do |conf|
   # Handle incoming reports about experiences

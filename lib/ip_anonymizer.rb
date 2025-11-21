@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class IpAnonymizer
   # Masks IP addresses so logs/controllers see an anonymised value
   # but leaves the original address intact for earlier middleware (Rack::Attack).

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 namespace :federation do
   desc "Clean up old federated announcements to prevent database bloat"

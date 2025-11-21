@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class ConsentsController < ApplicationController
   skip_before_action :_enforce_privacy_consent
   skip_forgery_protection only: %i[accept decline]

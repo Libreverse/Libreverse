@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class InstanceSetting < ApplicationRecord
   # Encrypt sensitive values
   encrypts :value, deterministic: true, downcase: false

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Enhanced caching concern with better HTTP caching strategies
 module EnhancedCaching
   extend ActiveSupport::Concern

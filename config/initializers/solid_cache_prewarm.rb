@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # config/initializers/solid_cache_prewarm.rb
 # Pre-warm Solid Cache table into PostgreSQL buffer cache for better performance
 # Based on: https://www.crunchydata.com/blog/solid-cache-for-rails-and-postgresql

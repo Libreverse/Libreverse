@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddTimestampsToAccounts < ActiveRecord::Migration[8.0]
   def change
     # Timestamps already exist, just update values for any null entries

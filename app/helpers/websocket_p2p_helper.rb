@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module WebsocketP2pHelper
   # WebSocket P2P Frame Helper
   # Provides backwards compatible p2p_frame_tag helper method

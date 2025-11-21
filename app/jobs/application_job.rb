@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class ApplicationJob < ActiveJob::Base
     include CableReady::Broadcaster
   # Automatically retry jobs that encountered a deadlock

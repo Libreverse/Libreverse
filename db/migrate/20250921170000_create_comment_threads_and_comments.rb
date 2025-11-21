@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class CreateCommentThreadsAndComments < ActiveRecord::Migration[7.1]
   def change
   create_table :comment_threads, if_not_exists: true do |t|

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 require "cgi"
 
 module Metaverse
@@ -10,8 +13,8 @@ module Metaverse
     include ErrorHandler
     include ProgressTrackable
 
-    SITEMAP_URL = "https://www.sandbox.game/__sitemap__/experiences.xml".freeze
-    FALLBACK_MAIN_SITEMAP = "https://www.sandbox.game/sitemap.xml".freeze
+    SITEMAP_URL = "https://www.sandbox.game/__sitemap__/experiences.xml"
+    FALLBACK_MAIN_SITEMAP = "https://www.sandbox.game/sitemap.xml"
 
     def platform_name
       "sandbox"

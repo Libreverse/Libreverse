@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 module ActiveStorageValidations
   # Only define stubs if the real gem hasn't been loaded
   module Model; end unless const_defined?(:Model)

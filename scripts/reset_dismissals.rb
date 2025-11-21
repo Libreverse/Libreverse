@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+# shareable_constant_value: literal
 
 # This script resets all dismissal preferences in the application
 # Run with: rails runner script/reset_dismissals.rb

@@ -327,8 +327,6 @@ export default defineConfig(({ mode }) => {
             nodePolyfills(),
             Erb({
                 env: {
-                    RUBYOPT:
-                        "--yjit --yjit-exec-mem-size=2 --yjit-mem-size=3 --yjit-call-threshold=1 --yjit-cold-threshold=1000000",
                     DISABLE_SPRING: "1",
                 },
             }),

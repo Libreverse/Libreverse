@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Usage: bundle exec rails runner scripts/cms_blog_setup.rb
 # Syncs CMS blog layouts from db/cms_seeds/libreverse-blog into the database
 # - Sets app_layout = 'application' so Rails head is used

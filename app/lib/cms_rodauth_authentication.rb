@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Custom authentication module for ComfortableMediaSurfer that integrates with Rodauth
 module CmsRodauthAuthentication
   # This method is called by ComfortableMediaSurfer to check if the user is authenticated

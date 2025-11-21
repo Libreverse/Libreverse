@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class SetExampleExperiencesToNotFederate < ActiveRecord::Migration[8.0]
   def up
     # Update existing example experiences to not federate

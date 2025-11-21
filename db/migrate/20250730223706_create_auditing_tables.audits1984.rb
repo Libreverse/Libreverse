@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # This migration comes from audits1984 (originally 20210810092639)
 class CreateAuditingTables < ActiveRecord::Migration[7.0]
   def change

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Standalone profiler for development: runs StackProf over configured routes,
 # prints top methods and per-module breakdown, and optionally emits a flamegraph.
 #
@@ -37,7 +40,7 @@ end
 
 puts "Profiling with StackProf mode=#{MODE}, runs=#{RUNS}, paths=#{PATHS.join(' ')}"
 
-# StackProf.run(mode: MODE, out: OUT, raw: true) do  # Removed for TruffleRuby compatibility
+  # StackProf.run(mode: MODE, out: OUT, raw: true) do  # Removed for TruffleRuby compatibility
   exercise(mock, HOST, PATHS, RUNS)
 # end
 

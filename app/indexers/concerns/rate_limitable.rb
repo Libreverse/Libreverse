@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Concern for rate limiting API requests in indexers
 module RateLimitable
   extend ActiveSupport::Concern

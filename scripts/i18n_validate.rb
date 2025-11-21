@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+# shareable_constant_value: literal
 
 # Runs i18n-tasks autofix (normalize, remove-unused, add-missing) and validation (health)
 require 'open3'
