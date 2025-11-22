@@ -6,7 +6,7 @@
 # improving privacy, performance, and avoiding ad blockers
 class ProxyController < ApplicationController
   # Skip CSRF protection for proxy endpoints since they don't modify data
-  skip_before_action :verify_authenticity_token, only: %i[umami_script electron_filterlists userscript]
+  skip_before_action :verify_authenticity_token, only: %i[umami_script userscript]
 
   # Proxy the Umami analytics script
   # GET /umami/script.js
@@ -32,28 +32,6 @@ class ProxyController < ApplicationController
       Rails.logger.error "Failed to proxy Umami script: #{e.message}"
       head :not_found
     end
-  end
-
-  # Proxy compiled electron filterlists
-  # GET /proxy/electron-filterlists
-  def electron_filterlists
-      # Load filter list URLs from config
-      filter_config = YAML.load_file(Rails.root.join("config/electron-filterlists.yaml"))
-      urls = filter_config["urls"] || []
-
-      # Fetch and compile all filter lists
-      compiled_filters = fetch_and_compile_filters(urls)
-
-      # Set appropriate headers
-      response.headers["Content-Type"] = "text/plain; charset=utf-8"
-      response.headers["Cache-Control"] = "public, max-age=3600" # Cache for 1 hour
-      response.headers["X-Content-Type-Options"] = "nosniff"
-
-      render plain: compiled_filters
-  rescue StandardError => e
-      # Log error and return 404
-      Rails.logger.error "Failed to proxy electron filterlists: #{e.message}"
-      head :not_found
   end
 
   # Proxy userscripts by name
@@ -97,28 +75,6 @@ class ProxyController < ApplicationController
                  headers: {
                    "User-Agent" => "LibreverseProxy/1.0"
                  })
-  end
-
-  def fetch_and_compile_filters(urls)
-    compiled = []
-    urls.each do |url|
-        response = HTTParty.get(url,
-                                timeout: 30,
-                                open_timeout: 10,
-                                headers: {
-                                  "User-Agent" => "LibreverseProxy/1.0"
-                                })
-        if response.success?
-          compiled << "! #{url}"
-          compiled << response.body.force_encoding("UTF-8").encode("UTF-8", invalid: :replace, undef: :replace)
-          compiled << ""
-        else
-          Rails.logger.warn "Failed to fetch filter list from #{url}: #{response.code}"
-        end
-    rescue StandardError => e
-        Rails.logger.warn "Error fetching filter list from #{url}: #{e.message}"
-    end
-    compiled.join("\n")
   end
 
   def find_userscript_url(urls, name)

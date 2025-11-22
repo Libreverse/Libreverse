@@ -1,3 +1,4 @@
+smol = true
 telemetry = false
 [install]
 exact = true

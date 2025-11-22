@@ -8,5 +8,5 @@ CableReady.configure do |config|
   config.on_failed_sanity_checks = :exit
 
   # Specify a default debounce time for CableReady::Updatable callbacks
-  config.updatable_debounce_time = 0.1.seconds
+  config.updatable_debounce_time = 0.01.seconds
 end

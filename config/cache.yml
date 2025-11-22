@@ -1,33 +1,7 @@
-<%
-  # Compute dynamic cache size ceiling once (exclude sqlite DBs, add current cache bytes)
-  require 'sys/filesystem'
-  require 'pathname'
-  raw_free_bytes = Sys::Filesystem.stat("/").bytes_free
-  # Use Rails.root if available; fallback to resolving relative to this file
-  project_root = defined?(Rails) ? Rails.root : Pathname.new(File.expand_path('..', __dir__))
-  cache_path = project_root.join('tmp', 'cache')
-  cache_bytes = 0
-  if File.directory?(cache_path)
-    begin
-      Dir.glob(File.join(cache_path.to_s, '**', '*'), File::FNM_DOTMATCH).each do |f|
-        next if File.directory?(f)
-        next if f.end_with?('.sqlite3') # Ignore sqlite databases
-        cache_bytes += File.size(f)
-      end
-    rescue StandardError => e
-      warn "cache.yml size scan failed: #{e.class}: #{e.message}"
-    end
-  end
-  computed_max_size = ((raw_free_bytes + cache_bytes) * 0.7).to_i
-%>
 default: &default
   store_options:
     # Cap age of oldest cache entry to fulfill retention policies
     max_age: <%= 60.days.to_i %>
-    # Target cache size = 70% of (raw free bytes + current cache bytes) so
-    # the cache size ceiling doesn't thrash downward as it grows.
-    # Excludes any *.sqlite3 files from the adjusted free space calculation.
-    max_size: <%= computed_max_size %>
     namespace: <%= Rails.env %>
     # Lower batch size for more frequent but smaller cleanup operations
     expiry_batch_size: 50

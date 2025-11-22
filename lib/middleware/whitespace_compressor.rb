@@ -7,6 +7,34 @@ require "digest/sha1"
 require "nokogiri"
 
 class WhitespaceCompressor
+  COMPRESSOR_CONFIG = {
+    enabled: true,
+    remove_spaces_inside_tags: true,
+    remove_multi_spaces: true,
+    remove_comments: true,
+    remove_intertag_spaces: false,
+    remove_quotes: true,
+    compress_css: false,
+    compress_javascript: false,
+    simple_doctype: true,
+    remove_script_attributes: false,
+    remove_style_attributes: false,
+    remove_link_attributes: false,
+    remove_form_attributes: false,
+    remove_input_attributes: true,
+    remove_javascript_protocol: false,
+    remove_http_protocol: false,
+    remove_https_protocol: false,
+    preserve_line_breaks: false,
+    simple_boolean_attributes: false,
+    compress_js_templates: false
+  }.freeze
+
+  SRC_DOC_COMPRESSOR_CONFIG = COMPRESSOR_CONFIG.merge(
+    compress_css: true,
+    compress_javascript: true
+  ).freeze
+
   def initialize(app)
     @app = app
     # NOTE: We don't pre-split or exclude tags like <pre>, <textarea>, or <script>.
@@ -16,95 +44,63 @@ class WhitespaceCompressor
 
   def call(env)
     status, headers, body = @app.call(env)
-    return [ status, headers, body ] unless headers["Content-Type"]&.include?("text/html")
+    return [status, headers, body] unless html_response?(headers)
 
-    Rails.logger.debug "WhitespaceCompressor: Processing HTML response" if defined?(Rails)
+    log_debug("WhitespaceCompressor: Processing HTML response")
 
-    # Step 1: Assemble HTML efficiently
-    return [ status, headers, body ] unless body.respond_to?(:each)
+    html = assemble_html(body)
+    return [status, headers, body] if html.empty?
+
+    html = process_html_with_cache(html)
+
+    log_debug("WhitespaceCompressor: Minified HTML length: #{html.length}")
+
+    update_headers(headers, html)
+    [status, headers, [html]]
+  end
+
+  private
+
+  def html_response?(headers)
+    headers["Content-Type"]&.include?("text/html")
+  end
+
+  def assemble_html(body)
+    return "" unless body.respond_to?(:each)
 
     chunks = []
     body.each { |chunk| chunks << chunk.to_s.encode("UTF-8", invalid: :replace, undef: :replace) }
     html = chunks.join
-    # We replace the body, so close the original to avoid leaks
     body.close if body.respond_to?(:close)
+    log_debug("WhitespaceCompressor: Original HTML length: #{html.length}")
+    html
+  end
 
-    Rails.logger.debug "WhitespaceCompressor: Original HTML length: #{html.length}" if defined?(Rails)
+  def process_html_with_cache(html)
+    cache_key = "wc_html:#{::Digest::SHA1.hexdigest(html)}"
+    cache = defined?(Rails) && Rails.respond_to?(:cache) ? Rails.cache : nil
+    cache&.fetch(cache_key, expires_in: 1.hour) do
+      process_html(html)
+    end || process_html(html)
+  end
 
-    # Caching: Use Rails.cache to store processed HTML based on SHA1 hash of original
-    # This saves unnecessary work for repeated identical responses (e.g., static pages)
-    unless html.empty?
-      cache_key = "wc_html:#{::Digest::SHA1.hexdigest(html)}"
-      html = (defined?(Rails) && Rails.respond_to?(:cache) ? Rails.cache : nil)&.fetch(cache_key, expires_in: 1.hour) do
-        # Step 1.5: Minify JSON-LD scripts before other processing (Nokogiri-based)
-        processed = minify_jsonld_scripts_with_nokogiri(html)
+  def process_html(html)
+    processed = minify_jsonld_scripts_with_nokogiri(html)
+    processed = minify_srcdoc_iframes_with_nokogiri(processed)
+    HtmlCompressor::Compressor.new(COMPRESSOR_CONFIG).compress(processed)
+  end
 
-        # Step 1.6: Minify iframe srcdoc content (Nokogiri-based)
-        processed = minify_srcdoc_iframes_with_nokogiri(processed)
+  def update_headers(headers, html)
+    headers["Content-Length"] = html.bytesize.to_s
+    headers.delete("Content-Encoding")
+  end
 
-        # Step 2: Apply htmlcompressor for efficient whitespace and comment removal
-        # Configure htmlcompressor options for optimal minification
-        minify_config = {
-          enabled: true,
-          remove_spaces_inside_tags: true,
-          remove_multi_spaces: true,
-          remove_comments: true,
-          remove_intertag_spaces: false,
-          remove_quotes: true,
-          compress_css: false,
-          compress_javascript: false,
-          simple_doctype: true,
-          remove_script_attributes: false,
-          remove_style_attributes: false,
-          remove_link_attributes: false,
-          remove_form_attributes: false,
-          remove_input_attributes: true,
-          remove_javascript_protocol: false,
-          remove_http_protocol: false,
-          remove_https_protocol: false,
-          preserve_line_breaks: false,
-          simple_boolean_attributes: false,
-          compress_js_templates: false
-        }
+  def log_debug(message)
+    Rails.logger.debug(message) if defined?(Rails)
+  end
 
-  # Always apply htmlcompressor for optimal compression - it's more effective than HAML's whitespace removal
-  HtmlCompressor::Compressor.new(minify_config).compress(processed)
-      end || begin
-        # Fallback path when Rails.cache is unavailable
-        processed = minify_jsonld_scripts_with_nokogiri(html)
-        processed = minify_srcdoc_iframes_with_nokogiri(processed)
-        HtmlCompressor::Compressor.new({
-                                         enabled: true,
-                                         remove_spaces_inside_tags: true,
-                                         remove_multi_spaces: true,
-                                         remove_comments: true,
-                                         remove_intertag_spaces: false,
-                                         remove_quotes: true,
-                                         compress_css: false,
-                                         compress_javascript: false,
-                                         simple_doctype: true,
-                                         remove_script_attributes: false,
-                                         remove_style_attributes: false,
-                                         remove_link_attributes: false,
-                                         remove_form_attributes: false,
-                                         remove_input_attributes: true,
-                                         remove_javascript_protocol: false,
-                                         remove_http_protocol: false,
-                                         remove_https_protocol: false,
-                                         preserve_line_breaks: false,
-                                         simple_boolean_attributes: false,
-                                         compress_js_templates: false
-                                       }).compress(processed)
-      end
-    end
-
-    Rails.logger.debug "WhitespaceCompressor: Minified HTML length: #{html.length}" if defined?(Rails)
-
-    # Update headers before returning
-    new_headers = headers.dup
-    new_headers["Content-Length"] = html.bytesize.to_s
-    new_headers.delete("Content-Encoding")
-    [ status, new_headers, [ html ] ]
+  def log_warn(message)
+    Rails.logger.warn(message) if defined?(Rails)
   end
 
   # Minify JSON-LD scripts by parsing and re-serializing JSON content (no regex lookaheads/backrefs)
@@ -128,7 +124,7 @@ class WhitespaceCompressor
     end
     doc.to_html
   rescue StandardError => e
-    Rails.logger.warn "WhitespaceCompressor: Failed JSON-LD minify: #{e.class}: #{e.message}" if defined?(Rails)
+    log_warn("WhitespaceCompressor: Failed JSON-LD minify: #{e.class}: #{e.message}")
     html
   end
 
@@ -141,36 +137,15 @@ class WhitespaceCompressor
       next unless content.lstrip.start_with?("<")
 
       begin
-        minified_content = HtmlCompressor::Compressor.new({
-                                                            enabled: true,
-                                                            remove_spaces_inside_tags: true,
-                                                            remove_multi_spaces: true,
-                                                            remove_comments: true,
-                                                            remove_intertag_spaces: false,
-                                                            remove_quotes: true,
-                                                            compress_css: true,
-                                                            compress_javascript: true,
-                                                            simple_doctype: true,
-                                                            remove_script_attributes: false,
-                                                            remove_style_attributes: false,
-                                                            remove_link_attributes: false,
-                                                            remove_form_attributes: false,
-                                                            remove_input_attributes: true,
-                                                            remove_javascript_protocol: false,
-                                                            remove_http_protocol: false,
-                                                            remove_https_protocol: false,
-                                                            preserve_line_breaks: false,
-                                                            simple_boolean_attributes: false,
-                                                            compress_js_templates: false
-                                                          }).compress(content)
+        minified_content = HtmlCompressor::Compressor.new(SRC_DOC_COMPRESSOR_CONFIG).compress(content)
         node["srcdoc"] = minified_content
       rescue StandardError => e
-        Rails.logger.warn "WhitespaceCompressor: Failed to minify srcdoc: #{e.message}" if defined?(Rails)
+        log_warn("WhitespaceCompressor: Failed to minify srcdoc: #{e.message}")
       end
     end
     doc.to_html
   rescue StandardError => e
-    Rails.logger.warn "WhitespaceCompressor: Failed srcdoc pass: #{e.class}: #{e.message}" if defined?(Rails)
+    log_warn("WhitespaceCompressor: Failed srcdoc pass: #{e.class}: #{e.message}")
     html
   end
 end

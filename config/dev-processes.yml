@@ -1,5 +1,5 @@
 # This is just a procfile named differently
-phusion-passenger: cd .. && bundle exec passenger start --address 127.0.0.1 --unlimited-concurrency-path '/cable' --app-connect-timeout 600
+phusion-passenger: cd .. && bundle exec passenger start --address 127.0.0.1 --port=3002 --unlimited-concurrency-path '/cable' --app-connect-timeout 600
 vite: cd .. && bin/vite dev | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g'
 shakapacker-asset-server: cd .. && bin/shakapacker-dev-server
 shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr
@@ -7,5 +7,5 @@ shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
 delayed-job: cd .. && bin/jobs
 mailhog: cd .. && mailhog | grep -v "\[APIv1\] KEEPALIVE /api/v1/events"
 stimulus-manifest-regenerator: cd .. && bin/manifest-isr
-electron: cd .. && while ! [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3002/up)" = "200" ]; do sleep 1; done && exec bun start
+electron: cd .. && bun start
 dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh > /dev/null 2>&1

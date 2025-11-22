@@ -9,8 +9,6 @@ Twemoji->import(qw(twemoji));  # Manually import the function
 use utf8;  # Enable UTF-8 for Unicode
 binmode STDOUT, ':encoding(UTF-8)';  # Set output encoding to UTF-8
 
-system("echo \"ensuring TR...\" && source /opt/homebrew/opt/chruby/share/chruby/chruby.sh && source /opt/homebrew/opt/chruby/share/chruby/auto.sh && chruby truffleruby-24.2.1 && chruby truffleruby-24.2.1");
-
 # Get terminal width
 my $width = `tput cols` || 80;  # Default to 80 if tput fails
 chomp $width;

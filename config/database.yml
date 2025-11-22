@@ -3,28 +3,7 @@
 
 # Common pool size calculation
 <%
-    # Use centralized ThreadBudget for consistent sizing across app, DB, and workers
-    begin
-        require './config/thread_budget'
-    rescue LoadError
-        # ignore; fallback below
-    end
-
-    if defined?(ThreadBudget)
-        b = ThreadBudget.compute
-        # Ensure the DB pool can handle both web threads and Delayed Job worker threads
-        # Keep a small headroom of +1 for ActiveRecord maintenance threads
-        pool_size = [ b[:app_threads], (b[:dj_threads_per_process] rescue 1) + 1 ].max
-        sqlite_threads = b[:sqlite_threads]
-    else
-        require 'etc'
-        nproc = Etc.respond_to?(:nprocessors) ? Etc.nprocessors : 2
-        pool_size = [(nproc / 2) * 2 - 4, 5].max
-        sqlite_threads = [nproc, 2].max
-    end
-
-    # Ensure minimum pool size of 3
-    pool_size = [pool_size, 3].max
+    pool_size=8
 %>
 
 default: &default
@@ -89,20 +68,15 @@ test:
         # sslca always provided; adapter will use it only if ssl_mode requires validation
         sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
     queue:
-        adapter: sqlite3
-        encoding: utf8
-        database: db/queue_test.sqlite3
-        pool: <%= pool_size %>
+        <<: *default
+        database: libreverse_test_queue
+        username: <%= ENV["TIDB_USERNAME"] %>
+        password: <%= ENV["TIDB_PASSWORD"] %>
+        host: <%= ENV.fetch("TIDB_HOST", "127.0.0.1") %>
+        port: 4000
+        ssl_mode: <%= ENV.fetch("TIDB_TEST_SSL_MODE", ENV.fetch("TIDB_SSL_MODE", "DISABLED")) %>
+        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
         migrations_paths: db/queue_migrate
-        schema_dump: false
-        database_tasks: false
-        pragmas:
-            journal_mode: 'WAL'
-            synchronous: 0
-            cache_size: -8000
-            foreign_keys: 0
-            temp_store: 2
-            wal_autocheckpoint: 1000
     cache:
         adapter: postgresql
         encoding: utf8

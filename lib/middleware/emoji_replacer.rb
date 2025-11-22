@@ -99,39 +99,33 @@ class EmojiReplacer
       return html
     end
 
-    # Enforce processing timeout to prevent DoS
-    Timeout.timeout(1.0) do
-      doc = Nokogiri::HTML4.parse(html)
+    doc = Nokogiri::HTML4.parse(html)
 
-      # Create a set of nodes to exclude
-      exclude_nodes = Set.new
-      @exclude_selectors.each do |selector|
-        doc.css(selector).each do |node|
-          exclude_nodes.add(node)
-        end
+    # Create a set of nodes to exclude
+    exclude_nodes = Set.new
+    @exclude_selectors.each do |selector|
+      doc.css(selector).each do |node|
+        exclude_nodes.add(node)
       end
-
-      # Process text nodes that are not within excluded elements
-      doc.traverse do |node|
-        next unless node.text? && !within_excluded_node?(node, exclude_nodes)
-
-        # Replace emojis with HTML nodes instead of text
-        replaced_content = replace_emojis_with_nodes(node.content, doc)
-
-        # Only replace if we actually found and replaced an emoji
-        if replaced_content != node.content
-          # Create a fragment for the replaced content
-          fragment = Nokogiri::HTML4.fragment(replaced_content)
-          # Replace the original node with the fragment
-          node.replace(fragment)
-        end
-      end
-
-      doc.to_html
     end
-  rescue Timeout::Error
-    Rails.logger.error "EmojiReplacer: Processing timeout"
-    html
+
+    # Process text nodes that are not within excluded elements
+    doc.traverse do |node|
+      next unless node.text? && !within_excluded_node?(node, exclude_nodes)
+
+      # Replace emojis with HTML nodes instead of text
+      replaced_content = replace_emojis_with_nodes(node.content, doc)
+
+      # Only replace if we actually found and replaced an emoji
+      if replaced_content != node.content
+        # Create a fragment for the replaced content
+        fragment = Nokogiri::HTML4.fragment(replaced_content)
+        # Replace the original node with the fragment
+        node.replace(fragment)
+      end
+    end
+
+    doc.to_html
   rescue Nokogiri::XML::SyntaxError => e
     Rails.logger.error "EmojiReplacer: HTML parsing error: #{e.message}"
     html

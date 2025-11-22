@@ -14,11 +14,9 @@ require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
-require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
-=begin
     require "worker_killer/middleware"
 
     # Kill passenger workers that use excess memory.
@@ -31,9 +29,8 @@ module LibreverseInstance
       killer: passenger_killer,
       min: 419_430_400,
       max: 524_288_000,
-      check_cycle: 16
+      check_cycle: 1
     )
-=end
 
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
@@ -49,17 +46,8 @@ module LibreverseInstance
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks middleware haml_lint])
 
-    # Encourage execjs to be fast
-    ExecJS.runtime = ExecJS::Runtimes::Bun
-
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
-
-    # I am still unsure if this speeds thing up or not,
-    # but I'm just going to leave it here permanently
-    # because I keep adding and removing it otherwise.
-    # (we need haikubot for code comments lol)
-    config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
