@@ -86,7 +86,7 @@ module.exports = [
     "no-first-run",
     "no-pings",
     "no-service-autorun",
-    "site-per-process",
+    "process-per-site",
     "reduce-user-agent-minor-version",
     "reduce-user-agent-platform-oscpu",
     "request-desktop-sites",

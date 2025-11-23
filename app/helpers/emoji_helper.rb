@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require Rails.root.join("lib/emoji/renderer").to_s
+
 module EmojiHelper
   require "nokogiri"
   require "cgi"

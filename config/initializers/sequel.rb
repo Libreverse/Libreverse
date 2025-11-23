@@ -12,3 +12,6 @@ adapter = :trilogy
 
 # Use the same TiDB connection as ActiveRecord
 Sequel.connect(adapter: adapter, test: false, extensions: :activerecord_connection)
+
+# Disable SQL logging for Sequel
+Sequel::DATABASES.first.loggers = []

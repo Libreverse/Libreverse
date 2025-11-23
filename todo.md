@@ -1,5 +1,11 @@
 # To-do
 
+THE TIMOUTES HAVE SOMETHING TO DO WITH THREDDED'S JS
+
+we also need to add a jit warmup module using rails internal triggers on startup
+
+we also need to move the ugc into a separate webcontentsview in electron for more security
+
 add global net blocklist using georlist once it's actually working. Perhaps move its logic into the app natively
 
 finish libreverse ai with api calls - use python node calls to use llama cpp python
@@ -38,14 +44,11 @@ Recommended privacy flags:
 - [ ] (feature) Deploy without master_key pre-set (remove `credentials.yml.enc` handling adjustments)
 - [ ] (feature) Make local codeql work fully
 - [ ] (feature) Deploy with SSL without reverse proxy (evaluate direct nginx inside container viability vs current cloud setup)
-- [ ] (feature) Add container runtime using podman in docker
-- [ ] (feature) Release beta
+- [ ] (feature) Add 2d bridge indexer
 - [ ] (feature) Add premade "bad content" federation blocklist
 - [ ] (feature) Add full decentralisation mode (blockchain-backed index for Decentraland, The Sandbox, etc.)
-- [ ] (feature) Release v3 gamma
 - [ ] (feature) Add Telegram search bot
 - [ ] (feature) Add x.com search bot
-- [ ] (feature) Add litestream back for optional cache backups
 
 ## JavaScript Optimizations
 

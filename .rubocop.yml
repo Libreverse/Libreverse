@@ -1,7 +1,7 @@
 # Modified from rubocop-rails-omakase licensed under the MIT License
 
 require:
-    - ./lib/rubocop/shareable_constant_value_comment.rb
+    - ./lib/rubocop/cop/style/shareable_constant_value_comment.rb
 
 plugins:
     - rubocop-rails

@@ -14,6 +14,7 @@ require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
+require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -27,27 +28,29 @@ module LibreverseInstance
       Rack::Runtime,
       WorkerKiller::Middleware::OOMLimiter,
       killer: passenger_killer,
-      min: 419_430_400,
-      max: 524_288_000,
+      min: 2_000_000_000,
+      max: 2_000_000_000,
       check_cycle: 1
     )
 
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
+
+    # Tell zeitwerk it needs to autoload these custom directories
     config.autoload_paths << "app/graphql"
     config.autoload_paths << "app/indexers"
+    config.eager_load_paths << "app/graphql"
+    config.eager_load_paths << "app/indexers"
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
-    # Please, add to the `ignore` list any other `lib` subdirectories that do
-    # not contain `.rb` files, or that should not be reloaded or eager loaded.
-    # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks middleware haml_lint])
-
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
+
+    # Tell it to load as much stuff ahead of time, given that we can likely afford it on TR in a way that we otherwise wouldn't be able to.
+    config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     # Position it before WhitespaceCompressor to ensure emojis are replaced before minification

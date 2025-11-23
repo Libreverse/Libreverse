@@ -60,8 +60,8 @@ Rails.application.config.after_initialize do
     # Set min and max to different values to randomize kill threshold (e.g., between 512MB and 600MB)
     plugins << WorkerKiller::DelayedJobPlugin::OOMLimiter.new(
       killer: delayed_job_killer,
-      min: 419_430_400,
-      max: 524_288_000
+      min: 2_000_000_000,
+      max: 2_000_000_000
     )
   end
 end

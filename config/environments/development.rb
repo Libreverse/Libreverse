@@ -24,13 +24,9 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
 
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # In the development environment your application's code is reloaded any time
-  # it changes. This slows down response time but is perfect for development
-  # since you don't have to restart the web server when you make code changes.
+  # We are messing with how people generally work in dev for performance here:
   config.enable_reloading = true
-
-  # Do not eager load code on boot. Note that it will cause unexplaineable breakeage if you turn this on.
-  config.eager_load = false
+  config.eager_load = true
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -61,16 +57,19 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   config.active_record.migration_error = :page_load
 
   # Highlight code that triggered database queries in logs.
-  config.active_record.verbose_query_logs = true
+  config.active_record.verbose_query_logs = false
+
+  # Disable SQL logging for ActiveRecord
+  config.active_record.logger = nil
 
   # Highlight code that enqueued background job in logs.
-  config.active_job.verbose_enqueue_logs = true
+  config.active_job.verbose_enqueue_logs = false
 
   # Raises error for missing translations.
   config.i18n.raise_on_missing_translations = true
 
   # Annotate rendered view with file names.
-  # config.action_view.annotate_rendered_view_with_filenames = true
+  config.action_view.annotate_rendered_view_with_filenames = true
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true

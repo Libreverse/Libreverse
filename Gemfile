@@ -98,6 +98,7 @@ gem "view_component"
 gem "vite_rails"
 gem "voight_kampff"
 gem "worker_killer"
+gem "y"
 gem "zip_kit"
 
 group :development, :test do

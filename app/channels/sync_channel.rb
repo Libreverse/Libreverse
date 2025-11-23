@@ -3,7 +3,7 @@
 
 # Yjs synchronization channel using yrb-actioncable gem
 class SyncChannel < ApplicationCable::Channel
-  include Y::Actioncable::Sync
+  # include Y::Actioncable::Sync  # TODO: Fix when proper gem is available
 
   # Called when a client subscribes. Expect params like { id: "session-<uuid>" }
   def subscribed

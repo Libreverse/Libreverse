@@ -921,6 +921,7 @@ GEM
       get_process_mem
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    y (0.0.2)
     zeitwerk (2.7.3)
     zip_kit (6.3.3)
 
@@ -1047,6 +1048,7 @@ DEPENDENCIES
   voight_kampff
   web-console
   worker_killer
+  y
   zip_kit
 
 RUBY VERSION
