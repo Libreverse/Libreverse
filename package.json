@@ -140,7 +140,7 @@
         "babel-jest": "29.7.0",
         "coffeescript": "2.7.0",
         "cssnano": "7.1.1",
-        "cssnano-preset-advanced": "7.0.9",
+        "cssnano-preset-advanced": "7.0.10",
         "docsify": "4.13.1",
         "electron": "39.0.0",
         "eslint": "9.37.0",
