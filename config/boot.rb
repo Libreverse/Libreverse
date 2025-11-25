@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+Gem::Silencer.enable   # if you only want to silence gem load warnings
+
 # Disable macOS fork safety check to prevent crashes during development
 ENV["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
 
@@ -24,8 +26,4 @@ Bootsnap.setup(
 )
 
 # Establish thread budgeting before Rails loads other initializers/config ERB
-begin
-  require_relative "thread_budget"
-rescue LoadError => e
-  warn "Thread budget not loaded: #{e.message}"
-end
+require_relative "thread_budget"

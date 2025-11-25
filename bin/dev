@@ -223,5 +223,4 @@ if ($missing_databases) {
 }
 
 print $message_color, twemoji('Check Mark'), " All databases are running!\n\n", $RESET;
-run_task("Preloading bootsnap cache...", "bundle exec bootsnap precompile . >/dev/null 2>&1");
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

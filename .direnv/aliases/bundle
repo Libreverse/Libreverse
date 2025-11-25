@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+CLEAN_PATH="${_CLEAN_PATH_FOR_BUNDLE:-$PATH}"
+
+env PATH="$CLEAN_PATH" \
+  /Users/$(whoami)/.gem/truffleruby/3.3.7/bin/bundle "$@" \
+  2>&1 | grep --color=always -v "Cleaning all the gems on your system is dangerous!"

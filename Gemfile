@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# Make the gem thing SHUT UP
+Gem::Specification.instance_variable_set(:@all, nil) rescue nil
+
 source "https://rubygems.org"
 
 ruby "3.3.7"
