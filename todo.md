@@ -2,9 +2,11 @@
 
 THE TIMOUTES HAVE SOMETHING TO DO WITH THREDDED'S JS
 
-we also need to add a jit warmup module using rails internal triggers on startup
-
 we also need to move the ugc into a separate webcontentsview in electron for more security
+
+add trufflehog to not put creds in github repo
+
+use rails memory caching and brotli comppression
 
 add global net blocklist using georlist once it's actually working. Perhaps move its logic into the app natively
 
@@ -19,21 +21,9 @@ facial age estimation using zkml for osa pycall and ezkl
 <https://github.com/justadudewhohacks/face-api.js-models>
 <https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript>
 
-add oj gem once we fix ruby shared libraries issue (install via: `gem install oj -- --with-sse42`)
+remove vite plugin tips
 
-fix vite plugin tips
-
-Flags to research more:
-<https://www.reddit.com/r/PrivacyGuides/comments/pzs6lz/which_chrome_flags_should_i_mess_around_with/>
-Recommended privacy flags:
-• #enable-webrtc-hide-local-ips-with-mdns: Enabled – Hides local IPs in WebRTC (reduces fingerprinting).
-• #reduce-user-agent: Enabled – Trims User-Agent string to hinder tracking.
-• #block-insecure-private-network-requests: Enabled – Blocks insecure private network access.
-• #strict-origin-isolation: Enabled – Enforces stricter origin isolation.
-• #force-punycode: Enabled – Displays IDNs as Punycode (anti-phishing/privacy).Users note these work on stock Chromium without issues.
-
-
-- [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image
+- [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image as well as root.io base images
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
 - [ ] (feature) Clear up attribution for images
 

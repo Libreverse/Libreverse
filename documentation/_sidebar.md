@@ -4,6 +4,7 @@
 
 - [Home](README.md)
 
+
 <!-- Documentation pages -->
 
 - [Attributionnotes](attributionnotes.md)
@@ -43,3 +44,5 @@
 - [Umami Analytics](umami-analytics.md)
 - [User Preferences](user-preferences.md)
 - [XML-RPC API](xmlrpc-api.md)
+
+- [Nginx Production Configuration](nginx-production.md)

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-Gem::Silencer.enable   # if you only want to silence gem load warnings
-
 # Disable macOS fork safety check to prevent crashes during development
 ENV["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
 
@@ -21,7 +19,6 @@ Bootsnap.setup(
   load_path_cache: true,
   compile_cache_iseq: false,
   compile_cache_yaml: true,
-  compile_cache_json: true,
   readonly: false
 )
 

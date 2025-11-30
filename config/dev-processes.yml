@@ -4,7 +4,7 @@ vite: cd .. && bin/vite dev > /dev/null 2>&1
 shakapacker-asset-server: cd .. && bin/shakapacker-dev-server > /dev/null 2>&1
 shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr > /dev/null 2>&1
 shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch > /dev/null 2>&1
-delayed-job: cd .. && bin/jobs > /dev/null 2>&1
+delayed-job: cd .. && bin/jobs
 mailhog: cd .. && mailhog > /dev/null 2>&1
 stimulus-manifest-regenerator: cd .. && bin/manifest-isr > /dev/null 2>&1
 electron: cd .. && bun start
