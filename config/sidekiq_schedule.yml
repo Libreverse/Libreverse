@@ -1,0 +1,27 @@
+# Sidekiq-Cron schedule configuration
+# Converted from Solid Queue recurring.yml format
+# https://github.com/sidekiq-cron/sidekiq-cron
+
+cleanup_abandoned_guests:
+  cron: "0 3 * * *"  # Every day at 3:00 AM
+  class: CleanupAbandonedGuestsJob
+  queue: default
+  description: "Clean up abandoned guest accounts"
+
+retention_tasks:
+  cron: "0 3 * * *"  # Every day at 3:00 AM
+  class: PurgeRodauthTokensJob
+  queue: maintenance
+  description: "Purge expired Rodauth tokens"
+
+integrity_check:
+  cron: "0 4 1 1,4,7,10 *"  # Quarterly on the 1st of Jan, Apr, Jul, Oct at 4 AM
+  class: IntegrityCheckJob
+  queue: maintenance
+  description: "Run quarterly database integrity checks"
+
+metaverse_indexing:
+  cron: "0 */12 * * *"  # Every 12 hours
+  class: ScheduledIndexingJob
+  queue: default
+  description: "Index metaverse platforms for new experiences"

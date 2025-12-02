@@ -10,7 +10,6 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 # Load custom middleware
-require_relative "../lib/middleware/whitespace_compressor"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
@@ -18,21 +17,6 @@ require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
-    require "worker_killer/middleware"
-
-    # Kill passenger workers that use excess memory.
-    # I don't believe there are memory leaks; this is for stability.
-    passenger_killer = WorkerKiller::Killer::Passenger.new
-
-    middleware.insert_before(
-      Rack::Runtime,
-      WorkerKiller::Middleware::OOMLimiter,
-      killer: passenger_killer,
-      min: 2_000_000_000,
-      max: 2_000_000_000,
-      check_cycle: 1
-    )
-
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
@@ -49,8 +33,20 @@ module LibreverseInstance
     # Silence ALL deprecation warnings (nuclear option)
     config.active_support.deprecation = :silence
 
-    # Use memory store for caching
-    config.cache_store = :memory_store
+    # Use Redis/DragonflyDB for caching (configured via REDIS_URL env var)
+    # Note: TruffleRuby only supports the :ruby driver, not :hiredis
+    redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
+    config.cache_store = :redis_cache_store, {
+      url: redis_url,
+      connect_timeout: 5,
+      read_timeout: 1,
+      write_timeout: 1,
+      reconnect_attempts: 3,
+      error_handler: ->(method:, returning:, exception:) {
+        Rails.logger.error "[Redis Cache] #{exception.class}: #{exception.message} (method: #{method}, returning: #{returning})"
+        Sentry.capture_exception(exception) if defined?(Sentry)
+      }
+    }
 
     # Out-of-band garbage collection middleware to reduce latency spikes
     config.middleware.use OobGcMiddleware
@@ -69,14 +65,10 @@ module LibreverseInstance
       end
     } }
 
-    # Add WhitespaceCompressor middleware to minify HTML before compression
-    config.middleware.use WhitespaceCompressor
-
     # Tell it to load as much stuff ahead of time, given that we can likely afford it on TR in a way that we otherwise wouldn't be able to.
     config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
-    # Position it before WhitespaceCompressor to ensure emojis are replaced before minification
     config.middleware.use EmojiReplacer, {
       exclude_selectors: [
         "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",

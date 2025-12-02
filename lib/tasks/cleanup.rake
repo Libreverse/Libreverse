@@ -4,7 +4,7 @@
 namespace :cleanup do
   desc "Clean up abandoned guest accounts older than 30 days"
   task abandoned_guests: :environment do
-    # Enqueue the job through ActiveJob (which uses Solid Queue)
+    # Enqueue the job through ActiveJob (which uses Sidekiq)
     CleanupAbandonedGuestsJob.perform_later
     puts "Cleanup job has been enqueued"
   end

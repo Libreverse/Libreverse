@@ -37,8 +37,8 @@ module CustomTaggedFormatter
   def call(severity, timestamp, _progname, msg)
     message_string = msg.to_s
 
-    # Silence specific SolidCable DEBUG messages
-    return nil if severity == "DEBUG" && message_string.include?("SolidCable::Message Insert")
+    # Silence noisy Sidekiq heartbeat messages in development
+    return nil if severity == "DEBUG" && message_string.include?("Sidekiq")
 
     message = if defined?(LogFormatting)
       LogFormatting.truncate(message_string)

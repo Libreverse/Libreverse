@@ -75,8 +75,8 @@ Rails.application.configure do
   # Use memory store for caching in test
   config.cache_store = :memory_store
 
-  # Use Delayed Job for Active Job (optional, typically not needed)
-  # config.active_job.queue_adapter = :delayed_job
+  # Use test adapter for jobs (synchronous execution)
+  config.active_job.queue_adapter = :test
 
   # Email configuration for test environment
   config.action_mailer.delivery_method = :test

@@ -40,8 +40,9 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # Store uploaded files in the database using active_storage_db
   config.active_storage.service = :db
 
-  # Use memory store for caching
-  config.cache_store = :memory_store
+  # Cache store inherits from application.rb (Redis/DragonflyDB)
+  # Uncomment below to use memory store for isolated development:
+  # config.cache_store = :memory_store
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -81,8 +82,8 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   config.action_cable.logger = ActiveSupport::Logger.new($stdout)
   config.action_cable.logger.level = Logger::ERROR
 
-  # Use Delayed Job for Active Job
-  config.active_job.queue_adapter = :delayed_job
+  # Use Sidekiq for Active Job
+  config.active_job.queue_adapter = :sidekiq
 
   # Email configuration for development (MailHog)
   config.action_mailer.delivery_method = :smtp

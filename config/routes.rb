@@ -1,14 +1,34 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require "sidekiq/web"
+require "sidekiq/cron/web"
+
+# Constraint to require admin authentication for Sidekiq Web UI
+class SidekiqAdminConstraint
+  def matches?(request)
+    return false unless request.session[:account_id]
+
+    # Use AccountSequel for fast admin check (consistent with mini_profiler.rb)
+    AccountSequel.where(id: request.session[:account_id]).get(:admin) == true
+  rescue StandardError
+    false
+  end
+end
+
 Rails.application.routes.draw do
+  # Sidekiq Web UI (admin only)
+  constraints SidekiqAdminConstraint.new do
+    mount Sidekiq::Web => "/admin/sidekiq"
+  end
+
   # CMS Admin routes (secured with Rodauth)
   comfy_route :cms_admin, path: "/cms-admin"
 
   # Blog CMS routes - mount under /blog only
   comfy_route :cms, path: "/blog"
   post "/graphql", to: "graphql#execute"
-  resources :search_new, only: [ :index ]
+  resources :search_new, only: [:index]
   get "search_new/index"
   get "search" => "search#index"
   post "search" => "search#create"

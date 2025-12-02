@@ -101,11 +101,11 @@ Rails.application.configure do
   # Use default Rails log file location for production
   # config.paths["log"] = "/dev/null"
 
-  # Cache Store Configuration
-  config.cache_store = :memory_store
+  # Cache Store Configuration - inherits from application.rb (Redis/DragonflyDB)
+  # The redis_cache_store is configured centrally in config/application.rb
 
-  # Active Job Queue Adapter Configuration
-  config.active_job.queue_adapter = :delayed_job
+  # Active Job Queue Adapter Configuration - use Sidekiq
+  config.active_job.queue_adapter = :sidekiq
   # config.active_job.queue_name_prefix = "libreverse_instance_production"
 
   # I18n Fallbacks

@@ -71,15 +71,13 @@ if Rails.env.development? || Rails.env.production?
     end
   end
 
-  # Persistent storage in Redis when available, else memory
-  begin
-    require "redis"
-    url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
-    Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
-    Rack::MiniProfiler.config.storage_options = { url: url }
-  rescue LoadError
-    Rack::MiniProfiler.config.storage = Rack::MiniProfiler::MemoryStore
-  end
+  # Persistent storage in Redis/DragonflyDB
+  # Note: TruffleRuby only supports the :ruby driver, not :hiredis
+  redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
+  Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
+  Rack::MiniProfiler.config.storage_options = {
+    url: redis_url
+  }
 
   # Insert middleware early for accurate timings, but avoid double insertion and
   # only do this when running the web server (not for jobs/console/rake).

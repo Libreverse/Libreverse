@@ -178,6 +178,9 @@ GEM
       activerecord (>= 4.2)
       activesupport (>= 4.2)
     crass (1.0.6)
+    cronex (0.15.0)
+      tzinfo
+      unicode (>= 0.4.4.5)
     css_parser (1.21.1)
       addressable
     csv (3.3.5)
@@ -212,6 +215,8 @@ GEM
       rubocop (>= 1)
       smart_properties
     erubi (1.13.1)
+    et-orbi (1.4.0)
+      tzinfo
     execjs (2.10.0)
     faraday (2.14.0)
       faraday-net_http (>= 2.0, < 3.5)
@@ -255,10 +260,10 @@ GEM
     foundation_emails (2.2.1.0)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
+    fugit (1.12.1)
+      et-orbi (~> 1.4)
+      raabro (~> 1.4)
     gemoji (4.1.0)
-    get_process_mem (1.0.0)
-      bigdecimal (>= 2.0)
-      ffi (~> 1.0)
     globalid (1.3.0)
       activesupport (>= 6.1)
     graphql (2.5.14)
@@ -536,6 +541,7 @@ GEM
     pundit (2.5.2)
       activesupport (>= 3.0.0)
     pwned (2.4.1)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.2.4)
     rack-attack (6.8.0)
@@ -779,6 +785,17 @@ GEM
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
       semantic_range (>= 2.3.0)
+    sidekiq (8.0.10)
+      connection_pool (>= 2.5.0)
+      json (>= 2.9.0)
+      logger (>= 1.6.2)
+      rack (>= 3.1.0)
+      redis-client (>= 0.23.2)
+    sidekiq-cron (2.3.1)
+      cronex (>= 0.13.0)
+      fugit (~> 1.8, >= 1.11.1)
+      globalid (>= 1.0.1)
+      sidekiq (>= 6.5.0)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
     smart_properties (1.17.0)
@@ -930,8 +947,6 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    worker_killer (1.2.1.338707)
-      get_process_mem
     xpath (3.2.0)
       nokogiri (~> 1.8)
     y (0.0.2)
@@ -1040,6 +1055,8 @@ DEPENDENCIES
   sentry-ruby
   sequel-activerecord_connection
   shakapacker (= 8.4.0)
+  sidekiq
+  sidekiq-cron
   sitemap_generator
   stimulus-rails
   stimulus_reflex (= 3.5.3)
@@ -1060,7 +1077,6 @@ DEPENDENCIES
   vite_rails
   voight_kampff
   web-console
-  worker_killer
   y
   zip_kit
 
@@ -1114,6 +1130,7 @@ CHECKSUMS
   console1984 (0.2.2) sha256=d6e8960d75667a5f5d7ff27d2549d7e906aa232c1daae6e02521784060fff8f2
   counter_culture (3.11.4) sha256=af64b6e429a2755057a7162826ea68ae354b869506199a6f521d171765c2ca38
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
+  cronex (0.15.0) sha256=21c794e085fad2951c4f2e279f440340a35ba2297e0b738f22f263f69fbe2186
   css_parser (1.21.1) sha256=6cfd3ffc0a97333b39d2b1b49c95397b05e0e3b684d68f77ec471ba4ec2ef7c7
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
   date (3.5.0) sha256=5e74fd6c04b0e65d97ad4f3bb5cb2d8efb37f386cc848f46310b4593ffc46ee5
@@ -1131,6 +1148,7 @@ CHECKSUMS
   erb-formatter (0.7.3) sha256=64d188897b9827a486ba56eb4cd60b4e3ebc8fce0674ee94c9b074d3c836a4d9
   erb_lint (0.9.0) sha256=dfb5e40ad839e8d1f0d56ca85ec9a7ac4c9cd966ec281138282f35b323ca7c31
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
+  et-orbi (1.4.0) sha256=6c7e3c90779821f9e3b324c5e96fda9767f72995d6ae435b96678a4f3e2de8bc
   execjs (2.10.0) sha256=6bcb8be8f0052ff9d370b65d1c080f2406656e150452a0abdb185a133048450d
   faraday (2.14.0) sha256=8699cfe5d97e55268f2596f9a9d5a43736808a943714e3d9a53e6110593941cd
   faraday-follow_redirects (0.4.0) sha256=d3fa1118ab1350e24035a272b4cff64948643bb7182846db89acaf87abadd5d9
@@ -1154,8 +1172,8 @@ CHECKSUMS
   fiddle (1.1.8) sha256=7fa8ee3627271497f3add5503acdbc3f40b32f610fc1cf49634f083ef3f32eee
   foundation_emails (2.2.1.0) sha256=34e67b0a9de9511b5a05e6763ed7a2bacef52cb7a87b11fc937a3a25c4b2a10c
   friendly_id (5.5.1) sha256=e018f2b89bfc143276fee6d378a64792385cd4fddd3d4fce501f59ec19c06207
+  fugit (1.12.1) sha256=5898f478ede9b415f0804e42b8f3fd53f814bd85eebffceebdbc34e1107aaf68
   gemoji (4.1.0) sha256=734434020cbe964ea9d19086798797a47d23a170892de0ce55b74aa65d2ddc1a
-  get_process_mem (1.0.0) sha256=d54024f3bcbf776a4d6e0155ec2b21bc3ba44e2fd158c4c00c80aa8a36e0b4aa
   globalid (1.3.0) sha256=05c639ad6eb4594522a0b07983022f04aa7254626ab69445a0e493aa3786ff11
   google_robotstxt_parser (0.0.6)
   graphql (2.5.14) sha256=c52612e17477517c369411abca26ddb593994e03a64cad5788bbd498baddea63
@@ -1275,6 +1293,7 @@ CHECKSUMS
   public_suffix (6.0.2) sha256=bfa7cd5108066f8c9602e0d6d4114999a5df5839a63149d3e8b0f9c1d3558394
   pundit (2.5.2) sha256=e374152baa24f90b630428293faf4b4c5468fc3cc010165f7d8fcb44ce108bbd
   pwned (2.4.1) sha256=e375b45e1cd78aded2c923737f75e09e64bc66582142c144bd85f4ce1fa0955d
+  raabro (1.4.0) sha256=d4fa9ff5172391edb92b242eed8be802d1934b1464061ae5e70d80962c5da882
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
   rack (3.2.4) sha256=5d74b6f75082a643f43c1e76b419c40f0e5527fcfee1e669ac1e6b73c0ccb6f6
   rack-attack (6.8.0) sha256=f2499fdebf85bcc05573a22dff57d24305ac14ec2e4156cd3c28d47cafeeecf2
@@ -1359,6 +1378,8 @@ CHECKSUMS
   sequel-activerecord_connection (2.0.1) sha256=8a13dc466520788459af18bb267f5e57d37b8764daaa3f6e8bc2932ce2642e15
   sexp_processor (4.17.4) sha256=af0d2a40124b00f7bc1315d220471990403bd4cf9138f289417ae4e54e6e1ad0
   shakapacker (8.4.0) sha256=df234ed4a9173407adc288df0d7f156c485ada9214b23d8f0e2c734f11c1aca8
+  sidekiq (8.0.10) sha256=37ccd8da8d46f6779b8655cb30c1bfcb0decd57e890ff56d8b8252a5d9a84cd6
+  sidekiq-cron (2.3.1) sha256=96ab3da372289a30dc744c1daa2ae2e85960b2444a6f6ed68df1ff7882c44aac
   sitemap_generator (6.3.0) sha256=1d803cbf03c44736bea05b9e3363d3523fec4e24f3abedad294d9c57cab994f3
   smart_properties (1.17.0) sha256=f9323f8122e932341756ddec8e0ac9ec6e238408a7661508be99439ca6d6384b
   sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
@@ -1414,7 +1435,6 @@ CHECKSUMS
   websocket (1.2.11) sha256=b7e7a74e2410b5e85c25858b26b3322f29161e300935f70a0e0d3c35e0462737
   websocket-driver (0.8.0) sha256=ed0dba4b943c22f17f9a734817e808bc84cdce6a7e22045f5315aa57676d4962
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
-  worker_killer (1.2.1.338707) sha256=1c74fb66dd9eadab188caf27a769c0f4533d15d0325f219d9f4bdbd8cd56c24e
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
   y (0.0.2) sha256=5a3b19297b07161ac86968eb9e3a5c9dee3b47f97902e92da42427dbeb61ac0c
   zeitwerk (2.7.3) sha256=b2e86b4a9b57d26ba68a15230dcc7fe6f040f06831ce64417b0621ad96ba3e85

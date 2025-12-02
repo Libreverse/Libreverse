@@ -106,6 +106,12 @@ gem "worker_killer"
 gem "y"
 gem "zip_kit"
 
+# Redis/Sidekiq for caching, ActionCable, and background jobs
+# Note: hiredis-client not used as TruffleRuby only supports :ruby driver
+gem "redis"
+gem "sidekiq"
+gem "sidekiq-cron"
+
 group :development, :test do
   gem "active_record_doctor"
   gem "listen"
@@ -118,7 +124,6 @@ group :development do
   gem "fasterer"
   gem "haml-lint"
   gem "i18n-tasks"
-  gem "redis"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rails"

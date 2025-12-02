@@ -7,8 +7,18 @@ require "re2"
 
 return if Rails.env.development?
 
-# Set Rack::Attack cache store outside the class definition
-Rack::Attack.cache.store = Rails.cache
+# Set Rack::Attack cache store to use Redis/DragonflyDB directly
+# This provides distributed rate limiting across multiple server instances
+# Note: TruffleRuby only supports the :ruby driver, not :hiredis
+redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
+Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
+  url: redis_url,
+  namespace: "rack_attack",
+  expires_in: 1.hour,
+  connect_timeout: 5,
+  read_timeout: 1,
+  write_timeout: 1
+)
 
 # Rack::Attack Rate Limiting Configuration
 module Rack

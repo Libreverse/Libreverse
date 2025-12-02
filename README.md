@@ -16,6 +16,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 - **Media attachments** – Active Storage with rigorous validations, encrypted blobs at rest, and one‑click ZIP export of your entire account.
 - **API functionality** – Full-featured GraphQL API, XML-RPC endpoints, JSON API, and integrated gRPC server with HTTP bridge.
 - **Zero‑Redis architecture** – Solid Cable and Solid Queue keep ActionCable and background jobs inside SQLite.
+- **DragonflyDB-powered infrastructure** – Redis-compatible in-memory database powers Rails cache, ActionCable pub/sub, Sidekiq job queues, and rate limiting.
 - **Security‑centric design** – CSP, Rack::Attack rate limiting, Brotli compression, and an evolving [security roadmap](todo.md).
 - **Collaborative Realtime** – WebSocket + Yjs CRDT layer providing durable shared state and ephemeral movement/presence without WebRTC complexity.
 

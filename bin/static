@@ -112,9 +112,6 @@ if ($prettier_exit_code != 0) {
 }
 push @sequential_status, $prettier_status;
 
-# Run scripts/remove_frozen.pl before Rubocop
-run_command("Remove Frozen", "perl", "scripts/remove_frozen.pl");
-
 # Run other sequential commands with RUBYOPT for Ruby commands
 run_command("Rubocop", "sh", "-c",
   "RUBYOPT='$rubyopt' bin/rubocop -A");

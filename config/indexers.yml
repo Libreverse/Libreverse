@@ -57,12 +57,13 @@ global:
     retry_delay: 5 # seconds between retries
     log_level: "info" # debug, info, warn, error
     enable_caching: true
-    cache_backend: "memory" # memory, redis (if available)
+    cache_backend: "redis" # Uses DragonflyDB via Rails.cache
 
 # Environment-specific overrides
 development:
     global:
         log_level: "debug"
+        cache_backend: "redis" # Use Redis in development too
     indexers:
         decentraland:
             max_items: 10 # Limit items in development
