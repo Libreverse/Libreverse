@@ -11,6 +11,7 @@ module.exports = ({
     const mainWindow = new BrowserWindow({
         width,
         height,
+        backgroundColor: "#0e0e0e",
         frame: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),

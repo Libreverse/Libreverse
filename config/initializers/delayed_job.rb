@@ -17,11 +17,11 @@ Rails.application.config.after_initialize do
   # ----- Recurring Jobs -----
   # Cleanup abandoned guests daily at 3:00am
   begin
-    Delayed::Job.where(name: 'cleanup_abandoned_guests').destroy_all
+    Delayed::Job.where(name: "cleanup_abandoned_guests").destroy_all
     Delayed::Job.create!(
-      name: 'cleanup_abandoned_guests',
-      klass: 'CleanupAbandonedGuestsJob',
-      cron: '0 3 * * *'
+      name: "cleanup_abandoned_guests",
+      klass: "CleanupAbandonedGuestsJob",
+      cron: "0 3 * * *"
     )
   rescue ActiveModel::UnknownAttributeError
     # Skip if klass attribute not available
@@ -31,9 +31,9 @@ Rails.application.config.after_initialize do
   begin
     # Delayed::Job.where(name: 'retention_tasks').destroy_all
     Delayed::Job.create!(
-      name: 'retention_tasks',
-      klass: 'RetentionTasksJob',
-      cron: '0 3 * * *'
+      name: "retention_tasks",
+      klass: "RetentionTasksJob",
+      cron: "0 3 * * *"
     )
   rescue ActiveModel::UnknownAttributeError
     # Skip if klass attribute not available
@@ -41,13 +41,13 @@ Rails.application.config.after_initialize do
 
   # Metaverse indexing every 12 hours
   begin
-    Delayed::Job.where(name: 'metaverse_indexing').destroy_all
+    Delayed::Job.where(name: "metaverse_indexing").destroy_all
     Delayed::Job.create!(
-      name: 'metaverse_indexing',
+      name: "metaverse_indexing",
       method_name: :perform_later,
-      klass: 'ScheduledIndexingJob',
-      run_at: Time.now,
-      cron: '0 */12 * * *'
+      klass: "ScheduledIndexingJob",
+      run_at: Time.zone.now,
+      cron: "0 */12 * * *"
     )
   rescue ActiveModel::UnknownAttributeError
     # Skip if klass attribute not available

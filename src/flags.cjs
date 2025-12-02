@@ -96,5 +96,6 @@ module.exports = [
     ["skia-resource-cache-limit-mb", "64"],
     ["user-agent", "LibreverseDesktopApp/1.0"],
     "video-capture-use-gpu-memory-buffer",
-    ['js-flags', '--optimize-for-size'],
+    ["js-flags", "--optimize-for-size"],
+    ["force-dark-mode", "true"],
 ];

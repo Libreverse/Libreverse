@@ -34,7 +34,7 @@ module RuboCop
         COMMENT = "# shareable_constant_value: literal\n"
 
         def on_new_investigation
-          return if processed_source.lines.empty?  # Skip empty files
+          return if processed_source.lines.empty? # Skip empty files
           return if shareable_constant_value_comment_present?
 
           add_offense(insertion_range, message: MSG) do |corrector|

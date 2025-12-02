@@ -16,14 +16,6 @@ else
     podman run -d -p 4000:4000 --name libreverse-dev-tidb --replace --restart=always pingcap/tidb:latest > /dev/null 2>&1
 fi
 
-# Start PostgreSQL if not already running
-if container_running "libreverse-dev-postgres"; then
-    echo "PostgreSQL is already running"
-else
-    echo "Starting PostgreSQL..."
-    podman run -d -p 5432:5432 --name libreverse-dev-postgres --replace --restart=always -e POSTGRES_PASSWORD=password -e POSTGRES_DB=libreverse_cache_development postgres:15-alpine > /dev/null 2>&1
-fi
-
 # Start DragonflyDB if not already running
 if container_running "libreverse-dev-dragonflydb"; then
     echo "DragonflyDB is already running"
@@ -37,12 +29,6 @@ echo "Databases started. Waiting for them to be ready..."
 # Wait for TiDB
 echo "Waiting for TiDB..."
 while ! mysql -h 127.0.0.1 -P 4000 -u root -e "SELECT 1;" >/dev/null 2>&1; do
-  sleep 1
-done
-
-# Wait for PostgreSQL
-echo "Waiting for PostgreSQL..."
-while ! PGPASSWORD=password psql -h 127.0.0.1 -p 5432 -U postgres -d libreverse_cache_development -c "SELECT 1;" >/dev/null 2>&1; do
   sleep 1
 done
 

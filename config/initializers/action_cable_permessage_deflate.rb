@@ -10,10 +10,10 @@ module ActionCable
       alias original_initialize initialize
 
       def initialize(env, event_target, event_loop, protocols)
-        # Force maximum compression regardless of cores
+        # Force fast compression settings
         enable_deflate = true
-        deflate_level = Zlib::BEST_COMPRESSION
-        deflate_mem_level = Zlib::MAX_MEM_LEVEL
+        deflate_level = Zlib::BEST_SPEED
+        deflate_mem_level = 1
         deflate_strategy = Zlib::DEFAULT_STRATEGY
         deflate_max_window_bits = 15
         deflate_request_max_window_bits = 15
@@ -30,7 +30,7 @@ module ActionCable
             request_max_window_bits: deflate_request_max_window_bits
           )
           @driver.add_extension(deflate)
-          Rails.logger.info "ActionCable permessage deflate configured (forced maximum): level=#{deflate_level}, mem_level=#{deflate_mem_level}, max_window_bits=#{deflate_max_window_bits}"
+          Rails.logger.info "ActionCable permessage deflate configured (forced fast): level=#{deflate_level}, mem_level=#{deflate_mem_level}, max_window_bits=#{deflate_max_window_bits}"
         end
       rescue StandardError => e
         Rails.logger.error "Error in ClientSocket initialization: #{e.message}"

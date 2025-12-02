@@ -13,7 +13,7 @@ class WhitespaceCompressor
     remove_multi_spaces: true,
     remove_comments: true,
     remove_intertag_spaces: false,
-    remove_quotes: true,
+    remove_quotes: false, # Disabled for speed and compatibility
     compress_css: false,
     compress_javascript: false,
     simple_doctype: true,
@@ -21,7 +21,7 @@ class WhitespaceCompressor
     remove_style_attributes: false,
     remove_link_attributes: false,
     remove_form_attributes: false,
-    remove_input_attributes: true,
+    remove_input_attributes: false, # Disabled for speed
     remove_javascript_protocol: false,
     remove_http_protocol: false,
     remove_https_protocol: false,
@@ -31,8 +31,8 @@ class WhitespaceCompressor
   }.freeze
 
   SRC_DOC_COMPRESSOR_CONFIG = COMPRESSOR_CONFIG.merge(
-    compress_css: true,
-    compress_javascript: true
+    compress_css: false, # Disabled for speed
+    compress_javascript: false # Disabled for speed
   ).freeze
 
   def initialize(app)
@@ -44,19 +44,19 @@ class WhitespaceCompressor
 
   def call(env)
     status, headers, body = @app.call(env)
-    return [status, headers, body] unless html_response?(headers)
+    return [ status, headers, body ] unless html_response?(headers)
 
     log_debug("WhitespaceCompressor: Processing HTML response")
 
     html = assemble_html(body)
-    return [status, headers, body] if html.empty?
+    return [ status, headers, body ] if html.empty?
 
     html = process_html_with_cache(html)
 
     log_debug("WhitespaceCompressor: Minified HTML length: #{html.length}")
 
     update_headers(headers, html)
-    [status, headers, [html]]
+    [ status, headers, [ html ] ]
   end
 
   private
@@ -85,27 +85,9 @@ class WhitespaceCompressor
   end
 
   def process_html(html)
-    processed = minify_jsonld_scripts_with_nokogiri(html)
-    processed = minify_srcdoc_iframes_with_nokogiri(processed)
-    HtmlCompressor::Compressor.new(COMPRESSOR_CONFIG).compress(processed)
-  end
-
-  def update_headers(headers, html)
-    headers["Content-Length"] = html.bytesize.to_s
-    headers.delete("Content-Encoding")
-  end
-
-  def log_debug(message)
-    Rails.logger.debug(message) if defined?(Rails)
-  end
-
-  def log_warn(message)
-    Rails.logger.warn(message) if defined?(Rails)
-  end
-
-  # Minify JSON-LD scripts by parsing and re-serializing JSON content (no regex lookaheads/backrefs)
-  def minify_jsonld_scripts_with_nokogiri(html)
     doc = Nokogiri::HTML4.parse(html)
+
+    # Minify JSON-LD scripts
     doc.css("script").each do |node|
       type = node["type"]
       next unless type && type.to_s.downcase.strip == "application/ld+json"
@@ -122,15 +104,8 @@ class WhitespaceCompressor
         # ignore invalid JSON
       end
     end
-    doc.to_html
-  rescue StandardError => e
-    log_warn("WhitespaceCompressor: Failed JSON-LD minify: #{e.class}: #{e.message}")
-    html
-  end
 
-  # Minify inline HTML in iframe[srcdoc] attributes using Nokogiri
-  def minify_srcdoc_iframes_with_nokogiri(html)
-    doc = Nokogiri::HTML4.parse(html)
+    # Minify inline HTML in iframe[srcdoc] attributes
     doc.css("iframe[srcdoc]").each do |node|
       content = node["srcdoc"].to_s
       next if content.strip.empty?
@@ -143,9 +118,24 @@ class WhitespaceCompressor
         log_warn("WhitespaceCompressor: Failed to minify srcdoc: #{e.message}")
       end
     end
-    doc.to_html
+
+    processed_html = doc.to_html
+    HtmlCompressor::Compressor.new(COMPRESSOR_CONFIG).compress(processed_html)
   rescue StandardError => e
-    log_warn("WhitespaceCompressor: Failed srcdoc pass: #{e.class}: #{e.message}")
-    html
+    log_warn("WhitespaceCompressor: Failed processing: #{e.class}: #{e.message}")
+    HtmlCompressor::Compressor.new(COMPRESSOR_CONFIG).compress(html)
+  end
+
+  def update_headers(headers, html)
+    headers["Content-Length"] = html.bytesize.to_s
+    headers.delete("Content-Encoding")
+  end
+
+  def log_debug(message)
+    Rails.logger.debug(message) if defined?(Rails)
+  end
+
+  def log_warn(message)
+    Rails.logger.warn(message) if defined?(Rails)
   end
 end

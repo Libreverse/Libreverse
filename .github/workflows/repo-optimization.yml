@@ -1,120 +1,120 @@
 name: Repo Optimization
 
 on:
-  schedule:
-    - cron: '0 2 1 * *'  # Monthly on 1st at 2 AM UTC—safe, low-traffic time
-  workflow_dispatch:  # Still allows manual runs
-    inputs:
-      bfg_size_threshold:
-        description: 'BFG: Strip blobs larger than (e.g., 50M)—in MiB for check'
-        required: false
-        default: '50'
-      bfg_target_files:
-        description: 'BFG: Optional files to delete (e.g., *.log)'
-        required: false
-        default: ''
+    schedule:
+        - cron: "0 2 1 * *" # Monthly on 1st at 2 AM UTC—safe, low-traffic time
+    workflow_dispatch: # Still allows manual runs
+        inputs:
+            bfg_size_threshold:
+                description: "BFG: Strip blobs larger than (e.g., 50M)—in MiB for check"
+                required: false
+                default: "50"
+            bfg_target_files:
+                description: "BFG: Optional files to delete (e.g., *.log)"
+                required: false
+                default: ""
 
 jobs:
-  optimize:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write  # Required for backup and pushes
+    optimize:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # Required for backup and pushes
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history required for checks/BFG
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0 # Full history required for checks/BFG
 
-      - name: Setup Git LFS (for existing LFS repos)
-        run: |
-          git lfs install --force
-          echo "LFS initialized. Pointers will be preserved."
-          git lfs ls-files --all | head -10  # Sample of tracked files
+            - name: Setup Git LFS (for existing LFS repos)
+              run: |
+                  git lfs install --force
+                  echo "LFS initialized. Pointers will be preserved."
+                  git lfs ls-files --all | head -10  # Sample of tracked files
 
-      - name: Log initial repo stats
-        run: |
-          echo "=== Initial Repo Stats ==="
-          git count-objects -vH
-          du -sh .git
+            - name: Log initial repo stats
+              run: |
+                  echo "=== Initial Repo Stats ==="
+                  git count-objects -vH
+                  du -sh .git
 
-      - name: Update rolling backup branch (ALWAYS first for safety)
-        run: |
-          BACKUP_BRANCH="backup-main"
-          echo "Updating rolling backup: ${BACKUP_BRANCH}"
-          if ! git checkout main; then
-            echo "ERROR: Failed to checkout main branch"
-            exit 1
-          fi
-          git push origin main:${BACKUP_BRANCH} --force-with-lease
-          echo "Backup ready: https://github.com/${{ github.repository }}/tree/${BACKUP_BRANCH}"
-          echo "Revert tip: git fetch origin backup-main:main --force"
+            - name: Update rolling backup branch (ALWAYS first for safety)
+              run: |
+                  BACKUP_BRANCH="backup-main"
+                  echo "Updating rolling backup: ${BACKUP_BRANCH}"
+                  if ! git checkout main; then
+                    echo "ERROR: Failed to checkout main branch"
+                    exit 1
+                  fi
+                  git push origin main:${BACKUP_BRANCH} --force-with-lease
+                  echo "Backup ready: https://github.com/${{ github.repository }}/tree/${BACKUP_BRANCH}"
+                  echo "Revert tip: git fetch origin backup-main:main --force"
 
-      - name: Check for large blobs (informational)
-        run: |
-          THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
-          THRESHOLD_BYTES=$((THRESHOLD_MIB * 1024 * 1024))
-          set -o pipefail  # Exit on any pipe component failure
-          LARGEST_BLOB=$(git rev-list --objects --all | \
-            git cat-file --batch-check='%(objecttype) %(objectsize)' | \
-            awk '/^blob/ {print $2}' | \
-            sort -n | tail -1 || echo 0)
-          LARGEST_BLOB="${LARGEST_BLOB:-0}"  # Default to 0 if empty (no blobs found)
-          
-          echo "Largest blob: ${LARGEST_BLOB} bytes (${THRESHOLD_MIB}MiB threshold)"
-          echo "BFG will run regardless of blob size."
+            - name: Check for large blobs (informational)
+              run: |
+                  THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
+                  THRESHOLD_BYTES=$((THRESHOLD_MIB * 1024 * 1024))
+                  set -o pipefail  # Exit on any pipe component failure
+                  LARGEST_BLOB=$(git rev-list --objects --all | \
+                    git cat-file --batch-check='%(objecttype) %(objectsize)' | \
+                    awk '/^blob/ {print $2}' | \
+                    sort -n | tail -1 || echo 0)
+                  LARGEST_BLOB="${LARGEST_BLOB:-0}"  # Default to 0 if empty (no blobs found)
 
-      - name: Download BFG Repo-Cleaner
-        run: |
-          curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar -o bfg.jar
-          curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar.sha1 -o bfg.jar.sha1
-          DOWNLOADED_SHA=$(sha1sum bfg.jar | awk '{print $1}')
-          EXPECTED_SHA=$(cat bfg.jar.sha1)
-          if [ "$DOWNLOADED_SHA" != "$EXPECTED_SHA" ]; then
-            echo "SHA-1 mismatch! Downloaded: $DOWNLOADED_SHA, Expected: $EXPECTED_SHA"
-            exit 1
-          fi
-          echo "BFG downloaded and verified."
+                  echo "Largest blob: ${LARGEST_BLOB} bytes (${THRESHOLD_MIB}MiB threshold)"
+                  echo "BFG will run regardless of blob size."
 
-      - name: Run BFG Repo-Cleaner
-        run: |
-          SIZE_THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
-          SIZE_THRESHOLD="${SIZE_THRESHOLD_MIB}M"
-          TARGET_FILES="${{ github.event.inputs.bfg_target_files }}"
-          echo "Running BFG: Strip > ${SIZE_THRESHOLD} (backup in place)"
-          if [ -n "$TARGET_FILES" ]; then
-            java -jar bfg.jar --delete-files "$TARGET_FILES" . || { echo "ERROR: BFG delete-files failed"; exit 1; }
-          fi
-          java -jar bfg.jar --strip-blobs-bigger-than $SIZE_THRESHOLD .
-          echo "BFG done—history rewritten."
+            - name: Download BFG Repo-Cleaner
+              run: |
+                  curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar -o bfg.jar
+                  curl -s https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar.sha1 -o bfg.jar.sha1
+                  DOWNLOADED_SHA=$(sha1sum bfg.jar | awk '{print $1}')
+                  EXPECTED_SHA=$(cat bfg.jar.sha1)
+                  if [ "$DOWNLOADED_SHA" != "$EXPECTED_SHA" ]; then
+                    echo "SHA-1 mismatch! Downloaded: $DOWNLOADED_SHA, Expected: $EXPECTED_SHA"
+                    exit 1
+                  fi
+                  echo "BFG downloaded and verified."
 
-      - name: Clean up after BFG
-        run: |
-          git reflog expire --expire=now --all
-          git gc --prune=now --aggressive
-          echo "Cleanup run."
+            - name: Run BFG Repo-Cleaner
+              run: |
+                  SIZE_THRESHOLD_MIB="${{ github.event.inputs.bfg_size_threshold || 50 }}"
+                  SIZE_THRESHOLD="${SIZE_THRESHOLD_MIB}M"
+                  TARGET_FILES="${{ github.event.inputs.bfg_target_files }}"
+                  echo "Running BFG: Strip > ${SIZE_THRESHOLD} (backup in place)"
+                  if [ -n "$TARGET_FILES" ]; then
+                    java -jar bfg.jar --delete-files "$TARGET_FILES" . || { echo "ERROR: BFG delete-files failed"; exit 1; }
+                  fi
+                  java -jar bfg.jar --strip-blobs-bigger-than $SIZE_THRESHOLD .
+                  echo "BFG done—history rewritten."
 
-      - name: Prune LFS objects (safe operation)
-        run: |
-          echo "Pruning LFS objects..."
-          git lfs prune
+            - name: Clean up after BFG
+              run: |
+                  git reflog expire --expire=now --all
+                  git gc --prune=now --aggressive
+                  echo "Cleanup run."
 
-      - name: Configure and run Git maintenance (always safe)
-        run: |
-          git config maintenance.repack.enabled true
-          git config maintenance.gc.enabled true
-          git config maintenance.commit-graph.enabled true
-          git maintenance run --auto --task=gc --task=repack --task=commit-graph
-          echo "Maintenance complete."
+            - name: Prune LFS objects (safe operation)
+              run: |
+                  echo "Pruning LFS objects..."
+                  git lfs prune
 
-      - name: Log final repo stats
-        run: |
-          echo "=== Final Repo Stats ==="
-          git count-objects -vH
-          du -sh .git
-          echo "Optimization done! Changes pushed below if any."
+            - name: Configure and run Git maintenance (always safe)
+              run: |
+                  git config maintenance.repack.enabled true
+                  git config maintenance.gc.enabled true
+                  git config maintenance.commit-graph.enabled true
+                  git maintenance run --auto --task=gc --task=repack --task=commit-graph
+                  echo "Maintenance complete."
 
-      - name: Push optimized main (safe force-with-lease; BFG always rewrites history)
-        run: |
-          echo "Pushing changes (BFG always rewrites history)."
-          git push origin main --force-with-lease
+            - name: Log final repo stats
+              run: |
+                  echo "=== Final Repo Stats ==="
+                  git count-objects -vH
+                  du -sh .git
+                  echo "Optimization done! Changes pushed below if any."
+
+            - name: Push optimized main (safe force-with-lease; BFG always rewrites history)
+              run: |
+                  echo "Pushing changes (BFG always rewrites history)."
+                  git push origin main --force-with-lease

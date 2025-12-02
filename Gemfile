@@ -2,7 +2,11 @@
 # shareable_constant_value: literal
 
 # Make the gem thing SHUT UP
-Gem::Specification.instance_variable_set(:@all, nil) rescue nil
+begin
+  Gem::Specification.instance_variable_set(:@all, nil)
+rescue StandardError
+  nil
+end
 
 source "https://rubygems.org"
 
@@ -80,8 +84,6 @@ gem "sentry-ruby"
 gem "sequel-activerecord_connection"
 gem "shakapacker", "8.4.0"
 gem "sitemap_generator"
-gem "solid_cable"
-gem "solid_cache", ">= 1.0.8"
 gem "stimulus-rails"
 gem "stimulus_reflex", "3.5.3"
 gem "sys-filesystem"

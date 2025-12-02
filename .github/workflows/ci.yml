@@ -2,8 +2,8 @@ name: CI/CD Pipeline
 
 # Cancel in-progress runs for the same branch/PR to save CI time
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 # Restrict workflow permissions for security
 permissions:
@@ -110,8 +110,6 @@ jobs:
               shell: bash
               run: bun stylelint '**/*.scss' --fix
 
-
-
             - name: Run markdownlint
               if: matrix.tool == 'markdownlint'
               shell: bash
@@ -143,7 +141,15 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                tool: [i18n-validation, erb-lint, hadolint, active-record-doctor, ruumba, zeitwerk-check]
+                tool:
+                    [
+                        i18n-validation,
+                        erb-lint,
+                        hadolint,
+                        active-record-doctor,
+                        ruumba,
+                        zeitwerk-check,
+                    ]
 
         steps:
             - name: Check out code

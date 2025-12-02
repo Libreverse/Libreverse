@@ -4,7 +4,6 @@
 
 - [Home](README.md)
 
-
 <!-- Documentation pages -->
 
 - [Attributionnotes](attributionnotes.md)

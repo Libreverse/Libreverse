@@ -14,4 +14,8 @@ adapter = :trilogy
 Sequel.connect(adapter: adapter, test: false, extensions: :activerecord_connection)
 
 # Disable SQL logging for Sequel
-Sequel::DATABASES.first.loggers = []
+require "logger"
+Sequel::DATABASES.first.logger = Logger.new("/dev/null")
+
+# Silence Sequel SQL logs in ActiveRecord
+ActiveSupport::Notifications.unsubscribe("sql.active_record")

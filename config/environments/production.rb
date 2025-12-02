@@ -101,8 +101,8 @@ Rails.application.configure do
   # Use default Rails log file location for production
   # config.paths["log"] = "/dev/null"
 
-  # Cache Store Configuration (coder provided by initializer)
-  config.cache_store = :solid_cache_store
+  # Cache Store Configuration
+  config.cache_store = :memory_store
 
   # Active Job Queue Adapter Configuration
   config.active_job.queue_adapter = :delayed_job

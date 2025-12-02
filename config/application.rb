@@ -46,6 +46,29 @@ module LibreverseInstance
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
+    # Silence ALL deprecation warnings (nuclear option)
+    config.active_support.deprecation = :silence
+
+    # Use memory store for caching
+    config.cache_store = :memory_store
+
+    # Out-of-band garbage collection middleware to reduce latency spikes
+    config.middleware.use OobGcMiddleware
+
+    # Add Rack::Brotli for compression of responses larger than 30KB
+    config.middleware.use Rack::Brotli, { quality: 2, if: lambda { |_env, _status, headers, body|
+      # Check content-length if present
+      if headers[Rack::CONTENT_LENGTH] && headers[Rack::CONTENT_LENGTH].to_i > 30_720
+        true
+      elsif body.is_a?(Array)
+        # Calculate body size for array bodies
+        body.sum(&:bytesize) > 30_720
+      else
+        # For streams or other bodies, don't compress to avoid consuming
+        false
+      end
+    } }
+
     # Add WhitespaceCompressor middleware to minify HTML before compression
     config.middleware.use WhitespaceCompressor
 
@@ -60,9 +83,6 @@ module LibreverseInstance
         ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
       ]
     }
-
-    # Out-of-band garbage collection middleware to reduce latency spikes
-    config.middleware.use OobGcMiddleware
 
     # Add this to make prod healthcheck pass correctly
     config.hosts << "localhost:3000"

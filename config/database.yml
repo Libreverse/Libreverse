@@ -38,19 +38,6 @@ development:
         port: 4000
         ssl_mode: DISABLED
         migrations_paths: db/queue_migrate
-    cache:
-        adapter: postgresql
-        encoding: utf8
-        database: libreverse_cache_development
-        username: postgres
-        password: password
-        host: localhost
-        port: 5432
-        pool: <%= pool_size %>
-        migrations_paths: db/cache_migrate
-        variables:
-            # Optimize for SSD storage (default was for HDDs)
-            random_page_cost: 1.1
 
 test:
     primary:
@@ -77,19 +64,7 @@ test:
         ssl_mode: <%= ENV.fetch("TIDB_TEST_SSL_MODE", ENV.fetch("TIDB_SSL_MODE", "DISABLED")) %>
         sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
         migrations_paths: db/queue_migrate
-    cache:
-        adapter: postgresql
-        encoding: utf8
-        database: libreverse_cache_test
-        username: postgres
-        password: password
-        host: localhost
-        port: 5432
-        pool: <%= pool_size %>
-        migrations_paths: db/cache_migrate
-        variables:
-            # Optimize for SSD storage (default was for HDDs)
-            random_page_cost: 1.1
+    
 
 production:
     primary:
@@ -111,16 +86,4 @@ production:
         ssl_mode: VERIFY_IDENTITY
         sslca: /etc/ssl/certs/ca-certificates.crt
         migrations_paths: db/queue_migrate
-    cache:
-        adapter: postgresql
-        encoding: utf8
-        database: libreverse_cache_production
-        username: <%= ENV["POSTGRESQL_USERNAME"] || "" %>
-        password: <%= ENV["POSTGRESQL_PASSWORD"] || "" %>
-        host: <%= ENV["POSTGRESQL_HOST"] || "localhost" %>
-        port: <%= ENV["POSTGRESQL_PORT"] || 5432 %>
-        pool: <%= pool_size %>
-        migrations_paths: db/cache_migrate
-        variables:
-            # Optimize for SSD storage (default was for HDDs)
-            random_page_cost: 1.1
+    

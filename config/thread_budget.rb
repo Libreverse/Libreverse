@@ -50,7 +50,7 @@ module ThreadBudget
         end
 
         # Returns allocated threads for a given component key (:app, :sqlite, :sq)
-        def allocated_threads(component)
+        def allocated_threads(_component)
                 1
         end
 

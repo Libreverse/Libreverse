@@ -191,107 +191,110 @@ app.whenReady().then(async () => {
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
-const LISTS = [
-    "https://ublockorigin.github.io/uAssetsCDN/filters/filters.min.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/filters/badware.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/filters/privacy.min.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/filters/quick-fixes.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/filters/unbreak.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/2.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/11.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easyprivacy.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/14.txt",
-    "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-cookies.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/3.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-social.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/15.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-annoyances.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/17.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/18.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/19.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/20.txt",
-    "https://ublockorigin.github.io/uAssetsCDN/filters/annoyances.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Dandelion%20Sprout's%20Website%20Stretcher.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/EmptyPaddingRemover.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcher4K.txt",
-    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcherVertical.txt",
-    "https://raw.githubusercontent.com/iam-py-test/my_filters_001/main/duckduckgo_extra_clean.txt",
-    "https://raw.githubusercontent.com/iam-py-test/my_filters_001/refs/heads/main/special_lists/anti-malware-ubo-extension.txt",
-    "https://raw.githubusercontent.com/yokoffing/filterlists/main/click2load.txt",
-    "https://raw.githubusercontent.com/yokoffing/filterlists/main/privacy_essentials.txt",
-    "https://filters.adtidy.org/extension/ublock/filters/3.txt",
-];
+    const LISTS = [
+        "https://ublockorigin.github.io/uAssetsCDN/filters/filters.min.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/filters/badware.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/filters/privacy.min.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/filters/quick-fixes.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/filters/unbreak.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/2.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/11.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easyprivacy.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/14.txt",
+        "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-cookies.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/3.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-social.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/15.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-annoyances.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/17.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/18.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/19.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/20.txt",
+        "https://ublockorigin.github.io/uAssetsCDN/filters/annoyances.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Dandelion%20Sprout's%20Website%20Stretcher.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/EmptyPaddingRemover.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcher4K.txt",
+        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcherVertical.txt",
+        "https://raw.githubusercontent.com/iam-py-test/my_filters_001/main/duckduckgo_extra_clean.txt",
+        "https://raw.githubusercontent.com/iam-py-test/my_filters_001/refs/heads/main/special_lists/anti-malware-ubo-extension.txt",
+        "https://raw.githubusercontent.com/yokoffing/filterlists/main/click2load.txt",
+        "https://raw.githubusercontent.com/yokoffing/filterlists/main/privacy_essentials.txt",
+        "https://filters.adtidy.org/extension/ublock/filters/3.txt",
+    ];
 
-let engine;
+    let engine;
 
-// Load or create engine
-async function loadEngine() {
-    const CACHE_DIR = path.join(app.getPath("userData"), "adblock-cache");
-    const ENGINE_PATH = path.join(CACHE_DIR, "engine.bin");
+    // Load or create engine
+    async function loadEngine() {
+        const CACHE_DIR = path.join(app.getPath("userData"), "adblock-cache");
+        const ENGINE_PATH = path.join(CACHE_DIR, "engine.bin");
 
-    // Ensure cache dir
-    try {
-        await fs.mkdir(CACHE_DIR, { recursive: true });
-    } catch {
-        // ignore if exists
-    }
-
-    if (await fs.stat(ENGINE_PATH).catch(() => false)) {
+        // Ensure cache dir
         try {
-            const serialized = await fs.readFile(ENGINE_PATH);
-            engine = FiltersEngine.deserialize(serialized);
-            console.log("Adblock engine loaded from cache");
-            return;
+            await fs.mkdir(CACHE_DIR, { recursive: true });
         } catch {
-            console.warn("Failed to load cached engine, rebuilding...");
-        }
-    }
-
-    console.log("Downloading and building adblock engine...");
-    const rawLists = await Promise.all(
-        LISTS.map(url => fetch(url).then(r => r.text()))
-    );
-
-    engine = FiltersEngine.parse(rawLists.join("\n"), {
-        enableOptimizations: true,
-        loadCosmeticFilters: true,
-        loadNetworkFilters: true,
-    });
-
-    // Save for next launch
-    await fs.writeFile(ENGINE_PATH, engine.serialize());
-    console.log("Adblock engine built and cached");
-}
-
-function blockWithEngine(sess = session.defaultSession) {
-    sess.webRequest.onBeforeRequest({ urls: ["<all_urls>"] }, (details, callback) => {
-        if (!engine) {
-            callback({});
-            return;
+            // ignore if exists
         }
 
-        const request = Request.fromRawDetails({
-            type: details.resourceType || "other",
-            url: details.url,
-            sourceUrl: details.url,
+        if (await fs.stat(ENGINE_PATH).catch(() => false)) {
+            try {
+                const serialized = await fs.readFile(ENGINE_PATH);
+                engine = FiltersEngine.deserialize(serialized);
+                console.log("Adblock engine loaded from cache");
+                return;
+            } catch {
+                console.warn("Failed to load cached engine, rebuilding...");
+            }
+        }
+
+        console.log("Downloading and building adblock engine...");
+        const rawLists = await Promise.all(
+            LISTS.map((url) => fetch(url).then((r) => r.text())),
+        );
+
+        engine = FiltersEngine.parse(rawLists.join("\n"), {
+            enableOptimizations: true,
+            loadCosmeticFilters: true,
+            loadNetworkFilters: true,
         });
 
-        const { match, redirect } = engine.match(request);
+        // Save for next launch
+        await fs.writeFile(ENGINE_PATH, engine.serialize());
+        console.log("Adblock engine built and cached");
+    }
 
-        if (match) {
-            callback({ cancel: true });
-        } else if (redirect) {
-            callback({ redirectURL: redirect.dataUrl });
-        } else {
-            callback({});
-        }
-    });
-}
+    function blockWithEngine(sess = session.defaultSession) {
+        sess.webRequest.onBeforeRequest(
+            { urls: ["<all_urls>"] },
+            (details, callback) => {
+                if (!engine) {
+                    callback({});
+                    return;
+                }
+
+                const request = Request.fromRawDetails({
+                    type: details.resourceType || "other",
+                    url: details.url,
+                    sourceUrl: details.url,
+                });
+
+                const { match, redirect } = engine.match(request);
+
+                if (match) {
+                    callback({ cancel: true });
+                } else if (redirect) {
+                    callback({ redirectURL: redirect.dataUrl });
+                } else {
+                    callback({});
+                }
+            },
+        );
+    }
 });
 
 // Handle macOS dock icon click when no windows are open

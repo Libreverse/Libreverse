@@ -18,8 +18,6 @@ import stylehacks from "stylehacks";
 import postcssMqOptimize from "postcss-mq-optimize";
 import autoprefixer from "autoprefixer";
 import removePrefix from "./plugins/postcss-remove-prefix.js";
-import nodePolyfills from "rollup-plugin-polyfill-node";
-import { ViteTips } from "vite-plugin-tips";
 
 function withInstrumentation(p) {
     let modified = 0;
@@ -324,7 +322,6 @@ export default defineConfig(({ mode }) => {
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
         plugins: [
-            nodePolyfills(),
             Erb({
                 env: {
                     DISABLE_SPRING: "1",
@@ -374,7 +371,6 @@ export default defineConfig(({ mode }) => {
             ]),
             typehintPlugin,
             preserveAllComments(),
-            ViteTips(),
         ],
     };
 });

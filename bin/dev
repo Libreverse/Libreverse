@@ -195,18 +195,12 @@ $ENV{OVERMIND_CAN_DIE}       = 'startup-message';
 # Check if databases are running before starting
 print $message_color, twemoji('Database'), " Checking database status...\n", $RESET;
 my $tidb_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-tidb") == 0;
-my $postgres_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-postgres") == 0;
 my $dragonfly_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-dragonflydb") == 0;
 
 my $missing_databases = 0;
 
 if (!$tidb_running) {
     print $message_color, twemoji('Cross Mark'), " TiDB database not running!\n", $RESET;
-    print $message_color, "  Run: bin/db-start\n", $RESET;
-    $missing_databases = 1;
-}
-if (!$postgres_running) {
-    print $message_color, twemoji('Cross Mark'), " PostgreSQL database not running!\n", $RESET;
     print $message_color, "  Run: bin/db-start\n", $RESET;
     $missing_databases = 1;
 }

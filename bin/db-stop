@@ -7,10 +7,6 @@ echo "Stopping development databases..."
 echo "Stopping TiDB..."
 podman stop libreverse-dev-tidb >/dev/null 2>&1 || true
 
-# Stop PostgreSQL
-echo "Stopping PostgreSQL..."
-podman stop libreverse-dev-postgres >/dev/null 2>&1 || true
-
 # Stop DragonflyDB
 echo "Stopping DragonflyDB..."
 podman stop libreverse-dev-dragonflydb >/dev/null 2>&1 || true

@@ -79,6 +79,6 @@ class TurboPreload
 
   def dynamic_route?(href)
     # Customize this to match your dynamic routes (e.g., user-specific, carts, etc.)
-    %w[/cart /login /profile /checkout /api /export /experiences/display].any? { |pattern| href.match?(pattern) }
+    %w[/cart /login /profile /checkout /api /export /display].any? { |pattern| href.match?(pattern) }
   end
 end
