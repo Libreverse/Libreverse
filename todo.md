@@ -1,14 +1,12 @@
 # To-do
 
-THE TIMOUTES HAVE SOMETHING TO DO WITH THREDDED'S JS
-
 we also need to move the ugc into a separate webcontentsview in electron for more security
 
 add trufflehog to not put creds in github repo
 
 add pagination instead of limits with geared pagination
 
-add global net blocklist using georlist once it's actually working. Perhaps move its logic into the app natively
+add global net blocklist using georlist - move its logic into the app natively
 
 finish libreverse ai with api calls - use python node calls to use llama cpp python
 
@@ -20,8 +18,6 @@ facial age estimation using zkml for osa pycall and ezkl
 <https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender>
 <https://github.com/justadudewhohacks/face-api.js-models>
 <https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript>
-
-remove vite plugin tips
 
 - [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image as well as root.io base images
 - [ ] (bugfix) Sidebar moves down when sidebar expanded
@@ -50,3 +46,4 @@ remove vite plugin tips
 ## Infra
 
 - [ ] (infra) Add separate mail service stack/container for self-hosted email flow - Expose on mail container: 25 (MX), optional 587 (submission), 993 (IMAPS) - Keep app container exposing only 3000 (+443 later) and optional 50051 (gRPC) - Wire app to IMAP/SMTP host via `LibreverseInstance.email_bot_*` settings
+- [ ] (infra) Migrate Active Storage to use Garage storage with aws-s3-sdk gem (pointing to local fixed port on docker container)

@@ -388,6 +388,13 @@ module LibreverseInstance
     end
 
     def detect_production_domain
+      # Optimization: Check for cached domain in tmp/ to avoid network calls on every boot
+      cache_file = Rails.root.join("tmp", "detected_domain")
+      if File.exist?(cache_file)
+        cached_domain = File.read(cache_file).strip
+        return cached_domain if cached_domain.present?
+      end
+
       ip = fetch_public_ip
       domain = fetch_reverse_dns(ip)
 
@@ -398,8 +405,12 @@ module LibreverseInstance
         If you're self-hosting, you'll need to set up DNS with your registrar or cloud provider.
       ERROR
 
-Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
-        domain
+      Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
+      
+      # Cache the result
+      File.write(cache_file, domain) rescue nil
+      
+      domain
     rescue StandardError => e
       raise "🚨 Domain check failed: #{e.message}"
     end

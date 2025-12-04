@@ -29,15 +29,6 @@ development:
         port: 4000
         # Explicitly disable SSL for local TiDB/MySQL dev instance
         ssl_mode: DISABLED
-    queue:
-        <<: *default
-        database: libreverse_development_queue
-        username: root
-        password: 
-        host: 127.0.0.1
-        port: 4000
-        ssl_mode: DISABLED
-        migrations_paths: db/queue_migrate
 
 test:
     primary:
@@ -54,17 +45,6 @@ test:
         ssl_mode: <%= ENV.fetch("TIDB_TEST_SSL_MODE", ENV.fetch("TIDB_SSL_MODE", "DISABLED")) %>
         # sslca always provided; adapter will use it only if ssl_mode requires validation
         sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-    queue:
-        <<: *default
-        database: libreverse_test_queue
-        username: <%= ENV["TIDB_USERNAME"] %>
-        password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV.fetch("TIDB_HOST", "127.0.0.1") %>
-        port: 4000
-        ssl_mode: <%= ENV.fetch("TIDB_TEST_SSL_MODE", ENV.fetch("TIDB_SSL_MODE", "DISABLED")) %>
-        sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-        migrations_paths: db/queue_migrate
-    
 
 production:
     primary:
@@ -76,14 +56,4 @@ production:
         port: 4000
         ssl_mode: VERIFY_IDENTITY
         sslca: <%= (RUBY_PLATFORM =~ /darwin/ ? "/etc/ssl/cert.pem" : "/etc/ssl/certs/ca-certificates.crt") %>
-    queue:
-        <<: *default
-        database: libreverse_production
-        username: <%= ENV["TIDB_USERNAME"] %>
-        password: <%= ENV["TIDB_PASSWORD"] %>
-        host: <%= ENV["TIDB_HOST"] %>
-        port: 4000
-        ssl_mode: VERIFY_IDENTITY
-        sslca: /etc/ssl/certs/ca-certificates.crt
-        migrations_paths: db/queue_migrate
     
