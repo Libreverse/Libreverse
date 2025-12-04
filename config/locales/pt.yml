@@ -69,6 +69,11 @@ pt:
       last_updated: 'Última atualização:'
       subtitle: Visualizando detalhes de uma experiência
       title: Detalhes da Experiência
+  experiences_mailer:
+    experience_error:
+      subject: Subject
+    offline_experience:
+      subject: Subject
   flash:
     content_flagged: Your submission contains content that appears to be spam.
     please_try_again: Please try again in a moment.
@@ -223,6 +228,9 @@ pt:
       tutorial_description: Digite palavras-chave para encontrar experiências no Libreverse.
         Os resultados aparecerão conforme você digita.
       tutorial_heading: Guia de Pesquisa
+  search_results_mailer:
+    search_results:
+      subject: Subject
   settings:
     index:
       description: Gerencie suas preferências.

@@ -1,0 +1,23 @@
+= render "layouts/sidebar"
+
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    .login-bg role="presentation"
+    /! Lamp effect with conical gradients
+    .lamp-effect-wrapper
+      .lamp-effect
+        .lamp-left-beam
+        .lamp-right-beam
+        .lamp-center-glow
+        .lamp-line
+      .login-container
+        .login-card
+          .login-header
+            h1 Multi-Factor Authentication
+            p Please complete the verification
+          == rodauth.login_form_header
+          == rodauth.render_multi_phase_login_forms
+          == rodauth.login_form_footer
+          .login-footer
+            = t('rodauth.multi_phase_login.footer_need_help')
+            a href=rodauth.login_path.to_s = t('rodauth.multi_phase_login.return_to_login')

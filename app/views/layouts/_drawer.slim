@@ -1,0 +1,17 @@
+- drawer_id = local_assigns.fetch(:drawer_id, "main")
+- enable_glass = local_assigns.fetch(:enable_glass, true)
+
+div class="drawer #{enable_glass ? 'glass-enabled glass glass-drawer-base' : ''}" id="#{drawer_id}-drawer" role="complementary" aria-labelledby="drawer-title-#{drawer_id}" data-drawer-id=drawer_id
+  .drawer-header data-reflex-permanent=""
+    h2.drawer-title id="drawer-title-#{drawer_id}"
+      - if content_for?(:drawer_title)
+        = yield(:drawer_title)
+      - else
+        = t('layouts.drawer.attribution')
+  .drawer-contents id="drawer-content-#{drawer_id}"
+    .drawer-content-container
+      .drawer-content
+        - if content_for?(:drawer)
+          = yield(:drawer)
+        - else
+          = render "layouts/default_drawer_content"

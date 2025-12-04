@@ -10,8 +10,6 @@ module ApplicationCable
     attr_accessor :peer_id, :session_id, :connected_at
 
     def connect
-      Rails.logger.debug "[ActionCable] Attempting to establish connection..."
-
       # Store connection timestamp for P2P
       self.connected_at = Time.current
 
@@ -30,15 +28,13 @@ module ApplicationCable
       # Handle invalid session markers (negative account IDs)
       begin
       if current_account_id&.negative?
-        Rails.logger.info "[ActionCable] Connection established with invalid session marker: #{current_account_id}"
         # Reject connection so the client can clear cookies
         reject_unauthorized_connection
         return
       end
 
       account = AccountSequel.with_pk!(current_account_id)
-        account_type = account.guest? ? "guest" : "user"
-        Rails.logger.info "[ActionCable] Connection established for \\#{account_type} account_id: \\#{current_account_id}"
+        account.guest? ? "guest" : "user"
       rescue Sequel::NoMatchingRow
          Rails.logger.error "[ActionCable] Connection established but Account record not found for ID: \\#{current_account_id}"
          reject_unauthorized_connection # Reject if account doesn't exist
@@ -50,21 +46,14 @@ module ApplicationCable
     # Finds a valid account ID (real or guest) from the session store (expecting CookieStore)
     def find_account_id_from_session
       session_key = Rails.application.config.session_options[:key]
-      Rails.logger.debug "[ActionCable][CookieStore] Attempting to find session using key: #{session_key}"
 
       session_data = nil
       begin
         # For CookieStore, the entire session hash is in the cookie.
         # Try encrypted first, then signed as fallback.
-        Rails.logger.debug "[ActionCable][CookieStore] Trying cookies.encrypted..."
         session_data = cookies.encrypted[session_key]
-        Rails.logger.debug "[ActionCable][CookieStore] Result from cookies.encrypted: #{session_data.inspect}"
 
-        unless session_data.is_a?(Hash)
-          Rails.logger.debug "[ActionCable][CookieStore] Trying cookies.signed as fallback..."
-          session_data = cookies.signed[session_key]
-          Rails.logger.debug "[ActionCable][CookieStore] Result from cookies.signed (fallback): #{session_data.inspect}"
-        end
+        session_data = cookies.signed[session_key] unless session_data.is_a?(Hash)
       rescue StandardError => e
         Rails.logger.error "[ActionCable][CookieStore] Error accessing/verifying session cookie: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
@@ -102,16 +91,12 @@ module ApplicationCable
       # -------------------------------------------------------
 
       if account_id
-         Rails.logger.debug "[ActionCable][CookieStore] Found account_id '#{account_id}' in session data using key '#{rodauth_session_key_string}'"
          verified_account = AccountSequel.where(id: account_id).first
          unless verified_account
             Rails.logger.warn "[ActionCable][CookieStore] Account ID '\\#{account_id}' found in session does not exist in DB. Ignoring."
             return nil
          end
          account_id # Return the verified ID
-      else
-         Rails.logger.debug "[ActionCable][CookieStore] No account_id found in session data using key '#{rodauth_session_key_string}'"
-         nil
       end
     rescue StandardError => e
       Rails.logger.error "[ActionCable][CookieStore] Error during session processing: #{e.message}"

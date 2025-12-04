@@ -25,8 +25,6 @@ REDIS_POOL = ConnectionPool.new(size: ENV.fetch("RAILS_MAX_THREADS", 5).to_i, ti
 end
 
 # Helper method to get a Redis connection from the pool
-def redis
-  REDIS_POOL.with { |conn| yield conn }
+def redis(&block)
+  REDIS_POOL.with(&block)
 end
-
-Rails.logger.info "[Redis] Configured with DragonflyDB at #{REDIS_URL}"

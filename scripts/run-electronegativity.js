@@ -15,15 +15,15 @@ run({
         console.log(`Errors: ${result.errors.length}`);
         if (result.errors.length > 0) {
             console.log("Findings:");
-            result.errors.forEach((error) => {
+            for (const error of result.errors) {
                 console.log(
                     `- ${error.id}: ${error.description} (${error.file}:${error.location.line})`,
                 );
-            });
+            }
         } else {
             console.log("No security issues found!");
         }
     })
-    .catch((err) => {
-        console.error("Error running scan:", err);
+    .catch((error) => {
+        console.error("Error running scan:", error);
     });

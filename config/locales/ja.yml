@@ -60,6 +60,11 @@ ja:
       last_updated: 最終更新：
       subtitle: 体験の詳細を表示
       title: 体験の詳細
+  experiences_mailer:
+    experience_error:
+      subject: Subject
+    offline_experience:
+      subject: Subject
   flash:
     content_flagged: Your submission contains content that appears to be spam.
     please_try_again: Please try again in a moment.
@@ -199,6 +204,9 @@ ja:
       title: 体験を検索
       tutorial_description: キーワードを入力してLibreverseの体験を見つけます。入力すると結果が表示されます。
       tutorial_heading: 検索ガイド
+  search_results_mailer:
+    search_results:
+      subject: Subject
   settings:
     index:
       description: 設定を管理します。

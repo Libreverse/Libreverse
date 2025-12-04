@@ -44,11 +44,12 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
   # Uncomment below to use memory store for isolated development:
   # config.cache_store = :memory_store
 
-  # Print deprecation notices to the Rails logger.
-  config.active_support.deprecation = :log
+  # Silence all deprecation warnings
+  config.active_support.deprecation = :silence
+  config.active_support.report_deprecations = false
 
-  # Raise exceptions for disallowed deprecations.
-  config.active_support.disallowed_deprecation = :raise
+  # Disable disallowed deprecation behavior
+  config.active_support.disallowed_deprecation = :silence
 
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []

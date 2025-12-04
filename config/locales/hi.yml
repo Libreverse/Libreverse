@@ -68,6 +68,11 @@ hi:
       last_updated: 'अंतिम अपडेट:'
       subtitle: एक अनुभव के लिए विवरण देखना
       title: अनुभव विवरण
+  experiences_mailer:
+    experience_error:
+      subject: Subject
+    offline_experience:
+      subject: Subject
   flash:
     content_flagged: Your submission contains content that appears to be spam.
     please_try_again: Please try again in a moment.
@@ -222,6 +227,9 @@ hi:
       tutorial_description: Libreverse में अनुभव खोजने के लिए कीवर्ड टाइप करें। परिणाम
         आपके टाइप करते ही दिखाई देंगे।
       tutorial_heading: खोज गाइड
+  search_results_mailer:
+    search_results:
+      subject: Subject
   settings:
     index:
       description: अपनी वरीयताएँ प्रबंधित करें।

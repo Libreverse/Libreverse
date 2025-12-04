@@ -115,6 +115,9 @@ show_spinner("Unlinking the overmind socket...");
 unlink '/tmp/.overmind.sock';
 print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
 
+show_spinner("Killing any running Passenger instances...");
+run_task("Killing any running Passenger instances...", "pkill -f 'Passenger' > /dev/null 2>&1; pkill -f 'passenger' > /dev/null 2>&1");
+
 show_spinner("Killing anything using the development SQLite database...");
 run_task("Killing anything using the development SQLite database...", "cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1");;
 
@@ -165,7 +168,7 @@ else {
     run_task("Stopping podman machine",    "podman machine stop 2>/dev/null || true");
     run_task("Removing podman machine",    "podman machine rm -f 2>/dev/null || true");
     run_task("Clearing out podman data",   "rm -rf ~/.local/share/containers ~/.config/containers 2>/dev/null || true");
-    run_task("Recreating podman VM",       "podman machine init --memory 2048 --cpus 1");
+    run_task("Recreating podman VM",       "podman machine init --memory 8192 --cpus 4");
     run_task("Starting podman VM",         "podman machine start");
 
     # ------------------------------------------------------------------

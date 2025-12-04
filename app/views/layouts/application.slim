@@ -1,0 +1,63 @@
+doctype html
+- rtl_locales = %w[ar]
+html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18n.locale.to_s
+  head
+    = render "layouts/app_assets"
+    = render "layouts/meta_tags"
+    = csrf_meta_tags
+    = csp_meta_tag
+  body
+    .titlebar style="-webkit-app-region: drag; height: 36px; width: 100%; position: fixed; top: 0; left: 0; z-index: 5; background: transparent;"
+    = render "layouts/window_controls"
+    = render "layouts/oneko"
+    = render "layouts/glass_filter"
+    noscript
+      .noscript-message
+        .noscript-message__content
+          h1.noscript-message__heading= t('layouts.application.noscript_heading')
+          p.noscript-message__text= t('layouts.application.noscript_message')
+
+    .off-canvas-wrapper
+      .off-canvas-wrapper-inner data-off-canvas-wrapper=""
+        / Off-canvas menu for additional options
+        .off-canvas.position-left id="sidebar-off-canvas" data-off-canvas="" data-transition="push"
+
+          / Close button
+          button.close-button aria-label="Close menu" type="button" data-action="click->off-canvas#close"
+            span aria-hidden="true"  &times;
+
+          / Menu
+          ul.vertical.menu
+            li
+              = link_to "Privacy Policy", main_app.privacy_path
+            li
+              = link_to "Cookie Policy", main_app.cookie_policy_path
+            li
+              = link_to "GitHub Repository", "https://github.com/Libreverse/Libreverse", target: "_blank", rel: "noopener"
+            li
+              = link_to "Gitea Repository", "https://versioncontrol.geor.me/Libreverse/Libreverse", target: "_blank", rel: "noopener"
+            - if authenticated_user? && current_account&.admin?
+              li
+                = link_to "Admin Panel", admin_root_path
+
+          .off-canvas-attribution role="complementary" aria-labelledby="off-canvas-attribution-title"
+            h5.off-canvas-attribution-title id="off-canvas-attribution-title"
+              = t('layouts.drawer.attribution')
+            .off-canvas-attribution-content
+              p= t('layouts.default_drawer.intro_html').html_safe
+              ul
+                li
+                  a.off-canvas-attribution-link href="https://github.com/twitter/twemoji?tab=readme-ov-file" = t('layouts.default_drawer.libreverse_twemoji')
+                  = t('layouts.default_drawer.modified_from')
+                  a.off-canvas-attribution-link href="https://github.com/twitter/twemoji?tab=readme-ov-file"  Twemoji
+                  = t('layouts.default_drawer.by')
+                  a.off-canvas-attribution-link href="https://x.com"  X Corp
+                  = t('layouts.default_drawer.licensed_under')
+                  a.off-canvas-attribution-link href="https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/LICENSE-GRAPHICS"  CC-BY-4.0
+
+        .off-canvas-content data-off-canvas-content=""
+          = render "layouts/flash_messages"
+          #toast-container
+          main.content-wrapper
+            = yield
+          = render "layouts/site_footer"

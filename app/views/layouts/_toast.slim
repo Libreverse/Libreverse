@@ -1,0 +1,10 @@
+- toast_class_modifier = case type; when "success" then "toast-success"; when "error" then "toast-error"; when "warning" then "toast-warning"; when "alert" then "toast-error"; else "toast-info"; end
+- toast_id = "toast-#{SecureRandom.hex(4)}"
+
+div id=toast_id class="toast #{toast_class_modifier} show glass glass-card-base" role="alert" aria-live="assertive" aria-atomic="true" data-controller="toast" data-toast-timeout-value="5000"
+  .toast-header
+    strong.me-auto= title
+    button.toast-close aria-label="Close" data-action="toast#dismiss" type="button"
+      img.toast-close-icon aria-hidden="true" decoding="sync" draggable="false" fetchpriority="high" loading="eager" src=svg_icon_data_url("x").to_s tabindex="-1" /
+  .toast-body
+    = message

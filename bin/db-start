@@ -21,7 +21,7 @@ if container_running "libreverse-dev-dragonflydb"; then
     echo "DragonflyDB is already running"
 else
     echo "Starting DragonflyDB..."
-    podman run -d -p 6379:6379 --name libreverse-dev-dragonflydb --replace --restart=always --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly --logtostderr > /dev/null 2>&1
+    podman run -d -p 6379:6379 --name libreverse-dev-dragonflydb --replace --restart=always --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly > /dev/null 2>&1
 fi
 
 echo "Databases started. Waiting for them to be ready..."

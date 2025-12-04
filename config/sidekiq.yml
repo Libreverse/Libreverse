@@ -6,11 +6,11 @@
 
 # Queue configuration with priorities (higher = processed first)
 :queues:
-  - [critical, 6]
-  - [default, 3]
-  - [mailers, 2]
-  - [maintenance, 1]
-  - [low, 1]
+    - [critical, 6]
+    - [default, 3]
+    - [mailers, 2]
+    - [maintenance, 1]
+    - [low, 1]
 
 # Scheduled job polling interval (in seconds)
 :poll_interval_average: 15
@@ -26,4 +26,4 @@
 
 # Dead job retention (days)
 :dead_max_jobs: 10000
-:dead_timeout_in_seconds: 7776000  # 90 days
+:dead_timeout_in_seconds: 7776000 # 90 days

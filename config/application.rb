@@ -13,7 +13,6 @@ Bundler.require(*Rails.groups)
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
-require_relative "../lib/middleware/turbo_preload"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -42,7 +41,7 @@ module LibreverseInstance
       read_timeout: 1,
       write_timeout: 1,
       reconnect_attempts: 3,
-      error_handler: ->(method:, returning:, exception:) {
+      error_handler: lambda { |method:, returning:, exception:|
         Rails.logger.error "[Redis Cache] #{exception.class}: #{exception.message} (method: #{method}, returning: #{returning})"
         Sentry.capture_exception(exception) if defined?(Sentry)
       }
@@ -51,22 +50,19 @@ module LibreverseInstance
     # Out-of-band garbage collection middleware to reduce latency spikes
     config.middleware.use OobGcMiddleware
 
-    # Add Rack::Brotli for compression of responses larger than 30KB
+    # Add Rack::Brotli for compression of responses larger than 32KB
     config.middleware.use Rack::Brotli, { quality: 2, if: lambda { |_env, _status, headers, body|
       # Check content-length if present
-      if headers[Rack::CONTENT_LENGTH] && headers[Rack::CONTENT_LENGTH].to_i > 30_720
+      if headers[Rack::CONTENT_LENGTH] && headers[Rack::CONTENT_LENGTH].to_i > 32_768
         true
       elsif body.is_a?(Array)
         # Calculate body size for array bodies
-        body.sum(&:bytesize) > 30_720
+        body.sum(&:bytesize) > 32_768
       else
         # For streams or other bodies, don't compress to avoid consuming
         false
       end
     } }
-
-    # Tell it to load as much stuff ahead of time, given that we can likely afford it on TR in a way that we otherwise wouldn't be able to.
-    config.middleware.use TurboPreload
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     config.middleware.use EmojiReplacer, {

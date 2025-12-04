@@ -28,10 +28,6 @@ module.exports = ({
     mainWindow.once("ready-to-show", () => {
         mainWindow.show();
         mainWindow.focus();
-
-        if (isDevelopment) {
-            mainWindow.webContents.openDevTools({ mode: "right" });
-        }
     });
 
     return mainWindow;

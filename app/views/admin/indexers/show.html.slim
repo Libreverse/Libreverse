@@ -1,0 +1,156 @@
+h1= @platform_name.humanize + ' Indexer'
+
+.row
+  .col-md-8
+    - if @indexer_class
+      .card
+        .card-header.d-flex.justify-content-between.align-items-center
+          h5 Configuration
+          = link_to 'Run Now', run_admin_indexer_path(@platform_name),
+                    method: :post, class: 'btn btn-primary btn-sm',
+                    data: { confirm: "Are you sure you want to run the #{@platform_name} indexer?" }
+        .card-body
+          dl.row
+            dt.col-sm-3 Platform
+            dd.col-sm-9= @platform_name
+
+            dt.col-sm-3 Status
+            dd.col-sm-9
+              - if @config['enabled']
+                span.badge.bg-success Enabled
+              - else
+                span.badge.bg-secondary Disabled
+
+            dt.col-sm-3 Rate Limit
+            dd.col-sm-9 # @config['rate_limit']  requests/second
+
+            dt.col-sm-3 Batch Size
+            dd.col-sm-9= @config['batch_size']
+
+            dt.col-sm-3 Max Items
+            dd.col-sm-9= @config['max_items']
+
+            - if @config['daily_limit']
+              dt.col-sm-3 Daily Limit
+              dd.col-sm-9
+                = @config['daily_limit']
+                small.text-muted per day
+
+            dt.col-sm-3 Cache Duration
+            dd.col-sm-9 # @config['cache_duration']  seconds
+
+            dt.col-sm-3 API Endpoints
+            dd.col-sm-9
+              - @config['api_endpoints']&.each do |name, url|
+                strong= name.humanize + ':'
+                code= url
+                br
+
+      - if @platform_name == 'decentraland' && @config['daily_limit']
+        h3.mt-4 Progressive Indexing Status
+        .card
+          .card-body
+            .row
+              .col-md-4
+                h6 Daily Progress
+                - today_count = IndexedContent.where(source_platform: 'decentraland').where('last_indexed_at >= ?', Time.current.beginning_of_day).count
+                - daily_limit = @config['daily_limit']
+                - progress_percent = daily_limit > 0 ? (today_count.to_f / daily_limit * 100).round(1) : 0
+                .progress.mb-2
+                  .progress-bar style="width: #{[progress_percent, 100].min}%" class=(progress_percent >= 100 ? 'bg-success' : 'bg-primary')
+                small
+                  | #{today_count} / #{daily_limit} items indexed today
+                  |  (#{progress_percent}%)
+              .col-md-4
+                h6 Search Coverage
+                - search_radius = Rails.cache.read("decentraland_indexer_search_radius") || 5
+                - total_indexed = IndexedContent.where(source_platform: 'decentraland').count
+                p.mb-1
+                  strong Search Radius:
+                  #{search_radius} parcels
+                p.mb-1
+                  strong Total Indexed:
+                  #{total_indexed} scenes
+              .col-md-4
+                h6 Status
+                - if today_count >= daily_limit
+                  span.badge.bg-success Limit Reached
+                  br
+                  small.text-muted Will resume tomorrow
+                - else
+                  span.badge.bg-primary Active
+                  br
+                  small.text-muted # daily_limit - today_count  remaining today
+
+      h3.mt-4 Recent Runs
+      - if @recent_runs.any?
+        .table-responsive
+          table.table.table-striped
+            thead
+              tr
+                th Run ID
+                th Status
+                th Started
+                th Duration
+                th Items
+                th Success Rate
+                th Actions
+            tbody
+              - @recent_runs.each do |run|
+                tr class=(run.failed? ? 'table-danger' : (run.completed? ? 'table-success' : ''))
+                  td= link_to "##{run.id}", admin_indexing_run_path(run)
+                  td
+                    span class="badge bg-#{run.completed? ? 'success' : (run.failed? ? 'danger' : 'warning')}"
+                      = run.status.humanize
+                  td= run.started_at&.strftime('%Y-%m-%d %H:%M')
+                  td= run.duration_formatted
+                  td
+                    = run.items_processed
+                    - if run.items_failed > 0
+                      span.text-danger = " (#{run.items_failed} failed)"
+                  td
+                    - if run.items_processed > 0
+                      #{run.success_rate}%
+                    - else
+                      span.text-muted N/A
+                  td
+                    = link_to 'View', admin_indexing_run_path(run), class: 'btn btn-sm btn-outline-primary'
+      - else
+        .alert.alert-info
+          | This indexer has never been run.
+          = link_to 'Run it now', run_admin_indexer_path(@platform_name),
+                    method: :post, class: 'btn btn-primary btn-sm ms-2'
+    - else
+      .alert.alert-warning
+        strong Indexer Not Found
+        p The indexer class for # @platform_name  has not been implemented yet.
+
+  .col-md-4
+    .card
+      .card-header
+        h5 Statistics
+      .card-body
+        - if @recent_runs.any?
+          dl
+            dt Total Runs
+            dd= @recent_runs.count
+
+            dt Success Rate
+            dd # IndexingRun.success_rate_for_indexer(@indexer_class.name) %
+
+            dt Last Success
+            dd
+              - last_success = @recent_runs.successful.first
+              - if last_success
+                = time_ago_in_words(last_success.completed_at) + ' ago'
+              - else
+                span.text-muted Never
+        - else
+          p.text-muted No statistics available
+
+    .card.mt-3
+      .card-header
+        h5 Actions
+      .card-body
+        = link_to 'Back to Indexers', admin_indexers_path, class: 'btn btn-outline-secondary'
+        = link_to 'View All Runs', admin_indexing_runs_path, class: 'btn btn-outline-primary ms-2'

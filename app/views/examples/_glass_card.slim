@@ -1,0 +1,11 @@
+/ Example: Glass Card Component - Usage: Add this anywhere you want a glass card effect
+
+div class="glass glass-component glass-card glass-card-base"
+  .card-contents
+    h3= title
+    p= content
+    - if actions
+      .card-actions
+        - actions.each do |action|
+          = link_to action[:path], class: "card-action-button" do
+            = action[:label]

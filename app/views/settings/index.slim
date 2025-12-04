@@ -1,0 +1,27 @@
+= render "layouts/sidebar"
+
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    .administrative-background data-controller="parallax-background" data-scroll="" data-scroll-speed="-3"
+    .dashboard-container
+      .dashboard-header-section
+        h1.display-heading= t('settings.index.title')
+        p.header-description
+          = t('settings.index.description')
+      h3.section-title= t('settings.index.language')
+      .language-picker-board.glass.glass-card-base data-controller="language-picker"
+        - I18n.available_locales.each do |locale|
+          - flag = locale_flag_emoji(locale)
+          - is_current = I18n.locale == locale
+          span.language-flag data-action="click->language-picker#select" data-locale=locale class=(is_current ? 'selected' : '')
+            = flag
+      h3.section-title= t('settings.index.oneko_skin')
+      .oneko-skin-picker-board.glass.glass-card-base data-controller="oneko-skin-picker"
+        - skin_urls = oneko_skin_urls
+        - available_skins = %w[ace agender asexual bisexual black bunny calico eevee esmeralda fox gay genderfluid ghost gray jess kina lesbian lucy maia maria mike nonbinary oneko_black oneko_gray oneko onekoslvt pride silver silversky snuupy spirit tora trans valentine]
+        - current_skin = current_oneko_skin
+        - available_skins.each do |skin|
+          - is_current = current_skin == skin
+          span.oneko-skin-option data-action="click->oneko-skin-picker#select" data-skin=skin class=(is_current ? 'selected' : '')
+            .oneko-skin-preview style="background-image: url('#{skin_urls[skin]}'); background-position: -96px -96px;"
+            .oneko-skin-label= skin.titleize

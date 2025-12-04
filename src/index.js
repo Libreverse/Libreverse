@@ -130,7 +130,6 @@ app.whenReady().then(async () => {
     // Load and enable adblocker
     loadEngine().then(() => {
         blockWithEngine();
-        console.log("Adblocker active with your exact lists");
     });
 
     // Create application menu
@@ -245,14 +244,12 @@ app.whenReady().then(async () => {
             try {
                 const serialized = await fs.readFile(ENGINE_PATH);
                 engine = FiltersEngine.deserialize(serialized);
-                console.log("Adblock engine loaded from cache");
                 return;
             } catch {
                 console.warn("Failed to load cached engine, rebuilding...");
             }
         }
 
-        console.log("Downloading and building adblock engine...");
         const rawLists = await Promise.all(
             LISTS.map((url) => fetch(url).then((r) => r.text())),
         );

@@ -1,8 +1,0 @@
-= render "layouts/leniswrapper" do
-  = render "layouts/navigationshortcutswrapper" do
-    .container.mx-auto.px-4.py-8
-      %h1.text-2xl.font-bold.mb-6 Edit Instance Setting
-      %p.text-gray-600.mb-4 Modify the instance configuration setting: #{@instance_setting.key}
-
-      .bg-white.shadow.rounded-lg.p-6
-        = render "form"

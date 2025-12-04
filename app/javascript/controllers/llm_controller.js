@@ -33,13 +33,13 @@ const MODEL_CONFIG_JSON = import.meta.glob(
 const snappyUncompress =
     typeof snappy === "function"
         ? snappy
-        : snappy?.uncompress
+        : (snappy?.uncompress
           ? snappy.uncompress
           : (() => {
                 throw new Error(
                     "snappyjs module did not expose an uncompress function",
                 );
-            })();
+            })());
 
 function resolveModelParts() {
     return Object.keys(MODEL_PARTS)

@@ -1,0 +1,8 @@
+/ Example: Glass Button Component - Usage: Add this for standalone glass buttons
+
+button class="glass glass-component glass-button glass-button-base"
+  .button-contents
+    - if icon
+      = raw svg_icon_data_url(icon)
+    - if text
+      span= text

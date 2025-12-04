@@ -580,7 +580,6 @@ class RodauthMain < Rodauth::Rails::Auth
     end
   end
   # rubocop:enable Metrics/BlockLength
-  Rails.logger.info "RodauthMain configuration loaded"
 
   # ==> Redirects (Define methods outside configure block)
   # ... other potential redirect methods like logout_redirect etc. ...

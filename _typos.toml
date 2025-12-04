@@ -22,4 +22,5 @@ extend-exclude = [
     "log/**",
     "storage/**",
     "**/gems/**"
+    "app/client-ai-models**"
 ]

@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   # Blog CMS routes - mount under /blog only
   comfy_route :cms, path: "/blog"
   post "/graphql", to: "graphql#execute"
-  resources :search_new, only: [:index]
+  resources :search_new, only: [ :index ]
   get "search_new/index"
   get "search" => "search#index"
   post "search" => "search#create"

@@ -61,7 +61,7 @@ Sidekiq.configure_server do |config|
   end
 
   # Load scheduled/cron jobs from recurring.yml
-  schedule_file = Rails.root.join("config", "sidekiq_schedule.yml")
+  schedule_file = Rails.root.join("config/sidekiq_schedule.yml")
   if File.exist?(schedule_file)
     Sidekiq::Cron::Job.load_from_hash YAML.load_file(schedule_file)
     Sidekiq.logger.info "[Sidekiq] Loaded cron schedule from #{schedule_file}"
@@ -73,5 +73,3 @@ Sidekiq.default_job_options = {
   "backtrace" => true,
   "retry" => 5
 }
-
-Rails.logger.info "[Sidekiq] Configured with DragonflyDB at #{redis_url}"

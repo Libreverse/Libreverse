@@ -1,0 +1,35 @@
+= render "layouts/leniswrapper" do
+  = render "layouts/navigationshortcutswrapper" do
+    div
+      div
+        h1 Experiences Pending Approval
+        = link_to "← Back to Dashboard", admin_root_path
+
+      div
+        h2 Example Experiences Management
+        p Manage the example experiences for demonstration purposes.
+        div
+          = button_to "Add Example Experiences", add_examples_admin_experiences_path, method: :post
+          = button_to "Restore Examples to Default", restore_examples_admin_experiences_path, method: :post
+          = button_to "Delete All Examples", delete_examples_admin_experiences_path, method: :delete,
+            data: { confirm: "Are you sure you want to delete all example experiences? This cannot be undone." }
+
+          hr
+
+        div
+          h2 Pending Approval
+          - if @experiences.any?
+            ul
+              - @experiences.each do |experience|
+                li
+                  div
+                    h2= experience.title
+                    p
+                      | Author: #{experience.author || "N/A"}
+                    p
+                      | Submitted by: #{experience.account&.federated_identifier || "Unknown"} on #{experience.created_at.to_date}
+                      = link_to "View", experience_display_path(experience), target: "_blank", rel: "noopener"
+                    div
+                      = button_to "Approve", approve_admin_experience_path(experience), method: :patch
+          - else
+            p There are no experiences currently pending approval.
