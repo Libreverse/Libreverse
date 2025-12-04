@@ -6,7 +6,7 @@ we also need to move the ugc into a separate webcontentsview in electron for mor
 
 add trufflehog to not put creds in github repo
 
-use rails memory caching and brotli comppression
+add pagination instead of limits with geared pagination
 
 add global net blocklist using georlist once it's actually working. Perhaps move its logic into the app natively
 

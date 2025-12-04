@@ -10,7 +10,7 @@ end
 
 source "https://rubygems.org"
 
-ruby "3.3.7"
+ruby ">= 3.3.7"
 
 gem "active_hashcash"
 gem "active_storage_db"
@@ -66,6 +66,10 @@ gem "re2"
 gem "reactionview", ">= 0.1.3"
 gem "react_on_rails", "16.0.0"
 gem "redis"
+# Vendored hiredis-client with TruffleRuby C extension support
+# The upstream gem doesn't compile C extensions for TruffleRuby, but TruffleRuby
+# now has excellent cext support. Our vendored version patches extconf.rb to enable it.
+gem "hiredis-client", path: "vendor/gems/hiredis-client"
 gem "reform"
 gem "rodauth-guest"
 gem "rodauth-i18n"

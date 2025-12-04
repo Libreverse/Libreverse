@@ -68,9 +68,11 @@ WORKDIR /home/app/webapp
 ## Copy Gemfile and Gemfile.lock first for efficient caching
 COPY Gemfile Gemfile.lock ./
 
-## Copy .gitmodules and initialize submodules, then copy vendored gem
+## Copy .gitmodules and initialize submodules, then copy vendored gems
 COPY .gitmodules ./
 COPY vendor/gems/google_robotstxt_parser ./vendor/gems/google_robotstxt_parser
+# Vendored hiredis-client with TruffleRuby C extension support (also works on CRuby)
+COPY vendor/gems/hiredis-client ./vendor/gems/hiredis-client
 
 ## Populate google/robotstxt and abseil-cpp sources without requiring a git repo context
 RUN set -eux; \
@@ -89,12 +91,13 @@ RUN set -eux; \
         fi
 
 ## Install production gems (exclude development & test groups) with verbose logs
-## and verify the vendored gem is present and loadable
+## and verify the vendored gems are present and loadable
 RUN bash -lc 'rvm --default use ruby-3.4.2 \
     && bundle config set without "development test" \
     && bundle install --jobs=$(nproc) --retry 3 --verbose \
     && bundle info google_robotstxt_parser \
-    && ruby -e "require \"bundler/setup\"; require \"google_robotstxt_parser\"; puts(\"Robotstxt loaded: #{!!defined?(Robotstxt)}\")"'
+    && ruby -e "require \"bundler/setup\"; require \"google_robotstxt_parser\"; puts(\"Robotstxt loaded: #{!!defined?(Robotstxt)}\")" \
+    && ruby -e "require \"bundler/setup\"; require \"hiredis-client\"; puts(\"Hiredis driver: #{RedisClient.default_driver}\")"'
 
 # Copy package.json and bun.lock for JS dependencies
 COPY package.json bun.lock ./

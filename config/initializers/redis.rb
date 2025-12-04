@@ -7,9 +7,12 @@
 REDIS_URL = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
 
 # Configure Redis connection settings
-# Note: TruffleRuby only supports the :ruby driver, not :hiredis
+# Use hiredis driver for faster C-based parsing
+# hiredis-client has been manually compiled for TruffleRuby support
+
 REDIS_CONFIG = {
   url: REDIS_URL,
+  driver: :hiredis,
   connect_timeout: 5,
   read_timeout: 1,
   write_timeout: 1,

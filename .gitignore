@@ -145,3 +145,12 @@ typings/
 out/
 
 *.pem.envrc.local
+
+# Compiled hiredis-client extension (platform-specific, auto-compiled on first load)
+vendor/gems/hiredis-client/ext/redis_client/hiredis/*.o
+vendor/gems/hiredis-client/ext/redis_client/hiredis/*.bundle
+vendor/gems/hiredis-client/ext/redis_client/hiredis/*.so
+vendor/gems/hiredis-client/ext/redis_client/hiredis/*.dylib
+vendor/gems/hiredis-client/ext/redis_client/hiredis/*.dSYM/
+vendor/gems/hiredis-client/ext/redis_client/hiredis/Makefile
+vendor/gems/hiredis-client/ext/redis_client/hiredis/mkmf.log

@@ -9,10 +9,12 @@ return if Rails.env.development?
 
 # Set Rack::Attack cache store to use Redis/DragonflyDB directly
 # This provides distributed rate limiting across multiple server instances
-# Note: TruffleRuby only supports the :ruby driver, not :hiredis
+# Use hiredis driver for faster C-based parsing
+# hiredis-client has been patched for TruffleRuby support (vendor/gems/hiredis-client)
 redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
 Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
   url: redis_url,
+  driver: :hiredis,
   namespace: "rack_attack",
   expires_in: 1.hour,
   connect_timeout: 5,

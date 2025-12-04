@@ -7,11 +7,14 @@ require "sidekiq"
 require "sidekiq-cron"
 
 redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
+# Use hiredis driver for faster C-based parsing
+# hiredis-client has been manually compiled for TruffleRuby support
 
 # Configure Sidekiq client (for enqueuing jobs from web processes)
 Sidekiq.configure_client do |config|
   config.redis = {
     url: redis_url,
+    driver: :hiredis,
     network_timeout: 5,
     pool_timeout: 5
   }
@@ -21,6 +24,7 @@ end
 Sidekiq.configure_server do |config|
   config.redis = {
     url: redis_url,
+    driver: :hiredis,
     network_timeout: 5,
     pool_timeout: 5
   }

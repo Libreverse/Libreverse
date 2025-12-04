@@ -72,11 +72,13 @@ if Rails.env.development? || Rails.env.production?
   end
 
   # Persistent storage in Redis/DragonflyDB
-  # Note: TruffleRuby only supports the :ruby driver, not :hiredis
+  # Use hiredis driver for faster C-based parsing
+  # hiredis-client has been patched for TruffleRuby support (vendor/gems/hiredis-client)
   redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
   Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
   Rack::MiniProfiler.config.storage_options = {
-    url: redis_url
+    url: redis_url,
+    driver: :hiredis
   }
 
   # Insert middleware early for accurate timings, but avoid double insertion and

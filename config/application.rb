@@ -33,10 +33,12 @@ module LibreverseInstance
     config.active_support.deprecation = :silence
 
     # Use Redis/DragonflyDB for caching (configured via REDIS_URL env var)
-    # Note: TruffleRuby only supports the :ruby driver, not :hiredis
+    # Use hiredis driver for faster C-based parsing
+    # hiredis-client has been manually compiled for TruffleRuby support
     redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
     config.cache_store = :redis_cache_store, {
       url: redis_url,
+      driver: :hiredis,
       connect_timeout: 5,
       read_timeout: 1,
       write_timeout: 1,
