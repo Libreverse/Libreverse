@@ -3,7 +3,7 @@ telemetry = false
 [install]
 exact = true
 [run]
-bun = true
+bun = false
 [install.cache]
 disable = true
 disableManifest = true

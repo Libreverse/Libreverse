@@ -2,7 +2,7 @@
 # https://github.com/sidekiq/sidekiq/wiki/Advanced-Options
 
 # Redis connection (DragonflyDB compatible)
-:concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 1) %>
+:concurrency: 1
 
 # Queue configuration with priorities (higher = processed first)
 :queues:

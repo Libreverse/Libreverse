@@ -23,5 +23,5 @@
       .btn-row
         button type="button" data-action="click->consent#accept"
           = t('consent.screen.agree_and_continue')
-        button type="button" data-action="click->consent#decline"
+        button type="button" data-reflex="click->ConsentReflex#decline"
           = t('consent.screen.decline')

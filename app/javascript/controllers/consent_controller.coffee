@@ -16,37 +16,14 @@ export default class extends ApplicationController
 
   accept: (event) ->
     event.preventDefault()
-    rememberOptIn = if @hasCheckboxTarget and @checkboxTarget.checked then "1" else "0"
-
-    # Set client-side cookie for immediate UI feedback
-    Cookies.set("consent_ui_preference", "accepted", { expires: 365 })
-
-    # Collect invisible captcha data
-    captchaData = @getCaptchaData()
-
-    post("/consent/accept", {
-      body: {
-        remember_opt_in: rememberOptIn,
-        ...captchaData
-      }
-      responseKind: "turbo-stream"
-    }).then (response) =>
-      if response.ok then response.html.then (html) => Turbo.renderStreamMessage html
+    rememberOptIn = if @hasCheckboxTarget and @checkboxTarget.checked then "true" else "false"
+    
+    # Trigger Reflex
+    @stimulate("ConsentReflex#accept", { dataset: { remember_opt_in: rememberOptIn } })
 
   decline: (event) ->
+    # Handled by data-reflex in HTML
     event.preventDefault()
-
-    # Set client-side cookie for declined
-    Cookies.set("consent_ui_preference", "declined", { expires: 30 })
-
-    # Collect invisible captcha data
-    captchaData = @getCaptchaData()
-
-    post("/consent/decline", {
-      body: captchaData
-      responseKind: "turbo-stream"
-    }).then (response) =>
-      if response.ok then response.html.then (html) => Turbo.renderStreamMessage html
 
   showScreen: (event) ->
     event.preventDefault()

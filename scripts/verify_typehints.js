@@ -27,7 +27,7 @@ function gatherFiles(directory) {
         if (st.isDirectory()) out.push(...gatherFiles(full));
         else if (
             st.isFile() &&
-            [".js", ".mjs", ".cjs"].includes(path.extname(entry))
+            [".js", ".mjs", ".js"].includes(path.extname(entry))
         )
             out.push(full);
     }

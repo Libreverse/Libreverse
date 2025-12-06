@@ -33,7 +33,7 @@ module EEAMode
         policy_exemptions: %w[consent privacy cookies]
       },
       cookie_settings: {
-        httponly: true,
+        httponly: false,
         secure: Rails.application.config.force_ssl,
         same_site: :strict,
         expiration: 1.year

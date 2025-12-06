@@ -12,6 +12,7 @@ app = Application.start();
 
 // Attach ActionCable consumer so StimulusReflex can share the connection
 app.consumer = consumer;
+globalThis.App = { cable: consumer };
 
 // Enable StimulusReflex debug when running in development mode
 // Use a safe check compatible with CoffeeScript/Node environments

@@ -97,5 +97,9 @@ module.exports = [
     ["user-agent", "LibreverseDesktopApp/1.0"],
     "video-capture-use-gpu-memory-buffer",
     ["js-flags", "--optimize-for-size"],
-    ["force-dark-mode", "true"],
+    "force-dark-mode",
+    "v8-cache-options=none",
+    "aggressive-cache-discard",
+    "disk-cache-size=52428800",
+    "max-decoded-image-size-mb=128"
 ];

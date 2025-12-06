@@ -126,5 +126,5 @@ turbo-frame#sidebar
             .info-item
               .info-label DELETE ACCOUNT
               .info-value
-                = button_to account_destroy_path, method: :delete, class: "info-button", data: { turbo_confirm: "Are you sure? This cannot be undone." } do
+                button.info-button type="button" data-reflex="click->AccountReflex#destroy" data-confirm="Are you sure? This cannot be undone."
                   = t('dashboard.index.delete_account')

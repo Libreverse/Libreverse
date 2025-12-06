@@ -1,5 +1,5 @@
-const clientWebpackConfig = require("./clientWebpackConfig.cjs");
-const serverWebpackConfig = require("./serverWebpackConfig.cjs");
+const clientWebpackConfig = require("./clientWebpackConfig.js");
+const serverWebpackConfig = require("./serverWebpackConfig.js");
 
 const webpackConfig = (environmentSpecific) => {
     const clientConfig = clientWebpackConfig();

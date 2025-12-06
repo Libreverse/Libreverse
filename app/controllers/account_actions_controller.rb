@@ -77,20 +77,6 @@ class AccountActionsController < ApplicationController
     # Content-Type to text/html and clear the streamed body in tests.
   end
 
-  # DELETE /account
-  def destroy
-    # Run the close_account internal request via the helper Rodauth adds for
-    # each route (see the :internal_request feature). This performs the full
-    # workflow inside a transaction and also honours our hooks.
-    RodauthMain.close_account(account_id: current_account.id)
-
-    # 3. Log the user out to clear any remaining session/cookies.
-    reset_session
-
-    flash[:notice] = "Your account has been deleted. We're sorry to see you go."
-    redirect_to root_path
-  end
-
   private
 
   def account_json

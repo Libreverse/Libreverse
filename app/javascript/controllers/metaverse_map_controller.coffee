@@ -11,6 +11,7 @@ import 'leaflet.translate'
 # Controller responsible for rendering the synthetic metaverse map using locally bundled Leaflet (CRS.Simple)
 export default class extends ApplicationController
     @values =
+        data: Object
         dataUrl: String
 
     connect: ->
@@ -19,10 +20,8 @@ export default class extends ApplicationController
 
     initMap: ->
         @element.classList.add('metaverse-map__container')
-        unless @hasDataUrlValue
-            console.warn('[MetaverseMap] data-url value missing, falling back to /map/data')
-            @dataUrlValue = '/map/data'
-        console.debug('[MetaverseMap] Fetching map data from', @dataUrlValue)
+        
+        console.debug('[MetaverseMap] Initializing map')
         @map = L.map(@element,
             crs: L.CRS.Simple
             minZoom: -2
@@ -67,10 +66,15 @@ export default class extends ApplicationController
         else if L.translate?.fromUrl?
             L.translate.fromUrl.load().catch (e) -> console.warn('[MetaverseMap] Auto translation load failed', e)
 
-        fetch(@dataUrlValue, { headers: { 'Accept': 'application/json' } })
-            .then (r) => r.json()
-            .then (data) => @renderData(data)
-            .catch (e) => console.error('Map data load failed', e)
+        if @hasDataValue
+            @renderData(@dataValue)
+        else if @hasDataUrlValue
+            fetch(@dataUrlValue, { headers: { 'Accept': 'application/json' } })
+                .then (r) => r.json()
+                .then (data) => @renderData(data)
+                .catch (e) => console.error('Map data load failed', e)
+        else
+             console.warn('[MetaverseMap] No data or data-url provided')
 
     renderData: (data) ->
         unless data?.meta?

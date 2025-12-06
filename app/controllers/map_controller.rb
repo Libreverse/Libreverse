@@ -4,10 +4,7 @@
 class MapController < ApplicationController
   # Basic caching to avoid rebuilding structure on every request
   def index
-  end
-
-  def data
     builder = MetaverseMapBuilder.new
-    render json: builder.build
+    @map_data = builder.build
   end
 end

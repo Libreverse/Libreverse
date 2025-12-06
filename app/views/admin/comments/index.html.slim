@@ -33,9 +33,9 @@
             td= l(c.created_at, format: :short)
             td.actions
               - if c.moderation_state != 'approved'
-                = button_to 'Approve', approve_admin_comment_path(c), method: :post, form: { data: { turbo_stream: true } }, class: 'btn-small'
+                button.btn-small type="button" data-reflex="click->CommentReflex#approve" data-id=c.id Approve
               - if c.moderation_state != 'rejected'
-                = button_to 'Reject', reject_admin_comment_path(c), method: :post, params: { reason: 'manual' }, form: { data: { turbo_stream: true } }, class: 'btn-small danger'
+                button.btn-small.danger type="button" data-reflex="click->CommentReflex#reject" data-id=c.id data-reason="manual" Reject
     .bulk-actions
       select name="moderation_action"
         option value="" Bulk Action...

@@ -1,5 +1,5 @@
 / Comment form
-= form_with model: [thread, Comment.new], url: comments_path(commontable_type: thread.commontable_type, commontable_id: thread.commontable_id), data: { controller: 'comment-form' } do |f|
+= form_with model: [thread, defined?(comment) ? comment : Comment.new], url: '#', html: { id: "comment-form-#{thread.id}", data: { reflex: "submit->CommentReflex#create", commontable_type: thread.commontable_type, commontable_id: thread.commontable_id } } do |f|
   .field
     = f.textarea :body, rows: 3, placeholder: 'Write a comment... Use @ to mention'
     = f.hidden_field :parent_id

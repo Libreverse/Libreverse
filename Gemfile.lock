@@ -194,14 +194,6 @@ GEM
     db_text_search (1.0.0)
       activerecord (>= 4.1.15)
     declarative (0.0.20)
-    delayed_job (4.1.13)
-      activesupport (>= 3.0, < 9.0)
-    delayed_job_active_record (4.1.11)
-      activerecord (>= 3.0, < 9.0)
-      delayed_job (>= 3.0, < 5)
-    delayed_job_recurring (0.3.9)
-      delayed_job (>= 3.0)
-      delayed_job_active_record
     diff-lcs (1.6.2)
     disposable (0.6.3)
       declarative (>= 0.0.9, < 1.0.0)
@@ -395,6 +387,10 @@ GEM
     kramdown-syntax-coderay (1.0.1)
       coderay (~> 1.1)
       kramdown (~> 2.0)
+    kredis (1.8.0)
+      activemodel (>= 6.0.0)
+      activesupport (>= 6.0.0)
+      redis (>= 4.2, < 6)
     language_server-protocol (3.17.0.5)
     link_header (0.0.8)
     lint_roller (1.1.0)
@@ -498,10 +494,6 @@ GEM
       validate_url
       webfinger (~> 2.0)
     ostruct (0.6.3)
-    p2p_streams_channel (0.0.3)
-      rails
-      stimulus-rails
-      turbo-rails
     package_json (0.2.0)
     parallel (1.27.0)
     parser (3.3.10.0)
@@ -512,13 +504,6 @@ GEM
       rackup (>= 1.0.1)
       rake (>= 12.3.3)
     permessage_deflate (0.1.4)
-    pg (1.6.2)
-    pg (1.6.2-aarch64-linux)
-    pg (1.6.2-aarch64-linux-musl)
-    pg (1.6.2-arm64-darwin)
-    pg (1.6.2-x86_64-darwin)
-    pg (1.6.2-x86_64-linux)
-    pg (1.6.2-x86_64-linux-musl)
     pp (0.6.3)
       prettyprint
     premailer (1.27.0)
@@ -963,7 +948,6 @@ GEM
       get_process_mem
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    y (0.0.2)
     zeitwerk (2.7.3)
     zip_kit (6.3.4)
 
@@ -999,8 +983,6 @@ DEPENDENCIES
   comfortable_media_surfer
   console1984
   counter_culture
-  delayed_job_active_record
-  delayed_job_recurring
   erb-formatter
   erb_lint
   fasterer
@@ -1021,6 +1003,7 @@ DEPENDENCIES
   jbuilder
   json
   kaminari-i18n
+  kredis
   listen
   lockbox
   mocha
@@ -1029,10 +1012,8 @@ DEPENDENCIES
   oj
   omniauth_openid_connect
   ostruct
-  p2p_streams_channel
   passenger (>= 6.0.20)
   permessage_deflate
-  pg
   premailer-rails
   propshaft
   rack-attack (>= 6.8.0)
@@ -1093,7 +1074,6 @@ DEPENDENCIES
   voight_kampff
   web-console
   worker_killer
-  y
   zip_kit
 
 CHECKSUMS
@@ -1152,9 +1132,6 @@ CHECKSUMS
   date (3.5.0) sha256=5e74fd6c04b0e65d97ad4f3bb5cb2d8efb37f386cc848f46310b4593ffc46ee5
   db_text_search (1.0.0) sha256=4cad83819a02e7e225174ab059de8087fcb68ed88e5926448aae63ef1769406b
   declarative (0.0.20) sha256=8021dd6cb17ab2b61233c56903d3f5a259c5cf43c80ff332d447d395b17d9ff9
-  delayed_job (4.1.13) sha256=4941e64c646b8349279fd6a98f699fd3725c79fc8dab8edf78b6da61c8853bbb
-  delayed_job_active_record (4.1.11) sha256=64f34a6d50316dd7a7df1daf7c6e04ad888c0e86938762318f6f52522b7c1ba8
-  delayed_job_recurring (0.3.9) sha256=be771c1ba217352b0211341930bb38c99bc072dfe8d02a22d42beec998e222a2
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   disposable (0.6.3) sha256=7f2a3fb251bff6cd83f25b164043d4ec3531209b51b066ed476a9df9c2d384cc
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
@@ -1240,6 +1217,7 @@ CHECKSUMS
   kramdown-math-katex (1.0.1) sha256=7119b299fed5ec49b9e2107d18e88f90acf4bbdf1b82a7568fd488790bb04cdc
   kramdown-parser-gfm (1.1.0) sha256=fb39745516427d2988543bf01fc4cf0ab1149476382393e0e9c48592f6581729
   kramdown-syntax-coderay (1.0.1) sha256=aae5da8a2bd78901cb87536cc780c47c3f9c542f4ee63e0df47835d6eb75770f
+  kredis (1.8.0) sha256=34b72a0bc242d7aaea98e82b6a5a8c293a27e1b26f2c729a8d4e1e1409886150
   language_server-protocol (3.17.0.5) sha256=fd1e39a51a28bf3eec959379985a72e296e9f9acfce46f6a79d31ca8760803cc
   link_header (0.0.8) sha256=15c65ce43b29f739b30d05e5f25c22c23797e89cf6f905dbb595fb4c70cb55f9
   lint_roller (1.1.0) sha256=2c0c845b632a7d172cb849cc90c1bce937a28c5c8ccccb50dfd46a485003cc87
@@ -1285,19 +1263,11 @@ CHECKSUMS
   onebox (2.2.19) sha256=1d0f7bf56a356c5f667cdfd429c601ebb65b3903a36697d9f9001d867270677f
   openid_connect (2.3.1) sha256=5d808380cff80d78e3d3d54cfaebe2d6461d835c674faa29e2314a402c1b2182
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
-  p2p_streams_channel (0.0.3) sha256=b355b480b878c6dfe700db69fd1339eadc84d8b4b71332ce6f2428420e1a7abb
   package_json (0.2.0) sha256=92c022dc2999a9e57e835f1ec1a84c9a6c2be08e0fd68886c6f86d94101b6b4d
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
   parser (3.3.10.0) sha256=ce3587fa5cc55a88c4ba5b2b37621b3329aadf5728f9eafa36bbd121462aabd6
   passenger (6.1.0) sha256=52ee135730e9b4fb538e39f96fe5295281d541d7516957d658070f3b24b99ca5
   permessage_deflate (0.1.4) sha256=c3f05a94f98994aa1a47589b0f33e94d86fc10c944efa0f6ab3666e37e343373
-  pg (1.6.2) sha256=58614afd405cc9c2c9e15bffe8432e0d6cfc58b722344ad4a47c73a85189c875
-  pg (1.6.2-aarch64-linux) sha256=0503c6be5b0ca5ca3aaf91f2ed638f90843313cb81e8e7d7b60ad4bb62c3d131
-  pg (1.6.2-aarch64-linux-musl) sha256=c4402447c56279bea80472770522e95c8a2ff49b7f3e534d0cdb01eb27fd6eb8
-  pg (1.6.2-arm64-darwin) sha256=4d44500b28d5193b26674583d199a6484f80f1f2ea9cf54f7d7d06a1b7e316b6
-  pg (1.6.2-x86_64-darwin) sha256=c441a55723584e2ae41749bf26024d7ffdfe1841b442308ed50cd6b7fda04115
-  pg (1.6.2-x86_64-linux) sha256=525f438137f2d1411a1ebcc4208ec35cb526b5a3b285a629355c73208506a8ea
-  pg (1.6.2-x86_64-linux-musl) sha256=e5c8668ffeaf7a9c3458a3dcb002dffa6d8ee1fca9ae534ffef861d2b15644ca
   pp (0.6.3) sha256=2951d514450b93ccfeb1df7d021cae0da16e0a7f95ee1e2273719669d0ab9df6
   premailer (1.27.0) sha256=0fe2348cd82738855c482b31c915a06ecb1d3ad004578c19042905196ddbd1e7
   premailer-rails (1.12.0) sha256=c13815d161b9bc7f7d3d81396b0bb0a61a90fa9bd89931548bf4e537c7710400
@@ -1455,7 +1425,6 @@ CHECKSUMS
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
   worker_killer (1.2.1.338707) sha256=1c74fb66dd9eadab188caf27a769c0f4533d15d0325f219d9f4bdbd8cd56c24e
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
-  y (0.0.2) sha256=5a3b19297b07161ac86968eb9e3a5c9dee3b47f97902e92da42427dbeb61ac0c
   zeitwerk (2.7.3) sha256=b2e86b4a9b57d26ba68a15230dcc7fe6f040f06831ce64417b0621ad96ba3e85
   zip_kit (6.3.4) sha256=407c6d39feef818678fae2d129077bd2f920c9806072af3482e671eeae3c48ea
 

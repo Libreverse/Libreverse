@@ -10,12 +10,10 @@
     .multiplayer-status
       span.status-indicator.connecting id="status-indicator"
         i.fas.fa-spinner.fa-spin
-        | Connecting to peers...
+        | Connecting to session...
 
-      = p2p_frame_tag(session_id: @session_id, peer_id: @peer_id, expires_in: 2.hours, config: {}) do
-
-        .experience-wrapper data-controller="websocket-p2p" data-websocket-p2p-session-id-value=@session_id data-websocket-p2p-peer-id-value=@peer_id data-websocket-p2p-target="status"
-          iframe.experiencedisplay-iframe allow="pointer-lock storage-access camera microphone accelerometer gyroscope magnetometer geolocation forms modals orientation-lock" sandbox="allow-scripts allow-pointer-lock allow-same-origin allow-storage-access allow-forms allow-modals allow-orientation-lock" srcdoc=@html_content.to_s title="Multiplayer Experience: #{@experience.title}" id="experience-iframe" data-websocket-p2p-target="iframe"
+    .experience-wrapper data-controller="experience-state" data-experience-state-session-id-value=@session_id data-experience-state-peer-id-value=@peer_id
+      iframe.experiencedisplay-iframe allow="pointer-lock storage-access camera microphone accelerometer gyroscope magnetometer geolocation forms modals orientation-lock" sandbox="allow-scripts allow-pointer-lock allow-same-origin allow-storage-access allow-forms allow-modals allow-orientation-lock" srcdoc=@html_content.to_s title="Multiplayer Experience: #{@experience.title}" id="experience-iframe" data-experience-state-target="iframe"
 
   .multiplayer-controls
     .peer-list

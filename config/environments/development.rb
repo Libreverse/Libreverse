@@ -26,7 +26,7 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
 
   # We are messing with how people generally work in dev for performance here:
   config.enable_reloading = true
-  config.eager_load = true
+  config.eager_load = false
 
   # Show full error reports.
   config.consider_all_requests_local = true

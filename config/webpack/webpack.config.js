@@ -3,7 +3,7 @@ const { existsSync } = require("node:fs");
 const path = require("node:path");
 
 const environmentSpecificConfig = () => {
-    const extension = ".cjs";
+    const extension = ".js";
     const configPath = path.resolve(__dirname, `${env.nodeEnv}${extension}`);
     if (!existsSync(configPath)) {
         throw new Error(

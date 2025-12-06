@@ -7,6 +7,9 @@ const commonOptions = {
     resolve: {
         extensions: [".css", ".ts", ".tsx"],
     },
+    output: {
+        hashFunction: "sha256",
+    },
 };
 
 const commonWebpackConfig = () =>

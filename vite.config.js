@@ -7,7 +7,6 @@ import babel from "vite-plugin-babel";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import postcssUrl from "postcss-url";
-import Erb from "vite-plugin-erb";
 import coffeescript from "./plugins/coffeescript.js";
 import typehints from "./plugins/typehints.js";
 import preserveAllComments from "./plugins/preserveallcomments.js";
@@ -317,16 +316,11 @@ export default defineConfig(({ mode }) => {
                 "stimulus-use/hotkeys",
                 "jquery",
             ],
-            exclude: ["@hotwired/turbo", "yjs"],
+            exclude: ["@hotwired/turbo"],
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
         plugins: [
-            Erb({
-                env: {
-                    DISABLE_SPRING: "1",
-                },
-            }),
             coffeescript(),
             babel({
                 filter: (id) => {

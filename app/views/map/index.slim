@@ -9,7 +9,7 @@
       button type="button" data-action="metaverse-panel-switch#show3d" data-metaverse-panel-switch-target="btn3d" 3D (Preview)
     .metaverse-panels-track data-metaverse-panel-switch-target="track"
       .metaverse-panel.is-active data-metaverse-panel-switch-target="panel2d"
-        #metaverse-map data-controller="metaverse-map" data-metaverse-map-data-url-value=map_data_path
+        #metaverse-map data-controller="metaverse-map" data-metaverse-map-data-value=@map_data.to_json
       .metaverse-panel.is-inactive data-metaverse-panel-switch-target="panel3d"
         .metaverse-panel__placeholder
-          = ror_component 'MetaversePreview'
+          = ror_component 'MetaversePreview', props: { mapData: @map_data }

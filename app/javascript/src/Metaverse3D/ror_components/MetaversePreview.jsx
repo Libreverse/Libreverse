@@ -255,7 +255,7 @@ const Player = () => {
     return <mesh ref={ref} visible={false} />;
 };
 
-const Scene = () => {
+const Scene = ({ mapData }) => {
     return (
         <>
             <color attach="background" args={["#050507"]} />
@@ -288,7 +288,7 @@ const Scene = () => {
             >
                 <Floor />
                 <Player />
-                <MapData />
+                <MapDataInner data={mapData} />
             </Physics>
             <EffectComposer enableNormalPass depthBuffer multisampling={0}>
                 <SSAO />
@@ -348,7 +348,7 @@ const MouseControls = () => {
     return null;
 };
 
-const MetaversePreview = () => {
+const MetaversePreview = ({ mapData }) => {
     const [hydrated, setHydrated] = useState(false);
     const canvasRef = useRef();
 
@@ -401,7 +401,7 @@ const MetaversePreview = () => {
                     }}
                 >
                     <Suspense fallback={null}>
-                        <Scene />
+                        <Scene mapData={mapData} />
                         <MouseControls />
                     </Suspense>
                 </Canvas>
@@ -417,22 +417,8 @@ const GROUND_GROUP = 2;
 const OBJECT_GROUP = 4;
 const PROVIDER_GROUP = 8;
 
-const MapData = () => {
-    const [data, setData] = useState(null);
-
-    useEffect(() => {
-        fetch("/map/data")
-            .then((res) => res.json())
-            .then(setData)
-            .catch(console.error);
-    }, []);
-
-    if (!data) return null;
-
-    return <MapDataInner data={data} />;
-};
-
 const MapDataInner = ({ data }) => {
+    if (!data) return null;
     return (
         <>
             {/* Providers as ground squares */}

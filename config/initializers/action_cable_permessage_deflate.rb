@@ -30,7 +30,6 @@ module ActionCable
             request_max_window_bits: deflate_request_max_window_bits
           )
           @driver.add_extension(deflate)
-          Rails.logger.info "ActionCable permessage deflate configured (forced fast): level=#{deflate_level}, mem_level=#{deflate_mem_level}, max_window_bits=#{deflate_max_window_bits}"
         end
       rescue StandardError => e
         Rails.logger.error "Error in ClientSocket initialization: #{e.message}"

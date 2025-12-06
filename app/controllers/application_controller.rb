@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   include PasswordSecurityEnforcer
   include Loggable
   include SpamDetection
-  include WebsocketP2pHelper
   include EnhancedCaching
 
   # CanCanCan integration

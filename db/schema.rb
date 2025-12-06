@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_20_173420) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -413,6 +413,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_20_173420) do
     t.boolean "approved", default: false, null: false
     t.string "author"
     t.datetime "created_at", null: false
+    t.json "current_state"
     t.text "description"
     t.boolean "federate", default: true, null: false
     t.boolean "federated_blocked", default: false, null: false

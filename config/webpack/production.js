@@ -1,4 +1,4 @@
-const generateWebpackConfigs = require("./generateWebpackConfigs.cjs");
+const generateWebpackConfigs = require("./generateWebpackConfigs.js");
 
 const productionEnvironmentOnly = () => {};
 

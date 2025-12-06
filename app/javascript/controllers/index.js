@@ -28,6 +28,9 @@ application.register("dismissible", DismissibleController);
 import EnhancedApplicationController from "./enhanced_application_controller";
 application.register("enhanced-application", EnhancedApplicationController);
 
+import ExperienceStateController from "./experience_state_controller";
+application.register("experience-state", ExperienceStateController);
+
 import ExperienceUploadController from "./experience_upload_controller";
 application.register("experience-upload", ExperienceUploadController);
 
@@ -93,9 +96,3 @@ application.register("sync-mode", SyncModeController);
 
 import ToastController from "./toast_controller";
 application.register("toast", ToastController);
-
-import WebsocketP2pController from "./websocket_p2p_controller";
-application.register("websocket-p2p", WebsocketP2pController);
-
-import YjsCollaborationController from "./yjs_collaboration_controller";
-application.register("yjs-collaboration", YjsCollaborationController);

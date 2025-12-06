@@ -1,0 +1,78 @@
+# frozen_string_literal: true
+
+class ExperienceChannel < ApplicationCable::Channel
+  def subscribed
+    @session_id = params[:session_id]
+    @peer_id = params[:peer_id]
+
+    reject unless @session_id.present? && @peer_id.present?
+
+    stream_from "experience_session_#{@session_id}"
+
+    # Send current state to the new peer
+    transmit({
+      type: "state_snapshot",
+      state: current_state_hash.to_h,
+      timestamp: Time.current.to_i
+    })
+  end
+
+  def unsubscribed
+    # Persist state to DB when a user leaves
+    # We parse the experience ID from the session ID (format: exp_{id}_{random})
+    if @session_id.match?(/^exp_\d+_/)
+      experience_id = @session_id.split("_")[1]
+      ExperienceStatePersistJob.perform_later(experience_id, @session_id)
+    end
+  end
+
+  def receive(data)
+    case data["type"]
+    when "update"
+      handle_update(data)
+    when "request_state"
+      transmit({
+        type: "state_snapshot",
+        state: current_state_hash.to_h,
+        timestamp: Time.current.to_i
+      })
+    end
+  end
+
+  private
+
+  def current_state_hash
+    # Use Kredis to store the state as a hash
+    # Key: experience_state:{session_id}
+    Kredis.hash("experience_state:#{@session_id}")
+  end
+
+  def handle_update(data)
+    key = data["key"]
+    value = data["value"]
+
+    return unless key.present?
+
+    # Update Kredis
+    # We store values as JSON strings to handle complex types if needed, 
+    # but Kredis hash values are strings.
+    # If value is an object/array, the client should probably stringify it or we handle it here.
+    # For simplicity, let's assume the client sends a value that we can store directly or as JSON.
+    
+    # If value is nil, we might want to delete the key
+    if value.nil?
+      current_state_hash.delete(key)
+    else
+      current_state_hash[key] = value
+    end
+
+    # Broadcast to others
+    ActionCable.server.broadcast("experience_session_#{@session_id}", {
+      type: "state_update",
+      key: key,
+      value: value,
+      from_peer_id: @peer_id,
+      timestamp: Time.current.to_i
+    })
+  end
+end

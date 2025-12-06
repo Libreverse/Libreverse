@@ -2,10 +2,9 @@
     "name": "libreverse",
     "productName": "libreverse",
     "version": "1.0.0",
-    "description": "My Electron application description",
+    "description": "The open source metaverse",
     "main": "src/index.js",
     "private": false,
-    "type": "module",
     "scripts": {
         "start": "electron-forge start",
         "package": "electron-forge package",
@@ -48,7 +47,6 @@
         "@vitejs/plugin-legacy": "7.2.1",
         "@wllama/wllama": "1.17.1",
         "@xenova/transformers": "2.17.2",
-        "@y-rb/actioncable": "0.1.5",
         "about-window": "1.15.2",
         "autoprefixer": "10.4.21",
         "babel-loader": "10.0.0",
@@ -85,7 +83,6 @@
         "locomotive-scroll": "4.1.4",
         "mini-css-extract-plugin": "2.9.4",
         "node-fetch": "3.3.2",
-        "p2p": "file:vendor/javascript/p2p",
         "postcss-class-name-shortener": "2.0.0",
         "postcss-mq-optimize": "2.1.0",
         "postcss-remove-root": "0.0.2",
@@ -98,7 +95,7 @@
         "sassy-lists": "3.0.1",
         "sfw": "2.0.4",
         "shakapacker": "8.4.0",
-        "snappyjs": "0.7.0",
+        "sortablejs": "1.15.2",
         "spin.js": "4.1.2",
         "stimulus-store": "0.0.3",
         "stimulus-use": "0.52.3",
@@ -117,9 +114,7 @@
         "webpack-cli": "6.0.1",
         "webpack-merge": "6.0.1",
         "webpack-subresource-integrity": "5.1.0",
-        "what-input": "5.2.12",
-        "y-webrtc": "10.3.0",
-        "yjs": "13.6.27"
+        "what-input": "5.2.12"
     },
     "devDependencies": {
         "@babel/core": "7.28.4",

@@ -1,4 +1,4 @@
-const commonWebpackConfig = require("./commonWebpackConfig.cjs");
+const commonWebpackConfig = require("./commonWebpackConfig.js");
 
 const configureClient = () => {
     const clientConfig = commonWebpackConfig();

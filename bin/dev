@@ -4,8 +4,6 @@ use warnings;
 use FindBin;
 use File::Glob 'bsd_glob';
 use Term::ANSIColor;  # For colored output
-require "$FindBin::Bin/../tui/twemoji.pm";  # Loads the exact file
-Twemoji->import(qw(twemoji));  # Manually import the function
 use utf8;  # Enable UTF-8 for Unicode
 binmode STDOUT, ':encoding(UTF-8)';  # Set output encoding to UTF-8
 
@@ -62,18 +60,18 @@ print $RESET;
 # Function to display a task with status
 sub run_task {
     my ($message, $command) = @_;
-    print $message_color, twemoji('▶'), " $message", $RESET, "\n";
+    print $message_color, '▶', " $message", $RESET, "\n";
     system($command) == 0 or warn "Command failed: $command\n";
-    print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
+    print $message_color, "  ", '✅', " Done", $RESET, "\n\n";
 }
 
 # Function to display a spinner during tasks
 sub show_spinner {
     my ($message) = @_;
-    print $message_color, "  ", twemoji('⏳'), " $message", $RESET;
+    print $message_color, "  ", '⏳', " $message", $RESET;
     my @spinner = ('|', '/', '-', '\\');
     for (1..10) {
-        print "\r", $message_color, "  ", twemoji('⏳'), " $message ", $spinner[$_ % 4], $RESET;
+        print "\r", $message_color, "  ", '⏳', " $message ", $spinner[$_ % 4], $RESET;
         select(undef, undef, undef, 0.1);  # Brief delay
     }
     print "\r", " " x ($width - 2), "\r";  # Clear line
@@ -113,7 +111,7 @@ run_task("Killing other overmind instances...", "pkill overmind > /dev/null 2>&1
 
 show_spinner("Unlinking the overmind socket...");
 unlink '/tmp/.overmind.sock';
-print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
+print $message_color, "  ", '✅', " Done", $RESET, "\n\n";
 
 show_spinner("Killing any running Passenger instances...");
 run_task("Killing any running Passenger instances...", "pkill -f 'Passenger' > /dev/null 2>&1; pkill -f 'passenger' > /dev/null 2>&1");
@@ -134,9 +132,9 @@ run_task(
 # ----------------------------------------------------------------------
 # 1. Clean up any stale containers first (excluding persistent databases)
 # ----------------------------------------------------------------------
-print $message_color, twemoji('Broom'), " Cleaning up any stale containers...", $RESET, "\n";
+print $message_color, '🧹', " Cleaning up any stale containers...", $RESET, "\n";
 system('podman rm -f libreverse-dev-detached-dragonflydb >/dev/null 2>&1');
-print $message_color, "  ", twemoji('✅'), " Done", $RESET, "\n\n";
+print $message_color, "  ", '✅', " Done", $RESET, "\n\n";
 
 # ----------------------------------------------------------------------
 # 2. Test podman with the hello container
@@ -153,13 +151,13 @@ if ($machine_running) {
 }
 
 if ($podman_ok) {
-    print $message_color, twemoji('Check Mark'), " podman works – skipping recreation steps.", $RESET, "\n\n";
+    print $message_color, '✅', " podman works – skipping recreation steps.", $RESET, "\n\n";
 }
 else {
     # ------------------------------------------------------------------
     # 2. podman broken → ONE spinner for the whole recreation block
     # ------------------------------------------------------------------
-    print $message_color, twemoji('Hourglass'), " podman failed. Recreating VM...", $RESET, "\n";
+    print $message_color, '⏳', " podman failed. Recreating VM...", $RESET, "\n";
 
     # Start the spinner (it will animate for ~30 s – enough for the whole block)
     show_spinner("Making sure podman behaves...");
@@ -174,17 +172,17 @@ else {
     # ------------------------------------------------------------------
     # 3. Final verification (still under the same spinner)
     # ------------------------------------------------------------------
-    print $message_color, twemoji('Magnifying Glass'), " Verifying podman after recreation...", $RESET, "\n";
+    print $message_color, '🔍', " Verifying podman after recreation...", $RESET, "\n";
     if (system('podman run --rm quay.io/podman/hello >/dev/null 2>&1') == 0) {
-        print $message_color, twemoji('Check Mark'), " podman is now working!", $RESET, "\n\n";
+        print $message_color, '✅', " podman is now working!", $RESET, "\n\n";
     }
     else {
-        print $message_color, twemoji('Cross Mark'), " Still broken – check logs / permissions.", $RESET, "\n\n";
+        print $message_color, '❌', " Still broken – check logs / permissions.", $RESET, "\n\n";
     }
 
     # Overwrite the spinner line with a final status
     print "\r", " " x ($width - 2), "\r";               # clear spinner line
-    print $message_color, twemoji('Check Mark'), " Making sure podman behaves... Done", $RESET, "\n\n";
+    print $message_color, '✅', " Making sure podman behaves... Done", $RESET, "\n\n";
 }
 
 # Set environment variables for Overmind and all child processes
@@ -196,28 +194,28 @@ $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,
 $ENV{OVERMIND_CAN_DIE}       = 'startup-message';
 
 # Check if databases are running before starting
-print $message_color, twemoji('Database'), " Checking database status...\n", $RESET;
+print $message_color, '🗄️', " Checking database status...\n", $RESET;
 my $tidb_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-tidb") == 0;
 my $dragonfly_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-dragonflydb") == 0;
 
 my $missing_databases = 0;
 
 if (!$tidb_running) {
-    print $message_color, twemoji('Cross Mark'), " TiDB database not running!\n", $RESET;
+    print $message_color, '❌', " TiDB database not running!\n", $RESET;
     print $message_color, "  Run: bin/db-start\n", $RESET;
     $missing_databases = 1;
 }
 if (!$dragonfly_running) {
-    print $message_color, twemoji('Cross Mark'), " DragonflyDB database not running!\n", $RESET;
+    print $message_color, '❌', " DragonflyDB database not running!\n", $RESET;
     print $message_color, "  Run: bin/db-start\n", $RESET;
     $missing_databases = 1;
 }
 
 if ($missing_databases) {
-    print $message_color, "\n", twemoji('Warning Sign'), " Required databases are not running. Please start them first.\n", $RESET;
+    print $message_color, "\n", '⚠️', " Required databases are not running. Please start them first.\n", $RESET;
     print $message_color, "  Run: bin/db-start\n", $RESET;
     exit 1;
 }
 
-print $message_color, twemoji('Check Mark'), " All databases are running!\n\n", $RESET;
+print $message_color, '✅', " All databases are running!\n\n", $RESET;
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

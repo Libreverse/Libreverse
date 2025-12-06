@@ -1,0 +1,8 @@
+- if blocked_domains.any?
+  ul.list-group
+    - blocked_domains.each do |domain|
+      li.list-group-item.d-flex.justify-content-between.align-items-center
+        span= domain
+        button.btn.btn-success.btn-sm type="button" data-reflex="click->Admin::FederationReflex#unblock_domain" data-domain=domain data-confirm="Are you sure you want to unblock #{domain}?" Unblock
+- else
+  p.text-muted No domains are currently blocked.

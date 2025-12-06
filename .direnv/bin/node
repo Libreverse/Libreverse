@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Minimal-memory Node.js — forced flags, no matter who calls "node"
+exec "/opt/homebrew/bin/node"   --optimize-for-size   --jitless   --single-threaded-gc   "$@"

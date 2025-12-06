@@ -31,7 +31,6 @@ Rails.application.routes.draw do
   resources :search_new, only: [ :index ]
   get "search_new/index"
   get "search" => "search#index"
-  post "search" => "search#create"
   root "homepage#index"
   get "terms", to: "terms#index"
   get "settings", to: "settings#index"
@@ -78,11 +77,8 @@ Rails.application.routes.draw do
     resources :experiences do
       member do
         get "display"
-        patch "approve"
       end
     end
-    # Account delete (requires authentication)
-    delete "account", to: "account_actions#destroy", as: :account_destroy
   end
 
   # Account export placed outside Rodauth constraint; controller handles auth.
@@ -93,13 +89,7 @@ Rails.application.routes.draw do
 
   # ===== Admin Namespace =====
   namespace :admin do
-    resources :comments, only: %i[index] do
-      post :bulk, on: :collection
-      member do
-        post :approve
-        post :reject
-      end
-    end
+    resources :comments, only: %i[index]
     resources :indexing_runs, only: %i[index show]
     resources :indexers, only: %i[index show] do
       member do
@@ -120,25 +110,13 @@ Rails.application.routes.draw do
     # ActiveHashcash monitoring dashboard - admin only
     mount ActiveHashcash::Engine, at: "hashcash"
 
-    resources :experiences, only: [ :index ] do
-      member do
-        patch :approve # Route for PATCH /admin/experiences/:id/approve
-      end
-      collection do
-        post :add_examples
-        post :restore_examples
-        delete :delete_examples
-      end
-    end
+    resources :experiences, only: [ :index ]
 
     # Instance settings management
     resources :instance_settings
 
     # Federation management
     get "federation", to: "federation#index"
-    post "federation/block_domain", to: "federation#block_domain"
-    delete "federation/unblock_domain/:domain", to: "federation#unblock_domain", as: :unblock_domain
-    post "federation/generate_actors", to: "federation#generate_actors"
     get "federation/federated_experiences", to: "federation#federated_experiences"
 
     # ActiveStorageDB utilities (optional admin utilities)
@@ -159,8 +137,6 @@ Rails.application.routes.draw do
 
   # Consent routes using Turbo Streams
   get  "consent/screen", to: "consent#screen", as: :consent_screen
-  post "consent/accept", to: "consent#accept"
-  post "consent/decline", to: "consent#decline"
 
   # Mount audits1984 engine for auditing console sessions
   mount Audits1984::Engine => "/console"
@@ -171,7 +147,6 @@ Rails.application.routes.draw do
 
   # Metaverse synthetic map
   get "map", to: "map#index"
-  get "map/data", to: "map#data", defaults: { format: :json }
 
   # LLM page
   get "lm", to: "lm#index"
@@ -181,9 +156,4 @@ Rails.application.routes.draw do
 
   # Mount Federails engine at root for ActivityPub federation
   mount Federails::Engine => "/"
-  resources :comments, only: [ :create ] do
-    post :like, on: :member
-    post :approve, on: :member
-    post :reject, on: :member
-  end
 end

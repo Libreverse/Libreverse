@@ -1,5 +1,5 @@
 const { config } = require("shakapacker");
-const commonWebpackConfig = require("./commonWebpackConfig.cjs");
+const commonWebpackConfig = require("./commonWebpackConfig.js");
 const webpack = require("webpack");
 
 const configureServer = () => {
@@ -33,6 +33,7 @@ const configureServer = () => {
         globalObject: "this",
         path: config.outputPath,
         publicPath: config.publicPath,
+        hashFunction: "sha256",
     };
     serverWebpackConfig.plugins = serverWebpackConfig.plugins.filter(
         (plugin) =>
