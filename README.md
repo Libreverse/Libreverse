@@ -120,10 +120,10 @@ The image exposes port **3000** and stores the production SQLite database and up
 
 Quality checks now run automatically via GitHub Actions CI on every push and pull request.
 
-To run quality checks manually (original script preserved):
+To run quality checks manually:
 
 ```bash
-perl scripts/static.pl
+bin/static
 ```
 
 ### Electron Security Scanning

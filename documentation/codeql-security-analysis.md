@@ -1,6 +1,8 @@
 # CodeQL Security Analysis
 
-This document describes how to use CodeQL for security analysis in the Libreverse project, both locally and in CI/CD.
+This repository is configured to run CodeQL in GitHub Actions (code scanning).
+
+Local CodeQL runner/setup scripts are intentionally **not** included or maintained.
 
 ## Overview
 
@@ -8,110 +10,6 @@ CodeQL is GitHub's static analysis engine that helps find security vulnerabiliti
 
 - **Ruby code** (Rails application, models, controllers, etc.)
 - **JavaScript/TypeScript code** (Frontend assets, Stimulus controllers, etc.)
-
-## Local Analysis
-
-### Quick Start
-
-1. **Run the analysis with the static script:**
-
-    ```bash
-    perl scripts/static.pl
-    ```
-
-    This automatically includes CodeQL analysis as part of the comprehensive static analysis suite.
-
-2. **Run CodeQL analysis independently:**
-
-    ```bash
-    # Install CodeQL CLI (first time only)
-    scripts/codeql-local.sh --install
-
-    # Run analysis for all languages
-    scripts/codeql-local.sh --create-db
-
-    # Run analysis for specific language
-    scripts/codeql-local.sh --language ruby --create-db
-    scripts/codeql-local.sh --language javascript --create-db
-    ```
-
-3. **View results:**
-
-    ```bash
-    # View summary for all languages
-    scripts/codeql-viewer.sh
-
-    # View detailed findings
-    scripts/codeql-viewer.sh --detailed
-
-    # View results for specific language
-    scripts/codeql-viewer.sh ruby --detailed --limit 5
-
-    # List available result files
-    scripts/codeql-viewer.sh --files
-    ```
-
-### Directory Structure
-
-After running CodeQL locally, the following structure is created:
-
-```text
-.codeql/
-├── codeql-cli/          # CodeQL CLI binaries
-├── codeql-queries/      # Standard CodeQL queries and libraries
-│   └── codeql-repo/     # GitHub's CodeQL repository
-├── databases/           # Analysis databases
-│   ├── ruby-database/
-│   └── javascript-database/
-└── results/             # Analysis results
-    ├── ruby-results.sarif
-    ├── ruby-results.txt
-    ├── javascript-results.sarif
-    └── javascript-results.txt
-```
-
-### Script Options
-
-#### `scripts/codeql-local.sh`
-
-```bash
-# Install CodeQL CLI
-scripts/codeql-local.sh --install
-
-# Create databases and run analysis
-scripts/codeql-local.sh --create-db
-
-# Analyze specific languages
-scripts/codeql-local.sh --language ruby,javascript --create-db
-
-# Run analysis without creating new databases
-scripts/codeql-local.sh --no-summary
-
-# Get help
-scripts/codeql-local.sh --help
-```
-
-#### `scripts/codeql-viewer.sh`
-
-```bash
-# Show summary for all languages
-scripts/codeql-viewer.sh
-
-# Show detailed findings
-scripts/codeql-viewer.sh --detailed
-
-# Limit number of detailed findings
-scripts/codeql-viewer.sh --detailed --limit 10
-
-# View specific language results
-scripts/codeql-viewer.sh ruby --detailed
-
-# List available files
-scripts/codeql-viewer.sh --files
-
-# Get help
-scripts/codeql-viewer.sh --help
-```
 
 ## CI/CD Integration
 
@@ -184,75 +82,19 @@ Results are provided in SARIF (Static Analysis Results Interchange Format):
 - Missing input validation
 - Client-side code injection
 
-## Integration with Static Analysis
+## Viewing results in VS Code
 
-CodeQL is integrated into the main static analysis pipeline (`scripts/static.pl`):
+If the workflow uploads SARIF artifacts, you can download them from the workflow run and open them locally.
 
-1. **Sequential setup** - Creates databases for analysis
-2. **Parallel analysis** - Runs Ruby and JavaScript analysis in parallel with other tools
-3. **Result aggregation** - Exit codes contribute to overall static analysis status
+For a nicer UI, install the **SARIF Viewer** extension in VS Code.
 
-## Troubleshooting
+## Troubleshooting (CI)
 
-### Common Issues
+If the CodeQL workflow fails:
 
-1. **Database creation fails**
-
-    ```bash
-    # Ensure project dependencies are installed
-    bundle install
-    bun install
-
-    # Try recreating databases
-    rm -rf .codeql/databases/
-    scripts/codeql-local.sh --create-db
-    ```
-
-2. **Analysis takes too long**
-
-    ```bash
-    # Analyze one language at a time
-    scripts/codeql-local.sh --language ruby
-    scripts/codeql-local.sh --language javascript
-    ```
-
-3. **No results shown**
-
-    ```bash
-    # Check if analysis completed successfully
-    scripts/codeql-viewer.sh --files
-
-    # Re-run analysis with verbose output
-    scripts/codeql-local.sh --create-db
-    ```
-
-### Requirements
-
-- **macOS/Linux** - CodeQL CLI supports macOS and Linux
-- **curl** - For downloading CodeQL CLI
-- **unzip** - For extracting CodeQL CLI
-- **git** - For downloading CodeQL queries
-- **jq** (optional) - For better result parsing and display
-
-### Performance Tips
-
-- **Incremental analysis** - Only recreate databases when code structure changes significantly
-- **Language-specific analysis** - Use `--language` flag to analyze specific languages
-- **Parallel execution** - The static.pl script runs analyses in parallel for better performance
-
-## VS Code Integration
-
-For the best experience viewing CodeQL results in VS Code:
-
-1. Install the **SARIF Viewer** extension
-2. Open SARIF files directly: `.codeql/results/*.sarif`
-3. Use the Problems panel to see findings inline with your code
-
-## Security Considerations
-
-- **Local databases** - Contains analyzed code structure, added to `.gitignore`
-- **Result files** - May contain file paths and code snippets, also ignored
-- **CI/CD results** - Uploaded to GitHub Security tab, visible to repository collaborators
+1. Check the failing job logs in GitHub Actions.
+2. Common causes are dependency install failures or build steps that are required for extraction.
+3. If you change what should be analyzed/excluded, update `.github/codeql/codeql-config.yml` accordingly.
 
 ## Further Reading
 

@@ -1,6 +1,6 @@
 name: "CodeQL Comprehensive Configuration"
 # This configuration mirrors the default GitHub CodeQL Action behavior
-# It ensures identical analysis between local runs and CI/CD pipelines
+# It standardizes analysis settings for CI/CD pipelines
 
 # Language-specific configurations
 languages:
