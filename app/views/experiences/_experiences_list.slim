@@ -3,21 +3,24 @@
     - link_href = experience.respond_to?(:display_path) ? experience.display_path : display_experience_path(experience)
     = link_to link_href, class: "experience-link", target: (experience.respond_to?(:federated?) && (experience.federated? || experience.metaverse?) ? "_blank" : nil), rel: (experience.respond_to?(:federated?) && (experience.federated? || experience.metaverse?) ? "noopener" : nil) do
       article itemscope="" itemtype="https://schema.org/CreativeWork"
-        h3 itemprop="name" = sanitize experience.title
+        h3 itemprop="name"
+          = sanitize experience.title
         div itemprop="description"
           = sanitize simple_format(experience.description)
         - if experience.author.present?
           p.sp-author
             span itemprop="author" itemscope="" itemtype="https://schema.org/Person"
               = t('.by')
-              span itemprop="name" = sanitize experience.author
+              span itemprop="name"
+                = sanitize experience.author
         - if experience.created_at.present?
           p.creation-date
             = t('.created_at')
             | \
             | \#{experience.created_at.strftime("%B %d, %Y")}
         - if experience.respond_to?(:approved?) && !experience.approved?
-          p.status-tag.pending= t('.awaiting_approval')
+          p.status-tag.pending
+            = t('.awaiting_approval')
     - if experience.respond_to?(:local?) ? experience.local? : true
       .experience-actions
         - if can? :approve, experience

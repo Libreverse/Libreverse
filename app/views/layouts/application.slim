@@ -1,4 +1,4 @@
-doctype html
+doctype strict
 - rtl_locales = %w[ar]
 html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18n.locale.to_s
   head
@@ -7,15 +7,15 @@ html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18
     = csrf_meta_tags
     = csp_meta_tag
   body
-    .titlebar style="-webkit-app-region: drag; height: 36px; width: 100%; position: fixed; top: 0; left: 0; z-index: 5; background: transparent;"
-    = render "layouts/window_controls"
     = render "layouts/oneko"
     = render "layouts/glass_filter"
     noscript
       .noscript-message
         .noscript-message__content
-          h1.noscript-message__heading= t('layouts.application.noscript_heading')
-          p.noscript-message__text= t('layouts.application.noscript_message')
+          h1.noscript-message__heading
+            = t('layouts.application.noscript_heading')
+          p.noscript-message__text
+            = t('layouts.application.noscript_message')
 
     .off-canvas-wrapper
       .off-canvas-wrapper-inner data-off-canvas-wrapper=""
@@ -44,10 +44,12 @@ html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18
             h5.off-canvas-attribution-title id="off-canvas-attribution-title"
               = t('layouts.drawer.attribution')
             .off-canvas-attribution-content
-              p= t('layouts.default_drawer.intro_html').html_safe
+              p
+                = t('layouts.default_drawer.intro_html').html_safe
               ul
                 li
-                  a.off-canvas-attribution-link href="https://github.com/twitter/twemoji?tab=readme-ov-file" = t('layouts.default_drawer.libreverse_twemoji')
+                  a.off-canvas-attribution-link href="https://github.com/twitter/twemoji?tab=readme-ov-file"
+                    = t('layouts.default_drawer.libreverse_twemoji')
                   = t('layouts.default_drawer.modified_from')
                   a.off-canvas-attribution-link href="https://github.com/twitter/twemoji?tab=readme-ov-file"  Twemoji
                   = t('layouts.default_drawer.by')

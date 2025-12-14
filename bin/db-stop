@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
-# Stop development databases
+echo "Stopping local databases..."
 
-echo "Stopping development databases..."
-
-# Stop TiDB
-echo "Stopping TiDB..."
-podman stop libreverse-dev-tidb >/dev/null 2>&1 || true
-
-# Stop DragonflyDB
-echo "Stopping DragonflyDB..."
-podman stop libreverse-dev-dragonflydb >/dev/null 2>&1 || true
-
-echo "Databases stopped."
+echo "Note: TiDB and Valkey are running as background services."
+echo "To stop them, run:"
+echo "  launchctl unload ~/Library/LaunchAgents/com.pingcap.tidb.plist"
+echo "  brew services stop valkey"

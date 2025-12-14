@@ -7,5 +7,5 @@ shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
 sidekiq: cd .. && bundle exec sidekiq -C config/sidekiq.yml
 mailhog: cd .. && mailhog
 stimulus-manifest-regenerator: cd .. && bin/manifest-isr
-electron: cd .. && npx electron-forge start
+electron: cd .. && npm run start
 dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh

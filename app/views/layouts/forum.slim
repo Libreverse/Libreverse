@@ -7,8 +7,6 @@ html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18
     = csrf_meta_tags
     = csp_meta_tag
   body
-    .titlebar style="-webkit-app-region: drag; height: 36px; width: 100%; position: fixed; top: 0; left: 0; z-index: 5; background: transparent;"
-    = render "layouts/window_controls"
     = render "layouts/oneko"
     = render "layouts/glass_filter"
     noscript

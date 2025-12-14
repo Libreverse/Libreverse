@@ -238,7 +238,11 @@ module LibreverseInstance
 
     @force_ssl = if can_access_database?
       setting = InstanceSetting.find_by(key: "force_ssl")
-      ActiveModel::Type::Boolean.new.cast(setting&.value)
+      if setting&.value.blank?
+        Rails.env.production?
+      else
+        ActiveModel::Type::Boolean.new.cast(setting.value)
+      end
     else
       Rails.env.production?
     end

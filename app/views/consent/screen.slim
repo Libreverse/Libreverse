@@ -13,7 +13,7 @@
       h2.hp-secondary#intro-heading
         = t('consent.screen.intro')
     section aria-labelledby="principle-heading"
-      p.hp-text= t('consent.screen.access_message_html', privacy_policy_link: link_to(t('policies.privacy_policy'), main_app.privacy_path, target: '_blank'), cookie_policy_link: link_to(t('policies.cookie_policy'), cookie_policy_path, target: '_blank')).html_safe
+      p.hp-text= t('consent.screen.access_message_html', privacy_policy_link: link_to(t('policies.privacy_policy'), main_app.privacy_path, target: '_blank'), cookie_policy_link: link_to(t('policies.cookie_policy'), main_app.cookie_policy_path, target: '_blank')).html_safe
       p.hp-text= t('consent.screen.remember_info_html')
       p.hp-text= t('consent.screen.english_only_notice')
 

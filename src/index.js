@@ -36,6 +36,11 @@ const baseUrl = process.env.APP_URL || "https://localhost:3000";
 // strangely it doesn't keep the window open without this.
 let mainWindow = null;
 
+const getFocusedOrMainWindow = () => {
+    const win = BrowserWindow.getFocusedWindow();
+    return win && !win.isDestroyed() ? win : mainWindow;
+};
+
 const attachContextMenu = (targetWindow) => {
     if (!targetWindow) return;
     contextMenu({
@@ -120,12 +125,88 @@ app.on("second-instance", () => {
 
 // This method will be called when Electron has finished initialization.
 app.whenReady().then(async () => {
+    const iconPath = path.join(
+        __dirname,
+        isDev
+            ? "../../app/images/macos-icon.png"
+            : "../app/images/macos-icon.png",
+    );
+
     // Set macOS dock icon
     if (process.platform === "darwin") {
-        app.dock.setIcon(path.join(__dirname, "../app/images/macos-icon.png"));
+        app.dock.setIcon(iconPath);
     }
 
     mainWindow = ensureMainWindow();
+
+    // ---------------------------------------------------------------------
+    // IPC: window controls + cookie management
+    // ---------------------------------------------------------------------
+
+    ipcMain.handle("minimize-window", () => {
+        const win = getFocusedOrMainWindow();
+        if (win && !win.isDestroyed()) win.minimize();
+        return true;
+    });
+
+    ipcMain.handle("maximize-window", () => {
+        const win = getFocusedOrMainWindow();
+        if (!win || win.isDestroyed()) return false;
+        if (win.isMaximized()) win.unmaximize();
+        else win.maximize();
+        return true;
+    });
+
+    ipcMain.handle("close-window", () => {
+        const win = getFocusedOrMainWindow();
+        if (win && !win.isDestroyed()) win.close();
+        return true;
+    });
+
+    ipcMain.handle("cookies:set", async (event, payload = {}) => {
+        const { url, name, value, options = {} } = payload;
+
+        if (!url || !name) {
+            throw new Error("cookies:set requires url and name");
+        }
+
+        const u = new URL(url);
+        const cookieUrl = u.origin;
+
+        const details = {
+            url: cookieUrl,
+            name: String(name),
+            value: value == null ? "" : String(value),
+            path: options.path || "/",
+            httpOnly: !!options.httpOnly,
+            secure:
+                typeof options.secure === "boolean"
+                    ? options.secure
+                    : u.protocol === "https:",
+        };
+
+        // Electron expects expirationDate in seconds since UNIX epoch.
+        if (typeof options.expirationDate === "number") {
+            details.expirationDate = options.expirationDate;
+        }
+
+        if (options.sameSite) {
+            details.sameSite = options.sameSite;
+        }
+
+        await event.sender.session.cookies.set(details);
+        return true;
+    });
+
+    ipcMain.handle("cookies:remove", async (event, payload = {}) => {
+        const { url, name } = payload;
+        if (!url || !name) {
+            throw new Error("cookies:remove requires url and name");
+        }
+        const u = new URL(url);
+        await event.sender.session.cookies.remove(u.origin, String(name));
+        return true;
+    });
 
     // Load and enable adblocker
     loadEngine().then(() => {
@@ -141,10 +222,7 @@ app.whenReady().then(async () => {
                     label: "About Libreverse",
                     click: () => {
                         openAboutWindow({
-                            icon_path: path.join(
-                                __dirname,
-                                "../app/images/macos-icon.png",
-                            ),
+                            icon_path: iconPath,
                             package_json_dir: path.join(__dirname, "../"),
                             use_version_info: true,
                             show_close_button: "Close",

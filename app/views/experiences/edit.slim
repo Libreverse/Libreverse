@@ -5,12 +5,15 @@
     /! Including search styles for experience styling
     .dashboard-container
       .dashboard-header-section
-        h1.display-heading= t('.title')
-        p.header-description= t('.subtitle')
+        h1.display-heading
+          = t('.title')
+        p.header-description
+          = t('.subtitle')
       .dashboard-section.welcome-section.mb-4.glass.glass-card-base
         h2.h4.mb-2
           = t('.refining', title: @experience.title)
-        p.text-muted.mb-0= t('.instructions')
+        p.text-muted.mb-0
+          = t('.instructions')
       .experience-form-container.glass.glass-card-base
         = render "form", experience: @experience
       .actions-section.mt-4.d-flex.justify-content-between

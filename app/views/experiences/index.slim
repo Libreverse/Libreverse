@@ -5,16 +5,20 @@
     .administrative-background data-controller="parallax-background" data-scroll="" data-scroll-speed="-3" 
     .dashboard-container
       .dashboard-header-section
-        h1.display-heading= t('experiences.index.title')
-        p.header-description= t('experiences.index.subtitle')
+        h1.display-heading
+          = t('experiences.index.title')
+        p.header-description
+          = t('experiences.index.subtitle')
       - if user_signed_in? && !guest_user? && !tutorial_dismissed?("experiences-tutorial")
         div data-controller="dismissible" 
           .dashboard-section.glass.glass-card-base#experiences-tutorial data-dismissible-key-value="experiences-tutorial" data-dismissible-target="container"
             .section-dismiss
               button.dismiss-button data-action="dismissible#dismiss" 
                 img.feather.feather-x alt="Close" aria-hidden="true" height="16" src=svg_icon_data_url("x").to_s width="16" /
-            h2.section-heading= t('experiences.index.tutorial_heading')
-            p.section-description= t('experiences.index.tutorial_description')
+            h2.section-heading
+              = t('experiences.index.tutorial_heading')
+            p.section-description
+              = t('experiences.index.tutorial_description')
       - if @experiences.any?
         .dashboard-experiences-list
           = render "experiences_list", experiences: @experiences
@@ -47,7 +51,8 @@
       - else
         section.glass.glass-card-base.experience-form-container.mt-5#create-experience
           - if authenticated_user?
-            h2.experiences-experience-form-heading= t('experiences.index.create_new_heading')
+            h2.experiences-experience-form-heading
+              = t('experiences.index.create_new_heading')
             p.text-muted.mb-4 Share your insights, stories, or creative ideas with the community.
             = render "form", experience: @experience
           - else

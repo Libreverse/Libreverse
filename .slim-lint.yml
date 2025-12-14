@@ -1,0 +1,22 @@
+exclude:
+    - "vendor/**/*"
+    - "vendor/**/*.slim"
+    - "vendor/**/*.html.slim"
+    - "**/vendor/**/*"
+    - "**/vendor/**/*.slim"
+    - "**/vendor/**/*.html.slim"
+    - ".codeql/**/*"
+    - "app/views/layouts/_glass_filter.slim"
+
+linters:
+    # Matches HAML 'LineLength'
+    LineLength:
+        enabled: false
+
+    # Matches HAML 'RuboCop'
+    RuboCop:
+        enabled: false
+
+    # Matches HAML 'ViewLength'
+    FileLength:
+        enabled: false

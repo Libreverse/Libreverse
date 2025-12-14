@@ -48,10 +48,62 @@ module ApplicationHelper
       ar: "🇸🇦",
       pt: "🇧🇷",
       fr: "🇫🇷",
-      ru: "🇷🇺",
       de: "🇩🇪",
-      ja: "🇯🇵"
-    }[locale.to_sym] || "🏳️"
+      ja: "🇯🇵",
+      ru: "🇷🇺"
+    }[locale.to_sym] || "❌"
+  end
+
+  def generate_inline_asset_importmap
+    imports = {}
+    import_statements = []
+
+    # Timeago
+    if Gem.loaded_specs.key?("timeago_js")
+      timeago_root = Gem.loaded_specs["timeago_js"].full_gem_path
+      timeago_files = {
+        "timeago_js/timeago.js" => "assets/javascripts/timeago.js",
+        "timeago_js/locales/de.js" => "assets/javascripts/locales/de.js",
+        "timeago_js/locales/pt_BR.js" => "assets/javascripts/locales/pt_BR.js"
+      }
+
+      timeago_files.each do |key, relative_path|
+        path = File.join(timeago_root, relative_path)
+        if File.exist?(path)
+          content = File.read(path)
+          imports[key] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
+          import_statements << key
+        end
+      end
+    end
+
+    # Thredded
+    if defined?(Thredded::WebpackAssets)
+      thredded_root = Gem.loaded_specs["thredded"].full_gem_path
+      thredded_imports_str = Thredded::WebpackAssets.javascripts
+
+      thredded_imports_str.scan(/import "(.*?)";/).flatten.each do |path|
+        if path == "@rails/ujs"
+          ujs_path = Rails.root.join("node_modules/@rails/ujs/app/assets/javascripts/rails-ujs.js")
+          if File.exist?(ujs_path)
+            content = File.read(ujs_path)
+            imports["@rails/ujs"] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
+            import_statements << "@rails/ujs"
+          end
+        else
+          if File.exist?(path)
+            content = File.read(path)
+            key = path.gsub(File.join(thredded_root, "app/assets/javascripts"), "thredded_js")
+                      .gsub(File.join(thredded_root, "vendor/assets/javascripts"), "thredded_vendor")
+
+            imports[key] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
+            import_statements << key
+          end
+        end
+      end
+    end
+
+    { imports: imports, statements: import_statements }
   end
 
   # --- SEO Asset Path Helpers (Moved from initializer) ---

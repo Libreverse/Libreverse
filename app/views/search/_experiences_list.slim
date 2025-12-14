@@ -27,11 +27,13 @@
       / Local experience (using unified interface)
       = link_to experience.display_path, class: "experience-link" do
         article itemscope="" itemtype="https://schema.org/CreativeWork"
-          h3 itemprop="name" = sanitize experience.title
+          h3 itemprop="name"
+            = sanitize experience.title
           div itemprop="description"
             = sanitize simple_format(experience.description)
           - if experience.author.present?
             p.sp-author
               span itemprop="author" itemscope="" itemtype="https://schema.org/Person"
                 = t('experiences.experiences_list.by')
-                span itemprop="name" = sanitize experience.author
+                span itemprop="name"
+                  = sanitize experience.author

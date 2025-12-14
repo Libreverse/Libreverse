@@ -1243,7 +1243,12 @@ RainyDay.prototype.prepareBackground = function () {
         this.canvas.height,
     );
 
-    if (!isNaN(this.options.blur) && this.options.blur >= 1) {
+    if (
+        !isNaN(this.options.blur) &&
+        this.options.blur >= 1 &&
+        this.canvas.width > 0 &&
+        this.canvas.height > 0
+    ) {
         this.stackBlurCanvasRGB(
             this.canvas.width,
             this.canvas.height,
@@ -1259,6 +1264,17 @@ RainyDay.prototype.prepareBackground = function () {
  * @param radius blur radius
  */
 RainyDay.prototype.stackBlurCanvasRGB = function (width, height, radius) {
+    if (
+        !width ||
+        !height ||
+        width < 1 ||
+        height < 1 ||
+        isNaN(radius) ||
+        radius < 1
+    ) {
+        return;
+    }
+
     var shgTable = [
         [0, 9],
         [1, 11],

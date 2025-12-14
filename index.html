@@ -1,0 +1,18 @@
+<!doctype html>
+<html dir="ltr">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="/src/window.scss" />
+    </head>
+    <body class="app-shell">
+        <iframe id="content-frame" class="app-frame"></iframe>
+        <div id="titlebar" class="app-titlebar" style="-webkit-app-region: drag;">
+            <div class="traffic-lights" style="-webkit-app-region: no-drag;">
+                <img id="close" class="traffic-light" />
+                <img id="minimize" class="traffic-light" />
+                <img id="maximize" class="traffic-light" />
+            </div>
+        </div>
+        <script type="module" src="/src/renderer.js"></script>
+    </body>
+</html>

@@ -129,61 +129,7 @@ run_task(
     q{mkcert -install >/dev/null 2>&1 || (command -v mkcert >/dev/null && mkcert -install)}
 );
 
-# ----------------------------------------------------------------------
-# 1. Clean up any stale containers first (excluding persistent databases)
-# ----------------------------------------------------------------------
-print $message_color, '🧹', " Cleaning up any stale containers...", $RESET, "\n";
-system('podman rm -f libreverse-dev-detached-dragonflydb >/dev/null 2>&1');
-print $message_color, "  ", '✅', " Done", $RESET, "\n\n";
 
-# ----------------------------------------------------------------------
-# 2. Test podman with the hello container
-# ----------------------------------------------------------------------
-print $message_color, "Testing podman...", $RESET, "\n";
-
-# First check if podman machine is running at all
-my $machine_running = system('podman machine info >/dev/null 2>&1') == 0;
-my $podman_ok = 0;
-
-if ($machine_running) {
-    # Machine is running, now test if containers work
-    $podman_ok = system('podman run --rm quay.io/podman/hello >/dev/null 2>&1') == 0;
-}
-
-if ($podman_ok) {
-    print $message_color, '✅', " podman works – skipping recreation steps.", $RESET, "\n\n";
-}
-else {
-    # ------------------------------------------------------------------
-    # 2. podman broken → ONE spinner for the whole recreation block
-    # ------------------------------------------------------------------
-    print $message_color, '⏳', " podman failed. Recreating VM...", $RESET, "\n";
-
-    # Start the spinner (it will animate for ~30 s – enough for the whole block)
-    show_spinner("Making sure podman behaves...");
-
-    # ---- recreation steps (no individual spinners) -----------------
-    run_task("Stopping podman machine",    "podman machine stop 2>/dev/null || true");
-    run_task("Removing podman machine",    "podman machine rm -f 2>/dev/null || true");
-    run_task("Clearing out podman data",   "rm -rf ~/.local/share/containers ~/.config/containers 2>/dev/null || true");
-    run_task("Recreating podman VM",       "podman machine init --memory 8192 --cpus 4");
-    run_task("Starting podman VM",         "podman machine start");
-
-    # ------------------------------------------------------------------
-    # 3. Final verification (still under the same spinner)
-    # ------------------------------------------------------------------
-    print $message_color, '🔍', " Verifying podman after recreation...", $RESET, "\n";
-    if (system('podman run --rm quay.io/podman/hello >/dev/null 2>&1') == 0) {
-        print $message_color, '✅', " podman is now working!", $RESET, "\n\n";
-    }
-    else {
-        print $message_color, '❌', " Still broken – check logs / permissions.", $RESET, "\n\n";
-    }
-
-    # Overwrite the spinner line with a final status
-    print "\r", " " x ($width - 2), "\r";               # clear spinner line
-    print $message_color, '✅', " Making sure podman behaves... Done", $RESET, "\n\n";
-}
 
 # Set environment variables for Overmind and all child processes
 $ENV{OBJC_DISABLE_INITIALIZE_FORK_SAFETY} = 'YES';
@@ -193,29 +139,9 @@ $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
 $ENV{OVERMIND_CAN_DIE}       = 'startup-message';
 
-# Check if databases are running before starting
-print $message_color, '🗄️', " Checking database status...\n", $RESET;
-my $tidb_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-tidb") == 0;
-my $dragonfly_running = system("podman ps --format '{{.Names}}' | grep -q libreverse-dev-dragonflydb") == 0;
+# Start/Check databases
+print $message_color, '🗄️', " Checking/Starting databases...\n", $RESET;
+system("bin/db-start") == 0 or warn "Failed to start databases\n";
+print "\n";
 
-my $missing_databases = 0;
-
-if (!$tidb_running) {
-    print $message_color, '❌', " TiDB database not running!\n", $RESET;
-    print $message_color, "  Run: bin/db-start\n", $RESET;
-    $missing_databases = 1;
-}
-if (!$dragonfly_running) {
-    print $message_color, '❌', " DragonflyDB database not running!\n", $RESET;
-    print $message_color, "  Run: bin/db-start\n", $RESET;
-    $missing_databases = 1;
-}
-
-if ($missing_databases) {
-    print $message_color, "\n", '⚠️', " Required databases are not running. Please start them first.\n", $RESET;
-    print $message_color, "  Run: bin/db-start\n", $RESET;
-    exit 1;
-}
-
-print $message_color, '✅', " All databases are running!\n\n", $RESET;
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;

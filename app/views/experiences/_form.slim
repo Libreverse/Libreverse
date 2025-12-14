@@ -10,7 +10,8 @@
           = t('.errors_prohibited')
       ul.mb-0.ps-4
         - experience.errors.full_messages.each do |message|
-          li= message
+          li
+            = message
   .form-group
     = form.label :title, class: "form-label"
     .input-group
@@ -19,13 +20,15 @@
     = form.label :description, class: "form-label"
     .input-group
       = form.text_area :description, class: "form-textarea", placeholder: "Describe your experience in detail. What makes it special?"
-    .form-text.text-muted= t('.rich_description_help')
+    .form-text.text-muted
+      = t('.rich_description_help')
   .form-group
     = form.label :html_file, "Experience HTML File", class: "form-label"
     .input-group
       = form.file_field :html_file, class: "form-control dropzone", accept: "text/html", data: { controller: "experience_upload", action: "dragover->experience_upload#dragOver dragleave->experience_upload#dragLeave drop->experience_upload#drop change->experience_upload#handleChange" }
       .dropzone-error data-experience_upload-target="error" style="display:none; color: red;"
-    .form-text-2.text-muted= t('.upload_single_html_help')
+    .form-text-2.text-muted
+      = t('.upload_single_html_help')
     - if experience.html_file.attached?
       .mt-2.text-muted
         = t('.current_file')

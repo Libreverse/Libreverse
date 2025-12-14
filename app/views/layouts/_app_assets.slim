@@ -10,13 +10,12 @@
 / Load the main javascript bundle
 = vite_javascript_tag "~/javascript/application.js", data: {turbo_track: "reload"}
 / Load supplemental javascript assets
-- timeago_root = File.join(Gem.loaded_specs["timeago_js"].full_gem_path, "assets", "javascripts")
-- timeago_imports = [%(import "#{File.join(timeago_root, "timeago.js")}";)]
-- %w[de pt_BR].each { |locale| timeago_imports << %(import "#{File.join(timeago_root, "locales/#{locale}.js")}";) }
-javascript:
+- asset_data = generate_inline_asset_importmap
+script type="importmap"
+  | #{ { imports: asset_data[:imports] }.to_json.html_safe }
+script type="module"
   | window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = { isDisabled: true };
-  #{timeago_imports.join("\n  ")}
-  #{Thredded::WebpackAssets.javascripts}
+  | #{asset_data[:statements].map { |key| %(import "#{key}";) }.join("\n  ")}
 / Load in react-rails bit for some of the 3D code
 = javascript_pack_tag 'generated/MetaversePreview', data: {turbo_track: "reload"}
 = stylesheet_pack_tag

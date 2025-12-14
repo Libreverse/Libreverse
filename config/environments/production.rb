@@ -91,6 +91,9 @@ Rails.application.configure do
   config.assume_ssl = ssl_enabled
   config.force_ssl  = ssl_enabled
 
+  # Ensure URL helpers default to HTTPS when SSL is enabled (helps avoid mixed content)
+  config.action_controller.default_url_options = { protocol: (ssl_enabled ? "https" : "http") }
+
   # Log level (using centralized configuration, but allow ENV override)
   config.log_level = if ENV["RAILS_LOG_LEVEL"].present?
     ENV["RAILS_LOG_LEVEL"].to_sym

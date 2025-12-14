@@ -10,7 +10,7 @@ export default class extends ApplicationController
   connect: ->
     super.connect()
     # Check if consent already given via cookie (for UI purposes)
-    if Cookies.get("consent_ui_preference") == "accepted"
+    if Cookies.get("privacy_consent") == "1"
       @hideConsentUI()
     return
 
@@ -19,7 +19,9 @@ export default class extends ApplicationController
     rememberOptIn = if @hasCheckboxTarget and @checkboxTarget.checked then "true" else "false"
     
     # Trigger Reflex
-    @stimulate("ConsentReflex#accept", { dataset: { remember_opt_in: rememberOptIn } })
+    # Pass data via element dataset instead of arguments to avoid argument mismatch
+    @element.dataset.rememberOptIn = rememberOptIn
+    @stimulate("ConsentReflex#accept")
 
   decline: (event) ->
     # Handled by data-reflex in HTML

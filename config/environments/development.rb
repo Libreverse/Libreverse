@@ -4,23 +4,34 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  # Dev runs behind an HTTPS reverse-proxy (Caddy). Treat requests as SSL so
+  # secure cookies (e.g., profiler/session) and generated URLs stay scheme-consistent.
+  config.assume_ssl = true
+
   config.session_store :cookie_store,
                        key: "_libreverse_session",
-                       expire_after: 2.hours, # Match previous setting
-                       domain: nil # Allow both localhost and ::1 in development
+                       expire_after: 2.hours,
+                       domain: :all,
+                       same_site: :none,
+                       secure: true
+
 # ------------------------------------------
 # === Configure ActionCable URL for consistency ===
 # Use default port for development (3000)
-config.action_cable.url = "ws://localhost:3000/cable"
+config.action_cable.url = "wss://localhost:3000/cable"
 config.action_cable.allowed_request_origins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://[::1]:3000"
+  "https://localhost:3000",
+  "https://127.0.0.1:3000",
+  "https://[::1]:3000",
+  "https://localhost:5173",
+  "https://127.0.0.1:5173",
+  "https://[::1]:5173",
+  "file://"
 ]
 # ===============================================
 
 # Default URL options should also match
-config.action_controller.default_url_options = { host: "localhost", port: 3000 }
+config.action_controller.default_url_options = { protocol: "https", host: "localhost", port: 3000 }
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -111,4 +122,81 @@ config.action_controller.default_url_options = { host: "localhost", port: 3000 }
     end
   end
   config.middleware.insert_before 0, remove_alt_svc
+
+  # ---------------------------------------------------------------------------
+  # TruffleRuby compatibility + TiDB transient retry
+  # ---------------------------------------------------------------------------
+
+  # web-console 4.2.1 can raise when mapping ActiveRecord exceptions on TruffleRuby
+  # (e.g., NoMethodError: undefined method `bindings` for ActiveRecord::StatementInvalid).
+  # Disable it so the app can continue rendering even when the DB is temporarily unhealthy.
+  if RUBY_ENGINE == "truffleruby" && defined?(WebConsole::Middleware)
+    config.middleware.delete(WebConsole::Middleware)
+  end
+
+  tidb_transient_retry = Class.new do
+    MAX_RETRIES = 3
+
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      attempts = 0
+
+      begin
+        @app.call(env)
+      rescue ActiveRecord::StatementInvalid => e
+        raise unless retryable_tidb?(e.cause)
+        attempts += 1
+        raise if attempts > MAX_RETRIES
+
+        ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)
+        sleep(backoff(attempts))
+        retry
+      rescue ActiveRecord::ConnectionNotEstablished => e
+        attempts += 1
+        raise if attempts > MAX_RETRIES
+
+        ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)
+        sleep(backoff(attempts))
+        retry
+      rescue StandardError => e
+        # Don't swallow unrelated application errors.
+        raise unless retryable_connection_error?(e)
+
+        attempts += 1
+        raise if attempts > MAX_RETRIES
+
+        ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)
+        sleep(backoff(attempts))
+        retry
+      end
+    end
+
+    private
+
+    def retryable_tidb?(cause)
+      return false unless cause
+
+      msg = cause.message.to_s
+      msg.include?("Region is unavailable") ||
+        msg.include?("trilogy_query_recv") ||
+        msg.include?("trilogy_connect")
+    end
+
+    def retryable_connection_error?(error)
+      klass = error.class.name
+      return true if klass == "Trilogy::ConnectionError"
+
+      msg = error.message.to_s
+      msg.include?("trilogy_connect") || msg.include?("unable to connect")
+    end
+
+    def backoff(attempt)
+      [0.1 * (2**(attempt - 1)), 1.0].min
+    end
+  end
+
+  config.middleware.insert_before 0, tidb_transient_retry
 end

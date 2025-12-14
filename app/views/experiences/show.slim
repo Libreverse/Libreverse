@@ -5,8 +5,10 @@
     /! Including search styles for experience styling
     .dashboard-container
       .dashboard-header-section
-        h1.display-heading= t('.title')
-        p.header-description= t('.subtitle')
+        h1.display-heading
+          = t('.title')
+        p.header-description
+          = t('.subtitle')
       = render ExperienceComponent.new(experience: @experience)
       .dashboard-footer.mt-4
         .d-flex.justify-content-between.align-items-center

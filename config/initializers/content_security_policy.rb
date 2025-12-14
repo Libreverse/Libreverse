@@ -47,6 +47,10 @@ Rails.application.configure do
     # Iframes for Experience viewer (data-URI) remain allowed.
     policy.frame_src :self, :data
 
+    # Restrict who can frame this application
+    # Allow localhost for Electron app and development
+    policy.frame_ancestors :self, "http://localhost:*", "https://localhost:*", "http://127.0.0.1:*", "https://127.0.0.1:*"
+
     # Test allowances – blob URIs used by rails system tests
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
 

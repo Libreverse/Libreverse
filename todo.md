@@ -8,7 +8,7 @@
 - [ ] finish libreverse ai with api calls - use python node calls to use llama cpp python
 - [ ] adopt cucumber rails for future tests
 - [ ] remove local codeql (not that deep)
-swap locomotive scroll for lenis and a custom scrollbar of our own
+      swap locomotive scroll for lenis and a custom scrollbar of our own
 - [ ] facial age estimation using zkml for osa pycall and ezkl https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender https://github.com/justadudewhohacks/face-api.js-models https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript
 - [ ] (feature) Use https://github.com/slimtoolkit/slim to optimise the docker image as well as root.io base images
 - [ ] (bugfix) Sidebar moves down when sidebar expanded

@@ -1,9 +1,7 @@
 import { defineConfig } from "vite";
 import path from "node:path";
+import fs from "node:fs";
 import { execSync } from "node:child_process";
-import rubyPlugin from "vite-plugin-ruby";
-import fullReload from "vite-plugin-full-reload";
-import stimulusHMR from "vite-plugin-stimulus-hmr";
 import babel from "vite-plugin-babel";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
@@ -78,6 +76,43 @@ function withInstrumentation(p) {
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
 
+    const devHttps = (() => {
+        if (!isDevelopment) return undefined;
+
+        const certDir =
+            process.env.VITE_DEV_CERT_DIR ||
+            path.join(process.cwd(), "tmp", "vite-dev-certs");
+        const certPath = path.join(certDir, "localhost.pem");
+        const keyPath = path.join(certDir, "localhost-key.pem");
+
+        try {
+            fs.mkdirSync(certDir, { recursive: true });
+        } catch {
+            // ignore
+        }
+
+        if (!fs.existsSync(certPath) || !fs.existsSync(keyPath)) {
+            try {
+                execSync(
+                    `mkcert -cert-file "${certPath}" -key-file "${keyPath}" localhost 127.0.0.1 ::1`,
+                    { stdio: "ignore" },
+                );
+            } catch {
+                // If mkcert isn't available, fall back to HTTPS without custom certs.
+                return true;
+            }
+        }
+
+        try {
+            return {
+                cert: fs.readFileSync(certPath),
+                key: fs.readFileSync(keyPath),
+            };
+        } catch {
+            return true;
+        }
+    })();
+
     const typehintPlugin = withInstrumentation(
         typehints({
             variableDocumentation: true,
@@ -97,35 +132,10 @@ export default defineConfig(({ mode }) => {
         },
         resolve: {
             extensions: [".js", ".json", ".coffee", ".scss", ".snappy", ".es6"],
-            // Workaround for js-cookie packaging (dist folder not present in installed copy under bun)
-            // Map to ESM source file so Vite can bundle successfully
-            alias: {
-                // Use explicit path into node_modules since package exports field hides src/*
-                "js-cookie": path.resolve(
-                    process.cwd(),
-                    "node_modules/js-cookie/index.js",
-                ),
-                timeago_js: path.join(
-                    execSync("bundle show timeago_js").toString().trim(),
-                    "assets/javascripts",
-                ),
-                thredded_js: path.join(
-                    execSync("bundle show thredded").toString().trim(),
-                    "app/assets/javascripts",
-                ),
-                thredded_vendor: path.join(
-                    execSync("bundle show thredded").toString().trim(),
-                    "vendor/assets/javascripts",
-                ),
-            },
         },
         build: {
             cache: isDevelopment, // Enable cache in development for faster rebuilds
             rollupOptions: {
-                input: {
-                    application: "app/javascript/application.js",
-                    emails: "app/stylesheets/emails.scss",
-                },
                 output: {
                     minifyInternalExports: true,
                     inlineDynamicImports: false,
@@ -271,17 +281,12 @@ export default defineConfig(({ mode }) => {
         },
         server: {
             hmr: { overlay: true }, // Enable error overlay in development
+            https: devHttps,
             headers: isDevelopment
                 ? {
                       "Cache-Control":
                           "no-store, no-cache, must-revalidate, max-age=0",
                       "Cross-Origin-Embedder-Policy": "credentialless",
-                      // Rails sets COEP/credentialless + CORP/same-site in dev.
-                      // When the app is loaded inside an iframe (Electron), the page
-                      // still pulls CSS/assets from this Vite dev server (different port).
-                      // Without an explicit CORP header here, some browsers/Electron
-                      // will block subresources (fonts/images), making CSS appear
-                      // partially applied.
                       "Cross-Origin-Resource-Policy": "same-site",
                   }
                 : {},
@@ -343,35 +348,6 @@ export default defineConfig(({ mode }) => {
             global: "globalThis",
         },
         optimizeDeps: {
-            // Force inclusion of dependencies that might not be detected
-            include: [
-                "debounced",
-                "foundation-sites",
-                "what-input",
-                "@fingerprintjs/botd",
-                "@rails/ujs",
-                "js-cookie",
-                "@sentry/browser",
-                "turbo_power",
-                "@rails/activestorage",
-                "stimulus_reflex",
-                "cable_ready",
-                "@rails/actioncable",
-                "locomotive-scroll",
-                "@rails/request.js",
-                "stimulus-store",
-                "@hotwired/turbo-rails",
-                "leaflet",
-                "leaflet.offline",
-                "leaflet-ajax",
-                "leaflet-spin",
-                "leaflet-sleep",
-                "leaflet.a11y",
-                "leaflet.translate",
-                "stimulus-use/hotkeys",
-                "jquery",
-            ],
-            exclude: ["@hotwired/turbo"],
             // Force reoptimization in development
             force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
         },
@@ -418,13 +394,6 @@ export default defineConfig(({ mode }) => {
                     ],
                 },
             }),
-            rubyPlugin(),
-            stimulusHMR(),
-            fullReload([
-                "config/routes.rb",
-                "app/views/**/*",
-                "app/javascript/src/**/*",
-            ]),
             !isDevelopment ? vitePluginBundleObfuscator(allObfuscatorConfig) : null,
             !isDevelopment ? typehintPlugin : null,
         ],

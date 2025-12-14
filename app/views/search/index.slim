@@ -3,10 +3,11 @@
 = render "layouts/leniswrapper" do
   = render "layouts/navigationshortcutswrapper" do
     - brasserie_img = bitmap_image_data_url("images/brasserie")
-    .sp-bg role: "presentation", data: {controller: "raindrop", "raindrop-background-url-value": brasserie_img['.avif'], scroll: true, "scroll-speed": "-2"} 
+    .sp-bg role="presentation" data={controller: "raindrop", "raindrop-background-url-value": brasserie_img['.avif'], scroll: true, "scroll-speed": "-2"}
     .sp-centerify
-      header.sp-main role: "banner" 
-        h1.large= t('search.index.title')
+      header.sp-main role="banner"
+        h1.large
+          = t('search.index.title')
         span.small aria-hidden="true" tabindex="-1"
           = t('search.index.search_word')
           br/
@@ -18,8 +19,10 @@
               .tutorial-dismiss
                 button.dismiss-button data-action="dismissible#dismiss" 
                   img.feather.feather-x alt="Close" aria-hidden="true" height="16" src=svg_icon_data_url("x").to_s width="16" /
-              h2.tutorial-heading= t('search.index.tutorial_heading')
-              p.tutorial-description= t('search.index.tutorial_description')
+              h2.tutorial-heading
+                = t('search.index.tutorial_heading')
+              p.tutorial-description
+                = t('search.index.tutorial_description')
         section aria-labelledby="search-heading" 
           .sp-search-bar
             .sp-search-bar-container.glass.glass-card-base

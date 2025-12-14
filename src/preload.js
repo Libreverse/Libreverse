@@ -368,4 +368,4 @@ const setupTrafficLights = () => {
 document.addEventListener("DOMContentLoaded", setupTrafficLights);
 
 // Listen for Turbo page changes
-document.addEventListener("turbo:load", setupTrafficLights);
+// document.addEventListener("turbo:load", setupTrafficLights);

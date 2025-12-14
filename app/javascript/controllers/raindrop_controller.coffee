@@ -35,13 +35,109 @@ export default class extends ApplicationController
 
   disconnect: ->
     super.disconnect()
+    @_cancelPendingRainyDayInit?()
     @rainyday?.destroy()
     @rainyday = null
     @removeParallax?()
     @removeResizeListener?()
     return
 
+  _cancelPendingRainyDayInit: ->
+    @_rainydaySetupId = (@_rainydaySetupId or 0) + 1
+    if @_rainydayInitRaf?
+      cancelAnimationFrame(@_rainydayInitRaf)
+      @_rainydayInitRaf = null
+    return
+
+  _effectiveCanvasSize: ->
+    rect = @element?.getBoundingClientRect?() or { width: 0, height: 0 }
+    width = Math.floor(rect.width or 0)
+    height = Math.floor(rect.height or 0)
+
+    # Fallbacks for edge cases during initial layout or if the element is temporarily hidden
+    width = Math.floor(@element.offsetWidth or @element.clientWidth or 0) if width <= 0
+    height = Math.floor(@element.offsetHeight or @element.clientHeight or 0) if height <= 0
+
+    # Last resort for full-screen backgrounds
+    width = Math.floor(window.innerWidth or 0) if width <= 0
+    height = Math.floor(window.innerHeight or 0) if height <= 0
+
+    { width, height }
+
+  _initRainyDayForImage: (img, setupId, attempt = 0) ->
+    return unless setupId is @_rainydaySetupId
+    return unless @element? and document?.body?.contains?(@element)
+
+    { width, height } = @_effectiveCanvasSize()
+    if width < 1 or height < 1
+      if attempt < 60
+        @_rainydayInitRaf = requestAnimationFrame =>
+          @_initRainyDayForImage(img, setupId, attempt + 1)
+        return
+      else
+        console?.warn?(
+          '[raindrop] Skipping RainyDay init: element has zero size',
+          { width, height, element: @element }
+        )
+        return
+
+    # Remove any previous canvas (again) in case a retry raced with a resize/reconnect
+    for child in @element.children
+      if child.tagName?.toLowerCase() is 'canvas'
+        child.remove()
+
+    # Create a canvas that fills the parent
+    canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    canvas.style.position = 'absolute'
+    canvas.style.top = 0
+    canvas.style.left = 0
+    canvas.style.width = '100%'
+    canvas.style.height = '100%'
+    canvas.style.pointerEvents = 'none'
+    canvas.className = 'raindrop-canvas'
+    @element.appendChild(canvas)
+
+    # Default config matching raindrop-fx as closely as possible
+    defaultRainyDayOptions =
+      opacity: 1
+      blur: 20
+      fps: 120
+      enableCollisions: true
+      enableSizeChange: true
+      gravityThreshold: 3
+      gravityAngle: Math.PI / 2
+      gravityAngleVariance: 0
+      reflectionScaledownFactor: 5
+      reflectionDropMappingWidth: 80
+      reflectionDropMappingHeight: 80
+      width: canvas.width
+      height: canvas.height
+      position: 'absolute'
+      top: 0
+      left: 0
+      parentElement: @element
+      canvas: canvas
+      image: img
+
+    # Merge options: background image, parent, canvas, size, plus user config
+    options = Object.assign {}, defaultRainyDayOptions, @rainydayOptionsValue
+
+    @rainyday?.destroy()
+    @rainyday = new window.RainyDay(options)
+
+    min = 8
+    base = 8
+    rate = 1
+    speed = 25
+    @rainyday.rain([[min, base, rate]], speed)
+    return
+
   setupRainyDay: ->
+    @_cancelPendingRainyDayInit()
+    setupId = @_rainydaySetupId
+
     # Fallback: if no data value, try hidden template, then path-map, then default
     unless @hasBackgroundUrlValue
       if @hasSourceTarget and @sourceTarget?.textContent?
@@ -68,51 +164,11 @@ export default class extends ApplicationController
     img.src = @backgroundUrlValue
 
     img.onload = =>
-      # Create a canvas that fills the parent
-      canvas = document.createElement('canvas')
-      canvas.width = @element.offsetWidth
-      canvas.height = @element.offsetHeight
-      canvas.style.position = 'absolute'
-      canvas.style.top = 0
-      canvas.style.left = 0
-      canvas.style.width = '100%'
-      canvas.style.height = '100%'
-      canvas.style.pointerEvents = 'none'
-      canvas.className = 'raindrop-canvas'
-      @element.appendChild(canvas)
-
-      # Default config matching raindrop-fx as closely as possible
-      defaultRainyDayOptions =
-        opacity: 1
-        blur: 20
-        fps: 120
-        enableCollisions: true
-        enableSizeChange: true
-        gravityThreshold: 3
-        gravityAngle: Math.PI / 2
-        gravityAngleVariance: 0
-        reflectionScaledownFactor: 5
-        reflectionDropMappingWidth: 80
-        reflectionDropMappingHeight: 80
-        width: canvas.width
-        height: canvas.height
-        position: 'absolute'
-        top: 0
-        left: 0
-        parentElement: @element
-        canvas: canvas
-        image: img
-
-      # Merge options: background image, parent, canvas, size, plus user config
-      options = Object.assign {}, defaultRainyDayOptions, @rainydayOptionsValue
-
-      @rainyday = new window.RainyDay(options)
-
-      min = 8
-      base = 8
-      rate = 1
-      speed = 25
-      @rainyday.rain([[min, base, rate]], speed)
+      return unless setupId is @_rainydaySetupId
+      # Some pages (Turbo transitions, hidden containers) can report 0 height briefly.
+      # Defer initialization until the element has real dimensions to avoid
+      # RainyDay's blur path calling getImageData(…, 0).
+      @_initRainyDayForImage(img, setupId)
     return
 
   setupParallax: ->

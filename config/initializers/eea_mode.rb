@@ -34,8 +34,8 @@ module EEAMode
       },
       cookie_settings: {
         httponly: false,
-        secure: Rails.application.config.force_ssl,
-        same_site: :strict,
+        secure: Rails.env.production? || Rails.application.config.force_ssl,
+        same_site: :none, # Allow cross-site usage (required for Electron/iframes)
         expiration: 1.year
       }
     }.freeze
@@ -85,9 +85,25 @@ module EEAMode
 
     private
 
-    # Returns true if the signed consent cookie has been stored.
+    # Returns true if the consent cookie has been stored.
     def consent_given?
-      cookies&.signed&.[](EEAMode::CONSENT_COOKIE_KEY) == "1"
+      return false unless cookies
+
+      key = EEAMode::CONSENT_COOKIE_KEY
+
+      # Plain cookie value (what CableReady's `set_cookie` sets via `document.cookie`).
+      plain = cookies[key.to_s] || cookies[key]
+      return true if plain.to_s == "1"
+
+      # Backwards/alternate formats: some deployments may have previously used
+      # Rails signed/encrypted cookie jars for this value. Accept those too.
+      signed = (cookies.signed[key] rescue nil)
+      return true if signed.to_s == "1"
+
+      encrypted = (cookies.encrypted[key] rescue nil)
+      return true if encrypted.to_s == "1"
+
+      false
     end
 
     # Main guard. Enforce consent for all HTML requests in EEA mode
@@ -101,6 +117,14 @@ module EEAMode
       # Skip for policy pages that must be accessible without consent
       path = request.path
       return if path.start_with?("/privacy", "/cookies", "/consent")
+
+      # Debug logging
+      Rails.logger.info "[EEA Debug] Checking consent. Cookies: #{cookies.to_h}"
+      Rails.logger.info "[EEA Debug] Consent cookie value (string): #{cookies[EEAMode::CONSENT_COOKIE_KEY.to_s]}"
+      Rails.logger.info "[EEA Debug] Consent cookie value (symbol): #{cookies[EEAMode::CONSENT_COOKIE_KEY]}"
+      Rails.logger.info "[EEA Debug] Consent cookie value (signed): #{(cookies.signed[EEAMode::CONSENT_COOKIE_KEY] rescue nil).inspect}"
+      Rails.logger.info "[EEA Debug] Consent cookie value (encrypted): #{(cookies.encrypted[EEAMode::CONSENT_COOKIE_KEY] rescue nil).inspect}"
+      Rails.logger.info "[EEA Debug] Consent given? #{consent_given?}"
 
       # Otherwise enforce for all HTML requests
       return unless !consent_given? && request.format.html?
