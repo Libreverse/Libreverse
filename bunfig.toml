@@ -1,9 +1,0 @@
-smol = true
-telemetry = false
-[install]
-exact = true
-[run]
-bun = false
-[install.cache]
-disable = true
-disableManifest = true

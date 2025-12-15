@@ -6,7 +6,7 @@ runs:
     steps:
         - name: Run Prettier
           shell: bash
-          run: bun prettier --write . --ignore-path .prettierignore --log-level warn
+          run: pnpm exec prettier --write . --ignore-path .prettierignore --log-level warn
 
         - name: Run Rubocop
           shell: bash
@@ -18,12 +18,12 @@ runs:
 
         - name: Run ESLint
           shell: bash
-          run: bun eslint . --fix
+          run: pnpm exec eslint . --fix
 
         - name: Run Stylelint
           shell: bash
-          run: bun stylelint '**/*.scss' --fix
+          run: pnpm exec stylelint '**/*.scss' --fix
 
         - name: Run markdownlint
           shell: bash
-          run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
+          run: pnpm exec markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc

@@ -67,29 +67,29 @@ jobs:
               run: |
                   set -euo pipefail
                   echo "Running full-repo autofix (not limited to changed files)"
-                  command -v bun >/dev/null 2>&1 || { echo "bun not found"; exit 0; }
+                  command -v pnpm >/dev/null 2>&1 || { echo "pnpm not found"; exit 0; }
 
                   # Prettier (formats many languages) – run once repo-wide, ignore unknown
-                  bun prettier --write --log-level warn --ignore-unknown . || true
+                  pnpm exec prettier --write --log-level warn --ignore-unknown . || true
                   # Dockerfiles may already be covered above (plugin), explicit re-run cheap
-                  find . -type f -iname 'Dockerfile*' -print0 | xargs -0 -r bun prettier --write --log-level warn || true
+                  find . -type f -iname 'Dockerfile*' -print0 | xargs -0 -r pnpm exec prettier --write --log-level warn || true
 
                   # ESLint (JS/TS)
-                  bun eslint . --fix || true
+                  pnpm exec eslint . --fix || true
 
                   # Coffeelint (CoffeeScript) with autofix
-                  if bun coffeelint --help >/dev/null 2>&1; then
-                    find . -type f -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r bun coffeelint --fix -f coffeelint.json || true
+                  if pnpm exec coffeelint --help >/dev/null 2>&1; then
+                    find . -type f -name '*.coffee' -not -path './node_modules/*' -print0 | xargs -0 -r pnpm exec coffeelint --fix -f coffeelint.json || true
                   fi
 
                   # Stylelint (CSS/SCSS/SASS)
-                  bun stylelint '**/*.{css,scss,sass}' --fix || true
+                  pnpm exec stylelint '**/*.{css,scss,sass}' --fix || true
 
                     # markdownlint (Markdown)
-                  bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc || true
+                  pnpm exec markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/licenses/**' '!**/.codeql/**' --fix --config .markdownlint-cli2.jsonc || true
 
                   # Socket optimize (dependency optimization)
-                  bunx socket optimize || true
+                  pnpm dlx socket optimize || true
 
                   # Rubocop (Ruby)
                   if bundle exec rubocop -v >/dev/null 2>&1; then
@@ -193,7 +193,7 @@ jobs:
                       Gemfile
                       Gemfile.lock
                       package.json
-                      bun.lock*
+                      pnpm-lock.yaml
                       eslint.config.js
                       stylelint.config.js
                       prettier.config.js

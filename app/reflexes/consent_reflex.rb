@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 class ConsentReflex < ApplicationReflex
   def accept
@@ -38,7 +39,7 @@ class ConsentReflex < ApplicationReflex
     # We chain both cookies + redirect into a single broadcast.
     cr = cable_ready.set_cookie(cookie: base.join("; "))
 
-    remember_cookie = ["remember_opt_in=#{remember_opt_in ? 1 : nil}", "Path=/"]
+    remember_cookie = [ "remember_opt_in=#{remember_opt_in ? 1 : nil}", "Path=/" ]
 
     if remember_opt_in
       remember_cookie << "Expires=#{30.days.from_now.utc.httpdate}"

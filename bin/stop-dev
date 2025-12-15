@@ -45,8 +45,8 @@ run("pkill -u $ME -f 'overmind start|overmind' || true", 'Killing overmind proce
 # 2) Kill Caddy instances started with the project Caddyfile
 run("pkill -u $ME -f 'caddy run --config Caddyfile' || true", 'Killing Caddy instances using the project Caddyfile...');
 
-# 3) Kill JS asset servers (bun/node/webpack/shakapacker/vite)
-run("pkill -u $ME -f 'bun run webpack' || true", 'Killing bun webpack processes...');
+# 3) Kill JS asset servers (pnpm/node/webpack/shakapacker/vite)
+run("pkill -u $ME -f 'pnpm run webpack' || true", 'Killing pnpm webpack processes...');
 run("pkill -u $ME -f 'webpack --watch' || true", 'Killing webpack --watch processes...');
 run("pkill -u $ME -f 'webpack serve' || true", 'Killing webpack serve processes...');
 run("pkill -u $ME -f 'shakapacker' || true", 'Killing shakapacker processes...');
@@ -81,7 +81,7 @@ run("rm -f tmp/sockets/* 2>/dev/null || true", 'Removing tmp/sockets files...');
 run("find /var/folders -type d -name 'overmind-config*' -maxdepth 5 -exec rm -rf {} + 2>/dev/null || true", 'Removing overmind-config temporary folders in /var/folders...');
 
 # 9) Re-run checks to show status
-run("pgrep -fl 'tmux -C -L overmind-config|overmind|caddy|bun run webpack|webpack --watch|webpack serve|spring server|spring app|ruby|rails|podman|docker' || true", 'Checking for remaining processes (grep results)...');
+run("pgrep -fl 'tmux -C -L overmind-config|overmind|caddy|pnpm run webpack|webpack --watch|webpack serve|spring server|spring app|ruby|rails|podman|docker' || true", 'Checking for remaining processes (grep results)...');
 run("lsof -iTCP -sTCP:LISTEN -Pn | egrep ':3000|:5173|:5432|:80|:443|:5174|:3080' || true", 'Listening ports that match dev services (should be nothing relevant)...');
 
 print "Done. If anything remains, run with --dry-run to see what would be killed and re-run with sudo if necessary.\n";

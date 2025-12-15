@@ -24,7 +24,7 @@ runs:
                 echo "Found CoffeeScript files:"
                 echo "$coffee_files"
                 echo "Running coffeelint..."
-                echo "$coffee_files" | xargs bun coffeelint -f coffeelint.json
+                echo "$coffee_files" | xargs pnpm exec coffeelint -f coffeelint.json
               else
                 echo "No .coffee files found, skipping Coffeelint"
               fi
@@ -36,4 +36,4 @@ runs:
         - name: Run Electronegativity
           if: inputs.tool == 'electronegativity'
           shell: bash
-          run: bun run security:scan || true
+          run: pnpm run security:scan || true

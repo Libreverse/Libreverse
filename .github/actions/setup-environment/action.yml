@@ -1,5 +1,5 @@
 name: "Setup Environment"
-description: "Set up Ruby, Bun, Node.js and install dependencies"
+description: "Set up Ruby, Node.js, pnpm and install dependencies"
 
 runs:
     using: "composite"
@@ -16,28 +16,23 @@ runs:
               restore-keys: |
                   ${{ runner.os }}-gemfile-
 
-        - name: Cache Bun Dependencies
-          uses: actions/cache@v3
-          with:
-              path: ~/.bun
-              key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-              restore-keys: |
-                  ${{ runner.os }}-bun-
-
         - name: Setup Ruby
           uses: ruby/setup-ruby@v1
           with:
               bundler-cache: false
 
-        - name: Setup Bun
-          uses: oven-sh/setup-bun@v2
-          with:
-              bun-version: latest
-
         - name: Setup Node.js
           uses: actions/setup-node@v4
           with:
               node-version: "20"
+              cache: "pnpm"
+              cache-dependency-path: "pnpm-lock.yaml"
+
+        - name: Setup pnpm
+          uses: pnpm/action-setup@v4
+          with:
+              version: 9.15.4
+              run_install: false
 
         - name: Install dependencies
           shell: bash
@@ -45,7 +40,7 @@ runs:
               bundle config set --local path 'vendor/bundle'
               bundle config set without ""
               bundle install --retry 3 --jobs 4
-              bun install --verbose
+              pnpm install --frozen-lockfile
 
         - name: Verify bundle installation
           shell: bash

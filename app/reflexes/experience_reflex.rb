@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 class ExperienceReflex < ApplicationReflex
   def approve
     authorize_admin!
     experience = Experience.find(element.dataset[:id])
     experience.update(approved: true)
-    # Assuming there is a row or card to update. 
+    # Assuming there is a row or card to update.
     # If it's the show page, we might redirect or show a success message.
     # If it's the index page, we update the row.
     morph :nothing

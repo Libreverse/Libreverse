@@ -35,17 +35,17 @@ module.exports = {
                 build: [
                     {
                         entry: "src/index.js",
-                        config: "vite.main.config.js",
+                        config: "config/electron/vite.main.config.js",
                     },
                     {
                         entry: "src/preload.js",
-                        config: "vite.preload.config.js",
+                        config: "config/electron/vite.preload.config.js",
                     },
                 ],
                 renderer: [
                     {
                         name: "main_window",
-                        config: "vite.renderer.config.js",
+                        config: "config/electron/vite.renderer.config.js",
                     },
                 ],
             },

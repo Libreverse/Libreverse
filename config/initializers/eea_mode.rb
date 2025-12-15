@@ -97,10 +97,18 @@ module EEAMode
 
       # Backwards/alternate formats: some deployments may have previously used
       # Rails signed/encrypted cookie jars for this value. Accept those too.
-      signed = (cookies.signed[key] rescue nil)
+      signed = begin
+                 cookies.signed[key]
+      rescue StandardError
+                 nil
+      end
       return true if signed.to_s == "1"
 
-      encrypted = (cookies.encrypted[key] rescue nil)
+      encrypted = begin
+                    cookies.encrypted[key]
+      rescue StandardError
+                    nil
+      end
       return true if encrypted.to_s == "1"
 
       false
@@ -122,8 +130,16 @@ module EEAMode
       Rails.logger.info "[EEA Debug] Checking consent. Cookies: #{cookies.to_h}"
       Rails.logger.info "[EEA Debug] Consent cookie value (string): #{cookies[EEAMode::CONSENT_COOKIE_KEY.to_s]}"
       Rails.logger.info "[EEA Debug] Consent cookie value (symbol): #{cookies[EEAMode::CONSENT_COOKIE_KEY]}"
-      Rails.logger.info "[EEA Debug] Consent cookie value (signed): #{(cookies.signed[EEAMode::CONSENT_COOKIE_KEY] rescue nil).inspect}"
-      Rails.logger.info "[EEA Debug] Consent cookie value (encrypted): #{(cookies.encrypted[EEAMode::CONSENT_COOKIE_KEY] rescue nil).inspect}"
+      Rails.logger.info "[EEA Debug] Consent cookie value (signed): #{begin
+                                                                        cookies.signed[EEAMode::CONSENT_COOKIE_KEY]
+      rescue StandardError
+                                                                        nil
+      end.inspect}"
+      Rails.logger.info "[EEA Debug] Consent cookie value (encrypted): #{begin
+                                                                           cookies.encrypted[EEAMode::CONSENT_COOKIE_KEY]
+      rescue StandardError
+                                                                           nil
+      end.inspect}"
       Rails.logger.info "[EEA Debug] Consent given? #{consent_given?}"
 
       # Otherwise enforce for all HTML requests

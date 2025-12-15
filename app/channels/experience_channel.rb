@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 class ExperienceChannel < ApplicationCable::Channel
   def subscribed
@@ -11,19 +12,19 @@ class ExperienceChannel < ApplicationCable::Channel
 
     # Send current state to the new peer
     transmit({
-      type: "state_snapshot",
-      state: current_state_hash.to_h,
-      timestamp: Time.current.to_i
-    })
+               type: "state_snapshot",
+               state: current_state_hash.to_h,
+               timestamp: Time.current.to_i
+             })
   end
 
   def unsubscribed
     # Persist state to DB when a user leaves
     # We parse the experience ID from the session ID (format: exp_{id}_{random})
-    if @session_id.match?(/^exp_\d+_/)
+    return unless @session_id.match?(/^exp_\d+_/)
+
       experience_id = @session_id.split("_")[1]
       ExperienceStatePersistJob.perform_later(experience_id, @session_id)
-    end
   end
 
   def receive(data)
@@ -32,10 +33,10 @@ class ExperienceChannel < ApplicationCable::Channel
       handle_update(data)
     when "request_state"
       transmit({
-        type: "state_snapshot",
-        state: current_state_hash.to_h,
-        timestamp: Time.current.to_i
-      })
+                 type: "state_snapshot",
+                 state: current_state_hash.to_h,
+                 timestamp: Time.current.to_i
+               })
     end
   end
 
@@ -51,14 +52,14 @@ class ExperienceChannel < ApplicationCable::Channel
     key = data["key"]
     value = data["value"]
 
-    return unless key.present?
+    return if key.blank?
 
     # Update Kredis
-    # We store values as JSON strings to handle complex types if needed, 
+    # We store values as JSON strings to handle complex types if needed,
     # but Kredis hash values are strings.
     # If value is an object/array, the client should probably stringify it or we handle it here.
     # For simplicity, let's assume the client sends a value that we can store directly or as JSON.
-    
+
     # If value is nil, we might want to delete the key
     if value.nil?
       current_state_hash.delete(key)
@@ -68,11 +69,11 @@ class ExperienceChannel < ApplicationCable::Channel
 
     # Broadcast to others
     ActionCable.server.broadcast("experience_session_#{@session_id}", {
-      type: "state_update",
-      key: key,
-      value: value,
-      from_peer_id: @peer_id,
-      timestamp: Time.current.to_i
-    })
+                                   type: "state_update",
+                                   key: key,
+                                   value: value,
+                                   from_peer_id: @peer_id,
+                                   timestamp: Time.current.to_i
+                                 })
   end
 end

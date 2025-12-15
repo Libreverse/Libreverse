@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Enforce Socket Firewall for all bundler usage in this repo.
+# Enforce Socket Firewall for all pnpm usage in this repo.
 # If sfw cannot run, we fail hard (no bypass/fallback).
 if ! command -v sfw >/dev/null 2>&1; then
   echo "❌ sfw (Socket Firewall) is required in this project." >&2
@@ -11,23 +11,15 @@ if ! command -v sfw >/dev/null 2>&1; then
 fi
 
 # Avoid infinite recursion:
-# sfw will exec bundle; ensure it resolves to the real bundle, not this wrapper.
+# sfw will exec pnpm; ensure it resolves to the real pnpm, not this wrapper.
 WRAPPER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BASE_PATH="${_CLEAN_PATH_FOR_BUNDLE:-$PATH}"
 
 CLEAN_PATH=""
-IFS=':' read -r -a _sfw_path_parts <<< "${BASE_PATH:-}"
+IFS=':' read -r -a _sfw_path_parts <<< "${PATH:-}"
 for _p in "${_sfw_path_parts[@]}"; do
   [[ -z "${_p}" ]] && continue
   [[ "${_p}" == "${WRAPPER_DIR}" ]] && continue
   CLEAN_PATH="${CLEAN_PATH:+${CLEAN_PATH}:}${_p}"
 done
 
-BUNDLE_BIN="/Users/$(whoami)/.gem/truffleruby/3.3.7/bin/bundle"
-
-set +e
-env PATH="$CLEAN_PATH" \
-  sfw "$BUNDLE_BIN" "$@" \
-  2>&1 | grep --color=always -v "Cleaning all the gems on your system is dangerous!"
-bundle_status=${PIPESTATUS[0]}
-exit "$bundle_status"
+exec env PATH="${CLEAN_PATH}" sfw pnpm "$@"

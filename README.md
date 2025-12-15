@@ -29,7 +29,7 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 | Language        | Ruby 3.4                                     |
 | Framework       | Rails 8.0.2 + Hotwire                        |
 | Database        | SQLite 3 (enhanced adapter)                  |
-| Build / Assets  | Vite 6 + Bun                                 |
+| Build / Assets  | Vite 6 + pnpm                                |
 | Web Server      | Puma                                         |
 | Container Image | Multi‑stage Dockerfile (< 80 MB final image) |
 
@@ -56,7 +56,8 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 ### Prerequisites
 
 - Ruby ≥ 3.4.2 (see .ruby-version)
-- Bun ≥ 1.2 (front‑end package manager)
+- Node.js ≥ 20 (for JS tooling)
+- pnpm (front‑end package manager; enabled via Corepack)
 - SQLite ≥ 3.41 (compiled with FTS5 and JSON1)
 - ImageMagick (for Active Storage variants)
 - Overmind (process manager for development)
@@ -67,10 +68,10 @@ Installation helpers:
 
 ```bash
 # macOS
-brew install ruby bun sqlite imagemagick overmind
+brew install ruby node pnpm sqlite imagemagick overmind
 
 # Ubuntu
-sudo apt install ruby-full bun curl sqlite3 libsqlite3-dev imagemagick
+sudo apt install ruby-full nodejs npm curl sqlite3 libsqlite3-dev imagemagick
 # overmind can be installed from: https://github.com/DarthSim/overmind/releases
 ```
 
@@ -134,7 +135,7 @@ To run the security scanner:
 
 ```bash
 # Scan the entire project
-bun run security:scan
+pnpm run security:scan
 
 # Or scan specific files/directories
 npx electronegativity -i src/

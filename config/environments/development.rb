@@ -130,9 +130,7 @@ config.action_controller.default_url_options = { protocol: "https", host: "local
   # web-console 4.2.1 can raise when mapping ActiveRecord exceptions on TruffleRuby
   # (e.g., NoMethodError: undefined method `bindings` for ActiveRecord::StatementInvalid).
   # Disable it so the app can continue rendering even when the DB is temporarily unhealthy.
-  if RUBY_ENGINE == "truffleruby" && defined?(WebConsole::Middleware)
-    config.middleware.delete(WebConsole::Middleware)
-  end
+  config.middleware.delete(WebConsole::Middleware) if RUBY_ENGINE == "truffleruby" && defined?(WebConsole::Middleware)
 
   tidb_transient_retry = Class.new do
     MAX_RETRIES = 3
@@ -148,6 +146,7 @@ config.action_controller.default_url_options = { protocol: "https", host: "local
         @app.call(env)
       rescue ActiveRecord::StatementInvalid => e
         raise unless retryable_tidb?(e.cause)
+
         attempts += 1
         raise if attempts > MAX_RETRIES
 
@@ -194,7 +193,7 @@ config.action_controller.default_url_options = { protocol: "https", host: "local
     end
 
     def backoff(attempt)
-      [0.1 * (2**(attempt - 1)), 1.0].min
+      [ 0.1 * (2**(attempt - 1)), 1.0 ].min
     end
   end
 

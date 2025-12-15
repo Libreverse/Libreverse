@@ -19,6 +19,8 @@ import removePrefix from "./plugins/postcss-remove-prefix.js";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import legacy from "vite-plugin-legacy-swc";
 import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
+import { purgePolyfills } from "unplugin-purge-polyfills";
+import replacements from "@e18e/unplugin-replacements/vite";
 
 // All configurations
 const allObfuscatorConfig = {
@@ -97,7 +99,7 @@ export default defineConfig(({ mode }) => {
         },
         resolve: {
             extensions: [".js", ".json", ".coffee", ".scss", ".snappy", ".es6"],
-            // Workaround for js-cookie packaging (dist folder not present in installed copy under bun)
+            // Workaround for js-cookie packaging (dist folder not present in some installs)
             // Map to ESM source file so Vite can bundle successfully
             alias: {
                 // Use explicit path into node_modules since package exports field hides src/*
@@ -378,6 +380,8 @@ export default defineConfig(({ mode }) => {
         plugins: [
             coffeescript(),
             nodePolyfills(),
+            purgePolyfills.vite(),
+            replacements(),
             legacy({
                 targets: ["chrome 142"],
                 renderLegacyChunks: false,
@@ -401,7 +405,6 @@ export default defineConfig(({ mode }) => {
                         /\.(js|coffee)$/.test(id)
                     );
                 },
-                enforce: "pre",
                 babelConfig: {
                     ignore: ["node_modules/locomotive-scroll"],
                     babelrc: false,
@@ -425,7 +428,9 @@ export default defineConfig(({ mode }) => {
                 "app/views/**/*",
                 "app/javascript/src/**/*",
             ]),
-            !isDevelopment ? vitePluginBundleObfuscator(allObfuscatorConfig) : null,
+            !isDevelopment
+                ? vitePluginBundleObfuscator(allObfuscatorConfig)
+                : null,
             !isDevelopment ? typehintPlugin : null,
         ],
     };

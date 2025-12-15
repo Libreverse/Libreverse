@@ -6,12 +6,12 @@ This directory contains Jest tests for the JavaScript files in the application.
 
 The JavaScript tests in this project are organized as follows:
 
-- `basic.test.js`: Basic tests to verify Jest configuration
 - `dom_test.test.js`: Tests for DOM manipulation
 - `dom_setup.js`: Common DOM setup used by all tests
-- `simple_controller.test.js`: Simple Stimulus controller test
-- `drawer_controller.test.js`: Tests for the drawer controller
 - `form_auto_submit_controller.test.js`: Tests for the form auto-submit controller
+- `form_auto_submit_controller_updated.test.js`: Updated/expanded tests for the form auto-submit controller
+- `search_url_updater_controller.test.js`: Tests for search URL updating
+- `sidebar_controller.test.js`: Tests for the sidebar controller
 - `toast_controller.test.js`: Tests for the toast controller
 - `dismissible_controller.test.js`: Tests for the dismissible controller
 - `utils/xmlrpc.test.js`: Tests for the XML-RPC utility
@@ -23,13 +23,13 @@ Each controller test uses a simplified approach to testing, creating a lightweig
 Run all the tests:
 
 ```bash
-bun test
+pnpm test
 ```
 
 Run specific tests:
 
 ```bash
-bun test test/javascript/basic.test.js
+pnpm test test/javascript/dom_test.test.js
 ```
 
 ## Current Limitations

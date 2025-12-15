@@ -93,5 +93,5 @@ spring server
 
 - Spring is only active in development and test environments
 - Production deployments exclude Spring (it's in the development group)
-- Uses bun for package management as per project standards
+- Uses pnpm for package management as per project standards
 - Works seamlessly with the existing development workflow

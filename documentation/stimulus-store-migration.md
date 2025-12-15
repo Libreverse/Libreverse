@@ -15,7 +15,7 @@ Key capabilities:
 
 Install:
 
-- bun add stimulus-store
+- pnpm add stimulus-store
 
 ## Core Concepts
 
@@ -287,7 +287,7 @@ LibreverseStores.toast.success("Debug message");
 
 ## Checklist
 
-- [ ] Install stimulus-store (bun add stimulus-store)
+- [ ] Install stimulus-store (pnpm add stimulus-store)
 - [ ] Define stores (type + initialValue)
 - [ ] Add @stores and useStore(this) in controllers
 - [ ] Update templates to use enhanced controllers
@@ -308,6 +308,6 @@ See app/javascript/controllers/:
 
 - stimulus-store docs: <https://stimulus-store.com/>
 - Use HAML for templates, SCSS for styles, CoffeeScript for controllers
-- Use bun for package management and running scripts
+- Use pnpm for package management and running scripts
 - Prefer backend StimulusReflex for server-authoritative updates
 - Turbo/Haml note: ensure .html.haml extension or add initializer default_format patch

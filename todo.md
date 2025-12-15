@@ -3,15 +3,11 @@
 - [ ] we also need to move the ugc into a separate webcontentsview in electron for more security
 - [ ] add trufflehog to not put creds in github repo
 - [ ] add pagination instead of limits with geared pagination
-- [ ] use liquidgl library to bring back that original liquid glass with webgl look for good.
 - [ ] add global net blocklist using georlist - move its logic into the app natively
 - [ ] finish libreverse ai with api calls - use python node calls to use llama cpp python
 - [ ] adopt cucumber rails for future tests
-- [ ] remove local codeql (not that deep)
-      swap locomotive scroll for lenis and a custom scrollbar of our own
-- [ ] facial age estimation using zkml for osa pycall and ezkl https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender https://github.com/justadudewhohacks/face-api.js-models https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript
-- [ ] (feature) Use https://github.com/slimtoolkit/slim to optimise the docker image as well as root.io base images
-- [ ] (bugfix) Sidebar moves down when sidebar expanded
+- [ ] facial age estimation using zkml for osa pycall and ezkl <https://huggingface.co/audeering/wav2vec2-large-robust-24-ft-age-gender> <https://github.com/justadudewhohacks/face-api.js-models> <https://github.com/Faceplugin-ltd/FaceRecognition-LivenessDetection-Javascript>
+- [ ] (feature) Use <https://github.com/slimtoolkit/slim> to optimise the docker image as well as root.io base images
 - [ ] (feature) Clear up attribution for images
 - [ ] (feature) Finish blog & social features (blog posts as ActivityPub/atproto ideally posts; ship prebuilt blocklist & document censorship considerations)
 - [ ] (feature) OSA compliance audit and changes

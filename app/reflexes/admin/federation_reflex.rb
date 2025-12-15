@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 module Admin
   class FederationReflex < ApplicationReflex
@@ -6,7 +7,7 @@ module Admin
       authorize_admin!
       domain = element.dataset[:domain] || params[:domain]
       reason = element.dataset[:reason] || params[:reason]
-      
+
       # Validation logic...
       # For simplicity in Reflex, we might rely on the service or simple checks
       if LibreverseModeration.block_instance(domain, reason)
@@ -22,13 +23,13 @@ module Admin
     def unblock_domain
       authorize_admin!
       domain = element.dataset[:domain]
-      
-      if LibreverseModeration.unblock_instance(domain)
+
+      return unless LibreverseModeration.unblock_instance(domain)
+
         morph :nothing
         cable_ready.console_log(message: "Unblocked #{domain}")
         # Refresh the list
         morph "#blocked-domains-list", render(partial: "admin/federation/blocked_domains_list")
-      end
     end
 
     def generate_actors

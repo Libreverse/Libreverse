@@ -69,11 +69,11 @@ module ApplicationHelper
 
       timeago_files.each do |key, relative_path|
         path = File.join(timeago_root, relative_path)
-        if File.exist?(path)
-          content = File.read(path)
-          imports[key] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
-          import_statements << key
-        end
+        next unless File.exist?(path)
+
+        content = File.read(path)
+        imports[key] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
+        import_statements << key
       end
     end
 
@@ -90,15 +90,13 @@ module ApplicationHelper
             imports["@rails/ujs"] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
             import_statements << "@rails/ujs"
           end
-        else
-          if File.exist?(path)
-            content = File.read(path)
+        elsif File.exist?(path)
+          content = File.read(path)
             key = path.gsub(File.join(thredded_root, "app/assets/javascripts"), "thredded_js")
                       .gsub(File.join(thredded_root, "vendor/assets/javascripts"), "thredded_vendor")
 
             imports[key] = "data:text/javascript;base64,#{Base64.strict_encode64(content)}"
             import_statements << key
-          end
         end
       end
     end

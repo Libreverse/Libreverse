@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 class CommentReflex < ApplicationReflex
   def create
     thread = load_thread
     comment = thread.comments.build(comment_params.merge(account_id: current_account.id))
-    
+
     apply_moderation(comment)
-    
+
     if comment.save
       if comment.approved?
         morph "#comment-thread-#{thread.id}", render(partial: "comments/thread", locals: { thread: thread })
@@ -25,7 +26,7 @@ class CommentReflex < ApplicationReflex
     return unless comment.approved?
 
     comment.likes.find_or_create_by!(account_id: current_account.id)
-    
+
     # Refresh just the comment meta/likes
     morph "#comment-#{comment.id} .likes", "Likes: #{comment.likes_count}"
     # Or simpler, just re-render the whole comment if needed, but granular is better.
@@ -52,9 +53,9 @@ class CommentReflex < ApplicationReflex
   def load_thread
     commontable_type = element.dataset[:commontable_type]
     commontable_id = element.dataset[:commontable_id]
-    
+
     raise ActiveRecord::RecordNotFound, "Unsupported commontable_type" unless commontable_type == "Comfy::Cms::Page"
-    
+
     commontable = Comfy::Cms::Page.find(commontable_id)
     CommentThread.find_or_create_by!(commontable: commontable)
   end

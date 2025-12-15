@@ -64,14 +64,7 @@ export default ({
         // -111: ERR_TUNNEL_CONNECTION_FAILED
         const retryableErrorCodes = new Set([
             // -3: ERR_ABORTED (often transient during dev server rebuilds)
-            -3,
-            -100,
-            -102,
-            -105,
-            -106,
-            -108,
-            -109,
-            -111,
+            -3, -100, -102, -105, -106, -108, -109, -111,
         ]);
 
         // Some Electron/Chromium errors expose the symbolic code string.
@@ -96,7 +89,8 @@ export default ({
                         u.hostname === "localhost" ||
                         u.hostname === "127.0.0.1" ||
                         u.hostname === "::1";
-                    const isHttp = u.protocol === "http:" || u.protocol === "https:";
+                    const isHttp =
+                        u.protocol === "http:" || u.protocol === "https:";
 
                     if (isLocalhost && isHttp) {
                         const port = u.port

@@ -393,7 +393,7 @@ module LibreverseInstance
 
     def detect_production_domain
       # Optimization: Check for cached domain in tmp/ to avoid network calls on every boot
-      cache_file = Rails.root.join("tmp", "detected_domain")
+      cache_file = Rails.root.join("tmp/detected_domain")
       if File.exist?(cache_file)
         cached_domain = File.read(cache_file).strip
         return cached_domain if cached_domain.present?
@@ -410,10 +410,14 @@ module LibreverseInstance
       ERROR
 
       Rails.logger.info("[DomainChecker] ✅ Found domain '#{domain}' for IP #{ip}")
-      
+
       # Cache the result
-      File.write(cache_file, domain) rescue nil
-      
+      begin
+        File.write(cache_file, domain)
+      rescue StandardError
+        nil
+      end
+
       domain
     rescue StandardError => e
       raise "🚨 Domain check failed: #{e.message}"

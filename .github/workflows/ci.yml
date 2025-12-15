@@ -54,7 +54,7 @@ jobs:
             - name: Run Prettier
               if: matrix.tool == 'prettier'
               shell: bash
-              run: bun prettier --write . --ignore-path .prettierignore --log-level warn
+              run: pnpm exec prettier --write . --ignore-path .prettierignore --log-level warn
 
             - name: Run Rubocop
               if: matrix.tool == 'rubocop'
@@ -103,17 +103,17 @@ jobs:
             - name: Run ESLint
               if: matrix.tool == 'eslint'
               shell: bash
-              run: bun eslint . --fix
+              run: pnpm exec eslint . --fix
 
             - name: Run Stylelint
               if: matrix.tool == 'stylelint'
               shell: bash
-              run: bun stylelint '**/*.scss' --fix
+              run: pnpm exec stylelint '**/*.scss' --fix
 
             - name: Run markdownlint
               if: matrix.tool == 'markdownlint'
               shell: bash
-              run: bun markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
+              run: pnpm exec markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/vendor/**' '!**/tmp/**' '!**/log/**' '!**/coverage/**' '!**/storage/**' '!**/licenses/**' --fix --config .markdownlint-cli2.jsonc
 
             - name: Run Caddy Fmt
               if: matrix.tool == 'caddy-fmt'

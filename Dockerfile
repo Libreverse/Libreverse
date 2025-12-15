@@ -99,30 +99,38 @@ RUN bash -lc 'rvm --default use ruby-3.4.2 \
     && ruby -e "require \"bundler/setup\"; require \"google_robotstxt_parser\"; puts(\"Robotstxt loaded: #{!!defined?(Robotstxt)}\")" \
     && ruby -e "require \"bundler/setup\"; require \"hiredis-client\"; puts(\"Hiredis driver: #{RedisClient.default_driver}\")"'
 
-# Copy package.json and bun.lock for JS dependencies
-COPY package.json bun.lock ./
+# Install Node.js (for JS tooling) and pnpm
+RUN set -eux; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl gnupg; \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nodejs; \
+    npm install -g pnpm@9.15.4; \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Bun (for JS package management and build only)
-ENV BUN_INSTALL=/usr/local/bun
-ENV PATH=/usr/local/bun/bin:$PATH
-RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v1.3.0"
+# Copy package.json and pnpm lockfile for JS dependencies
+COPY package.json pnpm-lock.yaml ./
 
 # Copy the rest of the application code (including vendor/)
 COPY . .
 
-# Ensure correct ownership for the app user (before bun install, so node_modules is not affected)
+# Ensure correct ownership for the app user (before installing JS deps, so node_modules is not affected)
 RUN chown -R app:app /home/app/webapp
 
+USER app
+
 # Now install JS dependencies (vendor/javascript/p2p should exist)
-RUN bun install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Precompile Rails bootsnap cache
 RUN bash -lc 'rvm --default use ruby-3.4.2 && bundle exec bootsnap precompile app/ lib/'
 
-# Precompile assets with vite (using bun)
+# Precompile assets with vite
 RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production VITE_RUBY_MODE=production \
-    bun run build \
+    pnpm run build \
     && rm -rf public/vite-dev public/vite-test
+
+USER root
 
 # Remove default Nginx site and add custom config for Rails app
 RUN rm /etc/nginx/sites-enabled/default

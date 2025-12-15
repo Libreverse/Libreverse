@@ -1,0 +1,23 @@
+# pnpm workspace configuration
+# See: https://pnpm.io/pnpm-workspace_yaml
+
+packages:
+    - "."
+
+# Only allow these packages to run install/postinstall scripts
+# (pnpm v10+ allowlist - blocks all others by default)
+onlyBuiltDependencies:
+    - "@parcel/watcher"
+    - "@swc/core"
+    - core-js
+    - esbuild
+    - docsify
+    - sharp
+    - protobufjs
+    - electron
+    - electron-winstaller
+
+# Explicitly ignore these (won't warn or prompt)
+ignoredBuiltDependencies:
+    - react_on_rails
+    - es5-ext

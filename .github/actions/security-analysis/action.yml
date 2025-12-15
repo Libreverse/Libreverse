@@ -13,7 +13,7 @@ runs:
           shell: bash
           run: |
               bundle update
-              bun update
+                            pnpm update
         - name: Run Brakeman
           if: inputs.tool == 'brakeman'
           shell: bash

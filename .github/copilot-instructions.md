@@ -1,8 +1,7 @@
 # A couple of prerequisites
 
-Use bun instead of npm for JS package management in the project.
-Use bun instead of node for running scripts in the project.
-However, don't use bun for anything else, such as building or testing the project.
+Use pnpm instead of npm/yarn for JS package management in the project.
+Prefer running JS tooling via pnpm (e.g. pnpm run / pnpm exec) so it uses the repo's pinned dependencies.
 Always research every task given. Check github repositories for relevant libraries, search the web with duckduckgo and get up-to-date documentation with context7.
 Always prefer Coffeescript over JavaScript where possible.
 Always prefer SCSS over CSS where possible.

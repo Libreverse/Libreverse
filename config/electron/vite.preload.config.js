@@ -1,10 +1,12 @@
 import { defineConfig } from "vite";
 import path from "node:path";
 import babel from "vite-plugin-babel";
-import coffeescript from "./plugins/coffeescript.js";
-import typehints from "./plugins/typehints.js";
+import coffeescript from "../../plugins/coffeescript.js";
+import typehints from "../../plugins/typehints.js";
 import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
-import { bytecodePlugin } from 'vite-plugin-bytecode2';
+import { bytecodePlugin } from "vite-plugin-bytecode2";
+import { purgePolyfills } from "unplugin-purge-polyfills";
+import replacements from "@e18e/unplugin-replacements/vite";
 
 // All configurations
 const allObfuscatorConfig = {
@@ -82,7 +84,7 @@ export default defineConfig(({ mode }) => {
             legalComments: isDevelopment ? "none" : "inline", // Skip legal comments in development
         },
         resolve: {
-            extensions: [".js",".coffee"],
+            extensions: [".js", ".coffee"],
         },
         build: {
             cache: isDevelopment, // Enable cache in development for faster rebuilds
@@ -242,6 +244,8 @@ export default defineConfig(({ mode }) => {
         },
         plugins: [
             coffeescript(),
+            purgePolyfills.vite(),
+            replacements(),
             babel({
                 filter: (id) => {
                     // Skip processing for hotwired/stimulus and for the prebuilt textconvert.min.js bundle (case-insensitive)
@@ -259,7 +263,6 @@ export default defineConfig(({ mode }) => {
                         /\.(js|coffee)$/.test(id)
                     );
                 },
-                enforce: "pre",
                 babelConfig: {
                     ignore: ["node_modules/locomotive-scroll"],
                     babelrc: false,
@@ -276,9 +279,18 @@ export default defineConfig(({ mode }) => {
                     ],
                 },
             }),
-            !isDevelopment ? vitePluginBundleObfuscator(allObfuscatorConfig) : null,
+            !isDevelopment
+                ? vitePluginBundleObfuscator(allObfuscatorConfig)
+                : null,
             !isDevelopment ? typehintPlugin : null,
-            !isDevelopment ? bytecodePlugin({chunkAlias: [], transformArrowFunctions: true, removeBundleJS: true, protectedStrings: []}) : null,
+            !isDevelopment
+                ? bytecodePlugin({
+                      chunkAlias: [],
+                      transformArrowFunctions: true,
+                      removeBundleJS: true,
+                      protectedStrings: [],
+                  })
+                : null,
         ],
     };
 });

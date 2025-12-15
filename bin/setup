@@ -8,6 +8,31 @@ def system!(*args)
   system(*args, exception: true)
 end
 
+def ensure_pnpm!
+  return if system("command -v pnpm > /dev/null 2>&1")
+
+  if system("command -v corepack > /dev/null 2>&1")
+    # Use the version pinned by package.json#packageManager when available.
+    system!("corepack enable")
+    system!("corepack prepare pnpm@9.15.4 --activate")
+    return
+  end
+
+  if system("command -v npm > /dev/null 2>&1")
+    warn "pnpm not found; installing pnpm@9.15.4 via npm (global)"
+    system!("npm install -g pnpm@9.15.4")
+    return if system("command -v pnpm > /dev/null 2>&1")
+  end
+
+  abort <<~MSG
+    pnpm was not found.
+
+    Install Node.js (>= 20) and either:
+      - enable Corepack (recommended): corepack enable && corepack prepare pnpm@9.15.4 --activate
+      - or install pnpm directly (e.g. via Homebrew): brew install pnpm
+  MSG
+end
+
 FileUtils.chdir APP_ROOT do
   # This script is a way to set up or update your development environment automatically.
   # This script is idempotent, so that you can run it at any time and get an expectable outcome.
@@ -18,10 +43,8 @@ FileUtils.chdir APP_ROOT do
   system("bundle check") || system!("bundle install")
 
   # Install JavaScript dependencies
-  system!("bun install")
-
-  # Install JavaScript dependencies
-  system("yarn check --check-files") || system!("yarn install")
+  ensure_pnpm!
+  system!("pnpm install")
 
   puts "\n== Installing overmind (process manager) =="
   system!("brew install overmind") unless system("which overmind > /dev/null 2>&1")
