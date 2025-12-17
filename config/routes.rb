@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     resources :experiences do
       member do
         get "display"
+        get "electron_sandbox"
       end
     end
   end

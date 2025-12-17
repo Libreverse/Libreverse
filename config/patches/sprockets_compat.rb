@@ -10,6 +10,7 @@ if defined?(Rails) && Rails.application.respond_to?(:assets) && Rails.applicatio
   rescue StandardError
     nil
   end
+
   module Sprockets
     class Environment
       unless method_defined?(:load_path)

@@ -12,6 +12,7 @@ class ExperienceChannel < ApplicationCable::Channel
 
     # Send current state to the new peer
     transmit({
+               api_version: 1,
                type: "state_snapshot",
                state: current_state_hash.to_h,
                timestamp: Time.current.to_i
@@ -33,6 +34,7 @@ class ExperienceChannel < ApplicationCable::Channel
       handle_update(data)
     when "request_state"
       transmit({
+                 api_version: 1,
                  type: "state_snapshot",
                  state: current_state_hash.to_h,
                  timestamp: Time.current.to_i
@@ -69,6 +71,7 @@ class ExperienceChannel < ApplicationCable::Channel
 
     # Broadcast to others
     ActionCable.server.broadcast("experience_session_#{@session_id}", {
+                                   api_version: 1,
                                    type: "state_update",
                                    key: key,
                                    value: value,

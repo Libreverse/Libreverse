@@ -33,14 +33,14 @@ if defined?(InlineSvg::PropshaftAssetFinder)
       filename = args.first
       env = ::Rails.application.assets
 
-    begin
-      if env.respond_to?(:load_path)
-        # Delegate with original arity/args only if environment supports expected API.
-        return args.length == 1 ? __original_pathname(filename) : __original_pathname(*args)
+      begin
+        if env.respond_to?(:load_path)
+          # Delegate with original arity/args only if environment supports expected API.
+          return args.length == 1 ? __original_pathname(filename) : __original_pathname(*args)
+        end
+      rescue ArgumentError
+        # Fall through to fallback search.
       end
-    rescue ArgumentError
-      # Fall through to fallback search.
-    end
 
       # Fallback: search a curated list of asset directories.
       candidate_dirs = [

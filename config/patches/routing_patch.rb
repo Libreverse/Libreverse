@@ -28,7 +28,7 @@ module RoutingPatch
 
     begin
       if defined?(RodauthApp) && RodauthApp.rodauth
-        known_rodauth_paths = [ "/login", "/create-account", "/logout", "/remember", "/change-password", "/change-login", "/close-account" ]
+        known_rodauth_paths = ["/login", "/create-account", "/logout", "/remember", "/change-password", "/change-login", "/close-account"]
         if known_rodauth_paths.include?(path)
           Rails.logger.debug "[RoutingPatch] Handling explicit Rodauth route: #{path}"
           request.env["REQUEST_PATH"] = path

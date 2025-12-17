@@ -1,4 +1,23 @@
-- if @is_multiplayer
+- if @electron_client
+  - content_for :title, "#{@experience.title}"
+
+  h2= @experience.title
+  - if @experience.description.present?
+    p= @experience.description
+
+  - sandbox_url = electron_sandbox_experience_path(@experience, session: (@session_id if @is_multiplayer))
+
+  .electron-ugc-launcher data-controller="electron-ugc-launcher" data-electron-ugc-launcher-url-value=sandbox_url
+    p.lead
+      | Opening this experience in a dedicated Electron sandbox…
+
+    p
+      = link_to "Open now", sandbox_url, class: "btn btn-primary", data: { action: "electron-ugc-launcher#open" }
+
+    p.text-muted
+      | If nothing happens, you may not be running inside the desktop app.
+
+- elsif @is_multiplayer
   - content_for :title, "#{@experience.title} - Multiplayer"
 
   h2= @experience.title

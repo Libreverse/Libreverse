@@ -1,5 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 import consumer from "../channels/consumer";
+import {
+    V1_INBOUND_TYPES,
+    V1_OUTBOUND_TYPES,
+    buildV1OutboundMessage,
+    normalizeV1InboundMessage,
+} from "../lib/multiplayer/iframe_api/v1";
 
 export default class extends Controller {
     static values = {
@@ -13,6 +19,10 @@ export default class extends Controller {
         console.log("[ExperienceState] Connecting...", this.sessionIdValue);
 
         this.state = {};
+
+        // Keep a stable reference so removeEventListener works.
+        this._boundHandleMessage = this._handleMessage.bind(this);
+
         this.subscription = consumer.subscriptions.create(
             {
                 channel: "ExperienceChannel",
@@ -26,14 +36,18 @@ export default class extends Controller {
             },
         );
 
-        window.addEventListener("message", this._handleMessage.bind(this));
+        window.addEventListener("message", this._boundHandleMessage);
     }
 
     disconnect() {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
-        window.removeEventListener("message", this._handleMessage.bind(this));
+
+        if (this._boundHandleMessage) {
+            window.removeEventListener("message", this._boundHandleMessage);
+            this._boundHandleMessage = null;
+        }
     }
 
     // API for the iframe
@@ -45,15 +59,23 @@ export default class extends Controller {
         )
             return;
 
-        const { type, key, value } = event.data;
+        const msg = normalizeV1InboundMessage(event.data);
+        if (!msg) return;
 
-        if (type === "state_set") {
+        const { type, key, value } = msg;
+
+        if (type === V1_INBOUND_TYPES.STATE_SET) {
             this.updateState(key, value);
-        } else if (type === "state_get") {
+        } else if (type === V1_INBOUND_TYPES.STATE_GET) {
             // Reply with current value
-            this._sendToIframe("state_value", { key, value: this.state[key] });
-        } else if (type === "state_request_all") {
-            this._sendToIframe("state_snapshot", { state: this.state });
+            this._sendToIframe(V1_OUTBOUND_TYPES.STATE_VALUE, {
+                key,
+                value: this.state[key],
+            });
+        } else if (type === V1_INBOUND_TYPES.STATE_REQUEST_ALL) {
+            this._sendToIframe(V1_OUTBOUND_TYPES.STATE_SNAPSHOT, {
+                state: this.state,
+            });
         }
     }
 
@@ -64,6 +86,7 @@ export default class extends Controller {
         // Send to server
         this.subscription.send({
             type: "update",
+            api_version: 1,
             key,
             value,
         });
@@ -71,26 +94,30 @@ export default class extends Controller {
 
     _onConnected() {
         console.log("[ExperienceState] Connected");
-        this._sendToIframe("connected", { peerId: this.peerIdValue });
+        this._sendToIframe(V1_OUTBOUND_TYPES.CONNECTED, {
+            peerId: this.peerIdValue,
+        });
     }
 
     _onDisconnected() {
         console.log("[ExperienceState] Disconnected");
-        this._sendToIframe("disconnected", {});
+        this._sendToIframe(V1_OUTBOUND_TYPES.DISCONNECTED, {});
     }
 
     _onReceived(data) {
         switch (data.type) {
             case "state_snapshot":
                 this.state = data.state || {};
-                this._sendToIframe("state_snapshot", { state: this.state });
+                this._sendToIframe(V1_OUTBOUND_TYPES.STATE_SNAPSHOT, {
+                    state: this.state,
+                });
                 break;
             case "state_update":
                 // Don't echo back our own updates if we already applied them optimistically
                 // But here we just apply everything to be safe/consistent
                 if (data.from_peer_id !== this.peerIdValue) {
                     this.state[data.key] = data.value;
-                    this._sendToIframe("state_update", {
+                    this._sendToIframe(V1_OUTBOUND_TYPES.STATE_UPDATE, {
                         key: data.key,
                         value: data.value,
                         fromPeerId: data.from_peer_id,
@@ -103,7 +130,7 @@ export default class extends Controller {
     _sendToIframe(type, payload) {
         if (this.hasIframeTarget && this.iframeTarget.contentWindow) {
             this.iframeTarget.contentWindow.postMessage(
-                { type, ...payload },
+                buildV1OutboundMessage(type, payload),
                 "*",
             );
         }

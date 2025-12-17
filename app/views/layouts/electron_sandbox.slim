@@ -1,0 +1,9 @@
+doctype strict
+html.no-js lang=I18n.locale.to_s
+  head
+    = render "layouts/app_assets"
+    = render "layouts/meta_tags"
+    = csrf_meta_tags
+    = csp_meta_tag
+  body.electron-sandbox
+    = yield

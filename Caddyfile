@@ -11,4 +11,8 @@ localhost:3000 {
     reverse_proxy localhost:3002
     # Advertise HTTP/3 via Alt-Svc
     header Alt-Svc "h3=\":3000\"; ma=86400"
+
+    # Allow same-site (different port) embeds when the caller has COEP enabled.
+    # This is safe for local dev: it does NOT allow arbitrary cross-origin embedding.
+    header Cross-Origin-Resource-Policy "same-site"
 }

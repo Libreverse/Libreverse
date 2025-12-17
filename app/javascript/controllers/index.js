@@ -25,6 +25,9 @@ application.register("cta-particles", CtaParticlesController);
 import DismissibleController from "./dismissible_controller";
 application.register("dismissible", DismissibleController);
 
+import ElectronUgcLauncherController from "./electron_ugc_launcher_controller";
+application.register("electron-ugc-launcher", ElectronUgcLauncherController);
+
 import EnhancedApplicationController from "./enhanced_application_controller";
 application.register("enhanced-application", EnhancedApplicationController);
 

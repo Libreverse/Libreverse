@@ -11,12 +11,12 @@ class ExperiencesController < ApplicationController
                     timestamp_threshold: 3 # Stricter timing for experience submissions
 
   # CanCanCan authorization
-  load_and_authorize_resource except: %i[index display show]
+  load_and_authorize_resource except: %i[index display show electron_sandbox]
 
   # Enhanced authentication - require non-guest users for CRUD operations
-  before_action :require_authenticated_user, except: %i[index display show]
+  before_action :require_authenticated_user, except: %i[index display show electron_sandbox]
   before_action :check_enhanced_spam_protection, only: %i[create update]
-  before_action :set_experience, only: %i[show edit update destroy display approve]
+  before_action :set_experience, only: %i[show edit update destroy display approve electron_sandbox]
   before_action :check_ownership, only: %i[edit update destroy]
   before_action :require_admin, only: %i[approve]
 
@@ -142,6 +142,53 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
       return
     end
 
+    prepare_experience_html!
+
+    @electron_client = request.user_agent.to_s.include?("Electron")
+
+    # Force browsers to treat the data as a download and prevent MIME sniffing
+    response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
+    response.headers["X-Content-Type-Options"] = "nosniff"
+  end
+
+  # GET /experiences/:id/electron_sandbox
+  #
+  # Render a minimal wrapper page intended to be loaded inside a dedicated Electron BrowserView.
+  # The UGC itself stays inside an iframe sandbox (and we intentionally do NOT allow same-origin).
+  def electron_sandbox
+    # Same access checks as display
+    unless @experience.approved? || current_account&.admin? || @experience.account_id == current_account&.id
+      redirect_to experiences_path, alert: "Experience is awaiting approval."
+      return
+    end
+
+    unless @experience.html_file.attached?
+      redirect_to experiences_path, alert: "Experience content not found."
+      return
+    end
+
+    prepare_experience_html!
+
+    response.headers["Content-Disposition"] = "inline"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+
+    render layout: "electron_sandbox"
+  end
+
+  # PATCH /experiences/1/approve
+  def approve
+    if @experience.update(approved: true)
+      redirect_to experiences_path, notice: "Experience approved."
+    else
+      redirect_to experiences_path, alert: "Unable to approve experience."
+    end
+  end
+
+  private
+
+  def prepare_experience_html!
+    @experience.reload
+
     @html_content = @experience.html_file.download.force_encoding("UTF-8")
 
     # Inject storage access script for secure IndexedDB access
@@ -159,22 +206,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
       @session_id = params[:session].presence || "exp_#{@experience.id}_#{SecureRandom.hex(8)}"
       @peer_id = "peer_#{current_account.id}_#{SecureRandom.hex(4)}"
     end
-
-    # Force browsers to treat the data as a download and prevent MIME sniffing
-    response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
-    response.headers["X-Content-Type-Options"] = "nosniff"
   end
-
-  # PATCH /experiences/1/approve
-  def approve
-    if @experience.update(approved: true)
-      redirect_to experiences_path, notice: "Experience approved."
-    else
-      redirect_to experiences_path, alert: "Unable to approve experience."
-    end
-  end
-
-  private
 
   # Require user to be logged in
   def require_authentication

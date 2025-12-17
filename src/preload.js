@@ -137,6 +137,73 @@ globalThis.electronAPI = {
     close: () => ipcRenderer.invoke("close-window"),
 };
 
+// ---------------------------------------------------------------------------
+// UGC sandboxing: allow the Rails UI (running inside the #content-frame iframe)
+// to request that Electron opens the experience in a dedicated, sandboxed
+// BrowserView.
+//
+// We intentionally do NOT expose ipcRenderer to web content. Instead, we accept
+// a narrowly-scoped postMessage protocol from the trusted Rails iframe.
+// ---------------------------------------------------------------------------
+
+const APP_URL = process.env.APP_URL || "https://localhost:3000";
+const APP_ORIGIN = (() => {
+    try {
+        return new URL(APP_URL).origin;
+    } catch {
+        return null;
+    }
+})();
+
+const resolveAllowedUgcUrl = (rawUrl) => {
+    if (!rawUrl || typeof rawUrl !== "string") return null;
+
+    let u;
+    try {
+        if (APP_ORIGIN && rawUrl.startsWith("/")) u = new URL(rawUrl, APP_ORIGIN);
+        else u = new URL(rawUrl);
+    } catch {
+        return null;
+    }
+
+    if (!APP_ORIGIN || u.origin !== APP_ORIGIN) return null;
+    if (!u.pathname.startsWith("/experiences/")) return null;
+    if (!u.pathname.includes("/electron_sandbox")) return null;
+
+    return u.toString();
+};
+
+const getRailsIframeWindow = () => {
+    const iframe = document.getElementById("content-frame");
+    return iframe && iframe.contentWindow ? iframe.contentWindow : null;
+};
+
+window.addEventListener("message", async (event) => {
+    try {
+        // Only accept commands from the Rails app iframe.
+        const railsWin = getRailsIframeWindow();
+        if (!railsWin || event.source !== railsWin) return;
+
+        // Origin allowlist (defense-in-depth).
+        if (APP_ORIGIN && event.origin !== APP_ORIGIN) return;
+
+        const data = event.data;
+        if (!data || typeof data !== "object") return;
+
+        if (data.type === "libreverse.ugc.open") {
+            const resolved = resolveAllowedUgcUrl(data.url);
+            if (!resolved) return;
+            await ipcRenderer.invoke("ugc:view:open", { url: resolved });
+        }
+
+        if (data.type === "libreverse.ugc.close") {
+            await ipcRenderer.invoke("ugc:view:close");
+        }
+    } catch {
+        // Swallow errors: never crash preload due to untrusted messages.
+    }
+});
+
 // Set up traffic lights (either injected or server-rendered)
 console.log("Setting up traffic lights");
 const setupTrafficLights = () => {

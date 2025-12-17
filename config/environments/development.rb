@@ -130,7 +130,7 @@ config.action_controller.default_url_options = { protocol: "https", host: "local
   # web-console 4.2.1 can raise when mapping ActiveRecord exceptions on TruffleRuby
   # (e.g., NoMethodError: undefined method `bindings` for ActiveRecord::StatementInvalid).
   # Disable it so the app can continue rendering even when the DB is temporarily unhealthy.
-  config.middleware.delete(WebConsole::Middleware) if RUBY_ENGINE == "truffleruby" && defined?(WebConsole::Middleware)
+  config.middleware.delete(WebConsole::Middleware) if defined?(WebConsole::Middleware)
 
   tidb_transient_retry = Class.new do
     MAX_RETRIES = 3

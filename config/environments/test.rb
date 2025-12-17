@@ -93,5 +93,3 @@ Rails.application.configure do
   # config.vite.autoload = false
   # config.vite.dev_server_enabled = false
 end
-
-# EEA mode now defaults to true, no environment variable needed

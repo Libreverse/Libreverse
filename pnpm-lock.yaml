@@ -277,6 +277,9 @@ importers:
       shakapacker:
         specifier: 8.4.0
         version: 8.4.0(@babel/core@7.28.4)(@babel/plugin-transform-runtime@7.28.5(@babel/core@7.28.4))(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@babel/runtime@7.28.4)(@types/babel__core@7.20.5)(@types/webpack@5.28.5(@swc/core@1.15.5)(webpack-cli@6.0.1))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.103.0))(compression-webpack-plugin@11.1.0(webpack@5.103.0))(terser-webpack-plugin@5.3.14(@swc/core@1.15.5)(webpack@5.103.0))(webpack-assets-manifest@6.3.0(webpack@5.103.0))(webpack-cli@6.0.1)(webpack-dev-server@5.2.2)(webpack-merge@6.0.1)(webpack-subresource-integrity@5.1.0(webpack@5.103.0))(webpack@5.103.0)
+      snappyjs:
+        specifier: ^0.7.0
+        version: 0.7.0
       sortablejs:
         specifier: 1.15.2
         version: 1.15.2
@@ -8240,6 +8243,9 @@ packages:
 
   smoothscroll-polyfill@0.4.4:
     resolution: {integrity: sha512-TK5ZA9U5RqCwMpfoMq/l1mrH0JAR7y7KRvOBx0n2869aLxch+gT9GhN3yUfjiw+d/DiF1mKo14+hd62JyMmoBg==}
+
+  snappyjs@0.7.0:
+    resolution: {integrity: sha512-u5iEEXkMe2EInQio6Wv9LWHOQYRDbD2O9hzS27GpT/lwfIQhTCnHCTqedqHIHe9ZcvQo+9au6vngQayipz1NYw==}
 
   sockjs@0.3.24:
     resolution: {integrity: sha512-GJgLTZ7vYb/JtPSSZ10hsOYIvEYsjbNU+zPdIHcUaWVNUEPivzxku31865sSSud0Da0W4lEeOPlmw93zLQchuQ==}
@@ -18408,6 +18414,8 @@ snapshots:
   smart-buffer@4.2.0: {}
 
   smoothscroll-polyfill@0.4.4: {}
+
+  snappyjs@0.7.0: {}
 
   sockjs@0.3.24:
     dependencies:

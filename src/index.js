@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, Menu, ipcMain } from "electron";
+import { app, BrowserWindow, BrowserView, session, Menu, ipcMain } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
@@ -35,6 +35,140 @@ for (const f of flags) {
 const baseUrl = process.env.APP_URL || "https://localhost:3000";
 // strangely it doesn't keep the window open without this.
 let mainWindow = null;
+
+let ugcView = null;
+
+const baseOrigin = (() => {
+    try {
+        return new URL(baseUrl).origin;
+    } catch {
+        return null;
+    }
+})();
+
+// Keep a small strip of the main window visible so the app chrome/traffic-lights
+// remain usable even while the sandboxed UGC BrowserView is open.
+// (We intentionally keep this single-window UX.)
+const UGC_VIEW_TOP_INSET_PX = Number.parseInt(
+    process.env.UGC_VIEW_TOP_INSET_PX || "44",
+    10,
+);
+
+const isAllowedUgcUrl = (rawUrl) => {
+    if (!rawUrl || typeof rawUrl !== "string") return false;
+
+    let u;
+    try {
+        // Accept relative URLs by resolving against the app base origin.
+        if (baseOrigin && rawUrl.startsWith("/")) {
+            u = new URL(rawUrl, baseOrigin);
+        } else {
+            u = new URL(rawUrl);
+        }
+    } catch {
+        return false;
+    }
+
+    if (!baseOrigin || u.origin !== baseOrigin) return false;
+
+    // Only allow our dedicated sandbox endpoint.
+    // This prevents a compromised renderer from opening arbitrary app pages.
+    if (!u.pathname.includes("/electron_sandbox")) return false;
+    if (!u.pathname.startsWith("/experiences/")) return false;
+
+    return true;
+};
+
+const closeUgcView = () => {
+    if (!ugcView) return;
+
+    try {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            // Only remove if it's the current view.
+            if (mainWindow.getBrowserView?.() === ugcView) {
+                mainWindow.setBrowserView(null);
+            }
+        }
+    } catch {
+        // ignore
+    }
+
+    try {
+        ugcView.webContents?.destroy();
+    } catch {
+        // ignore
+    }
+
+    ugcView = null;
+};
+
+const openUgcView = async ({ url }) => {
+    if (!isAllowedUgcUrl(url)) {
+        throw new Error("ugc:view:open blocked by allowlist");
+    }
+
+    const win = ensureMainWindow();
+    closeUgcView();
+
+    ugcView = new BrowserView({
+        webPreferences: {
+            // Strong isolation: no Node, no preload, Chromium sandbox.
+            sandbox: true,
+            contextIsolation: true,
+            nodeIntegration: false,
+            enableRemoteModule: false,
+            webSecurity: true,
+            allowRunningInsecureContent: false,
+            safeDialogs: true,
+            navigateOnDragDrop: false,
+            // Keep default partition so auth continues to work. We rely on the iframe sandbox
+            // (no allow-same-origin) to prevent cookie access from UGC.
+        },
+    });
+
+    win.setBrowserView(ugcView);
+    ugcView.setAutoResize({ width: true, height: true });
+
+    // Full-bleed overlay.
+    const resize = () => {
+        if (!ugcView || !win || win.isDestroyed()) return;
+        const { width, height } = win.getContentBounds();
+        const inset = Number.isFinite(UGC_VIEW_TOP_INSET_PX)
+            ? Math.max(0, UGC_VIEW_TOP_INSET_PX)
+            : 0;
+        ugcView.setBounds({
+            x: 0,
+            y: inset,
+            width,
+            height: Math.max(0, height - inset),
+        });
+    };
+    resize();
+
+    // Keep bounds updated.
+    win.on("resize", resize);
+    win.on("closed", closeUgcView);
+
+    // Lock down navigation.
+    ugcView.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+    ugcView.webContents.on("will-navigate", (event, nextUrl) => {
+        if (!isAllowedUgcUrl(nextUrl)) event.preventDefault();
+    });
+    ugcView.webContents.on("will-redirect", (event, nextUrl) => {
+        if (!isAllowedUgcUrl(nextUrl)) event.preventDefault();
+    });
+
+    // Press Escape to close the sandbox view.
+    ugcView.webContents.on("before-input-event", (event, input) => {
+        if (input.type === "keyDown" && input.key === "Escape") {
+            event.preventDefault();
+            closeUgcView();
+        }
+    });
+
+    await ugcView.webContents.loadURL(url);
+    return true;
+};
 
 const getFocusedOrMainWindow = () => {
     const win = BrowserWindow.getFocusedWindow();
@@ -160,6 +294,19 @@ app.whenReady().then(async () => {
     ipcMain.handle("close-window", () => {
         const win = getFocusedOrMainWindow();
         if (win && !win.isDestroyed()) win.close();
+        return true;
+    });
+
+    // ---------------------------------------------------------------------
+    // IPC: UGC sandbox view (BrowserView)
+    // ---------------------------------------------------------------------
+
+    ipcMain.handle("ugc:view:open", async (_event, payload = {}) => {
+        return await openUgcView({ url: payload?.url });
+    });
+
+    ipcMain.handle("ugc:view:close", () => {
+        closeUgcView();
         return true;
     });
 

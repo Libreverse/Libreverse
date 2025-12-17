@@ -65,3 +65,33 @@ Rails.application.config.after_initialize do
     end
   end
 end
+
+# Configure Federails moderation for handling reports about federated content
+Federails::Moderation.configure do |conf|
+  # Handle incoming reports about experiences
+  conf.after_report_created = lambda do |report|
+    LibreverseReportHandler.new(report).process
+  rescue StandardError => e
+    Rails.logger.error("LibreverseReportHandler failed: #{e.class}: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
+    # Optionally enqueue a retry job instead of aborting the request thread
+    # Libreverse::ReportHandlerJob.perform_later(report.id)
+  end
+end
+
+# ActivityPub extensions for Libreverse-specific metadata
+module LibreverseActivityPub
+  NAMESPACE = "https://libreverse.org/ns#"
+
+  CUSTOM_FIELDS = {
+    "experienceType" => "#{NAMESPACE}experienceType".freeze,
+    "author" => "#{NAMESPACE}author".freeze,
+    "approved" => "#{NAMESPACE}approved".freeze,
+    "htmlContent" => "#{NAMESPACE}htmlContent".freeze,
+    "searchVector" => "#{NAMESPACE}searchVector".freeze,
+    "moderationStatus" => "#{NAMESPACE}moderationStatus".freeze,
+    "interactionCapabilities" => "#{NAMESPACE}interactionCapabilities".freeze,
+    "instanceDomain" => "#{NAMESPACE}instanceDomain".freeze,
+    "creatorAccount" => "#{NAMESPACE}creatorAccount".freeze,
+    "tags" => "#{NAMESPACE}tags".freeze
+  }.freeze
+end

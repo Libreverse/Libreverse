@@ -95,6 +95,7 @@
         "sassy-lists": "3.0.1",
         "sfw": "2.0.4",
         "shakapacker": "8.4.0",
+        "snappyjs": "^0.7.0",
         "sortablejs": "1.15.2",
         "spin.js": "4.1.2",
         "stimulus-store": "0.0.3",
