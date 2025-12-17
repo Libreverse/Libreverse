@@ -30,6 +30,7 @@ import {
     createEsbuildConfig,
     createOptimizeDepsForce,
     createTypehintPlugin,
+    devViteSecurityHeaders,
 } from "./config/vite/common.js";
 
 export default defineConfig(({ mode }) => {
@@ -72,20 +73,7 @@ export default defineConfig(({ mode }) => {
         }),
         server: {
             hmr: { overlay: true }, // Enable error overlay in development
-            headers: isDevelopment
-                ? {
-                      "Cache-Control":
-                          "no-store, no-cache, must-revalidate, max-age=0",
-                      "Cross-Origin-Embedder-Policy": "credentialless",
-                      // Rails sets COEP/credentialless + CORP/same-site in dev.
-                      // When the app is loaded inside an iframe (Electron), the page
-                      // still pulls CSS/assets from this Vite dev server (different port).
-                      // Without an explicit CORP header here, some browsers/Electron
-                      // will block subresources (fonts/images), making CSS appear
-                      // partially applied.
-                      "Cross-Origin-Resource-Policy": "same-site",
-                  }
-                : {},
+            headers: isDevelopment ? devViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development
         },
         assetsInclude: ["**/*.snappy", "**/*.gguf", "**/*.wasm"],

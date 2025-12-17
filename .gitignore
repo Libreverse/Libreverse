@@ -144,6 +144,9 @@ typings/
 # Electron-Forge
 out/
 
+# mimalloc (staged locally; do not commit binaries)
+/mimalloc/*.dylib
+
 *.pem.envrc.local
 
 # Compiled hiredis-client extension (platform-specific, auto-compiled on first load)

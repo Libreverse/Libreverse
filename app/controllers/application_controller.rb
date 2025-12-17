@@ -29,14 +29,9 @@ class ApplicationController < ActionController::Base
   after_action :apply_automatic_caching
   before_action :set_current_ip
   before_action :set_locale
-  before_action :add_inference_headers
+  # COOP/COEP/CORP are configured centrally in `config/initializers/headers.rb`.
 
   helper_method :tutorial_dismissed?, :consent_given?, :consent_path
-
-  def add_inference_headers
-    response.set_header("Cross-Origin-Opener-Policy", "same-origin")
-    response.set_header("Cross-Origin-Embedder-Policy", "credentialless")
-  end
 
   def current_account
     # Use Current.account if available (set by ApplicationReflex)

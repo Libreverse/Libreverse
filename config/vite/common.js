@@ -76,6 +76,34 @@ export function createEsbuildConfig(isDevelopment) {
     };
 }
 
+// Shared development headers for Vite dev servers.
+//
+// These help when the renderer uses COEP/credentialless and embeds content from
+// other local origins (different port), which can otherwise cause CORP/COEP
+// blocking in Chromium/Electron.
+export function devViteSecurityHeaders() {
+    const headers = {
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        // Dev-only convenience; production builds should use stricter policies.
+        // This allows the Vite renderer (https://localhost:5173) to embed the Rails
+        // UI (https://localhost:3000) without CORP/COEP confusion.
+        "Cross-Origin-Resource-Policy": "cross-origin",
+    };
+
+    // COEP makes the document cross-origin isolated and forces CORP/CORS rules
+    // on embedded resources (including iframes). This is useful for features
+    // like SharedArrayBuffer, but it can break the Electron dev shell when the
+    // Rails UI is embedded from another origin/port.
+    //
+    // Enable explicitly when needed:
+    //   VITE_ENABLE_COEP=1
+    if (process.env.VITE_ENABLE_COEP === "1") {
+        headers["Cross-Origin-Embedder-Policy"] = "credentialless";
+    }
+
+    return headers;
+}
+
 export function createTerserOptions(isDevelopment) {
     if (isDevelopment) return undefined;
 

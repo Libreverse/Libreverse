@@ -34,6 +34,8 @@ module LibreversePatches
 
         # Compatibility patches
         "react_on_rails_connection_pool",
+        "connection_pool_initialize_compat",
+        "connection_pool_with_compat",
         "sprockets_compat",
         "inline_svg_patch",
         "routing_patch",

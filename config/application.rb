@@ -9,6 +9,14 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# ---------------------------------------------------------------------------
+# Compatibility shims that must load BEFORE Rails bootstrap builds cache stores
+# ---------------------------------------------------------------------------
+# Rails instantiates `config.cache_store` during its bootstrap phase, before
+# `config/initializers/*.rb` have run. We therefore load critical shims here.
+require_relative "patches/connection_pool_initialize_compat"
+require_relative "patches/connection_pool_with_compat"
+
 # Load custom middleware
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
@@ -34,32 +42,27 @@ module LibreverseInstance
 
     # Use Redis/DragonflyDB for caching (configured via REDIS_URL env var)
     #
-    # NOTE: Rails 8.1.1 currently wraps RedisCacheStore in the `connection_pool` gem
-    # by calling `ConnectionPool.new(pool_options)` (positional hash). With
-    # connection_pool >= 3 (required by Sidekiq 8), ConnectionPool#initialize is
-    # keyword-only, so that positional hash raises.
+    # Rails' RedisCacheStore expects a Redis client that responds to high-level
+    # commands like `get`, `set`, `mget`, `unlink`, etc. (i.e., `redis` gem).
     #
-    # Workaround: provide a redis-client pooled connection and disable Rails'
-    # ConnectionPool wrapping via `pool: false`.
+    # Rails 8.1.1 wraps RedisCacheStore in `connection_pool` by calling:
+    #   ConnectionPool.new(pool_options) { ... }
+    # where `pool_options` is a positional Hash.
+    #
+    # connection_pool >= 3 uses a keyword-only initialize, so we provide a small
+    # compatibility shim in `config/patches/connection_pool_initialize_compat.rb`.
     redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
     redis_pool_size = Integer(ENV.fetch("REDIS_POOL_SIZE", 5))
     redis_pool_timeout = Float(ENV.fetch("REDIS_POOL_TIMEOUT", 5))
 
-    require "redis_client"
-    redis_config = RedisClient::Config.new(
+    config.cache_store = :redis_cache_store, {
       url: redis_url,
       driver: :hiredis,
       connect_timeout: 5,
       read_timeout: 1,
       write_timeout: 1,
-      reconnect_attempts: 3
-    )
-
-    redis_pooled = redis_config.new_pool(size: redis_pool_size, timeout: redis_pool_timeout)
-
-    config.cache_store = :redis_cache_store, {
-      redis: redis_pooled,
-      pool: false,
+      reconnect_attempts: 3,
+      pool: { size: redis_pool_size, timeout: redis_pool_timeout },
       error_handler: lambda { |method:, returning:, exception:|
         Rails.logger.error "[Redis Cache] #{exception.class}: #{exception.message} (method: #{method}, returning: #{returning})"
         Sentry.capture_exception(exception) if defined?(Sentry)

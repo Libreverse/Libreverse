@@ -2,7 +2,13 @@
 # shareable_constant_value: literal
 
 # Consolidate and apply all security headers at once
-corp_policy = ENV["CROSS_ORIGIN_RESOURCE_POLICY"].presence_in(%w[same-origin same-site cross-origin]) || "same-site"
+#
+# NOTE: In development (especially when embedding the Rails app inside the
+# Electron+Vite shell), browsers can be stricter about CORP checks for documents
+# served from different ports. Using `cross-origin` avoids the embed being
+# blocked when COEP is enabled in the renderer.
+default_corp_policy = Rails.env.development? ? "cross-origin" : "same-site"
+corp_policy = ENV["CROSS_ORIGIN_RESOURCE_POLICY"].presence_in(%w[same-origin same-site cross-origin]) || default_corp_policy
 coep_policy = ENV["CROSS_ORIGIN_EMBEDDER_POLICY"].presence_in(%w[require-corp credentialless])
 coep_policy ||= "credentialless" if Rails.env.development?
 
