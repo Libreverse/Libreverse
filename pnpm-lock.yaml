@@ -404,6 +404,18 @@ importers:
       babel-jest:
         specifier: 29.7.0
         version: 29.7.0(@babel/core@7.28.4)
+      babel-plugin-react-compiler:
+        specifier: ^1.0.0
+        version: 1.0.0
+      babel-plugin-transform-react-constant-elements:
+        specifier: ^6.23.0
+        version: 6.23.0
+      babel-plugin-transform-react-inline-elements:
+        specifier: ^6.22.0
+        version: 6.22.0
+      babel-preset-react-optimize:
+        specifier: ^1.0.1
+        version: 1.0.1
       coffeescript:
         specifier: 2.7.0
         version: 2.7.0
@@ -521,6 +533,9 @@ importers:
       webpack-dev-server:
         specifier: 5.2.2
         version: 5.2.2(webpack-cli@6.0.1)(webpack@5.103.0)
+      webpack-obfuscator:
+        specifier: ^3.6.0
+        version: 3.6.0(javascript-obfuscator@4.2.2)(webpack@5.103.0)
 
 packages:
 
@@ -3419,6 +3434,10 @@ packages:
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
 
+  amdefine@1.0.1:
+    resolution: {integrity: sha512-S2Hw0TtNkMJhIabBwIojKL9YHO5T0n5eNqWJ7Lrlel/zDbftQpxpapi8tZs3X1HWa+u+QeydGmzzNU0m09+Rcg==}
+    engines: {node: '>=0.4.2'}
+
   ansi-colors@4.1.3:
     resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
     engines: {node: '>=6'}
@@ -3573,6 +3592,9 @@ packages:
   babel-generator@6.26.1:
     resolution: {integrity: sha512-HyfwY6ApZj7BYTcJURpM5tznulaBvyio7/0d4zFOeMPUmfxkCjHocCuoLa2SAGzBI8AREcH3eP3758F672DppA==}
 
+  babel-helper-is-react-class@1.0.0:
+    resolution: {integrity: sha512-9rulVgj7gg5/m33Z2zcYov042fe4WcNDGT52M0S5RjiNREg6Izreo/beEdAAiQTSnkb6/tzJ5c2cNaZN3fYHVw==}
+
   babel-helpers@6.24.1:
     resolution: {integrity: sha512-n7pFrqQm44TCYvrCDb0MqabAF+JUBq+ijBvNMUxpkLjJaAu32faIexewMumrH5KLLJ1HDyT0PTEqRyAe/GwwuQ==}
 
@@ -3625,6 +3647,21 @@ packages:
     peerDependencies:
       '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
 
+  babel-plugin-react-compiler@1.0.0:
+    resolution: {integrity: sha512-Ixm8tFfoKKIPYdCCKYTsqv+Fd4IJ0DQqMyEimo+pxUOMUR9cVPlwTrFt9Avu+3cb6Zp3mAzl+t1MrG2fxxKsxw==}
+
+  babel-plugin-transform-react-constant-elements@6.23.0:
+    resolution: {integrity: sha512-22TG15ONh0FWXj98Y5KOpMmEfDIMJa66rg58LzxssT0LUEFN8utkM1NmBEBx1WKkJFa6spK9aR4yLbDQntPxhg==}
+
+  babel-plugin-transform-react-inline-elements@6.22.0:
+    resolution: {integrity: sha512-+MtsC5c6n97B7+Ai76yJK9IZR/BLuTT5nljbNEC3iQ9ukaNOKqJG42WnOtLkVs6n52Tazpe7hwK0Ngn/2NoOYQ==}
+
+  babel-plugin-transform-react-pure-class-to-function@1.0.1:
+    resolution: {integrity: sha512-gKq6ZjnblsWqlDazV8u3JU/gIovFa1XyCqwqJAfR+C/k1FiSYISKKI9L2bSYKOMX3Yn5QUKIVX23uE3kNTaQkg==}
+
+  babel-plugin-transform-react-remove-prop-types@0.2.12:
+    resolution: {integrity: sha512-vvo7Bj6fAcs41BegHABNBe4fDArkjwXkoGIwb77+WwCBxArPgYNDnaD3d3HdcNrP2F75oigEBEkPpAb5EMuaQA==}
+
   babel-plugin-transform-react-remove-prop-types@0.4.24:
     resolution: {integrity: sha512-eqj0hVcJUR57/Ug2zE1Yswsw4LhuqqHhD+8v120T1cl3kjg76QwtyBrdIk4WVwK+lAhBJVYCd/v+4nc4y+8JsA==}
 
@@ -3638,6 +3675,9 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       '@babel/core': ^7.0.0
+
+  babel-preset-react-optimize@1.0.1:
+    resolution: {integrity: sha512-tmB6WqvJ137CQ5a4c4tYHutAc05EQi0zr1hj55Lmqiseg6gYWrE4J5r55eRJkJNVVkjxpvIDkVbAcdSbT8b5Sw==}
 
   babel-register@6.26.0:
     resolution: {integrity: sha512-veliHlHX06wjaeY8xNITbveXSiI+ASFnOqvne/LaIJIqOWi2Ogmj91KOugEz/hoh/fwMhXNBJPCv8Xaz5CyM4A==}
@@ -6613,6 +6653,9 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  multi-stage-sourcemap@0.3.1:
+    resolution: {integrity: sha512-UiTLYjqeIoVnJHyWGskwMKIhtZKK9uXUjSTWuwatarrc0d2H/6MAVFdwvEA/aKOHamIn7z4tfvxjz+FYucFpNQ==}
+
   multicast-dns@7.2.5:
     resolution: {integrity: sha512-2eznPJP8z2BFLX50tf0LuODrpINqP1RVIm/CObbTcBRITQgmC/TjcREF1NeTBzIcR5XO/ukWo+YHOjBbFwIupg==}
     hasBin: true
@@ -8282,6 +8325,10 @@ packages:
   source-map-support@0.5.21:
     resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
 
+  source-map@0.1.43:
+    resolution: {integrity: sha512-VtCvB9SIQhk3aF6h+N85EaqIaBFIAfZ9Cu+NJHHVvc8BbEcnvDcFw6sqQ2dQrT6SlOrZq3tIvyD9+EGq/lJryQ==}
+    engines: {node: '>=0.8.0'}
+
   source-map@0.5.7:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==}
     engines: {node: '>=0.10.0'}
@@ -9208,6 +9255,12 @@ packages:
   webpack-merge@6.0.1:
     resolution: {integrity: sha512-hXXvrjtx2PLYx4qruKl+kyRSLc52V+cCvMxRjmKwoA+CBbbF5GfIBtR6kCvl0fYGqTUPKB+1ktVmTHqMOzgCBg==}
     engines: {node: '>=18.0.0'}
+
+  webpack-obfuscator@3.6.0:
+    resolution: {integrity: sha512-Y/jRICYe08S6okfsL6UnC7PTwdumhYpXvwLdw4soGmVbQ0jldFjVDqRbPZnOc4PdOQSMDrnQNQB+b7Fc4rpx+A==}
+    peerDependencies:
+      javascript-obfuscator: ^4.0.0 || ^5.0.0
+      webpack: ^5.101.3
 
   webpack-sources@3.3.3:
     resolution: {integrity: sha512-yd1RBzSGanHkitROoPFd6qsrxt+oFhg/129YzheDGqeustzX0vTZJZsSsQjVQC4yzBQ56K55XU8gaNCtIzOnTg==}
@@ -12813,6 +12866,8 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
+  amdefine@1.0.1: {}
+
   ansi-colors@4.1.3: {}
 
   ansi-escapes@4.3.2:
@@ -12977,6 +13032,8 @@ snapshots:
       source-map: 0.5.7
       trim-right: 1.0.1
 
+  babel-helper-is-react-class@1.0.0: {}
+
   babel-helpers@6.24.1:
     dependencies:
       babel-runtime: 6.26.0
@@ -13063,6 +13120,24 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  babel-plugin-react-compiler@1.0.0:
+    dependencies:
+      '@babel/types': 7.28.5
+
+  babel-plugin-transform-react-constant-elements@6.23.0:
+    dependencies:
+      babel-runtime: 6.26.0
+
+  babel-plugin-transform-react-inline-elements@6.22.0:
+    dependencies:
+      babel-runtime: 6.26.0
+
+  babel-plugin-transform-react-pure-class-to-function@1.0.1:
+    dependencies:
+      babel-helper-is-react-class: 1.0.0
+
+  babel-plugin-transform-react-remove-prop-types@0.2.12: {}
+
   babel-plugin-transform-react-remove-prop-types@0.4.24: {}
 
   babel-preset-current-node-syntax@1.2.0(@babel/core@7.28.4):
@@ -13089,6 +13164,13 @@ snapshots:
       '@babel/core': 7.28.4
       babel-plugin-jest-hoist: 29.6.3
       babel-preset-current-node-syntax: 1.2.0(@babel/core@7.28.4)
+
+  babel-preset-react-optimize@1.0.1:
+    dependencies:
+      babel-plugin-transform-react-constant-elements: 6.23.0
+      babel-plugin-transform-react-inline-elements: 6.22.0
+      babel-plugin-transform-react-pure-class-to-function: 1.0.1
+      babel-plugin-transform-react-remove-prop-types: 0.2.12
 
   babel-register@6.26.0:
     dependencies:
@@ -16721,6 +16803,10 @@ snapshots:
 
   ms@2.1.3: {}
 
+  multi-stage-sourcemap@0.3.1:
+    dependencies:
+      source-map: 0.1.43
+
   multicast-dns@7.2.5:
     dependencies:
       dns-packet: 5.6.1
@@ -18462,6 +18548,10 @@ snapshots:
       buffer-from: 1.1.2
       source-map: 0.6.1
 
+  source-map@0.1.43:
+    dependencies:
+      amdefine: 1.0.1
+
   source-map@0.5.7: {}
 
   source-map@0.6.1: {}
@@ -19474,6 +19564,13 @@ snapshots:
       clone-deep: 4.0.1
       flat: 5.0.2
       wildcard: 2.0.1
+
+  webpack-obfuscator@3.6.0(javascript-obfuscator@4.2.2)(webpack@5.103.0):
+    dependencies:
+      javascript-obfuscator: 4.2.2
+      multi-stage-sourcemap: 0.3.1
+      multimatch: 5.0.0
+      webpack: 5.103.0(@swc/core@1.15.5)(webpack-cli@6.0.1)
 
   webpack-sources@3.3.3: {}
 
