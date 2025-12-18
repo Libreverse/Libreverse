@@ -35,9 +35,11 @@ config.action_controller.default_url_options = { protocol: "https", host: "local
 
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # We are messing with how people generally work in dev for performance here:
+  # TruffleRuby JIT benefits significantly from eager loading - all code is loaded
+  # and parsed upfront, allowing the JIT to compile hot methods during warmup.
+  # This trades slower boot time for faster request handling.
   config.enable_reloading = true
-  config.eager_load = false
+  config.eager_load = true
 
   # Show full error reports.
   config.consider_all_requests_local = true

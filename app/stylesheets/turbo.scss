@@ -1,38 +1,53 @@
 @use "variables";
 
 .turbo-loading {
-    pointer-events: none; /* Disables pointer events on body */
-    position: relative; /* Ensures pseudo-element positioning */
+    pointer-events: none;
+    position: relative;
 }
 
+/* The overlay pseudo-element – starts invisible */
 .turbo-loading::before {
     content: "";
-    position: fixed; /* Cover the entire viewport */
+    position: fixed;
     inset: 0;
-    background: rgb(0 0 0 / 30%); /* Semi-transparent dark overlay */
-    backdrop-filter: blur(3px); /* Subtle blur effect */
-    pointer-events: auto; /* Allows pseudo-element to show cursor */
-    z-index: 1111; /* Ensures it’s on top */
+    background: rgb(0 0 0 / 30%);
+    backdrop-filter: blur(3px);
+    pointer-events: auto;
+    z-index: 1111;
+
+    /* Spinner SVG */
     background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZS1kYXNoYXJyYXk9IjI4IDI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiPgogICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIGZyb209IjAgMjAgMjAiIHRvPSIzNjAgMjAgMjAiIGR1cj0iMXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CiAgPC9jaXJjbGU+Cjwvc3ZnPg==");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 40px 40px;
+
+    /* Start fully transparent */
+    opacity: 0;
+
+    /* Smooth fade-in */
+    transition: opacity 0.3s ease-out;
 }
 
-/* Add a subtle indicator to input elements during form submissions */
+/* When .turbo-loading is present on the parent → fade in */
+.turbo-loading::before {
+    opacity: 1;
+}
+
+/* Subtle dimming of form controls during submission */
 .turbo-submitting input,
 .turbo-submitting select,
 .turbo-submitting textarea,
 .turbo-submitting button {
     opacity: 0.7;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease;
 }
 
-/* Prevent multiple submissions while form is submitting */
+/* Prevent interaction during submission */
 .turbo-submitting {
     pointer-events: none;
 }
 
+/* Hide Turbo's default progress bar */
 .turbo-progress-bar {
     display: none !important;
     will-change: width, opacity;

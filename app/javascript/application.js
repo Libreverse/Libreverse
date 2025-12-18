@@ -159,6 +159,9 @@ import "./channels";
 import { start } from "@rails/activestorage";
 start();
 
+// Turbo Javascript configuration
+Turbo.config.drive.progressBarDelay = 0;
+
 // Check for cookie clearing instructions on every HTTP response
 // This handles cases where the server detects invalid sessions
 function checkForCookieClearHeaders() {

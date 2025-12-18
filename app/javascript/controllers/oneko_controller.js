@@ -515,15 +515,10 @@ export default _class = function () {
             centerX = rect.left + rect.width / 2 + scrollLeft;
             centerY = rect.top + rect.height / 2 + scrollTop;
             results = [];
-            if (!this._heartMap) this._heartMap = new WeakMap();
-            document.addEventListener("turbo:before-cache", () => {
-                for (const heart of document.querySelectorAll(".heart"))
-                    heart.remove();
-                this._heartMap = null; // Optional: Reset for next session (WeakMap auto-GCs)
-            });
             for (index = index_ = 0; index_ < 20; index = ++index_) {
                 heart = document.createElement("div");
                 heart.className = "heart";
+                heart.dataset.turboTemporary = "";
                 // Use custom SVG heart instead of text emoji
                 heart.innerHTML =
                     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><path fill="#e45c9c" d="M35.885 11.833c0-5.45-4.418-9.868-9.867-9.868-3.308 0-6.227 1.633-8.018 4.129-1.791-2.496-4.71-4.129-8.017-4.129-5.45 0-9.868 4.417-9.868 9.868 0 .772.098 1.52.266 2.241C1.751 22.587 11.216 31.568 18 34.034c6.783-2.466 16.249-11.447 17.617-19.959.17-.721.268-1.469.268-2.242z" /></svg>';
@@ -551,18 +546,10 @@ export default _class = function () {
                 heart.style.setProperty("--burst-y", `${burstY}px`);
                 heart.style.animationDelay = "0s";
                 parent.append(heart);
-                this._heartMap.set(heart, {
-                    created: Date.now(),
-                    burstX,
-                    burstY,
-                    startRot,
-                    rotRange,
-                });
                 results.push(
                     setTimeout(() => {
                         if (heart.parentElement) {
                             heart.remove();
-                            this._heartMap.delete(heart);
                         }
                     }, 1000),
                 );

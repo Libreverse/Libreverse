@@ -205,18 +205,14 @@ window.addEventListener("message", async (event) => {
 });
 
 // Set up traffic lights (either injected or server-rendered)
-console.log("Setting up traffic lights");
 const setupTrafficLights = () => {
-    console.log("DOM content loaded, setting up traffic lights");
     const trafficLights = document.querySelector(".traffic-lights");
     if (!trafficLights) {
-        console.log("Traffic lights not found, skipping setup");
         return;
     }
 
     // Check if already set up
     if (trafficLights.dataset.setup === "true") {
-        console.log("Traffic lights already set up, skipping");
         return;
     }
     trafficLights.dataset.setup = "true";
@@ -337,7 +333,6 @@ const setupTrafficLights = () => {
 
     // Function to update button sources based on focus (for macOS)
     const updateButtonSources = (focused) => {
-        console.log(`Updating button sources, focused: ${focused}`);
         if (process.platform === "darwin" && !forceGrayscale) {
             // For macOS, switch between colored and gray versions
             const newCloseNormal = focused
@@ -364,29 +359,19 @@ const setupTrafficLights = () => {
 
     // Window focus/blur listeners
     window.addEventListener("focus", () => {
-        console.log(
-            "Window focused, switching to colored/grayscale based on platform",
-        );
         updateButtonSources(true);
     });
     window.addEventListener("blur", () => {
-        console.log("Window blurred, switching to grayscale");
         updateButtonSources(false);
     });
 
     for (const [index, img] of imgs.entries()) {
         img.addEventListener("mouseenter", () => {
-            console.log(
-                `Button ${img.id} mouseenter, hoverCount: ${hoverCount + 1}`,
-            );
             hoverCount++;
             for (const [index_, index__] of imgs.entries())
                 index__.src = hoverSrcs[index_];
         });
         img.addEventListener("mouseleave", () => {
-            console.log(
-                `Button ${img.id} mouseleave, hoverCount: ${hoverCount - 1}`,
-            );
             hoverCount--;
             if (hoverCount === 0) {
                 for (const [index_, index__] of imgs.entries())
@@ -394,15 +379,12 @@ const setupTrafficLights = () => {
             }
         });
         img.addEventListener("mousedown", () => {
-            console.log(`Button ${img.id} mousedown`);
             img.src = pressSrcs[index];
         });
         img.addEventListener("mouseup", () => {
-            console.log(`Button ${img.id} mouseup`);
             img.src = hoverSrcs[index];
         });
         img.addEventListener("click", () => {
-            console.log(`Button ${img.id} clicked`);
             if (globalThis.electronAPI) {
                 switch (img.id) {
                     case "close": {
@@ -419,7 +401,6 @@ const setupTrafficLights = () => {
                     }
                 }
             } else {
-                console.log("electronAPI not available");
             }
         });
     }
@@ -427,12 +408,8 @@ const setupTrafficLights = () => {
     // Set initial state based on current window focus
     setTimeout(() => {
         const isFocused = document.hasFocus();
-        console.log(`Initial window focus state: ${isFocused}`);
         updateButtonSources(isFocused);
     }, 100);
 };
 
 document.addEventListener("DOMContentLoaded", setupTrafficLights);
-
-// Listen for Turbo page changes
-// document.addEventListener("turbo:load", setupTrafficLights);

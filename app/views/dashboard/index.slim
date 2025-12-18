@@ -97,7 +97,7 @@ turbo-frame#sidebar
             .info-item
               .info-label SESSION
               .info-value
-                = button_to rodauth.logout_path, method: :post, class: "info-button" do
+                = button_to rodauth.logout_path, method: :post, class: "info-button", data: { turbo_confirm: "Are you sure you want to sign out?", turbo_prefetch: false } do
                   = t('dashboard.index.sign_out')
 
         h3.section-title= t('dashboard.index.compliance_options_title')
@@ -121,10 +121,10 @@ turbo-frame#sidebar
             .info-item
               .info-label EXPORT DATA
               .info-value
-                = link_to account_export_path, class: "info-link" do
+                = link_to account_export_path, class: "info-link", download: true, data: { turbo_prefetch: false } do
                   = t('dashboard.index.export_data')
             .info-item
               .info-label DELETE ACCOUNT
               .info-value
-                button.info-button type="button" data-reflex="click->AccountReflex#destroy" data-confirm="Are you sure? This cannot be undone."
+                button.info-button type="button" data-reflex="click->AccountReflex#destroy" data-confirm="Are you sure? This cannot be undone." data-turbo-prefetch="false"
                   = t('dashboard.index.delete_account')
