@@ -43,12 +43,6 @@ Rails.application.routes.draw do
   # Mount ActionCable for real-time features
   mount ActionCable.server => "/cable"
 
-  # Analytics proxy routes for privacy-focused tracking
-  get "umami/script.js", to: "proxy#umami_script"
-
-  # Filter lists and userscripts proxy routes
-  get "proxy/userscripts/:name.js", to: "proxy#userscript"
-
   # Mount Action Mailbox for email bot functionality
   mount ActionMailbox::Engine => "/rails/action_mailbox"
 

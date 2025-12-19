@@ -39,6 +39,7 @@ module LibreversePatches
         "sprockets_compat",
         "inline_svg_patch",
         "routing_patch",
+        "tidb_transient_retry",
 
         # Test-only shims
         "vite_test_fallback",

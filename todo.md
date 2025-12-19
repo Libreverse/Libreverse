@@ -1,5 +1,5 @@
 # To-do
-
+use SRI for vite rails assets and shakapacker assets
 - [ ] (feature) Build authoritative realtime multiplayer service in parallel to Rails (interest management + generalized state governance; no server-side raycasting)
 - [ ] we also need to move the ugc into a separate webcontentsview in electron for more security
 - [ ] add trufflehog to not put creds in github repo

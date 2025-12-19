@@ -134,7 +134,7 @@ run_task(
 # Set environment variables for Overmind and all child processes
 $ENV{OBJC_DISABLE_INITIALIZE_FORK_SAFETY} = 'YES';
 $ENV{OVERMIND_SOCKET}        = '/tmp/.overmind.sock';
-$ENV{OVERMIND_TMUX_CONFIG}   = '/config/overmind-tmux.conf';
+$ENV{OVERMIND_TMUX_CONFIG}   = '/config/dev/overmind-tmux.conf';
 $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
 $ENV{OVERMIND_CAN_DIE}       = 'startup-message';

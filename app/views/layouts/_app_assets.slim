@@ -1,5 +1,5 @@
 / Link to the adguard extra script first in order to override other scripts if needed
-= javascript_include_tag "/proxy/userscripts/adguard-extra.js", data: {turbo_track: "reload"}
+= javascript_include_tag "https://userscripts.adtidy.org/release/adguard-extra/1.0/adguard-extra.user.js", data: {turbo_track: "reload"}
 / In dev we want the stylesheets to come from vite for HMR. In prod we want then inlined to avoid FOUC
 - if Rails.env.production?
   = inline_vite_stylesheet "~/javascript/application.js"
@@ -10,7 +10,7 @@
 / Load the main javascript bundle
 = vite_javascript_tag "~/javascript/application.js", data: {turbo_track: "reload"}
 / Thredded forum JS - compiled via Sprockets (Thredded requires Sprockets directives)
-= javascript_include_tag "thredded", data: {turbo_track: "reload"}
+= javascript_include_tag "thredded", data: {turbo_track: "reload"}, integrity: true
 / Load in react-rails bit for some of the 3D code
 = javascript_pack_tag 'generated/MetaversePreview', data: {turbo_track: "reload"}
 = stylesheet_pack_tag
