@@ -1,4 +1,5 @@
 import "../stylesheets/application.scss";
+// NOTE: Gem JS (timeago, thredded) loads via Sprockets - see app/assets/javascripts/thredded.js
 import "./libs/hashcash.js"; // ActiveHashcash proof-of-work for bot protection
 import debounced from "debounced";
 import "./libs/foundation.js";

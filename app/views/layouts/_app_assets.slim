@@ -9,13 +9,8 @@
 = vite_client_tag data: {turbo_track: "reload"}
 / Load the main javascript bundle
 = vite_javascript_tag "~/javascript/application.js", data: {turbo_track: "reload"}
-/ Load supplemental javascript assets
-- asset_data = generate_inline_asset_importmap
-script type="importmap"
-  | #{ { imports: asset_data[:imports] }.to_json.html_safe }
-script type="module"
-  | window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = { isDisabled: true };
-  | #{asset_data[:statements].map { |key| %(import "#{key}";) }.join("\n  ")}
+/ Thredded forum JS - compiled via Sprockets (Thredded requires Sprockets directives)
+= javascript_include_tag "thredded", data: {turbo_track: "reload"}
 / Load in react-rails bit for some of the 3D code
 = javascript_pack_tag 'generated/MetaversePreview', data: {turbo_track: "reload"}
 = stylesheet_pack_tag

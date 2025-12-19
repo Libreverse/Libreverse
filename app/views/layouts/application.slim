@@ -1,6 +1,6 @@
 doctype strict
 - rtl_locales = %w[ar]
-html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18n.locale.to_s data-turbo-prefetch="false"
+html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18n.locale.to_s data-turbo-prefetch="false" data-turbo-eval="false"
   head
     = render "layouts/app_assets"
     = render "layouts/meta_tags"

@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import path from "node:path";
+import fs from "node:fs";
 import { execSync } from "node:child_process";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 import rubyPlugin from "vite-plugin-ruby";
 import fullReload from "vite-plugin-full-reload";
 import stimulusHMR from "vite-plugin-stimulus-hmr";
@@ -38,6 +40,34 @@ export default defineConfig(({ mode }) => {
 
     const typehintPlugin = createTypehintPlugin(typehints);
 
+    const gemRoot = (name) => {
+        try {
+            return execSync(`bundle show ${name}`, {
+                stdio: ["pipe", "pipe", "ignore"],
+            })
+                .toString()
+                .trim();
+        } catch (error) {
+            return null;
+        }
+    };
+
+    const staticCopyTargets = [];
+
+    // NOTE: Thredded JS and timeago are compiled via Sprockets, not Vite
+    // See app/assets/javascripts/thredded.js and config/initializers/sprockets_thredded.rb
+
+    const gemojiRoot = gemRoot("gemoji");
+    if (gemojiRoot) {
+        const gemojiSvgs = path.join(gemojiRoot, "assets/images/emoji/unicode");
+        if (fs.existsSync(gemojiSvgs)) {
+            staticCopyTargets.push({
+                src: path.join(gemojiSvgs, "*.svg"),
+                dest: "static/gems/gemoji/emoji",
+            });
+        }
+    }
+
     return {
         esbuild: createEsbuildConfig(isDevelopment),
         resolve: {
@@ -50,18 +80,8 @@ export default defineConfig(({ mode }) => {
                     process.cwd(),
                     "node_modules/js-cookie/index.js",
                 ),
-                timeago_js: path.join(
-                    execSync("bundle show timeago_js").toString().trim(),
-                    "assets/javascripts",
-                ),
-                thredded_js: path.join(
-                    execSync("bundle show thredded").toString().trim(),
-                    "app/assets/javascripts",
-                ),
-                thredded_vendor: path.join(
-                    execSync("bundle show thredded").toString().trim(),
-                    "vendor/assets/javascripts",
-                ),
+                // NOTE: timeago_js, thredded_js, thredded_vendor aliases removed
+                // All gem JS is now compiled via Sprockets (see app/assets/javascripts/thredded.js)
             },
         },
         build: createCommonBuild({
@@ -167,6 +187,9 @@ export default defineConfig(({ mode }) => {
             nodePolyfills(),
             purgePolyfills.vite(),
             replacements(),
+            staticCopyTargets.length
+                ? viteStaticCopy({ targets: staticCopyTargets })
+                : null,
             legacy(commonLegacyOptions),
             babel(createBabelOptions(path)),
             rubyPlugin(),
