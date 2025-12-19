@@ -106,12 +106,12 @@ turbo-frame#sidebar
             .info-item
               .info-label PRIVACY POLICY
               .info-value
-                = link_to main_app.privacy_path, class: "info-link" do
+                = link_to safe_privacy_path, class: "info-link" do
                   = t('policies.view_privacy_policy')
             .info-item
               .info-label COOKIE POLICY
               .info-value
-                = link_to main_app.cookie_policy_path, class: "info-link" do
+                = link_to safe_cookie_policy_path, class: "info-link" do
                   = t('policies.view_cookie_policy')
             .info-item
               .info-label REVIEW CONSENT

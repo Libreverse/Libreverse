@@ -308,7 +308,6 @@ GEM
     html-pipeline (2.14.3)
       activesupport (>= 2)
       nokogiri (>= 1.4)
-    htmlcompressor (0.4.0)
     htmlentities (4.4.2)
     httparty (0.23.2)
       csv
@@ -998,7 +997,6 @@ DEPENDENCIES
   google_robotstxt_parser!
   graphql_rails
   hiredis-client!
-  htmlcompressor (~> 0.4.0)
   httparty
   i18n-tasks
   image_processing
@@ -1194,7 +1192,6 @@ CHECKSUMS
   hirb (0.7.3) sha256=5132733ca44b1f41f36c624693a3201284368a349dfe37f543ae6e2ad880ec57
   hiredis-client (0.26.1)
   html-pipeline (2.14.3) sha256=8a1d4d7128b2141913387cac0f8ba898bb6812557001acc0c2b46910f59413a0
-  htmlcompressor (0.4.0) sha256=4630cf8ed46b563f0b49cc6028a3fe8c17a9067f2becd7c3a2aa5aaacefb1f9e
   htmlentities (4.4.2) sha256=bbafbdf69f2eca9262be4efef7e43e6a1de54c95eb600f26984f71d2fe96c5c3
   httparty (0.23.2) sha256=72d52830ab5862115a3c9a4b16738dd67d9a691ffd796cf86bad8abaa8f1febb
   i18n (1.14.7) sha256=ceba573f8138ff2c0915427f1fc5bdf4aa3ab8ae88c8ce255eb3ecf0a11a5d0f

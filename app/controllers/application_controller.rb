@@ -108,12 +108,20 @@ class ApplicationController < ActionController::Base
     end
 
     def set_compliance_headers
-      # Use the host application's routes, even when inside an isolated engine
-      privacy_path  = main_app.privacy_path
-      cookies_path  = main_app.cookie_policy_path
+      # Use safe fallbacks in case route helpers aren't available (e.g., during Rodauth flows)
+      privacy_url  = begin
+        main_app.privacy_path
+      rescue NoMethodError
+        "/privacy"
+      end
+      cookies_url  = begin
+        main_app.cookie_policy_path
+      rescue NoMethodError
+        "/cookies"
+      end
 
-      response.headers["X-Privacy-Policy"] = privacy_path
-      response.headers["X-Cookie-Policy"] = cookies_path
+      response.headers["X-Privacy-Policy"] = privacy_url
+      response.headers["X-Cookie-Policy"] = cookies_url
       response.headers["X-Consent-Required"] = (!consent_given?).to_s
       response.headers["X-Consent-Status"] = consent_given? ? "accepted" : "pending"
     end

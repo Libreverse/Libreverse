@@ -32,19 +32,14 @@ class JitWarmupService
   # Additional public routes for logged-out users
   GUEST_PATHS = [
     '/dashboard',           # Dashboard (limited view for guests)
-    '/experiences',         # Experiences page
     '/login',               # Login page (Rodauth)
     '/create-account'       # Sign-up page (Rodauth)
   ].freeze
 
-  # Static/utility routes worth warming
-  UTILITY_PATHS = [
-    '/robots.txt',          # Robots
-    '/sitemap.xml',         # Sitemap
-    '/terms',               # Terms page
-    '/privacy',             # Privacy policy
-    '/cookies'              # Cookie policy
-  ].freeze
+  # Static/utility routes worth warming (minimal set that exercises controller code)
+  # Note: /robots.txt, /sitemap.xml are static-ish and don't benefit much from JIT warmup
+  # Policy pages (/terms, /privacy, /cookies) are simple renders
+  UTILITY_PATHS = [].freeze
 
   # Routes to skip (handled by engines or require auth)
   SKIP_PATTERNS = [
@@ -88,6 +83,12 @@ class JitWarmupService
       paths.each do |path|
         if skip_path?(path)
           stats[:skipped] += 1
+          next
+        end
+
+        unless route_available?(path)
+          stats[:skipped] += 1
+          log_missing_route(path) unless silent
           next
         end
 
@@ -247,6 +248,16 @@ class JitWarmupService
       SKIP_PATTERNS.any? { |pattern| pattern.match?(path) }
     end
 
+    def route_available?(path)
+      # Simple route check - just verify the path resolves to a controller/action
+      Rails.application.routes.recognize_path(path, method: :get)
+      true
+    rescue ActionController::RoutingError, ActionController::UrlGenerationError
+      false
+    rescue StandardError
+      false
+    end
+
     def default_runs
       # More runs in production for better warmup, fewer in development
       # TruffleRuby needs ~10-100 invocations to trigger compilation
@@ -311,6 +322,10 @@ class JitWarmupService
 
     def log_response_issue(path, status)
       Rails.logger.debug("[JitWarmup] #{path} returned #{status}")
+    end
+
+    def log_missing_route(path)
+      Rails.logger.debug("[JitWarmup] Skipping #{path} (no matching route for warmup)")
     end
 
     def log_error(path, error)

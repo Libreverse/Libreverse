@@ -17,6 +17,20 @@ module ApplicationHelper
     auth_paths.any? { |path| request.path.include?(path) }
   end
 
+  # Safe policy path helpers that work even when route helpers aren't available
+  # (e.g., in Rodauth views or engine-mounted contexts)
+  def safe_privacy_path
+    main_app.respond_to?(:privacy_path) ? main_app.privacy_path : "/privacy"
+  rescue NoMethodError
+    "/privacy"
+  end
+
+  def safe_cookie_policy_path
+    main_app.respond_to?(:cookie_policy_path) ? main_app.cookie_policy_path : "/cookies"
+  rescue NoMethodError
+    "/cookies"
+  end
+
   def page_with_drawer?
     content_for?(:drawer)
   end

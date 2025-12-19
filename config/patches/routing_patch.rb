@@ -51,8 +51,11 @@ module RoutingPatch
         Rails.logger.debug "[RoutingPatch] RodauthApp not defined or rodauth instance not accessible, re-raising error"
         raise ActionController::RoutingError, "No route matches \"#{original_path}\""
       end
+    rescue ActionController::RoutingError
+      # Re-raise routing errors as-is (don't wrap them)
+      raise
     rescue StandardError => e
-      Rails.logger.error "[RoutingPatch] Unexpected error during Rodauth check: #{e.message}"
+      Rails.logger.debug "[RoutingPatch] Error during Rodauth check for #{original_path}: #{e.message}"
       raise ActionController::RoutingError, "Routing patch failed for \"#{original_path}\" due to internal error"
     end
   end

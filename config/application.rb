@@ -21,7 +21,6 @@ require_relative "patches/connection_pool_with_compat"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
-require "htmlcompressor"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -73,39 +72,6 @@ module LibreverseInstance
     # Out-of-band garbage collection middleware to reduce latency spikes
     config.middleware.use OobGcMiddleware
 
-    # Add EmojiReplacer middleware to process emoji replacement in HTML responses
-    config.middleware.use EmojiReplacer, {
-      exclude_selectors: [
-        "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
-        ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
-      ]
-    }
-
-    # HTML minification (conservative defaults) for production HTML responses
-    htmlcompressor_options = {
-      enabled: true,
-      remove_multi_spaces: true,
-      remove_comments: true,
-      remove_intertag_spaces: true,
-      remove_quotes: false,
-      compress_css: false,
-      compress_javascript: false,
-      preserve_line_breaks: false,
-      simple_doctype: false,
-      remove_script_attributes: false,
-      remove_style_attributes: false,
-      remove_link_attributes: false,
-      remove_form_attributes: false,
-      remove_input_attributes: false,
-      simple_boolean_attributes: false,
-      remove_javascript_protocol: false,
-      remove_http_protocol: false,
-      remove_https_protocol: false,
-      compress_js_templates: false
-    }
-
-    config.middleware.use HtmlCompressor::Rack, htmlcompressor_options
-
     # Add Rack::Brotli for compression of responses larger than 32KB
     config.middleware.use Rack::Brotli, { quality: 2, if: lambda { |_env, _status, headers, body|
       # Check content-length if present
@@ -119,6 +85,14 @@ module LibreverseInstance
         false
       end
     } }
+
+    # Add EmojiReplacer middleware to process emoji replacement in HTML responses
+    config.middleware.use EmojiReplacer, {
+      exclude_selectors: [
+        "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
+        ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
+      ]
+    }
 
     # Add this to make prod healthcheck pass correctly
     config.hosts << "localhost:3000"
