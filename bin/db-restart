@@ -1,0 +1,2 @@
+launchctl unload ~/Library/LaunchAgents/com.pingcap.tidb.plist
+launchctl start ~/Library/LaunchAgents/com.pingcap.tidb.plist

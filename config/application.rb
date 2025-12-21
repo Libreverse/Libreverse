@@ -86,6 +86,9 @@ module LibreverseInstance
       end
     } }
 
+    # Add TidyMiddleware for HTML repair and minification
+    # config.middleware.use TidyMiddleware
+
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
     config.middleware.use EmojiReplacer, {
       exclude_selectors: [

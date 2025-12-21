@@ -865,6 +865,7 @@ GEM
     thredded-markdown_katex (1.0.0)
       katex (>= 0.4.3)
       kramdown-math-katex
+    tidy-ext (0.1.14)
     tilt (2.6.1)
     timeago_js (3.0.2.2)
     timeout (0.5.0)
@@ -1063,6 +1064,7 @@ DEPENDENCIES
   thredded (~> 1.2)
   thredded-markdown_coderay
   thredded-markdown_katex
+  tidy-ext
   tilt
   trailblazer
   trilogy
@@ -1388,6 +1390,7 @@ CHECKSUMS
   thredded (1.2.1) sha256=73bb4f50a674a654d6a81a6886442f1ff196f3a6c5e4b5ed1f84df644e474499
   thredded-markdown_coderay (1.0.0) sha256=f89e731fec2c2e8a9dd102dc27a7975b6c9ccc5e03e945cc00a47169f16c290a
   thredded-markdown_katex (1.0.0) sha256=49305cffa72dc607f80d581875b078e2ca4ab82a691b830049aef23d1a7021df
+  tidy-ext (0.1.14) sha256=9bd24274b4fea9f2c459a34742b89f106f03ac34086db2119b779b3190109344
   tilt (2.6.1) sha256=35a99bba2adf7c1e362f5b48f9b581cce4edfba98117e34696dde6d308d84770
   timeago_js (3.0.2.2) sha256=3917fdc1b5da901b5691e2901246a8fde0a3ccfb10c4fe048b0950579ab5a5c0
   timeout (0.5.0) sha256=852aefd13f41d84c2d0d83099b275034c6517395884b58e635acc8847c9190cb

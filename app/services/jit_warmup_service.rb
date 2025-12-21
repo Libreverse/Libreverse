@@ -29,9 +29,10 @@ class JitWarmupService
     '/settings'    # Settings page
   ].freeze
 
-  # Additional public routes for logged-out users
+  # Additional public routes for logged-out users (from sidebar)
   GUEST_PATHS = [
     '/dashboard',           # Dashboard (limited view for guests)
+    '/experiences',         # Experiences page (for guests)
     '/login',               # Login page (Rodauth)
     '/create-account'       # Sign-up page (Rodauth)
   ].freeze
@@ -135,19 +136,6 @@ class JitWarmupService
 
       log_complete(stats) unless silent
       stats
-    end
-
-    # Async warmup - runs in a background thread to not block boot
-    #
-    # @param delay [Float] Seconds to wait before starting warmup
-    # @return [Thread] The background thread
-    def warmup_async(delay: 1.0, **options)
-      Thread.new do
-        sleep(delay)
-        warmup(**options)
-      rescue StandardError => e
-        Rails.logger.error("[JitWarmup] Async warmup failed: #{e.class}: #{e.message}")
-      end
     end
 
     # All paths to warm up
@@ -259,9 +247,8 @@ class JitWarmupService
     end
 
     def default_runs
-      # More runs in production for better warmup, fewer in development
-      # TruffleRuby needs ~10-100 invocations to trigger compilation
-      Rails.env.production? ? 5 : 3
+      # Always do one run per path for faster warmup
+      1
     end
 
     def warmup_host

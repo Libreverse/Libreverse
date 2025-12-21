@@ -1,5 +1,7 @@
 # To-do
 use SRI for vite rails assets and shakapacker assets
+replace all situations where we do inline html with the phlex engine which is much faster
+also walk back a bunch of the inlining tech that we've done that doesn't affect render flashes like the sitemap inlining
 - [ ] (feature) Build authoritative realtime multiplayer service in parallel to Rails (interest management + generalized state governance; no server-side raycasting)
 - [ ] we also need to move the ugc into a separate webcontentsview in electron for more security
 - [ ] add trufflehog to not put creds in github repo
@@ -15,14 +17,9 @@ use SRI for vite rails assets and shakapacker assets
 - [ ] (feature) Deploy without master_key pre-set (remove `credentials.yml.enc` handling adjustments)
 - [ ] (feature) Make local codeql work fully
 - [ ] (feature) Deploy with SSL without reverse proxy
-- [ ] (feature) Add 2d bridge indexer
 - [ ] (feature) Add premade "bad content" federation blocklist
 - [ ] (feature) Add full decentralisation mode (blockchain-backed index for Decentraland, The Sandbox, etc.)
 - [ ] (feature) Add Telegram search bot
 - [ ] (feature) Add x.com search bot
-- [ ] (feature) Integrate babel-react-optimize preset: Inline elements, constants, remove propTypes in production
-- [ ] (feature) Integrate babel-plugin-transform-react-constant-elements: Hoist static JSX to constants
-- [ ] (feature) Integrate babel-plugin-transform-react-inline-elements: Inline simple JSX to skip createElement calls
-- [ ] (feature) Integrate babel-plugin-react-compiler: Auto-memoize components/hooks via static analysis (React Forget)
 - [ ] (infra) Make the email service actually fully wired up while maintaining the container blob system we've been using for the longest time
 - [ ] (infra) Migrate Active Storage to use Garage storage with aws-s3-sdk gem (pointing to local fixed port on docker container)
