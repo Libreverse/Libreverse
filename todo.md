@@ -1,4 +1,6 @@
 # To-do
+do a massive middleware cleanup operation where we get everything in sense
+move rails cache store to the memorystore and cut out the isolator middleware
 use SRI for vite rails assets and shakapacker assets
 replace all situations where we do inline html with the phlex engine which is much faster
 also walk back a bunch of the inlining tech that we've done that doesn't affect render flashes like the sitemap inlining

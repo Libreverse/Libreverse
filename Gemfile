@@ -128,3 +128,5 @@ group :test do
   gem "mocha"
   gem "mysql2"
 end
+gem "sidekiq-worker-killer", "~> 1.1"
+

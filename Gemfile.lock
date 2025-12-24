@@ -269,8 +269,7 @@ GEM
       et-orbi (~> 1.4)
       raabro (~> 1.4)
     gemoji (4.1.0)
-    get_process_mem (1.0.0)
-      bigdecimal (>= 2.0)
+    get_process_mem (0.2.7)
       ffi (~> 1.0)
     globalid (1.3.0)
       activesupport (>= 6.1)
@@ -308,6 +307,7 @@ GEM
     html-pipeline (2.14.3)
       activesupport (>= 2)
       nokogiri (>= 1.4)
+    htmlcompressor (0.4.0)
     htmlentities (4.4.2)
     httparty (0.23.2)
       csv
@@ -786,6 +786,9 @@ GEM
       fugit (~> 1.8, >= 1.11.1)
       globalid (>= 1.0.1)
       sidekiq (>= 6.5.0)
+    sidekiq-worker-killer (1.1.0)
+      get_process_mem (~> 0.2.1)
+      sidekiq (>= 5)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
     slim (5.2.1)
@@ -865,7 +868,8 @@ GEM
     thredded-markdown_katex (1.0.0)
       katex (>= 0.4.3)
       kramdown-math-katex
-    tidy-ext (0.1.14)
+    tidy_ffi (1.0.1)
+      ffi (~> 1.2)
     tilt (2.6.1)
     timeago_js (3.0.2.2)
     timeout (0.5.0)
@@ -998,6 +1002,7 @@ DEPENDENCIES
   google_robotstxt_parser!
   graphql_rails
   hiredis-client!
+  htmlcompressor (~> 0.4.0)
   httparty
   i18n-tasks
   image_processing
@@ -1052,6 +1057,7 @@ DEPENDENCIES
   shakapacker (= 8.4.0)
   sidekiq
   sidekiq-cron
+  sidekiq-worker-killer (~> 1.1)
   sitemap_generator
   slim
   slim-rails
@@ -1064,7 +1070,7 @@ DEPENDENCIES
   thredded (~> 1.2)
   thredded-markdown_coderay
   thredded-markdown_katex
-  tidy-ext
+  tidy_ffi
   tilt
   trailblazer
   trilogy
@@ -1171,7 +1177,7 @@ CHECKSUMS
   friendly_id (5.6.0) sha256=28e221cd53fbd21586321164c1c6fd0c9ba8dde13969cb2363679f44726bb0c3
   fugit (1.12.1) sha256=5898f478ede9b415f0804e42b8f3fd53f814bd85eebffceebdbc34e1107aaf68
   gemoji (4.1.0) sha256=734434020cbe964ea9d19086798797a47d23a170892de0ce55b74aa65d2ddc1a
-  get_process_mem (1.0.0) sha256=d54024f3bcbf776a4d6e0155ec2b21bc3ba44e2fd158c4c00c80aa8a36e0b4aa
+  get_process_mem (0.2.7) sha256=4afd3c3641dd6a817c09806c7d6d509d8a9984512ac38dea8b917426bbf77eba
   globalid (1.3.0) sha256=05c639ad6eb4594522a0b07983022f04aa7254626ab69445a0e493aa3786ff11
   google_robotstxt_parser (0.0.6)
   graphql (2.5.16) sha256=1c156204cf6796a6a99c48d07e2f4e6b4a861fda2cec5753e1eb1f28c6220797
@@ -1194,6 +1200,7 @@ CHECKSUMS
   hirb (0.7.3) sha256=5132733ca44b1f41f36c624693a3201284368a349dfe37f543ae6e2ad880ec57
   hiredis-client (0.26.1)
   html-pipeline (2.14.3) sha256=8a1d4d7128b2141913387cac0f8ba898bb6812557001acc0c2b46910f59413a0
+  htmlcompressor (0.4.0) sha256=4630cf8ed46b563f0b49cc6028a3fe8c17a9067f2becd7c3a2aa5aaacefb1f9e
   htmlentities (4.4.2) sha256=bbafbdf69f2eca9262be4efef7e43e6a1de54c95eb600f26984f71d2fe96c5c3
   httparty (0.23.2) sha256=72d52830ab5862115a3c9a4b16738dd67d9a691ffd796cf86bad8abaa8f1febb
   i18n (1.14.7) sha256=ceba573f8138ff2c0915427f1fc5bdf4aa3ab8ae88c8ce255eb3ecf0a11a5d0f
@@ -1368,6 +1375,7 @@ CHECKSUMS
   shakapacker (8.4.0) sha256=df234ed4a9173407adc288df0d7f156c485ada9214b23d8f0e2c734f11c1aca8
   sidekiq (8.1.0) sha256=6bde5eaee9e4d7b1121e97ebd585273627fb32b1f870a47893723572479ad1e4
   sidekiq-cron (2.3.1) sha256=96ab3da372289a30dc744c1daa2ae2e85960b2444a6f6ed68df1ff7882c44aac
+  sidekiq-worker-killer (1.1.0) sha256=454b7e51f7241fef11e6541f490d8a9c79d0f5294e12f906962fd1511ff68df3
   sitemap_generator (6.3.0) sha256=1d803cbf03c44736bea05b9e3363d3523fec4e24f3abedad294d9c57cab994f3
   slim (5.2.1) sha256=72351dff7e2ff20e2d5c393cfc385bb9142cef5db059141628fd7163ac3c13e7
   slim-rails (4.0.0) sha256=2cfee5c4ba00d4d935676db1e74a05dbaf9dd6f789903a1006e3bb687bbe36e2
@@ -1390,7 +1398,7 @@ CHECKSUMS
   thredded (1.2.1) sha256=73bb4f50a674a654d6a81a6886442f1ff196f3a6c5e4b5ed1f84df644e474499
   thredded-markdown_coderay (1.0.0) sha256=f89e731fec2c2e8a9dd102dc27a7975b6c9ccc5e03e945cc00a47169f16c290a
   thredded-markdown_katex (1.0.0) sha256=49305cffa72dc607f80d581875b078e2ca4ab82a691b830049aef23d1a7021df
-  tidy-ext (0.1.14) sha256=9bd24274b4fea9f2c459a34742b89f106f03ac34086db2119b779b3190109344
+  tidy_ffi (1.0.1) sha256=284f9282d1e30ad80147ec1229e54b2ab72b1c6ce6d44628f878770073abe3a6
   tilt (2.6.1) sha256=35a99bba2adf7c1e362f5b48f9b581cce4edfba98117e34696dde6d308d84770
   timeago_js (3.0.2.2) sha256=3917fdc1b5da901b5691e2901246a8fde0a3ccfb10c4fe048b0950579ab5a5c0
   timeout (0.5.0) sha256=852aefd13f41d84c2d0d83099b275034c6517395884b58e635acc8847c9190cb

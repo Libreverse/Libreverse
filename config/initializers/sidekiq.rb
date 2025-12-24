@@ -7,8 +7,6 @@ require "sidekiq"
 require "sidekiq-cron"
 
 redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
-# Use hiredis driver for faster C-based parsing
-# hiredis-client has been manually compiled for TruffleRuby support
 
 # Configure Sidekiq client (for enqueuing jobs from web processes)
 Sidekiq.configure_client do |config|
@@ -28,20 +26,6 @@ Sidekiq.configure_server do |config|
     network_timeout: 5,
     pool_timeout: 5
   }
-
-  # Memory killer for Sidekiq workers (replaces worker_killer gem)
-  # Kill workers that exceed memory limits to prevent runaway memory usage
-  config.on(:startup) do
-    # Check memory every 16 jobs
-    require "sidekiq/component"
-
-    Sidekiq.logger.info "[Sidekiq] Starting with Redis at #{redis_url}"
-  end
-
-  config.on(:shutdown) do
-    Sidekiq.logger.info "[Sidekiq] Shutting down gracefully"
-  end
-
   # Error handling with Sentry
   config.error_handlers << proc do |ex, ctx_hash|
     if defined?(Sentry)
@@ -77,3 +61,11 @@ Sidekiq.default_job_options = {
   "backtrace" => true,
   "retry" => 5
 }
+
+require 'sidekiq/worker_killer'
+
+Sidekiq.configure_server do |config|
+  config.server_middleware do |chain|
+    chain.add Sidekiq::WorkerKiller, max_rss: 2048, grace_time: 0
+  end
+end

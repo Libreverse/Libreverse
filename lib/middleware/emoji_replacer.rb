@@ -2,7 +2,7 @@
 # shareable_constant_value: literal
 
 # ===== Emoji Replacement Middleware =====
-class EmojiReplacer
+class EmojiReplacerMiddleware
   require "unicode"
   require "nokogiri"
   require "digest/sha1"

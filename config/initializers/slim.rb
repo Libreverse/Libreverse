@@ -10,7 +10,7 @@ Slim::Engine.set_options(
   sort_attrs: false,
   pretty: false,
   streaming: false,
-  disable_escape: true,
+  disable_escape: false,
   use_html_safe: true,
   disable_capture: true,
   hyphen_underscore_attrs: true,

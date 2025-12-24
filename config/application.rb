@@ -21,6 +21,8 @@ require_relative "patches/connection_pool_with_compat"
 require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
+require_relative "../lib/middleware/tidy"
+require 'worker_killer/middleware'
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -87,15 +89,23 @@ module LibreverseInstance
     } }
 
     # Add TidyMiddleware for HTML repair and minification
-    # config.middleware.use TidyMiddleware
+    config.middleware.use TidyMiddleware
 
     # Add EmojiReplacer middleware to process emoji replacement in HTML responses
-    config.middleware.use EmojiReplacer, {
+    config.middleware.use EmojiReplacerMiddleware, {
       exclude_selectors: [
         "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
         ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"
       ]
     }
+
+    killer = WorkerKiller::Killer::Passenger.new
+
+    # Max memory size (RSS) per worker (4GB = 4.0 in GB)
+    middleware.insert_before(
+      Rack::Runtime,
+      WorkerKiller::Middleware::OOMLimiter, killer: killer, min: nil, max: 4.0, check_cycle: 1
+    )
 
     # Add this to make prod healthcheck pass correctly
     config.hosts << "localhost:3000"
@@ -103,9 +113,6 @@ module LibreverseInstance
     # I18n configuration
     config.i18n.default_locale = :en
     config.i18n.available_locales = %i[en zh es hi ar pt fr ru de ja]
-
-    # This tends to work better
-    config.active_record.schema_format = :ruby
 
     # Email bot configuration using Action Mailbox
     config.action_mailbox.ingress = :imap
