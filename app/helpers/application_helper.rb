@@ -8,7 +8,7 @@ module ApplicationHelper
   require "base64"
   require "unicode"
   require "cgi"
-  require "uri"
+  require "addressable/uri"
 
   # Ensure subsequent original methods are public
 
@@ -125,12 +125,12 @@ module ApplicationHelper
     return false if ref.blank?
 
     begin
-      uri = URI.parse(ref)
+      uri = Addressable::URI.parse(ref)
       ref_host = uri.host
       ref_scheme = uri.scheme
       ref_port = uri.port || (ref_scheme == "https" ? 443 : 80)
       ref_host == request.host && ref_port == request.port
-    rescue URI::InvalidURIError
+    rescue Addressable::URI::InvalidURIError
       false
     end
   end

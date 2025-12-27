@@ -33,7 +33,7 @@ class RobotsController < ApplicationController
       # Default robots.txt - allow all
       host = InstanceSetting.get("canonical_host")
 host ||= begin
-  uri = URI.parse(request.base_url)
+  uri = Addressable::URI.parse(request.base_url)
   # Allow only well-formed http(s) schemes and strip user-info, port, etc.
   %w[http https].include?(uri.scheme) ? "#{uri.scheme}://#{uri.host}" : ""
 end

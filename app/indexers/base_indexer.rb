@@ -184,7 +184,7 @@ class BaseIndexer
     wait_for_rate_limit
 
     # Check for domain-specific blocks and rate limits
-    domain = URI.parse(url).host
+    domain = Addressable::URI.parse(url).host
 
     raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly." if domain_blocked?(domain)
 
@@ -235,7 +235,7 @@ class BaseIndexer
     log_debug "Making JSON request to: #{url}"
 
     # Check for domain-specific blocks and rate limits
-    domain = URI.parse(url).host
+    domain = Addressable::URI.parse(url).host
 
     raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly." if domain_blocked?(domain)
 
@@ -282,7 +282,7 @@ class BaseIndexer
     wait_for_rate_limit
 
     # Check for domain-specific blocks and rate limits
-    domain = URI.parse(url).host
+    domain = Addressable::URI.parse(url).host
 
     raise ForbiddenAccessError, "Domain #{domain} is currently blocked due to previous 403 response. Will recheck monthly." if domain_blocked?(domain)
 
@@ -641,7 +641,7 @@ class BaseIndexer
         return true
       end
 
-      uri = URI.parse(url)
+      uri = Addressable::URI.heuristic_parse(url)
       domain = "#{uri.scheme}://#{uri.host}"
       domain += ":#{uri.port}" if uri.port && ![ 80, 443 ].include?(uri.port)
 
@@ -691,7 +691,7 @@ class BaseIndexer
       delay_seconds = crawl_delay.to_f
       return unless delay_seconds.positive?
 
-      domain = URI.parse(url).host
+      domain = Addressable::URI.parse(url).host
       log_info "Enforcing crawl-delay of #{delay_seconds}s for #{domain} (from robots.txt)"
 
       # Check if we need to wait based on last crawl time for this domain
@@ -725,7 +725,7 @@ class BaseIndexer
     # First, check if robots.txt is actually accessible (do not cache fallbacks)
     robots_url = "#{domain}/robots.txt"
     begin
-      uri = URI(robots_url)
+      uri = Addressable::URI.parse(robots_url)
       response = Net::HTTP.get_response(uri)
       if response.code.to_i >= 400
         log_warn "Robots.txt returned #{response.code} for #{domain}"
@@ -760,7 +760,7 @@ class BaseIndexer
   # Handle rate limiting responses with proper Retry-After support
   def handle_rate_limit_response(response, url)
     retry_after = extract_retry_after(response)
-    domain = URI.parse(url).host
+    domain = Addressable::URI.parse(url).host
 
     log_warn "Rate limited by #{domain}: HTTP #{response.code}"
     log_info "Retry-After: #{retry_after} seconds"
@@ -777,7 +777,7 @@ class BaseIndexer
 
   # Handle 403 Forbidden responses with monthly recheck
   def handle_forbidden_response(response, url)
-    domain = URI.parse(url).host
+    domain = Addressable::URI.parse(url).host
 
     log_warn "Access forbidden by #{domain}: HTTP 403"
     log_info "Domain will be blocked for 30 days, then rechecked in case of temporary/accidental block"

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require 'memo_wise'
+
 class TextPreprocessingService
   # Common English stop words
   STOP_WORDS = %w[
@@ -15,41 +17,46 @@ class TextPreprocessingService
   PUNCTUATION_REGEX = /[^\w\s]/
 
   class << self
+    prepend MemoWise
     # Main preprocessing pipeline
     def preprocess(text)
       return [] if text.blank?
 
       # Normalize text
-      normalized = normalize_text(text)
+      normalized_text = normalize_text(text)
 
       # Tokenize into words
-      words = tokenize(normalized)
+      words = tokenize(normalized_text)
 
       # Remove stop words
       filtered_words = remove_stop_words(words)
 
       # Generate n-grams
       word_ngrams = generate_word_ngrams(filtered_words, 2)
-      char_ngrams = generate_char_ngrams(normalized, 3)
+      char_ngrams = generate_char_ngrams(normalized_text, 3)
 
       # Combine all features
       (filtered_words + word_ngrams + char_ngrams).uniq
     end
+    memo_wise :preprocess
 
     # Normalize text (lowercase, remove punctuation, etc.)
     def normalize_text(text)
       text.downcase.gsub(PUNCTUATION_REGEX, " ").strip
     end
+    memo_wise :normalize_text
 
     # Split text into words
     def tokenize(text)
       text.split(/\s+/).reject(&:empty?)
     end
+    memo_wise :tokenize
 
     # Remove common stop words
     def remove_stop_words(words)
       words.reject { |word| STOP_WORDS.include?(word) || word.length < 2 }
     end
+    memo_wise :remove_stop_words
 
     # Generate word n-grams
     def generate_word_ngrams(words, ngram_size)

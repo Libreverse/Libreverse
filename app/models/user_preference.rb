@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# == Schema Information
+#
+# Table name: user_preferences
+#
+#  id               :bigint           not null, primary key
+#  key              :string(255)      not null
+#  value            :string(255)
+#  value_ciphertext :text(65535)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  account_id       :bigint           not null
+#
+# Indexes
+#
+#  index_user_preferences_on_account_id          (account_id)
+#  index_user_preferences_on_account_id_and_key  (account_id,key) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id) ON DELETE => cascade
+#
 class UserPreference < ApplicationRecord
   include GraphqlRails::Model
 

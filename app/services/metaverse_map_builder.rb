@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require 'memo_wise'
+
 # Service that constructs a synthetic 2D map layout for metaverse Experiences.
 # Each distinct `metaverse_platform` is treated as a separate "continent" laid out horizontally
 # in a simple CRS coordinate space consumed by Leaflet (using L.CRS.Simple on the frontend).
@@ -10,6 +12,8 @@
 # rectangular bounding box. Experiences missing coordinate data are placed at the centre of
 # their platform's continent.
 class MetaverseMapBuilder
+  prepend MemoWise
+
   Provider = Struct.new(:name, :experiences, :min_x, :max_x, :min_y, :max_y, keyword_init: true) do
     def width = (max_x - min_x).positive? ? (max_x - min_x) : 1
     def height = (max_y - min_y).positive? ? (max_y - min_y) : 1
@@ -108,46 +112,51 @@ class MetaverseMapBuilder
     xs = []
     ys = []
     experiences.each do |exp|
-      c = parse_coords(exp)
-      next unless c[:x] || c[:y]
-
-      xs << c[:x] if c[:x]
-      ys << c[:y] if c[:y]
+      coords = parse_coords(exp)
+      xs << coords[:x] if coords[:x]
+      ys << coords[:y] if coords[:y]
     end
+
     {
-      min_x: xs.min || 0.0,
-      max_x: xs.max || 1.0,
-      min_y: ys.min || 0.0,
-      max_y: ys.max || 1.0
+      min_x: xs.min,
+      max_x: xs.max,
+      min_y: ys.min,
+      max_y: ys.max
     }
   end
+  memo_wise :coordinate_stats
 
   def parse_coords(exp)
     return {} if exp.metaverse_coordinates.blank?
 
     json = begin
-             JSON.parse(exp.metaverse_coordinates)
-    rescue StandardError
-             {}
+      JSON.parse(exp.metaverse_coordinates)
+    rescue JSON::ParserError
+      {}
     end
+
     {
-      x: extract_number(json["x"]),
-      y: extract_number(json["y"])
+      x: extract_number(json['x']),
+      y: extract_number(json['y'])
     }
   end
+  memo_wise :parse_coords
 
   def extract_number(v)
     case v
     when String
       begin
         Float(v)
-      rescue StandardError
+      rescue ArgumentError
         nil
       end
-    when Integer, Float
+    when Numeric
       v.to_f
+    else
+      nil
     end
   end
+  memo_wise :extract_number
 
   def map_coordinates(coords, provider)
     bbox = provider[:bbox]

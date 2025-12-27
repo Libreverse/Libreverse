@@ -1,7 +1,34 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# == Schema Information
+#
+# Table name: experience_vectors
+#
+#  id            :bigint           not null, primary key
+#  generated_at  :datetime         not null
+#  vector_data   :text(65535)      not null
+#  vector_hash   :string(255)      not null
+#  version       :integer          default(1), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  experience_id :bigint           not null
+#
+# Indexes
+#
+#  index_experience_vectors_on_experience_id                  (experience_id) UNIQUE
+#  index_experience_vectors_on_generated_at                   (generated_at)
+#  index_experience_vectors_on_vector_hash                    (vector_hash)
+#  index_experience_vectors_on_vector_hash_and_experience_id  (vector_hash,experience_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (experience_id => experiences.id)
+#
 class ExperienceVector < ApplicationRecord
+  # Enable SecondLevelCache for automatic read-through/write-through caching
+  second_level_cache expires_in: 30.minutes
+  
   belongs_to :experience
 
   validates :vector_data, presence: true

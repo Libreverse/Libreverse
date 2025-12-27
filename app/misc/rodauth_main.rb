@@ -79,7 +79,9 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Set guest account flag on creation
     before_create_guest do
-      account[:guest] = true
+      # Use FlagShihTzu instead of old boolean column
+      # account is a Hash in Rodauth, so we need to set the flags field directly
+      account[:flags] = (account[:flags] || 0) | 2  # Set guest flag (bit position 2)
       # Set timestamps for guest accounts to prevent database constraint violations
       now = Time.current
       account[:created_at] = now
@@ -487,7 +489,7 @@ class RodauthMain < Rodauth::Rails::Auth
       # === ROLE ASSIGNMENT ===
       # Assign appropriate role based on guest status
       account_info = db.from(accounts_table).where(id: account_id).first
-      is_guest = account_info && account_info[:guest] == true
+      is_guest = account_info && (account_info[:flags] & 2) != 0  # Check guest flag (bit position 2)
 
       # Use ActiveRecord model to assign roles via Rolify
       ar_account = Account.find_by(id: account_id)
@@ -506,13 +508,13 @@ class RodauthMain < Rodauth::Rails::Auth
         Rails.logger.debug "[Rodauth][after_create_account] Account ID: #{account_id} is a guest. Skipping admin check."
       else
         # Check if any *other* admin exists (excluding guests)
-        admin_exists = db.from(accounts_table).where(admin: true, guest: false).exclude(id: account_id).count.positive?
+        admin_exists = db.from(accounts_table).where Sequel.lit("(flags & 1) != 0").where(Sequel.lit("(flags & 2) = 0")).exclude(id: account_id).count.positive?
 
         if admin_exists
           Rails.logger.debug "[Rodauth][after_create_account] Admin already exists. Skipping admin assignment for account ID: #{account_id}"
         else
           Rails.logger.info "[Rodauth][after_create_account] Assigning admin role to first non-guest account ID: #{account_id}"
-          db.from(accounts_table).where(id: account_id).update(admin: true)
+          db.from(accounts_table).where(id: account_id).update(Sequel.lit("flags = flags | 1"))  # Set admin flag
         end
       end
       # --- Assign first non-guest account as admin --- End

@@ -57,7 +57,7 @@ module Metaverse
     # Override robots.txt checking for Spatial.io since they don't have robots.txt
     # Sitemaps are specifically meant to be crawled, so this is acceptable
     def robots_allowed?(url)
-      uri = URI.parse(url)
+      uri = Addressable::URI.parse(url)
       if [ "www.spatial.io", "spatial.io" ].include?(uri.host)
         log_debug "Spatial.io has no robots.txt - allowing sitemap access"
         return true

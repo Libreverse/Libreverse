@@ -375,3 +375,6 @@ if (!attachScrollbarEvents()) {
         subtree: true,
     });
 }
+
+import "trix"
+import "@rails/actiontext"

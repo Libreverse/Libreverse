@@ -46,6 +46,9 @@ class ApplicationController < ActionController::Base
     account_id = session[:account_id] || request.env["rack.session"]&.[](:account_id)
     return nil unless account_id
 
+    # Don't cache or lookup if account_id is nil or invalid
+    return nil unless account_id.is_a?(Integer) && account_id > 0
+
     account = FunctionCache.instance.cache(:account_by_id, account_id, ttl: 300) do
       Account.find(account_id)
     end

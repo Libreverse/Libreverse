@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require 'memo_wise'
+
 class VectorizationService
   # Field weights for different parts of experience content
   FIELD_WEIGHTS = {
@@ -10,6 +12,7 @@ class VectorizationService
   }.freeze
 
   class << self
+    prepend MemoWise
     # Generate TF-IDF vector for an experience
     def vectorize_experience(experience, vocabulary = nil)
       vocabulary ||= current_vocabulary
@@ -27,6 +30,7 @@ class VectorizationService
       # Generate TF-IDF vector
       generate_tfidf_vector(term_frequencies, document_frequencies, total_documents, vocabulary)
     end
+    memo_wise :vectorize_experience
 
     # Generate vector for a search query
     def vectorize_query(query_text, vocabulary = nil)
@@ -45,6 +49,7 @@ class VectorizationService
       # Generate TF-IDF vector
       generate_tfidf_vector(term_frequencies, document_frequencies, total_documents, vocabulary)
     end
+    memo_wise :vectorize_query
 
     # Get the current vocabulary (cached)
     def current_vocabulary
@@ -86,6 +91,7 @@ class VectorizationService
 
       term_frequencies
     end
+    memo_wise :calculate_weighted_tf
 
     # Calculate simple term frequencies
     def calculate_term_frequencies(terms)
@@ -98,6 +104,7 @@ class VectorizationService
       max_count = term_counts.values.max.to_f
       term_counts.transform_values { |count| count / max_count }
     end
+    memo_wise :calculate_term_frequencies
 
     # Generate TF-IDF vector from term frequencies
     def generate_tfidf_vector(term_frequencies, document_frequencies, total_documents, vocabulary)

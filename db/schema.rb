@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
   create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -63,10 +63,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
   end
 
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.string "federated_id"
-    t.boolean "guest", default: false
+    t.integer "flags", default: 0, null: false
     t.datetime "password_changed_at"
     t.string "password_hash"
     t.string "provider"
@@ -74,9 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "status", default: 1, null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
-    t.index ["admin"], name: "index_accounts_on_admin"
     t.index ["federated_id"], name: "index_accounts_on_federated_id"
-    t.index ["guest", "created_at"], name: "index_accounts_on_guest_and_created_at"
     t.index ["provider", "provider_uid"], name: "index_accounts_on_provider_and_provider_uid", unique: true
     t.index ["username"], name: "index_accounts_on_username", unique: true
   end
@@ -98,6 +95,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["message_id", "message_checksum"], name: "index_action_mailbox_inbound_emails_uniqueness", unique: true
+  end
+
+  create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "body", size: :long
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_id", "record_type"], name: "index_action_text_rich_texts_on_record_id_and_record_type"
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_hashcash_stamps", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -124,6 +132,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.bigint "record_id", null: false
     t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_id", "record_type"], name: "index_active_storage_attachments_on_record_id_and_record_type"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
@@ -150,6 +159,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index ["blob_id"], name: "index_active_storage_variant_records_on_blob_id"
   end
 
   create_table "audits1984_audits", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -188,13 +198,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.string "label", null: false
     t.integer "site_id", null: false
     t.index ["site_id", "categorized_type", "label"], name: "index_cms_categories_on_site_id_and_cat_type_and_label", unique: true
+    t.index ["site_id"], name: "index_comfy_cms_categories_on_site_id"
   end
 
   create_table "comfy_cms_categorizations", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "categorized_id", null: false
     t.string "categorized_type", null: false
     t.integer "category_id", null: false
+    t.index ["categorized_id", "categorized_type"], name: "idx_on_categorized_id_categorized_type_875b4ed9b1"
     t.index ["category_id", "categorized_type", "categorized_id"], name: "index_cms_categorizations_on_cat_id_and_catd_type_and_catd_id", unique: true
+    t.index ["category_id"], name: "index_comfy_cms_categorizations_on_category_id"
   end
 
   create_table "comfy_cms_files", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -205,6 +218,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "site_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["site_id", "position"], name: "index_comfy_cms_files_on_site_id_and_position"
+    t.index ["site_id"], name: "index_comfy_cms_files_on_site_id"
   end
 
   create_table "comfy_cms_fragments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -236,7 +250,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "site_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["parent_id", "position"], name: "index_comfy_cms_layouts_on_parent_id_and_position"
+    t.index ["parent_id"], name: "index_comfy_cms_layouts_on_parent_id"
     t.index ["site_id", "identifier"], name: "index_comfy_cms_layouts_on_site_id_and_identifier", unique: true
+    t.index ["site_id"], name: "index_comfy_cms_layouts_on_site_id"
   end
 
   create_table "comfy_cms_pages", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -254,8 +270,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "target_page_id"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["is_published"], name: "index_comfy_cms_pages_on_is_published"
+    t.index ["layout_id"], name: "index_comfy_cms_pages_on_layout_id"
     t.index ["parent_id", "position"], name: "index_comfy_cms_pages_on_parent_id_and_position"
+    t.index ["parent_id"], name: "index_comfy_cms_pages_on_parent_id"
     t.index ["site_id", "full_path"], name: "index_comfy_cms_pages_on_site_id_and_full_path"
+    t.index ["site_id"], name: "index_comfy_cms_pages_on_site_id"
+    t.index ["target_page_id"], name: "index_comfy_cms_pages_on_target_page_id"
   end
 
   create_table "comfy_cms_revisions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -263,6 +283,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.text "data", size: :medium
     t.integer "record_id", null: false
     t.string "record_type", null: false
+    t.index ["record_id", "record_type"], name: "index_comfy_cms_revisions_on_record_id_and_record_type"
     t.index ["record_type", "record_id", "created_at"], name: "index_cms_revisions_on_rtype_and_rid_and_created_at"
   end
 
@@ -288,6 +309,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["site_id", "identifier"], name: "index_comfy_cms_snippets_on_site_id_and_identifier", unique: true
     t.index ["site_id", "position"], name: "index_comfy_cms_snippets_on_site_id_and_position"
+    t.index ["site_id"], name: "index_comfy_cms_snippets_on_site_id"
   end
 
   create_table "comfy_cms_translations", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -300,8 +322,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "page_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["is_published"], name: "index_comfy_cms_translations_on_is_published"
+    t.index ["layout_id"], name: "index_comfy_cms_translations_on_layout_id"
     t.index ["locale"], name: "index_comfy_cms_translations_on_locale"
     t.index ["page_id"], name: "index_comfy_cms_translations_on_page_id"
+  end
+
+  create_table "comment_hierarchies", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "ancestor_id", null: false
+    t.integer "descendant_id", null: false
+    t.integer "generations", null: false
+    t.index ["ancestor_id", "descendant_id", "generations"], name: "comment_anc_desc_idx", unique: true
+    t.index ["descendant_id"], name: "comment_desc_idx"
   end
 
   create_table "comment_likes", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -352,6 +383,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "updated_at", null: false
     t.index ["sensitive_access_id"], name: "index_console1984_commands_on_sensitive_access_id"
     t.index ["session_id", "created_at", "sensitive_access_id"], name: "on_session_and_sensitive_chronologically"
+    t.index ["session_id"], name: "index_console1984_commands_on_session_id"
   end
 
   create_table "console1984_sensitive_accesses", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -369,6 +401,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.bigint "user_id", null: false
     t.index ["created_at"], name: "index_console1984_sessions_on_created_at"
     t.index ["user_id", "created_at"], name: "index_console1984_sessions_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_console1984_sessions_on_user_id"
   end
 
   create_table "console1984_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -410,25 +443,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
 
   create_table "experiences", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.boolean "approved", default: false, null: false
     t.string "author"
     t.datetime "created_at", null: false
     t.json "current_state"
     t.text "description"
-    t.boolean "federate", default: true, null: false
-    t.boolean "federated_blocked", default: false, null: false
+    t.integer "flags", default: 0, null: false
     t.bigint "indexed_content_id"
     t.text "metaverse_coordinates"
     t.text "metaverse_metadata"
     t.string "metaverse_platform"
-    t.boolean "offline_available", default: false, null: false
     t.string "slug"
     t.string "source_type", default: "user_created", null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_experiences_on_account_id"
-    t.index ["approved"], name: "index_experiences_on_approved"
     t.index ["indexed_content_id"], name: "index_experiences_on_indexed_content_id"
     t.index ["metaverse_platform"], name: "index_experiences_on_metaverse_platform"
     t.index ["slug"], name: "index_experiences_on_slug", unique: true
@@ -486,6 +515,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.string "uuid", null: false
     t.index ["actor_id", "target_actor_id"], name: "index_federails_followings_on_actor_id_and_target_actor_id", unique: true
     t.index ["actor_id"], name: "index_federails_followings_on_actor_id"
+    t.index ["target_actor_id", "actor_id"], name: "index_federails_followings_on_target_actor_id_and_actor_id"
     t.index ["target_actor_id"], name: "index_federails_followings_on_target_actor_id"
     t.index ["uuid"], name: "index_federails_followings_on_uuid", unique: true
   end
@@ -531,6 +561,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+    t.index ["sluggable_id", "sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_id_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type", "scope"], name: "index_friendly_id_slugs_on_sluggable_type_and_scope"
   end
@@ -608,7 +639,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
   create_table "oauth_applications", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id"
     t.string "application_type"
-    t.boolean "backchannel_logout_session_required", default: false
     t.string "backchannel_logout_uri"
     t.string "client_id", null: false
     t.string "client_secret", null: false
@@ -617,7 +647,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "created_at", null: false
     t.string "description"
     t.string "dpop_bound_access_tokens"
-    t.boolean "frontchannel_logout_session_required", default: false
+    t.integer "flags", default: 0, null: false
     t.string "frontchannel_logout_uri"
     t.string "grant_types"
     t.string "homepage_url"
@@ -637,7 +667,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.string "request_object_encryption_enc"
     t.string "request_object_signing_alg"
     t.string "request_uris"
-    t.boolean "require_pushed_authorization_requests", default: false, null: false
     t.boolean "require_signed_request_object"
     t.string "response_types"
     t.string "scopes", null: false
@@ -650,7 +679,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.string "tls_client_auth_san_ip"
     t.string "tls_client_auth_san_uri"
     t.string "tls_client_auth_subject_dn"
-    t.boolean "tls_client_certificate_bound_access_tokens", default: false
     t.string "token_endpoint_auth_method"
     t.string "tos_uri"
     t.string "userinfo_encrypted_response_alg"
@@ -903,7 +931,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.string "notifier_key", limit: 90, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
+    t.index ["messageboard_id"], name: "idx_on_messageboard_id_5899898a2a"
     t.index ["user_id", "messageboard_id", "notifier_key"], name: "thredded_messageboard_notifications_for_followed_topics_unique", unique: true
+    t.index ["user_id"], name: "idx_on_user_id_78e6269133"
   end
 
   create_table "thredded_messageboard_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -914,6 +944,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["thredded_messageboard_id", "last_seen_at"], name: "index_thredded_messageboard_users_for_recently_active"
     t.index ["thredded_messageboard_id", "thredded_user_detail_id"], name: "index_thredded_messageboard_users_primary", unique: true
+    t.index ["thredded_messageboard_id"], name: "index_thredded_messageboard_users_on_thredded_messageboard_id"
     t.index ["thredded_user_detail_id"], name: "fk_rails_06e42c62f5"
   end
 
@@ -929,6 +960,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.string "slug", limit: 191
     t.integer "topics_count", default: 0
     t.datetime "updated_at", precision: nil, null: false
+    t.index ["last_topic_id"], name: "index_thredded_messageboards_on_last_topic_id"
     t.index ["messageboard_group_id"], name: "index_thredded_messageboards_on_messageboard_group_id"
     t.index ["slug"], name: "index_thredded_messageboards_on_slug", unique: true
   end
@@ -949,6 +981,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_private_topics_unique", unique: true
+    t.index ["user_id"], name: "index_thredded_notifications_for_private_topics_on_user_id"
   end
 
   create_table "thredded_post_moderation_records", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -963,6 +996,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.integer "previous_moderation_state", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["messageboard_id", "created_at"], name: "index_thredded_moderation_records_for_display"
+    t.index ["messageboard_id"], name: "index_thredded_post_moderation_records_on_messageboard_id"
+    t.index ["moderator_id"], name: "index_thredded_post_moderation_records_on_moderator_id"
+    t.index ["post_id"], name: "index_thredded_post_moderation_records_on_post_id"
+    t.index ["post_user_id"], name: "index_thredded_post_moderation_records_on_post_user_id"
   end
 
   create_table "thredded_posts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -975,6 +1012,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
     t.index ["content"], name: "thredded_posts_content_idx", length: 255
+    t.index ["messageboard_id", "user_id"], name: "index_thredded_posts_on_messageboard_id_and_user_id"
     t.index ["messageboard_id"], name: "index_thredded_posts_on_messageboard_id"
     t.index ["moderation_state", "updated_at"], name: "index_thredded_posts_for_display"
     t.index ["postable_id", "created_at"], name: "index_thredded_posts_on_postable_id_and_created_at"
@@ -989,6 +1027,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
     t.index ["postable_id", "created_at"], name: "index_thredded_private_posts_on_postable_id_and_created_at"
+    t.index ["postable_id"], name: "index_thredded_private_posts_on_postable_id"
+    t.index ["user_id"], name: "index_thredded_private_posts_on_user_id"
   end
 
   create_table "thredded_private_topics", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -1003,7 +1043,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_123656) do
     t.bigint "user_id"
     t.index ["hash_id"], name: "index_thredded_private_topics_on_hash_id"
     t.index ["last_post_at"], name: "index_thredded_private_topics_on_last_post_at"
+    t.index ["last_user_id"], name: "index_thredded_private_topics_on_last_user_id"
     t.index ["slug"], name: "index_thredded_private_topics_on_slug", unique: true
+    t.index ["user_id"], name: "index_thredded_private_topics_on_user_id"
   end
 
   create_table "thredded_private_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

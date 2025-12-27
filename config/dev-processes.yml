@@ -1,11 +1,11 @@
 # This is just a procfile named differently
 phusion-passenger: cd .. && bundle exec passenger start
-vite: cd .. && bin/vite dev > /dev/null 2>&1
-shakapacker-asset-server: cd .. && bin/shakapacker-dev-server > /dev/null 2>&1
-shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr > /dev/null 2>&1
-shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch > /dev/null 2>&1
-sidekiq: cd .. && bundle exec sidekiq -C config/sidekiq.yml > /dev/null 2>&1
-mailhog: cd .. && mailhog > /dev/null 2>&1
-stimulus-manifest-regenerator: cd .. && bin/manifest-isr > /dev/null 2>&1
+vite: cd .. && bin/vite dev 
+shakapacker-asset-server: cd .. && bin/shakapacker-dev-server 
+shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr 
+shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch 
+sidekiq: cd .. && bundle exec sidekiq -C config/sidekiq.yml
+mailhog: cd .. && mailhog 
+stimulus-manifest-regenerator: cd .. && bin/manifest-isr 
 electron: cd .. && npm run start
-dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh > /dev/null 2>&1
+dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh 

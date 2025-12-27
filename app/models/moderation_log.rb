@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# == Schema Information
+#
+# Table name: moderation_logs
+#
+#  id              :bigint           not null, primary key
+#  content         :text(65535)
+#  field           :string(255)
+#  model_type      :string(255)
+#  reason          :string(255)
+#  violations_data :text(65535)
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  account_id      :bigint
+#
+# Indexes
+#
+#  index_moderation_logs_on_account_id  (account_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#
 class ModerationLog < ApplicationRecord
   include GraphqlRails::Model
 

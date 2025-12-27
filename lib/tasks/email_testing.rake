@@ -100,9 +100,7 @@ namespace :email do
       title: "Test Offline Experience",
       description: "A test experience for trying out the email bot offline download functionality",
       author: "Email Bot Test",
-      offline_available: true,
-      approved: true,
-      federate: true
+      flags: 11  # approved(1) + federate(2) + offline_available(8) = 11
     )
 
     experience.html_file.attach(

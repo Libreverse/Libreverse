@@ -76,7 +76,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
     @experience.account_id = current_account.id if current_account
     @experience.author = current_account.username if current_account
     # User-created experiences are always federated
-    @experience.federate = true
+    @experience.flags |= 2  # Set federate flag (bit position 2)
 
     if @experience.save
       redirect_to display_experience_path(@experience), notice: "Experience created successfully."
@@ -148,7 +148,6 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
 
     # Force browsers to treat the data as a download and prevent MIME sniffing
     response.headers["Content-Disposition"] = "inline" # still render in iframe but not downloadable file name
-    response.headers["X-Content-Type-Options"] = "nosniff"
   end
 
   # GET /experiences/:id/electron_sandbox
@@ -170,7 +169,6 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
     prepare_experience_html!
 
     response.headers["Content-Disposition"] = "inline"
-    response.headers["X-Content-Type-Options"] = "nosniff"
 
     render layout: "electron_sandbox"
   end
@@ -260,7 +258,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
   end
 
   def validate_and_sanitize_federated_uri(uri)
-      parsed_uri = URI.parse(uri)
+      parsed_uri = Addressable::URI.parse(uri)
 
       # Only allow HTTPS
       return nil unless parsed_uri.scheme == "https"
@@ -296,7 +294,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
   end
 
   def valid_federated_uri?(uri)
-      parsed_uri = URI.parse(uri)
+      parsed_uri = Addressable::URI.parse(uri)
 
       # Only allow HTTPS
       return false unless parsed_uri.scheme == "https"

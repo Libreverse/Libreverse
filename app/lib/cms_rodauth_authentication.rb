@@ -12,7 +12,7 @@ module CmsRodauthAuthentication
       account = controller.current_account
       Rails.logger.warn "[CmsRodauthAuthentication] account.admin: #{account.admin.inspect} (#{account.admin.class})"
       # Only allow admin users to access the CMS
-      if account.respond_to?(:admin) && account.admin == true
+      if account.respond_to?(:admin?) && account.admin?
         Rails.logger.warn "[CmsRodauthAuthentication] PASSED: admin access granted"
         return true
       else

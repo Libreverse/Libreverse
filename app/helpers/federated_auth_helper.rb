@@ -22,9 +22,9 @@ module FederatedAuthHelper
       return nil
     end
 
-    url = "https://#{domain}/.well-known/openid-configuration"
+    config_url = UrlTemplateService.oidc_config_url(domain)
 
-    response = HTTParty.get(url, timeout: 10, headers: {
+    response = HTTParty.get(config_url, timeout: 10, headers: {
                               "User-Agent" => "Libreverse/1.0 (Federated Authentication)"
                             })
 
@@ -45,16 +45,10 @@ module FederatedAuthHelper
   end
 
   def register_dynamic_client(registration_endpoint, redirect_uri)
-    # Validate the registration endpoint URL
-    begin
-      parsed_endpoint = URI.parse(registration_endpoint)
-      unless parsed_endpoint.scheme == "https" && !parsed_endpoint.host.nil?
-        Rails.logger.error "Invalid registration endpoint: #{registration_endpoint}"
-        return { error: "Invalid registration endpoint" }
-      end
-    rescue URI::InvalidURIError
-      Rails.logger.error "Malformed registration endpoint URL: #{registration_endpoint}"
-      return { error: "Malformed registration endpoint URL" }
+    # Validate the registration endpoint URL using Addressable
+    unless UrlTemplateService.valid_url?(registration_endpoint, schemes: ["https"])
+      Rails.logger.error "Invalid registration endpoint: #{registration_endpoint}"
+      return { error: "Invalid registration endpoint" }
     end
 
     client_data = {

@@ -7,12 +7,6 @@ return unless Rails.env.development?
 
 Rails.logger.debug '[DevSeed][Metaverse] Creating sample experiences...'
 
-# Use or create a throwaway account as owner
-# Create or reuse a simple guest/dev account. The Account model stores password hashes in
-# password_hash via Rodauth; we avoid manual password handling here. For development sample
-# data we only need an owning account, so a guest or basic account is sufficient.
-account = Account.first || Account.create!(username: 'devseed', guest: true)
-
 platforms = {
   'HoloWorld' => 20,
   'CyberGrid' => 15,
@@ -36,9 +30,7 @@ platforms.each do |platform, count|
       description: "Synthetic dev sample for #{platform} (#{i + 1}).",
       author: 'DevSeeder',
       account: account,
-      approved: true,
-      federate: false,
-      offline_available: false,
+      flags: 1,  # Set approved flag (bit position 1)
       metaverse_platform: platform,
       metaverse_coordinates: (rand < 0.15 ? nil : random_coord.call), # Some experiences intentionally lack coords
       metaverse_metadata: { category: %w[game social art edu sim].sample }.to_json,

@@ -1,12 +1,12 @@
 require 'open3'
 require 'nokogiri'
 
-# TidyMiddleware — cleans/repairs HTML via `tidy` CLI, then applies a parser-based
+# TidyMiddleware — cleans/repairs HTML via tidy CLI, then applies a parser-based
 # whitespace minification pass (Nokogiri for safe text collapsing + inter-tag removal)
-# followed by a final compact Tidy pass to eliminate any remaining structural whitespace.
-#
+# with compact serialization to eliminate any remaining structural whitespace.
 # This gives aggressive, safe whitespace minification while preserving semantics
 # (e.g., exact spacing in <pre>, <textarea>, <script>, <style>, <code>).
+
 class TidyMiddleware
   def initialize(app)
     @app = app
@@ -114,31 +114,9 @@ class TidyMiddleware
         node.content = node.content.split.join(' ')
       end
 
-      intermediate_html = doc.to_html
+      intermediate_html = doc.serialize(save_with: Nokogiri::XML::Node::SaveOptions::AS_XHTML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
 
-      # Third pass: final compact Tidy to strip any structural whitespace/indents/newlines
-      compact_cmd = [
-        'tidy',
-        '-q',
-        '--force-output', 'yes',
-        '--tidy-mark', 'no',
-        '--indent', 'no',
-        '--indent-spaces', '0',
-        '--tab-size', '0',
-        '--wrap', '0',
-        '--vertical-space', 'no',
-        '--drop-empty-elements', 'yes',
-        '--output-xhtml', 'yes'        # match your first pass; change to '--output-html', 'yes' if preferred
-      ]
-
-      minified_html, compact_stderr, compact_status = Open3.capture3(*compact_cmd, stdin_data: intermediate_html)
-
-      final_html = if compact_status.success? && !minified_html.strip.empty?
-                     minified_html
-                   else
-                     warn "Final compact Tidy failed (fallback to intermediate): #{compact_stderr}" if compact_stderr && !compact_stderr.strip.empty?
-                     intermediate_html
-                   end
+      final_html = intermediate_html
 
       # Replace response body
       response = [final_html]

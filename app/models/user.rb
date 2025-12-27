@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                  :bigint           not null, primary key
+#  flags               :integer          default(0), not null
+#  password_changed_at :datetime
+#  password_hash       :string(255)
+#  provider            :string(255)
+#  provider_uid        :string(255)
+#  status              :integer          default(1), not null
+#  username            :string(255)      not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  federated_id        :string(255)
+#
+# Indexes
+#
+#  index_accounts_on_federated_id               (federated_id)
+#  index_accounts_on_provider_and_provider_uid  (provider,provider_uid) UNIQUE
+#  index_accounts_on_username                   (username) UNIQUE
+#
 class User < ApplicationRecord
   # Thredded requires an ActiveRecord user model
   # This model wraps the Sequel Account model for Thredded compatibility

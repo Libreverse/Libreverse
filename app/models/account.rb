@@ -1,10 +1,42 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                  :bigint           not null, primary key
+#  flags               :integer          default(0), not null
+#  password_changed_at :datetime
+#  password_hash       :string(255)
+#  provider            :string(255)
+#  provider_uid        :string(255)
+#  status              :integer          default(1), not null
+#  username            :string(255)      not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  federated_id        :string(255)
+#
+# Indexes
+#
+#  index_accounts_on_federated_id               (federated_id)
+#  index_accounts_on_provider_and_provider_uid  (provider,provider_uid) UNIQUE
+#  index_accounts_on_username                   (username) UNIQUE
+#
 require_relative "../services/moderation_service"
 
 # ActiveRecord primary model (must always be defined for Zeitwerk autoloading)
 class Account < ApplicationRecord
+      # Enable SecondLevelCache for automatic read-through/write-through caching
+      second_level_cache expires_in: 2.hours
+      
+      include FlagShihTzu
+      
+      # FlagShihTzu bit field configuration
+      # Bit positions: 1=admin, 2=guest
+      has_flags 1 => :admin,
+                2 => :guest
+      
       has_many :account_roles, dependent: :destroy
       has_many :roles, through: :account_roles
       rolify

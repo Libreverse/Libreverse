@@ -1,5 +1,20 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+# == Schema Information
+#
+# Table name: instance_settings
+#
+#  id          :bigint           not null, primary key
+#  description :text(65535)
+#  key         :string(255)      not null
+#  value       :text(65535)
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_instance_settings_on_key  (key) UNIQUE
+#
 test_instance_name:
     key: instance_name
     value: Test Instance
