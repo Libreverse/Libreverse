@@ -1,9 +1,11 @@
 https://github.com/toptal/chewy
 https://github.com/soundcloud/lhm
-https://github.com/BattleBrisket/finishing_moves
-https://github.com/hamstergem/hamster
-https://github.com/rubyworks/facets
-https://github.com/keithrbennett/trick_bag
-https://github.com/cgriego/active_attr
 https://github.com/hashie/hashie
 https://github.com/MarioRuiz/string_pattern
+https://github.com/twitter/twitter-cldr-rb
+https://github.com/thoughtbot/high_voltage
+https://github.com/yippee-fun/phlex
+https://github.com/roidrage/lograge
+https://github.com/ohler55/ox
+https://github.com/ohler55/oj
+https://github.com/BetterErrors/better_errors

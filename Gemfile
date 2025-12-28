@@ -12,6 +12,7 @@ source "https://rubygems.org"
 
 ruby ">= 3.3.7"
 
+gem "active_attr"
 gem "active_hashcash"
 gem "active_storage_db"
 gem "active_storage_validations"
@@ -115,6 +116,10 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "worker_killer"
 gem "zip_kit"
+gem "finishing_moves"
+gem "hamster"
+gem "facets"
+gem "trick_bag"
 
 group :development, :test do
   gem "active_record_doctor"

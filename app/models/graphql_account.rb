@@ -2,6 +2,8 @@
 # shareable_constant_value: literal
 
 class GraphqlAccount
+  include ActiveAttr::Attributes
+  include ActiveAttr::BlockInitialization
   include GraphqlRails::Model
 
   graphql do |c|
@@ -12,14 +14,16 @@ class GraphqlAccount
     c.attribute(:status, type: "String!")
   end
 
-  attr_accessor :id, :username, :admin, :guest, :status
+  attribute :id, :username, :admin, :guest, :status
 
   def initialize(account)
-    @id = account.id
-    @username = account.username
-    @admin = account.admin?
-    @guest = account.guest?
-    @status = account_status_string(account.status)
+    super(
+      id: account.id,
+      username: account.username,
+      admin: account.admin?,
+      guest: account.guest?,
+      status: account_status_string(account.status)
+    )
   end
 
   private
