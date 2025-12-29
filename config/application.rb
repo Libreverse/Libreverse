@@ -4,10 +4,8 @@
 require_relative "boot"
 
 require "rails/all"
-
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+require "hamster/core_ext"
 
 # ---------------------------------------------------------------------------
 # Compatibility shims that must load BEFORE Rails bootstrap builds cache stores
@@ -22,7 +20,7 @@ require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
 require_relative "../lib/middleware/tidy"
-require 'worker_killer/middleware'
+require "worker_killer/middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
@@ -43,16 +41,7 @@ module LibreverseInstance
     config.active_support.deprecation = :silence
 
     # Use Redis/DragonflyDB for caching (configured via REDIS_URL env var)
-    #
-    # Rails' RedisCacheStore expects a Redis client that responds to high-level
-    # commands like `get`, `set`, `mget`, `unlink`, etc. (i.e., `redis` gem).
-    #
-    # Rails 8.1.1 wraps RedisCacheStore in `connection_pool` by calling:
-    #   ConnectionPool.new(pool_options) { ... }
-    # where `pool_options` is a positional Hash.
-    #
-    # connection_pool >= 3 uses a keyword-only initialize, so we provide a small
-    # compatibility shim in `config/patches/connection_pool_initialize_compat.rb`.
+
     redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
     redis_pool_size = Integer(ENV.fetch("REDIS_POOL_SIZE", 5))
     redis_pool_timeout = Float(ENV.fetch("REDIS_POOL_TIMEOUT", 5))

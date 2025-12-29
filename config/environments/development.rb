@@ -15,7 +15,7 @@ Rails.application.configure do
                        same_site: :none,
                        secure: true
 
-  # Configure ActionCable URL for consistency 
+  # Configure ActionCable URL for consistency
   # Use default port for development (3000)
   config.action_cable.url = "wss://localhost:3000/cable"
   config.action_cable.allowed_request_origins = [

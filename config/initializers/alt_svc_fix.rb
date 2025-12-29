@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Ensure HTTP/1.1 in development: clear any Alt-Svc hints from responses
 # so that clients don't attempt HTTP/2/3 upgrades against localhost.
 remove_alt_svc = Class.new do

@@ -19,7 +19,7 @@ module Api
 # Ensure required accounts exist for tests
 @account_one = Account.find_or_create_by!(username: "testuser1") do |a|
   a.status = 2
-  a.flags = 0  # No flags set (not admin, not guest)
+  a.flags = 0 # No flags set (not admin, not guest)
 end
       @account_two = if Account.exists?(id: 2)
         Account.find(2)

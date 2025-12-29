@@ -66,7 +66,7 @@
 #
 class OauthApplication < ApplicationRecord
   include FlagShihTzu
-  
+
   # FlagShihTzu bit field configuration
   # Bit positions: 1=backchannel_logout_session_required, 2=frontchannel_logout_session_required, 3=require_pushed_authorization_requests, 4=tls_client_certificate_bound_access_tokens
   has_flags 1 => :backchannel_logout_session_required,

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 # TruffleRuby compatibility + TiDB transient retry
 # ---------------------------------------------------------------------------
@@ -7,9 +8,7 @@ if Rails.env.development?
   # web-console 4.2.1 can raise when mapping ActiveRecord exceptions on TruffleRuby
   # (e.g., NoMethodError: undefined method `bindings` for ActiveRecord::StatementInvalid).
   # Disable it so the app can continue rendering even when the DB is temporarily unhealthy.
-  if defined?(WebConsole::Middleware)
-    Rails.application.config.middleware.delete(WebConsole::Middleware)
-  end
+  Rails.application.config.middleware.delete(WebConsole::Middleware) if defined?(WebConsole::Middleware)
 
   class TiDBTransientRetry
     MAX_RETRIES = 3

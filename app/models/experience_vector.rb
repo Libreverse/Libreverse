@@ -28,7 +28,7 @@
 class ExperienceVector < ApplicationRecord
   # Enable SecondLevelCache for automatic read-through/write-through caching
   second_level_cache expires_in: 30.minutes
-  
+
   belongs_to :experience
 
   validates :vector_data, presence: true

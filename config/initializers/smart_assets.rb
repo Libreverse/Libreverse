@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 Rails.application.configure do
   # SmartAssets configuration
   #
@@ -9,7 +12,7 @@ Rails.application.configure do
 
   next unless config.respond_to?(:smart_assets)
 
-  config.smart_assets.cache_control = 'public,max-age=60'
+  config.smart_assets.cache_control = "public,max-age=60"
 
   # The default is disabled for `development` and enabled for all other environments.
   # config.smart_assets.serve_non_digest_assets = false

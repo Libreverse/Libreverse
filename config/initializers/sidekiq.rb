@@ -62,7 +62,7 @@ Sidekiq.default_job_options = {
   "retry" => 5
 }
 
-require 'sidekiq/worker_killer'
+require "sidekiq/worker_killer"
 
 Sidekiq.configure_server do |config|
   config.server_middleware do |chain|

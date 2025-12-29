@@ -14,7 +14,11 @@ class GraphqlAccount
     c.attribute(:status, type: "String!")
   end
 
-  attribute :id, :username, :admin, :guest, :status
+  attribute :id
+  attribute :username
+  attribute :admin
+  attribute :guest
+  attribute :status
 
   def initialize(account)
     super(

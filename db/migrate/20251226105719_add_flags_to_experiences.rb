@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class AddFlagsToExperiences < ActiveRecord::Migration[8.1]
   def change
     # Add flags column for FlagShihTzu bit field storage

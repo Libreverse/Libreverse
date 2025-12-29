@@ -45,14 +45,14 @@ class Experience < ApplicationRecord
   include FederatableExperience
   include EncodingNormalizer
   include FlagShihTzu
-  
+
   # FlagShihTzu bit field configuration
   # Bit positions: 1=approved, 2=federate, 4=federated_blocked, 8=offline_available
   has_flags 1 => :approved,
             2 => :federate,
             4 => :federated_blocked,
             8 => :offline_available
-  
+
   # Enable SecondLevelCache for automatic read-through/write-through caching
   second_level_cache expires_in: 1.hour
 
@@ -99,17 +99,17 @@ class Experience < ApplicationRecord
   before_validation :assign_owner, on: :create
 
   # Add a scope for approved experiences using FlagShihTzu
-  scope :approved, -> { where("flags & 1 != 0") }  # Check approved flag (bit position 1)
-  scope :pending_approval, -> { where("flags & 1 = 0") }  # Not approved
+  scope :approved, -> { where("flags & 1 != 0") } # Check approved flag (bit position 1)
+  scope :pending_approval, -> { where("flags & 1 = 0") } # Not approved
 
   # Add a scope for experiences configured to federate using FlagShihTzu
-  scope :federating, -> { where("flags & 2 != 0") }  # Check federate flag (bit position 2)
+  scope :federating, -> { where("flags & 2 != 0") } # Check federate flag (bit position 2)
 
   # Add a scope for offline-available experiences using FlagShihTzu
-  scope :offline_available, -> { where("flags & 8 != 0") }  # Check offline_available flag (bit position 8)
+  scope :offline_available, -> { where("flags & 8 != 0") } # Check offline_available flag (bit position 8)
 
   # Add a scope for online-only experiences using FlagShihTzu
-  scope :online_only, -> { where("flags & 8 = 0") }  # Not offline_available
+  scope :online_only, -> { where("flags & 8 = 0") } # Not offline_available
 
   # Automatically mark experiences created by admins as approved
   before_validation :auto_approve_for_admin, on: :create
@@ -126,7 +126,7 @@ class Experience < ApplicationRecord
   end
 
   def auto_approve_for_admin
-    self.flags |= 1 if account&.admin?  # Set approved flag (bit position 1)
+    self.flags |= 1 if account&.admin? # Set approved flag (bit position 1)
   end
 
   def html_file?

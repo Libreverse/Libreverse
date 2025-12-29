@@ -76,7 +76,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
     @experience.account_id = current_account.id if current_account
     @experience.author = current_account.username if current_account
     # User-created experiences are always federated
-    @experience.flags |= 2  # Set federate flag (bit position 2)
+    @experience.flags |= 2 # Set federate flag (bit position 2)
 
     if @experience.save
       redirect_to display_experience_path(@experience), notice: "Experience created successfully."
@@ -199,11 +199,11 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
     @html_content = inject_keyboard_lock_handler_client(@html_content)
 
     # Auto-enable P2P for experiences that are not offline-available (multiplayer experiences)
-    unless @experience.offline_available
+    return if @experience.offline_available
+
       @is_multiplayer = true
       @session_id = params[:session].presence || "exp_#{@experience.id}_#{SecureRandom.hex(8)}"
       @peer_id = "peer_#{current_account.id}_#{SecureRandom.hex(4)}"
-    end
   end
 
   # Require user to be logged in

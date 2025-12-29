@@ -23,8 +23,10 @@ class AccountSequel < Sequel::Model(:accounts)
   def unverified? = status == 1
   def verified? = status == 2
   def closed? = status == 3
-  def guest? = (flags & 2) != 0  # Check guest flag (bit position 2)
-  def admin? = (flags & 1) != 0  # Check admin flag (bit position 1)
+  # Check guest flag (bit position 2)
+  def guest? = (flags & 2) != 0
+  # Check admin flag (bit position 1)
+  def admin? = (flags & 1) != 0
   # Provide parity with ActiveRecord Account interface
   def effective_user? = !guest?
 

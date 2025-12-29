@@ -11,19 +11,19 @@ class UrlTemplateService
     # API endpoints
     api_search: "https://{domain}/api/search{?query,limit,offset}",
     api_user: "https://{domain}/api/users/{user_id}",
-    
+
     # Federation endpoints
     federation_webfinger: "https://{domain}/.well-known/webfinger{?resource,rel}",
     federation_oidc_config: "https://{domain}/.well-known/openid-configuration",
     federation_register: "https://{domain}/register{?redirect_uri,client_name,scope}",
-    
+
     # Sitemap templates
     sitemap: "https://{domain}/sitemap.xml",
     sitemap_index: "https://{domain}/sitemap-index.xml",
-    
+
     # CDN/Asset templates
     cdn_asset: "https://cdn.{domain}/assets/{path*}",
-    
+
     # OAuth templates
     oauth_authorize: "https://{domain}/oauth/authorize{?response_type,client_id,redirect_uri,scope,state}",
     oauth_token: "https://{domain}/oauth/token"
@@ -90,15 +90,15 @@ class UrlTemplateService
       return false unless uri
 
       # Check scheme
-      if allowed_schemes = options[:schemes]
-        return false unless allowed_schemes.include?(uri.scheme)
+      if (allowed_schemes = options[:schemes]) && !allowed_schemes.include?(uri.scheme)
+        return false
       end
 
       # Check host
       return false if uri.host.blank?
 
       # Check port
-      if allowed_ports = options[:ports]
+      if (allowed_ports = options[:ports])
         port = uri.port || (uri.scheme == "https" ? 443 : 80)
         return false unless allowed_ports.include?(port)
       end
@@ -133,9 +133,9 @@ class UrlTemplateService
     def same_domain?(url1, url2)
       domain1 = extract_domain(url1)
       domain2 = extract_domain(url2)
-      
+
       return false if domain1.blank? || domain2.blank?
-      
+
       domain1.downcase == domain2.downcase
     end
 

@@ -28,7 +28,7 @@
 class IndexedContent < ApplicationRecord
   # Enable SecondLevelCache for automatic read-through/write-through caching
   second_level_cache expires_in: 1.hour
-  
+
   # Associations
   has_one :indexed_content_vector, dependent: :destroy
 

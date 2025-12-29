@@ -7,5 +7,4 @@ https://github.com/thoughtbot/high_voltage
 https://github.com/yippee-fun/phlex
 https://github.com/roidrage/lograge
 https://github.com/ohler55/ox
-https://github.com/ohler55/oj
 https://github.com/BetterErrors/better_errors

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 # Keep secure_headers defaults, but let Rails manage CSP and disable automatic cookie attributes.
 
 SecureHeaders::Configuration.default do |config|

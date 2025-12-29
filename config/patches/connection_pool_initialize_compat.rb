@@ -18,9 +18,7 @@ begin
   require "connection_pool"
 
   ConnectionPool.class_eval do
-    unless method_defined?(:__libreverse_original_initialize)
-      alias_method :__libreverse_original_initialize, :initialize
-    end
+    alias_method :__libreverse_original_initialize, :initialize unless method_defined?(:__libreverse_original_initialize)
 
     def initialize(options = nil, **kwargs, &block)
       if options.is_a?(Hash) && kwargs.empty?

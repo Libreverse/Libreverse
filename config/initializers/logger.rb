@@ -222,7 +222,6 @@ Rails.application.config.filter_parameters += %i[
 # shareable_constant_value: literal
 
 require "active_support/ordered_options"
-require "active_support/logger"
 require "active_support/tagged_logging"
 
 module LogFormatting

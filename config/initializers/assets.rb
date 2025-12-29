@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 # This app primarily uses Vite for asset compilation. However, some gems still
 # require Sprockets for their JavaScript/CSS assets:
@@ -33,9 +34,8 @@ Rails.application.config.after_initialize do
   rails_ujs_path = Rails.root.join("node_modules/@rails/ujs/app/assets/javascripts")
   Rails.application.config.assets.paths << rails_ujs_path.to_s if rails_ujs_path.exist?
 
- 
   # Comfortable Media Surfer (Comfy CMS)
- 
+
   # Comfy's assets are auto-registered by its engine, but we ensure the paths
   # are available for sassc-rails to resolve @import statements.
   if Gem.loaded_specs.key?("comfortable_media_surfer")
@@ -61,4 +61,3 @@ Rails.application.config.assets.integrity_hash_algorithm = "sha384"
 Rails.application.config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 Rails.application.config.assets.unknown_asset_fallback = false
 Rails.application.config.assets.digest = true
-

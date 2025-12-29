@@ -7,11 +7,11 @@ class CleanupAbandonedGuestsJob < ApplicationJob
 
   def build_enumerator(cursor:)
     cutoff_date = 30.days.ago
-    
+
     # Convert to ActiveRecord relation for iteration
     Account.where(guest: true)
-          .where('created_at < ?', cutoff_date)
-          .order(:created_at, :id)
+           .where("created_at < ?", cutoff_date)
+           .order(:created_at, :id)
   end
 
   def each_iteration(account)

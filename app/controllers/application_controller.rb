@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
     return nil unless account_id
 
     # Don't cache or lookup if account_id is nil or invalid
-    return nil unless account_id.is_a?(Integer) && account_id > 0
+    return nil unless account_id.is_a?(Integer) && account_id.positive?
 
     account = FunctionCache.instance.cache(:account_by_id, account_id, ttl: 300) do
       Account.find(account_id)
@@ -112,12 +112,12 @@ class ApplicationController < ActionController::Base
 
     def set_compliance_headers
       # Use safe fallbacks in case route helpers aren't available (e.g., during Rodauth flows)
-      privacy_url  = begin
+      privacy_url = begin
         main_app.privacy_path
       rescue NoMethodError
         "/privacy"
       end
-      cookies_url  = begin
+      cookies_url = begin
         main_app.cookie_policy_path
       rescue NoMethodError
         "/cookies"

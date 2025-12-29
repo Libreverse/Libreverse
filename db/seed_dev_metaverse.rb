@@ -30,7 +30,7 @@ platforms.each do |platform, count|
       description: "Synthetic dev sample for #{platform} (#{i + 1}).",
       author: 'DevSeeder',
       account: account,
-      flags: 1,  # Set approved flag (bit position 1)
+      flags: 1, # Set approved flag (bit position 1)
       metaverse_platform: platform,
       metaverse_coordinates: (rand < 0.15 ? nil : random_coord.call), # Some experiences intentionally lack coords
       metaverse_metadata: { category: %w[game social art edu sim].sample }.to_json,

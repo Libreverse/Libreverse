@@ -8,8 +8,8 @@ ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 
 require "bundler/setup" # Set up gems listed in the Gemfile.
 
-# Load core extensions for additional gems
-require 'hamster/core_ext'  # Load Hamster core extensions (Enumerable#to_list, IO#to_list, etc.)
+# Load Rails 8.1.1 compatibility patch
+require_relative "patches/rails_811_attr_reader_fix"
 
 # Bootsnap Performance Optimization
 require "bootsnap"

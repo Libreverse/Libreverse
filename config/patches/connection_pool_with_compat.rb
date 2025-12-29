@@ -18,9 +18,7 @@ begin
   require "connection_pool"
 
   ConnectionPool.class_eval do
-    unless method_defined?(:__libreverse_original_with)
-      alias_method :__libreverse_original_with, :with
-    end
+    alias_method :__libreverse_original_with, :with unless method_defined?(:__libreverse_original_with)
 
     def with(*_args, &block)
       __libreverse_original_with(&block)

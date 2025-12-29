@@ -21,9 +21,9 @@ if Rails.env.test?
         missing_constant = e.is_a?(NameError) && e.message.include?("ViteRuby::MissingEntryError")
         missing_entry = begin
                           e.instance_of?(::ViteRuby::MissingEntryError)
-                        rescue StandardError
+        rescue StandardError
                           false
-                        end
+        end
 
         if (missing_constant || missing_entry) && names.any? { |n| n.include?("application") }
           Rails.logger.warn("[Test] Suppressing missing Vite entry error: #{e.message}")

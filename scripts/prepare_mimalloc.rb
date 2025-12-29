@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 require 'fileutils'
 require 'open3'
@@ -14,7 +15,7 @@ require 'rbconfig'
 required = ARGV.include?('--required')
 
 host = RbConfig::CONFIG['host_os']
-unless host =~ /darwin/i
+unless /darwin/i.match?(host)
   puts '[mimalloc] non-macOS host; nothing to do.'
   exit 0
 end

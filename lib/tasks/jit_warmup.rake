@@ -2,10 +2,10 @@
 # shareable_constant_value: literal
 
 namespace :jit do
-  desc 'Run JIT warmup to pre-compile hot code paths (TruffleRuby)'
+  desc "Run JIT warmup to pre-compile hot code paths (TruffleRuby)"
   task warmup: :environment do
-    runs = ENV.fetch('RUNS', '3').to_i
-    silent = ENV['SILENT'] == '1'
+    runs = ENV.fetch("RUNS", "3").to_i
+    silent = ENV["SILENT"] == "1"
 
     puts "Running JIT warmup with #{runs} iterations per route..."
     puts "Ruby engine: #{RUBY_ENGINE} #{RUBY_VERSION}"
@@ -15,9 +15,9 @@ namespace :jit do
     stats = JitWarmupService.warmup(runs: runs, silent: silent)
 
     puts
-    puts '=' * 60
-    puts 'JIT Warmup Complete'
-    puts '=' * 60
+    puts "=" * 60
+    puts "JIT Warmup Complete"
+    puts "=" * 60
     puts "  Paths warmed:       #{stats[:paths]}"
     puts "  Total requests:     #{stats[:requests]}"
     puts "  Errors:             #{stats[:errors]}"
@@ -28,7 +28,7 @@ namespace :jit do
 
     if stats[:skipped_reason]
       puts "Note: Warmup was skipped (#{stats[:skipped_reason]})"
-      puts 'Set FORCE_JIT_WARMUP=1 to force warmup on non-TruffleRuby'
+      puts "Set FORCE_JIT_WARMUP=1 to force warmup on non-TruffleRuby"
     end
 
     if stats[:guest_accounts_created] > 1
@@ -39,32 +39,32 @@ namespace :jit do
     end
   end
 
-  desc 'List all paths that will be warmed up'
+  desc "List all paths that will be warmed up"
   task paths: :environment do
-    puts 'Public paths (always visible):'
+    puts "Public paths (always visible):"
     JitWarmupService::PUBLIC_PATHS.each { |p| puts "  #{p}" }
 
     puts
-    puts 'Guest/logged-out paths:'
+    puts "Guest/logged-out paths:"
     JitWarmupService::GUEST_PATHS.each { |p| puts "  #{p}" }
 
     puts
-    puts 'Utility paths:'
+    puts "Utility paths:"
     JitWarmupService::UTILITY_PATHS.each { |p| puts "  #{p}" }
 
     puts
     puts "Total: #{JitWarmupService.all_warmup_paths.size} paths"
   end
 
-  desc 'Benchmark warmup iterations to find optimal count'
+  desc "Benchmark warmup iterations to find optimal count"
   task benchmark: :environment do
-    require 'benchmark'
+    require "benchmark"
 
     puts "Benchmarking JIT warmup iterations..."
     puts "Ruby engine: #{RUBY_ENGINE} #{RUBY_VERSION}"
     puts
 
-    [1, 2, 3, 5, 10].each do |runs|
+    [ 1, 2, 3, 5, 10 ].each do |runs|
       # Reset any caching between runs
       GC.start
 
@@ -79,6 +79,6 @@ namespace :jit do
     end
 
     puts
-    puts 'Recommendation: Use 3-5 runs for production warmup'
+    puts "Recommendation: Use 3-5 runs for production warmup"
   end
 end

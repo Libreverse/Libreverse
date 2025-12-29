@@ -46,7 +46,7 @@ module FederatedAuthHelper
 
   def register_dynamic_client(registration_endpoint, redirect_uri)
     # Validate the registration endpoint URL using Addressable
-    unless UrlTemplateService.valid_url?(registration_endpoint, schemes: ["https"])
+    unless UrlTemplateService.valid_url?(registration_endpoint, schemes: [ "https" ])
       Rails.logger.error "Invalid registration endpoint: #{registration_endpoint}"
       return { error: "Invalid registration endpoint" }
     end

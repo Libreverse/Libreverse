@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-require 'memo_wise'
+require "memo_wise"
 
 class VectorizationService
   # Field weights for different parts of experience content

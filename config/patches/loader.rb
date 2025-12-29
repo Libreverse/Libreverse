@@ -43,7 +43,7 @@ module LibreversePatches
 
         # Test-only shims
         "vite_test_fallback",
-        "test_trilogy_patches",
+        "test_trilogy_patches"
       ]
     else
       raise ArgumentError, "Unknown patch stage: #{stage.inspect}"

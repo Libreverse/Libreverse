@@ -9,9 +9,9 @@ class GenerateMissingActorsJob < ApplicationJob
   def build_enumerator(cursor:)
     # Find accounts that don't have federails actors yet
     Account.left_joins(:federails_actor)
-          .where(federails_actors: { id: nil })
-          .where(guest: false) # Only non-guest accounts
-          .order(:id)
+           .where(federails_actors: { id: nil })
+           .where(guest: false) # Only non-guest accounts
+           .order(:id)
   end
 
   def each_iteration(account)

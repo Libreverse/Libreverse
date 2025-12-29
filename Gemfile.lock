@@ -72,6 +72,10 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_attr (0.17.2)
+      actionpack (>= 3.0.2, < 8.2)
+      activemodel (>= 3.0.2, < 8.2)
+      activesupport (>= 3.0.2, < 8.2)
     active_hashcash (0.4.0)
       rails (>= 5.2.0)
     active_link_to (1.0.5)
@@ -218,6 +222,7 @@ GEM
       activerecord (>= 4.1.15)
     declarative (0.0.20)
     diff-lcs (1.6.2)
+    diffy (3.4.4)
     disposable (0.6.3)
       declarative (>= 0.0.9, < 1.0.0)
       representable (>= 3.1.1, < 4)
@@ -239,6 +244,7 @@ GEM
     et-orbi (1.4.0)
       tzinfo
     execjs (2.10.0)
+    facets (3.1.0)
     faraday (2.14.0)
       faraday-net_http (>= 2.0, < 3.5)
       json
@@ -280,6 +286,7 @@ GEM
       rake
     fiber-storage (1.0.1)
     fiddle (1.1.8)
+    finishing_moves (1.3)
     flag_shih_tzu (0.3.23)
     foundation_emails (2.2.1.0)
     friendly_id (5.6.0)
@@ -311,6 +318,8 @@ GEM
       activesupport (>= 5.1)
       haml (>= 4.0.6)
       railties (>= 5.1)
+    hamster (3.0.0)
+      concurrent-ruby (~> 1.0)
     hashie (5.0.0)
     herb (0.8.4)
     herb (0.8.4-aarch64-linux-gnu)
@@ -471,6 +480,7 @@ GEM
       timeout
     net-smtp (0.5.1)
       net-protocol
+    net-ssh (7.3.0)
     nio4r (2.7.5)
     nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
@@ -494,6 +504,9 @@ GEM
     nokogiri-html5-inference (0.3.0)
       nokogiri (~> 1.14)
     observer (0.1.2)
+    oj (3.16.13)
+      bigdecimal (>= 3.0)
+      ostruct (>= 0.2)
     omniauth (2.1.4)
       hashie (>= 3.4.6)
       logger
@@ -522,6 +535,7 @@ GEM
       tzinfo
       validate_url
       webfinger (~> 2.0)
+    os (1.1.4)
     ostruct (0.6.3)
     package_json (0.2.0)
     parallel (1.27.0)
@@ -930,6 +944,10 @@ GEM
       trailblazer-activity-dsl-linear (>= 1.2.3, < 1.3.0)
       trailblazer-developer (>= 0.1.0, < 0.2.0)
     trailblazer-option (0.1.2)
+    trick_bag (0.70.0)
+      diffy (~> 3.0)
+      net-ssh
+      os (~> 1.1)
     trilogy (2.9.0)
     tsort (0.2.0)
     turbo-rails (2.0.20)
@@ -1007,6 +1025,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  active_attr
   active_hashcash
   active_record_doctor
   active_storage_db
@@ -1029,18 +1048,21 @@ DEPENDENCIES
   database_consistency
   erb-formatter
   erb_lint
+  facets
   fast_blank
   fast_underscore
   fasterer
   federails
   federails-moderation
   fiddle
+  finishing_moves
   flag_shih_tzu
   friendly_id
   gemoji
   goldiloader
   google_robotstxt_parser!
   graphql_rails
+  hamster
   hiredis-client!
   httparty
   i18n-tasks
@@ -1048,7 +1070,6 @@ DEPENDENCIES
   inky-rb
   invisible_captcha
   jbuilder
-  json
   kaminari-i18n
   kredis
   listen
@@ -1058,6 +1079,7 @@ DEPENDENCIES
   mocha
   mysql2
   nokogiri
+  oj
   omniauth_openid_connect
   ostruct
   passenger (>= 6.0.20)
@@ -1117,6 +1139,7 @@ DEPENDENCIES
   thredded-markdown_katex
   tilt
   trailblazer
+  trick_bag
   trilogy
   turbo-rails
   turbo_power
@@ -1138,6 +1161,7 @@ CHECKSUMS
   actionpack (8.1.1) sha256=192e27c39a63c7d801ac7b6d50505f265e389516985eed9b2ee364896a6a06d7
   actiontext (8.1.1) sha256=fd8d8da1e6bc0b04ff72fccfd127e78431238a99a82e736c7b52727c576a7640
   actionview (8.1.1) sha256=ca480c8b099dea0862b0934f24182b84c2d29092e7dbf464fb3e6d4eb9b468dc
+  active_attr (0.17.2) sha256=70ca32b789965d7bbfa3962997cfb1660ef9831c7b92050e068b5a548836585d
   active_hashcash (0.4.0) sha256=20c72cb358eeabfa30c184e3f9041a22a02b88072a942e804fb586b42b695fe6
   active_link_to (1.0.5) sha256=4830847b3d14589df1e9fc62038ceec015257fce975ec1c2a77836c461b139ba
   active_record_doctor (2.0.1) sha256=7af0ac02195385c8f2f67d0e4ebe72b1fc79d65eaaf329e0db07f4d12a84069a
@@ -1190,6 +1214,7 @@ CHECKSUMS
   db_text_search (1.0.0) sha256=4cad83819a02e7e225174ab059de8087fcb68ed88e5926448aae63ef1769406b
   declarative (0.0.20) sha256=8021dd6cb17ab2b61233c56903d3f5a259c5cf43c80ff332d447d395b17d9ff9
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
+  diffy (3.4.4) sha256=79384ab5ca82d0e115b2771f0961e27c164c456074bd2ec46b637ebf7b6e47e3
   disposable (0.6.3) sha256=7f2a3fb251bff6cd83f25b164043d4ec3531209b51b066ed476a9df9c2d384cc
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
   dry-cli (1.3.0) sha256=984a715f9d7f8d9bf87b6530acdd4321dcf747636bfeb3ea7fd1b81bc0226e84
@@ -1200,6 +1225,7 @@ CHECKSUMS
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   et-orbi (1.4.0) sha256=6c7e3c90779821f9e3b324c5e96fda9767f72995d6ae435b96678a4f3e2de8bc
   execjs (2.10.0) sha256=6bcb8be8f0052ff9d370b65d1c080f2406656e150452a0abdb185a133048450d
+  facets (3.1.0) sha256=7834a68824efbb35380ed7f6f590e01fb9a31a9466e317210e8803f72813c345
   faraday (2.14.0) sha256=8699cfe5d97e55268f2596f9a9d5a43736808a943714e3d9a53e6110593941cd
   faraday-follow_redirects (0.4.0) sha256=d3fa1118ab1350e24035a272b4cff64948643bb7182846db89acaf87abadd5d9
   faraday-net_http (3.4.2) sha256=f147758260d3526939bf57ecf911682f94926a3666502e24c69992765875906c
@@ -1222,6 +1248,7 @@ CHECKSUMS
   ffi-compiler (1.3.2) sha256=a94f3d81d12caf5c5d4ecf13980a70d0aeaa72268f3b9cc13358bcc6509184a0
   fiber-storage (1.0.1) sha256=f48e5b6d8b0be96dac486332b55cee82240057065dc761c1ea692b2e719240e1
   fiddle (1.1.8) sha256=7fa8ee3627271497f3add5503acdbc3f40b32f610fc1cf49634f083ef3f32eee
+  finishing_moves (1.3) sha256=9afc810a2098ef44cdb52abea708d1d1f73ccea8b7f745e5ad528d363f4deb36
   flag_shih_tzu (0.3.23) sha256=0982215a5b96771671e13884e08f34c7084650752fd002a3ad6e91c4897061be
   foundation_emails (2.2.1.0) sha256=34e67b0a9de9511b5a05e6763ed7a2bacef52cb7a87b11fc937a3a25c4b2a10c
   friendly_id (5.6.0) sha256=28e221cd53fbd21586321164c1c6fd0c9ba8dde13969cb2363679f44726bb0c3
@@ -1235,6 +1262,7 @@ CHECKSUMS
   graphql_rails (3.1.0) sha256=4fa2b2ef21f867440feb0ffb9d25cb6ddca2c0b4984ce5e9c3ab03710dd90f20
   haml (7.1.0) sha256=aed691bddcaaf4855398b3e4dd39d8590600b0f0151f4def1c2aa83bfd444248
   haml-rails (2.1.0) sha256=273ba0189e2f82ce4b2385019dd9138884017e3103cc2eaebeee7f45186f59ea
+  hamster (3.0.0) sha256=5951e3a3ffd15ba854a976ac36ebae9469966f726034ffed0dccdb6d12d434d8
   hashie (5.0.0) sha256=9d6c4e51f2a36d4616cbc8a322d619a162d8f42815a792596039fc95595603da
   herb (0.8.4) sha256=0255052f9b5ee64baadba7aacd05a022c30f78faa2f1962e09adf1735faabef6
   herb (0.8.4-aarch64-linux-gnu) sha256=94aa93e7508511b035caa30ceb87c21becae7773b163e4364b1ff1e37552f506
@@ -1307,6 +1335,7 @@ CHECKSUMS
   net-pop (0.1.2) sha256=848b4e982013c15b2f0382792268763b748cce91c9e91e36b0f27ed26420dff3
   net-protocol (0.2.2) sha256=aa73e0cba6a125369de9837b8d8ef82a61849360eba0521900e2c3713aa162a8
   net-smtp (0.5.1) sha256=ed96a0af63c524fceb4b29b0d352195c30d82dd916a42f03c62a3a70e5b70736
+  net-ssh (7.3.0) sha256=172076c4b30ce56fb25a03961b0c4da14e1246426401b0f89cba1a3b54bf3ef0
   nio4r (2.7.5) sha256=6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1
   nokogiri (1.18.10) sha256=d5cc0731008aa3b3a87b361203ea3d19b2069628cb55e46ac7d84a0445e69cc1
   nokogiri (1.18.10-aarch64-linux-gnu) sha256=7fb87235d729c74a2be635376d82b1d459230cc17c50300f8e4fcaabc6195344
@@ -1319,10 +1348,12 @@ CHECKSUMS
   nokogiri (1.18.10-x86_64-linux-musl) sha256=0651fccf8c2ebbc2475c8b1dfd7ccac3a0a6d09f8a41b72db8c21808cb483385
   nokogiri-html5-inference (0.3.0) sha256=04f078ad36843da11973773dbdd034672eb397373b0766ab11679e4a7b86c01e
   observer (0.1.2) sha256=d8a3107131ba661138d748e7be3dbafc0d82e732fffba9fccb3d7829880950ac
+  oj (3.16.13) sha256=b114bcb83ef884f1736b3112108f77cf9ca90aa8111a775318cc5d7a6a1e0303
   omniauth (2.1.4) sha256=42a05b0496f0d22e1dd85d42aaf602f064e36bb47a6826a27ab55e5ba608763c
   omniauth_openid_connect (0.8.0) sha256=1f2f3890386e2a742221cee0d2e903b78d874e6fab9ea3bfa31c1462f4793d25
   onebox (2.2.19) sha256=1d0f7bf56a356c5f667cdfd429c601ebb65b3903a36697d9f9001d867270677f
   openid_connect (2.3.1) sha256=5d808380cff80d78e3d3d54cfaebe2d6461d835c674faa29e2314a402c1b2182
+  os (1.1.4) sha256=57816d6a334e7bd6aed048f4b0308226c5fb027433b67d90a9ab435f35108d3f
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   package_json (0.2.0) sha256=92c022dc2999a9e57e835f1ec1a84c9a6c2be08e0fd68886c6f86d94101b6b4d
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
@@ -1467,6 +1498,7 @@ CHECKSUMS
   trailblazer-macro-contract (2.1.5) sha256=c1d558c0ed1219efd226b05b517de55357c6d0d72f5be81725cfbcd886614cce
   trailblazer-operation (0.11.1) sha256=780c790313994873b1f5b22dcefdd8c3c5a5dc7c39d70c69cf0abdbf021c514c
   trailblazer-option (0.1.2) sha256=20e4f12ea4e1f718c8007e7944ca21a329eee4eed9e0fa5dde6e8ad8ac4344a3
+  trick_bag (0.70.0) sha256=45b4983b6f9cebc7b9cb57081090e34ba7404bb8867fd42549e7d5f1272475e3
   trilogy (2.9.0) sha256=a2d63b663ba68a4758e15d1f9afb228f5d16efc7fe7cea68699e1c106ef6067f
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
   turbo-rails (2.0.20) sha256=cbcbb4dd3ce59f6471c9f911b1655b2c721998cc8303959d982da347f374ea95

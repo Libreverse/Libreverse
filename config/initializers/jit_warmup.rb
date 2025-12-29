@@ -14,31 +14,31 @@
 #
 
 Rails.application.config.after_initialize do
-  next if ENV['JIT_WARMUP_DISABLED'] == '1'
+  next if ENV["JIT_WARMUP_DISABLED"] == "1"
   next unless warmup_enabled?
 
   # Skip warmup in test environment
   next if Rails.env.test?
 
   # Skip warmup in console or rake tasks
-  next if defined?(Rails::Console) || File.basename($PROGRAM_NAME) == 'rake'
+  next if defined?(Rails::Console) || File.basename($PROGRAM_NAME) == "rake"
 
   warmup_options = {
-    runs: ENV.fetch('JIT_WARMUP_RUNS', nil)&.to_i,
+    runs: ENV.fetch("JIT_WARMUP_RUNS", nil)&.to_i,
     silent: !Rails.env.development?
   }.compact
 
-  Rails.logger.info('[JitWarmup] Running synchronous warmup')
+  Rails.logger.info("[JitWarmup] Running synchronous warmup")
   JitWarmupService.warmup(**warmup_options)
 end
 
 # Helper to determine if warmup should run
 def warmup_enabled?
-  return true if ENV['JIT_WARMUP_ENABLED'] == '1'
-  return true if ENV['FORCE_JIT_WARMUP'] == '1'
+  return true if ENV["JIT_WARMUP_ENABLED"] == "1"
+  return true if ENV["FORCE_JIT_WARMUP"] == "1"
 
   # Auto-enable on TruffleRuby
-  RUBY_ENGINE == 'truffleruby'
+  RUBY_ENGINE == "truffleruby"
 end
 
 # Helper to determine warmup mode

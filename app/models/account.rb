@@ -29,14 +29,14 @@ require_relative "../services/moderation_service"
 class Account < ApplicationRecord
       # Enable SecondLevelCache for automatic read-through/write-through caching
       second_level_cache expires_in: 2.hours
-      
+
       include FlagShihTzu
-      
+
       # FlagShihTzu bit field configuration
       # Bit positions: 1=admin, 2=guest
       has_flags 1 => :admin,
                 2 => :guest
-      
+
       has_many :account_roles, dependent: :destroy
       has_many :roles, through: :account_roles
       rolify

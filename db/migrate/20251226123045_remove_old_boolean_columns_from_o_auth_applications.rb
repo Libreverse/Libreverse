@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# shareable_constant_value: literal
+
 class RemoveOldBooleanColumnsFromOAuthApplications < ActiveRecord::Migration[8.1]
   def change
     # Remove old boolean columns that are now handled by FlagShihTzu flags

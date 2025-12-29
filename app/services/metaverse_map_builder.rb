@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-require 'memo_wise'
+require "memo_wise"
 
 # Service that constructs a synthetic 2D map layout for metaverse Experiences.
 # Each distinct `metaverse_platform` is treated as a separate "continent" laid out horizontally
@@ -136,8 +136,8 @@ class MetaverseMapBuilder
     end
 
     {
-      x: extract_number(json['x']),
-      y: extract_number(json['y'])
+      x: extract_number(json["x"]),
+      y: extract_number(json["y"])
     }
   end
   memo_wise :parse_coords
@@ -152,8 +152,6 @@ class MetaverseMapBuilder
       end
     when Numeric
       v.to_f
-    else
-      nil
     end
   end
   memo_wise :extract_number

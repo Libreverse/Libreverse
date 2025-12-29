@@ -34,7 +34,7 @@
 #
 class Comment < ApplicationRecord
   has_closure_tree
-  
+
   belongs_to :thread, class_name: "CommentThread", foreign_key: :comment_thread_id, counter_cache: true
   begin
     belongs_to :account, class_name: "Account", optional: false, inverse_of: false
@@ -46,7 +46,7 @@ class Comment < ApplicationRecord
   scope :root, -> { where(parent_id: nil) }
   scope :visible, -> { where(deleted_at: nil) }
   scope :ordered_by_likes, -> { order(likes_count: :desc, created_at: :asc) }
-  
+
   # ClosureTree convenience methods
   scope :with_descendants, -> { includes(:descendants) }
   scope :threaded, -> { includes(:children, :parent) }
@@ -88,20 +88,20 @@ class Comment < ApplicationRecord
   def soft_delete!
     update!(deleted_at: Time.current)
   end
-  
+
   # ClosureTree convenience methods
   def thread_root
     root
   end
-  
+
   def reply_count
     descendants.visible.count
   end
-  
+
   def thread_depth
     ancestors.count
   end
-  
+
   def full_thread
     self_and_descendants.visible.ordered_by_likes
   end

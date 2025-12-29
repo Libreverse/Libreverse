@@ -36,6 +36,7 @@ unless Fiber.respond_to?(:[])
         current.instance_variable_set(:@__libreverse_fiber_local, store)
       end
       store[key] = value
+      store
     end
   end
 end
@@ -55,6 +56,7 @@ unless Fiber.method_defined?(:[])
         instance_variable_set(:@__libreverse_fiber_local, store)
       end
       store[key] = value
+      store
     end
   end
 end
