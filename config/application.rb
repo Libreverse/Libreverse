@@ -24,6 +24,9 @@ require "worker_killer/middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
+    # Make eager loading happen only in the web process since it's so memory intensive
+    config.eager_load = defined?(PhusionPassenger)
+    
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]

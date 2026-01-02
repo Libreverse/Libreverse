@@ -6,6 +6,12 @@ html.no-js dir=(rtl_locales.include?(I18n.locale.to_s) ? 'rtl' : 'ltr') lang=I18
     = render "layouts/meta_tags"
     = csrf_meta_tags
     = csp_meta_tag
+    = action_cable_meta_tag
+    / AnyCable JWT token for stateless authentication (works for both regular and guest accounts)
+    - if user_signed_in?
+      meta name="anycable-jwt" content=generate_token_for_current_account(current_account)
+    / AnyCable configuration meta tags
+    meta name="anycable-reliable-streams-enabled" content="true"
   body
     = render "layouts/oneko"
     = render "layouts/glass_filter"

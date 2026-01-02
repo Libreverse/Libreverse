@@ -1,3 +1,4 @@
+require('v8-compile-cache');
 import { app, BrowserWindow, BrowserView, session, Menu, ipcMain } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -207,7 +208,6 @@ const attachContextMenu = (targetWindow) => {
 const buildMainWindow = () => {
     const window = createWindow({
         isDev,
-        url: `${baseUrl}?platform=${process.platform}`,
     });
 
     attachContextMenu(window);

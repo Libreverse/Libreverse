@@ -1,5 +1,4 @@
 {
-    auto_https off
     # Enable HTTP/3 (QUIC) by default in Caddy
     servers {
         protocols h1 h2 h3
@@ -9,6 +8,30 @@
 localhost:3000 {
     tls /tmp/mkcert-dev-certs/localhost.pem /tmp/mkcert-dev-certs/localhost-key.pem
     reverse_proxy localhost:3002
+
+    # Proxy Vite assets to Vite dev server (HMR, WebSockets, SSE)
+    @vite_client {
+        path /@vite/client
+    }
+
+    handle /vite/* {
+        reverse_proxy localhost:3001 {
+            header_up -Connection
+            header_up -Upgrade
+            # Handle WebSocket upgrade for HMR
+            header_up Host {http.reverse_proxy.upstream.hostport}
+        }
+    }
+
+    # Handle @vite/client HMR requests
+    handle @vite_client {
+        reverse_proxy localhost:3001 {
+            header_up -Connection
+            header_up -Upgrade
+            header_up Host {http.reverse_proxy.upstream.hostport}
+        }
+    }
+
     # Advertise HTTP/3 via Alt-Svc
     header Alt-Svc "h3=\":3000\"; ma=86400"
 

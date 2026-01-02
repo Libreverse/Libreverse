@@ -31,14 +31,16 @@ Rails.application.configure do
       vite_dev_ports = [ 3001 ]
       vite_hosts = %w[localhost 127.0.0.1]
       vite_http_origins = vite_hosts.product(vite_dev_ports).map { |h, p| "http://#{h}:#{p}" }
+      vite_https_origins = vite_hosts.product(vite_dev_ports).map { |h, p| "https://#{h}:#{p}" }
 
       # Script + style tags, dynamic module fetches, CSS HMR, and source map fetches
-      policy.script_src(*policy.script_src, *vite_http_origins)
-      policy.style_src(*policy.style_src, *vite_http_origins)
+      policy.script_src(*policy.script_src, *vite_http_origins, *vite_https_origins)
+      policy.style_src(*policy.style_src, *vite_http_origins, *vite_https_origins)
 
-      # connect-src needs HTTP (module preloads / import analysis requests) and WS for HMR
-      policy.connect_src(*policy.connect_src, *vite_http_origins)
+      # connect-src needs HTTP (module preloads / import analysis requests) and WS/WSS for HMR
+      policy.connect_src(*policy.connect_src, *vite_http_origins, *vite_https_origins)
       policy.connect_src(*policy.connect_src, *vite_http_origins.map { |o| o.sub("http://", "ws://") })
+      policy.connect_src(*policy.connect_src, *vite_https_origins.map { |o| o.sub("https://", "wss://") })
     end
 
     # Allow generic WebSocket scheme (ws:) so localhost or custom ports work when not using SSL

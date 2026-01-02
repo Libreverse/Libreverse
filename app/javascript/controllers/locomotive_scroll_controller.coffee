@@ -19,6 +19,11 @@ export default class extends Controller
 
   init: ->
     try
+      # Check if LocomotiveScroll is available before initializing
+      if typeof LocomotiveScroll is 'undefined'
+        console.error "LocomotiveScroll is not available - library may not be loaded properly"
+        return
+
       @scroll ||= new LocomotiveScroll({
         el: @element or document.querySelector('[data-scroll-container]') or document.body,
         smooth: true,
@@ -45,6 +50,7 @@ export default class extends Controller
         document.dispatchEvent(event)
     catch error
       console.error "Failed to initialize LocomotiveScroll:", error
+      # Don't re-throw to prevent breaking the page load
     return
 
   destroy: ->

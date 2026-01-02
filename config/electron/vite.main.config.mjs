@@ -1,8 +1,11 @@
+// NOTE: Do NOT load v8-compile-cache in this config.
+// Under Node 25, it can break Vite's CJS shim (vite/index.cjs) which uses dynamic import,
+// leading to: ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING.
 import { defineConfig } from "vite";
 import path from "node:path";
 import babel from "vite-plugin-babel";
-import coffeescript from "../../plugins/coffeescript.js";
-import typehints from "../../plugins/typehints.js";
+import coffeescript from "../../plugins/coffeescript.mjs";
+import typehints from "../../plugins/typehints.mjs";
 import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
 import { bytecodePlugin } from "vite-plugin-bytecode2";
 import { purgePolyfills } from "unplugin-purge-polyfills";
@@ -15,7 +18,7 @@ import {
     createEsbuildConfig,
     createOptimizeDepsForce,
     createTypehintPlugin,
-} from "../vite/common.js";
+} from "../vite/common.mjs";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";

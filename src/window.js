@@ -1,13 +1,139 @@
-import { BrowserWindow, screen } from "electron";
+import { BrowserWindow, screen, WebContentsView } from "electron";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import net from "node:net";
+import isDev from "electron-is-dev";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const retryableChromiumErrorCodes = new Set([
+    -3, -100, -102, -105, -106, -108, -109, -111,
+]);
+const retryableElectronErrorCodes = new Set(["ERR_ABORTED"]);
+const retryableNodeErrorCodes = new Set([
+    "ECONNREFUSED",
+    "ECONNRESET",
+    "EHOSTUNREACH",
+    "ENETUNREACH",
+    "ETIMEDOUT",
+]);
+
+const normalizeErrorCode = (code) => {
+    if (typeof code === "string" && /^-?\d+$/.test(code)) {
+        return Number.parseInt(code, 10);
+    }
+    return code;
+};
+
+const isRetryableLoadError = (err) => {
+    const rawCode = err?.code ?? err?.errno;
+    const code = normalizeErrorCode(rawCode);
+    return (
+        retryableChromiumErrorCodes.has(code) ||
+        retryableElectronErrorCodes.has(code) ||
+        retryableNodeErrorCodes.has(code) ||
+        err?.message === "tcp_timeout"
+    );
+};
+
+const getTcpProbeForUrl = (rawUrl) => {
+    try {
+        const u = new URL(rawUrl);
+        const isLocalhost =
+            u.hostname === "localhost" ||
+            u.hostname === "127.0.0.1" ||
+            u.hostname === "::1";
+        const isHttp = u.protocol === "http:" || u.protocol === "https:";
+        if (!isLocalhost || !isHttp) return null;
+
+        const port = u.port
+            ? Number.parseInt(u.port, 10)
+            : u.protocol === "https:"
+              ? 443
+              : 80;
+
+        return { host: u.hostname, port };
+    } catch {
+        return null;
+    }
+};
+
+const waitForTcp = async (host, port, timeoutMs = 750) => {
+    return await new Promise((resolve, reject) => {
+        const socket = net.createConnection({ host, port });
+
+        const timeout = setTimeout(() => {
+            socket.destroy();
+            reject(new Error("tcp_timeout"));
+        }, timeoutMs);
+
+        socket.once("connect", () => {
+            clearTimeout(timeout);
+            socket.end();
+            resolve(true);
+        });
+
+        socket.once("error", (err) => {
+            clearTimeout(timeout);
+            socket.destroy();
+            reject(err);
+        });
+    });
+};
+
+const buildWaitingPageUrl = (targetUrl) => {
+    const html = `<html><body style="background:#0e0e0e;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;max-width:640px;padding:24px;"><h1>Libreverse</h1><p>Waiting for <code>${targetUrl}</code></p><p>Start Rails with: <code>bin/dev</code></p><p>Retrying automatically…</p></div></body></html>`;
+    return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
+};
+
+const buildFatalPageUrl = (targetUrl, err) => {
+    const rawCode = err?.code ?? err?.errno;
+    const code = rawCode == null ? "" : String(rawCode);
+    const message = err?.message ? String(err.message) : "Unknown error";
+    const html = `<html><body style="background:#0e0e0e;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;max-width:640px;padding:24px;"><h1>Libreverse</h1><p>Failed to load <code>${targetUrl}</code></p><p><code>${code}</code> ${message}</p></div></body></html>`;
+    return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
+};
+
+const loadUrlWithPeriodicRetry = async (
+    win,
+    targetUrl,
+    { retryIntervalMs = 2000, tcpTimeoutMs = 750 } = {},
+) => {
+    const tcpProbe = getTcpProbeForUrl(targetUrl);
+    const waitingPageUrl = buildWaitingPageUrl(targetUrl);
+
+    while (!win.isDestroyed()) {
+        try {
+            if (tcpProbe) {
+                await waitForTcp(tcpProbe.host, tcpProbe.port, tcpTimeoutMs);
+            }
+
+            await win.loadURL(targetUrl);
+            return true;
+        } catch (err) {
+            const shouldRetry = tcpProbe && isRetryableLoadError(err);
+            if (!shouldRetry) throw err;
+
+            try {
+                if (!win.isDestroyed() && win.webContents.getURL() !== waitingPageUrl) {
+                    await win.loadURL(waitingPageUrl);
+                }
+            } catch {
+                // ignore
+            }
+
+            await sleep(retryIntervalMs);
+        }
+    }
+
+    return false;
+};
+
 export default ({
-    isDev: isDevelopment = false,
+    isDev: isDevelopment = isDev,
     url = "https://localhost:3000",
 } = {}) => {
     const primary = screen.getPrimaryDisplay();
@@ -22,156 +148,180 @@ export default ({
             preload: path.join(__dirname, "preload.js"),
             contextIsolation: true,
             nodeIntegration: false,
-            enableRemoteModule: false,
         },
         show: false,
         title: "Libreverse",
     });
 
-    const loadUrlWithRetry = async (targetUrl, { maxAttempts = 30 } = {}) => {
-        let attempt = 0;
 
-        const waitForTcp = async (host, port, timeoutMs = 750) => {
-            return await new Promise((resolve, reject) => {
-                const socket = net.createConnection({ host, port });
-
-                const timeout = setTimeout(() => {
-                    socket.destroy();
-                    reject(new Error("tcp_timeout"));
-                }, timeoutMs);
-
-                socket.once("connect", () => {
-                    clearTimeout(timeout);
-                    socket.end();
-                    resolve(true);
-                });
-
-                socket.once("error", (err) => {
-                    clearTimeout(timeout);
-                    socket.destroy();
-                    reject(err);
-                });
-            });
-        };
-
-        // Chromium net error codes are negative numbers.
-        // -100: ERR_CONNECTION_CLOSED
-        // -102: ERR_CONNECTION_REFUSED
-        // -105: ERR_NAME_NOT_RESOLVED
-        // -106: ERR_INTERNET_DISCONNECTED
-        // -108: ERR_ADDRESS_INVALID
-        // -109: ERR_ADDRESS_UNREACHABLE
-        // -111: ERR_TUNNEL_CONNECTION_FAILED
-        const retryableErrorCodes = new Set([
-            // -3: ERR_ABORTED (often transient during dev server rebuilds)
-            -3, -100, -102, -105, -106, -108, -109, -111,
-        ]);
-
-        // Some Electron/Chromium errors expose the symbolic code string.
-        const retryableElectronErrorCodes = new Set(["ERR_ABORTED"]);
-
-        const retryableNodeErrorCodes = new Set([
-            "ECONNREFUSED",
-            "ECONNRESET",
-            "EHOSTUNREACH",
-            "ENETUNREACH",
-            "ETIMEDOUT",
-        ]);
-
-        while (attempt < maxAttempts && !mainWindow.isDestroyed()) {
-            try {
-                // When using the local dev proxy, Chromium can log noisy TLS/handshake
-                // errors if we attempt to load the URL before the proxy is listening.
-                // Avoid that by waiting until the port is reachable.
-                try {
-                    const u = new URL(targetUrl);
-                    const isLocalhost =
-                        u.hostname === "localhost" ||
-                        u.hostname === "127.0.0.1" ||
-                        u.hostname === "::1";
-                    const isHttp =
-                        u.protocol === "http:" || u.protocol === "https:";
-
-                    if (isLocalhost && isHttp) {
-                        const port = u.port
-                            ? Number.parseInt(u.port, 10)
-                            : u.protocol === "https:"
-                              ? 443
-                              : 80;
-                        await waitForTcp(u.hostname, port);
-                    }
-                } catch {
-                    // Ignore URL parsing errors and attempt to load anyway.
-                }
-
-                await mainWindow.loadURL(targetUrl);
-                return;
-            } catch (err) {
-                attempt += 1;
-
-                const errorCode = err?.code;
-                const retryable =
-                    retryableErrorCodes.has(errorCode) ||
-                    retryableElectronErrorCodes.has(errorCode) ||
-                    retryableNodeErrorCodes.has(errorCode) ||
-                    err?.message === "tcp_timeout";
-
-                if (!retryable || attempt >= maxAttempts) {
-                    throw err;
-                }
-
-                const delayMs = Math.min(10_000, 250 * 2 ** (attempt - 1));
-                await new Promise((resolve) => setTimeout(resolve, delayMs));
-            }
+    // Create titlebar view only
+    const titlebarView = new WebContentsView({
+        webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: false,
+            enableRemoteModule: false,
+            transparent: true,
+            backgroundColor: 'transparent',
         }
+    });
+    
+    // Add titlebar view to main window
+    mainWindow.contentView.addChildView(titlebarView);
+    
+    // Position titlebar at top
+    const resizeTitlebar = () => {
+        const { width } = mainWindow.getBounds();
+        
+        titlebarView.setBounds({
+            x: 0,
+            y: 0,
+            width: width,
+            height: 32
+        });
     };
-
-    if (
-        typeof MAIN_WINDOW_VITE_DEV_SERVER_URL !== "undefined" &&
-        MAIN_WINDOW_VITE_DEV_SERVER_URL
-    ) {
-        let devServerUrl = MAIN_WINDOW_VITE_DEV_SERVER_URL;
-        try {
-            const u = new URL(devServerUrl);
-            if (
-                u.protocol === "http:" &&
-                (u.hostname === "localhost" ||
-                    u.hostname === "127.0.0.1" ||
-                    u.hostname === "::1")
-            ) {
-                u.protocol = "https:";
-                devServerUrl = u.toString();
-            }
-        } catch {
-            // ignore
-        }
-
-        devServerUrl = devServerUrl.replace(/\/$/, "");
-        void loadUrlWithRetry(
-            `${devServerUrl}?target=${encodeURIComponent(url)}`,
-        ).catch((err) => {
-            console.error("Failed to load dev server URL", err);
-        });
-    } else if (
-        typeof MAIN_WINDOW_VITE_NAME !== "undefined" &&
-        MAIN_WINDOW_VITE_NAME
-    ) {
-        mainWindow.loadFile(
-            path.join(
-                __dirname,
-                `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`,
-            ),
-            { query: { target: url } },
+    
+    // Handle window resize
+    mainWindow.on('resize', resizeTitlebar);
+    
+    if (isDevelopment) {
+        mainWindow.webContents.on(
+            "did-fail-load",
+            (event, errorCode, errorDescription, validatedURL) => {
+                console.log(
+                    "MAIN: Failed to load:",
+                    errorCode,
+                    errorDescription,
+                    validatedURL,
+                );
+            },
         );
-    } else {
-        void loadUrlWithRetry(url).catch((err) => {
-            console.error("Failed to load app URL", err);
-        });
     }
 
-    mainWindow.once("ready-to-show", () => {
+    loadUrlWithPeriodicRetry(mainWindow, url).catch((err) => {
+        console.error("Failed to load main URL:", err);
+        if (mainWindow.isDestroyed()) return;
+        mainWindow.loadURL(buildFatalPageUrl(url, err));
+    });
+    
+    // Load titlebar content
+    console.log('Loading titlebar content...');
+    const titlebarHTML = `
+        <!doctype html>
+        <html>
+        <head>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    height: 32px;
+                    background: transparent;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 10px;
+                    box-sizing: border-box;
+                    -webkit-app-region: drag;
+                }
+                .traffic-lights {
+                    -webkit-app-region: no-drag;
+                    display: flex;
+                    gap: 8px;
+                }
+                .traffic-light {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                }
+                .close { background-color: #ff5f57; }
+                .minimize { background-color: #ffbd2e; }
+                .maximize { background-color: #28ca42; }
+            </style>
+        </head>
+        <body>
+            <div class="traffic-lights">
+                <div class="traffic-light close" id="close"></div>
+                <div class="traffic-light minimize" id="minimize"></div>
+                <div class="traffic-light maximize" id="maximize"></div>
+            </div>
+        </body>
+        </html>
+    `;
+    titlebarView.webContents.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(titlebarHTML)}`);
+    
+    // Add titlebar event listeners for debugging
+    titlebarView.webContents.on('did-finish-load', () => {
+        console.log('EVENT: Titlebar finished loading');
+        console.log('Titlebar URL:', titlebarView.webContents.getURL());
+        
+        // Add click handlers - use main process directly
+        titlebarView.webContents.executeJavaScript(`
+            console.log('Setting up click handlers...');
+            
+            try {
+                document.getElementById('close').addEventListener('click', () => {
+                    console.log('Close button clicked');
+                    // Send message to main process via titlebar view
+                    document.title = 'CLOSE_WINDOW';
+                });
+                
+                document.getElementById('minimize').addEventListener('click', () => {
+                    console.log('Minimize button clicked');
+                    // Send message to main process via titlebar view
+                    document.title = 'MINIMIZE_WINDOW';
+                });
+                
+                document.getElementById('maximize').addEventListener('click', () => {
+                    console.log('Maximize button clicked');
+                    // Send message to main process via titlebar view
+                    document.title = 'MAXIMIZE_WINDOW';
+                });
+                
+                console.log('Click handlers set up successfully');
+            } catch (error) {
+                console.error('Error setting up click handlers:', error);
+            }
+        `);
+        
+        // Listen for title changes to detect clicks
+        titlebarView.webContents.on('page-title-updated', (event, title) => {
+            console.log('Titlebar title changed:', title);
+            if (title === 'CLOSE_WINDOW') {
+                mainWindow.close();
+            } else if (title === 'MINIMIZE_WINDOW') {
+                mainWindow.minimize();
+            } else if (title === 'MAXIMIZE_WINDOW') {
+                if (mainWindow.isMaximized()) {
+                    mainWindow.unmaximize();
+                } else {
+                    mainWindow.maximize();
+                }
+            }
+        });
+        
+        // Add console error listener
+        titlebarView.webContents.on('console-message', (event, level, message, line, sourceId) => {
+            console.log('Titlebar console:', level, message);
+        });
+    });
+    
+    titlebarView.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+        console.log('EVENT: Titlebar failed to load:', errorCode, errorDescription);
+    });
+    
+    // Wait for window to be ready before showing
+    mainWindow.once('ready-to-show', () => {
+        resizeTitlebar();
+        
+        // Show window
         mainWindow.show();
         mainWindow.focus();
+        
+        // DevTools can be opened manually when needed
+        // if (isDevelopment) {
+        //     mainWindow.webContents.openDevTools({ mode: 'detach' });
+        // }
+        
+        return { mainWindow, titlebarView };
     });
 
     return mainWindow;

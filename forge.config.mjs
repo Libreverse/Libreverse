@@ -1,7 +1,10 @@
-const { FusesPlugin } = require("@electron-forge/plugin-fuses");
-const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+// NOTE: Do NOT load v8-compile-cache in the Electron Forge config process.
+// Under Node 25, it can break Vite's CJS shim (vite/index.cjs) which uses dynamic import,
+// leading to: ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING.
+import { FusesPlugin } from "@electron-forge/plugin-fuses";
+import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
-module.exports = {
+export default {
     packagerConfig: {
         asar: true,
         // Bundle mimalloc as a non-ASAR resource so it can be preloaded via DYLD_INSERT_LIBRARIES.
@@ -38,17 +41,17 @@ module.exports = {
                 build: [
                     {
                         entry: "src/index.js",
-                        config: "config/electron/vite.main.config.js",
+                        config: "config/electron/vite.main.config.mjs",
                     },
                     {
                         entry: "src/preload.js",
-                        config: "config/electron/vite.preload.config.js",
+                        config: "config/electron/vite.preload.config.mjs",
                     },
                 ],
                 renderer: [
                     {
                         name: "main_window",
-                        config: "config/electron/vite.renderer.config.js",
+                        config: "config/electron/vite.renderer.config.mjs",
                     },
                 ],
             },

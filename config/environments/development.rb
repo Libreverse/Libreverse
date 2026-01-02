@@ -15,9 +15,9 @@ Rails.application.configure do
                        same_site: :none,
                        secure: true
 
-  # Configure ActionCable URL for consistency
-  # Use default port for development (3000)
-  config.action_cable.url = "wss://localhost:3000/cable"
+  # Configure ActionCable URL to connect directly to AnyCable
+  # Must match the websocket_url in config/anycable.yml
+  config.action_cable.url = "ws://localhost:8080/cable"
   config.action_cable.allowed_request_origins = [
     "https://localhost:3000",
     "https://127.0.0.1:3000",
@@ -33,7 +33,6 @@ Rails.application.configure do
 
   # Settings specified here will take precedence over those in config/application.rb.
   config.enable_reloading = true
-  config.eager_load = true
 
   # Show full error reports.
   config.consider_all_requests_local = true

@@ -2,13 +2,16 @@
 # shareable_constant_value: literal
 
 class ExperienceChannel < ApplicationCable::Channel
+  state_attr_accessor :session_id, :peer_id
+
   def subscribed
-    @session_id = params[:session_id]
-    @peer_id = params[:peer_id]
+    self.session_id = params[:session_id]
+    self.peer_id = params[:peer_id]
 
-    reject unless @session_id.present? && @peer_id.present?
+    reject unless session_id.present? && peer_id.present?
 
-    stream_from "experience_session_#{@session_id}"
+    # Use signed stream for stateless subscription
+    stream_from signed_stream_name("experience_session_#{session_id}")
 
     # Send current state to the new peer
     transmit({
@@ -22,10 +25,10 @@ class ExperienceChannel < ApplicationCable::Channel
   def unsubscribed
     # Persist state to DB when a user leaves
     # We parse the experience ID from the session ID (format: exp_{id}_{random})
-    return unless @session_id.match?(/^exp_\d+_/)
+    return unless session_id.match?(/^exp_\d+_/)
 
-      experience_id = @session_id.split("_")[1]
-      ExperienceStatePersistJob.perform_later(experience_id, @session_id)
+      experience_id = session_id.split("_")[1]
+      ExperienceStatePersistJob.perform_later(experience_id, session_id)
   end
 
   def receive(data)
@@ -47,7 +50,7 @@ class ExperienceChannel < ApplicationCable::Channel
   def current_state_hash
     # Use Kredis to store the state as a hash
     # Key: experience_state:{session_id}
-    Kredis.hash("experience_state:#{@session_id}")
+    Kredis.hash("experience_state:#{session_id}")
   end
 
   def handle_update(data)
@@ -69,14 +72,17 @@ class ExperienceChannel < ApplicationCable::Channel
       current_state_hash[key] = value
     end
 
-    # Broadcast to others
-    ActionCable.server.broadcast("experience_session_#{@session_id}", {
-                                   api_version: 1,
-                                   type: "state_update",
-                                   key: key,
-                                   value: value,
-                                   from_peer_id: @peer_id,
-                                   timestamp: Time.current.to_i
-                                 })
+    # Broadcast to others using signed stream
+    ActionCable.server.broadcast(
+      signed_stream_name("experience_session_#{session_id}"), 
+      {
+        api_version: 1,
+        type: "state_update",
+        key: key,
+        value: value,
+        from_peer_id: peer_id,
+        timestamp: Time.current.to_i
+      }
+    )
   end
 end

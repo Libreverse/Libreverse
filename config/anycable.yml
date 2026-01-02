@@ -1,0 +1,71 @@
+# This file contains per-environment settings for AnyCable Rails integration
+# (NOT the AnyCable server).
+#
+# The settings specified here would be overriden by the corresponding values in Rails credentials (e.g., `anycable.secret`), or environment variables (e.g., ANYCABLE_SECRET), or any other configuration
+# sources supported by Anyway Config (https://github.com/palkan/anyway_config).
+#
+default: &default
+  # Turn on/off access logs ("Started..." and "Finished...")
+  access_logs_disabled: false
+  # Whether to enable gRPC level logging or not
+  log_grpc: false
+  # Use HTTP broadcaster by default
+  broadcast_adapter: http
+  # This values MUST be the same as in your AnyCable server configuration
+  secret: "anycable-local-secret"
+  # WebSocket endpoint of your AnyCable server for clients to connect to
+  # IMPORTANT: Make sure you have the `action_cable_meta_tag` in your HTML layout
+  # to propogate this value to the client app.
+  # Make sure your AnyCable server runs on port 8080 in development.
+  websocket_url: "ws://localhost:8080/cable"
+  
+  # JWT configuration for stateless authentication
+  jwt:
+    # Enable JWT identification
+    enabled: true
+    # JWT secret key (should be the same as AnyCable server)
+    secret: "anycable-jwt-secret-key-change-in-production"
+    # JWT expiration time (1 hour)
+    expiration: 3600
+    # JWT algorithm
+    algorithm: "HS256"
+  
+  # Signed streams configuration for Hotwire optimization
+  signed_streams:
+    # Enable signed streams for stateless subscriptions
+    enabled: true
+    # Secret for signing streams (should be the same as AnyCable server)
+    secret: "anycable-streams-secret-change-in-production"
+    # Token expiration (30 minutes)
+    expiration: 1800
+  
+  # Public streams for read-only public data
+  public_streams:
+    # Enable public streams without authentication
+    enabled: true
+    # Public stream patterns (comma-separated)
+    patterns: "public_*,announcements_*,live_scores_*"
+  
+  # Reliable streams configuration
+  reliable_streams:
+    # Enable reliable streams with history
+    enabled: true
+    # History size per stream
+    history_size: 50
+    # History TTL in seconds
+    history_ttl: 300
+
+development:
+  <<: *default
+
+# Read more about running AnyCable in test env:
+# https://docs.anycable.io/rails/getting_started?id=testing-with-anycable
+test:
+  <<: *default
+
+production:
+  <<: *default
+  # Use ANYCABLE_WEBSOCKET_URL and ANYCABLE_SECRET environment variables
+  # or credentials or whatever.
+  websocket_url: ~
+  secret: ~

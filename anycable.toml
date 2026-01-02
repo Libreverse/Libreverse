@@ -1,0 +1,94 @@
+# AnyCable server configuration.
+#
+# Read more at https://docs.anycable.io/anycable-go/configuration
+
+# Public mode disables connection authentication, pub/sub streams and broadcasts verification
+# public = false
+
+# The application secret key: it's used to verify JWT tokens, signed streams, etc.
+# In development, it MUST match the value in the `config/anycable.yml`.
+# IMPORTANT: Make sure you provided a secret in production via the ANYCABLE_SECRET env var
+# if you use this configuration file.
+secret = "anycable-local-secret"
+
+# JWT secret for stateless authentication (must match Rails config)
+jwt_secret = "anycable-jwt-secret-key-change-in-production"
+
+# Signed streams secret for Turbo optimization (must match Rails config)
+streams_secret = "anycable-streams-secret-change-in-production"
+
+# Enable AnyCable power features such as reliable streams and resumable sessions.
+# Read more:
+#  - https://docs.anycable.io/anycable-go/reliable_streams
+presets = ["broker", "reliable_streams"]
+
+# Broadcasting adapters for app-to-clients messages.
+# You one of the specified adapters in the config/anycable.yml.
+# Read more in https://docs.anycable.io/anycable-go/broadcasting.
+broadcast_adapters = ["http", "redisx"]
+
+# Pub/sub adapter for inter-node communication in a production cluster
+# IMPORTANT: In production, when running AnyCable in a cluster mode,
+# make sure to enable pub/sub adapter via the ANYCABLE_PUBSUB_ADAPTER env var
+# pubsub_adapter = "redis" # or "nats"
+
+[logging]
+debug = true
+
+# RPC is used to authorized subscriptions and perform channel actions.
+# You only need it if you use custom Action Cable channel classes.
+# Read more: https://docs.anycable.io/anycable-go/rpc
+[rpc]
+# AnyCable is running in a standalone mode with minimal RPC for JWT authentication
+# Read more: https://docs.anycable.io/anycable-go/getting_started?id=standalone-mode-pubsub-only
+implementation = "none"
+
+# Connection optimization settings
+[connection]
+# Maximum number of concurrent connections
+max_connections = 10000
+# Connection read/write timeouts (seconds)
+read_timeout = 30
+write_timeout = 15
+# Disconnect rate limiting (disconnects per second)
+disconnect_rate = 100
+# Slow client protection
+slow_client_threshold = 5
+
+# Signed and public streams configuration.
+# Read more: https://docs.anycable.io/anycable-go/signed_streams
+[streams]
+# Enable public (unsigned) streams for read-only data
+public = true
+# Public stream patterns (comma-separated)
+public_patterns = "public_*,announcements_*,live_scores_*"
+# Enable whispering support for pub/sub streams
+whisper = true
+# Authorize Turbo Streams at the AnyCable server side.
+# IMPORTANT: Make sure your Turbo verifier key is the same as AnyCable secret.
+# Add this line to your Rails configuration (if missing):
+#
+#  config.turbo.signed_stream_verifier_key = AnyCable.config.secret
+#
+turbo = true
+
+# Reliable streams configuration for message recovery
+[reliable_streams]
+# Enable reliable streams
+enabled = true
+# History size per stream (number of messages to keep)
+history_size = 50
+# History TTL (how long to keep messages, in seconds)
+history_ttl = 300
+# History cleanup interval (in seconds)
+cleanup_interval = 60
+
+[redis]
+# IMPORTANT: In production, provide Redis address via the REDIS_URL or ANYCABLE_REDIS_URL env var
+url = "redis://localhost:6379/1"
+# Connection pool settings
+max_connections = 20
+min_connections = 5
+# Redis pub/sub channel prefix
+channel_prefix = "anycable"
+

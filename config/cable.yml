@@ -1,15 +1,14 @@
-# ActionCable uses Redis/DragonflyDB for pub/sub across all environments
-# This enables real-time features to work across multiple server processes/instances
+# AnyCable configuration with Redis pub/sub backend
+# AnyCable-Go handles WebSocket connections, Rails handles broadcasting
 
 development:
-    adapter: redis
-    url: <%= ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/1" } %>
+    adapter: any_cable
     channel_prefix: libreverse_development
 
 test:
-    adapter: test
+    adapter: any_cable
+    channel_prefix: libreverse_test
 
 production:
-    adapter: redis
-    url: <%= ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/1" } %>
+    adapter: any_cable
     channel_prefix: libreverse_production

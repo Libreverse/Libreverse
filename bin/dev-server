@@ -144,4 +144,4 @@ print $message_color, '🗄️', " Checking/Starting databases...\n", $RESET;
 system("bin/db-start") == 0 or warn "Failed to start databases\n";
 print "\n";
 
-exec 'overmind', 'start', '-f', 'config/dev-processes.yml', @ARGV;
+exec 'overmind', 'start', '-f', 'config/dev-processes.yml'

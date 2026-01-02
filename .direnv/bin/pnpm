@@ -1,25 +1,41 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Enforce Socket Firewall for all pnpm usage in this repo.
-# If sfw cannot run, we fail hard (no bypass/fallback).
-if ! command -v sfw >/dev/null 2>&1; then
-  echo "❌ sfw (Socket Firewall) is required in this project." >&2
-  echo "   Install it globally (bypassing project-local npm wrapper):" >&2
-  echo "     /Users/george/.nvm/versions/node/v25.2.1/bin/npm i -g sfw" >&2
-  exit 127
-fi
-
-# Avoid infinite recursion:
-# sfw will exec pnpm; ensure it resolves to the real pnpm, not this wrapper.
 WRAPPER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Strip the wrapper dir from PATH so we always resolve the real pnpm binary.
 CLEAN_PATH=""
-IFS=':' read -r -a _sfw_path_parts <<< "${PATH:-}"
-for _p in "${_sfw_path_parts[@]}"; do
+IFS=':' read -r -a _path_parts <<< "${PATH:-}"
+for _p in "${_path_parts[@]}"; do
   [[ -z "${_p}" ]] && continue
   [[ "${_p}" == "${WRAPPER_DIR}" ]] && continue
   CLEAN_PATH="${CLEAN_PATH:+${CLEAN_PATH}:}${_p}"
 done
 
-exec env PATH="${CLEAN_PATH}" sfw pnpm "$@"
+resolve_primary_command() {
+  for arg in "$@"; do
+    [[ "${arg}" == "--" ]] && break
+    [[ "${arg}" == -* ]] && continue
+    printf '%s' "${arg}"
+    return 0
+  done
+  return 1
+}
+
+PRIMARY_CMD="$(resolve_primary_command "$@" || true)"
+[[ -z "${PRIMARY_CMD}" ]] && PRIMARY_CMD="install"
+
+case "${PRIMARY_CMD}" in
+  install|i|add|update|up|import|fetch|link|unlink|remove|rm|dedupe)
+    if ! command -v sfw >/dev/null 2>&1; then
+      echo "❌ sfw (Socket Firewall) is required for pnpm ${PRIMARY_CMD} commands in this project." >&2
+      echo "   Install it globally (bypassing project-local npm wrapper):" >&2
+      echo "     /Users/george/.nvm/versions/node/v25.2.1/bin/npm i -g sfw" >&2
+      exit 127
+    fi
+    exec env PATH="${CLEAN_PATH}" sfw pnpm "$@"
+    ;;
+  *)
+    exec env PATH="${CLEAN_PATH}" pnpm "$@"
+    ;;
+esac

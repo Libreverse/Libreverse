@@ -1,3 +1,4 @@
+import "v8-compile-cache";
 import { defineConfig } from "vite";
 import path from "node:path";
 import fs from "node:fs";
@@ -34,6 +35,21 @@ import {
     createTypehintPlugin,
     devViteSecurityHeaders,
 } from "./config/vite/common.js";
+
+const mkcertDefaults = {
+    cert: process.env.MKCERT_CERT_PATH || "/tmp/mkcert-dev-certs/localhost.pem",
+    key: process.env.MKCERT_KEY_PATH || "/tmp/mkcert-dev-certs/localhost-key.pem",
+};
+
+function buildHttpsOptions() {
+    if (!fs.existsSync(mkcertDefaults.cert) || !fs.existsSync(mkcertDefaults.key)) {
+        return undefined;
+    }
+    return {
+        cert: fs.readFileSync(mkcertDefaults.cert),
+        key: fs.readFileSync(mkcertDefaults.key),
+    };
+}
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
@@ -92,7 +108,18 @@ export default defineConfig(({ mode }) => {
             },
         }),
         server: {
-            hmr: { overlay: true }, // Enable error overlay in development
+            host: "localhost",
+            port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
+            strictPort: true,
+            https: isDevelopment ? buildHttpsOptions() : undefined,
+            hmr: {
+                overlay: true,
+                protocol: isDevelopment && buildHttpsOptions() ? "wss" : "ws",
+                host: "localhost",
+                port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
+                clientPort: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
+            },
+            origin: isDevelopment && buildHttpsOptions() ? `https://localhost:${process.env.VITE_DEV_SERVER_PORT || 3001}` : undefined,
             headers: isDevelopment ? devViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development
         },

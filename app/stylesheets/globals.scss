@@ -9,6 +9,7 @@
 
 body {
     font-family: Hack;
+    contain: content !important;
 }
 
 *.glass-active {

@@ -6,7 +6,7 @@ worker_priority -5;
 
 events {
     worker_connections 8096;
-    accept_mutex off;
+    accept_mutex on;
     multi_accept off;
     <% if RUBY_PLATFORM.include?('darwin') %>
         use kqueue;  
@@ -62,24 +62,6 @@ http {
         <%= include_passenger_internal_template('rails_asset_pipeline.erb', 8, false) %>
         reset_timedout_connection on;
         passenger_env_var X-Accel-Mapping /storage/=/internal/storage/;
-        location /cable {
-            passenger_enabled on;
-            passenger_app_group_name libreverse_action_cable;
-            passenger_force_max_concurrent_requests_per_process 0;
-            proxy_read_timeout 86400s;
-            proxy_send_timeout 86400s;
-            proxy_set_header Connection "";
-        }
-        location ^~ /vite/ {
-            proxy_pass http://localhost:3001;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-        }
         location ^~ /_internal/storage/ {
             internal;
             alias /home/app/webapp/storage/;

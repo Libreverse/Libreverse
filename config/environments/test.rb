@@ -13,14 +13,7 @@ Rails.application.configure do
 
   # While tests run files are not watched, reloading is not necessary.
   # However, Spring requires reloading to be enabled for proper operation.
-  config.enable_reloading = true
-
-  # Eager loading loads your entire application. When running a single test locally,
-  # this is usually not necessary, and can slow down your test suite. However, it's
-  # recommended that you enable it in continuous integration systems to ensure eager
-  # loading is working properly before deploying your code.
-  # Enable eager loading on CI for better test coverage
-  config.eager_load = true
+  config.enable_reloading = false
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = false

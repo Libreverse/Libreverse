@@ -1,3 +1,6 @@
+// NOTE: Do NOT load v8-compile-cache in this config.
+// Under Node 25, it can break Vite's CJS shim (vite/index.cjs) which uses dynamic import,
+// leading to: ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING.
 import { defineConfig } from "vite";
 import path from "node:path";
 import fs from "node:fs";
@@ -6,14 +9,14 @@ import babel from "vite-plugin-babel";
 import postcssInlineRtl from "postcss-inline-rtl";
 import cssnano from "cssnano";
 import postcssUrl from "postcss-url";
-import coffeescript from "../../plugins/coffeescript.js";
-import typehints from "../../plugins/typehints.js";
+import coffeescript from "../../plugins/coffeescript.mjs";
+import typehints from "../../plugins/typehints.mjs";
 import postcssRemoveRoot from "postcss-remove-root";
 import cssMqpacker from "css-mqpacker";
 import stylehacks from "stylehacks";
 import postcssMqOptimize from "postcss-mq-optimize";
 import autoprefixer from "autoprefixer";
-import removePrefix from "../../plugins/postcss-remove-prefix.js";
+import removePrefix from "../../plugins/postcss-remove-prefix.mjs";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import legacy from "vite-plugin-legacy-swc";
 import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
@@ -29,7 +32,7 @@ import {
     createOptimizeDepsForce,
     createTypehintPlugin,
     devViteSecurityHeaders,
-} from "../vite/common.js";
+} from "../vite/common.mjs";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
