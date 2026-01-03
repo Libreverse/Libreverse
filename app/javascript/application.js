@@ -1,4 +1,5 @@
 import "../stylesheets/application.scss";
+import 'lenis/dist/lenis.css';
 // NOTE: Gem JS (timeago, thredded) loads via Sprockets - see app/assets/javascripts/thredded.js
 import "./libs/hashcash.js"; // ActiveHashcash proof-of-work for bot protection
 import debounced from "debounced";
@@ -304,77 +305,6 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
         }
     });
 })();
-
-function attachScrollbarEvents() {
-    const scrollbar = document.querySelector(".c-scrollbar");
-
-    if (scrollbar) {
-        const targetElement = document.body; // Or '.scroll-container' for scoped disabling
-
-        // Check if listeners are already attached using a data attribute
-        if (scrollbar.dataset.listenersAttached) {
-            return true; // Already attached, exit early
-        }
-
-        // Mouse events
-        scrollbar.addEventListener(
-            "mouseenter",
-            () => {
-                targetElement.classList.add("noselect");
-            },
-            { passive: true },
-        );
-
-        scrollbar.addEventListener(
-            "mouseleave",
-            () => {
-                targetElement.classList.remove("noselect");
-            },
-            { passive: true },
-        );
-
-        // Touch events for mobile
-        scrollbar.addEventListener(
-            "touchstart",
-            () => {
-                targetElement.classList.add("noselect");
-            },
-            { passive: true },
-        );
-
-        scrollbar.addEventListener(
-            "touchend",
-            () => {
-                targetElement.classList.remove("noselect");
-            },
-            { passive: true },
-        );
-
-        // Mark as attached
-        scrollbar.dataset.listenersAttached = "true";
-
-        return true; // Found and attached
-    }
-
-    return false; // Not found
-}
-
-// Initial check
-if (!attachScrollbarEvents()) {
-    // Watch for dynamic additions
-    const observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-            if (mutation.type === "childList" && attachScrollbarEvents()) {
-                observer.disconnect(); // Stop observing once attached
-            }
-        }
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-    });
-}
 
 import "trix"
 import "@rails/actiontext"

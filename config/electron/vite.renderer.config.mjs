@@ -32,7 +32,7 @@ import {
     createOptimizeDepsForce,
     createTypehintPlugin,
     devViteSecurityHeaders,
-} from "../vite/common.mjs";
+} from "../vite/common.js";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";

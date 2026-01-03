@@ -58,8 +58,8 @@ application.register("link", LinkController)
 import LlmController from "./llm_controller"
 application.register("llm", LlmController)
 
-import LocomotiveScrollController from "./locomotive_scroll_controller"
-application.register("locomotive-scroll", LocomotiveScrollController)
+import LenisController from "./lenis_controller"
+application.register("lenis", LenisController)
 
 import MetaverseMapController from "./metaverse_map_controller"
 application.register("metaverse-map", MetaverseMapController)

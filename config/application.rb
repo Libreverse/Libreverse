@@ -24,9 +24,6 @@ require "worker_killer/middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
-    # Make eager loading happen only in the web process since it's so memory intensive
-    config.eager_load = defined?(PhusionPassenger)
-    
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
@@ -485,3 +482,30 @@ end
 
 # Enable console1984 in production and staging by default
 Rails.application.config.console1984.protected_environments = %i[ production staging ]
+
+# Embedded Sidekiq configuration for PhusionPassenger
+# https://github.com/sidekiq/sidekiq/wiki/Embedded-Workers
+if defined?(PhusionPassenger)
+  $embedded_sidekiq = nil
+
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+      $embedded_sidekiq = Sidekiq.configure_embed do |config|
+        config.concurrency = 5
+        config.logger.level = Logger::INFO
+        config.poll_interval_average = 15
+        config.timeout = 25
+        config.max_retries = 25
+        config.dead_max_jobs = 10000
+        config.dead_timeout_in_seconds = 7776000
+      end
+      $embedded_sidekiq.run
+      Rails.logger.info "[Sidekiq] Embedded instance started in worker process"
+    end
+  end
+
+  PhusionPassenger.on_event(:stopping_worker_process) do
+    $embedded_sidekiq&.stop
+    Rails.logger.info "[Sidekiq] Embedded instance stopped in worker process"
+  end
+end

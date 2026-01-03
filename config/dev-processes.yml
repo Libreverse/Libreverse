@@ -1,11 +1,10 @@
 phusion-passenger: cd .. && bundle exec passenger start
-vite: cd .. && bin/vite dev > /dev/null 2>&1
-shakapacker-asset-server: cd .. && bin/shakapacker-dev-server > /dev/null 2>&1
-shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr > /dev/null 2>&1
-shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch > /dev/null 2>&1
-sidekiq: cd .. && bundle exec sidekiq -C config/sidekiq.yml > /dev/null 2>&1
-mailhog: cd .. && mailhog > /dev/null 2>&1
-stimulus-manifest-regenerator: cd .. && bin/manifest-isr > /dev/null 2>&1
-dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh > /dev/null 2>&1
-anycable-rpc: cd .. && bundle exec anycable --rpc-host 127.0.0.1:50051 > /dev/null 2>&1
-anycable-go: cd .. && bin/anycable-go --redis_url redis://localhost:6379/1 --port 3003 --path /cable --http_broadcast_port 8091 > /dev/null 2>&1
+vite: cd .. && bin/vite dev
+shakapacker-asset-server: cd .. && bin/shakapacker-dev-server  
+shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr  
+shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch  
+mailhog: cd .. && mailhog  
+stimulus-manifest-regenerator: cd .. && bin/manifest-isr  
+dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh  
+anycable-rpc: cd .. && bundle exec anycable --rpc-host 127.0.0.1:50051
+anycable-go: cd .. && bin/anycable-go --redis_url redis://localhost:6379/1 --port 3003 --path /cable --http_broadcast_port 8091

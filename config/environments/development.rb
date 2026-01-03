@@ -4,6 +4,8 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  config.eager_load = true
+
   # Dev runs behind an HTTPS reverse-proxy (Caddy). Treat requests as SSL so
   # secure cookies (e.g., profiler/session) and generated URLs stay scheme-consistent.
   config.assume_ssl = true

@@ -5,6 +5,7 @@ require "active_support/core_ext/integer/time"
 require "re2"
 
 Rails.application.configure do
+  config.eager_load = true
   # Prepare the ingress controller used to receive mail
   # config.action_mailbox.ingress = :relay
 

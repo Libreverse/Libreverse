@@ -69,3 +69,5 @@ Sidekiq.configure_server do |config|
     chain.add Sidekiq::WorkerKiller, max_rss: 2048, grace_time: 0
   end
 end
+
+Sidekiq.transactional_push!

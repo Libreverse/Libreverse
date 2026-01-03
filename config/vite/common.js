@@ -297,7 +297,7 @@ export function createBabelOptions(pathModule) {
             );
         },
         babelConfig: {
-            ignore: [], // Remove locomotive-scroll from ignore list to fix bundling
+            ignore: [/node_modules[\\/]locomotive-scroll/], // Exclude locomotive-scroll from all Babel processing to preserve sparse arrays
             babelrc: false,
             configFile: false,
             plugins: [

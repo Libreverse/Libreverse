@@ -15,7 +15,7 @@ localhost:3000 {
     }
 
     handle /vite/* {
-        reverse_proxy localhost:3001 {
+        reverse_proxy https://[::1]:3001 {
             header_up -Connection
             header_up -Upgrade
             # Handle WebSocket upgrade for HMR
@@ -25,7 +25,7 @@ localhost:3000 {
 
     # Handle @vite/client HMR requests
     handle @vite_client {
-        reverse_proxy localhost:3001 {
+        reverse_proxy https://[::1]:3001 {
             header_up -Connection
             header_up -Upgrade
             header_up Host {http.reverse_proxy.upstream.hostport}

@@ -108,7 +108,7 @@ export default defineConfig(({ mode }) => {
             },
         }),
         server: {
-            host: "localhost",
+            host: process.env.VITE_DEV_SERVER_HOST || "127.0.0.1",
             port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
             strictPort: true,
             https: isDevelopment ? buildHttpsOptions() : undefined,
