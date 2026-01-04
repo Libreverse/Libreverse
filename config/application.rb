@@ -491,7 +491,7 @@ if defined?(PhusionPassenger)
   PhusionPassenger.on_event(:starting_worker_process) do |forked|
     if forked
       $embedded_sidekiq = Sidekiq.configure_embed do |config|
-        config.concurrency = 5
+        config.concurrency = 8
         config.logger.level = Logger::INFO
         config.poll_interval_average = 15
         config.timeout = 25

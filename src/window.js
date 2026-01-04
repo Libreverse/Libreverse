@@ -153,6 +153,10 @@ export default ({
         title: "Libreverse",
     });
 
+    mainWindow.webContents.once('did-finish-load', () => {
+        mainWindow.webContents.setZoomLevel(2);  // Equivalent to two Cmd+/Ctrl+ + presses
+    });
+
 
     // Create titlebar view only
     const titlebarView = new WebContentsView({

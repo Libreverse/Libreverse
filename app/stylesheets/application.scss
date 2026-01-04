@@ -31,8 +31,7 @@
 @use "components/_metaverse_map";
 @use "glass_overrides";
 @use "lm";
-
-// Thredded styles (copied locally) - use relative import chain entry point
+@use 'lenis/dist/lenis.css';
 @import "thredded/thredded";
 
 html,
@@ -40,11 +39,8 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-    overflow: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    position: fixed;
-    overflow: hidden;
 }
 
 html::-webkit-scrollbar,
@@ -52,7 +48,44 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+.lenis-wrapper,
+.lenis {
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.lenis-wrapper::-webkit-scrollbar,
+.lenis::-webkit-scrollbar {
+    display: none;
+}
+
+.lenis-content {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+// Override Lenis default that sets html/body height to auto
+html.lenis,
+html.lenis body {
+    height: 100%;
+}
+
+// Optimize parallax elements for GPU acceleration
+[data-controller*="parallax"] {
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translateZ(0);
+}
+
 // Foundation overrides
 .alert {
     padding: 1rem;
+}
+
+.hidden {
+    display: none;
 }

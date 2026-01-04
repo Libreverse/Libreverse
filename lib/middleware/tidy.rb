@@ -33,15 +33,15 @@ class TidyMiddleware
         "-q", # quiet
         "-utf8",
         "-wrap", "0",
-        "--clean", "yes",
+        "--clean", "no",
         "--drop-proprietary-attributes", "no",
         "--force-output", "yes",
         "--show-warnings", "no",
-        "--tidy-mark", "no",
+        "--tidy-mark", "yes",
         "--output-html", "no",
         "--output-xhtml", "yes",
         "--output-xml", "no",
-        "--hide-comments", "yes", # preserve comments (fixed from your original 'yes')
+        "--hide-comments", "yes",
         "--bare", "no",
         "--logical-emphasis", "yes",
         "--drop-empty-paras", "yes",

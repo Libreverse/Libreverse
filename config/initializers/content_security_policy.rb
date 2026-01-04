@@ -12,10 +12,11 @@ Rails.application.configure do
     policy.manifest_src :self, :data # Allow inlined manifests as data URIs
 
     # ---- Dynamic script/style directives ----
-    script_sources = %i[self https unsafe_inline unsafe_eval data blob]
+    script_sources = %i[self https unsafe_inline data blob]
     style_sources  = %i[self https unsafe_inline data]
 
     # Removed nonce requirement to allow inline scripts/styles since our app inlines large Vite bundles.
+    # Only allow unsafe_eval in development for Vite HMR
 
     policy.script_src(*script_sources)
     policy.style_src(*style_sources)

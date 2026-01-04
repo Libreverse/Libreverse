@@ -1,2 +1,12 @@
-launchctl unload ~/Library/LaunchAgents/com.pingcap.tidb.plist
+#!/bin/bash
+
+# Try normal unload first
+if ! launchctl unload ~/Library/LaunchAgents/com.pingcap.tidb.plist 2>/dev/null; then
+    echo "Normal unload failed, trying force bootout..."
+    # Force bootout if normal unload fails
+    sudo launchctl bootout system/com.pingcap.tidb 2>/dev/null || \
+    launchctl bootout gui/$(id -u)/com.pingcap.tidb 2>/dev/null || \
+    echo "Service not loaded, proceeding with start..."
+fi
+
 launchctl start ~/Library/LaunchAgents/com.pingcap.tidb.plist

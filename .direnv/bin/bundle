@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WRAPPER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Strip the wrapper dir from PATH so we always resolve the real bundle binary.
+CLEAN_PATH=""
+IFS=':' read -r -a _path_parts <<< "${PATH:-}"
+for _p in "${_path_parts[@]}"; do
+  [[ -z "${_p}" ]] && continue
+  [[ "${_p}" == "${WRAPPER_DIR}" ]] && continue
+  CLEAN_PATH="${CLEAN_PATH:+${CLEAN_PATH}:}${_p}"
+done
+
+# Use TruffleRuby's bundle explicitly
+TRUFFLERUBY_BIN="/Users/george/.rubies/truffleruby-25.0.0/bin/truffleruby"
+if [[ -x "$TRUFFLERUBY_BIN" ]]; then
+  exec env PATH="${CLEAN_PATH}" LANG=en_US.UTF-8 "$TRUFFLERUBY_BIN" -S bundle "$@"
+else
+  echo "❌ TruffleRuby not found at $TRUFFLERUBY_BIN" >&2
+  exit 127
+fi
