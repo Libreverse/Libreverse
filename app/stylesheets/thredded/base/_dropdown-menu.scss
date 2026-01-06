@@ -1,7 +1,7 @@
 %thredded--dropdown-menu--container {
     position: relative;
     display: inline-block;
-    cursor: pointer;
+    cursor: default;
 
     &:hover {
         %thredded--dropdown-menu--toggle {
@@ -26,7 +26,7 @@
     overflow: hidden;
     min-width: 8.5rem;
     z-index: 3;
-    cursor: pointer;
+    cursor: default;
     box-shadow: $thredded-overlay-box-shadow;
     transform: scale(0);
     opacity: 0;
@@ -76,7 +76,7 @@ form.button_to > %thredded--dropdown-menu--actions--item {
         background-color: $thredded-button-background;
         color: $thredded-button-color;
         text-decoration: none;
-        cursor: pointer;
+        cursor: default;
     }
 
     &:active,

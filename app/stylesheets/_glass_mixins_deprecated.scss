@@ -32,7 +32,7 @@
         opacity 300ms ease-out;
     flex-shrink: 0;
     position: relative;
-    cursor: pointer;
+    cursor: default;
 
     &:active:not(.disabled) {
         transform: scale(0.97);
@@ -370,7 +370,7 @@
 
         border-radius: var(--glass-border-radius, 6px);
         padding: 8px 16px; // Smaller padding for square design
-        cursor: pointer;
+        cursor: default;
 
         &:hover {
             background: linear-gradient(

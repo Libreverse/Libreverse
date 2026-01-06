@@ -154,7 +154,7 @@ export default ({
     });
 
     mainWindow.webContents.once('did-finish-load', () => {
-        mainWindow.webContents.setZoomLevel(2);  // Equivalent to two Cmd+/Ctrl+ + presses
+        mainWindow.webContents.setZoomLevel(-1);  // Equivalent to two Cmd+/Ctrl+ + presses
     });
 
 
@@ -234,7 +234,7 @@ export default ({
                     width: 12px;
                     height: 12px;
                     border-radius: 50%;
-                    cursor: pointer;
+                    cursor: default;
                 }
                 .close { background-color: #ff5f57; }
                 .minimize { background-color: #ffbd2e; }

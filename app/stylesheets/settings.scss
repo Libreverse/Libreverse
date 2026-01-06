@@ -14,7 +14,7 @@
 
 .language-flag {
     font-size: 2rem;
-    cursor: pointer;
+    cursor: default;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,7 +51,7 @@
     background: variables.$white-10;
     color: variables.$dashboard-primary;
     text-align: center;
-    cursor: pointer;
+    cursor: default;
     transition: all 0.2s ease;
     font-size: 0.9rem;
     font-weight: 500;

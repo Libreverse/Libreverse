@@ -231,7 +231,7 @@ const setupTrafficLights = () => {
     .traffic-light {
       width: 12px;
       height: 12px;
-      cursor: pointer;
+      cursor: default;
       outline: none;
     }
   `;

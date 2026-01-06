@@ -18,6 +18,11 @@ body {
     }
 }
 
+a, button {
+    cursor: default;
+    user-select: none;
+}
+
 .noscript-message {
     position: fixed;
     inset: 0;

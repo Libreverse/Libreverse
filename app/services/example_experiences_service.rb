@@ -328,7 +328,7 @@ class ExampleExperiencesService
                     body { margin: 0; padding: 20px; font-family: 'Georgia', serif; background: #1a1a1a; color: #f0f0f0; line-height: 1.6; }
                     .story-container { max-width: 800px; margin: 0 auto; background: #2a2a2a; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
                     .choices { margin: 20px 0; }
-                    .choice-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #4a4a4a; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background 0.3s; }
+                    .choice-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #4a4a4a; color: white; border: none; border-radius: 8px; cursor: default; font-size: 16px; transition: background 0.3s; }
                     .choice-btn:hover { background: #5a5a5a; }
                     h1 { color: #ffd700; text-align: center; margin-bottom: 30px; }
                     .story-text { font-size: 18px; margin-bottom: 20px; }
@@ -472,7 +472,7 @@ class ExampleExperiencesService
                     .bar { width: 8px; background: linear-gradient(to top, #ff6b6b, #4ecdc4, #45b7d1); border-radius: 4px 4px 0 0; transition: height 0.1s ease; animation: pulse 2s infinite; }
                     @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
                     .controls { margin-top: 20px; text-align: center; }
-                    .btn { background: #4ecdc4; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin: 0 10px; font-size: 16px; transition: background 0.3s; }
+                    .btn { background: #4ecdc4; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: default; margin: 0 10px; font-size: 16px; transition: background 0.3s; }
                     .btn:hover { background: #45b7d1; }
                     h1 { margin-bottom: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                 </style>
@@ -569,14 +569,14 @@ class ExampleExperiencesService
                 <style>
                     body { margin: 0; padding: 0; background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 50%, #228B22 100%); font-family: Arial, sans-serif; height: 100vh; overflow: hidden; }
                     .garden { position: relative; width: 100%; height: 100%; }
-                    .flower { position: absolute; cursor: pointer; transition: transform 0.3s ease; }
+                    .flower { position: absolute; cursor: default; transition: transform 0.3s ease; }
                     .flower:hover { transform: scale(1.2); }
                     .sun { position: absolute; top: 50px; right: 50px; width: 80px; height: 80px; background: radial-gradient(circle, #FFD700, #FFA500); border-radius: 50%; animation: shine 3s ease-in-out infinite; }
                     @keyframes shine { 0%, 100% { box-shadow: 0 0 20px #FFD700; } 50% { box-shadow: 0 0 40px #FFD700; } }
                     .cloud { position: absolute; background: white; border-radius: 50px; opacity: 0.8; animation: float 10s linear infinite; }
                     .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50px; }
                     .controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); text-align: center; }
-                    .garden-btn { background: rgba(34, 139, 34, 0.8); color: white; border: none; padding: 10px 20px; border-radius: 20px; margin: 0 5px; cursor: pointer; }
+                    .garden-btn { background: rgba(34, 139, 34, 0.8); color: white; border: none; padding: 10px 20px; border-radius: 20px; margin: 0 5px; cursor: default; }
                     .garden-btn:hover { background: rgba(34, 139, 34, 1); }
                     .counter { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px; }
                 </style>
@@ -712,7 +712,7 @@ class ExampleExperiencesService
                 .title { font-size: 24px; margin-bottom: 20px; text-align: center; animation: glow 2s infinite alternate; }
                 @keyframes glow { from { text-shadow: 0 0 5px #00ff00; } to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; } }
                 .controls { margin-top: 20px; }
-                .btn { background: #444; color: #00ff00; border: 2px solid #00ff00; padding: 10px 20px; margin: 0 10px; cursor: pointer; font-family: inherit; font-size: 12px; }
+                .btn { background: #444; color: #00ff00; border: 2px solid #00ff00; padding: 10px 20px; margin: 0 10px; cursor: default; font-family: inherit; font-size: 12px; }
                 .btn:hover { background: #00ff00; color: #000; }
             </style>
         </head>
@@ -799,7 +799,7 @@ class ExampleExperiencesService
                 .mantra { font-size: 24px; margin: 20px 0; opacity: 0.8; font-style: italic; }
                 .timer { font-size: 18px; margin: 10px; }
                 .controls { margin-top: 30px; }
-                .zen-btn { background: transparent; color: #d4af37; border: 2px solid #d4af37; padding: 12px 24px; margin: 0 10px; border-radius: 25px; cursor: pointer; font-family: inherit; transition: all 0.3s; }
+                .zen-btn { background: transparent; color: #d4af37; border: 2px solid #d4af37; padding: 12px 24px; margin: 0 10px; border-radius: 25px; cursor: default; font-family: inherit; transition: all 0.3s; }
                 .zen-btn:hover { background: #d4af37; color: #1a0f0a; }
                 .sound-indicator { position: absolute; top: 20px; right: 20px; opacity: 0.6; }
             </style>

@@ -191,7 +191,6 @@ export default defineConfig(({ mode }) => {
                 "stimulus_reflex",
                 "cable_ready",
                 "@rails/actioncable",
-                "locomotive-scroll",
                 "@rails/request.js",
                 "stimulus-store",
                 "@hotwired/turbo-rails",

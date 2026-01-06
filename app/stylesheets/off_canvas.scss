@@ -88,7 +88,7 @@
         border: none;
         color: rgb(255 255 255 / 80%);
         font-size: 24px;
-        cursor: pointer;
+        cursor: default;
         width: 32px;
         height: 32px;
         display: flex;
@@ -225,7 +225,7 @@
 // Sidebar more button styling
 .sidebar-more-button {
     border: none;
-    cursor: pointer;
+    cursor: default;
     transition: all 0.2s ease;
 
     &:hover {

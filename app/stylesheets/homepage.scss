@@ -333,6 +333,8 @@
     line-height: 1.8;
     font-size: 1.5rem;
     padding-bottom: 2rem;
+    position: relative;
+    overflow: visible;
 }
 
 .cta-container {
@@ -359,7 +361,7 @@
         padding: 0.5rem 1rem;
         font-size: 1.2rem;
         border-radius: 10px;
-        cursor: pointer;
+        cursor: default;
         transition: transform 0.1s ease;
         border: none;
 

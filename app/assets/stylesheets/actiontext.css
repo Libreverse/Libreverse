@@ -58,7 +58,7 @@ trix-toolbar .trix-button {
     background: #cbeefa;
     color: black; }
   trix-toolbar .trix-button:not(:disabled) {
-    cursor: pointer; }
+    cursor: default; }
   trix-toolbar .trix-button:disabled {
     color: rgba(0, 0, 0, 0.125); }
   @media (max-width: 768px) {
@@ -280,7 +280,7 @@ trix-editor .trix-button {
   trix-editor .trix-button.trix-active {
     background: #cbeefa; }
   trix-editor .trix-button:not(:disabled) {
-    cursor: pointer; }
+    cursor: default; }
 
 trix-editor .trix-button--remove {
   text-indent: -9999px;

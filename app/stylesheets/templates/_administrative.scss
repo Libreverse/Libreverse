@@ -679,7 +679,7 @@
         // Nested class
         background: transparent;
         border: none;
-        cursor: pointer;
+        cursor: default;
         padding: 5px;
         border-radius: 50%;
         display: flex;
@@ -714,7 +714,7 @@
 %administrative-dismiss-button {
     background: transparent;
     border: none;
-    cursor: pointer;
+    cursor: default;
     padding: 5px;
     border-radius: 50%;
     display: flex;
@@ -818,7 +818,7 @@
     color: variables.$dashboard-primary;
     font-size: 1.1rem;
     font-family: inherit;
-    cursor: pointer;
+    cursor: default;
     font-weight: 600;
     transition: color 0.2s ease;
 
