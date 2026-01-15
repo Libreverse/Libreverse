@@ -168,6 +168,12 @@ const openUgcView = async ({ url }) => {
     });
 
     await ugcView.webContents.loadURL(url);
+    
+    // Apply adblocker to UGC webview session specifically
+    if (engine) {
+        blockWithEngine(ugcView.webContents.session);
+    }
+    
     return true;
 };
 
@@ -355,9 +361,10 @@ app.whenReady().then(async () => {
         return true;
     });
 
-    // Load and enable adblocker
+    // Load and enable adblocker for UGC webviews only
     loadEngine().then(() => {
-        blockWithEngine();
+        // Don't apply to default session - will be applied to UGC webviews specifically
+        console.log("Adblock engine loaded for UGC webviews only");
     });
 
     // Create application menu

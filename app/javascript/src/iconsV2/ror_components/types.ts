@@ -7,6 +7,8 @@ export interface AnimatedIconProps {
   strokeWidth?: number;
   /** Additional CSS classes */
   className?: string;
+  /** Hide non-critical hydration mismatches (useful when HTML is post-processed) */
+  suppressHydrationWarning?: boolean;
 }
 
 export interface AnimatedIconHandle {

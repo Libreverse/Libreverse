@@ -5,7 +5,7 @@ require "temple/generators/array_buffer"
 
 # Configure Slim options for Rails templates
 Slim::Engine.set_options(
-  format: :xhtml,
+  format: :html,
   attr_quote: '"',
   sort_attrs: false,
   pretty: false,

@@ -24,6 +24,8 @@ require "worker_killer/middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
+    # Set platform-specific JavaScript runtime
+    ExecJS.runtime = ExecJS::Runtimes::Node
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
@@ -60,9 +62,6 @@ module LibreverseInstance
       }
     }
 
-    # Out-of-band garbage collection middleware to reduce latency spikes
-    config.middleware.use OobGcMiddleware
-
     # Add Rack::Brotli for compression of responses larger than 32KB
     config.middleware.use Rack::Brotli, { quality: 2, if: lambda { |_env, _status, headers, body|
       # Check content-length if present
@@ -93,7 +92,7 @@ module LibreverseInstance
     # Max memory size (RSS) per worker (4GB = 4.0 in GB)
     middleware.insert_before(
       Rack::Runtime,
-      WorkerKiller::Middleware::OOMLimiter, killer: killer, min: nil, max: 4.0, check_cycle: 1
+      WorkerKiller::Middleware::OOMLimiter, killer: killer, min: nil, max: 4.0, check_cycle: 16
     )
 
     # Add this to make prod healthcheck pass correctly

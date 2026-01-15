@@ -2,17 +2,37 @@
 # shareable_constant_value: literal
 
 require "open3"
-require "nokogiri"
-
-# TidyMiddleware — cleans/repairs HTML via tidy CLI, then applies a parser-based
-# whitespace minification pass (Nokogiri for safe text collapsing + inter-tag removal)
-# with compact serialization to eliminate any remaining structural whitespace.
-# This gives aggressive, safe whitespace minification while preserving semantics
-# (e.g., exact spacing in <pre>, <textarea>, <script>, <style>, <code>).
+require "htmlcompressor"
+#
+# TidyMiddleware — cleans/repairs HTML via tidy CLI. This keeps the middleware
+# focused on the tidy executable instead of chaining additional post-processing
+# passes, reducing complexity while still ensuring well-formed output.
 
 class TidyMiddleware
+  COMPRESSOR_OPTIONS = {
+    enabled: true,
+    remove_multi_spaces: true,
+    remove_comments: true,
+    remove_intertag_spaces: true,
+    remove_quotes: false,
+    compress_css: false,
+    compress_javascript: false,
+    simple_doctype: false,
+    remove_script_attributes: false,
+    remove_style_attributes: false,
+    remove_link_attributes: false,
+    remove_form_attributes: false,
+    remove_input_attributes: false,
+    remove_javascript_protocol: false,
+    remove_http_protocol: false,
+    remove_https_protocol: false,
+    preserve_line_breaks: false,
+    simple_boolean_attributes: false
+  }.freeze
+
   def initialize(app)
     @app = app
+    @compressor = HtmlCompressor::Compressor.new(COMPRESSOR_OPTIONS)
   end
 
   def call(env)
@@ -38,8 +58,8 @@ class TidyMiddleware
         "--force-output", "yes",
         "--show-warnings", "no",
         "--tidy-mark", "yes",
-        "--output-html", "no",
-        "--output-xhtml", "yes",
+        "--output-html", "yes",
+        "--output-xhtml", "no",
         "--output-xml", "no",
         "--hide-comments", "yes",
         "--bare", "no",
@@ -72,7 +92,7 @@ class TidyMiddleware
         "--ascii-chars", "yes",
         "--join-classes", "no",
         "--join-styles", "no",
-        "--escape-cdata", "yes",
+        "--escape-cdata", "no",
         "--ncr", "no",
         "--replace-color", "no",
         "--vertical-space", "no",
@@ -103,24 +123,13 @@ class TidyMiddleware
 
       end
 
-      # Second pass: parser-based whitespace collapsing (no regex, safe & fast at scale)
-      doc = Nokogiri::HTML.parse(cleaned_html)
+      # Final pass: HTML compression for whitespace/tags
+      compressed_html = @compressor.compress(cleaned_html)
+      response_body = compressed_html.presence || cleaned_html
 
-      # Remove pure-whitespace text nodes outside preformatted elements
-      doc.xpath('//text()[normalize-space() = "" and not(ancestor::pre | ancestor::textarea | ancestor::script | ancestor::style | ancestor::code)]').remove
-
-      # Collapse multiple whitespace → single space (and trim) in flow content
-      doc.xpath('//text()[normalize-space() != "" and not(ancestor::pre | ancestor::textarea | ancestor::script | ancestor::style | ancestor::code)]').each do |node|
-        node.content = node.content.split.join(" ")
-      end
-
-      intermediate_html = doc.serialize(save_with: Nokogiri::XML::Node::SaveOptions::AS_XHTML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-
-      final_html = intermediate_html
-
-      # Replace response body
-      response = [ final_html ]
-      headers["Content-Length"] = final_html.bytesize.to_s if headers["Content-Length"]
+      # Replace response body with tidy+compressed output
+      response = [ response_body ]
+      headers["Content-Length"] = response_body.bytesize.to_s if headers["Content-Length"]
     end
 
     [ status, headers, response ]

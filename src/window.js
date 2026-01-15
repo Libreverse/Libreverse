@@ -154,7 +154,7 @@ export default ({
     });
 
     mainWindow.webContents.once('did-finish-load', () => {
-        mainWindow.webContents.setZoomLevel(-1);  // Equivalent to two Cmd+/Ctrl+ + presses
+        mainWindow.webContents.setZoomLevel(2);  // Equivalent to two Cmd+/Ctrl+ + presses
     });
 
 

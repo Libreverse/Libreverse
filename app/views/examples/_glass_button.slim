@@ -3,6 +3,6 @@
 button class="glass glass-component glass-button glass-button-base"
   .button-contents
     - if icon
-      = raw svg_icon_data_url(icon)
+      = animated_icon(icon, size: 18, class_name: "glass-button-icon", fallback_text: (text || icon).to_s.titleize)
     - if text
       span= text

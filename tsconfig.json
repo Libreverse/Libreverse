@@ -14,10 +14,11 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
+    "checkJs": false,
     "paths": {
       "@/*": ["app/javascript/src/*"]
     }
   },
   "include": ["app/javascript/**/*"],
-  "exclude": ["node_modules", "public", "vendor"]
+  "exclude": ["node_modules", "public", "vendor", "**/*.js", "**/*.jsx"]
 }

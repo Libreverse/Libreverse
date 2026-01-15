@@ -14,7 +14,7 @@
           .dashboard-section.glass.glass-card-base#experiences-tutorial data-dismissible-key-value="experiences-tutorial" data-dismissible-target="container"
             .section-dismiss
               button.dismiss-button data-action="dismissible#dismiss" 
-                img.feather.feather-x alt="Close" aria-hidden="true" height="16" src=svg_icon_data_url("x").to_s width="16" /
+                = animated_icon("x", size: 16, class_name: "feather feather-x", fallback_text: "Close tutorial")
             h2.section-heading
               = t('experiences.index.tutorial_heading')
             p.section-description

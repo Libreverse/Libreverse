@@ -1,1 +1,1 @@
-tmux new-session -d 'bin/dev-server' \; split-window -h 'bin/dev-client' \; attach-session
+echo "Use the separate commands bin/dev-client and bin/dev-server"

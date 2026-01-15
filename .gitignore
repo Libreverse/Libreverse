@@ -3,6 +3,7 @@
 !/.env*.erb
 /log/*
 /tmp/*
+.python-version.local
 !/log/.keep
 !/tmp/.keep
 /tmp/pids/*
@@ -158,3 +159,5 @@ vendor/gems/hiredis-client/ext/redis_client/hiredis/*.dSYM/
 vendor/gems/hiredis-client/ext/redis_client/hiredis/Makefile
 vendor/gems/hiredis-client/ext/redis_client/hiredis/mkmf.log
 bin/dist
+
+.venv

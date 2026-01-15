@@ -6,6 +6,7 @@ module ApplicationHelper
   include EmojiHelper # Include the new helper
   include EmailHelper # Include email CSS inlining helper
   include AnycableJwtHelper # Include AnyCable JWT helper
+  include ReactHelper
   require "base64"
   require "unicode"
   require "cgi"
@@ -41,15 +42,82 @@ module ApplicationHelper
     Rails.application.config.x.seo_config[key.to_s]
   end
 
-  def sidebar_icon(path, additional_class = "")
-    image_tag(path,
-              class: "sidebar-icons #{additional_class}".strip,
-              loading: "eager",
-              decoding: "async",
-              fetchpriority: "high",
-              draggable: "false",
-              aria: { hidden: true },
-              tabindex: "-1")
+  ANIMATED_ICON_ALIASES = {
+    "blog" => "book",
+    "dashboard" => "gauge",
+    "experiences" => "users-group",
+    "forum" => "message-circle",
+    "lm" => "sparkles",
+    "logout" => "logout",
+    "login" => "arrow-narrow-right",
+    "map" => "world",
+    "more-vertical" => "dots-vertical",
+    "search" => "magnifier",
+    "settings" => "gear",
+    "signup" => "user-plus",
+    "zap" => "sparkles"
+  }.freeze
+
+  def sidebar_icon(icon_name, additional_class = "", **options)
+    label = options.delete(:label)
+    class_name = ["sidebar-icons", additional_class, options.delete(:class_name)]
+                  .compact
+                  .join(" ")
+
+    animated_icon(
+      icon_name,
+      size: options.delete(:size) || 28,
+      class_name: class_name,
+      fallback_text: label || options.delete(:fallback_text) || icon_name.to_s.humanize,
+      **options
+    )
+  end
+
+  def animated_icon(name, **options)
+    component_options = options.delete(:component_options) || {}
+    class_name = options.delete(:class_name)
+    stroke_width = options.delete(:stroke_width) || options.delete(:strokeWidth)
+    fallback_text = options.delete(:fallback_text) || options.delete(:fallbackText)
+
+    normalized_name = resolve_animated_icon_name(name)
+    icon_props = {
+      name: normalized_name,
+      size: options.delete(:size) || 24,
+      color: options.delete(:color) || "currentColor"
+    }
+
+    icon_props[:className] = class_name if class_name.present?
+    icon_props[:strokeWidth] = stroke_width if stroke_width
+    icon_props[:fallbackText] = fallback_text if fallback_text.present?
+    icon_props.merge!(options) if options.present?
+
+    cache_key = [
+      "animated_icon_v2",
+      icon_props.deep_stringify_keys.sort.to_h
+    ]
+
+    AnimatedIconSsrCache.fetch(cache_key) do
+      ror_component(
+        "AnimatedIconRenderer",
+        props: icon_props,
+        prerender: true,
+        # keep JS behavior; assume bundle is already included on the page
+        skip_pack_script_tags: true,
+        trace: false,
+        replay_console: false,
+        logging_on_server: false,
+        **component_options
+      )
+    end
+  end
+
+  def resolve_animated_icon_name(name)
+    key = name.to_s.strip.downcase
+    fallback = "sparkles"
+    return fallback if key.blank?
+
+    canonical = ANIMATED_ICON_ALIASES.fetch(key, key)
+    canonical.presence || fallback
   end
 
   # Returns the flag emoji for a given locale symbol.

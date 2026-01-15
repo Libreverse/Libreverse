@@ -1354,4 +1354,24 @@ const ICON_LIST: IconType[] = [
   },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
-export { ICON_LIST };
+const ICON_BY_NAME = ICON_LIST.reduce<Record<string, IconType>>((acc, icon) => {
+  const originalName = icon.name;
+  const lowerCase = originalName.toLowerCase();
+  const baseName = lowerCase.replace(/-icon$/, "");
+
+  acc[originalName] = icon;
+  acc[lowerCase] = icon;
+
+  if (!acc[baseName]) {
+    acc[baseName] = icon;
+  }
+
+  const normalizedBase = baseName.replace(/[^a-z0-9-]/g, "-");
+  if (!acc[normalizedBase]) {
+    acc[normalizedBase] = icon;
+  }
+
+  return acc;
+}, {});
+
+export { ICON_LIST, ICON_BY_NAME };

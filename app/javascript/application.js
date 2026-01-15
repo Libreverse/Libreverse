@@ -1,6 +1,5 @@
 import "../stylesheets/application.scss";
-// NOTE: Gem JS (timeago, thredded) loads via Sprockets - see app/assets/javascripts/thredded.js
-import "./libs/hashcash.js"; // ActiveHashcash proof-of-work for bot protection
+import "./libs/hashcash.js";
 import debounced from "debounced";
 import "./libs/foundation.js";
 import jquery from "jquery";
@@ -147,8 +146,6 @@ debounced.register(["resize"], {
     leading: false,
     trailing: true,
 });
-
-// WebGL glass entirely removed; CSS-only glass requires no globals
 
 import * as Turbo from "@hotwired/turbo";
 import TurboPower from "turbo_power";

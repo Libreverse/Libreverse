@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+=begin
+
 # Compatibility patch:
 # react_on_rails 16.0.0 calls ConnectionPool.new(options_hash) with a positional
 # Hash in its server rendering pool.
@@ -32,3 +34,5 @@ rescue StandardError
   # Avoid blocking boot if upstream changes.
   nil
 end
+
+=end
