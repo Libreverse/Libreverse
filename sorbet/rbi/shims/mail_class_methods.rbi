@@ -1,4 +1,4 @@
-# typed: true
+# typed: strict
 # frozen_string_literal: true
 
 # This shim provides the Mail::ClassMethods module that ActionMailer expects
