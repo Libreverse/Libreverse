@@ -121,7 +121,7 @@ end
 
 curr_key = -> { Thread.current[:_prof_curr_action] }
 
-ActiveSupport::Notifications.subscribe('start_processing.action_controller') do |*, payload|
+ActiveSupport::Notifications.subscribe('start_processing.action_controller') do |*_, payload|
   Thread.current[:_prof_curr_action] = "#{payload[:controller]}##{payload[:action]}"
 end
 

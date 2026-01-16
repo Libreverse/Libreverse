@@ -39,7 +39,7 @@ def check_constants(mod, prefix = "", visited = Set.new, app_root)
         # Check shareability for non-module values
         begin
           puts "UNSHAREABLE: #{full_name} = #{value.inspect[0..100]}..." unless Ractor.shareable?(value)
-        rescue Ractor::IsolationError => e
+        rescue StandardError => e
           puts "ISOLATION ERROR: #{full_name} - #{e.message}"
         end
       end

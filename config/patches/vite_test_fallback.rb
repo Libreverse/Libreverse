@@ -15,13 +15,13 @@
 if Rails.env.test?
   module ViteRails
     module TagHelpers
-      def vite_javascript_tag(*names, **options)
+      def vite_javascript_tag(*names, type: T.untyped(nil), asset_type: T.untyped(nil), skip_preload_tags: T.untyped(nil), skip_style_tags: T.untyped(nil), crossorigin: T.untyped(nil), media: T.untyped(nil), **options)
         super
       rescue StandardError => e
         # Suppress only if it's a missing entry scenario or the constant itself is undefined.
         missing_constant = e.is_a?(NameError) && e.message.include?("ViteRuby::MissingEntryError")
         missing_entry = begin
-                          e.instance_of?(::ViteRuby::MissingEntryError)
+                          e.instance_of?(::ViteRuby::MissingEntrypointError)
         rescue StandardError
                           false
         end

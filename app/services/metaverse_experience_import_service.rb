@@ -5,7 +5,8 @@
 # Service to convert IndexedContent records to Experience records
 # This bridges the gap between metaverse indexer data and the existing Experience system
 class MetaverseExperienceImportService
-  include Rails.application.routes.url_helpers
+  UrlHelpers = Rails.application.routes.url_helpers
+  include UrlHelpers
 
   def self.import_from_indexed_content(indexed_content)
     new.import_from_indexed_content(indexed_content)

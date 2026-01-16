@@ -8,7 +8,9 @@
 require "sequel/model"
 require_relative "../services/moderation_service"
 
-class AccountSequel < Sequel::Model(:accounts)
+AccountModel = Sequel::Model(:accounts)
+# typed: ignore
+class AccountSequel < AccountModel
   plugin :timestamps, update_on_create: true
   plugin :validation_helpers
   plugin :instance_hooks

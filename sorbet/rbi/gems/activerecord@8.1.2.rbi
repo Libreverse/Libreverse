@@ -8640,7 +8640,7 @@ class ActiveRecord::Base
   include ::CounterCulture::SkipUpdates
   include ::Kaminari::ActiveRecordExtension
   include ::FriendlyId::UnfriendlyUtils
-  include ::SecondLevelCache::Mixin
+  include Admin
   include ::ActiveStorage::Attached::Model
   include ::ActiveStorage::Reflection::ActiveRecordExtensions
   include ::ActionText::Attribute
@@ -8715,7 +8715,7 @@ class ActiveRecord::Base
   extend ::Lockbox::Model
   extend ::Lockbox::Model::Attached
   extend ::PluckInBatches::Extensions::ModelExtension
-  extend ::SecondLevelCache::Mixin::ClassMethods
+  extend ::MethodModule
   extend ::SecondLevelCache::ActiveRecord::FetchByUniqKey
   extend ::ActiveStorage::Attached::Model::ClassMethods
   extend ::ActiveStorage::Reflection::ActiveRecordExtensions::ClassMethods

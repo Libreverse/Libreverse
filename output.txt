@@ -1,0 +1,11 @@
+sorbet/rbi/gems/activerecord@8.1.2.rbi:8718: Only modules can be `extend`d, but `Method` is a class https://srb.help/5032
+    8718 |  extend Method
+                   ^^^^^^
+    https://github.com/sorbet/sorbet/tree/34b2f4c70da8e562bf0b9e7667d06b12f315f20c/rbi/core/method.rbi#L30: `Method` defined as a class here
+    30 |class Method < Object
+        ^^^^^^^^^^^^^^^^^^^^^
+
+sorbet/rbi/gems/active_storage_validations@3.0.3.rbi:1141: Parent of class `ActiveStorageValidations::SizeValidator` redefined from `ActiveModel::EachValidator` to `ActiveStorageValidations::BaseComparisonValidator` https://srb.help/5012
+    1141 |class ActiveStorageValidations::SizeValidator < ::ActiveStorageValidations::BaseComparisonValidator
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Errors: 2

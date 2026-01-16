@@ -82,3 +82,9 @@ end
 class Sidekiq::WorkSet
   Elem = type_member { { fixed: T.untyped } }
 end
+
+class Sidekiq::SortedEntry
+end
+
+class Sidekiq::Process
+end

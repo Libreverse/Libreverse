@@ -32,3 +32,6 @@ module Mocha::ObjectMethods
   sig { params(stubbed_methods_vs_return_values: T.untyped).returns(Mocha::Expectation) }
   def stubs(stubbed_methods_vs_return_values); end
 end
+
+class Mocha::Mock
+end

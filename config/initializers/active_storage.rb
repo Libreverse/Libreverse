@@ -25,16 +25,19 @@ end
 module ActiveStorageValidations
   # Only define stubs if the real gem hasn't been loaded
   module Model; end unless const_defined?(:Model)
+  
+  class BaseComparisonValidator < ActiveModel::EachValidator
+  end unless const_defined?(:BaseComparisonValidator)
 
   unless const_defined?(:ContentTypeValidator)
     class ContentTypeValidator < ActiveModel::EachValidator
-      def validate_each(*); end
+      def validate_each(record, attribute, _value); end
     end
   end
 
   unless const_defined?(:SizeValidator)
-    class SizeValidator < ActiveModel::EachValidator
-      def validate_each(*); end
+    class SizeValidator < ActiveStorageValidations::BaseComparisonValidator
+      def validate_each(record, attribute, _value); end
     end
   end
 
