@@ -29,7 +29,7 @@ nav id="#{sidebar_id}-sidebar" class="sidebar glass-component glass glass-sideba
   / Public links – always visible
   - public_links.each do |item|
     - item_is_current = (current_path == item[:path])
-    = link_to item[:path], class: "sidebar-link#{' sidebar-current' if item_is_current}", aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") }, data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover], "turbo-frame": "_top", "turbo-preload": "true" } do
+    = link_to item[:path], class: "sidebar-link#{' sidebar-current' if item_is_current}", aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") }, data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover], "turbo-frame": "_top" } do
       = sidebar_icon(item[:icon], (item_is_current ? 'sidebar-current' : ''), label: item[:label])
 
   / Navigation for regular users only
@@ -37,7 +37,7 @@ nav id="#{sidebar_id}-sidebar" class="sidebar glass-component glass glass-sideba
     - auth_links = [{ path: main_app.dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View your personal dashboard with analytics and quick actions' }, { path: main_app.experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Manage your created experiences and browse favorites' }]
     - auth_links.each do |item|
       - item_is_current = (current_path == item[:path])
-      = link_to item[:path], class: "sidebar-link#{' sidebar-current' if item_is_current}", aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") }, data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover], "turbo-frame": "_top", "turbo-preload": "true" } do
+      = link_to item[:path], class: "sidebar-link#{' sidebar-current' if item_is_current}", aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") }, data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover], "turbo-frame": "_top" } do
         = sidebar_icon(item[:icon], (item_is_current ? 'sidebar-current' : ''), label: item[:label])
     / Only show logout button for non-guest users
     = button_to rodauth_obj.logout_path, method: :post, class: 'sidebar-link sidebar-logout-button', aria: { label: 'Sign out' }, data: { "sidebar-item": "logout", "sidebar-popover-target": "item", "popover-content": "Sign out of your current session", "turbo-frame": "_top", "turbo-confirm": "Are you sure you want to sign out?", "turbo-prefetch": "false" } do
@@ -47,7 +47,7 @@ nav id="#{sidebar_id}-sidebar" class="sidebar glass-component glass glass-sideba
     - guest_links = [{ path: main_app.dashboard_path, icon: 'dashboard', label: 'dashboard', popover: 'View the dashboard and analytics (limited features for guests)' }, { path: main_app.experiences_path, icon: 'experiences', label: 'experiences page', popover: 'Browse all public experiences and discussions' }, { path: rodauth_obj.login_path, icon: 'login', label: 'login page', popover: 'Sign in to your account to access full features' }, { path: rodauth_obj.create_account_path, icon: 'signup', label: 'sign-up page', popover: 'Create a new account to start building experiences' }]
     - guest_links.each do |item|
       - item_is_current = (current_path == item[:path])
-      = link_to item[:path], class: "sidebar-link#{' sidebar-current' if item_is_current}", aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") }, data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover], "turbo-frame": "_top", "turbo-preload": "true" } do
+      = link_to item[:path], class: "sidebar-link#{' sidebar-current' if item_is_current}", aria: { label: (item_is_current ? "On #{item[:label]}" : "Go to #{item[:label]}") }, data: { "sidebar-item": item[:icon], "sidebar-popover-target": "item", "popover-content": item[:popover], "turbo-frame": "_top" } do
         = sidebar_icon(item[:icon], (item_is_current ? 'sidebar-current' : ''), label: item[:label])
 
   / More menu button at the bottom

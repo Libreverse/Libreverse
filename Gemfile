@@ -123,11 +123,18 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "worker_killer"
 gem "zip_kit"
+gem "ruby-next"
+gem "duktape", require: false
+gem 'sorbet-runtime'
+gem 'openssl', '~> 3.3.1', require: false
+gem "ractor-shim", require: false
 
 group :development, :test do
   gem "active_record_doctor", require: false
   gem "annotaterb"
   gem "listen"
+  gem 'sorbet', '~> 0.5'
+  gem 'tapioca', '~> 0.17', require: false
 end
 
 group :development do
@@ -143,7 +150,7 @@ group :development do
   gem "rubocop-rails", require: false
   gem "ruumba", require: false
   gem "slim_lint", require: false
-  gem "web-console"
+  gem 'spoom', require: false
 end
 
 group :test do

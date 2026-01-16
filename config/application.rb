@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
@@ -5,6 +6,7 @@ require_relative "boot"
 
 require "rails/all"
 Bundler.require(*Rails.groups)
+require 'facets'
 require "hamster/core_ext"
 
 # ---------------------------------------------------------------------------
@@ -24,8 +26,13 @@ require "worker_killer/middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
-    # Set platform-specific JavaScript runtime
+
+    # Set embeddable js runtime for server side eval
+    # Update: I do prefer embedding but we don't often have the RAM for it
+    # require "duktape"
+    # ExecJS.runtime = ExecJS::Runtimes::Duktape
     ExecJS.runtime = ExecJS::Runtimes::Node
+    
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
@@ -61,6 +68,9 @@ module LibreverseInstance
         Sentry.capture_exception(exception) if defined?(Sentry)
       }
     }
+
+    # Out-of-band garbage collection middleware to reduce latency spikes
+    config.middleware.use OobGcMiddleware
 
     # Add Rack::Brotli for compression of responses larger than 32KB
     config.middleware.use Rack::Brotli, { quality: 2, if: lambda { |_env, _status, headers, body|

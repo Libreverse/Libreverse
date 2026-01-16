@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
@@ -7,9 +8,9 @@ module WindowControlsHelper
 
   # Color schemes for traffic light buttons
   TRAFFIC_LIGHT_COLORS = {
-    close: { macos: %w[e24b41 ed6a5f], grayscale: %w[888888 aaaaaa] },
-    minimize: { macos: %w[e1a73e f6be50], grayscale: %w[888888 aaaaaa] },
-    maximize: { macos: %w[2dac2f 61c555], grayscale: %w[888888 aaaaaa] }
+    close: { macos: ["e24b41", "ed6a5f"].freeze, grayscale: ["888888", "aaaaaa"].freeze }.freeze,
+    minimize: { macos: ["e1a73e", "f6be50"].freeze, grayscale: ["888888", "aaaaaa"].freeze }.freeze,
+    maximize: { macos: ["2dac2f", "61c555"].freeze, grayscale: ["888888", "aaaaaa"].freeze }.freeze
   }.freeze
 
   def traffic_light_src(button, is_macos)

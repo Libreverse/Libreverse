@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # JWT helper for AnyCable stateless authentication

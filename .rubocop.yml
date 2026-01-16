@@ -2,6 +2,7 @@
 
 require:
     - ./lib/rubocop/cop/style/shareable_constant_value_comment.rb
+    - ruby-next/rubocop
 
 plugins:
     - rubocop-rails
@@ -12,6 +13,7 @@ inherit_mode:
         - Exclude
 
 AllCops:
+    TargetRubyVersion: next
     NewCops: disable
     SuggestExtensions: false
     Exclude:
@@ -380,3 +382,5 @@ Style/TrailingCommaInHashLiteral:
 Style/ShareableConstantValueComment:
     Enabled: true
     Description: "Requires # shareable_constant_value: literal magic comment."
+    Exclude:
+        - "app/graphql/graphql_router.rb"

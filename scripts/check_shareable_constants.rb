@@ -1,5 +1,10 @@
+# typed: false
 # frozen_string_literal: true
 # shareable_constant_value: literal
+
+if RUBY_ENGINE == "truffleruby"
+  require 'ractor/shim'
+end
 
 # script/check_shareable_constants.rb
 require_relative '../config/environment'

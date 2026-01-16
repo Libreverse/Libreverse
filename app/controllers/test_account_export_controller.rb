@@ -1,3 +1,4 @@
+# typed: false
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 # shareable_constant_value: literal
