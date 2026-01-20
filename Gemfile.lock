@@ -23,9 +23,22 @@ PATH
       rails (>= 6.1, < 8.2)
       sprockets-rails (>= 3, < 4)
 
+PATH
+  remote: vendor/gems/spoom
+  specs:
+    spoom (1.7.11)
+      erubi (>= 1.10.0)
+      prism (>= 0.28.0)
+      rbi (>= 0.3.3)
+      rbs (>= 4.0.0.dev.5)
+      rexml (>= 3.2.6)
+      sorbet-static-and-runtime (>= 0.5.10187)
+      thor (>= 0.19.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
+    RedCloth (4.3.4)
     action_text-trix (2.1.16)
       railties
     actioncable (8.1.2)
@@ -153,6 +166,11 @@ GEM
       rinku
       rouge
       turbo-rails
+    auto_html (1.4.2)
+      RedCloth
+      redcarpet
+      rinku
+      tag_helper
     autoprefixer-rails (10.4.21.0)
       execjs (~> 2)
     babel-source (5.8.35)
@@ -244,7 +262,6 @@ GEM
       representable (>= 3.1.1, < 4)
     drb (2.2.3)
     dry-cli (1.4.0)
-    duktape (2.7.0.0)
     email_validator (2.2.4)
       activemodel
     erb (6.0.1)
@@ -741,6 +758,7 @@ GEM
     reactionview (0.2.0)
       actionview (>= 7.0)
       herb (>= 0.8.0, < 1.0.0)
+    redcarpet (3.6.1)
     redis (5.4.1)
       redis-client (>= 0.22.0)
     redis-client (0.26.1)
@@ -913,14 +931,6 @@ GEM
     sorbet-static-and-runtime (0.6.12887)
       sorbet (= 0.6.12887)
       sorbet-runtime (= 0.6.12887)
-    spoom (1.7.11)
-      erubi (>= 1.10.0)
-      prism (>= 0.28.0)
-      rbi (>= 0.3.3)
-      rbs (>= 4.0.0.dev.4)
-      rexml (>= 3.2.6)
-      sorbet-static-and-runtime (>= 0.5.10187)
-      thor (>= 0.19.2)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -956,6 +966,7 @@ GEM
       prettier_print (>= 1.2.0)
     sys-filesystem (1.5.5)
       ffi (~> 1.1)
+    tag_helper (0.5.0)
     tapioca (0.17.10)
       benchmark
       bundler (>= 2.2.25)
@@ -1116,6 +1127,7 @@ DEPENDENCIES
   anycable-rails (~> 1.4)
   argon2
   audits1984
+  auto_html
   better_html
   bootsnap
   brakeman
@@ -1128,7 +1140,6 @@ DEPENDENCIES
   console1984
   counter_culture
   database_consistency
-  duktape
   erb-formatter
   erb_lint
   facets
@@ -1219,7 +1230,7 @@ DEPENDENCIES
   smart_assets!
   sorbet (~> 0.5)
   sorbet-runtime
-  spoom
+  spoom!
   stimulus-rails
   stimulus_reflex (= 3.5.3)
   sys-filesystem
@@ -1244,6 +1255,7 @@ DEPENDENCIES
   zip_kit
 
 CHECKSUMS
+  RedCloth (4.3.4) sha256=5231b2fdd91a933915cba330e5fd1a74025e77b56f57b7404c7191ebf2812297
   action_text-trix (2.1.16) sha256=f645a2c21821b8449fd1d6770708f4031c91a2eedf9ef476e9be93c64e703a8a
   actioncable (8.1.2) sha256=dc31efc34cca9cdefc5c691ddb8b4b214c0ea5cd1372108cbc1377767fb91969
   actionmailbox (8.1.2) sha256=058b2fb1980e5d5a894f675475fcfa45c62631103d5a2596d9610ec81581889b
@@ -1274,6 +1286,7 @@ CHECKSUMS
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   attr_required (1.0.2) sha256=f0ebfc56b35e874f4d0ae799066dbc1f81efefe2364ca3803dc9ea6a4de6cb99
   audits1984 (0.1.7) sha256=095e0a0a2135f310ef6be5234e4aecd1ab5fb3670e15d4083b604cb425449cc2
+  auto_html (1.4.2) sha256=0d13b75d46f3fd4502a05283b0cde7ee4f39c3fb76e69287c55e40618aa97454
   autoprefixer-rails (10.4.21.0) sha256=71b48caf850fc25275abd96f0b1fdd51c82e1c9b99cd30085cacb05da9c70235
   babel-source (5.8.35) sha256=79ef222a9dcb867ac2efa3b0da35b4bcb15a4bfa67b6b2dcbf1e9a29104498d9
   babel-transpiler (0.7.0) sha256=4c06f4ad9e8e1cabe94f99e11df2f140bb72aca9ba067dbb49dc14d9b98d1570
@@ -1313,7 +1326,6 @@ CHECKSUMS
   disposable (0.6.3) sha256=7f2a3fb251bff6cd83f25b164043d4ec3531209b51b066ed476a9df9c2d384cc
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
   dry-cli (1.4.0) sha256=eda5b9082aa31909c086825e049bd749b67afba17d1003d53171e3e574e3178f
-  duktape (2.7.0.0) sha256=2ac64d097cbd038df065200acddda6e0710a9c8637938d5aa6c2510757df30db
   email_validator (2.2.4) sha256=5ab238095bec7aef9389f230e9e0c64c5081cdf91f19d6c5cecee0a93af20604
   erb (6.0.1) sha256=28ecdd99c5472aebd5674d6061e3c6b0a45c049578b071e5a52c2a7f13c197e5
   erb-formatter (0.7.3) sha256=64d188897b9827a486ba56eb4cd60b4e3ebc8fce0674ee94c9b074d3c836a4d9
@@ -1516,6 +1528,7 @@ CHECKSUMS
   re2 (2.23.0-x86_64-linux-musl) sha256=1556e360e1fd5ac985f5da065f41e4621fdf4af0e23b33f8c1b0e0711565fc36
   react_on_rails (16.0.0) sha256=456c02b36dc33db3228d3ca6229ea2c066d527562b39700d549d6e18078b71ba
   reactionview (0.2.0) sha256=adddab493f1e9e6fa2b58d46e5fbcef4a9090ebb2dc4f2b2efd018cfdc6247bd
+  redcarpet (3.6.1) sha256=d444910e6aa55480c6bcdc0cdb057626e8a32c054c29e793fa642ba2f155f445
   redis (5.4.1) sha256=b5e675b57ad22b15c9bcc765d5ac26f60b675408af916d31527af9bd5a81faae
   redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
   reform (2.6.2) sha256=59f228401d2971708e1a97940279ea81f86c648fb57cb41b0dfba33244e94608
@@ -1582,7 +1595,7 @@ CHECKSUMS
   sorbet-static (0.6.12887-universal-darwin) sha256=8b45fef2a153300dca083a3862dc8703d8d10f699b46e4d9209275c9fcbc2b79
   sorbet-static (0.6.12887-x86_64-linux) sha256=861c5366dbcc3e401f98201c67ef350c1f43a9914e9d7492b8e8ef255e4f0c7a
   sorbet-static-and-runtime (0.6.12887) sha256=eb562f794cdec6f530d20f644fabbc7a854cc41bb91eda50632cdd9c63e72acb
-  spoom (1.7.11) sha256=4e27384af6d3fde5aadc0287c51e6f76c0802259cbb3b6a67603bf718352f4cf
+  spoom (1.7.11)
   sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
   sprockets-es6 (0.9.2) sha256=c383e06a234dfe5f15f3b9d59bd47471ef653133ea87308961087c69f7800814
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
@@ -1592,6 +1605,7 @@ CHECKSUMS
   swd (2.0.3) sha256=4cdbe2a4246c19f093fce22e967ec3ebdd4657d37673672e621bf0c7eb770655
   syntax_tree (6.3.0) sha256=56e25a9692c798ec94c5442fe94c5e94af76bef91edc8bb02052cbdecf35f13d
   sys-filesystem (1.5.5) sha256=6f995890a734b9f0aa55df5e09d99adeb9fd1c288f2c4097269a1f8c95e15033
+  tag_helper (0.5.0) sha256=d17d34209412a97301fea47aeada8a453046eb8b5b9fce8bb0353d93a4cf5150
   tapioca (0.17.10) sha256=880a682ca8314f798dd09e9f104134fbf1a713c13be51f7dd4741dd434e6471b
   temple (0.10.4) sha256=b7a1e94b6f09038ab0b6e4fe0126996055da2c38bec53a8a336f075748fff72c
   terminal-table (4.0.0) sha256=f504793203f8251b2ea7c7068333053f0beeea26093ec9962e62ea79f94301d2

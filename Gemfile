@@ -17,6 +17,7 @@ gem "active_hashcash"
 gem "active_storage_db"
 gem "active_storage_validations"
 gem "addressable"
+gem "auto_html"
 gem "anycable-rails", "~> 1.4"
 gem "argon2"
 gem "audits1984"
@@ -124,7 +125,6 @@ gem "voight_kampff"
 gem "worker_killer"
 gem "zip_kit"
 gem "ruby-next"
-gem "duktape", require: false
 gem 'sorbet-runtime'
 gem 'openssl', '~> 3.3.1', require: false
 gem "ractor-shim", require: false
@@ -150,7 +150,7 @@ group :development do
   gem "rubocop-rails", require: false
   gem "ruumba", require: false
   gem "slim_lint", require: false
-  gem 'spoom', require: false
+  gem 'spoom', path: "vendor/gems/spoom", require: false
 end
 
 group :test do

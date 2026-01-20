@@ -12,5 +12,4 @@
 / Thredded forum JS - compiled via Sprockets (Thredded requires Sprockets directives)
 = javascript_include_tag "thredded", data: {turbo_track: "reload"}, integrity: true
 / Load in react-rails bit for some of the 3D code
-= javascript_pack_tag 'generated/MetaversePreview', 'generated/AnimatedIconRenderer', data: {turbo_track: "reload"}
-= stylesheet_pack_tag
+= javascript_pack_tag 'generated/MetaversePreview', 'generated/AnimatedIconRenderer', async: true, data: {turbo_track: "reload"}

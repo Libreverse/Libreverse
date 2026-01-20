@@ -1,9 +1,0 @@
-#!/bin/bash
-set -e
-fswatch -r app/javascript/controllers | while read changed; do
-    # ignore changes to the controllers manifest itself
-    if [[ "$changed" =~ app/javascript/controllers/index\.js$ ]]; then
-        continue
-    fi
-    ./bin/rails stimulus:manifest:update > /dev/null 2>&1
-done

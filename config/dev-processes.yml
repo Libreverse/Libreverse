@@ -1,9 +1,11 @@
-phusion-passenger: cd .. && bundle exec passenger start
+phusion-passenger: cd .. && USE_TRUFFLERUBY_SERVER=true ./bin/passenger-truffleruby
+sidekiq: cd .. && bin/jobs
+anycable-rpc: cd .. && bundle exec anycable
 vite: cd .. && bin/vite dev
-shakapacker-asset-server: cd .. && bin/shakapacker-dev-server  
-shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr  
-shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch  
 mailhog: cd .. && mailhog  
-stimulus-manifest-regenerator: cd .. && bin/manifest-isr  
 dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh  
 anycable-go: cd .. && bin/anycable-go
+# If we ever decide to use non-jit mode in the future - i don't think it's worth it for shakapacker
+#shakapacker-asset-server: cd .. && bin/shakapacker-dev-server  
+#shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr  
+#shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch

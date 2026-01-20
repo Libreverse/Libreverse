@@ -20,7 +20,7 @@ Rails.application.configure do
 
   # Configure ActionCable URL to connect directly to AnyCable
   # Must match the websocket_url in config/anycable.yml
-  config.action_cable.url = "ws://localhost:8080/cable"
+  config.action_cable.url = "ws://localhost:3003/cable"
   config.action_cable.allowed_request_origins = [
     "https://localhost:3000",
     "https://127.0.0.1:3000",

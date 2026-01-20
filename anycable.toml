@@ -33,7 +33,7 @@ broadcast_adapters = ["http", "redisx"]
 # pubsub_adapter = "redis" # or "nats"
 
 [logging]
-debug = true
+debug = false
 
 # RPC is used to authorized subscriptions and perform channel actions.
 # You only need it if you use custom Action Cable channel classes.
@@ -41,7 +41,7 @@ debug = true
 [rpc]
 # AnyCable is running in a standalone mode with minimal RPC for JWT authentication
 # Read more: https://docs.anycable.io/anycable-go/getting_started?id=standalone-mode-pubsub-only
-implementation = "none"
+host = "localhost:50051"
 
 # Connection optimization settings
 [connection]

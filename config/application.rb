@@ -18,20 +18,16 @@ require_relative "patches/connection_pool_initialize_compat"
 require_relative "patches/connection_pool_with_compat"
 
 # Load custom middleware
-require_relative "../lib/middleware/emoji_replacer"
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
-require_relative "../lib/middleware/tidy"
+require_relative "../lib/middleware/html_postprocessing"
 require "worker_killer/middleware"
 
 module LibreverseInstance
   class Application < Rails::Application
 
     # Set embeddable js runtime for server side eval
-    # Update: I do prefer embedding but we don't often have the RAM for it
-    # require "duktape"
-    # ExecJS.runtime = ExecJS::Runtimes::Duktape
-    ExecJS.runtime = ExecJS::Runtimes::Node
+    ExecJS.runtime = ExecJS::Runtimes::Bun
     
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
@@ -86,11 +82,7 @@ module LibreverseInstance
       end
     } }
 
-    # Add TidyMiddleware for HTML repair and minification
-    config.middleware.use TidyMiddleware
-
-    # Add EmojiReplacer middleware to process emoji replacement in HTML responses
-    config.middleware.use EmojiReplacerMiddleware, {
+    config.middleware.use HtmlPostprocessingMiddleware, {
       exclude_selectors: [
         "script", "style", "pre", "code", "textarea", "svg", "noscript", "template",
         ".no-emoji", "[data-no-emoji]", ".syntax-highlighted"

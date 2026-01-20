@@ -83,7 +83,7 @@ export default defineConfig(({ mode }) => {
         },
         build: createCommonBuild({ isDevelopment }),
         server: {
-            hmr: { overlay: true }, // Enable error overlay in development
+            hmr: { overlay: false }, // Enable error overlay in development
             https: devHttps,
             headers: isDevelopment ? devViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development

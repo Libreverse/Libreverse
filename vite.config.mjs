@@ -113,7 +113,7 @@ export default defineConfig(({ mode }) => {
             strictPort: true,
             https: isDevelopment ? buildHttpsOptions() : undefined,
             hmr: {
-                overlay: true,
+                overlay: false,
                 protocol: isDevelopment && buildHttpsOptions() ? "wss" : "ws",
                 host: "localhost",
                 port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),

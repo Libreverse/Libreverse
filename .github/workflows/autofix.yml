@@ -186,7 +186,6 @@ jobs:
                       lib/**
                       public/**
                       scripts/**
-                      docker/**
                       spec/**
                       test/**
                       .github/**

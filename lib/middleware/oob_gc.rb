@@ -5,12 +5,13 @@
 class OobGcMiddleware
   def initialize(app)
     @app = app
+    @request_count = 0
   end
 
   def call(env)
     status, headers, body = @app.call(env)
-    # Trigger every 5 requests (adjust as needed)
-    headers["!~Request-OOB-Work"] = "true" if rand(5).zero?
+    @request_count += 1
+    headers["!~Request-OOB-Work"] = "true" if (@request_count % 5).zero?
     [ status, headers, body ]
   end
 end

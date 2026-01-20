@@ -31,7 +31,6 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 | Database        | SQLite 3 (enhanced adapter)                  |
 | Build / Assets  | Vite 6 + pnpm                                |
 | Web Server      | Puma                                         |
-| Container Image | Multi‑stage Dockerfile (< 80 MB final image) |
 
 ---
 
