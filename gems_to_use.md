@@ -13,3 +13,4 @@ https://github.com/parro-it/electron-localshortcut
 rubyllm
 document the core extensions we have as like things for the Ai to use
 vercel react agent skills
+redesign the mimalloc - try to move to an mri build with jemalloc like fullstaq ruby and then tweak the gc for throughput (because we offset the memory savings with even more perf)

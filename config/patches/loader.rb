@@ -32,6 +32,8 @@ module LibreversePatches
 
         # Debugging aids
         "initializer_trace",
+        "eager_load_trace",
+        "prepare_callbacks_trace",
 
         # Compatibility patches
         "react_on_rails_connection_pool",

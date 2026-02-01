@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-Rails.application.reloader.to_prepare do
+Rails.application.config.after_initialize do
   # Patch all relevant ActiveStorage controllers to set strict private download headers
   [
     defined?(ActiveStorage::Blobs::ProxyController) && ActiveStorage::Blobs::ProxyController,

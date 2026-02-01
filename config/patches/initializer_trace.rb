@@ -23,14 +23,29 @@ begin
     def run(*args)
       begin
         trace_path = File.expand_path("../../tmp/initializer_trace.log", __dir__)
+        timestamp = Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%6N")
         File.open(trace_path, "a") do |f|
-          f.puts("#{Time.now.utc} #{name}")
+          f.puts("#{timestamp} initializer_start #{name}")
           f.flush
         end
       rescue StandardError
         nil
       end
-      super
+
+      result = super
+
+      begin
+        trace_path = File.expand_path("../../tmp/initializer_trace.log", __dir__)
+        timestamp = Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%6N")
+        File.open(trace_path, "a") do |f|
+          f.puts("#{timestamp} initializer_finish #{name}")
+          f.flush
+        end
+      rescue StandardError
+        nil
+      end
+
+      result
     end
   end
 

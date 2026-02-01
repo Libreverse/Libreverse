@@ -3,29 +3,48 @@
 # shareable_constant_value: literal
 
 require_relative "boot"
+BootTrace.log("application.rb: start")
 
+BootTrace.log("application.rb: loading rails/all")
 require "rails/all"
+BootTrace.log("application.rb: rails/all loaded")
+
+BootTrace.log("application.rb: running Bundler.require")
 Bundler.require(*Rails.groups)
+BootTrace.log("application.rb: Bundler.require complete")
+
+BootTrace.log("application.rb: loading facets")
 require 'facets'
+BootTrace.log("application.rb: facets loaded")
+
+BootTrace.log("application.rb: loading hamster/core_ext")
 require "hamster/core_ext"
+BootTrace.log("application.rb: hamster/core_ext loaded")
 
 # ---------------------------------------------------------------------------
 # Compatibility shims that must load BEFORE Rails bootstrap builds cache stores
 # ---------------------------------------------------------------------------
 # Rails instantiates `config.cache_store` during its bootstrap phase, before
 # `config/initializers/*.rb` have run. We therefore load critical shims here.
+BootTrace.log("application.rb: loading connection_pool patches")
 require_relative "patches/connection_pool_initialize_compat"
 require_relative "patches/connection_pool_with_compat"
+BootTrace.log("application.rb: connection_pool patches loaded")
 
 # Load custom middleware
+BootTrace.log("application.rb: loading custom middleware")
 require_relative "../lib/middleware/oob_gc"
 require_relative "../app/services/function_cache"
 require_relative "../lib/middleware/html_postprocessing"
 require "worker_killer/middleware"
+BootTrace.log("application.rb: custom middleware loaded")
+
+BootTrace.log("application.rb: defining LibreverseInstance::Application")
 
 module LibreverseInstance
   class Application < Rails::Application
 
+    BootTrace.log("application.rb: configuring ExecJS runtime")
     # Set embeddable js runtime for server side eval
     ExecJS.runtime = ExecJS::Runtimes::Bun
     
@@ -40,12 +59,15 @@ module LibreverseInstance
     config.eager_load_paths << "app/indexers"
 
     # Initialize configuration defaults for originally generated Rails version.
+    BootTrace.log("application.rb: loading Rails 8.0 defaults")
     config.load_defaults 8.0
+    BootTrace.log("application.rb: Rails 8.0 defaults loaded")
 
     # Silence ALL deprecation warnings (nuclear option)
     config.active_support.deprecation = :silence
 
     # Use Redis/DragonflyDB for caching (configured via REDIS_URL env var)
+    BootTrace.log("application.rb: configuring Redis cache store")
 
     redis_url = ENV.fetch("REDIS_URL") { "redis://127.0.0.1:6379/0" }
     redis_pool_size = Integer(ENV.fetch("REDIS_POOL_SIZE", 5))
@@ -64,6 +86,7 @@ module LibreverseInstance
         Sentry.capture_exception(exception) if defined?(Sentry)
       }
     }
+    BootTrace.log("application.rb: Redis cache store configured")
 
     # Out-of-band garbage collection middleware to reduce latency spikes
     config.middleware.use OobGcMiddleware
@@ -481,12 +504,16 @@ module LibreverseInstance
   end
 end
 
+BootTrace.log("application.rb: configuring console1984")
 # Enable console1984 in production and staging by default
 Rails.application.config.console1984.protected_environments = %i[ production staging ]
+BootTrace.log("application.rb: console1984 configured")
 
 # Embedded Sidekiq configuration for PhusionPassenger
 # https://github.com/sidekiq/sidekiq/wiki/Embedded-Workers
+BootTrace.log("application.rb: checking for PhusionPassenger")
 if defined?(PhusionPassenger)
+  BootTrace.log("application.rb: setting up PhusionPassenger event handlers")
   $embedded_sidekiq = nil
 
   PhusionPassenger.on_event(:starting_worker_process) do |forked|
@@ -509,4 +536,7 @@ if defined?(PhusionPassenger)
     $embedded_sidekiq&.stop
     Rails.logger.info "[Sidekiq] Embedded instance stopped in worker process"
   end
+  BootTrace.log("application.rb: PhusionPassenger event handlers registered")
 end
+
+BootTrace.log("application.rb: complete")
