@@ -91,8 +91,13 @@ logger.extend(ActiveSupport::LoggerSilencer) unless logger.respond_to?(:silence)
 logger = ActiveSupport::TaggedLogging.new(logger)
 logger.formatter.extend(CustomTaggedFormatter)
 
-# Replace the Rails logger
-Rails.logger = logger
+# Rails 8.1+ expects a BroadcastLogger for server command compatibility
+if defined?(ActiveSupport::BroadcastLogger)
+  broadcast_logger = ActiveSupport::BroadcastLogger.new(logger)
+  Rails.logger = broadcast_logger
+else
+  Rails.logger = logger
+end
 
 # Ensure the application config uses the same logger instance
 Rails.application.config.logger = Rails.logger

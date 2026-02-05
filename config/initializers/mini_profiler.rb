@@ -88,15 +88,16 @@ if Rails.env.development? || Rails.env.production?
     stack = Rails.application.config.middleware
     unless ENV["RACK_MINI_PROFILER_INSERTED"] == "1"
       begin
-        if defined?(ViteRuby::DevServerProxy)
+        if defined?(ViteRuby::DevServerProxy) && stack.any? { |m| m.klass == ViteRuby::DevServerProxy }
           # Ensure Mini Profiler runs after Vite Ruby's dev server proxy
           stack.insert_after ViteRuby::DevServerProxy, Rack::MiniProfiler
         else
           # Append to the end so it comes after most engine middlewares
           stack.use Rack::MiniProfiler
         end
-      rescue StandardError
-        # As a last resort, append
+      rescue StandardError => e
+        # As a last resort, append (handles missing middleware gracefully)
+        Rails.logger.warn "Mini Profiler middleware insertion failed: #{e.message}. Appending to end."
         stack.use Rack::MiniProfiler
       end
       ENV["RACK_MINI_PROFILER_INSERTED"] = "1"

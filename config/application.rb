@@ -5,13 +5,18 @@
 require_relative "boot"
 BootTrace.log("application.rb: start")
 
+# Load Bundler require tracer before any gem requires
+require_relative "patches/bundler_require_trace" if ENV["TRACE_BUNDLER_REQUIRE"] == "1"
+
 BootTrace.log("application.rb: loading rails/all")
 require "rails/all"
 BootTrace.log("application.rb: rails/all loaded")
 
 BootTrace.log("application.rb: running Bundler.require")
+start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 Bundler.require(*Rails.groups)
-BootTrace.log("application.rb: Bundler.require complete")
+duration_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000.0).round(3)
+BootTrace.log("application.rb: Bundler.require complete duration_ms=#{duration_ms}")
 
 BootTrace.log("application.rb: loading facets")
 require 'facets'
@@ -540,3 +545,10 @@ if defined?(PhusionPassenger)
 end
 
 BootTrace.log("application.rb: complete")
+
+# Trace Rails finisher hook to identify post-initialization hangs
+Rails.application.config.after_initialize do
+  BootTrace.log("application.rb: finisher_hook start")
+  # Rails runs finisher hooks here; any hang will be visible
+  BootTrace.log("application.rb: finisher_hook finish")
+end

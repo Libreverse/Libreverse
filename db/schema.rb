@@ -905,6 +905,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "test", id: false, charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+    t.integer "id"
+  end
+
   create_table "thredded_categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.text "description"

@@ -87,6 +87,9 @@ export default defineConfig(({ mode }) => {
             https: devHttps,
             headers: isDevelopment ? devViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development
+            watch: {
+                ignored: ["**/.ruby-lsp/**"],
+            },
         },
         assetsInclude: ["**/*.snappy", "**/*.gguf", "**/*.wasm"],
         css: {

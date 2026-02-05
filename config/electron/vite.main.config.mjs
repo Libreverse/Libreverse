@@ -33,6 +33,9 @@ export default defineConfig(({ mode }) => {
         build: createCommonBuild({ isDevelopment }),
         server: {
             fs: { strict: false }, // More lenient file system access for development
+            watch: {
+                ignored: ["**/.ruby-lsp/**"],
+            },
         },
         define: commonDefine,
         optimizeDeps: createOptimizeDepsForce(isDevelopment),
