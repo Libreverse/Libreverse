@@ -41,7 +41,10 @@ http {
     passenger_temp_path /tmp/passenger_temp;
     passenger_buffer_upload off;
     passenger_response_buffer_high_watermark 0;
-    passenger_start_timeout 120;
+    passenger_start_timeout 600;
+    passenger_disable_anonymous_telemetry on;
+    passenger_spawn_method smart;
+    passenger_ruby /Users/george/.rubies/truffleruby-25.0.0/bin/truffleruby;
     gzip off;
     default_type application/octet-stream;
     types_hash_max_size 2048;

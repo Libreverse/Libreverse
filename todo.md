@@ -1,4 +1,5 @@
 # To-do
+get rid of truffleruby
 db find indexes command on static tools
 do a massive middleware cleanup operation where we get everything in sense
 move rails cache store to the memorystore and cut out the isolator middleware
