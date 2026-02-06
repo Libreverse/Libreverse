@@ -1,5 +1,6 @@
 # typed: strict
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 # Boot tracing module (defined before shareable_constant_value to avoid restrictions)
 module BootTrace
@@ -7,15 +8,13 @@ module BootTrace
     return unless ENV["TRACE_BOOT"] == "1"
     trace_file = File.expand_path("../tmp/boot_trace.log", __dir__)
     File.open(trace_file, "a") do |f|
-      f.puts("#{Time.now.utc.strftime('%Y-%m-%d %H:%M:%S.%6N')} pid=#{Process.pid} #{event}")
+      f.puts("#{event}")
       f.flush
     end
   rescue StandardError
     nil
   end
 end
-
-# shareable_constant_value: literal
 
 # Disable macOS fork safety check to prevent crashes during development
 ENV["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
@@ -70,8 +69,4 @@ if ENV["RAILS_ENV"] == "development"
   # RubyNext::Language.exclude_patterns << /vendor/
 end
 
-# Establish thread budgeting before Rails loads other initializers/config ERB
-BootTrace.log("boot.rb: loading thread_budget")
-require_relative "thread_budget"
-BootTrace.log("boot.rb: thread_budget loaded")
 BootTrace.log("boot.rb: complete")
