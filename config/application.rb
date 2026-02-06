@@ -514,35 +514,6 @@ BootTrace.log("application.rb: configuring console1984")
 Rails.application.config.console1984.protected_environments = %i[ production staging ]
 BootTrace.log("application.rb: console1984 configured")
 
-# Embedded Sidekiq configuration for PhusionPassenger
-# https://github.com/sidekiq/sidekiq/wiki/Embedded-Workers
-BootTrace.log("application.rb: checking for PhusionPassenger")
-if defined?(PhusionPassenger)
-  BootTrace.log("application.rb: setting up PhusionPassenger event handlers")
-  $embedded_sidekiq = nil
-
-  PhusionPassenger.on_event(:starting_worker_process) do |forked|
-    if forked
-      $embedded_sidekiq = Sidekiq.configure_embed do |config|
-        config.concurrency = 8
-        config.logger.level = Logger::INFO
-        config.poll_interval_average = 15
-        config.timeout = 25
-        config.max_retries = 25
-        config.dead_max_jobs = 10000
-        config.dead_timeout_in_seconds = 7776000
-      end
-      $embedded_sidekiq.run
-      Rails.logger.info "[Sidekiq] Embedded instance started in worker process"
-    end
-  end
-
-  PhusionPassenger.on_event(:stopping_worker_process) do
-    $embedded_sidekiq&.stop
-    Rails.logger.info "[Sidekiq] Embedded instance stopped in worker process"
-  end
-  BootTrace.log("application.rb: PhusionPassenger event handlers registered")
-end
 
 BootTrace.log("application.rb: complete")
 

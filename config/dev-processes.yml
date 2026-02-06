@@ -1,4 +1,5 @@
-phusion-passenger: cd .. && USE_TRUFFLERUBY_SERVER=true ./bin/passenger-truffleruby
+phusion-passenger: cd .. && USE_TRUFFLERUBY_SERVER=true ./bin/passenger
+passenger-monitor: cd .. && ruby scripts/passenger_monitor.rb
 sidekiq: cd .. && bin/jobs
 anycable-rpc: cd .. && bundle exec anycable
 vite: cd .. && bin/vite dev
