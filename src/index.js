@@ -33,7 +33,7 @@ for (const f of flags) {
     else app.commandLine.appendSwitch(f);
 }
 
-const baseUrl = process.env.APP_URL || "https://localhost:3000";
+const baseUrl = process.env.APP_URL || "http://localhost:3000";
 // strangely it doesn't keep the window open without this.
 let mainWindow = null;
 

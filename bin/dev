@@ -1,1 +1,44 @@
-echo "Use the separate commands bin/dev-client and bin/dev-server"
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Development server launcher with single pane tmux setup
+# This script starts dev-server in background and dev-client in foreground
+
+require 'fileutils'
+
+# Define session name
+session_name = "libreverse-dev"
+
+# Kill any existing session to ensure fresh start
+system("tmux kill-session -t #{session_name} 2>/dev/null")
+
+# Create new tmux session
+system("tmux new-session -d -s #{session_name}")
+
+# Configure tmux for proper mouse scrolling and terminal behavior
+system("tmux set-option -t #{session_name} mouse on")
+system("tmux set-option -t #{session_name} terminal-overrides 'xterm*:smcup@:rmcup@'")
+system("tmux set-option -t #{session_name} -g mode-keys vi")
+system("tmux set-option -t #{session_name} history-limit 50000")
+system("tmux set-option -t #{session_name} status off")
+
+# Change prefix to Ctrl+A to avoid conflicts
+system("tmux set-option -t #{session_name} prefix C-a")
+
+# Setup the single pane with proper environment
+system("tmux send-keys -t #{session_name}:0 'cd #{Dir.pwd}' Enter")
+system("tmux send-keys -t #{session_name}:0 'source .envrc' Enter")
+
+# Start server with proper prep work in background
+system("tmux send-keys -t #{session_name}:0 './bin/dev-server 2>&1 | tee /tmp/falcon-server.log &' Enter")
+system("tmux send-keys -t #{session_name}:0 'SERVER_PID=$!' Enter")
+system("tmux send-keys -t #{session_name}:0 'sleep 5' Enter")
+
+# Check if server started successfully
+system("tmux send-keys -t #{session_name}:0 'if ps -p $SERVER_PID > /dev/null; then :; else exit 1; fi' Enter")
+
+# Start client in foreground
+system("tmux send-keys -t #{session_name}:0 'bin/dev-client' Enter")
+
+# Attach to the session
+exec("tmux attach-session -t #{session_name}")

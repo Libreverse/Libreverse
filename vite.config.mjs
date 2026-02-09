@@ -36,20 +36,6 @@ import {
     devViteSecurityHeaders,
 } from "./config/vite/common.js";
 
-const mkcertDefaults = {
-    cert: process.env.MKCERT_CERT_PATH || "/tmp/mkcert-dev-certs/localhost.pem",
-    key: process.env.MKCERT_KEY_PATH || "/tmp/mkcert-dev-certs/localhost-key.pem",
-};
-
-function buildHttpsOptions() {
-    if (!fs.existsSync(mkcertDefaults.cert) || !fs.existsSync(mkcertDefaults.key)) {
-        return undefined;
-    }
-    return {
-        cert: fs.readFileSync(mkcertDefaults.cert),
-        key: fs.readFileSync(mkcertDefaults.key),
-    };
-}
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
@@ -111,15 +97,13 @@ export default defineConfig(({ mode }) => {
             host: process.env.VITE_DEV_SERVER_HOST || "127.0.0.1",
             port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
             strictPort: true,
-            https: isDevelopment ? buildHttpsOptions() : undefined,
             hmr: {
                 overlay: false,
-                protocol: isDevelopment && buildHttpsOptions() ? "wss" : "ws",
+                protocol: "ws",
                 host: "localhost",
                 port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
                 clientPort: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
             },
-            origin: isDevelopment && buildHttpsOptions() ? `https://localhost:${process.env.VITE_DEV_SERVER_PORT || 3001}` : undefined,
             headers: isDevelopment ? devViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development
         },

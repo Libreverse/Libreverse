@@ -35,51 +35,11 @@ sub get_next_color {
 # Clear screen for a fresh start
 system('clear');
 
-# Define banner lines
-my @banner = (
-    "  / /(_) |__  _ __ _____   _____ _ __ ___  ___ ",
-    " / / | | '_ \\| '__/ _ \\ \\ / / _ \\ '__/ __|/ _ \\",
-    "/ /__| | |_) | | |  __/\\ V /  __/ |  \\__ \\  __/",
-    "\\____/_|_.__/|_|  \\___| \\_/ \\___|_|  |___/\\___|"
-);
-
-# Print header with banner
-print $header_color;
-print "╔$line╗\n";
-foreach my $banner_line (@banner) {
-    my $len = length($banner_line);
-    my $side_spaces = int(($box_width - ($len + 1)) / 2);
-    print "║", " " x $side_spaces, $banner_line, " " x $side_spaces, " ║\n";
-}
-print "╚$line╝\n";
-print $RESET;
-
-# Render a Twemoji brain emoji after the banner for flair
-# print twemoji('🧠');
-
 # Function to display a task with status
 sub run_task {
     my ($message, $command) = @_;
-    print $message_color, '▶', " $message", $RESET, "\n";
-    system($command) == 0 or warn "Command failed: $command\n";
-    print $message_color, "  ", '✅', " Done", $RESET, "\n\n";
+    system($command);
 }
-
-# Function to display a spinner during tasks
-sub show_spinner {
-    my ($message) = @_;
-    print $message_color, "  ", '⏳', " $message", $RESET;
-    my @spinner = ('|', '/', '-', '\\');
-    for (1..10) {
-        print "\r", $message_color, "  ", '⏳', " $message ", $spinner[$_ % 4], $RESET;
-        select(undef, undef, undef, 0.1);  # Brief delay
-    }
-    print "\r", " " x ($width - 2), "\r";  # Clear line
-}
-
-#!/usr/bin/env perl
-use strict;
-use warnings;
 
 # Define colors from the provided palette
 my %COLORS = (
@@ -89,59 +49,19 @@ my %COLORS = (
   cyan   => "\033[38;5;115m",
 );
 
-# Print messages as regular text (left-aligned)
-print "\n";
-print $COLORS{red}
-  . $COLORS{cyan}
-  . "Libreverse development startup in progress..."
-  . $COLORS{reset} . "\n";
-print $COLORS{yellow}
-  . "This process may take a few minutes."
-  . $COLORS{reset} . "\n";
-print $COLORS{yellow}
-  . "Please do not interrupt or close the terminal unless the time has gotten "
-  . "\033[3mreally\033[23m"
-  . " long."
-  . $COLORS{reset} . "\n";
-print "\n";
-
 # Run tasks with visual feedback
-show_spinner("Killing other overmind instances...");
 run_task("Killing other overmind instances...", "pkill overmind > /dev/null 2>&1");
-
-show_spinner("Unlinking the overmind socket...");
 unlink '/tmp/.overmind.sock';
-print $message_color, "  ", '✅', " Done", $RESET, "\n\n";
-
-show_spinner("Killing any running Passenger instances...");
-run_task("Killing any running Passenger instances...", "pkill -f 'Passenger' > /dev/null 2>&1; pkill -f 'passenger' > /dev/null 2>&1");
-
-show_spinner("Killing anything using the development SQLite database...");
-run_task("Killing anything using the development SQLite database...", "cd .. && perl script/unlock_sqlite.pl > /dev/null 2>&1");;
-
-show_spinner("Killing anything on port 3000...");
 run_task("Killing anything on port 3000...", "fuser -k -TERM 3000/tcp > /dev/null 2>&1");
-
-# Ensure mkcert root CA is installed and trusted (sudo once)
-show_spinner("Configuring certificates for local http/3...");
 run_task(
     "Ensuring mkcert root CA is trusted",
     q{mkcert -install >/dev/null 2>&1 || (command -v mkcert >/dev/null && mkcert -install)}
 );
 
-
-
-# Set environment variables for Overmind and all child processes
-$ENV{OBJC_DISABLE_INITIALIZE_FORK_SAFETY} = 'YES';
 $ENV{OVERMIND_SOCKET}        = '/tmp/.overmind.sock';
 $ENV{OVERMIND_TMUX_CONFIG}   = '/config/dev/overmind-tmux.conf';
 $ENV{OVERMIND_RESTART}       = 'all';
 $ENV{OVERMIND_COLORS}        = '224,111,150,182,186,147,216,110,174,115,175,116,218,217';
 $ENV{OVERMIND_CAN_DIE}       = 'startup-message';
-
-# Start/Check databases
-print $message_color, '🗄️', " Checking/Starting databases...\n", $RESET;
-system("bin/db-start") == 0 or warn "Failed to start databases\n";
-print "\n";
 
 exec 'overmind', 'start', '-f', 'config/dev-processes.yml'

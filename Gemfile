@@ -60,7 +60,7 @@ gem "memo_wise"
 gem "nokogiri"
 gem "omniauth_openid_connect"
 gem "ostruct"
-gem "passenger", ">= 6.0.20", require: "phusion_passenger/rack_handler"
+gem "falcon"
 gem "permessage_deflate"
 gem "pluck_in_batches"
 gem "premailer-rails"
@@ -125,7 +125,7 @@ gem "voight_kampff"
 gem "worker_killer"
 gem "zip_kit"
 gem "ruby-next"
-gem 'sorbet-runtime'
+# gem 'sorbet-runtime'
 gem 'openssl', '~> 3.3.1', require: false
 gem "ractor-shim", require: false
 
@@ -133,8 +133,8 @@ group :development, :test do
   gem "active_record_doctor", require: false
   gem "annotaterb"
   gem "listen"
-  gem 'sorbet', '~> 0.5'
-  gem 'tapioca', '~> 0.17', require: false
+  # gem 'sorbet', '~> 0.5'
+  # gem 'tapioca', '~> 0.17', require: false
 end
 
 group :development do
@@ -150,7 +150,7 @@ group :development do
   gem "rubocop-rails", require: false
   gem "ruumba", require: false
   gem "slim_lint", require: false
-  gem 'spoom', path: "vendor/gems/spoom", require: false
+  # gem 'spoom', path: "vendor/gems/spoom", require: false
 end
 
 group :test do

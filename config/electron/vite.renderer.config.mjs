@@ -37,43 +37,6 @@ import {
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
 
-    const devHttps = (() => {
-        if (!isDevelopment) return undefined;
-
-        const certDir =
-            process.env.VITE_DEV_CERT_DIR ||
-            path.join(process.cwd(), "tmp", "vite-dev-certs");
-        const certPath = path.join(certDir, "localhost.pem");
-        const keyPath = path.join(certDir, "localhost-key.pem");
-
-        try {
-            fs.mkdirSync(certDir, { recursive: true });
-        } catch {
-            // ignore
-        }
-
-        if (!fs.existsSync(certPath) || !fs.existsSync(keyPath)) {
-            try {
-                execSync(
-                    `mkcert -cert-file "${certPath}" -key-file "${keyPath}" localhost 127.0.0.1 ::1`,
-                    { stdio: "ignore" },
-                );
-            } catch {
-                // If mkcert isn't available, fall back to HTTPS without custom certs.
-                return true;
-            }
-        }
-
-        try {
-            return {
-                cert: fs.readFileSync(certPath),
-                key: fs.readFileSync(keyPath),
-            };
-        } catch {
-            return true;
-        }
-    })();
-
     const typehintPlugin = createTypehintPlugin(typehints);
 
     return {
@@ -84,7 +47,6 @@ export default defineConfig(({ mode }) => {
         build: createCommonBuild({ isDevelopment }),
         server: {
             hmr: { overlay: false }, // Enable error overlay in development
-            https: devHttps,
             headers: isDevelopment ? devViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development
             watch: {

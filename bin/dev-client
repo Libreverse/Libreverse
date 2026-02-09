@@ -1,1 +1,15 @@
-pnpm start
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Development client launcher for Electron Forge
+# This script starts the Electron Forge client in development mode
+
+# Check if pnpm is available
+unless system('which pnpm > /dev/null 2>&1')
+  puts "pnpm is not installed. Please install pnpm first:"
+  puts "   npm install -g pnpm"
+  exit 1
+end
+
+# Start Electron Forge
+system("pnpm start")

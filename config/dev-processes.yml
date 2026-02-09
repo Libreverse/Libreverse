@@ -1,12 +1,7 @@
-phusion-passenger: cd .. && USE_TRUFFLERUBY_SERVER=true ./bin/passenger
-passenger-monitor: cd .. && ruby scripts/passenger_monitor.rb
-sidekiq: cd .. && bin/jobs
-anycable-rpc: cd .. && bundle exec anycable
+webserver: cd .. && APP_PORT=3000 bin/falcon
+tasks: cd .. && bin/jobs
+websocket-broker: cd .. && bundle exec anycable
 vite: cd .. && bin/vite dev
-mailhog: cd .. && mailhog  
-dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh  
-anycable-go: cd .. && bin/anycable-go
-# If we ever decide to use non-jit mode in the future - i don't think it's worth it for shakapacker
-#shakapacker-asset-server: cd .. && bin/shakapacker-dev-server  
-#shakapacker-client: cd .. && CLIENT_BUNDLE_ONLY=yes bin/shakapacker-isr  
-#shakapacker-server: cd .. && SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
+mail-receiver: cd .. && mailhog  
+websockets: cd .. && bin/anycable-go
+boottrace: bash -c 'while ! ls tmp/boottrace* >/dev/null 2>&1; do sleep 1; done; tail -f tmp/boottrace*'

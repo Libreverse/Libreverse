@@ -7,32 +7,31 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   config.eager_load = true
 
-  # Dev runs behind an HTTPS reverse-proxy (Caddy). Treat requests as SSL so
-  # secure cookies (e.g., profiler/session) and generated URLs stay scheme-consistent.
-  config.assume_ssl = true
+  # Dev runs directly without HTTPS proxy. Don't assume SSL.
+  config.assume_ssl = false
 
   config.session_store :cookie_store,
                        key: "_libreverse_session",
                        expire_after: 2.hours,
                        domain: :all,
-                       same_site: :none,
-                       secure: true
+                       same_site: :lax,
+                       secure: false
 
   # Configure ActionCable URL to connect directly to AnyCable
   # Must match the websocket_url in config/anycable.yml
   config.action_cable.url = "ws://localhost:3003/cable"
   config.action_cable.allowed_request_origins = [
-    "https://localhost:3000",
-    "https://127.0.0.1:3000",
-    "https://[::1]:3000",
-    "https://localhost:5173",
-    "https://127.0.0.1:5173",
-    "https://[::1]:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://[::1]:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://[::1]:5173",
     "file://"
   ]
 
   # Default URL options should also match
-  config.action_controller.default_url_options = { protocol: "https", host: "localhost", port: 3000 }
+  config.action_controller.default_url_options = { protocol: "http", host: "localhost", port: 3000 }
 
   # Settings specified here will take precedence over those in config/application.rb.
   config.enable_reloading = true

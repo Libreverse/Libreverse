@@ -12,20 +12,20 @@ for _p in "${_path_parts[@]}"; do
   CLEAN_PATH="${CLEAN_PATH:+${CLEAN_PATH}:}${_p}"
 done
 
-# Use CRuby by default, TruffleRuby only when explicitly requested.
+# Use TruffleRuby by default, CRuby only when explicitly requested.
 # IMPORTANT: do not call `ruby` here, because that would resolve to whatever Ruby
 # is active *before* any later engine switch (e.g., inside bin/passenger-truffleruby).
 TRUFFLERUBY_BIN="/Users/george/.rubies/truffleruby-25.0.0/bin/truffleruby"
 CRUBY_BIN="/Users/george/.rubies/ruby-3.4.1/bin/ruby"
 
-RUBY_BIN="${CRUBY_BIN}"
-if [[ "${USE_TRUFFLERUBY_SERVER:-}" == "true" ]] && [[ -x "$TRUFFLERUBY_BIN" ]]; then
-  RUBY_BIN="$TRUFFLERUBY_BIN"
+RUBY_BIN="${TRUFFLERUBY_BIN}"
+if [[ "${USE_CRUBY:-}" == "true" ]] && [[ -x "$CRUBY_BIN" ]]; then
+  RUBY_BIN="$CRUBY_BIN"
 fi
 
 if [[ ! -x "$RUBY_BIN" ]]; then
   echo "❌ Expected Ruby not found/executable: $RUBY_BIN" >&2
-  echo "   (set USE_TRUFFLERUBY_SERVER=true to force TruffleRuby, otherwise CRuby is used)" >&2
+  echo "   (set USE_CRUBY=true to force CRuby, otherwise TruffleRuby is used)" >&2
   exit 127
 fi
 

@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Development server script using Falcon
+# This script starts the Rails application with Falcon in development mode
+
+require 'falcon'
+
+# Set development environment
+ENV['RAILS_ENV'] ||= 'development'
+
+puts "Loading Rails environment..."
+
+# Load Rails with timeout to avoid hanging
+begin
+  require_relative '../config/environment'
+  puts "Rails environment loaded successfully"
+rescue => e
+  puts "Error loading Rails: #{e.message}"
+  exit 1
+end
+
+puts "Creating Falcon server..."
+
+# Create a simple Rack service for Rails
+class RailsService
+  def initialize(app)
+    @app = app
+  end
+  
+  def call(env)
+    @app.call(env)
+  end
+end
+
+# Create a development service
+service = Falcon::Service::Rack.new(
+  RailsService.new(Rails.application),
+  environment: 'development'
+)
+
+# Create endpoint for development
+endpoint = Falcon::Endpoint.new(
+  host: 'localhost',
+  port: 3002  # Changed to 3002 to match what dev-proxy expects
+)
+
+# Create and run the server
+server = Falcon::Server.new(service, endpoint)
+
+puts "Starting Falcon development server on http://localhost:3002"
+puts "Press Ctrl+C to stop"
+
+server.run
