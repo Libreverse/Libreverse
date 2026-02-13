@@ -5,4 +5,4 @@ vite: cd .. && bin/vite dev
 mail-receiver: cd .. && mailhog  
 websocket-server: cd .. && bin/anycable-go
 dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh
-shakapacker: cd .. && ./bin/shakapacker --watch --progress
+webpack: cd .. && ./bin/shakapacker-isr

@@ -69,7 +69,7 @@ export function createTypehintPlugin(typehintsPluginFactory) {
 
 export function createEsbuildConfig(isDevelopment) {
     return {
-        target: "es2020", // Modern target
+        target: "esnext", // Allow latest syntax (class fields/private names)
         keepNames: false,
         treeShaking: isDevelopment ? false : true, // Disable tree shaking in development for faster builds
         legalComments: isDevelopment ? "none" : "inline", // Skip legal comments in development
@@ -240,7 +240,6 @@ export function createCommonBuild({ isDevelopment, rollupInput } = {}) {
         cache: isDevelopment,
         rollupOptions: {
             output: createRollupOutputConfig(),
-            external: [],
             treeshake: {
                 moduleSideEffects: true,
                 propertyReadSideEffects: false,
@@ -248,7 +247,17 @@ export function createCommonBuild({ isDevelopment, rollupInput } = {}) {
                 unknownGlobalSideEffects: false,
             },
         },
-        target: ["es2020", "edge88", "firefox78", "chrome87", "safari14"],
+        // Ensure CJS plugin uses a modern parser that understands class private fields
+        // (turbo.es2017-esm.js trips esbuild when target is too low).
+        commonjsOptions: {
+            esbuildTarget: "esnext",
+            transformMixedEsModules: true,
+            esbuildOptions: {
+                target: "esnext",
+            },
+            exclude: [/node_modules\/@hotwired\/turbo/],
+        },
+        target: ["esnext"],
         modulePreload: { polyfill: true },
         cssCodeSplit: true,
         assetsInlineLimit: 500000,

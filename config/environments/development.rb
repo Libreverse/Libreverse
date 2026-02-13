@@ -43,7 +43,7 @@ Rails.application.configure do
   config.server_timing = true
 
   # Disable browser caching in development
-  config.public_file_server.enabled = false
+  config.public_file_server.enabled = true
 
   # Store uploaded files in the database using active_storage_db
   config.active_storage.service = :db

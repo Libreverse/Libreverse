@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 # Initial build after delay
-sleep 10
 bin/shakapacker
-# Watch JSX files for changes and rebuild
-fswatch -r app/javascript --include '\.jsx$' | while read; do
-    bin/shakapacker > /dev/null 2>&1
+# Watch JSX and TSX files for changes and rebuild
+fswatch -r app/javascript --include '\.jsx?$' --include '\.tsx?$' | while read; do
+    bin/shakapacker
 done

@@ -58,8 +58,6 @@ application.register("lenis", LenisController)
 import LinkController from "./link_controller"
 application.register("link", LinkController)
 
-import LlmController from "./llm_controller"
-application.register("llm", LlmController)
 
 import MetaverseMapController from "./metaverse_map_controller"
 application.register("metaverse-map", MetaverseMapController)
