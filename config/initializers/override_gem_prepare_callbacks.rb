@@ -1,4 +1,4 @@
-# typed: true
+# typed: strict
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
@@ -20,7 +20,7 @@ end
 
 # ReactOnRails: move version check and pool reset to after_initialize
 Rails.application.config.after_initialize do
-  VersionChecker.build.log_if_gem_and_node_package_versions_differ if defined?(VersionChecker)
+  ReactOnRails::VersionChecker.build.log_if_gem_and_node_package_versions_differ if defined?(ReactOnRails::VersionChecker)
   ReactOnRails::ServerRenderingPool.reset_pool if defined?(ReactOnRails::ServerRenderingPool)
 end
 

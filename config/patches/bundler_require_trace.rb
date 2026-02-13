@@ -40,7 +40,7 @@ module Bundler
       BundlerRequireTrace.log("Bundler.require start groups=#{groups.inspect}")
 
       # Get the list of gems that will be required
-      specs = Runtime.new.definition.specs_for(groups)
+      specs = Bundler.definition.specs_for(groups)
 
       specs.each do |spec|
         BundlerRequireTrace.trace_require(spec.name) do

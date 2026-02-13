@@ -4,6 +4,9 @@
 
 # Boot tracing module (defined before shareable_constant_value to avoid restrictions)
 module BootTrace
+  extend T::Sig
+
+  sig { params(event: T.untyped).returns(T.nilable(File)) }
   def self.log(event)
     return unless ENV["TRACE_BOOT"] == "1"
 

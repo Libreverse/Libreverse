@@ -10,8 +10,8 @@ class BatchVectorizeExperiencesJobTest < ActiveJob::TestCase
     Experience.delete_all
     clear_enqueued_jobs
 
-    @account = Account.create!(username: "testaccount", status: 2)
-    @experiences = []
+    @account = T.let(Account.create!(username: "testaccount", status: 2), Account)
+    @experiences = T.let([], T::Array[Experience])
     5.times do |i|
       @experiences << Experience.create!(
         title: "Experience #{i}",
