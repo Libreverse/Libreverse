@@ -1,5 +1,8 @@
 ---
 zh:
+  activerecord:
+    models:
+      account: Account
   consent:
     screen:
       access_message_html: 要访问应用，您必须同意我们的%{privacy_policy_link}和%{cookie_policy_link}。
@@ -70,6 +73,9 @@ zh:
     please_try_again: Please try again in a moment.
     suspicious_activity: Suspicious activity detected. Please try again later.
     too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  helpers:
+    submit:
+      create: Create
   homepage:
     index:
       article:

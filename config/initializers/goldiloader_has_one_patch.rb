@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 # typed: false
 
 # Patch Goldiloader to accept ActiveRecord 8's force_reload arg in has_one find_target.

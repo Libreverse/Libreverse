@@ -4,6 +4,6 @@ import MetaversePreview from "../src/Metaverse3D/ror_components/MetaversePreview
 import AnimatedIconRenderer from "../src/iconsV2/ror_components/animated-icon-renderer";
 
 ReactOnRails.register({
-  MetaversePreview,
-  AnimatedIconRenderer,
+    MetaversePreview,
+    AnimatedIconRenderer,
 });

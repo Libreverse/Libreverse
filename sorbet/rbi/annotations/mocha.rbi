@@ -1,4 +1,4 @@
-# typed: strict
+# typed: true
 
 # DO NOT EDIT MANUALLY
 # This file was pulled from a central RBI files repository.
@@ -31,7 +31,4 @@ module Mocha::ObjectMethods
 
   sig { params(stubbed_methods_vs_return_values: T.untyped).returns(Mocha::Expectation) }
   def stubs(stubbed_methods_vs_return_values); end
-end
-
-class Mocha::Mock
 end

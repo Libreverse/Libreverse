@@ -1,4 +1,4 @@
-require('v8-compile-cache');
+require("v8-compile-cache");
 const commonWebpackConfig = require("./commonWebpackConfig.js");
 
 const configureClient = () => {

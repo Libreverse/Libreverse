@@ -5,4 +5,4 @@
 :dead_timeout_in_seconds: 7776000
 :max_retries: 25
 :queues:
-  - default
+    - default

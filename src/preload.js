@@ -160,7 +160,8 @@ const resolveAllowedUgcUrl = (rawUrl) => {
 
     let u;
     try {
-        if (APP_ORIGIN && rawUrl.startsWith("/")) u = new URL(rawUrl, APP_ORIGIN);
+        if (APP_ORIGIN && rawUrl.startsWith("/"))
+            u = new URL(rawUrl, APP_ORIGIN);
         else u = new URL(rawUrl);
     } catch {
         return null;

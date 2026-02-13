@@ -1,5 +1,8 @@
 ---
 pt:
+  activerecord:
+    models:
+      account: Account
   consent:
     screen:
       access_message_html: Para acessar o aplicativo, você deve concordar com nossa
@@ -79,6 +82,9 @@ pt:
     please_try_again: Please try again in a moment.
     suspicious_activity: Suspicious activity detected. Please try again later.
     too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  helpers:
+    submit:
+      create: Create
   homepage:
     index:
       article:

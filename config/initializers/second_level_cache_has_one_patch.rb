@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# shareable_constant_value: literal
 # typed: false
 
 # Patch SecondLevelCache to handle ActiveRecord 8's HasOneAssociation#find_target
@@ -17,6 +18,7 @@ module SecondLevelCache
           through = reflection.options[:through]
           record = if through
             return super(*args, **kwargs) unless owner.class.reflections[through.to_s].klass.second_level_cache_enabled?
+
             begin
               reflection.klass.find(owner.send(through).read_attribute(reflection.foreign_key))
             rescue StandardError
@@ -29,6 +31,7 @@ module SecondLevelCache
           end
 
           return nil unless record
+
           record.tap { |r| set_inverse_instance(r) }
         end
       end

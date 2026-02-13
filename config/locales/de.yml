@@ -1,5 +1,8 @@
 ---
 de:
+  activerecord:
+    models:
+      account: Account
   consent:
     screen:
       access_message_html: Um auf die App zuzugreifen, müssen Sie unserer %{privacy_policy_link}
@@ -81,6 +84,9 @@ de:
     please_try_again: Please try again in a moment.
     suspicious_activity: Suspicious activity detected. Please try again later.
     too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  helpers:
+    submit:
+      create: Create
   homepage:
     index:
       article:

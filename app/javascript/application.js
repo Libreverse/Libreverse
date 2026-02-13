@@ -302,5 +302,5 @@ document.addEventListener("DOMContentLoaded", checkForCookieClearHeaders);
     });
 })();
 
-import "trix"
-import "@rails/actiontext"
+import "trix";
+import "@rails/actiontext";

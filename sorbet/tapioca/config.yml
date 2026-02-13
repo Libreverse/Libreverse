@@ -1,15 +1,15 @@
 gem:
-  # Add your `gem` command parameters here:
-  #
-  exclude:
-   - fast_underscore
-   - execjs
-   - redis
-  # doc: true
-  # workers: 5
+    # Add your `gem` command parameters here:
+    #
+    exclude:
+        - fast_underscore
+        - execjs
+        - redis
+    # doc: true
+    # workers: 5
 dsl:
-  # Add your `dsl` command parameters here:
-  #
-  # exclude:
-  # - SomeGeneratorName
-  # workers: 5
+    # Add your `dsl` command parameters here:
+    #
+    # exclude:
+    # - SomeGeneratorName
+    # workers: 5

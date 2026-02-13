@@ -5,8 +5,8 @@
 # This file configures the Puma webserver for deployment
 
 # Application-specific configuration
-hostname = ENV.fetch("HOSTNAME", "0.0.0.0")
-port = ENV.fetch("PORT", 3002).to_i
+ENV.fetch("HOSTNAME", "0.0.0.0")
+ENV.fetch("PORT", 3002).to_i
 ENV.fetch("RAILS_ENV", "production")
 
 # Performance tuning

@@ -24,13 +24,13 @@ Libreverse is a privacy‑centric application for curating and sharing interacti
 
 ## 🛠 Technology Stack
 
-| Layer           | Technology                                   |
-| --------------- | -------------------------------------------- |
-| Language        | Ruby 3.4                                     |
-| Framework       | Rails 8.0.2 + Hotwire                        |
-| Database        | SQLite 3 (enhanced adapter)                  |
-| Build / Assets  | Vite 6 + pnpm                                |
-| Web Server      | Puma                                         |
+| Layer          | Technology                  |
+| -------------- | --------------------------- |
+| Language       | Ruby 3.4                    |
+| Framework      | Rails 8.0.2 + Hotwire       |
+| Database       | SQLite 3 (enhanced adapter) |
+| Build / Assets | Vite 6 + pnpm               |
+| Web Server     | Puma                        |
 
 ---
 

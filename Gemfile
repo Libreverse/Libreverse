@@ -20,7 +20,6 @@ gem "addressable"
 gem "anycable-rails", "~> 1.4"
 gem "argon2"
 gem "audits1984"
-gem "auto_html"
 gem "better_html"
 gem "bootsnap", require: false
 gem "cancancan"
@@ -125,7 +124,6 @@ gem "vite_rails"
 gem "voight_kampff"
 gem "worker_killer"
 gem "zip_kit"
-# gem 'sorbet-runtime'
 gem "openssl", "~> 3.3.1", require: false
 gem "ractor-shim", require: false
 
@@ -133,8 +131,6 @@ group :development, :test do
   gem "active_record_doctor", require: false
   gem "annotaterb"
   gem "listen"
-  # gem 'sorbet', '~> 0.5'
-  # gem 'tapioca', '~> 0.17', require: false
 end
 
 group :development do
@@ -150,10 +146,16 @@ group :development do
   gem "rubocop-rails", require: false
   gem "ruumba", require: false
   gem "slim_lint", require: false
-  # gem 'spoom', path: "vendor/gems/spoom", require: false
 end
 
 group :test do
   gem "mocha"
   gem "mysql2"
+end
+
+if RUBY_ENGINE != "truffleruby"
+  gem 'sorbet-runtime'
+  gem 'sorbet', '~> 0.5'
+  gem 'tapioca', '~> 0.17', require: false
+  gem 'spoom', path: "vendor/gems/spoom", require: false
 end

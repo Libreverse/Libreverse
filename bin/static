@@ -116,12 +116,6 @@ push @sequential_status, $prettier_status;
 run_command("Rubocop", "sh", "-c",
   "RUBYOPT='$rubyopt' bin/rubocop -A");
 
-run_command("HAML Whitespace Cleanup", "sh", "-c",
-  "find . -name '*.haml' -not -path './node_modules/*' -not -path './.git/*' -exec sed -i '' 's/[[:space:]]*\$//' {} +");
-
-run_command("haml-lint", "sh", "-c",
-  "RUBYOPT='$rubyopt' bundle exec haml-lint --auto-correct .");
-
 # ERB formatting and linting with RUBYOPT
 run_command("ERB Format", "sh", "-c",
   "command -v bundle >/dev/null && bundle exec erb-format --help >/dev/null 2>&1 && RUBYOPT='$rubyopt' find app -name '*.erb' -not -path 'app/views/layouts/mailer.html.erb' -print0 | xargs -0 -r bundle exec erb-format --write || true");

@@ -1,4 +1,4 @@
-require('v8-compile-cache');
+require("v8-compile-cache");
 const { config } = require("shakapacker");
 const commonWebpackConfig = require("./commonWebpackConfig.js");
 const webpack = require("webpack");

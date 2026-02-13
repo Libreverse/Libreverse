@@ -1,6 +1,6 @@
 // The source code including full typescript support is available at:
 // https://github.com/shakacode/react_on_rails_demo_ssr_hmr/blob/master/babel.config.js
-require('v8-compile-cache');
+require("v8-compile-cache");
 const defaultConfigFunc = require("shakapacker/package/babel/preset.js");
 
 module.exports = function (_api) {
@@ -30,14 +30,8 @@ module.exports = function (_api) {
         "babel-plugin-react-compiler",
     ];
 
-    resultConfig.presets = [
-        ...resultConfig.presets,
-        ...extraPresets,
-    ];
-    resultConfig.plugins = [
-        ...resultConfig.plugins,
-        ...extraPlugins,
-    ];
+    resultConfig.presets = [...resultConfig.presets, ...extraPresets];
+    resultConfig.plugins = [...resultConfig.plugins, ...extraPlugins];
 
     return resultConfig;
 };

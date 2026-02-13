@@ -28,7 +28,10 @@ export function normalizeV1InboundMessage(data) {
 
     // If explicitly tagged, it must match v1.
     if ("api" in data && data.api !== MULTIPLAYER_IFRAME_API_V1) return null;
-    if ("api_version" in data && Number(data.api_version) !== MULTIPLAYER_IFRAME_API_V1_NUMBER)
+    if (
+        "api_version" in data &&
+        Number(data.api_version) !== MULTIPLAYER_IFRAME_API_V1_NUMBER
+    )
         return null;
 
     const type = data.type;

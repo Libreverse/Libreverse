@@ -1,5 +1,8 @@
 ---
 ru:
+  activerecord:
+    models:
+      account: Account
   consent:
     screen:
       access_message_html: Для доступа к приложению вы должны согласиться с нашей
@@ -77,6 +80,9 @@ ru:
     please_try_again: Please try again in a moment.
     suspicious_activity: Suspicious activity detected. Please try again later.
     too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  helpers:
+    submit:
+      create: Create
   homepage:
     index:
       article:

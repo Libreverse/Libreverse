@@ -1,5 +1,12 @@
-require('v8-compile-cache');
-import { app, BrowserWindow, BrowserView, session, Menu, ipcMain } from "electron";
+require("v8-compile-cache");
+import {
+    app,
+    BrowserWindow,
+    BrowserView,
+    session,
+    Menu,
+    ipcMain,
+} from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
@@ -168,12 +175,12 @@ const openUgcView = async ({ url }) => {
     });
 
     await ugcView.webContents.loadURL(url);
-    
+
     // Apply adblocker to UGC webview session specifically
     if (engine) {
         blockWithEngine(ugcView.webContents.session);
     }
-    
+
     return true;
 };
 

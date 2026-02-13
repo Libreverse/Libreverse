@@ -1,4 +1,4 @@
-# typed: strict
+# typed: true
 
 # DO NOT EDIT MANUALLY
 # This file was pulled from a central RBI files repository.
@@ -39,8 +39,9 @@ class GraphQL::Schema::Resolver
 end
 
 module GraphQL::Schema::Member::HasFields
-  sig { params(args: T.untyped, kwargs: T.untyped, block: T.nilable(T.proc.params(field: GraphQL::Schema::Field).bind(GraphQL::Schema::Field).void)).returns(T.untyped) }
-  def field(*args, **kwargs, &block); end
+  # @version >= 2.5.17
+  sig { params(name_positional: T.untyped, type_positional: T.untyped, desc_positional: T.untyped, kwargs: T.untyped, block: T.nilable(T.proc.params(field: GraphQL::Schema::Field).bind(GraphQL::Schema::Field).void)).returns(T.untyped) }
+  def field(name_positional = T.unsafe(nil), type_positional = T.unsafe(nil), desc_positional = T.unsafe(nil), **kwargs, &block); end
 end
 
 module GraphQL::Schema::Member::BaseDSLMethods

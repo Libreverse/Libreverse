@@ -1,4 +1,4 @@
-# typed: strict
+# typed: true
 
 # DO NOT EDIT MANUALLY
 # This file was pulled from a central RBI files repository.
@@ -81,10 +81,4 @@ end
 
 class Sidekiq::WorkSet
   Elem = type_member { { fixed: T.untyped } }
-end
-
-class Sidekiq::SortedEntry
-end
-
-class Sidekiq::Process
 end

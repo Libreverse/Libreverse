@@ -6,7 +6,7 @@
 set -e
 
 PORTS=(
-    3000  # dev-proxy (Caddy)
+    3000 # dev-proxy (Caddy)
     3001
     3002  # webserver (Puma)
     3003  # websocket-server (AnyCable)

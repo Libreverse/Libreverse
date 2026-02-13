@@ -1,5 +1,8 @@
 ---
 ja:
+  activerecord:
+    models:
+      account: Account
   consent:
     screen:
       access_message_html: アプリにアクセスするには、私たちの%{privacy_policy_link}と%{cookie_policy_link}に同意する必要があります。
@@ -70,6 +73,9 @@ ja:
     please_try_again: Please try again in a moment.
     suspicious_activity: Suspicious activity detected. Please try again later.
     too_many_requests: You're submitting forms too quickly. Please wait a moment.
+  helpers:
+    submit:
+      create: Create
   homepage:
     index:
       article:

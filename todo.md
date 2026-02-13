@@ -1,16 +1,18 @@
 # To-do
-https://github.com/toptal/chewy
-https://github.com/soundcloud/lhm
-https://github.com/hashie/hashie
-https://github.com/MarioRuiz/string_pattern
-https://github.com/twitter/twitter-cldr-rb
-https://github.com/thoughtbot/high_voltage
-https://github.com/yippee-fun/phlex
-https://github.com/roidrage/lograge
-https://github.com/BetterErrors/better_errors
-https://github.com/mawie81/electron-window-state
-https://github.com/carter-thaxton/electron-default-menu
-https://github.com/parro-it/electron-localshortcut
+
+fix the bin/static
+<https://github.com/toptal/chewy>
+<https://github.com/soundcloud/lhm>
+<https://github.com/hashie/hashie>
+<https://github.com/MarioRuiz/string_pattern>
+<https://github.com/twitter/twitter-cldr-rb>
+<https://github.com/thoughtbot/high_voltage>
+<https://github.com/yippee-fun/phlex>
+<https://github.com/roidrage/lograge>
+<https://github.com/BetterErrors/better_errors>
+<https://github.com/mawie81/electron-window-state>
+<https://github.com/carter-thaxton/electron-default-menu>
+<https://github.com/parro-it/electron-localshortcut>
 rubyllm
 document the core extensions we have as like things for the Ai to use
 vercel react agent skills
@@ -21,6 +23,7 @@ move rails cache store to the memorystore and cut out the isolator middleware
 use SRI for vite rails assets and shakapacker assets
 replace all situations where we do inline html with the phlex engine which is much faster
 also walk back a bunch of the inlining tech that we've done that doesn't affect render flashes like the sitemap inlining
+
 - [ ] (feature) Build authoritative realtime multiplayer service in parallel to Rails (interest management + generalized state governance; no server-side raycasting)
 - [ ] we also need to move the ugc into a separate webcontentsview in electron for more security
 - [ ] add trufflehog to not put creds in github repo

@@ -1,0 +1,3 @@
+bundle exec tapioca annotations && \
+bundle exec tapioca gem && \
+bundle exec tapioca dsl

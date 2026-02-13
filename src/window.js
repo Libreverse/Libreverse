@@ -118,7 +118,10 @@ const loadUrlWithPeriodicRetry = async (
             if (!shouldRetry) throw err;
 
             try {
-                if (!win.isDestroyed() && win.webContents.getURL() !== waitingPageUrl) {
+                if (
+                    !win.isDestroyed() &&
+                    win.webContents.getURL() !== waitingPageUrl
+                ) {
                     await win.loadURL(waitingPageUrl);
                 }
             } catch {
@@ -153,10 +156,9 @@ export default ({
         title: "Libreverse",
     });
 
-    mainWindow.webContents.once('did-finish-load', () => {
-        mainWindow.webContents.setZoomLevel(2);  // Equivalent to two Cmd+/Ctrl+ + presses
+    mainWindow.webContents.once("did-finish-load", () => {
+        mainWindow.webContents.setZoomLevel(2); // Equivalent to two Cmd+/Ctrl+ + presses
     });
-
 
     // Create titlebar view only
     const titlebarView = new WebContentsView({
@@ -165,28 +167,28 @@ export default ({
             nodeIntegration: false,
             enableRemoteModule: false,
             transparent: true,
-            backgroundColor: 'transparent',
-        }
+            backgroundColor: "transparent",
+        },
     });
-    
+
     // Add titlebar view to main window
     mainWindow.contentView.addChildView(titlebarView);
-    
+
     // Position titlebar at top
     const resizeTitlebar = () => {
         const { width } = mainWindow.getBounds();
-        
+
         titlebarView.setBounds({
             x: 0,
             y: 0,
             width: width,
-            height: 32
+            height: 32,
         });
     };
-    
+
     // Handle window resize
-    mainWindow.on('resize', resizeTitlebar);
-    
+    mainWindow.on("resize", resizeTitlebar);
+
     if (isDevelopment) {
         mainWindow.webContents.on(
             "did-fail-load",
@@ -206,9 +208,9 @@ export default ({
         if (mainWindow.isDestroyed()) return;
         mainWindow.loadURL(buildFatalPageUrl(url, err));
     });
-    
+
     // Load titlebar content
-    console.log('Loading titlebar content...');
+    console.log("Loading titlebar content...");
     const titlebarHTML = `
         <!doctype html>
         <html>
@@ -250,13 +252,15 @@ export default ({
         </body>
         </html>
     `;
-    titlebarView.webContents.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(titlebarHTML)}`);
-    
+    titlebarView.webContents.loadURL(
+        `data:text/html;charset=utf-8,${encodeURIComponent(titlebarHTML)}`,
+    );
+
     // Add titlebar event listeners for debugging
-    titlebarView.webContents.on('did-finish-load', () => {
-        console.log('EVENT: Titlebar finished loading');
-        console.log('Titlebar URL:', titlebarView.webContents.getURL());
-        
+    titlebarView.webContents.on("did-finish-load", () => {
+        console.log("EVENT: Titlebar finished loading");
+        console.log("Titlebar URL:", titlebarView.webContents.getURL());
+
         // Add click handlers - use main process directly
         titlebarView.webContents.executeJavaScript(`
             console.log('Setting up click handlers...');
@@ -285,15 +289,15 @@ export default ({
                 console.error('Error setting up click handlers:', error);
             }
         `);
-        
+
         // Listen for title changes to detect clicks
-        titlebarView.webContents.on('page-title-updated', (event, title) => {
-            console.log('Titlebar title changed:', title);
-            if (title === 'CLOSE_WINDOW') {
+        titlebarView.webContents.on("page-title-updated", (event, title) => {
+            console.log("Titlebar title changed:", title);
+            if (title === "CLOSE_WINDOW") {
                 mainWindow.close();
-            } else if (title === 'MINIMIZE_WINDOW') {
+            } else if (title === "MINIMIZE_WINDOW") {
                 mainWindow.minimize();
-            } else if (title === 'MAXIMIZE_WINDOW') {
+            } else if (title === "MAXIMIZE_WINDOW") {
                 if (mainWindow.isMaximized()) {
                     mainWindow.unmaximize();
                 } else {
@@ -301,30 +305,40 @@ export default ({
                 }
             }
         });
-        
+
         // Add console error listener
-        titlebarView.webContents.on('console-message', (event, level, message, line, sourceId) => {
-            console.log('Titlebar console:', level, message);
-        });
+        titlebarView.webContents.on(
+            "console-message",
+            (event, level, message, line, sourceId) => {
+                console.log("Titlebar console:", level, message);
+            },
+        );
     });
-    
-    titlebarView.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-        console.log('EVENT: Titlebar failed to load:', errorCode, errorDescription);
-    });
-    
+
+    titlebarView.webContents.on(
+        "did-fail-load",
+        (event, errorCode, errorDescription) => {
+            console.log(
+                "EVENT: Titlebar failed to load:",
+                errorCode,
+                errorDescription,
+            );
+        },
+    );
+
     // Wait for window to be ready before showing
-    mainWindow.once('ready-to-show', () => {
+    mainWindow.once("ready-to-show", () => {
         resizeTitlebar();
-        
+
         // Show window
         mainWindow.show();
         mainWindow.focus();
-        
+
         // DevTools can be opened manually when needed
         // if (isDevelopment) {
         //     mainWindow.webContents.openDevTools({ mode: 'detach' });
         // }
-        
+
         return { mainWindow, titlebarView };
     });
 

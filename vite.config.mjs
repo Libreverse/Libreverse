@@ -36,7 +36,6 @@ import {
     devViteSecurityHeaders,
 } from "./config/vite/common.js";
 
-
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
 

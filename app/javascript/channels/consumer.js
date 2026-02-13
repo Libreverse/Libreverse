@@ -5,46 +5,52 @@ import { createConsumer } from "@anycable/core";
 import { start } from "@anycable/turbo-stream";
 
 // Create consumer using the Action Cable URL from meta tag
-const actionCableUrl = document.querySelector('meta[name="action-cable-url"]')?.getAttribute('content');
+const actionCableUrl = document
+    .querySelector('meta[name="action-cable-url"]')
+    ?.getAttribute("content");
 
 // Enhanced configuration for AnyCable with JWT support and optimizations
 const consumer = createConsumer(actionCableUrl, {
     // Enable AnyCable's extended protocol features
     protocolVersion: "actioncable-v1-ext-json",
-    
+
     // JWT token support - will be automatically extracted from cookies or headers
     token: () => {
         // Try to get JWT from cookie first
         const jwtCookie = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('anycable_jwt='))
-            ?.split('=')[1];
-        
+            .split("; ")
+            .find((row) => row.startsWith("anycable_jwt="))
+            ?.split("=")[1];
+
         if (jwtCookie) return jwtCookie;
-        
+
         // Fallback to meta tag or localStorage
-        return document.querySelector('meta[name="anycable-jwt"]')?.getAttribute('content') ||
-               localStorage.getItem('anycable_jwt');
+        return (
+            document
+                .querySelector('meta[name="anycable-jwt"]')
+                ?.getAttribute("content") ||
+            localStorage.getItem("anycable_jwt")
+        );
     },
-    
+
     // Enable session restoration for faster reconnections
-    sessionId: () => sessionStorage.getItem('anycable_session_id') || null,
-    
+    sessionId: () => sessionStorage.getItem("anycable_session_id") || null,
+
     // Store session ID for restoration
     onSessionId: (sessionId) => {
         if (sessionId) {
-            sessionStorage.setItem('anycable_session_id', sessionId);
+            sessionStorage.setItem("anycable_session_id", sessionId);
         }
     },
-    
+
     // Enable reliable streams with history recovery
     historyEnabled: true,
     historySize: 50, // Keep last 50 messages for recovery
-    
+
     // Connection optimization settings
     connectionTimeout: 15000,
     reconnectInterval: 1000,
-    maxReconnectAttempts: 10
+    maxReconnectAttempts: 10,
 });
 
 // Initialize Turbo Stream support

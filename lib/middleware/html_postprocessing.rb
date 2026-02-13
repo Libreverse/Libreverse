@@ -7,7 +7,6 @@ require "erb" # For ERB::Util.html_escape
 require "unicode"
 require "nokogiri"
 require "digest/sha1"
-require "auto_html"
 
 #
 # HtmlPostprocessingMiddleware — runs post-processing passes over HTML.
@@ -82,7 +81,6 @@ class HtmlPostprocessingMiddleware
         end
       end
 
-      # Skip tidy/auto_html; return body as-is (with emoji replacement)
       response_body = body
 
       response = [ response_body ]

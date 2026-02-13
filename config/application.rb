@@ -13,6 +13,14 @@ require "rails/all"
 BootTrace.log("application.rb: rails/all loaded")
 
 BootTrace.log("application.rb: loading facets")
+require_relative 'facets.rb'
+BootTrace.log("application.rb: facets loaded")
+
+BootTrace.log("application.rb: loading hamster/core_ext")
+require "hamster/core_ext"
+BootTrace.log("application.rb: hamster/core_ext loaded")
+
+BootTrace.log("application.rb: loading facets")
 require_relative "facets"
 BootTrace.log("application.rb: facets loaded")
 
@@ -51,7 +59,7 @@ module LibreverseInstance
     BootTrace.log("application.rb: configuring ExecJS runtime")
     # Set embeddable js runtime for server side eval
     ExecJS.runtime = ExecJS::Runtimes::Bun
-
+    
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
