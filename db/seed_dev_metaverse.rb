@@ -8,6 +8,12 @@ return unless Rails.env.development?
 
 Rails.logger.debug '[DevSeed][Metaverse] Creating sample experiences...'
 
+# Ensure an account exists for ownership
+account = Account.find_or_create_by!(username: "metaverse-system") do |acc|
+  acc.admin = true
+  acc.status = 2
+end
+
 platforms = {
   'HoloWorld' => 20,
   'CyberGrid' => 15,
@@ -24,9 +30,12 @@ platforms.each do |platform, count|
   needed = [ count - existing, 0 ].max
   next if needed.zero?
 
+  # Temporarily disable vectorization callbacks during bulk seeding to avoid after_commit errors
+  Experience.skip_callback(:commit, :after, :schedule_vectorization) if Experience.respond_to?(:skip_callback)
+
   needed.times do |i|
     title = "#{platform} Experience #{existing + i + 1}"
-    Experience.create!(
+    exp = Experience.new(
       title: title,
       description: "Synthetic dev sample for #{platform} (#{i + 1}).",
       author: 'DevSeeder',
@@ -34,17 +43,19 @@ platforms.each do |platform, count|
       flags: 1, # Set approved flag (bit position 1)
       metaverse_platform: platform,
       metaverse_coordinates: (rand < 0.15 ? nil : random_coord.call), # Some experiences intentionally lack coords
-      metaverse_metadata: { category: %w[game social art edu sim].sample }.to_json,
-      html_file: (begin
-        # Attach a tiny HTML blob (skipped validations if necessary) - using StringIO
-        io = StringIO.new("<html><body><h1>#{ERB::Util.html_escape(title)}</h1><p>Sample content.</p></body></html>")
-        io.set_encoding(Encoding::UTF_8)
-        { io: io, filename: "#{title.parameterize}.html", content_type: 'text/html' }
-      end)
+      metaverse_metadata: { category: %w[game social art edu sim].sample }.to_json
     )
+
+    html_io = StringIO.new("<html><body><h1>#{ERB::Util.html_escape(title)}</h1><p>Sample content.</p></body></html>")
+    html_io.set_encoding(Encoding::UTF_8)
+    exp.html_file.attach(io: html_io, filename: "#{title.parameterize}.html", content_type: 'text/html')
+
+    exp.save!
   rescue StandardError => e
-    Rails.logger.warn "[DevSeed][Metaverse] Failed to create #{title}: #{e.message}"
+    Rails.logger.warn "[DevSeed][Metaverse] Failed to create #{title}: #{e.message}\n#{e.backtrace&.take(10)&.join("\n")}"
   end
+ensure
+  Experience.set_callback(:commit, :after, :schedule_vectorization) if Experience.respond_to?(:set_callback)
 end
 
 Rails.logger.debug '[DevSeed][Metaverse] Sample experiences present:'

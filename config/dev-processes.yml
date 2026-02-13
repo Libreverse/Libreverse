@@ -1,7 +1,8 @@
-webserver: cd .. && APP_PORT=3000 bin/falcon
-tasks: cd .. && bin/jobs
-websocket-broker: cd .. && bundle exec anycable
+webserver: cd .. && APP_PORT=3002 bin/puma
+background-tasks: cd .. && bin/jobs
+websocket-server-rpc: cd .. && bundle exec anycable
 vite: cd .. && bin/vite dev
 mail-receiver: cd .. && mailhog  
-websockets: cd .. && bin/anycable-go
-boottrace: bash -c 'while ! ls tmp/boottrace* >/dev/null 2>&1; do sleep 1; done; tail -f tmp/boottrace*'
+websocket-server: cd .. && bin/anycable-go
+dev-proxy: cd .. && APP_PORT=3002 CADDY_PORT=3000 ./scripts/start-http3-dev.sh
+shakapacker: cd .. && ./bin/shakapacker --watch --progress

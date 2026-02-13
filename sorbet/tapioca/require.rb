@@ -1,3 +1,4 @@
+# shareable_constant_value: literal
 # typed: strict
 # frozen_string_literal: true
 

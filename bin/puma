@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Development server script using Puma
+# This script starts the Rails application with Puma in development mode
+
+require 'puma/cli'
+
+# Set development environment
+ENV['RAILS_ENV'] ||= 'development'
+
+# Use APP_PORT if set, otherwise default to 3002 for development
+port = ENV.fetch('APP_PORT', '3002')
+
+puts "Loading Rails environment..."
+
+# Load Rails with timeout to avoid hanging
+begin
+  require_relative '../config/environment'
+  puts "Rails environment loaded successfully"
+rescue => e
+  puts "Error loading Rails: #{e.message}"
+  exit 1
+end
+
+puts "Starting Puma development server on http://localhost:#{port}"
+
+# Start Puma with custom options
+cli = Puma::CLI.new([
+  '-b', "tcp://localhost:#{port}",  # Bind to localhost with specified port
+  '-e', 'development',
+  '--pidfile', 'tmp/pids/server.pid',
+  '--state', 'tmp/pids/puma.state'
+])
+
+cli.run

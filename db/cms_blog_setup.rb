@@ -132,7 +132,7 @@ module CMSBlogSync
 
   def ensure_root_page(site)
     root = site.pages.find_or_initialize_by(full_path: '/')
-    root.slug = nil
+    root.slug = 'root'
     root.label = 'Blog'
     root.layout ||= site.layouts.find_by(identifier: 'blog') || site.layouts.first
     root.is_published = true if root.new_record?

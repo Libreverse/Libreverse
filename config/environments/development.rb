@@ -79,10 +79,9 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
 
-  # Noisy Action Cable
-  config.action_cable.log_tags = [ :action_cable ]
-  config.action_cable.logger = ActiveSupport::Logger.new($stdout)
-  config.action_cable.logger.level = Logger::ERROR
+  # Force Rails logger to stdout for overmind capture
+  config.logger = ActiveSupport::Logger.new($stdout)
+  config.log_level = :debug
 
   # Use Sidekiq for Active Job
   config.active_job.queue_adapter = :sidekiq

@@ -82,9 +82,7 @@ begin
   end
 
   Kernel.prepend(EagerLoadTrace::RequirePatch) unless Kernel.ancestors.include?(EagerLoadTrace::RequirePatch)
-  if defined?(Zeitwerk::Loader)
-    Zeitwerk::Loader.prepend(EagerLoadTrace::LoaderPatch) unless Zeitwerk::Loader.ancestors.include?(EagerLoadTrace::LoaderPatch)
-  end
+  Zeitwerk::Loader.prepend(EagerLoadTrace::LoaderPatch) if defined?(Zeitwerk::Loader) && !Zeitwerk::Loader.ancestors.include?(EagerLoadTrace::LoaderPatch)
 rescue StandardError
   # If anything goes wrong while enabling tracing, continue boot normally.
   nil

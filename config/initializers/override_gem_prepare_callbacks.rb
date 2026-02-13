@@ -8,9 +8,7 @@
 # Thredded: move view hooks reset and UserExtender inclusion to after_initialize
 Rails.application.config.after_initialize do
   Thredded::AllViewHooks.reset_instance!
-  if Thredded.user_class
-    Thredded.user_class.send(:include, Thredded::UserExtender)
-  end
+  Thredded.user_class&.send(:include, Thredded::UserExtender)
 end
 
 # ComfortableMediaSurfer: move decorator loading to after_initialize
@@ -22,17 +20,11 @@ end
 
 # ReactOnRails: move version check and pool reset to after_initialize
 Rails.application.config.after_initialize do
-  if defined?(VersionChecker)
-    VersionChecker.build.log_if_gem_and_node_package_versions_differ
-  end
-  if defined?(ReactOnRails::ServerRenderingPool)
-    ReactOnRails::ServerRenderingPool.reset_pool
-  end
+  VersionChecker.build.log_if_gem_and_node_package_versions_differ if defined?(VersionChecker)
+  ReactOnRails::ServerRenderingPool.reset_pool if defined?(ReactOnRails::ServerRenderingPool)
 end
 
 # AnyCable: move connection factory setup to after_initialize
 Rails.application.config.after_initialize do
-  if defined?(AnyCable) && AnyCable.respond_to?(:connection_factory=)
-    AnyCable.connection_factory = AnyCable::Rails::ConnectionFactory.new
-  end
+  AnyCable.connection_factory = AnyCable::Rails::ConnectionFactory.new if defined?(AnyCable) && AnyCable.respond_to?(:connection_factory=)
 end

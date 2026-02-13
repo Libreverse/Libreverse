@@ -6,9 +6,10 @@
 module BootTrace
   def self.log(event)
     return unless ENV["TRACE_BOOT"] == "1"
+
     trace_file = File.expand_path("../tmp/boot_trace.log", __dir__)
     File.open(trace_file, "a") do |f|
-      f.puts("#{event}")
+      f.puts(event.to_s)
       f.flush
     end
   rescue StandardError
@@ -27,7 +28,7 @@ require "bundler/setup" # Set up gems listed in the Gemfile.
 BootTrace.log("boot.rb: bundler/setup loaded")
 
 if RUBY_ENGINE == "truffleruby"
-  require 'ractor/shim'
+  require "ractor/shim"
   BootTrace.log("boot.rb: ractor/shim loaded")
 end
 

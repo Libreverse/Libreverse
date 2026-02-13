@@ -1,3 +1,4 @@
+# shareable_constant_value: literal
 # typed: true
 # frozen_string_literal: true
 
@@ -11,12 +12,12 @@ class AnimatedIconSsrCache
 
     # @param cache_key [String] deterministic, unique key for the icon render
     # @yieldreturn [String] HTML-safe rendered component
-    def fetch(cache_key, &block)
+    def fetch(cache_key)
       raise ArgumentError, "block required" unless block_given?
 
       # Use a simple instance variable cache since MemoWise doesn't handle blocks well
       @cache ||= {}
-      @cache[cache_key] ||= block.call
+      @cache[cache_key] ||= yield
     end
   end
 end

@@ -9,6 +9,8 @@ require 'fileutils'
 # Define session name
 session_name = "libreverse-dev"
 
+system("bash scripts/kill-stray-services.sh")
+
 # Kill any existing session to ensure fresh start
 system("tmux kill-session -t #{session_name} 2>/dev/null")
 
@@ -30,7 +32,7 @@ system("tmux send-keys -t #{session_name}:0 'cd #{Dir.pwd}' Enter")
 system("tmux send-keys -t #{session_name}:0 'source .envrc' Enter")
 
 # Start server with proper prep work in background
-system("tmux send-keys -t #{session_name}:0 './bin/dev-server 2>&1 | tee /tmp/falcon-server.log &' Enter")
+system("tmux send-keys -t #{session_name}:0 './bin/dev-server 2>&1 | tee /tmp/puma-server.log &' Enter")
 system("tmux send-keys -t #{session_name}:0 'SERVER_PID=$!' Enter")
 system("tmux send-keys -t #{session_name}:0 'sleep 5' Enter")
 

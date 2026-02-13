@@ -61,9 +61,9 @@ module ApplicationHelper
 
   def sidebar_icon(icon_name, additional_class = "", **options)
     label = options.delete(:label)
-    class_name = ["sidebar-icons", additional_class, options.delete(:class_name)]
-                  .compact
-                  .join(" ")
+    class_name = [ "sidebar-icons", additional_class, options.delete(:class_name) ]
+                 .compact
+                 .join(" ")
 
     animated_icon(
       icon_name,

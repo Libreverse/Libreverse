@@ -58,7 +58,7 @@ Rails.application.configure do
   config.action_cable.url = ENV.fetch("ACTION_CABLE_URL") { "wss://#{LibreverseInstance.instance_domain}/cable" }
   config.action_cable.allowed_request_origins = [
     "https://#{LibreverseInstance.instance_domain}",
-    /https:\/\/#{Regexp.escape(LibreverseInstance.instance_domain)}/
+    %r{https://#{Regexp.escape(LibreverseInstance.instance_domain)}}
   ]
 
   # Host Authorization - using centralized configuration

@@ -10,20 +10,20 @@ class HealthController < ApplicationController
   skip_before_action :log_request_info
   skip_before_action :set_current_ip
   skip_before_action :set_locale
-  
+
   # Override authentication check to allow health endpoints
   before_action :allow_health_access
-  
+
   private
-  
+
   def allow_health_access
     # Allow access to health endpoints without authentication
     return if action_name.in?(%w[show anycable])
-    
+
     # For other actions, use normal authentication
     require_authentication if respond_to?(:require_authentication)
   end
-  
+
   def show
     render json: { status: "ok", timestamp: Time.current.iso8601 }, status: :ok
   end
@@ -57,10 +57,10 @@ class HealthController < ApplicationController
 
     render json: health_status, status: :ok
   rescue StandardError => e
-    render json: { 
-      status: "error", 
-      timestamp: Time.current.iso8601, 
-      error: e.message 
+    render json: {
+      status: "error",
+      timestamp: Time.current.iso8601,
+      error: e.message
     }, status: :service_unavailable
   end
 end

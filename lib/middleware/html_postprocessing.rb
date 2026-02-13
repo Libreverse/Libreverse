@@ -2,13 +2,11 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-require "open3"
 require "htmlcompressor"
-require "erb"  # For ERB::Util.html_escape
+require "erb" # For ERB::Util.html_escape
 require "unicode"
 require "nokogiri"
 require "digest/sha1"
-require "set"
 require "auto_html"
 
 #
@@ -60,18 +58,23 @@ class HtmlPostprocessingMiddleware
     status, headers, response = @app.call(env)
 
     if headers["Content-Type"]&.include?("text/html")
-      body = case response
-      when String then response
-      when Array then response.join
-      when Enumerable then response.inject("") { |acc, part| acc << part }
-      else response.to_s
+      body = +""
+      if response.is_a?(String)
+        body = response
+      elsif response.respond_to?(:each)
+        response.each { |part| body << part.to_s }
+      elsif response.respond_to?(:join)
+        body = response.join
+      elsif response.respond_to?(:inject)
+        body = response.inject("") { |acc, part| acc << part.to_s }
+      else
+        body = response.to_s
       end
+
+      response.close if response.respond_to?(:close)
 
       cache_key = "html_post:#{::Digest::SHA1.hexdigest(body)}"
       body = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
-        body = AutoHtml.auto_html(body) do
-          emoji
-        end
         if @exclude_selectors.any? && body.include?("<html")
           process_emojis_with_nokogiri(body)
         else
@@ -79,84 +82,8 @@ class HtmlPostprocessingMiddleware
         end
       end
 
-      tidy_cmd = [
-        "tidy",
-        "-q",
-        "-utf8",
-        "-wrap", "0",
-        "--clean", "no",
-        "--drop-proprietary-attributes", "no",
-        "--force-output", "yes",
-        "--show-warnings", "no",
-        "--tidy-mark", "yes",
-        "--output-html", "yes",
-        "--output-xhtml", "no",
-        "--output-xml", "no",
-        "--hide-comments", "yes",
-        "--bare", "no",
-        "--logical-emphasis", "yes",
-        "--drop-empty-paras", "yes",
-        "--fix-bad-comments", "yes",
-        "--break-before-br", "no",
-        "--numeric-entities", "yes",
-        "--quote-marks", "no",
-        "--quote-nbsp", "no",
-        "--quote-ampersand", "no",
-        "--wrap-attributes", "no",
-        "--wrap-script-literals", "no",
-        "--wrap-sections", "no",
-        "--wrap-asp", "no",
-        "--wrap-jste", "no",
-        "--wrap-php", "no",
-        "--fix-backslash", "yes",
-        "--indent-attributes", "no",
-        "--assume-xml-procins", "yes",
-        "--add-xml-space", "yes",
-        "--enclose-text", "no",
-        "--enclose-block-text", "no",
-        "--gnu-emacs", "no",
-        "--literal-attributes", "yes",
-        "--show-body-only", "no",
-        "--fix-uri", "yes",
-        "--lower-literals", "no",
-        "--indent-cdata", "no",
-        "--ascii-chars", "yes",
-        "--join-classes", "no",
-        "--join-styles", "no",
-        "--escape-cdata", "no",
-        "--ncr", "no",
-        "--replace-color", "no",
-        "--vertical-space", "no",
-        "--punctuation-wrap", "no",
-        "--merge-divs", "auto",
-        "--decorate-inferred-ul", "yes",
-        "--drop-empty-elements", "yes",
-        "--merge-spans", "auto",
-        "--preserve-entities", "no",
-        "--anchor-as-name", "yes",
-        "--coerce-endtags", "yes",
-        "--escape-scripts", "yes",
-        "--fix-style-tags", "yes",
-        "--repeated-attributes", "keep-last",
-        "--strict-tags-attributes", "no",
-        "--merge-emphasis", "yes"
-      ]
-
-      cleaned_html, stderr_str, tidy_status = Open3.capture3(*tidy_cmd, stdin_data: body)
-
-      raise "Tidy CLI produced no output (exit=#{tidy_status.exitstatus}): #{stderr_str}" if cleaned_html.nil? || cleaned_html.strip.empty?
-
-      if stderr_str && !stderr_str.strip.empty?
-        fatal_patterns = [ /\bError\b/i, /not a file/i, /unknown option/i, /invalid/i, /fatal/i ]
-        raise "Tidy CLI error (exit=#{tidy_status.exitstatus}): #{stderr_str}" if stderr_str.lines.any? { |l| fatal_patterns.any? { |pat| l =~ pat } }
-
-        warn "Tidy CLI warnings: #{stderr_str}" if defined?(Rails)
-      end
-
-      escaped_html = ERB::Util.html_escape(cleaned_html)
-
-      compressed_html = @compressor.compress(escaped_html)
-      response_body = compressed_html.presence || escaped_html
+      # Skip tidy/auto_html; return body as-is (with emoji replacement)
+      response_body = body
 
       response = [ response_body ]
       headers["Content-Length"] = response_body.bytesize.to_s if headers["Content-Length"]

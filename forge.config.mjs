@@ -7,9 +7,6 @@ import { FuseV1Options, FuseVersion } from "@electron/fuses";
 export default {
     packagerConfig: {
         asar: true,
-        // Bundle mimalloc as a non-ASAR resource so it can be preloaded via DYLD_INSERT_LIBRARIES.
-        // The dylib is staged locally into ./mimalloc by scripts/prepare_mimalloc.rb.
-        extraResource: ["mimalloc"],
     },
     rebuildConfig: {},
     makers: [

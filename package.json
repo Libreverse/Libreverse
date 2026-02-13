@@ -7,9 +7,9 @@
     "private": false,
     "scripts": {
         "start": "electron-forge start",
-        "package": "ruby scripts/prepare_mimalloc.rb --required && electron-forge package",
-        "make": "ruby scripts/prepare_mimalloc.rb --required && electron-forge make",
-        "publish": "ruby scripts/prepare_mimalloc.rb --required && electron-forge publish",
+        "package": "electron-forge package",
+        "make": "electron-forge make",
+        "publish": "electron-forge publish",
         "build": "vite build --outDir public",
         "test": "jest -i"
     },

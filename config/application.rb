@@ -12,19 +12,19 @@ BootTrace.log("application.rb: loading rails/all")
 require "rails/all"
 BootTrace.log("application.rb: rails/all loaded")
 
-BootTrace.log("application.rb: running Bundler.require")
-start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-Bundler.require(*Rails.groups)
-duration_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000.0).round(3)
-BootTrace.log("application.rb: Bundler.require complete duration_ms=#{duration_ms}")
-
 BootTrace.log("application.rb: loading facets")
-require 'facets'
+require_relative "facets"
 BootTrace.log("application.rb: facets loaded")
 
 BootTrace.log("application.rb: loading hamster/core_ext")
 require "hamster/core_ext"
 BootTrace.log("application.rb: hamster/core_ext loaded")
+
+BootTrace.log("application.rb: running Bundler.require")
+start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+Bundler.require(*Rails.groups)
+duration_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000.0).round(3)
+BootTrace.log("application.rb: Bundler.require complete duration_ms=#{duration_ms}")
 
 # ---------------------------------------------------------------------------
 # Compatibility shims that must load BEFORE Rails bootstrap builds cache stores
@@ -48,11 +48,10 @@ BootTrace.log("application.rb: defining LibreverseInstance::Application")
 
 module LibreverseInstance
   class Application < Rails::Application
-
     BootTrace.log("application.rb: configuring ExecJS runtime")
     # Set embeddable js runtime for server side eval
     ExecJS.runtime = ExecJS::Runtimes::Bun
-    
+
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
     config.railties_order = [ ActiveStorage::Engine, :main_app, :all ]
@@ -117,7 +116,7 @@ module LibreverseInstance
       ]
     }
 
-    killer = WorkerKiller::Killer::Passenger.new
+    killer = WorkerKiller::Killer::Signal.new
 
     # Max memory size (RSS) per worker (4GB = 4.0 in GB)
     middleware.insert_before(
@@ -513,7 +512,6 @@ BootTrace.log("application.rb: configuring console1984")
 # Enable console1984 in production and staging by default
 Rails.application.config.console1984.protected_environments = %i[ production staging ]
 BootTrace.log("application.rb: console1984 configured")
-
 
 BootTrace.log("application.rb: complete")
 

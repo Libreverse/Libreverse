@@ -75,7 +75,7 @@ class ExperienceChannel < ApplicationCable::Channel
 
     # Broadcast to others using signed stream
     ActionCable.server.broadcast(
-      signed_stream_name("experience_session_#{session_id}"), 
+      signed_stream_name("experience_session_#{session_id}"),
       {
         api_version: 1,
         type: "state_update",

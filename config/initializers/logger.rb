@@ -76,11 +76,7 @@ require "active_support/logger"
 # Create an ActiveSupport::Logger (not the standard Ruby Logger)
 # which automatically includes the silence method needed by ActiveRecord session store
 # In containers, write logs to STDOUT so the orchestrator captures them.
-io_target = if Rails.env.production?
-  $stdout
-else
-  Rails.root.join("log", "#{Rails.env}.log")
-end
+io_target = $stdout
 
 logger = ActiveSupport::Logger.new(io_target)
 

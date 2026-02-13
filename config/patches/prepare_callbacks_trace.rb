@@ -76,9 +76,7 @@ begin
             end
           end
           env.halted = halted_lambda.call(target, result_lambda)
-          if env.halted
-            target.send :halted_callback_hook, filter, name
-          end
+          target.send :halted_callback_hook, filter, name if env.halted
         end
 
         env
@@ -86,9 +84,7 @@ begin
     end
   end
 
-  unless ActiveSupport::Callbacks::Filters::Before.ancestors.include?(PrepareCallbacksTrace::BeforePatch)
-    ActiveSupport::Callbacks::Filters::Before.prepend(PrepareCallbacksTrace::BeforePatch)
-  end
+  ActiveSupport::Callbacks::Filters::Before.prepend(PrepareCallbacksTrace::BeforePatch) unless ActiveSupport::Callbacks::Filters::Before.ancestors.include?(PrepareCallbacksTrace::BeforePatch)
 rescue StandardError
   # If anything goes wrong while enabling tracing, continue boot normally.
   nil

@@ -2,9 +2,7 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-if RUBY_ENGINE == "truffleruby"
-  require 'ractor/shim'
-end
+require 'ractor/shim' if RUBY_ENGINE == "truffleruby"
 
 # script/check_shareable_constants.rb
 require_relative '../config/environment'
