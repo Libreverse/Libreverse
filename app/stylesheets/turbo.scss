@@ -7,6 +7,7 @@
 
 /* The overlay pseudo-element – starts invisible */
 .turbo-loading::before {
+    opacity: 1;
     content: "";
     position: fixed;
     inset: 0;
@@ -21,16 +22,8 @@
     background-repeat: no-repeat;
     background-size: 40px 40px;
 
-    /* Start fully transparent */
-    opacity: 0;
-
     /* Smooth fade-in */
     transition: opacity 0.3s ease-out;
-}
-
-/* When .turbo-loading is present on the parent → fade in */
-.turbo-loading::before {
-    opacity: 1;
 }
 
 /* Subtle dimming of form controls during submission */

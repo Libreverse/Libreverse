@@ -161,6 +161,15 @@ run_command("pnpm update", "pnpm", "update");
 run_command("i18n Validation", "sh", "-c",
   "RUBYOPT='$rubyopt' ruby scripts/i18n_validate.rb");
 
+run_command("Active Record Doctor", "sh", "-c",
+  "RUBYOPT='$rubyopt' bundle exec rake active_record_doctor");
+
+run_command("Database Consistency", "sh", "-c",
+  "RUBYOPT='$rubyopt' bundle exec database_consistency");
+
+run_command("lol_dba", "sh", "-c",
+  "RUBYOPT='$rubyopt' bundle exec lol_dba");
+
 # --- Parallel Execution Setup ---
 my $log_dir = tempdir(CLEANUP => 1);    # Auto-cleanup
 
@@ -231,7 +240,7 @@ for my $i (0 .. $num_tools - 1) {
   } elsif ($tool_name eq "Rails Tests") {
     @cmd = (
       "sh", "-c",
-      "RUBYOPT='$rubyopt' bin/parallel_test"
+      "RUBYOPT='$rubyopt' bin/rails test"
     );
   } elsif ($tool_name eq "hadolint") {
     @cmd = (

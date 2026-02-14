@@ -1190,6 +1190,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-next
+  ruby_parser
   rubyzip
   ruumba
   second_level_cache (~> 2.7)!
