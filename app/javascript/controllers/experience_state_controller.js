@@ -46,7 +46,7 @@ export default class extends Controller {
 
         if (this._boundHandleMessage) {
             window.removeEventListener("message", this._boundHandleMessage);
-            this._boundHandleMessage = null;
+            this._boundHandleMessage = undefined;
         }
     }
 
@@ -59,23 +59,34 @@ export default class extends Controller {
         )
             return;
 
-        const msg = normalizeV1InboundMessage(event.data);
-        if (!msg) return;
+        const message = normalizeV1InboundMessage(event.data);
+        if (!message) return;
 
-        const { type, key, value } = msg;
+        const { type, key, value } = message;
 
-        if (type === V1_INBOUND_TYPES.STATE_SET) {
-            this.updateState(key, value);
-        } else if (type === V1_INBOUND_TYPES.STATE_GET) {
-            // Reply with current value
-            this._sendToIframe(V1_OUTBOUND_TYPES.STATE_VALUE, {
-                key,
-                value: this.state[key],
-            });
-        } else if (type === V1_INBOUND_TYPES.STATE_REQUEST_ALL) {
-            this._sendToIframe(V1_OUTBOUND_TYPES.STATE_SNAPSHOT, {
-                state: this.state,
-            });
+        switch (type) {
+            case V1_INBOUND_TYPES.STATE_SET: {
+                this.updateState(key, value);
+
+                break;
+            }
+            case V1_INBOUND_TYPES.STATE_GET: {
+                // Reply with current value
+                this._sendToIframe(V1_OUTBOUND_TYPES.STATE_VALUE, {
+                    key,
+                    value: this.state[key],
+                });
+
+                break;
+            }
+            case V1_INBOUND_TYPES.STATE_REQUEST_ALL: {
+                this._sendToIframe(V1_OUTBOUND_TYPES.STATE_SNAPSHOT, {
+                    state: this.state,
+                });
+
+                break;
+            }
+            // No default
         }
     }
 
@@ -106,13 +117,14 @@ export default class extends Controller {
 
     _onReceived(data) {
         switch (data.type) {
-            case "state_snapshot":
+            case "state_snapshot": {
                 this.state = data.state || {};
                 this._sendToIframe(V1_OUTBOUND_TYPES.STATE_SNAPSHOT, {
                     state: this.state,
                 });
                 break;
-            case "state_update":
+            }
+            case "state_update": {
                 // Don't echo back our own updates if we already applied them optimistically
                 // But here we just apply everything to be safe/consistent
                 if (data.from_peer_id !== this.peerIdValue) {
@@ -124,6 +136,7 @@ export default class extends Controller {
                     });
                 }
                 break;
+            }
         }
     }
 

@@ -165,8 +165,7 @@ if defined?(Rails::Server)
   rescue StandardError => e
       Rails.logger.debug "\n[FATAL] Error during application initialization: #{e.message}"
       Rails.logger.debug e.backtrace.join("\n")
-      # Don't use exit directly, use Rails.application.exit! or abort
-      abort("Application initialization failed") # This is the Rails-preferred way to exit
+      raise "Application initialization failed"
   end
 end
 

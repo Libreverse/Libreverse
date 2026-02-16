@@ -126,7 +126,7 @@ export default _class = function () {
         }
 
         saveNekoState() {
-            var e, nekoState;
+            var caughtError, nekoState;
             boundMethodCheck(this, _class);
             if (!this.running) {
                 // Only save if oneko is running
@@ -150,16 +150,21 @@ export default _class = function () {
                     JSON.stringify(nekoState),
                 );
             } catch (error) {
-                e = error;
+                caughtError = error;
                 return console.error(
                     "Failed to save oneko state to localStorage",
-                    e,
+                    caughtError,
                 );
             }
         }
 
         loadNekoState() {
-            var currentTime, e, savedState, state, timeDifference, timestamp;
+            var currentTime,
+                caughtError,
+                savedState,
+                state,
+                timeDifference,
+                timestamp;
             boundMethodCheck(this, _class);
             try {
                 savedState = localStorage.getItem(STORAGE_KEY);
@@ -193,10 +198,10 @@ export default _class = function () {
                     }
                 }
             } catch (error) {
-                e = error;
+                caughtError = error;
                 return console.error(
                     "Failed to load oneko state from localStorage",
-                    e,
+                    caughtError,
                 );
             }
         }
@@ -223,7 +228,7 @@ export default _class = function () {
                 this.idleTime = 0;
             }
             if (this.idleAnimation == undefined) {
-                this.idleAnimation = null;
+                this.idleAnimation = undefined;
             }
             if (this.idleAnimationFrame == undefined) {
                 this.idleAnimationFrame = 0;
@@ -354,7 +359,7 @@ export default _class = function () {
                 this.idle();
                 return;
             }
-            this.idleAnimation = null;
+            this.idleAnimation = undefined;
             this.idleAnimationFrame = 0;
             if (this.idleTime > 1) {
                 this.setSprite("alert", 0);
@@ -498,7 +503,6 @@ export default _class = function () {
             var centerX,
                 centerY,
                 heart,
-                index,
                 index_,
                 offsetX,
                 offsetY,
@@ -515,7 +519,7 @@ export default _class = function () {
             centerX = rect.left + rect.width / 2 + scrollLeft;
             centerY = rect.top + rect.height / 2 + scrollTop;
             results = [];
-            for (index = index_ = 0; index_ < 20; index = ++index_) {
+            for (index_ = 0; index_ < 20; index_++) {
                 heart = document.createElement("div");
                 heart.className = "heart";
                 heart.dataset.turboTemporary = "";

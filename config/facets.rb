@@ -4,7 +4,7 @@
 
 def safe_require(lib)
   require lib
-rescue Exception => e
+rescue StandardError => e
   Rails.logger.debug "Failed to require #{lib}: #{e.message}"
   $LOADED_FEATURES << "#{lib}.rb" unless lib.end_with?(".rb")
 end

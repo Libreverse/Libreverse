@@ -25,6 +25,13 @@ module Admin
       @experiences = Experience.federating.includes(:account).order(created_at: :desc).limit(50)
     end
 
+    def unblock_domain
+      return unless @domain
+
+      LibreverseModeration.unblock_domain(@domain)
+      redirect_to admin_federation_path, notice: "Domain #{@domain} unblocked"
+    end
+
     private
 
     def set_blocked_domain

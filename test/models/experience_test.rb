@@ -16,7 +16,7 @@
 #  metaverse_platform    :string(255)
 #  slug                  :string(255)
 #  source_type           :string(255)      default("user_created"), not null
-#  title                 :string(255)
+#  title                 :string(255)      not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  account_id            :bigint           not null
@@ -24,12 +24,10 @@
 #
 # Indexes
 #
-#  index_experiences_on_account_id                          (account_id)
 #  index_experiences_on_account_id_and_created_at           (account_id,created_at)
 #  index_experiences_on_indexed_content_id                  (indexed_content_id)
 #  index_experiences_on_metaverse_platform                  (metaverse_platform)
 #  index_experiences_on_slug                                (slug) UNIQUE
-#  index_experiences_on_source_type                         (source_type)
 #  index_experiences_on_source_type_and_metaverse_platform  (source_type,metaverse_platform)
 #
 # Foreign Keys

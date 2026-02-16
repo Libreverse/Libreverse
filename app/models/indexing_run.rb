@@ -41,6 +41,9 @@ class IndexingRun < ApplicationRecord
   # Validations
   validates :indexer_class, presence: true
   validates :status, presence: true
+  validates :indexer_class, length: { maximum: 255 }, allow_blank: true
+  validates :configuration, :error_details, :error_message,
+            length: { maximum: 65_535 }, allow_blank: true
 
   # Scopes
   scope :recent, -> { order(created_at: :desc) }

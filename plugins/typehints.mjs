@@ -390,9 +390,9 @@ export default function typehints(options = {}) {
                                       functionType,
                                       ts.SignatureKind.Call,
                                   )
-                                : functionType.getCallSignatures
+                                : (functionType.getCallSignatures
                                   ? functionType.getCallSignatures()
-                                  : [];
+                                  : []);
                         } catch {
                             bailOut = true;
                             return;

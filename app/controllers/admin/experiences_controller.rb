@@ -14,6 +14,11 @@ module Admin
       @experiences = Experience.pending_approval.order(created_at: :desc)
     end
 
+    def approve
+      @experience.update!(approved: true)
+      redirect_to admin_experiences_path, notice: "Experience approved"
+    end
+
     private
 
     # Finds the Experience based on the ID parameter.

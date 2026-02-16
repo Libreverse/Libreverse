@@ -16,10 +16,8 @@
 #
 # Indexes
 #
-#  index_experience_vectors_on_experience_id                  (experience_id) UNIQUE
-#  index_experience_vectors_on_generated_at                   (generated_at)
-#  index_experience_vectors_on_vector_hash                    (vector_hash)
-#  index_experience_vectors_on_vector_hash_and_experience_id  (vector_hash,experience_id) UNIQUE
+#  index_experience_vectors_on_experience_id  (experience_id) UNIQUE
+#  index_experience_vectors_on_generated_at   (generated_at)
 #
 # Foreign Keys
 #

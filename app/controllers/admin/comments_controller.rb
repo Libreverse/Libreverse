@@ -16,6 +16,16 @@ module Admin
       @counts = Comment.group(:moderation_state).count.slice("pending", "rejected", "approved")
     end
 
+    def approve
+      @comment.update!(moderation_state: "approved")
+      redirect_to admin_comments_path, notice: "Comment approved"
+    end
+
+    def reject
+      @comment.update!(moderation_state: "rejected")
+      redirect_to admin_comments_path, notice: "Comment rejected"
+    end
+
     private
 
     def set_comment

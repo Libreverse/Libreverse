@@ -73,6 +73,9 @@ module LibreverseInstance
     config.load_defaults 8.0
     BootTrace.log("application.rb: Rails 8.0 defaults loaded")
 
+    cross_origin_resource_policy = Rails.env.development? ? "cross-origin" : "same-site"
+    config.action_dispatch.default_headers["Cross-Origin-Resource-Policy"] = cross_origin_resource_policy
+
     # Silence ALL deprecation warnings (nuclear option)
     config.active_support.deprecation = :silence
 

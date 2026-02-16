@@ -51,6 +51,7 @@
 #  userinfo_encrypted_response_enc :string(255)
 #  userinfo_signed_response_alg    :string(255)
 #  created_at                      :datetime         not null
+#  updated_at                      :datetime         not null
 #  account_id                      :bigint
 #  client_id                       :string(255)      not null
 #  software_id                     :string(255)
@@ -67,6 +68,26 @@
 #
 class OauthApplication < ApplicationRecord
   include FlagShihTzu
+
+  validates :client_id, :client_secret, :flags, :name,
+            :post_logout_redirect_uris, :redirect_uri, :scopes, presence: true
+
+  validates :application_type, :backchannel_logout_uri, :client_id, :client_secret,
+            :client_uri, :contacts, :description, :dpop_bound_access_tokens,
+            :frontchannel_logout_uri, :grant_types, :homepage_url,
+            :id_token_encrypted_response_alg, :id_token_encrypted_response_enc,
+            :id_token_signed_response_alg, :initiate_login_uri, :jwks, :jwks_uri,
+            :logo_uri, :name, :policy_uri, :post_logout_redirect_uris,
+            :redirect_uri, :registration_access_token, :request_object_encryption_alg,
+            :request_object_encryption_enc, :request_object_signing_alg,
+            :request_uris, :response_types, :scopes, :sector_identifier_uri,
+            :software_id, :software_version, :subject_type,
+            :tls_client_auth_san_dns, :tls_client_auth_san_email,
+            :tls_client_auth_san_ip, :tls_client_auth_san_uri,
+            :tls_client_auth_subject_dn, :token_endpoint_auth_method, :tos_uri,
+            :userinfo_encrypted_response_alg, :userinfo_encrypted_response_enc,
+            :userinfo_signed_response_alg,
+            length: { maximum: 255 }, allow_blank: true
 
   # FlagShihTzu bit field configuration
   # Bit positions: 1=backchannel_logout_session_required, 2=frontchannel_logout_session_required, 3=require_pushed_authorization_requests, 4=tls_client_certificate_bound_access_tokens

@@ -30,6 +30,25 @@ class AccountSequel < AccountModel
   def guest? = (flags & 2) != 0
   # Check admin flag (bit position 1)
   def admin? = (flags & 1) != 0
+
+  def guest
+    guest?
+  end
+
+  def admin
+    admin?
+  end
+
+  def guest=(value)
+    self.flags ||= 0
+    self.flags = truthy?(value) ? (flags | 2) : (flags & ~2)
+  end
+
+  def admin=(value)
+    self.flags ||= 0
+    self.flags = truthy?(value) ? (flags | 1) : (flags & ~1)
+  end
+
   # Provide parity with ActiveRecord Account interface
   def effective_user? = !guest?
 
@@ -58,6 +77,10 @@ class AccountSequel < AccountModel
   end
 
   private
+
+  def truthy?(value)
+    [ true, 1, "1", "true" ].include?(value)
+  end
 
   def validate_username_moderation
     return if username.blank?

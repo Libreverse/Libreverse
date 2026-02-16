@@ -42,6 +42,10 @@ module LibreverseModeration
       false
   end
 
+  def unblock_domain(domain)
+    unblock_instance(domain)
+  end
+
   def should_federate_to?(domain)
     # Check if the domain is in the blocked domains list
     # Return false if blocked, true if allowed

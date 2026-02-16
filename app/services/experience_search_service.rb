@@ -2,8 +2,6 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
-require "memo_wise"
-
 class ExperienceSearchService
   # Minimum similarity threshold for results
   DEFAULT_SIMILARITY_THRESHOLD = 0.0
@@ -12,7 +10,6 @@ class ExperienceSearchService
   DEFAULT_LIMIT = 100
 
   class << self
-    prepend MemoWise
     # Main search method that handles both vector and fallback search
     def search(query, scope: nil, limit: DEFAULT_LIMIT, use_vector_search: true, include_metaverse: true)
       query = query.to_s.strip
@@ -278,7 +275,6 @@ class ExperienceSearchService
       # Exponential decay: score decreases as content gets older
       Math.exp(-days_ago / 365.0) # Half-life of about 1 year
     end
-    memo_wise :calculate_recency_score
 
     # Calculate how well the query matches the title
     def calculate_title_match_score(experience, query)
@@ -295,7 +291,6 @@ class ExperienceSearchService
 
       overlap.to_f / total_unique
     end
-    memo_wise :calculate_title_match_score
 
     # Calculate similarity score for LIKE search results
     def calculate_like_similarity(experience, query)
@@ -322,7 +317,6 @@ class ExperienceSearchService
       # Normalize to 0-1 range
       [ score / 1.8, 1.0 ].min
     end
-    memo_wise :calculate_like_similarity
 
     # Fallback method for finding related experiences
     def fallback_related_search(experience, limit)

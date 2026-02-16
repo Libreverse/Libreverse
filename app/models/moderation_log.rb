@@ -7,10 +7,10 @@
 # Table name: moderation_logs
 #
 #  id              :bigint           not null, primary key
-#  content         :text(65535)
-#  field           :string(255)
-#  model_type      :string(255)
-#  reason          :string(255)
+#  content         :text(65535)      not null
+#  field           :string(255)      not null
+#  model_type      :string(255)      not null
+#  reason          :string(255)      not null
 #  violations_data :text(65535)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

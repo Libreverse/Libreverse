@@ -7,6 +7,7 @@ class MigrateOAuthApplicationBooleansToFlags < ActiveRecord::Migration[8.1]
     # Migrate existing boolean data to flags bit field
     # Bit positions: 1=backchannel_logout_session_required, 2=frontchannel_logout_session_required, 3=require_pushed_authorization_requests, 4=tls_client_certificate_bound_access_tokens
 
+    # rubocop:disable Rails/SkipsModelValidations
     OauthApplication.find_each do |app|
       flags = 0
       flags |= 1 if app.backchannel_logout_session_required?
@@ -16,10 +17,11 @@ class MigrateOAuthApplicationBooleansToFlags < ActiveRecord::Migration[8.1]
 
       app.update_columns(flags: flags)
     end
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def down
     # Revert by setting all flags to 0
-    OauthApplication.update_all(flags: 0)
+    OauthApplication.update_all(flags: 0) # rubocop:disable Rails/SkipsModelValidations
   end
 end

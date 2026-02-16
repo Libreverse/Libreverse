@@ -30,6 +30,11 @@ class User < ApplicationRecord
 
   self.table_name = "accounts" # Use the same table as Sequel Account
 
+  validates :flags, :status, :username, presence: true
+  validates :username, length: { maximum: 255 }
+  validates :federated_id, :password_hash, :provider, :provider_uid,
+            length: { maximum: 255 }, allow_blank: true
+
   # Find user by Sequel account
   def self.from_account(account)
     return nil unless account

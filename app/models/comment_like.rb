@@ -14,7 +14,7 @@
 #
 # Indexes
 #
-#  index_comment_likes_on_comment_id                 (comment_id)
+#  index_comment_likes_on_account_id                 (account_id)
 #  index_comment_likes_on_comment_id_and_account_id  (comment_id,account_id) UNIQUE
 #
 # Foreign Keys

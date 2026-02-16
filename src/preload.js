@@ -129,7 +129,8 @@ express Statement of Purpose.
 
 */
 
-const { ipcRenderer } = require("electron");
+import { ipcRenderer } from "electron";
+import process from "node:process";
 
 globalThis.electronAPI = {
     minimize: () => ipcRenderer.invoke("minimize-window"),
@@ -151,32 +152,33 @@ const APP_ORIGIN = (() => {
     try {
         return new URL(APP_URL).origin;
     } catch {
-        return null;
+        return;
     }
 })();
 
 const resolveAllowedUgcUrl = (rawUrl) => {
-    if (!rawUrl || typeof rawUrl !== "string") return null;
+    if (!rawUrl || typeof rawUrl !== "string") return;
 
     let u;
     try {
-        if (APP_ORIGIN && rawUrl.startsWith("/"))
-            u = new URL(rawUrl, APP_ORIGIN);
-        else u = new URL(rawUrl);
+        u =
+            APP_ORIGIN && rawUrl.startsWith("/")
+                ? new URL(rawUrl, APP_ORIGIN)
+                : new URL(rawUrl);
     } catch {
-        return null;
+        return;
     }
 
-    if (!APP_ORIGIN || u.origin !== APP_ORIGIN) return null;
-    if (!u.pathname.startsWith("/experiences/")) return null;
-    if (!u.pathname.includes("/electron_sandbox")) return null;
+    if (!APP_ORIGIN || u.origin !== APP_ORIGIN) return;
+    if (!u.pathname.startsWith("/experiences/")) return;
+    if (!u.pathname.includes("/electron_sandbox")) return;
 
     return u.toString();
 };
 
 const getRailsIframeWindow = () => {
-    const iframe = document.getElementById("content-frame");
-    return iframe && iframe.contentWindow ? iframe.contentWindow : null;
+    const iframe = document.querySelector("#content-frame");
+    return iframe && iframe.contentWindow ? iframe.contentWindow : undefined;
 };
 
 window.addEventListener("message", async (event) => {
@@ -246,53 +248,7 @@ const setupTrafficLights = () => {
             : "right: 12px; top: 12px;";
     trafficLights.style.cssText += positionStyle;
 
-    // Define colors based on platform
-    let closeOuter, closeInner, closeIconHover, closeIconPress;
-    let minimizeOuter, minimizeInner, minimizeIconHover, minimizeIconPress;
-    let maximizeOuter, maximizeInner, maximizeIconHover, maximizeIconPress;
     let forceGrayscale = process.env.FORCE_GRAYSCALE_TRAFFIC_LIGHTS === "true";
-
-    // Gray colors for unfocused state
-    const grayCloseOuter = "#888888";
-    const grayCloseInner = "#aaaaaa";
-    const grayCloseIconHover = "#333333";
-    const grayCloseIconPress = "#111111";
-    const grayMinimizeOuter = "#888888";
-    const grayMinimizeInner = "#aaaaaa";
-    const grayMinimizeIconHover = "#333333";
-    const grayMinimizeIconPress = "#111111";
-    const grayMaximizeOuter = "#888888";
-    const grayMaximizeInner = "#aaaaaa";
-    const grayMaximizeIconHover = "#333333";
-    const grayMaximizeIconPress = "#111111";
-
-    if (process.platform === "darwin" && !forceGrayscale) {
-        closeOuter = "#e24b41";
-        closeInner = "#ed6a5f";
-        closeIconHover = "#460804";
-        closeIconPress = "#170101";
-        minimizeOuter = "#e1a73e";
-        minimizeInner = "#f6be50";
-        minimizeIconHover = "#90591d";
-        minimizeIconPress = "#532a0a";
-        maximizeOuter = "#2dac2f";
-        maximizeInner = "#61c555";
-        maximizeIconHover = "#2a6218";
-        maximizeIconPress = "#113107";
-    } else {
-        closeOuter = grayCloseOuter;
-        closeInner = grayCloseInner;
-        closeIconHover = grayCloseIconHover;
-        closeIconPress = grayCloseIconPress;
-        minimizeOuter = grayMinimizeOuter;
-        minimizeInner = grayMinimizeInner;
-        minimizeIconHover = grayMinimizeIconHover;
-        minimizeIconPress = grayMinimizeIconPress;
-        maximizeOuter = grayMaximizeOuter;
-        maximizeInner = grayMaximizeInner;
-        maximizeIconHover = grayMaximizeIconHover;
-        maximizeIconPress = grayMaximizeIconPress;
-    }
 
     // Generate data URLs for the appropriate platform
     let closeNormalData, closeHoverData, closePressData;
@@ -401,7 +357,6 @@ const setupTrafficLights = () => {
                         break;
                     }
                 }
-            } else {
             }
         });
     }

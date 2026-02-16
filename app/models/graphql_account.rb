@@ -22,13 +22,12 @@ class GraphqlAccount
   attribute :status
 
   def initialize(account)
-    super(
-      id: account.id,
-      username: account.username,
-      admin: account.admin?,
-      guest: account.guest?,
-      status: account_status_string(account.status)
-    )
+    super()
+    self.id = account.id
+    self.username = account.username
+    self.admin = account.admin?
+    self.guest = account.guest?
+    self.status = account_status_string(account.status)
   end
 
   private

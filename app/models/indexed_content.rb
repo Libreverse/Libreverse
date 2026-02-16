@@ -23,7 +23,6 @@
 #
 #  index_indexed_contents_on_content_type                     (content_type)
 #  index_indexed_contents_on_last_indexed_at                  (last_indexed_at)
-#  index_indexed_contents_on_source_platform                  (source_platform)
 #  index_indexed_contents_on_source_platform_and_external_id  (source_platform,external_id) UNIQUE
 #
 class IndexedContent < ApplicationRecord
@@ -42,6 +41,10 @@ class IndexedContent < ApplicationRecord
   validates :external_id, presence: true
   validates :content_type, presence: true
   validates :external_id, uniqueness: { scope: :source_platform }
+  validates :author, :content_type, :external_id, :source_platform, :title,
+            length: { maximum: 255 }, allow_blank: true
+  validates :coordinates, :description, length: { maximum: 65_535 }, allow_blank: true
+  validates :metadata, length: { maximum: 4_294_967_295 }, allow_blank: true
 
   # Scopes
   scope :by_platform, ->(platform) { where(source_platform: platform) }

@@ -22,8 +22,6 @@ class RodauthApp < Rodauth::Rails::App
         rescue StandardError => e
           Rails.logger.error "[RodauthApp] Error during load_memory (guest with cookie): #{e.message}"
         end
-      # Case 3: Guest session without remember cookie.
-      else
       end
     end
 

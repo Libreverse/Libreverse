@@ -16,7 +16,7 @@
 #  metaverse_platform    :string(255)
 #  slug                  :string(255)
 #  source_type           :string(255)      default("user_created"), not null
-#  title                 :string(255)
+#  title                 :string(255)      not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  account_id            :bigint           not null
@@ -24,12 +24,10 @@
 #
 # Indexes
 #
-#  index_experiences_on_account_id                          (account_id)
 #  index_experiences_on_account_id_and_created_at           (account_id,created_at)
 #  index_experiences_on_indexed_content_id                  (indexed_content_id)
 #  index_experiences_on_metaverse_platform                  (metaverse_platform)
 #  index_experiences_on_slug                                (slug) UNIQUE
-#  index_experiences_on_source_type                         (source_type)
 #  index_experiences_on_source_type_and_metaverse_platform  (source_type,metaverse_platform)
 #
 # Foreign Keys
@@ -71,14 +69,17 @@ class Experience < ApplicationRecord
     c.attribute(:updated_at, type: "String!")
   end
 
-  belongs_to :account, optional: true
+  belongs_to :account, optional: false
   has_one :experience_vector, dependent: :destroy
   has_one_attached :html_file, dependent: :purge_later
   encrypts_attached :html_file
 
+  validates :flags, :source_type, presence: true
   validates :title, presence: true, length: { maximum: 255 }
-  validates :description, length: { maximum: 2000 }
+  validates :description, length: { maximum: 65_535 }, allow_blank: true
   validates :author, length: { maximum: 255 }
+  validates :source_type, :slug, :metaverse_platform, length: { maximum: 255 }, allow_blank: true
+  validates :metaverse_coordinates, :metaverse_metadata, length: { maximum: 65_535 }, allow_blank: true
   validates :federate, inclusion: { in: [ true, false ] }
   validates :offline_available, inclusion: { in: [ true, false ] }
   validates :html_file, presence: true,
@@ -126,8 +127,11 @@ class Experience < ApplicationRecord
     self.account_id ||= Current.account&.id || nil
   end
 
-  def auto_approve_for_admin
-    self.flags |= 1 if account&.admin? # Set approved flag (bit position 1)
+  def auto_approve_for_admin(*)
+    return unless account_id
+
+    admin_account = Account.where(id: account_id).pick(:flags).to_i & 1
+    self.flags |= 1 if admin_account == 1 # Set approved flag (bit position 1)
   end
 
   def html_file?

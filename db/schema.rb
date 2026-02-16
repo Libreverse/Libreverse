@@ -1,4 +1,3 @@
-# typed: false
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,34 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
-  create_table "account_active_session_keys", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
+  create_table "account_active_session_keys", primary_key: "session_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "last_use", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.string "session_id", null: false
-    t.index ["account_id", "session_id"], name: "index_account_active_session_keys_on_account_id_and_session_id", unique: true
-    t.index ["session_id"], name: "index_account_active_session_keys_on_session_id", unique: true
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "idx_account_active_session_keys_on_account_id"
   end
 
   create_table "account_login_change_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.datetime "deadline", null: false
     t.string "key", null: false
     t.string "login", null: false
-    t.index ["id"], name: "fk_rails_18962144a4"
+    t.datetime "updated_at", null: false
   end
 
   create_table "account_password_reset_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.datetime "deadline", null: false
     t.datetime "email_last_sent", null: false
     t.string "key", null: false
-    t.index ["id"], name: "fk_rails_ccaeb37cea"
+    t.datetime "updated_at", null: false
   end
 
   create_table "account_remember_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.datetime "deadline", null: false
     t.string "key", null: false
-    t.index ["id"], name: "fk_rails_9b2f6d8501"
+    t.datetime "updated_at", null: false
   end
 
   create_table "account_roles", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -47,20 +48,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "role_id", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "role_id"], name: "index_account_roles_on_account_id_and_role_id", unique: true
-    t.index ["account_id"], name: "index_account_roles_on_account_id"
     t.index ["role_id"], name: "index_account_roles_on_role_id"
   end
 
   create_table "account_session_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.string "key", null: false
-    t.index ["id"], name: "fk_rails_86a43d3592"
+    t.datetime "updated_at", null: false
   end
 
   create_table "account_verification_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.datetime "email_last_sent", null: false
     t.string "key", null: false
     t.datetime "requested_at", null: false
-    t.index ["id"], name: "fk_rails_2e3b612008"
+    t.datetime "updated_at", null: false
   end
 
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -79,13 +81,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.index ["username"], name: "index_accounts_on_username", unique: true
   end
 
-  create_table "accounts_roles", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "account_id"
+  create_table "accounts_roles", id: :bigint, default: nil, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
     t.datetime "created_at", null: false
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id", "role_id"], name: "index_accounts_roles_on_account_id_and_role_id"
-    t.index ["account_id"], name: "index_accounts_roles_on_account_id"
+    t.index ["account_id", "role_id"], name: "idx_accounts_roles_unique_account_role", unique: true
     t.index ["role_id"], name: "index_accounts_roles_on_role_id"
   end
 
@@ -153,14 +154,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", null: false
     t.binary "data", size: :long, null: false
     t.string "ref", null: false
+    t.datetime "updated_at", null: false
     t.index ["ref"], name: "index_active_storage_db_files_on_ref", unique: true
   end
 
   create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
-    t.index ["blob_id"], name: "index_active_storage_variant_records_on_blob_id"
   end
 
   create_table "audits1984_audits", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -196,19 +199,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
 
   create_table "comfy_cms_categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "categorized_type", null: false
+    t.datetime "created_at", null: false
     t.string "label", null: false
-    t.integer "site_id", null: false
+    t.bigint "site_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["site_id", "categorized_type", "label"], name: "index_cms_categories_on_site_id_and_cat_type_and_label", unique: true
-    t.index ["site_id"], name: "index_comfy_cms_categories_on_site_id"
   end
 
   create_table "comfy_cms_categorizations", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "categorized_id", null: false
     t.string "categorized_type", null: false
-    t.integer "category_id", null: false
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["categorized_id", "categorized_type"], name: "idx_on_categorized_id_categorized_type_875b4ed9b1"
     t.index ["category_id", "categorized_type", "categorized_id"], name: "index_cms_categorizations_on_cat_id_and_catd_type_and_catd_id", unique: true
-    t.index ["category_id"], name: "index_comfy_cms_categorizations_on_category_id"
   end
 
   create_table "comfy_cms_files", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -216,10 +221,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.text "description"
     t.string "label", default: "", null: false
     t.integer "position", default: 0, null: false
-    t.integer "site_id", null: false
+    t.bigint "site_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["site_id", "position"], name: "index_comfy_cms_files_on_site_id_and_position"
-    t.index ["site_id"], name: "index_comfy_cms_files_on_site_id"
   end
 
   create_table "comfy_cms_fragments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -228,14 +232,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "datetime", precision: nil
     t.string "identifier", null: false
-    t.bigint "record_id"
-    t.string "record_type"
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
     t.string "tag", default: "text", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["boolean"], name: "index_comfy_cms_fragments_on_boolean"
     t.index ["datetime"], name: "index_comfy_cms_fragments_on_datetime"
     t.index ["identifier"], name: "index_comfy_cms_fragments_on_identifier"
-    t.index ["record_type", "record_id"], name: "index_comfy_cms_fragments_on_record_type_and_record_id"
+    t.index ["record_type", "record_id", "identifier"], name: "idx_comfy_cms_fragments_unique_record_identifier", unique: true
   end
 
   create_table "comfy_cms_layouts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -246,14 +250,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "identifier", null: false
     t.text "js", size: :medium
     t.string "label", null: false
-    t.integer "parent_id"
+    t.bigint "parent_id"
     t.integer "position", default: 0, null: false
-    t.integer "site_id", null: false
+    t.bigint "site_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["parent_id", "position"], name: "index_comfy_cms_layouts_on_parent_id_and_position"
-    t.index ["parent_id"], name: "index_comfy_cms_layouts_on_parent_id"
     t.index ["site_id", "identifier"], name: "index_comfy_cms_layouts_on_site_id_and_identifier", unique: true
-    t.index ["site_id"], name: "index_comfy_cms_layouts_on_site_id"
   end
 
   create_table "comfy_cms_pages", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -263,27 +265,26 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "full_path", null: false
     t.boolean "is_published", default: true, null: false
     t.string "label", null: false
-    t.integer "layout_id"
-    t.integer "parent_id"
+    t.bigint "layout_id", null: false
+    t.bigint "parent_id"
     t.integer "position", default: 0, null: false
-    t.integer "site_id", null: false
+    t.bigint "site_id", null: false
     t.string "slug"
-    t.integer "target_page_id"
+    t.bigint "target_page_id"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["is_published"], name: "index_comfy_cms_pages_on_is_published"
     t.index ["layout_id"], name: "index_comfy_cms_pages_on_layout_id"
     t.index ["parent_id", "position"], name: "index_comfy_cms_pages_on_parent_id_and_position"
-    t.index ["parent_id"], name: "index_comfy_cms_pages_on_parent_id"
     t.index ["site_id", "full_path"], name: "index_comfy_cms_pages_on_site_id_and_full_path"
-    t.index ["site_id"], name: "index_comfy_cms_pages_on_site_id"
     t.index ["target_page_id"], name: "index_comfy_cms_pages_on_target_page_id"
   end
 
   create_table "comfy_cms_revisions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
     t.text "data", size: :medium
     t.integer "record_id", null: false
     t.string "record_type", null: false
+    t.datetime "updated_at", null: false
     t.index ["record_id", "record_type"], name: "index_comfy_cms_revisions_on_record_id_and_record_type"
     t.index ["record_type", "record_id", "created_at"], name: "index_cms_revisions_on_rtype_and_rid_and_created_at"
   end
@@ -297,6 +298,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "path"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["hostname"], name: "index_comfy_cms_sites_on_hostname"
+    t.index ["identifier"], name: "idx_comfy_cms_sites_unique_identifier", unique: true
+    t.index ["path", "hostname"], name: "idx_comfy_cms_sites_unique_path_hostname", unique: true
   end
 
   create_table "comfy_cms_snippets", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -306,11 +309,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "label", null: false
     t.boolean "markdown", default: false
     t.integer "position", default: 0, null: false
-    t.integer "site_id", null: false
+    t.bigint "site_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["site_id", "identifier"], name: "index_comfy_cms_snippets_on_site_id_and_identifier", unique: true
     t.index ["site_id", "position"], name: "index_comfy_cms_snippets_on_site_id_and_position"
-    t.index ["site_id"], name: "index_comfy_cms_snippets_on_site_id"
   end
 
   create_table "comfy_cms_translations", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -318,20 +320,22 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", precision: nil, null: false
     t.boolean "is_published", default: true, null: false
     t.string "label", null: false
-    t.integer "layout_id"
+    t.bigint "layout_id", null: false
     t.string "locale", null: false
-    t.integer "page_id", null: false
+    t.bigint "page_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["is_published"], name: "index_comfy_cms_translations_on_is_published"
     t.index ["layout_id"], name: "index_comfy_cms_translations_on_layout_id"
     t.index ["locale"], name: "index_comfy_cms_translations_on_locale"
-    t.index ["page_id"], name: "index_comfy_cms_translations_on_page_id"
+    t.index ["page_id", "locale"], name: "idx_comfy_cms_translations_unique_page_locale", unique: true
   end
 
-  create_table "comment_hierarchies", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "ancestor_id", null: false
-    t.integer "descendant_id", null: false
+  create_table "comment_hierarchies", id: :bigint, default: nil, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "ancestor_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "descendant_id", null: false
     t.integer "generations", null: false
+    t.datetime "updated_at", null: false
     t.index ["ancestor_id", "descendant_id", "generations"], name: "comment_anc_desc_idx", unique: true
     t.index ["descendant_id"], name: "comment_desc_idx"
   end
@@ -341,8 +345,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "comment_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_comment_likes_on_account_id"
     t.index ["comment_id", "account_id"], name: "index_comment_likes_on_comment_id_and_account_id", unique: true
-    t.index ["comment_id"], name: "index_comment_likes_on_comment_id"
   end
 
   create_table "comment_threads", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -371,6 +375,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "parent_id"
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_comments_on_account_id"
+    t.index ["approved_by_id"], name: "index_comments_on_approved_by_id"
     t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
     t.index ["moderation_state"], name: "index_comments_on_moderation_state"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
@@ -384,7 +389,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "updated_at", null: false
     t.index ["sensitive_access_id"], name: "index_console1984_commands_on_sensitive_access_id"
     t.index ["session_id", "created_at", "sensitive_access_id"], name: "on_session_and_sensitive_chronologically"
-    t.index ["session_id"], name: "index_console1984_commands_on_session_id"
   end
 
   create_table "console1984_sensitive_accesses", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -402,7 +406,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "user_id", null: false
     t.index ["created_at"], name: "index_console1984_sessions_on_created_at"
     t.index ["user_id", "created_at"], name: "index_console1984_sessions_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_console1984_sessions_on_user_id"
   end
 
   create_table "console1984_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -438,8 +441,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.integer "version", default: 1, null: false
     t.index ["experience_id"], name: "index_experience_vectors_on_experience_id", unique: true
     t.index ["generated_at"], name: "index_experience_vectors_on_generated_at"
-    t.index ["vector_hash", "experience_id"], name: "index_experience_vectors_on_vector_hash_and_experience_id", unique: true
-    t.index ["vector_hash"], name: "index_experience_vectors_on_vector_hash"
   end
 
   create_table "experiences", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -455,15 +456,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "metaverse_platform"
     t.string "slug"
     t.string "source_type", default: "user_created", null: false
-    t.string "title"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "created_at"], name: "index_experiences_on_account_id_and_created_at"
-    t.index ["account_id"], name: "index_experiences_on_account_id"
     t.index ["indexed_content_id"], name: "index_experiences_on_indexed_content_id"
     t.index ["metaverse_platform"], name: "index_experiences_on_metaverse_platform"
     t.index ["slug"], name: "index_experiences_on_slug", unique: true
     t.index ["source_type", "metaverse_platform"], name: "index_experiences_on_source_type_and_metaverse_platform"
-    t.index ["source_type"], name: "index_experiences_on_source_type"
   end
 
   create_table "federails_activities", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -515,9 +514,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "updated_at", null: false
     t.string "uuid", null: false
     t.index ["actor_id", "target_actor_id"], name: "index_federails_followings_on_actor_id_and_target_actor_id", unique: true
-    t.index ["actor_id"], name: "index_federails_followings_on_actor_id"
     t.index ["target_actor_id", "actor_id"], name: "index_federails_followings_on_target_actor_id_and_actor_id"
-    t.index ["target_actor_id"], name: "index_federails_followings_on_target_actor_id"
     t.index ["uuid"], name: "index_federails_followings_on_uuid", unique: true
   end
 
@@ -556,14 +553,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
   end
 
   create_table "friendly_id_slugs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at"
+    t.datetime "created_at", null: false
     t.string "scope"
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
-    t.string "sluggable_type", limit: 50
+    t.string "sluggable_type", limit: 50, null: false
+    t.datetime "updated_at", null: false
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["sluggable_id", "sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_id_and_sluggable_type"
-    t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type", "scope"], name: "index_friendly_id_slugs_on_sluggable_type_and_scope"
   end
 
@@ -573,12 +570,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "generated_at", null: false
     t.bigint "indexed_content_id", null: false
     t.datetime "updated_at", null: false
-    t.text "vector_data"
+    t.text "vector_data", null: false
     t.string "vector_hash", null: false
     t.index ["generated_at"], name: "index_indexed_content_vectors_on_generated_at"
     t.index ["indexed_content_id"], name: "index_indexed_content_vectors_on_indexed_content_id", unique: true
-    t.index ["vector_hash", "indexed_content_id"], name: "idx_icv_on_vh_and_icid", unique: true
-    t.index ["vector_hash"], name: "index_indexed_content_vectors_on_vector_hash"
   end
 
   create_table "indexed_contents", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -596,7 +591,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.index ["content_type"], name: "index_indexed_contents_on_content_type"
     t.index ["last_indexed_at"], name: "index_indexed_contents_on_last_indexed_at"
     t.index ["source_platform", "external_id"], name: "index_indexed_contents_on_source_platform_and_external_id", unique: true
-    t.index ["source_platform"], name: "index_indexed_contents_on_source_platform"
   end
 
   create_table "indexing_runs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -627,11 +621,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
 
   create_table "moderation_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id"
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at", null: false
-    t.string "field"
-    t.string "model_type"
-    t.string "reason"
+    t.string "field", null: false
+    t.string "model_type", null: false
+    t.string "reason", null: false
     t.datetime "updated_at", null: false
     t.text "violations_data"
     t.index ["account_id"], name: "index_moderation_logs_on_account_id"
@@ -682,6 +676,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "tls_client_auth_subject_dn"
     t.string "token_endpoint_auth_method"
     t.string "tos_uri"
+    t.datetime "updated_at", null: false
     t.string "userinfo_encrypted_response_alg"
     t.string "userinfo_encrypted_response_enc"
     t.string "userinfo_signed_response_alg"
@@ -691,34 +686,37 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
   end
 
   create_table "oauth_dpop_proofs", primary_key: "jti", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.datetime "first_use", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "oauth_grants", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "access_type", default: "offline", null: false
-    t.bigint "account_id"
-    t.string "acr"
-    t.string "certificate_thumbprint"
-    t.string "claims"
-    t.string "claims_locales"
-    t.string "code"
-    t.string "code_challenge"
-    t.string "code_challenge_method"
+    t.bigint "account_id", null: false
+    t.string "acr", null: false
+    t.string "certificate_thumbprint", null: false
+    t.string "claims", null: false
+    t.string "claims_locales", null: false
+    t.string "code", null: false
+    t.string "code_challenge", null: false
+    t.string "code_challenge_method", null: false
     t.datetime "created_at", null: false
-    t.string "dpop_jkt"
-    t.string "dpop_jwk"
+    t.string "dpop_jkt", null: false
+    t.string "dpop_jwk", null: false
     t.datetime "expires_in", null: false
-    t.datetime "last_polled_at"
-    t.string "nonce"
-    t.bigint "oauth_application_id"
-    t.string "redirect_uri"
-    t.string "refresh_token"
-    t.string "resource"
-    t.datetime "revoked_at"
+    t.datetime "last_polled_at", null: false
+    t.string "nonce", null: false
+    t.bigint "oauth_application_id", null: false
+    t.string "redirect_uri", null: false
+    t.string "refresh_token", null: false
+    t.string "resource", null: false
+    t.datetime "revoked_at", null: false
     t.string "scopes", null: false
-    t.string "token"
+    t.string "token", null: false
     t.string "type"
-    t.string "user_code"
+    t.datetime "updated_at", null: false
+    t.string "user_code", null: false
     t.index ["account_id"], name: "fk_rails_3e095b0b7e"
     t.index ["oauth_application_id", "code"], name: "index_oauth_grants_on_oauth_application_id_and_code", unique: true
     t.index ["refresh_token"], name: "index_oauth_grants_on_refresh_token", unique: true
@@ -735,7 +733,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "params", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_oauth_pushed_requests_on_code", unique: true
-    t.index ["oauth_application_id", "code"], name: "index_oauth_pushed_requests_on_oauth_application_id_and_code", unique: true
+    t.index ["oauth_application_id"], name: "idx_oauth_pushed_requests_on_oauth_application_id"
   end
 
   create_table "oauth_saml_settings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -760,7 +758,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "resource_type"
     t.datetime "updated_at", null: false
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
-    t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
 
@@ -769,6 +766,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "channel_hash", null: false
     t.datetime "created_at", null: false
     t.binary "payload", size: :long, null: false
+    t.datetime "updated_at", null: false
     t.index ["channel"], name: "index_solid_cable_messages_on_channel"
     t.index ["channel_hash"], name: "index_solid_cable_messages_on_channel_hash"
     t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
@@ -779,6 +777,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", null: false
     t.binary "key", limit: 1024, null: false
     t.bigint "key_hash", null: false
+    t.datetime "updated_at", null: false
     t.binary "value", size: :long, null: false
     t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
     t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
@@ -792,6 +791,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "job_id", null: false
     t.integer "priority", default: 0, null: false
     t.string "queue_name", null: false
+    t.datetime "updated_at", null: false
     t.index ["concurrency_key", "priority", "job_id"], name: "index_solid_queue_blocked_executions_for_release"
     t.index ["expires_at", "concurrency_key"], name: "index_solid_queue_blocked_executions_for_maintenance"
     t.index ["job_id"], name: "index_solid_queue_blocked_executions_on_job_id", unique: true
@@ -801,6 +801,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", null: false
     t.bigint "job_id", null: false
     t.bigint "process_id"
+    t.datetime "updated_at", null: false
     t.index ["job_id"], name: "index_solid_queue_claimed_executions_on_job_id", unique: true
     t.index ["process_id", "job_id"], name: "index_solid_queue_claimed_executions_on_process_id_and_job_id"
   end
@@ -809,6 +810,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", null: false
     t.text "error"
     t.bigint "job_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["job_id"], name: "index_solid_queue_failed_executions_on_job_id", unique: true
   end
 
@@ -833,6 +835,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
   create_table "solid_queue_pauses", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "queue_name", null: false
+    t.datetime "updated_at", null: false
     t.index ["queue_name"], name: "index_solid_queue_pauses_on_queue_name", unique: true
   end
 
@@ -845,6 +848,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "name", null: false
     t.integer "pid", null: false
     t.bigint "supervisor_id"
+    t.datetime "updated_at", null: false
     t.index ["last_heartbeat_at"], name: "index_solid_queue_processes_on_last_heartbeat_at"
     t.index ["name", "supervisor_id"], name: "index_solid_queue_processes_on_name_and_supervisor_id", unique: true
     t.index ["supervisor_id"], name: "index_solid_queue_processes_on_supervisor_id"
@@ -855,6 +859,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "job_id", null: false
     t.integer "priority", default: 0, null: false
     t.string "queue_name", null: false
+    t.datetime "updated_at", null: false
     t.index ["job_id"], name: "index_solid_queue_ready_executions_on_job_id", unique: true
     t.index ["priority", "job_id"], name: "index_solid_queue_poll_all"
     t.index ["queue_name", "priority", "job_id"], name: "index_solid_queue_poll_by_queue"
@@ -865,6 +870,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "job_id", null: false
     t.datetime "run_at", null: false
     t.string "task_key", null: false
+    t.datetime "updated_at", null: false
     t.index ["job_id"], name: "index_solid_queue_recurring_executions_on_job_id", unique: true
     t.index ["task_key", "run_at"], name: "index_solid_queue_recurring_executions_on_task_key_and_run_at", unique: true
   end
@@ -891,6 +897,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.integer "priority", default: 0, null: false
     t.string "queue_name", null: false
     t.datetime "scheduled_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["job_id"], name: "index_solid_queue_scheduled_executions_on_job_id", unique: true
     t.index ["scheduled_at", "priority", "job_id"], name: "index_solid_queue_dispatch_all"
   end
@@ -906,8 +913,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
-  create_table "test", id: false, charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.integer "id"
+  create_table "test", id: :bigint, default: nil, charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "thredded_categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -918,13 +926,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "slug", limit: 191, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["messageboard_id", "slug"], name: "index_thredded_categories_on_messageboard_id_and_slug", unique: true
-    t.index ["messageboard_id"], name: "index_thredded_categories_on_messageboard_id"
     t.index ["name"], name: "thredded_categories_name_ci"
   end
 
   create_table "thredded_messageboard_groups", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
-    t.string "name"
+    t.string "name", null: false
     t.integer "position", null: false
     t.datetime "updated_at", precision: nil, null: false
   end
@@ -938,7 +945,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "user_id", null: false
     t.index ["messageboard_id"], name: "idx_on_messageboard_id_5899898a2a"
     t.index ["user_id", "messageboard_id", "notifier_key"], name: "thredded_messageboard_notifications_for_followed_topics_unique", unique: true
-    t.index ["user_id"], name: "idx_on_user_id_78e6269133"
   end
 
   create_table "thredded_messageboard_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -949,7 +955,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["thredded_messageboard_id", "last_seen_at"], name: "index_thredded_messageboard_users_for_recently_active"
     t.index ["thredded_messageboard_id", "thredded_user_detail_id"], name: "index_thredded_messageboard_users_primary", unique: true
-    t.index ["thredded_messageboard_id"], name: "index_thredded_messageboard_users_on_thredded_messageboard_id"
     t.index ["thredded_user_detail_id"], name: "fk_rails_06e42c62f5"
   end
 
@@ -973,9 +978,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
   create_table "thredded_notifications_for_followed_topics", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.boolean "enabled", default: true, null: false
+    t.bigint "messageboard_id"
     t.string "notifier_key", limit: 90, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
+    t.index ["messageboard_id"], name: "idx_tnfft_messageboard_id"
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_followed_topics_unique", unique: true
   end
 
@@ -986,12 +993,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_private_topics_unique", unique: true
-    t.index ["user_id"], name: "index_thredded_notifications_for_private_topics_on_user_id"
   end
 
   create_table "thredded_post_moderation_records", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
-    t.bigint "messageboard_id"
+    t.bigint "messageboard_id", null: false
     t.integer "moderation_state", null: false
     t.bigint "moderator_id"
     t.text "post_content"
@@ -1001,14 +1007,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.integer "previous_moderation_state", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["messageboard_id", "created_at"], name: "index_thredded_moderation_records_for_display"
-    t.index ["messageboard_id"], name: "index_thredded_post_moderation_records_on_messageboard_id"
     t.index ["moderator_id"], name: "index_thredded_post_moderation_records_on_moderator_id"
     t.index ["post_id"], name: "index_thredded_post_moderation_records_on_post_id"
     t.index ["post_user_id"], name: "index_thredded_post_moderation_records_on_post_user_id"
   end
 
   create_table "thredded_posts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at", precision: nil, null: false
     t.bigint "messageboard_id", null: false
     t.integer "moderation_state", null: false
@@ -1018,21 +1023,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "user_id"
     t.index ["content"], name: "thredded_posts_content_idx", length: 255
     t.index ["messageboard_id", "user_id"], name: "index_thredded_posts_on_messageboard_id_and_user_id"
-    t.index ["messageboard_id"], name: "index_thredded_posts_on_messageboard_id"
     t.index ["moderation_state", "updated_at"], name: "index_thredded_posts_for_display"
     t.index ["postable_id", "created_at"], name: "index_thredded_posts_on_postable_id_and_created_at"
-    t.index ["postable_id"], name: "index_thredded_posts_on_postable_id"
     t.index ["user_id"], name: "index_thredded_posts_on_user_id"
   end
 
   create_table "thredded_private_posts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at", precision: nil, null: false
     t.bigint "postable_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
     t.index ["postable_id", "created_at"], name: "index_thredded_private_posts_on_postable_id_and_created_at"
-    t.index ["postable_id"], name: "index_thredded_private_posts_on_postable_id"
     t.index ["user_id"], name: "index_thredded_private_posts_on_user_id"
   end
 
@@ -1046,7 +1048,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "title", limit: 191, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
-    t.index ["hash_id"], name: "index_thredded_private_topics_on_hash_id"
+    t.index ["hash_id"], name: "idx_thredded_private_topics_unique_hash_id", unique: true
     t.index ["last_post_at"], name: "index_thredded_private_topics_on_last_post_at"
     t.index ["last_user_id"], name: "index_thredded_private_topics_on_last_user_id"
     t.index ["slug"], name: "index_thredded_private_topics_on_slug", unique: true
@@ -1055,9 +1057,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
 
   create_table "thredded_private_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
-    t.bigint "private_topic_id"
+    t.bigint "private_topic_id", null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
     t.index ["private_topic_id"], name: "index_thredded_private_users_on_private_topic_id"
     t.index ["user_id"], name: "index_thredded_private_users_on_user_id"
   end
@@ -1085,8 +1087,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "title", limit: 191, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
-    t.index ["hash_id"], name: "index_thredded_topics_on_hash_id"
+    t.index ["hash_id"], name: "idx_thredded_topics_unique_hash_id", unique: true
     t.index ["last_post_at"], name: "index_thredded_topics_on_last_post_at"
+    t.index ["last_user_id"], name: "index_thredded_topics_on_last_user_id"
     t.index ["messageboard_id"], name: "index_thredded_topics_on_messageboard_id"
     t.index ["moderation_state", "sticky", "updated_at"], name: "index_thredded_topics_for_display"
     t.index ["slug"], name: "index_thredded_topics_on_slug", unique: true
@@ -1116,6 +1119,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.bigint "messageboard_id", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
+    t.index ["messageboard_id"], name: "idx_on_messageboard_id_d046de79c6"
     t.index ["user_id", "messageboard_id"], name: "thredded_user_messageboard_preferences_user_id_messageboard_id", unique: true
   end
 
@@ -1147,6 +1151,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.integer "unread_posts_count", default: 0, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
+    t.index ["postable_id"], name: "index_thredded_user_private_topic_read_states_on_postable_id"
     t.index ["user_id", "postable_id"], name: "thredded_user_private_topic_read_states_user_postable", unique: true
   end
 
@@ -1154,7 +1159,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "created_at", precision: nil, null: false
     t.integer "reason", limit: 1
     t.bigint "topic_id", null: false
+    t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["topic_id"], name: "index_thredded_user_topic_follows_on_topic_id"
     t.index ["user_id", "topic_id"], name: "thredded_user_topic_follows_user_topic", unique: true
   end
 
@@ -1169,6 +1176,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
     t.index ["messageboard_id"], name: "index_thredded_user_topic_read_states_on_messageboard_id"
+    t.index ["postable_id"], name: "index_thredded_user_topic_read_states_on_postable_id"
     t.index ["user_id", "messageboard_id"], name: "thredded_user_topic_read_states_user_messageboard"
     t.index ["user_id", "postable_id"], name: "thredded_user_topic_read_states_user_postable", unique: true
   end
@@ -1181,21 +1189,37 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
     t.string "value"
     t.text "value_ciphertext"
     t.index ["account_id", "key"], name: "index_user_preferences_on_account_id_and_key", unique: true
-    t.index ["account_id"], name: "index_user_preferences_on_account_id"
   end
 
   add_foreign_key "account_active_session_keys", "accounts"
-  add_foreign_key "account_login_change_keys", "accounts", column: "id"
-  add_foreign_key "account_password_reset_keys", "accounts", column: "id"
-  add_foreign_key "account_remember_keys", "accounts", column: "id"
   add_foreign_key "account_roles", "accounts"
   add_foreign_key "account_roles", "roles"
-  add_foreign_key "account_session_keys", "accounts", column: "id"
-  add_foreign_key "account_verification_keys", "accounts", column: "id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audits1984_audits", "console1984_sessions", column: "session_id"
+  add_foreign_key "audits1984_audits", "console1984_users", column: "auditor_id"
+  add_foreign_key "comfy_cms_categories", "comfy_cms_sites", column: "site_id"
+  add_foreign_key "comfy_cms_categorizations", "comfy_cms_categories", column: "category_id"
+  add_foreign_key "comfy_cms_files", "comfy_cms_sites", column: "site_id"
+  add_foreign_key "comfy_cms_layouts", "comfy_cms_layouts", column: "parent_id"
+  add_foreign_key "comfy_cms_layouts", "comfy_cms_sites", column: "site_id"
+  add_foreign_key "comfy_cms_pages", "comfy_cms_layouts", column: "layout_id"
+  add_foreign_key "comfy_cms_pages", "comfy_cms_pages", column: "parent_id"
+  add_foreign_key "comfy_cms_pages", "comfy_cms_pages", column: "target_page_id"
+  add_foreign_key "comfy_cms_pages", "comfy_cms_sites", column: "site_id"
+  add_foreign_key "comfy_cms_snippets", "comfy_cms_sites", column: "site_id"
+  add_foreign_key "comfy_cms_translations", "comfy_cms_layouts", column: "layout_id"
+  add_foreign_key "comfy_cms_translations", "comfy_cms_pages", column: "page_id"
+  add_foreign_key "comment_hierarchies", "comments", column: "ancestor_id"
+  add_foreign_key "comment_hierarchies", "comments", column: "descendant_id"
   add_foreign_key "comment_likes", "comments"
+  add_foreign_key "comments", "accounts"
   add_foreign_key "comments", "comment_threads"
+  add_foreign_key "comments", "comments", column: "parent_id"
+  add_foreign_key "console1984_commands", "console1984_sensitive_accesses", column: "sensitive_access_id"
+  add_foreign_key "console1984_commands", "console1984_sessions", column: "session_id"
+  add_foreign_key "console1984_sensitive_accesses", "console1984_sessions", column: "session_id"
+  add_foreign_key "console1984_sessions", "console1984_users", column: "user_id"
   add_foreign_key "experience_vectors", "experiences"
   add_foreign_key "experiences", "accounts"
   add_foreign_key "experiences", "indexed_contents"
@@ -1214,9 +1238,46 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_26_214103) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "thredded_categories", "thredded_messageboards", column: "messageboard_id"
+  add_foreign_key "thredded_messageboard_notifications_for_followed_topics", "accounts", column: "user_id"
+  add_foreign_key "thredded_messageboard_notifications_for_followed_topics", "thredded_messageboards", column: "messageboard_id"
   add_foreign_key "thredded_messageboard_users", "thredded_messageboards", on_delete: :cascade
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
+  add_foreign_key "thredded_messageboards", "thredded_messageboard_groups", column: "messageboard_group_id"
+  add_foreign_key "thredded_messageboards", "thredded_topics", column: "last_topic_id"
+  add_foreign_key "thredded_notifications_for_followed_topics", "accounts", column: "user_id"
+  add_foreign_key "thredded_notifications_for_followed_topics", "thredded_messageboards", column: "messageboard_id"
+  add_foreign_key "thredded_notifications_for_private_topics", "accounts", column: "user_id"
+  add_foreign_key "thredded_post_moderation_records", "accounts", column: "moderator_id"
+  add_foreign_key "thredded_post_moderation_records", "accounts", column: "post_user_id"
+  add_foreign_key "thredded_post_moderation_records", "thredded_messageboards", column: "messageboard_id"
+  add_foreign_key "thredded_post_moderation_records", "thredded_posts", column: "post_id"
+  add_foreign_key "thredded_posts", "accounts", column: "user_id"
+  add_foreign_key "thredded_posts", "thredded_messageboards", column: "messageboard_id"
+  add_foreign_key "thredded_posts", "thredded_topics", column: "postable_id"
+  add_foreign_key "thredded_private_posts", "accounts", column: "user_id"
+  add_foreign_key "thredded_private_posts", "thredded_private_topics", column: "postable_id"
+  add_foreign_key "thredded_private_topics", "accounts", column: "last_user_id"
+  add_foreign_key "thredded_private_topics", "accounts", column: "user_id"
+  add_foreign_key "thredded_private_users", "accounts", column: "user_id"
+  add_foreign_key "thredded_private_users", "thredded_private_topics", column: "private_topic_id"
+  add_foreign_key "thredded_topic_categories", "thredded_categories", column: "category_id"
+  add_foreign_key "thredded_topic_categories", "thredded_topics", column: "topic_id"
+  add_foreign_key "thredded_topics", "accounts", column: "last_user_id"
+  add_foreign_key "thredded_topics", "accounts", column: "user_id"
+  add_foreign_key "thredded_topics", "thredded_messageboards", column: "messageboard_id"
+  add_foreign_key "thredded_user_details", "accounts", column: "user_id"
+  add_foreign_key "thredded_user_messageboard_preferences", "accounts", column: "user_id"
+  add_foreign_key "thredded_user_messageboard_preferences", "thredded_messageboards", column: "messageboard_id"
   add_foreign_key "thredded_user_post_notifications", "accounts", column: "user_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
+  add_foreign_key "thredded_user_preferences", "accounts", column: "user_id"
+  add_foreign_key "thredded_user_private_topic_read_states", "accounts", column: "user_id"
+  add_foreign_key "thredded_user_private_topic_read_states", "thredded_private_topics", column: "postable_id"
+  add_foreign_key "thredded_user_topic_follows", "accounts", column: "user_id"
+  add_foreign_key "thredded_user_topic_follows", "thredded_topics", column: "topic_id"
+  add_foreign_key "thredded_user_topic_read_states", "accounts", column: "user_id"
+  add_foreign_key "thredded_user_topic_read_states", "thredded_messageboards", column: "messageboard_id"
+  add_foreign_key "thredded_user_topic_read_states", "thredded_topics", column: "postable_id"
   add_foreign_key "user_preferences", "accounts", on_delete: :cascade
 end

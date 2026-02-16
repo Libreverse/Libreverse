@@ -1,23 +1,18 @@
 import unicorn from "eslint-plugin-unicorn";
 import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import eslintrc from "@eslint/eslintrc";
-const { FlatCompat } = eslintrc;
 import jestPlugin from "eslint-plugin-jest";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all,
-});
+// Flat config: use flat-ready presets
+const baseConfigs = [
+    js.configs.recommended,
+    unicorn.configs["flat/recommended"],
+];
 
 export default [
     {
         ignores: [
             "app//builds**",
+            "app/assets/builds/**",
             "**/node_modules/",
             "**/vendor/",
             "**/tmp/",
@@ -25,6 +20,8 @@ export default [
             "public/**",
             "app//libs/**",
             "coverage/**",
+            ".vite/**",
+            "dist/**",
             "**/gems/**",
             "**/haml_lint*/**",
             "**/openid_connect*/**",
@@ -36,11 +33,8 @@ export default [
             "**/generated/**",
         ],
     },
-    ...compat.extends("eslint:recommended", "plugin:unicorn/recommended"),
+    ...baseConfigs,
     {
-        plugins: {
-            unicorn,
-        },
         languageOptions: {
             globals: {
                 ...globals.browser,
@@ -59,10 +53,8 @@ export default [
     },
     // Updated Jest test configuration
     {
+        ...jestPlugin.configs["flat/recommended"],
         files: ["test/javascript/**/*.js"],
-        plugins: {
-            jest: jestPlugin,
-        },
         languageOptions: {
             globals: {
                 ...globals.jest,
@@ -73,9 +65,6 @@ export default [
                 ecmaVersion: "latest",
                 sourceType: "module",
             },
-        },
-        rules: {
-            ...jestPlugin.configs.recommended.rules,
         },
     },
 ];

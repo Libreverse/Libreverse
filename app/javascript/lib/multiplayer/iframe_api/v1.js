@@ -24,15 +24,15 @@ export const V1_OUTBOUND_TYPES = Object.freeze({
 });
 
 export function normalizeV1InboundMessage(data) {
-    if (!data || typeof data !== "object") return null;
+    if (!data || typeof data !== "object") return;
 
     // If explicitly tagged, it must match v1.
-    if ("api" in data && data.api !== MULTIPLAYER_IFRAME_API_V1) return null;
+    if ("api" in data && data.api !== MULTIPLAYER_IFRAME_API_V1) return;
     if (
         "api_version" in data &&
         Number(data.api_version) !== MULTIPLAYER_IFRAME_API_V1_NUMBER
     )
-        return null;
+        return;
 
     const type = data.type;
     if (
@@ -40,7 +40,7 @@ export function normalizeV1InboundMessage(data) {
         type !== V1_INBOUND_TYPES.STATE_GET &&
         type !== V1_INBOUND_TYPES.STATE_REQUEST_ALL
     ) {
-        return null;
+        return;
     }
 
     return {

@@ -3,6 +3,8 @@
 # shareable_constant_value: literal
 
 class SessionFinalization < ApplicationRecord
+  self.abstract_class = true
+
   validates :session_id, presence: true, uniqueness: true
 
   after_initialize do

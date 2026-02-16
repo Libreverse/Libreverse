@@ -17,10 +17,8 @@
 #
 # Indexes
 #
-#  index_experience_vectors_on_experience_id                  (experience_id) UNIQUE
-#  index_experience_vectors_on_generated_at                   (generated_at)
-#  index_experience_vectors_on_vector_hash                    (vector_hash)
-#  index_experience_vectors_on_vector_hash_and_experience_id  (vector_hash,experience_id) UNIQUE
+#  index_experience_vectors_on_experience_id  (experience_id) UNIQUE
+#  index_experience_vectors_on_generated_at   (generated_at)
 #
 # Foreign Keys
 #
@@ -33,9 +31,12 @@ class ExperienceVector < ApplicationRecord
   belongs_to :experience
 
   validates :vector_data, presence: true
-  validates :vector_hash, presence: true, uniqueness: { scope: :experience_id }
+  validates :vector_hash, presence: true
   validates :generated_at, presence: true
   validates :version, presence: true, numericality: { greater_than: 0 }
+  validates :vector_hash, length: { maximum: 255 }
+  validates :vector_data, length: { maximum: 65_535 }, allow_blank: true
+  validate :vector_hash_unique_for_experience
 
   # JSON serialization for vector data
   serialize :vector_data, type: Array, coder: JSON
@@ -65,5 +66,14 @@ class ExperienceVector < ApplicationRecord
       experience.author
     )
     vector_hash != current_hash
+  end
+
+  private
+
+  def vector_hash_unique_for_experience
+    return if experience_id.blank? || vector_hash.blank?
+
+    conflict = self.class.where(experience_id: experience_id, vector_hash: vector_hash).where.not(id: id).exists?
+    errors.add(:vector_hash, :taken) if conflict
   end
 end

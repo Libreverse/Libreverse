@@ -34,7 +34,7 @@ const consumer = createConsumer(actionCableUrl, {
     },
 
     // Enable session restoration for faster reconnections
-    sessionId: () => sessionStorage.getItem("anycable_session_id") || null,
+    sessionId: () => sessionStorage.getItem("anycable_session_id") || undefined,
 
     // Store session ID for restoration
     onSessionId: (sessionId) => {
@@ -48,7 +48,7 @@ const consumer = createConsumer(actionCableUrl, {
     historySize: 50, // Keep last 50 messages for recovery
 
     // Connection optimization settings
-    connectionTimeout: 15000,
+    connectionTimeout: 15_000,
     reconnectInterval: 1000,
     maxReconnectAttempts: 10,
 });

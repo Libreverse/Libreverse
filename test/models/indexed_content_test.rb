@@ -23,7 +23,6 @@
 #
 #  index_indexed_contents_on_content_type                     (content_type)
 #  index_indexed_contents_on_last_indexed_at                  (last_indexed_at)
-#  index_indexed_contents_on_source_platform                  (source_platform)
 #  index_indexed_contents_on_source_platform_and_external_id  (source_platform,external_id) UNIQUE
 #
 require "test_helper"

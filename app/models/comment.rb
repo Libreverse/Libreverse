@@ -25,18 +25,21 @@
 # Indexes
 #
 #  index_comments_on_account_id         (account_id)
+#  index_comments_on_approved_by_id     (approved_by_id)
 #  index_comments_on_comment_thread_id  (comment_thread_id)
 #  index_comments_on_moderation_state   (moderation_state)
 #  index_comments_on_parent_id          (parent_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (account_id => accounts.id)
 #  fk_rails_...  (comment_thread_id => comment_threads.id)
+#  fk_rails_...  (parent_id => comments.id)
 #
 class Comment < ApplicationRecord
   has_closure_tree
 
-  belongs_to :thread, class_name: "CommentThread", foreign_key: :comment_thread_id, counter_cache: true
+  belongs_to :thread, class_name: "CommentThread", foreign_key: :comment_thread_id, counter_cache: true, inverse_of: :comments
   begin
     belongs_to :account, class_name: "Account", optional: false, inverse_of: false
   rescue StandardError
@@ -52,7 +55,8 @@ class Comment < ApplicationRecord
   scope :with_descendants, -> { includes(:descendants) }
   scope :threaded, -> { includes(:children, :parent) }
 
-  validates :body, presence: true, length: { maximum: 10_000 }
+  validates :body, presence: true, length: { maximum: 65_535 }
+  validates :likes_count, :mentions_cache, presence: true
   validates :moderation_state, inclusion: { in: %w[pending rejected approved] }
 
   before_validation :ensure_defaults, :extract_mentions

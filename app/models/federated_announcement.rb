@@ -26,6 +26,8 @@ class FederatedAnnouncement < ApplicationRecord
   validates :activitypub_uri, presence: true, uniqueness: true
   validates :source_domain, presence: true
   validates :announced_at, presence: true
+  validates :activitypub_uri, :experience_url, :source_domain, :title,
+            length: { maximum: 255 }, allow_blank: true
 
   scope :recent, -> { order(announced_at: :desc) }
   scope :from_domain, ->(domain) { where(source_domain: domain) }

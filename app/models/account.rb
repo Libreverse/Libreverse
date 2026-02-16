@@ -65,6 +65,11 @@ class Account < ApplicationRecord
       has_many :user_preferences, dependent: :destroy
       has_many :moderation_logs, dependent: :destroy
 
+      validates :flags, :status, :username, presence: true
+      validates :username, length: { maximum: 255 }
+      validates :federated_id, :password_hash, :provider, :provider_uid,
+                length: { maximum: 255 }, allow_blank: true
+
       # Content moderation validations
       validate :username_moderation
 
@@ -115,6 +120,41 @@ class Account < ApplicationRecord
           # Remove guest role if account is no longer a guest
           remove_role(:guest) if has_role?(:guest)
         end
+      end
+
+      # Use the account_roles join model so timestamps and primary key handling
+      # are handled by ActiveRecord instead of direct HABTM inserts.
+      def has_role?(role_name, resource = nil)
+        scope = roles.where(name: role_name.to_s)
+        scope = if resource
+          scope.where(resource_type: resource.class.base_class.name, resource_id: resource.id)
+        else
+          scope.where(resource_type: nil, resource_id: nil)
+        end
+        scope.exists?
+      end
+
+      def add_role(role_name, resource = nil)
+        role_attrs = { name: role_name.to_s }
+        if resource
+          role_attrs[:resource_type] = resource.class.base_class.name
+          role_attrs[:resource_id] = resource.id
+        end
+
+        role = Role.find_or_create_by!(role_attrs)
+        account_roles.find_or_create_by!(role: role)
+        role
+      end
+
+      def remove_role(role_name, resource = nil)
+        scope = roles.where(name: role_name.to_s)
+        scope = if resource
+          scope.where(resource_type: resource.class.base_class.name, resource_id: resource.id)
+        else
+          scope.where(resource_type: nil, resource_id: nil)
+        end
+
+        account_roles.where(role_id: scope.select(:id)).destroy_all
       end
 
       def profile_url

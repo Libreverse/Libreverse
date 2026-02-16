@@ -1,8 +1,8 @@
 console.log("Renderer process running");
 
-const params = new URLSearchParams(window.location.search);
-const targetUrl = params.get("target");
-const iframe = document.getElementById("content-frame");
+const parameters = new URLSearchParams(globalThis.location.search);
+const targetUrl = parameters.get("target");
+const iframe = document.querySelector("#content-frame");
 
 if (targetUrl && iframe) {
     console.log(`Loading target URL: ${targetUrl}`);

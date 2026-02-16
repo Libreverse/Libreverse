@@ -22,6 +22,9 @@ class CommentThread < ApplicationRecord
   belongs_to :commontable, polymorphic: true
   has_many :comments, dependent: :destroy
 
+  validates :comments_count, :commontable_type, :commontable_id, presence: true
+  validates :commontable_type, length: { maximum: 255 }
+
   scope :for, ->(record) { find_or_create_by!(commontable: record) }
 
   def locked?

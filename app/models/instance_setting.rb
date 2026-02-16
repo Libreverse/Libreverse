@@ -22,9 +22,8 @@ class InstanceSetting < ApplicationRecord
   encrypts :value, deterministic: true, downcase: false
 
   validates :key, presence: true, uniqueness: true
-  validates :key, length: { maximum: 100 }
-  validates :value, length: { maximum: 10_000 }
-  validates :description, length: { maximum: 500 }
+  validates :key, length: { maximum: 255 }
+  validates :value, :description, length: { maximum: 65_535 }, allow_blank: true
 
   # Allowed setting keys for security
   ALLOWED_KEYS = %w[

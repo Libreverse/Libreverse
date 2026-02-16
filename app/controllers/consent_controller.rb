@@ -20,6 +20,18 @@ class ConsentController < ApplicationController
         render turbo_stream: turbo_stream.morph(".consent-overlay", render_to_string("consent/screen", layout: false))
     end
 
+    def accept
+        session[:consent_given] = true
+        session[:consent_timestamp] = Time.current
+        redirect_to root_path, notice: "Thank you for accepting"
+    end
+
+    def decline
+        session[:consent_given] = false
+        session[:consent_timestamp] = Time.current
+        redirect_to root_path, notice: "You have declined consent"
+    end
+
   private
 
     def rate_limit_consent_actions

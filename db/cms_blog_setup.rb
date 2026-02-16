@@ -77,7 +77,7 @@ module CMSBlogSync
     return if page_ids.empty?
 
     site.pages.where(id: page_ids).find_each do |page|
-      page.update_column(:content_cache, nil)
+      page.update_column(:content_cache, nil) # rubocop:disable Rails/SkipsModelValidations
     end
     Rails.logger.debug "[cms_blog_setup] Cleared content_cache for #{page_ids.size} page(s) using #{layout.identifier}"
   end

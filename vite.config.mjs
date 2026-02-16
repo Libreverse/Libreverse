@@ -2,6 +2,7 @@ import "v8-compile-cache";
 import { defineConfig } from "vite";
 import path from "node:path";
 import fs from "node:fs";
+import process from "node:process";
 import { execSync } from "node:child_process";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import rubyPlugin from "vite-plugin-ruby";
@@ -33,25 +34,25 @@ import {
     createEsbuildConfig,
     createOptimizeDepsForce,
     createTypehintPlugin,
-    devViteSecurityHeaders,
+    devViteSecurityHeaders as developmentViteSecurityHeaders,
 } from "./config/vite/common.js";
+
+const gemRoot = (name) => {
+    try {
+        return execSync(`bundle show ${name}`, {
+            stdio: ["pipe", "pipe", "ignore"],
+        })
+            .toString()
+            .trim();
+    } catch {
+        return;
+    }
+};
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
 
     const typehintPlugin = createTypehintPlugin(typehints);
-
-    const gemRoot = (name) => {
-        try {
-            return execSync(`bundle show ${name}`, {
-                stdio: ["pipe", "pipe", "ignore"],
-            })
-                .toString()
-                .trim();
-        } catch (error) {
-            return null;
-        }
-    };
 
     const staticCopyTargets = [];
 
@@ -103,7 +104,7 @@ export default defineConfig(({ mode }) => {
                 port: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
                 clientPort: Number(process.env.VITE_DEV_SERVER_PORT || 3001),
             },
-            headers: isDevelopment ? devViteSecurityHeaders() : {},
+            headers: isDevelopment ? developmentViteSecurityHeaders() : {},
             fs: { strict: false }, // More lenient file system access for development
         },
         assetsInclude: ["**/*.snappy", "**/*.gguf", "**/*.wasm"],
@@ -124,11 +125,11 @@ export default defineConfig(({ mode }) => {
                             filter: "**/*.woff2",
                             url: "inline",
                             encodeType: "base64",
-                            maxSize: 2147483647,
+                            maxSize: 2_147_483_647,
                         },
                         {
                             url: "inline",
-                            maxSize: 2147483647,
+                            maxSize: 2_147_483_647,
                             encodeType: "encodeURIComponent",
                             optimizeSvgEncode: true,
                             ignoreFragmentWarning: true,
@@ -196,9 +197,9 @@ export default defineConfig(({ mode }) => {
             nodePolyfills(),
             purgePolyfills.vite(),
             replacements(),
-            staticCopyTargets.length
+            staticCopyTargets.length > 0
                 ? viteStaticCopy({ targets: staticCopyTargets })
-                : null,
+                : undefined,
             legacy(commonLegacyOptions),
             babel(createBabelOptions(path)),
             rubyPlugin(),
@@ -208,10 +209,10 @@ export default defineConfig(({ mode }) => {
                 "app/views/**/*",
                 "app/javascript/src/**/*",
             ]),
-            !isDevelopment
-                ? vitePluginBundleObfuscator(allObfuscatorConfig)
-                : null,
-            !isDevelopment ? typehintPlugin : null,
+            isDevelopment
+                ? undefined
+                : vitePluginBundleObfuscator(allObfuscatorConfig),
+            isDevelopment ? undefined : typehintPlugin,
         ],
     };
 });

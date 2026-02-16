@@ -7,7 +7,7 @@ export default class extends Controller {
     connect() {
         // please keep it hardcoded - it's really annoying to have to like try to set the flag before lenis initialises (else the logs won't be captured for startup phases)
         this.debug = false;
-        this.lenis = null;
+        this.lenis = undefined;
         this.disabled = false;
         this.boundDestroyIfNeeded = this.destroyIfNeeded.bind(this);
         this.boundDestroy = this.destroy.bind(this);
@@ -17,8 +17,8 @@ export default class extends Controller {
         this.boundDebugWheel = this.debugWheel.bind(this);
         this.boundDebugTouchMove = this.debugTouchMove.bind(this);
 
-        window.__lenisWrapper = this.element;
-        window.__lenisWrapperDocument = this.element?.ownerDocument;
+        globalThis.__lenisWrapper = this.element;
+        globalThis.__lenisWrapperDocument = this.element?.ownerDocument;
 
         this.log("connect", { element: this.element });
         this.setupEventListeners();
@@ -41,7 +41,7 @@ export default class extends Controller {
             }
 
             // Check if Lenis is available before initializing
-            if (typeof Lenis === "undefined") {
+            if (Lenis === undefined) {
                 console.error(
                     "Lenis is not available - library may not be loaded properly",
                 );
@@ -86,12 +86,9 @@ export default class extends Controller {
                 gestureDirection: "vertical",
                 smooth: true,
                 mouseMultiplier: 1,
-                smoothTouch: false,
-                touchMultiplier: 2,
                 infinite: false,
                 autoResize: true,
                 syncTouch: false,
-                wheelMultiplier: 1,
                 touchInertiaMultiplier: 35,
                 touchInertiaExponent: 1.7,
                 lerp: 0.15, // Start here for snappy responsiveness (try 0.12–0.25 range)
@@ -101,24 +98,24 @@ export default class extends Controller {
                 smoothTouch: false, // Optional: disable on mobile if you want instant native touch scroll
                 prevent: (node) =>
                     node.classList.contains("lenis-prevent") ||
-                    node.hasAttribute("data-lenis-prevent"),
+                    Object.hasOwn(node.dataset, "lenisPrevent"),
             });
 
             // Expose globally for glass container integration
-            window.lenis = this.lenis;
+            globalThis.lenis = this.lenis;
 
             this.log("init:created", { lenis: this.lenis });
 
             // Synchronize Lenis scrolling with custom scroll events
-            this.lenis.on("scroll", (args) => {
-                this.debugScroll("scroll", args);
+            this.lenis.on("scroll", (arguments_) => {
+                this.debugScroll("scroll", arguments_);
                 const event = new CustomEvent("lenis-scroll", {
                     detail: {
-                        scroll: args.scroll,
-                        limit: args.limit,
-                        velocity: args.velocity,
-                        direction: args.direction,
-                        progress: args.progress,
+                        scroll: arguments_.scroll,
+                        limit: arguments_.limit,
+                        velocity: arguments_.velocity,
+                        direction: arguments_.direction,
+                        progress: arguments_.progress,
                     },
                 });
                 document.dispatchEvent(event);
@@ -185,10 +182,10 @@ export default class extends Controller {
             this.log("destroy");
             // Destroy Lenis instance
             this.lenis.destroy();
-            this.lenis = null;
+            this.lenis = undefined;
 
             // Clean up global reference
-            window.lenis = null;
+            globalThis.lenis = undefined;
         }
     }
 
@@ -240,10 +237,10 @@ export default class extends Controller {
 
     handleTurboRender = () => {
         this.log("turbo:render");
-        if (!this.lenis) {
-            this.init();
-        } else {
+        if (this.lenis) {
             this.resize();
+        } else {
+            this.init();
         }
     };
 
@@ -289,7 +286,7 @@ export default class extends Controller {
         this.element.removeEventListener("touchmove", this.boundDebugTouchMove);
     }
 
-    log(message, data = undefined) {
+    log(message, data) {
         if (!this.debug) return;
         if (data !== undefined) {
             console.debug(`[Lenis] ${message}`, data);
@@ -298,7 +295,7 @@ export default class extends Controller {
         console.debug(`[Lenis] ${message}`);
     }
 
-    debugScroll(message, args) {
+    debugScroll(message, arguments_) {
         if (!this.debug) return;
 
         const now = Date.now();
@@ -306,11 +303,11 @@ export default class extends Controller {
         this._lastDebugScrollLogAt = now;
 
         console.debug(`[Lenis] ${message}`, {
-            scroll: args?.scroll,
-            limit: args?.limit,
-            velocity: args?.velocity,
-            direction: args?.direction,
-            progress: args?.progress,
+            scroll: arguments_?.scroll,
+            limit: arguments_?.limit,
+            velocity: arguments_?.velocity,
+            direction: arguments_?.direction,
+            progress: arguments_?.progress,
         });
     }
 
@@ -349,13 +346,13 @@ export default class extends Controller {
 
         contentElement = document.createElement("div");
         contentElement.className = "lenis-content";
-        contentElement.setAttribute("data-lenis-content", "");
+        contentElement.dataset.lenisContent = "";
 
         while (this.element.firstChild) {
-            contentElement.appendChild(this.element.firstChild);
+            contentElement.append(this.element.firstChild);
         }
 
-        this.element.appendChild(contentElement);
+        this.element.append(contentElement);
         return contentElement;
     }
 }

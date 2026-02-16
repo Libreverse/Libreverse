@@ -14,7 +14,6 @@
 #
 # Indexes
 #
-#  index_account_roles_on_account_id              (account_id)
 #  index_account_roles_on_account_id_and_role_id  (account_id,role_id) UNIQUE
 #  index_account_roles_on_role_id                 (role_id)
 #

@@ -6,7 +6,7 @@ class CleanupAbandonedGuestsJob < ApplicationJob
   include SidekiqIteration::Iteration
   queue_as :default
 
-  def build_enumerator(cursor:)
+  def build_enumerator(_cursor:)
     cutoff_date = 30.days.ago
 
     # Convert to ActiveRecord relation for iteration

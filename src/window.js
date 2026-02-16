@@ -1,11 +1,11 @@
 import { BrowserWindow, screen, WebContentsView } from "electron";
-import path, { dirname } from "node:path";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import net from "node:net";
 import isDev from "electron-is-dev";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -28,14 +28,14 @@ const normalizeErrorCode = (code) => {
     return code;
 };
 
-const isRetryableLoadError = (err) => {
-    const rawCode = err?.code ?? err?.errno;
+const isRetryableLoadError = (error) => {
+    const rawCode = error?.code ?? error?.errno;
     const code = normalizeErrorCode(rawCode);
     return (
         retryableChromiumErrorCodes.has(code) ||
         retryableElectronErrorCodes.has(code) ||
         retryableNodeErrorCodes.has(code) ||
-        err?.message === "tcp_timeout"
+        error?.message === "tcp_timeout"
     );
 };
 
@@ -47,17 +47,17 @@ const getTcpProbeForUrl = (rawUrl) => {
             u.hostname === "127.0.0.1" ||
             u.hostname === "::1";
         const isHttp = u.protocol === "http:" || u.protocol === "https:";
-        if (!isLocalhost || !isHttp) return null;
+        if (!isLocalhost || !isHttp) return;
 
         const port = u.port
             ? Number.parseInt(u.port, 10)
-            : u.protocol === "https:"
+            : (u.protocol === "https:"
               ? 443
-              : 80;
+              : 80);
 
         return { host: u.hostname, port };
     } catch {
-        return null;
+        return;
     }
 };
 
@@ -76,10 +76,10 @@ const waitForTcp = async (host, port, timeoutMs = 750) => {
             resolve(true);
         });
 
-        socket.once("error", (err) => {
+        socket.once("error", (error) => {
             clearTimeout(timeout);
             socket.destroy();
-            reject(err);
+            reject(error);
         });
     });
 };
@@ -89,10 +89,10 @@ const buildWaitingPageUrl = (targetUrl) => {
     return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 };
 
-const buildFatalPageUrl = (targetUrl, err) => {
-    const rawCode = err?.code ?? err?.errno;
-    const code = rawCode == null ? "" : String(rawCode);
-    const message = err?.message ? String(err.message) : "Unknown error";
+const buildFatalPageUrl = (targetUrl, error) => {
+    const rawCode = error?.code ?? error?.errno;
+    const code = rawCode == undefined ? "" : String(rawCode);
+    const message = error?.message ? String(error.message) : "Unknown error";
     const html = `<html><body style="background:#0e0e0e;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;max-width:640px;padding:24px;"><h1>Libreverse</h1><p>Failed to load <code>${targetUrl}</code></p><p><code>${code}</code> ${message}</p></div></body></html>`;
     return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 };
@@ -113,9 +113,9 @@ const loadUrlWithPeriodicRetry = async (
 
             await win.loadURL(targetUrl);
             return true;
-        } catch (err) {
-            const shouldRetry = tcpProbe && isRetryableLoadError(err);
-            if (!shouldRetry) throw err;
+        } catch (error) {
+            const shouldRetry = tcpProbe && isRetryableLoadError(error);
+            if (!shouldRetry) throw error;
 
             try {
                 if (
@@ -203,10 +203,10 @@ export default ({
         );
     }
 
-    loadUrlWithPeriodicRetry(mainWindow, url).catch((err) => {
-        console.error("Failed to load main URL:", err);
+    loadUrlWithPeriodicRetry(mainWindow, url).catch((error) => {
+        console.error("Failed to load main URL:", error);
         if (mainWindow.isDestroyed()) return;
-        mainWindow.loadURL(buildFatalPageUrl(url, err));
+        mainWindow.loadURL(buildFatalPageUrl(url, error));
     });
 
     // Load titlebar content
@@ -293,23 +293,34 @@ export default ({
         // Listen for title changes to detect clicks
         titlebarView.webContents.on("page-title-updated", (event, title) => {
             console.log("Titlebar title changed:", title);
-            if (title === "CLOSE_WINDOW") {
-                mainWindow.close();
-            } else if (title === "MINIMIZE_WINDOW") {
-                mainWindow.minimize();
-            } else if (title === "MAXIMIZE_WINDOW") {
-                if (mainWindow.isMaximized()) {
-                    mainWindow.unmaximize();
-                } else {
-                    mainWindow.maximize();
+            switch (title) {
+                case "CLOSE_WINDOW": {
+                    mainWindow.close();
+
+                    break;
                 }
+                case "MINIMIZE_WINDOW": {
+                    mainWindow.minimize();
+
+                    break;
+                }
+                case "MAXIMIZE_WINDOW": {
+                    if (mainWindow.isMaximized()) {
+                        mainWindow.unmaximize();
+                    } else {
+                        mainWindow.maximize();
+                    }
+
+                    break;
+                }
+                // No default
             }
         });
 
         // Add console error listener
         titlebarView.webContents.on(
             "console-message",
-            (event, level, message, line, sourceId) => {
+            (_event, level, message) => {
                 console.log("Titlebar console:", level, message);
             },
         );

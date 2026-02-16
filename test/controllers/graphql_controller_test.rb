@@ -80,7 +80,6 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
     # Stub the current_account method for this request
     GraphqlController.any_instance.stubs(:current_account).returns(account)
 
-    # Make the request
     post "/graphql",
          params: {
            query: query,
@@ -155,7 +154,7 @@ class GraphqlControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     response_data = JSON.parse(response.body)
-    assert_not_nil response_data["data"]["me"]
+    assert_not_nil response_data.dig("data", "me"), "Response should include me: #{response_data.inspect}"
     assert_equal @account.id.to_s, response_data["data"]["me"]["id"]
     assert_equal @account.username, response_data["data"]["me"]["username"]
     assert_equal false, response_data["data"]["me"]["admin"]

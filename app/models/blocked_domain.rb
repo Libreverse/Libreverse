@@ -26,6 +26,8 @@ class BlockedDomain < ApplicationRecord
             uniqueness: true,
             format: { with: /\A[a-z0-9.-]+\z/, message: "invalid domain" }
   validates :blocked_at, presence: true
+  validates :blocked_by, :domain, length: { maximum: 255 }, allow_blank: true
+  validates :reason, length: { maximum: 65_535 }, allow_blank: true
 
   scope :recent, -> { order(blocked_at: :desc) }
 

@@ -7,7 +7,7 @@ class GenerateMissingActorsJob < ApplicationJob
   include SidekiqIteration::Iteration
   queue_as :federation
 
-  def build_enumerator(cursor:)
+  def build_enumerator(_cursor:)
     # Find accounts that don't have federails actors yet
     Account.left_joins(:federails_actor)
            .where(federails_actors: { id: nil })

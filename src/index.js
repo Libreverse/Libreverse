@@ -1,4 +1,4 @@
-require("v8-compile-cache");
+import "v8-compile-cache";
 import {
     app,
     BrowserWindow,
@@ -8,8 +8,8 @@ import {
     ipcMain,
 } from "electron";
 import path from "node:path";
+import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
 import fixPath from "fix-path";
 import openAboutWindow from "about-window";
 import squirrelStartup from "electron-squirrel-startup";
@@ -22,7 +22,7 @@ import fetch from "node-fetch";
 import contextMenu from "electron-context-menu";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 fixPath();
 
@@ -42,15 +42,117 @@ for (const f of flags) {
 
 const baseUrl = process.env.APP_URL || "http://localhost:3000";
 // strangely it doesn't keep the window open without this.
-let mainWindow = null;
+let mainWindow;
 
-let ugcView = null;
+let ugcView;
+
+let engine;
+
+const LISTS = [
+    "https://ublockorigin.github.io/uAssetsCDN/filters/filters.min.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/filters/badware.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/filters/privacy.min.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/filters/quick-fixes.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/filters/unbreak.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/2.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/11.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easyprivacy.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/14.txt",
+    "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-cookies.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/3.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-social.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/15.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-annoyances.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/17.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/18.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/19.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/20.txt",
+    "https://ublockorigin.github.io/uAssetsCDN/filters/annoyances.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Dandelion%20Sprout's%20Website%20Stretcher.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/EmptyPaddingRemover.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcher4K.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcherVertical.txt",
+    "https://raw.githubusercontent.com/iam-py-test/my_filters_001/main/duckduckgo_extra_clean.txt",
+    "https://raw.githubusercontent.com/iam-py-test/my_filters_001/refs/heads/main/special_lists/anti-malware-ubo-extension.txt",
+    "https://raw.githubusercontent.com/yokoffing/filterlists/main/click2load.txt",
+    "https://raw.githubusercontent.com/yokoffing/filterlists/main/privacy_essentials.txt",
+    "https://filters.adtidy.org/extension/ublock/filters/3.txt",
+];
+
+async function loadEngine() {
+    const CACHE_DIR = path.join(app.getPath("userData"), "adblock-cache");
+    const ENGINE_PATH = path.join(CACHE_DIR, "engine.bin");
+
+    // Ensure cache dir
+    try {
+        await fs.mkdir(CACHE_DIR, { recursive: true });
+    } catch {
+        // ignore if exists
+    }
+
+    if (await fs.stat(ENGINE_PATH).catch(() => false)) {
+        try {
+            const serialized = await fs.readFile(ENGINE_PATH);
+            engine = FiltersEngine.deserialize(serialized);
+            return;
+        } catch {
+            console.warn("Failed to load cached engine, rebuilding...");
+        }
+    }
+
+    const rawLists = await Promise.all(
+        LISTS.map((url) => fetch(url).then((response_) => response_.text())),
+    );
+
+    engine = FiltersEngine.parse(rawLists.join("\n"), {
+        enableOptimizations: true,
+        loadCosmeticFilters: true,
+        loadNetworkFilters: true,
+    });
+
+    // Save for next launch
+    await fs.writeFile(ENGINE_PATH, engine.serialize());
+    console.log("Adblock engine built and cached");
+}
+
+function blockWithEngine(sess = session.defaultSession) {
+    sess.webRequest.onBeforeRequest(
+        { urls: ["<all_urls>"] },
+        (details, callback) => {
+            if (!engine) {
+                callback({});
+                return;
+            }
+
+            const request = Request.fromRawDetails({
+                type: details.resourceType || "other",
+                url: details.url,
+                sourceUrl: details.url,
+            });
+
+            const { match, redirect } = engine.match(request);
+
+            if (match) {
+                callback({ cancel: true });
+            } else if (redirect) {
+                callback({ redirectURL: redirect.dataUrl });
+            } else {
+                callback({});
+            }
+        },
+    );
+}
 
 const baseOrigin = (() => {
     try {
         return new URL(baseUrl).origin;
     } catch {
-        return null;
+        return;
     }
 })();
 
@@ -68,11 +170,10 @@ const isAllowedUgcUrl = (rawUrl) => {
     let u;
     try {
         // Accept relative URLs by resolving against the app base origin.
-        if (baseOrigin && rawUrl.startsWith("/")) {
-            u = new URL(rawUrl, baseOrigin);
-        } else {
-            u = new URL(rawUrl);
-        }
+        u =
+            baseOrigin && rawUrl.startsWith("/")
+                ? new URL(rawUrl, baseOrigin)
+                : new URL(rawUrl);
     } catch {
         return false;
     }
@@ -91,11 +192,12 @@ const closeUgcView = () => {
     if (!ugcView) return;
 
     try {
-        if (mainWindow && !mainWindow.isDestroyed()) {
-            // Only remove if it's the current view.
-            if (mainWindow.getBrowserView?.() === ugcView) {
-                mainWindow.setBrowserView(null);
-            }
+        if (
+            mainWindow &&
+            !mainWindow.isDestroyed() && // Only remove if it's the current view.
+            mainWindow.getBrowserView?.() === ugcView
+        ) {
+            mainWindow.removeBrowserView(ugcView);
         }
     } catch {
         // ignore
@@ -107,7 +209,7 @@ const closeUgcView = () => {
         // ignore
     }
 
-    ugcView = null;
+    ugcView = undefined;
 };
 
 const openUgcView = async ({ url }) => {
@@ -193,8 +295,8 @@ const attachContextMenu = (targetWindow) => {
     if (!targetWindow) return;
     contextMenu({
         window: targetWindow,
-        prepend: (defaultActions, parameters, browserWindow) => [],
-        append: (defaultActions, parameters, browserWindow) => [],
+        prepend: () => [],
+        append: () => [],
         showLearnSpelling: false,
         showLookUpSelection: false,
         showSearchWithGoogle: false,
@@ -211,10 +313,10 @@ const attachContextMenu = (targetWindow) => {
         showInspectElement: false,
         showServices: false,
         labels: {},
-        shouldShowMenu: (event, parameters) => true,
+        shouldShowMenu: () => true,
         menu: undefined,
-        onShow: (event) => {},
-        onClose: (event) => {},
+        onShow: () => {},
+        onClose: () => {},
     });
 };
 
@@ -227,7 +329,7 @@ const buildMainWindow = () => {
 
     window.on("closed", () => {
         if (mainWindow === window) {
-            mainWindow = null;
+            mainWindow = undefined;
         }
     });
 
@@ -271,7 +373,8 @@ app.on("second-instance", () => {
 });
 
 // This method will be called when Electron has finished initialization.
-app.whenReady().then(async () => {
+await app.whenReady();
+{
     const iconPath = path.join(
         __dirname,
         isDev
@@ -336,7 +439,7 @@ app.whenReady().then(async () => {
         const details = {
             url: cookieUrl,
             name: String(name),
-            value: value == null ? "" : String(value),
+            value: value == undefined ? "" : String(value),
             path: options.path || "/",
             httpOnly: !!options.httpOnly,
             secure:
@@ -369,10 +472,9 @@ app.whenReady().then(async () => {
     });
 
     // Load and enable adblocker for UGC webviews only
-    loadEngine().then(() => {
-        // Don't apply to default session - will be applied to UGC webviews specifically
-        console.log("Adblock engine loaded for UGC webviews only");
-    });
+    await loadEngine();
+    // Don't apply to default session - will be applied to UGC webviews specifically
+    console.log("Adblock engine loaded for UGC webviews only");
 
     // Create application menu
     const template = [
@@ -428,110 +530,7 @@ app.whenReady().then(async () => {
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
-
-    const LISTS = [
-        "https://ublockorigin.github.io/uAssetsCDN/filters/filters.min.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/filters/badware.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/filters/privacy.min.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/filters/quick-fixes.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/filters/unbreak.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/2.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/11.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easyprivacy.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/14.txt",
-        "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-cookies.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/3.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-social.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/15.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/thirdparties/easylist-annoyances.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/17.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/18.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/19.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/20.txt",
-        "https://ublockorigin.github.io/uAssetsCDN/filters/annoyances.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Dandelion%20Sprout's%20Website%20Stretcher.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/EmptyPaddingRemover.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcher4K.txt",
-        "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/WebsiteStretcherVertical.txt",
-        "https://raw.githubusercontent.com/iam-py-test/my_filters_001/main/duckduckgo_extra_clean.txt",
-        "https://raw.githubusercontent.com/iam-py-test/my_filters_001/refs/heads/main/special_lists/anti-malware-ubo-extension.txt",
-        "https://raw.githubusercontent.com/yokoffing/filterlists/main/click2load.txt",
-        "https://raw.githubusercontent.com/yokoffing/filterlists/main/privacy_essentials.txt",
-        "https://filters.adtidy.org/extension/ublock/filters/3.txt",
-    ];
-
-    let engine;
-
-    // Load or create engine
-    async function loadEngine() {
-        const CACHE_DIR = path.join(app.getPath("userData"), "adblock-cache");
-        const ENGINE_PATH = path.join(CACHE_DIR, "engine.bin");
-
-        // Ensure cache dir
-        try {
-            await fs.mkdir(CACHE_DIR, { recursive: true });
-        } catch {
-            // ignore if exists
-        }
-
-        if (await fs.stat(ENGINE_PATH).catch(() => false)) {
-            try {
-                const serialized = await fs.readFile(ENGINE_PATH);
-                engine = FiltersEngine.deserialize(serialized);
-                return;
-            } catch {
-                console.warn("Failed to load cached engine, rebuilding...");
-            }
-        }
-
-        const rawLists = await Promise.all(
-            LISTS.map((url) => fetch(url).then((r) => r.text())),
-        );
-
-        engine = FiltersEngine.parse(rawLists.join("\n"), {
-            enableOptimizations: true,
-            loadCosmeticFilters: true,
-            loadNetworkFilters: true,
-        });
-
-        // Save for next launch
-        await fs.writeFile(ENGINE_PATH, engine.serialize());
-        console.log("Adblock engine built and cached");
-    }
-
-    function blockWithEngine(sess = session.defaultSession) {
-        sess.webRequest.onBeforeRequest(
-            { urls: ["<all_urls>"] },
-            (details, callback) => {
-                if (!engine) {
-                    callback({});
-                    return;
-                }
-
-                const request = Request.fromRawDetails({
-                    type: details.resourceType || "other",
-                    url: details.url,
-                    sourceUrl: details.url,
-                });
-
-                const { match, redirect } = engine.match(request);
-
-                if (match) {
-                    callback({ cancel: true });
-                } else if (redirect) {
-                    callback({ redirectURL: redirect.dataUrl });
-                } else {
-                    callback({});
-                }
-            },
-        );
-    }
-});
+}
 
 // Handle macOS dock icon click when no windows are open
 app.on("activate", () => {

@@ -16,7 +16,6 @@
 #
 # Indexes
 #
-#  index_user_preferences_on_account_id          (account_id)
 #  index_user_preferences_on_account_id_and_key  (account_id,key) UNIQUE
 #
 # Foreign Keys
@@ -41,9 +40,11 @@ class UserPreference < ApplicationRecord
   # Use deterministic encryption since we need to query these values
   encrypts :value, deterministic: true, downcase: false
 
-  validates :key, presence: true, uniqueness: { scope: :account_id }
-  validates :key, length: { maximum: 50 } # Limit key length
-  validates :value, length: { maximum: 1000 } # Limit value size
+  validates :account_id, :key, presence: true
+  validates :key, uniqueness: { scope: :account_id }
+  validates :key, length: { maximum: 255 }
+  validates :value, length: { maximum: 255 }, allow_blank: true
+  validates :value_ciphertext, length: { maximum: 65_535 }, allow_blank: true
 
   # Whitelist of allowed preference keys
   ALLOWED_KEYS = %w[

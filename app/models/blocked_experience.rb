@@ -22,6 +22,8 @@
 class BlockedExperience < ApplicationRecord
   validates :activitypub_uri, presence: true, uniqueness: true
   validates :blocked_at, presence: true
+  validates :activitypub_uri, :blocked_by, length: { maximum: 255 }, allow_blank: true
+  validates :reason, length: { maximum: 65_535 }, allow_blank: true
 
   scope :recent, -> { order(blocked_at: :desc) }
 

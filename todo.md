@@ -1,6 +1,7 @@
 # To-do
 
-fix the bin/static
+remove bunjs
+remove truffleruby
 <https://github.com/toptal/chewy>
 <https://github.com/soundcloud/lhm>
 <https://github.com/hashie/hashie>
