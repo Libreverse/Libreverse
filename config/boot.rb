@@ -1,15 +1,9 @@
-# typed: strict
+# typed: false
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
 # Boot tracing module (defined before shareable_constant_value to avoid restrictions)
 module BootTrace
-  if defined?(T::Sig)
-    extend T::Sig
-
-    sig { params(event: T.untyped).returns(T.nilable(File)) }
-  end
-
   def self.log(event)
     return unless ENV["TRACE_BOOT"] == "1"
 

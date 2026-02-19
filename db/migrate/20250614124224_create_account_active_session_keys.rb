@@ -4,7 +4,7 @@
 
 class CreateAccountActiveSessionKeys < ActiveRecord::Migration[8.0]
   def change
-    create_table :account_active_session_keys, id: false do |t|
+    create_table :account_active_session_keys do |t|
       t.bigint :account_id, null: false
       t.string :session_id, null: false
       t.datetime :created_at, null: false

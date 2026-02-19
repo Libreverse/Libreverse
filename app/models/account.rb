@@ -52,8 +52,7 @@ class Account < ApplicationRecord
 
             # Configure field names for federation
             acts_as_federails_actor username_field: :username,
-                                    name_field: :username,
-                                    profile_url_method: :profile_url
+                                    name_field: :username
           end
         rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
           # Skip federails setup if database/table doesn't exist (e.g., during migrations)

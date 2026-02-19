@@ -441,17 +441,18 @@ class RodauthMain < Rodauth::Rails::Auth
       # Ensure Rodauth session tables get explicit timestamps on TiDB where
       # ALTER TABLE defaults are restricted.
       def active_sessions_insert_hash
-        super.merge(created_at: Sequel::CURRENT_TIMESTAMP, updated_at: Sequel::CURRENT_TIMESTAMP)
+        current_timestamp = Sequel.lit("CURRENT_TIMESTAMP")
+        super.merge(created_at: current_timestamp, updated_at: current_timestamp)
       end
 
       def active_sessions_update_hash
-        super.merge(updated_at: Sequel::CURRENT_TIMESTAMP)
+        super.merge(updated_at: Sequel.lit("CURRENT_TIMESTAMP"))
       end
 
       def reset_single_session_key
         return unless logged_in?
 
-        single_session_ds.update(single_session_key_column => random_key, updated_at: Sequel::CURRENT_TIMESTAMP)
+        single_session_ds.update(single_session_key_column => random_key, updated_at: Sequel.lit("CURRENT_TIMESTAMP"))
       end
 
       def update_single_session_key
@@ -459,14 +460,14 @@ class RodauthMain < Rodauth::Rails::Auth
         set_single_session_key(key)
 
         return unless single_session_ds.update(single_session_key_column => key,
-                                               updated_at: Sequel::CURRENT_TIMESTAMP).zero?
+                                               updated_at: Sequel.lit("CURRENT_TIMESTAMP")).zero?
 
         # rubocop:disable Rails/SkipsModelValidations
         single_session_ds.insert(
           single_session_id_column => session_value,
           single_session_key_column => key,
-          created_at: Sequel::CURRENT_TIMESTAMP,
-          updated_at: Sequel::CURRENT_TIMESTAMP
+          created_at: Sequel.lit("CURRENT_TIMESTAMP"),
+          updated_at: Sequel.lit("CURRENT_TIMESTAMP")
         )
         # rubocop:enable Rails/SkipsModelValidations
       end

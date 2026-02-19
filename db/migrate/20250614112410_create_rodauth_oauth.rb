@@ -158,9 +158,11 @@ class CreateRodauthOauth < ActiveRecord::Migration[8.0]
     add_index :oauth_saml_settings, :issuer, unique: true
     add_foreign_key :oauth_saml_settings, :oauth_applications, column: :oauth_application_id
 
-    create_table :oauth_dpop_proofs, id: false do |t|
-      t.string :jti, null: false, primary_key: true
+    create_table :oauth_dpop_proofs do |t|
+      t.string :jti, null: false
       t.datetime :first_use, null: false
     end
+
+    add_index :oauth_dpop_proofs, :jti, unique: true
   end
 end

@@ -29,7 +29,6 @@
 #  type                   :string(255)
 #  user_code              :string(255)      not null
 #  created_at             :datetime         not null
-#  updated_at             :datetime         not null
 #  account_id             :bigint           not null
 #  oauth_application_id   :bigint           not null
 #

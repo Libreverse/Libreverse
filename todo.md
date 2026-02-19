@@ -1,9 +1,5 @@
 # To-do
-
-remove bunjs
-remove truffleruby
 <https://github.com/toptal/chewy>
-<https://github.com/soundcloud/lhm>
 <https://github.com/hashie/hashie>
 <https://github.com/MarioRuiz/string_pattern>
 <https://github.com/twitter/twitter-cldr-rb>
@@ -17,16 +13,14 @@ remove truffleruby
 rubyllm
 document the core extensions we have as like things for the Ai to use
 vercel react agent skills
-redesign the mimalloc - try to move to an mri build with jemalloc like fullstaq ruby and then tweak the gc for throughput (because we offset the memory savings with even more perf)
-db find indexes command on static tools
+
 do a massive middleware cleanup operation where we get everything in sense
-move rails cache store to the memorystore and cut out the isolator middleware
+
 use SRI for vite rails assets and shakapacker assets
 replace all situations where we do inline html with the phlex engine which is much faster
-also walk back a bunch of the inlining tech that we've done that doesn't affect render flashes like the sitemap inlining
+
 
 - [ ] (feature) Build authoritative realtime multiplayer service in parallel to Rails (interest management + generalized state governance; no server-side raycasting)
-- [ ] we also need to move the ugc into a separate webcontentsview in electron for more security
 - [ ] add trufflehog to not put creds in github repo
 - [ ] add pagination instead of limits with geared pagination
 - [ ] add global net blocklist using georlist - move its logic into the app natively

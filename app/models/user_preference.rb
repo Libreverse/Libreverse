@@ -6,13 +6,13 @@
 #
 # Table name: user_preferences
 #
-#  id               :bigint           not null, primary key
-#  key              :string(255)      not null
-#  value            :string(255)
-#  value_ciphertext :text(65535)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  account_id       :bigint           not null
+#  id                :bigint           not null, primary key
+#  key               :string(255)      not null
+#  unencrypted_value :string(255)
+#  value             :string(255)
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  account_id        :bigint           not null
 #
 # Indexes
 #

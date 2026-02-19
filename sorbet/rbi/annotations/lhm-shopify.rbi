@@ -1,0 +1,174 @@
+# typed: true
+
+# DO NOT EDIT MANUALLY
+# This file was pulled from a central RBI files repository.
+# Please run `bin/tapioca annotations` to update it.
+
+module Lhm
+  extend Lhm
+
+  sig { params(table_name: T.any(String, Symbol), options: T::Hash[Symbol, T.untyped], block: T.proc.params(arg0: Lhm::Migrator).void).returns(T::Boolean) }
+  def change_table(table_name, options = {}, &block); end
+
+  sig { params(run: T::Boolean, options: T.nilable(T::Hash[Symbol, T.untyped])).void }
+  def cleanup(run = false, options = {}); end
+
+  sig { returns(Continuation) }
+  def connection; end
+
+  sig { returns(Logger) }
+  def self.logger; end
+
+  sig { params(new_logger: Logger).returns(Logger) }
+  def self.logger=(new_logger); end
+
+  sig { params(adapter: Continuation).void }
+  def setup(adapter); end
+end
+
+class Lhm::Table
+  sig { returns(T::Hash[T.untyped, T.untyped]) }
+  attr_reader :columns
+
+  sig { returns(T.untyped) }
+  attr_reader :ddl
+
+  sig { returns(T::Hash[T.untyped, T.untyped]) }
+  attr_reader :indices
+
+  sig { returns(T.any(String, Symbol)) }
+  attr_reader :name
+
+  sig { returns(T.any(String, Symbol)) }
+  attr_reader :pk
+
+  sig { params(name: T.any(String, Symbol), pk: T.any(String, Symbol), ddl: T.untyped).void }
+  def initialize(name, pk = "id", ddl = nil); end
+
+  sig { returns(String) }
+  def destination_name; end
+
+  sig { params(table_name: T.any(Symbol, String), connection: Continuation).returns(Lhm::Table) }
+  def self.parse(table_name, connection); end
+end
+
+module Lhm::Command
+  sig { params(block: T.nilable(T.proc.params(arg0: Lhm::Command).void)).void }
+  def run(&block); end
+end
+
+class Lhm::Printer::Output
+  sig { params(message: String).void }
+  def write(message); end
+end
+
+class Lhm::Printer::Base
+  sig { void }
+  def initialize; end
+end
+
+class Lhm::Printer::Percentage
+  sig { void }
+  def end; end
+
+  sig { params(lowest: Numeric, highest: T.nilable(Numeric)).void }
+  def notify(lowest, highest); end
+end
+
+class Lhm::Printer::Dot < Lhm::Printer::Base
+  sig { void }
+  def end; end
+
+  sig { params(_arg0: T.untyped).void }
+  def notify(*_arg0); end
+end
+
+class Lhm::Migrator
+  include Lhm::Command
+
+  sig { returns(String) }
+  attr_reader :name
+
+  sig { returns(T::Array[String]) }
+  attr_reader :statements
+
+  sig { returns(T.nilable(Continuation)) }
+  attr_reader :connection
+
+  sig { returns(T::Array[String]) }
+  attr_reader :conditions
+
+  sig { returns(T::Hash[T.untyped, T.untyped]) }
+  attr_reader :renames
+
+  sig { returns(Lhm::Table) }
+  attr_reader :origin
+
+  sig { params(table: Lhm::Table, connection: T.nilable(Continuation), options: T::Hash[Symbol, T.untyped]).void }
+  def initialize(table, connection = nil, options = {}); end
+
+  # @version >= 4.2.2
+  sig { params(name: T.any(String, Symbol), definition: T.any(String, Symbol), algorithm: T.nilable(String)).void }
+  def add_column(name, definition, algorithm: T.unsafe(nil)); end
+
+  sig { params(columns: T.any(String, Symbol, T::Array[T.any(String, Symbol)]), index_name: T.nilable(T.any(String, Symbol))).void }
+  def add_index(columns, index_name = nil); end
+
+  sig { params(columns: T.any(String, Symbol, T::Array[T.any(String, Symbol)]), index_name: T.nilable(T.any(String, Symbol))).void }
+  def add_unique_index(columns, index_name = nil); end
+
+  sig { params(name: T.any(String, Symbol), definition: T.any(String, Symbol)).void }
+  def change_column(name, definition); end
+
+  # @version >= 4.2.2
+  sig { params(statement: String, algorithm: T.nilable(String)).void }
+  def ddl(statement, algorithm: T.unsafe(nil)); end
+
+  sig { params(sql: String).returns(String) }
+  def filter(sql); end
+
+  # @version >= 4.2.2
+  sig { params(name: T.any(String, Symbol), algorithm: T.nilable(String)).void }
+  def remove_column(name, algorithm: T.unsafe(nil)); end
+
+  sig { params(columns: T.any(String, Symbol, T::Array[T.any(String, Symbol)]), index_name: T.nilable(T.any(String, Symbol))).void }
+  def remove_index(columns, index_name = nil); end
+
+  # @version >= 4.2.2
+  sig { params(old: T.any(String, Symbol), nu: T.any(String, Symbol), algorithm: T.nilable(String)).void }
+  def rename_column(old, nu, algorithm: T.unsafe(nil)); end
+end
+
+module Lhm::Throttler
+  sig { params(type: T.any(Lhm::Command, Symbol, String, Class), options: T::Hash[T.untyped, T.untyped]).void }
+  def setup_throttler(type, options = {}); end
+
+  sig { returns(Lhm::Throttler) }
+  def throttler; end
+end
+
+class Lhm::Throttler::Time
+  include Lhm::Command
+
+  sig { returns(Integer) }
+  attr_accessor :stride
+
+  sig { returns(Numeric) }
+  attr_accessor :timeout_seconds
+
+  sig { params(options: T::Hash[T.untyped, T.untyped]).void }
+  def initialize(options = {}); end
+
+  sig { void }
+  def execute; end
+end
+
+class Lhm::Throttler::LegacyTime < Lhm::Throttler::Time
+  sig { params(timeout: T.nilable(Numeric), stride: T.nilable(Integer)).void }
+  def initialize(timeout, stride); end
+end
+
+class Lhm::Throttler::Factory
+  sig { params(type: T.any(Lhm::Command, Symbol, String, Class), options: T::Hash[T.untyped, T.untyped]).returns(Lhm::Throttler) }
+  def self.create_throttler(type, options = {}); end
+end

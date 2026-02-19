@@ -15,31 +15,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.bigint "account_id", null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "last_use", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.datetime "updated_at", null: false
     t.index ["account_id"], name: "idx_account_active_session_keys_on_account_id"
   end
 
   create_table "account_login_change_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.datetime "deadline", null: false
     t.string "key", null: false
     t.string "login", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "account_password_reset_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.datetime "deadline", null: false
     t.datetime "email_last_sent", null: false
     t.string "key", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "account_remember_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.datetime "deadline", null: false
     t.string "key", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "account_roles", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -52,24 +45,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
   end
 
   create_table "account_session_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.string "key", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "account_verification_keys", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.datetime "email_last_sent", null: false
     t.string "key", null: false
     t.datetime "requested_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "federated_id"
     t.integer "flags", default: 0, null: false
-    t.datetime "password_changed_at"
+    t.datetime "password_changed_at", precision: nil
     t.string "password_hash"
     t.string "provider"
     t.string "provider_uid"
@@ -83,9 +72,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
 
   create_table "accounts_roles", id: :bigint, default: nil, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.bigint "role_id", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["account_id", "role_id"], name: "idx_accounts_roles_unique_account_role", unique: true
     t.index ["role_id"], name: "index_accounts_roles_on_role_id"
   end
@@ -152,16 +141,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
 
   create_table "active_storage_db_files", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.binary "data", size: :long, null: false
+    t.binary "data", size: :long
     t.string "ref", null: false
-    t.datetime "updated_at", null: false
     t.index ["ref"], name: "index_active_storage_db_files_on_ref", unique: true
   end
 
   create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
@@ -199,10 +185,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
 
   create_table "comfy_cms_categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "categorized_type", null: false
-    t.datetime "created_at", null: false
     t.string "label", null: false
     t.bigint "site_id", null: false
-    t.datetime "updated_at", null: false
     t.index ["site_id", "categorized_type", "label"], name: "index_cms_categories_on_site_id_and_cat_type_and_label", unique: true
   end
 
@@ -210,8 +194,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.integer "categorized_id", null: false
     t.string "categorized_type", null: false
     t.bigint "category_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.index ["categorized_id", "categorized_type"], name: "idx_on_categorized_id_categorized_type_875b4ed9b1"
     t.index ["category_id", "categorized_type", "categorized_id"], name: "index_cms_categorizations_on_cat_id_and_catd_type_and_catd_id", unique: true
   end
@@ -284,7 +266,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.text "data", size: :medium
     t.integer "record_id", null: false
     t.string "record_type", null: false
-    t.datetime "updated_at", null: false
     t.index ["record_id", "record_type"], name: "index_comfy_cms_revisions_on_record_id_and_record_type"
     t.index ["record_type", "record_id", "created_at"], name: "index_cms_revisions_on_rtype_and_rid_and_created_at"
   end
@@ -332,10 +313,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
 
   create_table "comment_hierarchies", id: :bigint, default: nil, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "ancestor_id", null: false
-    t.datetime "created_at", null: false
     t.bigint "descendant_id", null: false
     t.integer "generations", null: false
-    t.datetime "updated_at", null: false
     t.index ["ancestor_id", "descendant_id", "generations"], name: "comment_anc_desc_idx", unique: true
     t.index ["descendant_id"], name: "comment_desc_idx"
   end
@@ -495,7 +474,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.string "profile_url"
     t.text "public_key"
     t.string "server"
-    t.datetime "tombstoned_at"
+    t.datetime "tombstoned_at", precision: nil
     t.datetime "updated_at", null: false
     t.string "username"
     t.string "uuid", null: false
@@ -558,7 +537,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50, null: false
-    t.datetime "updated_at", null: false
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["sluggable_id", "sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_id_and_sluggable_type"
     t.index ["sluggable_type", "scope"], name: "index_friendly_id_slugs_on_sluggable_type_and_scope"
@@ -570,7 +548,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.datetime "generated_at", null: false
     t.bigint "indexed_content_id", null: false
     t.datetime "updated_at", null: false
-    t.text "vector_data", null: false
+    t.text "vector_data"
     t.string "vector_hash", null: false
     t.index ["generated_at"], name: "index_indexed_content_vectors_on_generated_at"
     t.index ["indexed_content_id"], name: "index_indexed_content_vectors_on_indexed_content_id", unique: true
@@ -676,7 +654,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.string "tls_client_auth_subject_dn"
     t.string "token_endpoint_auth_method"
     t.string "tos_uri"
-    t.datetime "updated_at", null: false
     t.string "userinfo_encrypted_response_alg"
     t.string "userinfo_encrypted_response_enc"
     t.string "userinfo_signed_response_alg"
@@ -686,9 +663,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
   end
 
   create_table "oauth_dpop_proofs", primary_key: "jti", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
     t.datetime "first_use", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "oauth_grants", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -715,7 +690,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.string "scopes", null: false
     t.string "token", null: false
     t.string "type"
-    t.datetime "updated_at", null: false
     t.string "user_code", null: false
     t.index ["account_id"], name: "fk_rails_3e095b0b7e"
     t.index ["oauth_application_id", "code"], name: "index_oauth_grants_on_oauth_application_id_and_code", unique: true
@@ -1159,7 +1133,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.datetime "created_at", precision: nil, null: false
     t.integer "reason", limit: 1
     t.bigint "topic_id", null: false
-    t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["topic_id"], name: "index_thredded_user_topic_follows_on_topic_id"
     t.index ["user_id", "topic_id"], name: "thredded_user_topic_follows_user_topic", unique: true
@@ -1185,9 +1158,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_160000) do
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
     t.string "key", null: false
+    t.string "unencrypted_value"
     t.datetime "updated_at", null: false
     t.string "value"
-    t.text "value_ciphertext"
     t.index ["account_id", "key"], name: "index_user_preferences_on_account_id_and_key", unique: true
   end
 

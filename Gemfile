@@ -309,6 +309,9 @@ gem "thredded-markdown_katex"
 # Generic interface to template engines
 gem "tilt"
 
+# Online schema migrations for large MySQL tables
+gem "lhm-shopify"
+
 # High-level Rails architecture (operations/activities)
 gem "trailblazer"
 
