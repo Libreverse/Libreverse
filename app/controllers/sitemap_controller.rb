@@ -37,6 +37,16 @@ class InMemoryAdapter
 end
 
 class SitemapController < ApplicationController
+  CORE_PAGE_METADATA = {
+    "/experiences" => { changefreq: "daily", priority: 0.9 }.freeze,
+    "/search" => { changefreq: "weekly", priority: 0.7 }.freeze,
+    "/terms" => { changefreq: "monthly", priority: 0.5 }.freeze,
+    "/privacy" => { changefreq: "monthly", priority: 0.5 }.freeze
+  }.freeze
+
+  TECHNICAL_PATH_PREFIXES = %w[/rails /assets /packs /vite].freeze
+  AUTH_PATHS = %w[/login /create-account /logout /remember /change-password /change-login /close-account /token /authorize /jwks /userinfo].freeze
+
   skip_before_action :_enforce_privacy_consent
   skip_forgery_protection
 
@@ -155,11 +165,18 @@ class SitemapController < ApplicationController
         SitemapGenerator::Sitemap.create do
           Rails.logger.debug "Starting sitemap creation"
 
-          # Main pages (sitemap_generator automatically adds the root URL)
-          add "/experiences", changefreq: "daily", priority: 0.9
-          add "/search", changefreq: "weekly", priority: 0.7
-          add "/terms", changefreq: "monthly", priority: 0.5
-          add "/privacy", changefreq: "monthly", priority: 0.5
+          # Main pages with explicit SEO metadata (sitemap_generator automatically adds root URL)
+          CORE_PAGE_METADATA.each do |path, metadata|
+            add path, **metadata
+          end
+
+          # Discover additional public static GET routes automatically.
+          # We still exclude known auth/technical endpoints to keep the sitemap content-focused.
+          discoverable_paths.each do |path|
+            next if CORE_PAGE_METADATA.key?(path)
+
+            add path, changefreq: "weekly", priority: 0.5
+          end
 
           # Add approved experiences dynamically
           experience_count = 0
@@ -207,5 +224,36 @@ class SitemapController < ApplicationController
       SitemapGenerator::Sitemap.adapter = original_adapter
       SitemapGenerator::Sitemap.compress = original_compress
      end
+   end
+
+   def discoverable_paths
+     Rails.application.routes.routes.filter_map do |route|
+      verb_source = route.verb.respond_to?(:source) ? route.verb.source : route.verb.to_s
+      next if verb_source.blank? || !verb_source.include?("GET")
+
+       raw_path = route.path.spec.to_s
+       normalized_path = normalize_route_path(raw_path)
+       next if normalized_path.nil?
+       next if filtered_path?(normalized_path)
+
+       normalized_path
+     end.uniq.sort
+   end
+
+   def normalize_route_path(raw_path)
+     return nil if raw_path.blank?
+
+     path = raw_path.sub("(.:format)", "")
+     return nil if path.include?(":") || path.include?("*")
+     return nil if path == "/"
+
+     path.chomp("/")
+   end
+
+   def filtered_path?(path)
+     return true if TECHNICAL_PATH_PREFIXES.any? { |prefix| path.start_with?(prefix) }
+     return true if AUTH_PATHS.include?(path)
+
+     false
    end
 end

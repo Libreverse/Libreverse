@@ -2,6 +2,9 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+SP_ADD_TO_RUBY = false
+SP_COMPARE_NUMBERS_AS_STRINGS = false
+
 # Boot tracing module (defined before shareable_constant_value to avoid restrictions)
 module BootTrace
   def self.log(event)

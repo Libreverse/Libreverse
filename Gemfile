@@ -108,6 +108,9 @@ gem "graphql_rails"
 # Immutable collection data structures
 gem "hamster"
 
+# Lightweight Ruby data structures and utility classes
+gem "hashie"
+
 # Vendored fast Redis client using hiredis
 gem "hiredis-client", path: "vendor/gems/hiredis-client"
 
@@ -143,6 +146,9 @@ gem "lockbox"
 
 # Fast memoization helper for methods
 gem "memo_wise"
+
+# Hash utility helpers
+gem "nice_hash"
 
 # XML/HTML parsing with libxml2
 gem "nokogiri"
@@ -305,6 +311,9 @@ gem "thredded-markdown_coderay"
 
 # Thredded plugin for Markdown math via KaTeX
 gem "thredded-markdown_katex"
+
+# Unicode locale data and formatting helpers (CLDR)
+gem "twitter_cldr"
 
 # Generic interface to template engines
 gem "tilt"

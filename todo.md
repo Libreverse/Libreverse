@@ -1,8 +1,5 @@
 # To-do
 <https://github.com/toptal/chewy>
-<https://github.com/hashie/hashie>
-<https://github.com/MarioRuiz/string_pattern>
-<https://github.com/twitter/twitter-cldr-rb>
 <https://github.com/thoughtbot/high_voltage>
 <https://github.com/yippee-fun/phlex>
 <https://github.com/roidrage/lograge>

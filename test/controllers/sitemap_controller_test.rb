@@ -85,6 +85,35 @@ class SitemapControllerTest < ActionController::TestCase
     assert_includes urls, "#{request.base_url}/privacy"
   end
 
+  test "should not include auth or technical routes in sitemap" do
+    get :show, format: :xml
+
+    assert_response :success
+
+    xml_doc = Nokogiri::XML(response.body)
+    urls = xml_doc.xpath("//xmlns:url/xmlns:loc", "xmlns" => "http://www.sitemaps.org/schemas/sitemap/0.9").map(&:text)
+
+    blocked_suffixes = %w[
+      /login
+      /create-account
+      /logout
+      /remember
+      /change-password
+      /change-login
+      /close-account
+      /token
+      /authorize
+      /jwks
+      /userinfo
+    ]
+
+    blocked_suffixes.each do |suffix|
+      assert urls.none? { |url| url.end_with?(suffix) }, "Expected #{suffix} to be excluded from sitemap"
+    end
+
+    assert urls.none? { |url| url.include?("/rails/") }, "Expected /rails/* routes to be excluded"
+  end
+
   test "should include only approved experiences in sitemap" do
     get :show, format: :xml
 
