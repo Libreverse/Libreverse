@@ -65,14 +65,6 @@ class ConsentReflex < ApplicationReflex
     # Log (server side)
     Rails.logger.warn("[EEA Compliance] Consent declined via Reflex")
 
-    html = <<~HTML
-      <div class="consent-decline">
-          <h1>Consent Required</h1>
-          <p>You declined the Privacy &amp; Cookie Policy. Libreverse cannot operate without the strictly necessary cookies described in the policy. Please reconsider to continue.</p>
-          <button class="btn-secondary" data-action="click->consent#showScreen">Go Back</button>
-      </div>
-    HTML
-
-    morph ".consent-overlay", html
+    morph ".consent-overlay", ConsentDeclineComponent.new.call
   end
 end

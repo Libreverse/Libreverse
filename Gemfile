@@ -171,6 +171,9 @@ gem "pluck_in_batches"
 # Inline CSS and rewrite links for email delivery
 gem "premailer-rails"
 
+# Object-oriented Ruby views
+gem "phlex"
+
 # Rails asset pipeline successor
 gem "propshaft"
 
@@ -239,9 +242,6 @@ gem "rodauth-rails"
 
 # Role management for users and resources
 gem "rolify"
-
-# Testing framework
-gem "rspec"
 
 # Backports future Ruby features
 gem "ruby-next"
