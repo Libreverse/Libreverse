@@ -391,6 +391,7 @@ GEM
     herb (0.8.10-x86_64-darwin)
     herb (0.8.10-x86_64-linux-gnu)
     herb (0.8.10-x86_64-linux-musl)
+    high_voltage (5.0.0)
     highline (3.1.2)
       reline
     hirb (0.7.3)
@@ -1152,6 +1153,7 @@ DEPENDENCIES
   graphql_rails
   hamster
   hashie
+  high_voltage (~> 5.0)
   hiredis-client!
   htmlcompressor
   httparty
@@ -1385,6 +1387,7 @@ CHECKSUMS
   herb (0.8.10-x86_64-darwin) sha256=d1aa283e9d354f3ec20db4ba725718441d1b9d24ff75e17fa244b27f7dd82ec3
   herb (0.8.10-x86_64-linux-gnu) sha256=268b059f66a1f3191c8d7c15cfcb293a91be5c3811704856acd49b6f2e5dc1b1
   herb (0.8.10-x86_64-linux-musl) sha256=bd1b2bf9f0ab9ceecdd874cdf03424176b83fa3c937188568c011cecf40b5d7f
+  high_voltage (5.0.0) sha256=fbdd1a861af30d51d6a9f710b37709ab489211402685972945cd5eac6a4c0b23
   highline (3.1.2) sha256=67cbd34d19f6ef11a7ee1d82ffab5d36dfd5b3be861f450fc1716c7125f4bb4a
   hirb (0.7.3) sha256=5132733ca44b1f41f36c624693a3201284368a349dfe37f543ae6e2ad880ec57
   hiredis-client (0.26.1)

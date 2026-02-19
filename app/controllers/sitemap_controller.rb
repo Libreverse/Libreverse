@@ -160,6 +160,7 @@ class SitemapController < ApplicationController
         SitemapGenerator::Sitemap.compress = false
 
         Rails.logger.debug "SitemapGenerator configured with host: #{SitemapGenerator::Sitemap.default_host}"
+        paths = discoverable_paths
 
         # Create sitemap in memory
         SitemapGenerator::Sitemap.create do
@@ -172,7 +173,7 @@ class SitemapController < ApplicationController
 
           # Discover additional public static GET routes automatically.
           # We still exclude known auth/technical endpoints to keep the sitemap content-focused.
-          discoverable_paths.each do |path|
+          paths.each do |path|
             next if CORE_PAGE_METADATA.key?(path)
 
             add path, changefreq: "weekly", priority: 0.5
@@ -227,7 +228,7 @@ class SitemapController < ApplicationController
    end
 
    def discoverable_paths
-     Rails.application.routes.routes.filter_map do |route|
+     route_paths = Rails.application.routes.routes.filter_map do |route|
       verb_source = route.verb.respond_to?(:source) ? route.verb.source : route.verb.to_s
       next if verb_source.blank? || !verb_source.include?("GET")
 
@@ -237,7 +238,23 @@ class SitemapController < ApplicationController
        next if filtered_path?(normalized_path)
 
        normalized_path
-     end.uniq.sort
+     end
+
+     (route_paths + high_voltage_page_paths).uniq.sort
+   end
+
+   def high_voltage_page_paths
+     return [] unless defined?(HighVoltage)
+
+     HighVoltage.page_ids.filter_map do |page_id|
+       path = "/#{page_id}".tr("_", "-")
+       next if filtered_path?(path)
+
+       path
+     end
+   rescue StandardError => e
+     Rails.logger.warn "Unable to enumerate HighVoltage pages for sitemap: #{e.class.name}: #{e.message}"
+     []
    end
 
    def normalize_route_path(raw_path)

@@ -114,6 +114,9 @@ gem "hashie"
 # Vendored fast Redis client using hiredis
 gem "hiredis-client", path: "vendor/gems/hiredis-client"
 
+# Rails engine for static pages
+gem "high_voltage", "~> 5.0"
+
 # HTML compression/minification
 gem "htmlcompressor"
 

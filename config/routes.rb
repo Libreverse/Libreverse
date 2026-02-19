@@ -350,7 +350,7 @@ Rails.application.routes.draw do
   get "search_new/index"
   get "search" => "search#index"
   root "homepage#index"
-  get "terms", to: "terms#index"
+  get "terms", to: "pages#show", defaults: { id: "terms" }, as: :terms, format: false
   get "settings", to: "settings#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -458,8 +458,8 @@ Rails.application.routes.draw do
   mount Audits1984::Engine => "/console"
 
   # Policies (Privacy & Cookies)
-  get "privacy", to: "policies#privacy", as: :privacy
-  get "cookies", to: "policies#cookies", as: :cookie_policy
+  get "privacy", to: "pages#show", defaults: { id: "privacy" }, as: :privacy, format: false
+  get "cookies", to: "pages#show", defaults: { id: "cookies" }, as: :cookie_policy, format: false
 
   # Metaverse synthetic map
   get "map", to: "map#index"
