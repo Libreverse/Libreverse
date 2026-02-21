@@ -1,6 +1,5 @@
 # To-do
 <https://github.com/toptal/chewy>
-<https://github.com/yippee-fun/phlex>
 <https://github.com/roidrage/lograge>
 <https://github.com/BetterErrors/better_errors>
 <https://github.com/mawie81/electron-window-state>
@@ -9,10 +8,9 @@
 rubyllm
 document the core extensions we have as like things for the Ai to use
 vercel react agent skills
-
+replace onekos with AI-generated pixel art versions to avoid copyright
 do a massive middleware cleanup operation where we get everything in sense
 
-use SRI for vite rails assets and shakapacker assets
 replace all situations where we do inline html with the phlex engine which is much faster
 
 

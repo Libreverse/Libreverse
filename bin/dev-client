@@ -11,5 +11,11 @@ unless system('which pnpm > /dev/null 2>&1')
   exit 1
 end
 
-# Start Electron Forge
-system("pnpm start")
+# Start Electron Forge with expanded debug output by default
+env = {
+  "DEBUG" => "electron-forge:*,@electron-forge/*:*",
+  "VITE_TIMING" => "1",
+  "LIBREVERSE_FORGE_DEV" => "1",
+}
+
+system(env, "pnpm start")

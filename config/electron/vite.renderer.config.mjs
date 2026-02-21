@@ -30,12 +30,17 @@ import {
     createCommonBuild,
     createEsbuildConfig,
     createOptimizeDepsForce,
+    createTimingProbePlugin,
     createTypehintPlugin,
     devViteSecurityHeaders,
+    wrapPluginsWithBuildStartTiming,
 } from "../vite/common.js";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
+    const timingEnabled =
+        process.env.VITE_TIMING !== "0" &&
+        process.env.VITE_TIMING !== "false";
 
     const typehintPlugin = createTypehintPlugin(typehints);
 
@@ -107,17 +112,31 @@ export default defineConfig(({ mode }) => {
         },
         define: commonDefine,
         optimizeDeps: createOptimizeDepsForce(isDevelopment),
-        plugins: [
-            coffeescript(),
-            nodePolyfills(),
-            purgePolyfills.vite(),
-            replacements(),
-            legacy(commonLegacyOptions),
-            babel(createBabelOptions(path)),
-            !isDevelopment
-                ? vitePluginBundleObfuscator(allObfuscatorConfig)
-                : null,
-            !isDevelopment ? typehintPlugin : null,
-        ],
+        plugins: wrapPluginsWithBuildStartTiming(
+            [
+                createTimingProbePlugin({
+                    label: "electron-renderer",
+                    enabled: timingEnabled,
+                    slowMs: Number(process.env.VITE_TIMING_SLOW_MS || 150),
+                    heartbeatMs: 0,
+                }),
+                coffeescript(),
+                !isDevelopment ? nodePolyfills() : null,
+                !isDevelopment ? purgePolyfills.vite() : null,
+                !isDevelopment ? replacements() : null,
+                !isDevelopment ? legacy(commonLegacyOptions) : null,
+                !isDevelopment ? babel(createBabelOptions(path)) : null,
+                !isDevelopment
+                    ? vitePluginBundleObfuscator(allObfuscatorConfig)
+                    : null,
+                !isDevelopment ? typehintPlugin : null,
+            ],
+            {
+                label: "electron-renderer",
+                enabled: timingEnabled,
+                logFilePath:
+                    process.env.VITE_TIMING_LOG_FILE || "tmp/vite-timing.log",
+            },
+        ),
     };
 });

@@ -17,11 +17,16 @@ import {
     createCommonBuild,
     createEsbuildConfig,
     createOptimizeDepsForce,
+    createTimingProbePlugin,
     createTypehintPlugin,
+    wrapPluginsWithBuildStartTiming,
 } from "../vite/common.js";
 
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
+    const timingEnabled =
+        process.env.VITE_TIMING !== "0" &&
+        process.env.VITE_TIMING !== "false";
 
     const typehintPlugin = createTypehintPlugin(typehints);
 
@@ -39,23 +44,39 @@ export default defineConfig(({ mode }) => {
         },
         define: commonDefine,
         optimizeDeps: createOptimizeDepsForce(isDevelopment),
-        plugins: [
-            coffeescript(),
-            purgePolyfills.vite(),
-            replacements(),
-            babel(createBabelOptions(path)),
-            !isDevelopment
-                ? vitePluginBundleObfuscator(allObfuscatorConfig)
-                : null,
-            !isDevelopment ? typehintPlugin : null,
-            !isDevelopment
-                ? bytecodePlugin({
-                      chunkAlias: [],
-                      transformArrowFunctions: true,
-                      removeBundleJS: true,
-                      protectedStrings: [],
-                  })
-                : null,
-        ],
+        plugins: wrapPluginsWithBuildStartTiming(
+            [
+                createTimingProbePlugin({
+                    label: "electron-preload",
+                    enabled: timingEnabled,
+                    slowMs: Number(process.env.VITE_TIMING_SLOW_MS || 150),
+                    heartbeatMs: Number(
+                        process.env.VITE_TIMING_HEARTBEAT_MS || 10_000,
+                    ),
+                }),
+                coffeescript(),
+                !isDevelopment ? purgePolyfills.vite() : null,
+                !isDevelopment ? replacements() : null,
+                !isDevelopment ? babel(createBabelOptions(path)) : null,
+                !isDevelopment
+                    ? vitePluginBundleObfuscator(allObfuscatorConfig)
+                    : null,
+                !isDevelopment ? typehintPlugin : null,
+                !isDevelopment
+                    ? bytecodePlugin({
+                          chunkAlias: [],
+                          transformArrowFunctions: true,
+                          removeBundleJS: true,
+                          protectedStrings: [],
+                      })
+                    : null,
+            ],
+            {
+                label: "electron-preload",
+                enabled: timingEnabled,
+                logFilePath:
+                    process.env.VITE_TIMING_LOG_FILE || "tmp/vite-timing.log",
+            },
+        ),
     };
 });

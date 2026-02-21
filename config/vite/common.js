@@ -1,6 +1,9 @@
 // Shared Vite config helpers used by both the Rails Vite dev server and Electron Forge.
 // Keep this file dependency-free (besides Node builtins) so it can be imported from config files.
 
+import fs from "node:fs";
+import path from "node:path";
+
 export const allObfuscatorConfig = {
     excludes: [],
     enable: true,
@@ -278,6 +281,139 @@ export function createOptimizeDepsForce(isDevelopment) {
     return {
         force: isDevelopment && process.env.VITE_FORCE_DEPS === "true",
     };
+}
+
+export function createTimingProbePlugin({
+    label = "vite",
+    enabled = true,
+    slowMs = 150,
+    heartbeatMs = 10_000,
+    logFilePath = process.env.VITE_TIMING_LOG_FILE || "tmp/vite-timing.log",
+} = {}) {
+    if (!enabled) return null;
+
+    let startedAt = 0;
+    let heartbeatTimer;
+
+    const writeLine = createTimingLineWriter(logFilePath);
+
+    return {
+        name: `timing-probe-${label}`,
+        enforce: "pre",
+        buildStart() {
+            startedAt = performance.now();
+            writeLine(`[timing:${label}] buildStart`);
+            if (heartbeatMs > 0) {
+                heartbeatTimer = setInterval(() => {
+                    const elapsed = ((performance.now() - startedAt) / 1000).toFixed(1);
+                    writeLine(
+                        `[timing:${label}] heartbeat +${elapsed}s`,
+                    );
+                }, heartbeatMs);
+            }
+        },
+        buildEnd() {
+            if (heartbeatTimer) clearInterval(heartbeatTimer);
+            const totalMs = performance.now() - startedAt;
+            writeLine(`[timing:${label}] buildEnd (${(totalMs / 1000).toFixed(1)}s)`);
+        },
+    };
+}
+
+export function createTimingLineWriter(logFilePath) {
+    const resolvedLogPath = path.isAbsolute(logFilePath)
+        ? logFilePath
+        : path.resolve(process.cwd(), logFilePath);
+
+    return (line) => {
+        // eslint-disable-next-line no-console
+        console.log(line);
+        try {
+            fs.mkdirSync(path.dirname(resolvedLogPath), { recursive: true });
+            fs.appendFileSync(resolvedLogPath, `${line}\n`, "utf8");
+        } catch {
+            // Best effort only; never break build due to logging I/O.
+        }
+    };
+}
+
+export function wrapPluginsWithBuildStartTiming(
+    plugins,
+    {
+        label = "vite",
+        enabled = true,
+        logFilePath = process.env.VITE_TIMING_LOG_FILE || "tmp/vite-timing.log",
+        slowHookMs = Number(process.env.VITE_TIMING_HOOK_SLOW_MS || 0),
+    } = {},
+) {
+    if (!enabled) return plugins;
+
+    const writeLine = createTimingLineWriter(logFilePath);
+    const HOOKS_TO_WRAP = [
+        "config",
+        "configResolved",
+        "options",
+        "buildStart",
+        "buildEnd",
+        "configureServer",
+        "configurePreviewServer",
+        "resolveId",
+        "load",
+    ];
+
+    writeLine(`[timing:${label}] plugin-count ${(plugins || []).length}`);
+
+    const wrapHook = (pluginName, hookName, originalHook) => {
+        return async function wrappedHook(...args) {
+            const startedAt = performance.now();
+            writeLine(`[timing:${label}] ${hookName}:begin ${pluginName}`);
+            try {
+                return await originalHook.apply(this, args);
+            } finally {
+                const ms = performance.now() - startedAt;
+                if (ms >= slowHookMs) {
+                    writeLine(
+                        `[timing:${label}] ${hookName}:end ${ms.toFixed(1)}ms ${pluginName}`,
+                    );
+                }
+            }
+        };
+    };
+
+    return (plugins || []).map((plugin, index) => {
+        if (!plugin || typeof plugin !== "object") return plugin;
+        const pluginName = plugin.name || `plugin-${index}`;
+        const wrapped = { ...plugin };
+        let changed = false;
+        let hookCount = 0;
+
+        for (const hookName of HOOKS_TO_WRAP) {
+            const hook = wrapped[hookName];
+            if (typeof hook === "function") {
+                wrapped[hookName] = wrapHook(pluginName, hookName, hook);
+                changed = true;
+                hookCount += 1;
+                continue;
+            }
+            if (hook && typeof hook === "object" && typeof hook.handler === "function") {
+                wrapped[hookName] = {
+                    ...hook,
+                    handler: wrapHook(pluginName, hookName, hook.handler),
+                };
+                changed = true;
+                hookCount += 1;
+            }
+        }
+
+        if (hookCount > 0) {
+            writeLine(`[timing:${label}] wrapped ${pluginName} hooks=${hookCount}`);
+        } else {
+            writeLine(`[timing:${label}] skipped ${pluginName} hooks=0`);
+            changed = true;
+        }
+
+        return changed ? wrapped : plugin;
+    });
 }
 
 export const commonDefine = {

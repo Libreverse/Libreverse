@@ -301,8 +301,7 @@ module LogFormatting
   end
 end
 
-LogFormatting::FormatterPrepend.prepend_truncation!(Logger::Formatter)
-
-LogFormatting::FormatterPrepend.prepend_truncation!(ActiveSupport::Logger::SimpleFormatter) if defined?(ActiveSupport::Logger::SimpleFormatter)
-
-LogFormatting::FormatterPrepend.prepend_truncation!(ActiveSupport::TaggedLogging::Formatter) if defined?(ActiveSupport::TaggedLogging::Formatter)
+# Do not monkey-patch formatter classes/modules here.
+# In this app we already truncate through CustomTaggedFormatter#call, and
+# mutating formatter internals can raise runtime errors (e.g. protected
+# remove_method in some Ruby/AS combinations) during request handling.

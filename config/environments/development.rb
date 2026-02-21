@@ -13,7 +13,6 @@ Rails.application.configure do
   config.session_store :cookie_store,
                        key: "_libreverse_session",
                        expire_after: 2.hours,
-                       domain: :all,
                        same_site: :lax,
                        secure: false
 

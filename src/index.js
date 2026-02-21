@@ -84,6 +84,13 @@ const LISTS = [
     "https://filters.adtidy.org/extension/ublock/filters/3.txt",
 ];
 
+const ADBLOCK_REFRESH_INTERVAL_MS = Number.parseInt(
+    process.env.ADBLOCK_REFRESH_INTERVAL_MS || `${6 * 60 * 60 * 1000}`,
+    10,
+);
+
+let engineRefreshInFlight;
+
 async function loadEngine() {
     const CACHE_DIR = path.join(app.getPath("userData"), "adblock-cache");
     const ENGINE_PATH = path.join(CACHE_DIR, "engine.bin");
@@ -118,6 +125,38 @@ async function loadEngine() {
     // Save for next launch
     await fs.writeFile(ENGINE_PATH, engine.serialize());
     console.log("Adblock engine built and cached");
+}
+
+async function refreshEngineInBackground() {
+    if (engineRefreshInFlight) return engineRefreshInFlight;
+
+    engineRefreshInFlight = loadEngine()
+        .then(() => {
+            console.log("Adblock engine refreshed");
+        })
+        .catch((error) => {
+            console.warn("Adblock engine refresh failed:", error);
+        })
+        .finally(() => {
+            engineRefreshInFlight = undefined;
+        });
+
+    return engineRefreshInFlight;
+}
+
+function startAdblockEngineRefreshLoop() {
+    refreshEngineInBackground();
+
+    if (
+        !Number.isFinite(ADBLOCK_REFRESH_INTERVAL_MS) ||
+        ADBLOCK_REFRESH_INTERVAL_MS <= 0
+    ) {
+        return;
+    }
+
+    setInterval(() => {
+        refreshEngineInBackground();
+    }, ADBLOCK_REFRESH_INTERVAL_MS);
 }
 
 function blockWithEngine(sess = session.defaultSession) {
@@ -373,8 +412,7 @@ app.on("second-instance", () => {
 });
 
 // This method will be called when Electron has finished initialization.
-await app.whenReady();
-{
+app.whenReady().then(async () => {
     const iconPath = path.join(
         __dirname,
         isDev
@@ -471,10 +509,10 @@ await app.whenReady();
         return true;
     });
 
-    // Load and enable adblocker for UGC webviews only
-    await loadEngine();
-    // Don't apply to default session - will be applied to UGC webviews specifically
-    console.log("Adblock engine loaded for UGC webviews only");
+    // Start adblock engine loading/refresh in the background.
+    // Don't block Electron startup on remote list downloads.
+    // Engine is still applied to UGC sessions when available.
+    startAdblockEngineRefreshLoop();
 
     // Create application menu
     const template = [
@@ -530,7 +568,7 @@ await app.whenReady();
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
-}
+});
 
 // Handle macOS dock icon click when no windows are open
 app.on("activate", () => {

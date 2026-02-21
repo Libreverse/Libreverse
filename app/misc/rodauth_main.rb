@@ -438,36 +438,70 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Override email validation for username
     auth_class_eval do
+      def table_columns(dataset)
+        dataset.columns
+      rescue StandardError
+        []
+      end
+
+      def with_existing_timestamp_columns(dataset, attrs)
+        cols = table_columns(dataset)
+        attrs.select { |k, _v| cols.include?(k) }
+      end
+
       # Ensure Rodauth session tables get explicit timestamps on TiDB where
       # ALTER TABLE defaults are restricted.
       def active_sessions_insert_hash
         current_timestamp = Sequel.lit("CURRENT_TIMESTAMP")
-        super.merge(created_at: current_timestamp, updated_at: current_timestamp)
+        super.merge(
+          with_existing_timestamp_columns(
+            active_sessions_ds,
+            { created_at: current_timestamp, updated_at: current_timestamp }
+          )
+        )
       end
 
       def active_sessions_update_hash
-        super.merge(updated_at: Sequel.lit("CURRENT_TIMESTAMP"))
+        super.merge(
+          with_existing_timestamp_columns(
+            active_sessions_ds,
+            { updated_at: Sequel.lit("CURRENT_TIMESTAMP") }
+          )
+        )
       end
 
       def reset_single_session_key
         return unless logged_in?
 
-        single_session_ds.update(single_session_key_column => random_key, updated_at: Sequel.lit("CURRENT_TIMESTAMP"))
+        single_session_ds.update(
+          single_session_key_column => random_key,
+          **with_existing_timestamp_columns(
+            single_session_ds,
+            { updated_at: Sequel.lit("CURRENT_TIMESTAMP") }
+          )
+        )
       end
 
       def update_single_session_key
         key = random_key
         set_single_session_key(key)
 
-        return unless single_session_ds.update(single_session_key_column => key,
-                                               updated_at: Sequel.lit("CURRENT_TIMESTAMP")).zero?
+        return unless single_session_ds.update(
+          single_session_key_column => key,
+          **with_existing_timestamp_columns(
+            single_session_ds,
+            { updated_at: Sequel.lit("CURRENT_TIMESTAMP") }
+          )
+        ).zero?
 
         # rubocop:disable Rails/SkipsModelValidations
         single_session_ds.insert(
           single_session_id_column => session_value,
           single_session_key_column => key,
-          created_at: Sequel.lit("CURRENT_TIMESTAMP"),
-          updated_at: Sequel.lit("CURRENT_TIMESTAMP")
+          **with_existing_timestamp_columns(
+            single_session_ds,
+            { created_at: Sequel.lit("CURRENT_TIMESTAMP"), updated_at: Sequel.lit("CURRENT_TIMESTAMP") }
+          )
         )
         # rubocop:enable Rails/SkipsModelValidations
       end

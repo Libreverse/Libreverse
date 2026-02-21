@@ -130,7 +130,6 @@ express Statement of Purpose.
 */
 
 import { ipcRenderer } from "electron";
-import process from "node:process";
 
 globalThis.electronAPI = {
     minimize: () => ipcRenderer.invoke("minimize-window"),

@@ -49,6 +49,7 @@ export default [
             "unicorn/no-anonymous-default-export": "off",
             "unicorn/no-empty-file": "off",
             "unicorn/no-document-cookie": "off",
+            "unicorn/prefer-top-level-await": "off",
         },
     },
     // Updated Jest test configuration

@@ -74,6 +74,8 @@ development:
     <<: *default
     compile: false
     compiler_strategy: mtime
+    integrity:
+        enabled: false
 
     # Reference: https://webpack.js.org/configuration/dev-server/
     # Keys not described there are documented inline and in https://github.com/shakacode/shakapacker/

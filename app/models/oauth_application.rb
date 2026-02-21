@@ -51,6 +51,7 @@
 #  userinfo_encrypted_response_enc :string(255)
 #  userinfo_signed_response_alg    :string(255)
 #  created_at                      :datetime         not null
+#  updated_at                      :datetime         not null
 #  account_id                      :bigint
 #  client_id                       :string(255)      not null
 #  software_id                     :string(255)

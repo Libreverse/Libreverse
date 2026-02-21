@@ -45,6 +45,9 @@ export default class extends Controller {
     }
 
     handleTurboLoad() {
+        this.offCanvasElement = this.hasTargetIdValue
+            ? document.querySelector(`#${this.targetIdValue}`)
+            : this.element;
         this.initializeOffCanvas();
     }
 
@@ -61,7 +64,13 @@ export default class extends Controller {
 
         // Destroy existing instance if it exists
         if (this.offCanvasInstance) {
-            this.offCanvasInstance.destroy();
+            try {
+                this.offCanvasInstance.destroy();
+            } catch {
+                // Ignore Foundation teardown errors when Turbo has already replaced the node.
+            } finally {
+                this.offCanvasInstance = undefined;
+            }
         }
 
         // Set up options
