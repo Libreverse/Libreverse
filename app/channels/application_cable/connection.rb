@@ -44,27 +44,10 @@ module ApplicationCable
 
     private
 
-    # Finds a valid account ID (real or guest) from the session store (expecting CookieStore)
+    # Finds a valid account ID (real or guest) from the session store
     def find_account_id_from_session
-      session_key = Rails.application.config.session_options[:key]
-
-      session_data = nil
-      begin
-        # For CookieStore, the entire session hash is in the cookie.
-        # Try encrypted first, then signed as fallback.
-        session_data = cookies.encrypted[session_key]
-
-        session_data = cookies.signed[session_key] unless session_data.is_a?(Hash)
-      rescue StandardError => e
-        Rails.logger.error "[ActionCable][CookieStore] Error accessing/verifying session cookie: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        return nil
-      end
-
-      unless session_data.is_a?(Hash)
-        Rails.logger.warn "[ActionCable][CookieStore] Could not retrieve session hash from cookie ('#{session_key}'). Data: #{session_data.inspect}"
-        return nil
-      end
+      # AnyCable automatically parses the session cookie and makes it available in request.session
+      session_data = request.session.to_h
 
       # --- Extract account_id directly from the session hash ---
       account_id = nil
@@ -85,7 +68,7 @@ module ApplicationCable
         # Fallback to symbol key if string key wasn't found
         account_id ||= session_data[rodauth_session_key_name]
       rescue StandardError => e
-        Rails.logger.warn "[ActionCable][CookieStore] Error getting rodauth session key, falling back to default :account_id. Error: #{e.message}"
+        Rails.logger.warn "[ActionCable] Error getting rodauth session key, falling back to default :account_id. Error: #{e.message}"
         # Fallback access trying both string and symbol
         account_id = session_data["account_id"] || session_data[:account_id]
       end
@@ -94,13 +77,16 @@ module ApplicationCable
       if account_id
          verified_account = AccountSequel.where(id: account_id).first
          unless verified_account
-            Rails.logger.warn "[ActionCable][CookieStore] Account ID '\\#{account_id}' found in session does not exist in DB. Ignoring."
+            Rails.logger.warn "[ActionCable] Account ID '\\#{account_id}' found in session does not exist in DB. Ignoring."
             return nil
          end
          account_id # Return the verified ID
+      else
+         Rails.logger.warn "[ActionCable] No account_id found in session hash. Session data: #{session_data.inspect}"
+         nil
       end
     rescue StandardError => e
-      Rails.logger.error "[ActionCable][CookieStore] Error during session processing: #{e.message}"
+      Rails.logger.error "[ActionCable] Error during session processing: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
       nil
     end
