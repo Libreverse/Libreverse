@@ -2,6 +2,27 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+# Optimisation 1: Disable useless warnings
+if defined?(Warning)
+  Warning[:deprecated]          = false
+  Warning[:experimental]        = false
+  Warning[:performance]         = true
+  Warning[:strict_unused_block] = true
+end
+
+# Optimisation 2: Control how ruby compiles instructions
+ISEQ_COMPILE_OPTIONS = {
+  tailcall_optimization: false, # only enable if you really know what you're doing
+  debug_level: 0,
+  peephole_optimization: true,
+  specialized_instruction: true,
+  inline_const_cache: true,
+  instructions_unification: true,
+  operands_unification: true
+}.freeze
+
+RubyVM::InstructionSequence.compile_option = ISEQ_COMPILE_OPTIONS if defined?(RubyVM::InstructionSequence.compile_option)
+
 SP_ADD_TO_RUBY = false
 SP_COMPARE_NUMBERS_AS_STRINGS = false
 

@@ -9,8 +9,6 @@ require 'fileutils'
 # Define session name
 session_name = "libreverse-dev"
 
-system("bash scripts/kill-stray-services.sh")
-
 # Kill any existing session to ensure fresh start
 system("tmux kill-session -t #{session_name} 2>/dev/null")
 
@@ -31,6 +29,9 @@ system("tmux set-option -t #{session_name} prefix C-a")
 system("tmux send-keys -t #{session_name}:0 'cd #{Dir.pwd}' Enter")
 system("tmux send-keys -t #{session_name}:0 'source .envrc' Enter")
 
+# Set up signal handling within tmux session
+system("tmux send-keys -t #{session_name}:0 'trap \"echo Cleaning up...; kill $SERVER_PID 2>/dev/null; exit 0\" INT TERM' Enter")
+
 # Start server with proper prep work in background
 system("tmux send-keys -t #{session_name}:0 './bin/dev-server 2>&1 | tee /tmp/puma-server.log &' Enter")
 system("tmux send-keys -t #{session_name}:0 'SERVER_PID=$!' Enter")
@@ -39,8 +40,12 @@ system("tmux send-keys -t #{session_name}:0 'sleep 5' Enter")
 # Check if server started successfully
 system("tmux send-keys -t #{session_name}:0 'if ps -p $SERVER_PID > /dev/null; then :; else exit 1; fi' Enter")
 
-# Start client in foreground
-system("tmux send-keys -t #{session_name}:0 'bin/dev-client' Enter")
+# Start client in foreground with signal handling
+system("tmux send-keys -t #{session_name}:0 'bin/dev-client; echo Client exited, cleaning up...; kill $SERVER_PID 2>/dev/null; exit 0' Enter")
 
 # Attach to the session
 exec("tmux attach-session -t #{session_name}")
+
+system("tmux kill-session -t #{session_name} 2>/dev/null")
+system("bash scripts/kill-stray-services.sh")
+exit 0
