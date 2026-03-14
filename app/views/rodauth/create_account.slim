@@ -21,7 +21,7 @@
               = form.label :login, "Step 1:", class: "login-form-label"
               - login_field_class = "login-form-control"
               - login_field_class += " is-invalid" if rodauth.field_error(rodauth.login_param)
-              = form.text_field rodauth.login_param, value: params[rodauth.login_param], id: "login", placeholder: "Username", autocomplete: "username", required: true, class: login_field_class, data: { form_auto_submit_target: "input" }
+              = form.text_field rodauth.login_param, value: params[rodauth.login_param], id: "login", placeholder: "Click here and enter your username", autocomplete: "username", required: true, class: login_field_class, data: { form_auto_submit_target: "input" }
               - if rodauth.field_error(rodauth.login_param)
                 = content_tag :span, rodauth.field_error(rodauth.login_param), class: "login-invalid-feedback"
             - if rodauth.create_account_set_password?
@@ -29,7 +29,7 @@
                 = form.label :password, "Step 2:", class: "login-form-label"
                 - password_field_class = "login-form-control"
                 - password_field_class += " is-invalid" if rodauth.field_error(rodauth.password_param)
-                = form.text_field rodauth.password_param, id: "password", placeholder: "Password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: password_field_class, data: { form_auto_submit_target: "input" }
+                = form.text_field rodauth.password_param, id: "password", placeholder: "Click here and enter your password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: password_field_class, data: { form_auto_submit_target: "input" }
                 - if rodauth.field_error(rodauth.password_param)
                   = content_tag :span, rodauth.field_error(rodauth.password_param), class: "login-invalid-feedback"
               - if rodauth.require_password_confirmation?
@@ -37,7 +37,7 @@
                   = form.label "password-confirm", "Step 3:", class: "login-form-label"
                   - password_confirm_field_class = "login-form-control"
                   - password_confirm_field_class += " is-invalid" if rodauth.field_error(rodauth.password_confirm_param)
-                  = form.text_field rodauth.password_confirm_param, id: "password-confirm", placeholder: "Password (again, for confirmation)", autocomplete: "new-password", required: true, class: password_confirm_field_class, data: { form_auto_submit_target: "input" }
+                  = form.text_field rodauth.password_confirm_param, id: "password-confirm", placeholder: "Click here and enter your password (again, for confirmation)", autocomplete: "new-password", required: true, class: password_confirm_field_class, data: { form_auto_submit_target: "input" }
                   - if rodauth.field_error(rodauth.password_confirm_param)
                     = content_tag :span, rodauth.field_error(rodauth.password_confirm_param), class: "login-invalid-feedback"
           .login-footer

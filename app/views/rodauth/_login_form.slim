@@ -7,23 +7,25 @@
       = form.text_field rodauth.login_param, value: params[rodauth.login_param], id: "login", readonly: true, class: "login-form-control-plaintext"
   - else
     .login-form-group.mb-3
+      = form.label :password, "Step 1:", class: "login-form-label"
       - login_field_class = "login-form-control"
       - login_aria_attrs = {}
       - if rodauth.field_error(rodauth.login_param)
         - login_field_class += " is-invalid"
         - login_aria_attrs = { invalid: true, describedby: "login_error_message" }
-      = form.text_field rodauth.login_param, value: params[rodauth.login_param], id: "login", placeholder: "Username", autocomplete: "username", required: true, data: { form_auto_submit_target: "input" }, class: login_field_class, aria: login_aria_attrs
+      = form.text_field rodauth.login_param, value: params[rodauth.login_param], id: "login", placeholder: "Click here and enter your username", autocomplete: "username", required: true, data: { form_auto_submit_target: "input" }, class: login_field_class, aria: login_aria_attrs
       - if rodauth.field_error(rodauth.login_param)
         span.login-invalid-feedback id="login_error_message"
           = rodauth.field_error(rodauth.login_param)
   - unless rodauth.skip_password_field_on_login?
     .login-form-group.mb-3
+      = form.label :password, "Step 2:", class: "login-form-label"
       - password_field_class = "login-form-control"
       - password_aria_attrs = {}
       - if rodauth.field_error(rodauth.password_param)
         - password_field_class += " is-invalid"
         - password_aria_attrs  = { invalid: true, describedby: "password_error_message" }
-      = form.text_field rodauth.password_param, value: "", id: "password", placeholder: "Password", autocomplete: rodauth.password_field_autocomplete_value, required: true, data: { form_auto_submit_target: "input" }, class: password_field_class, aria: password_aria_attrs
+      = form.text_field rodauth.password_param, value: "", id: "password", placeholder: "Click here and enter your password", autocomplete: rodauth.password_field_autocomplete_value, required: true, data: { form_auto_submit_target: "input" }, class: password_field_class, aria: password_aria_attrs
       - if rodauth.field_error(rodauth.password_param)
         span.login-invalid-feedback id="password_error_message"
           = rodauth.field_error(rodauth.password_param)
