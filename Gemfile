@@ -369,6 +369,9 @@ gem "openssl", "~> 3.3.1", require: false
 # Shim for Ractor compatibility on truffleruby
 gem "ractor-shim", require: false
 
+# Return unsused memory from the ruby process to the OS
+gem "rails_malloc_trim"
+
 group :development, :test do
   # Checks AR schema for anti-patterns
   gem "active_record_doctor"

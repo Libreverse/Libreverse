@@ -9,6 +9,8 @@ require 'fileutils'
 # Define session name
 session_name = "libreverse-dev"
 
+system("bash scripts/kill-stray-services.sh")
+
 # Kill any existing session to ensure fresh start
 system("tmux kill-session -t #{session_name} 2>/dev/null")
 
@@ -47,5 +49,6 @@ system("tmux send-keys -t #{session_name}:0 'bin/dev-client; echo Client exited,
 exec("tmux attach-session -t #{session_name}")
 
 system("tmux kill-session -t #{session_name} 2>/dev/null")
+exit -f
+exit -f
 system("bash scripts/kill-stray-services.sh")
-exit 0
