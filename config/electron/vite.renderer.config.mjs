@@ -121,15 +121,13 @@ export default defineConfig(({ mode }) => {
                     heartbeatMs: 0,
                 }),
                 coffeescript(),
-                !isDevelopment ? nodePolyfills() : null,
-                !isDevelopment ? purgePolyfills.vite() : null,
-                !isDevelopment ? replacements() : null,
-                !isDevelopment ? legacy(commonLegacyOptions) : null,
-                !isDevelopment ? babel(createBabelOptions(path)) : null,
-                !isDevelopment
-                    ? vitePluginBundleObfuscator(allObfuscatorConfig)
-                    : null,
-                !isDevelopment ? typehintPlugin : null,
+                nodePolyfills(),
+                purgePolyfills.vite(),
+                replacements(),
+                legacy(commonLegacyOptions),
+                babel(createBabelOptions(path)),
+                vitePluginBundleObfuscator(allObfuscatorConfig),
+                typehintPlugin,
             ],
             {
                 label: "electron-renderer",

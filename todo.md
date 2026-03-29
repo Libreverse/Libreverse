@@ -1,4 +1,9 @@
 # To-do
+
+massive task where we document all of our gems that extend ruby
+itself and then search for use cases
+re-add GRPC api
+iodine web server
 <https://github.com/toptal/chewy>
 <https://github.com/roidrage/lograge>
 <https://github.com/BetterErrors/better_errors>
@@ -11,7 +16,6 @@ vercel react agent skills
 replace onekos with AI-generated pixel art versions to avoid copyright
 do a massive middleware cleanup operation where we get everything in sense
 replace all situations where we do inline html with the phlex engine which is much faster
-
 
 - [ ] (feature) Build authoritative realtime multiplayer service in parallel to Rails (interest management + generalized state governance; no server-side raycasting)
 - [ ] add trufflehog to not put creds in github repo

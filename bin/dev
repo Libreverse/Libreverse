@@ -32,10 +32,12 @@ system("tmux send-keys -t #{session_name}:0 'cd #{Dir.pwd}' Enter")
 system("tmux send-keys -t #{session_name}:0 'source .envrc' Enter")
 
 # Set up signal handling within tmux session
-system("tmux send-keys -t #{session_name}:0 'trap \"echo Cleaning up...; kill $SERVER_PID 2>/dev/null; exit 0\" INT TERM' Enter")
+system(%Q!tmux send-keys -t #{session_name}:0 'cleanup() { if [ -n "${SERVER_PID:-}" ]; then kill -TERM -- -"$SERVER_PID" 2>/dev/null || kill -TERM "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true; SERVER_PID=; fi; }' Enter!)
+system("tmux send-keys -t #{session_name}:0 'trap \"cleanup; exit 130\" INT TERM' Enter")
+system("tmux send-keys -t #{session_name}:0 'trap cleanup EXIT' Enter")
 
 # Start server with proper prep work in background
-system("tmux send-keys -t #{session_name}:0 './bin/dev-server 2>&1 | tee /tmp/puma-server.log &' Enter")
+system("tmux send-keys -t #{session_name}:0 './bin/dev-server > >(tee /tmp/puma-server.log) 2>&1 &' Enter")
 system("tmux send-keys -t #{session_name}:0 'SERVER_PID=$!' Enter")
 system("tmux send-keys -t #{session_name}:0 'sleep 5' Enter")
 
@@ -43,12 +45,11 @@ system("tmux send-keys -t #{session_name}:0 'sleep 5' Enter")
 system("tmux send-keys -t #{session_name}:0 'if ps -p $SERVER_PID > /dev/null; then :; else exit 1; fi' Enter")
 
 # Start client in foreground with signal handling
-system("tmux send-keys -t #{session_name}:0 'bin/dev-client; echo Client exited, cleaning up...; kill $SERVER_PID 2>/dev/null; exit 0' Enter")
+system("tmux send-keys -t #{session_name}:0 'bin/dev-client; echo Client exited, cleaning up...; cleanup; exit 0' Enter")
 
 # Attach to the session
-exec("tmux attach-session -t #{session_name}")
-
-system("tmux kill-session -t #{session_name} 2>/dev/null")
-exit -f
-exit -f
-system("bash scripts/kill-stray-services.sh")
+begin
+  system("tmux attach-session -t #{session_name}")
+ensure
+  system("tmux kill-session -t #{session_name} 2>/dev/null")
+end

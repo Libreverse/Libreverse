@@ -55,21 +55,17 @@ export default defineConfig(({ mode }) => {
                     ),
                 }),
                 coffeescript(),
-                !isDevelopment ? purgePolyfills.vite() : null,
-                !isDevelopment ? replacements() : null,
-                !isDevelopment ? babel(createBabelOptions(path)) : null,
-                !isDevelopment
-                    ? vitePluginBundleObfuscator(allObfuscatorConfig)
-                    : null,
-                !isDevelopment ? typehintPlugin : null,
-                !isDevelopment
-                    ? bytecodePlugin({
-                          chunkAlias: [],
-                          transformArrowFunctions: true,
-                          removeBundleJS: true,
-                          protectedStrings: [],
-                      })
-                    : null,
+                purgePolyfills.vite(),
+                replacements(),
+                babel(createBabelOptions(path)),
+                vitePluginBundleObfuscator(allObfuscatorConfig),
+                typehintPlugin,
+                bytecodePlugin({
+                    chunkAlias: [],
+                    transformArrowFunctions: true,
+                    removeBundleJS: true,
+                    protectedStrings: [],
+                }),
             ],
             {
                 label: "electron-main",
