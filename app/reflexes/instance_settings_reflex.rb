@@ -7,7 +7,7 @@ class InstanceSettingsReflex < ApplicationReflex
 
   def toggle_automoderation
     current_value = InstanceSetting.get("automoderation_enabled")
-    new_value = current_value == "true" ? "false" : "true"
+    new_value = (!current_value.to_bool).to_s
 
     InstanceSetting.set("automoderation_enabled", new_value, "Enable or disable content automoderation instance-wide")
 
@@ -17,7 +17,7 @@ class InstanceSettingsReflex < ApplicationReflex
 
   def toggle_eea_mode
     current_value = InstanceSetting.get("eea_mode_enabled")
-    new_value = current_value == "true" ? "false" : "true"
+    new_value = (!current_value.to_bool).to_s
 
     InstanceSetting.set("eea_mode_enabled", new_value, "Enable or disable EEA privacy mode instance-wide")
 
@@ -27,7 +27,7 @@ class InstanceSettingsReflex < ApplicationReflex
 
   def toggle_force_ssl
     current_value = InstanceSetting.get("force_ssl")
-    new_value = current_value == "true" ? "false" : "true"
+    new_value = (!current_value.to_bool).to_s
 
     InstanceSetting.set("force_ssl", new_value, "Force all connections to use SSL/HTTPS")
 
@@ -41,7 +41,7 @@ class InstanceSettingsReflex < ApplicationReflex
 
   def toggle_no_ssl
     current_value = InstanceSetting.get("no_ssl")
-    new_value = current_value == "true" ? "false" : "true"
+    new_value = (!current_value.to_bool).to_s
 
     InstanceSetting.set("no_ssl", new_value, "Disable SSL requirements entirely")
 
@@ -53,10 +53,14 @@ class InstanceSettingsReflex < ApplicationReflex
   end
 
   def update_rails_log_level(value)
-    # Validate log level
+    # Validate log level using TrickBag validation
     valid_levels = %w[debug info warn error fatal unknown]
     value = value.to_s.downcase.strip
-    value = "info" unless valid_levels.include?(value)
+    begin
+      TrickBag::Validations.raise_on_invalid_value(value, valid_levels, "log level")
+    rescue TrickBag::Validations::InvalidValueError
+      value = "info"
+    end
 
     InstanceSetting.set("rails_log_level", value, "Rails application log level")
 

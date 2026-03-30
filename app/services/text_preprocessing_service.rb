@@ -2,15 +2,18 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require "unidecoder"
+require "hamster"
+
 class TextPreprocessingService
   # Common English stop words
-  STOP_WORDS = %w[
+  STOP_WORDS = Hamster::Set.new(%w[
     a am an and are as at be been being by can could did do does for from get gets getting
     got going had has have he her hers herself him himself his i in is it its itself
     may me might must my myself of on our ours ourselves shall she should that the
     their theirs them themselves these they this those to was were will with would
     you your yours yourself yourselves
-  ].to_set.freeze
+  ])
 
   # Punctuation and special characters to remove
   PUNCTUATION_REGEX = /[^\w\s]/
@@ -39,7 +42,7 @@ class TextPreprocessingService
 
     # Normalize text (lowercase, remove punctuation, etc.)
     def normalize_text(text)
-      text.downcase.gsub(PUNCTUATION_REGEX, " ").strip
+      text.to_ascii.downcase.gsub(PUNCTUATION_REGEX, " ").strip
     end
 
     # Split text into words
@@ -82,6 +85,14 @@ class TextPreprocessingService
       end
 
       vocabulary.to_a.sort
+    end
+
+    # Calculate term frequency for a text using facets Enumerable#frequency
+    def term_frequency(text)
+      return {} if text.blank?
+
+      words = remove_stop_words(tokenize(normalize_text(text)))
+      words.frequency
     end
 
     # Combine all searchable text from an experience

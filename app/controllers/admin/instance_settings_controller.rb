@@ -52,8 +52,8 @@ settings_hash      = @instance_settings.pluck(:key, :value).to_h
     @automoderation_enabled = ActiveModel::Type::Boolean.new.cast(
       get_setting_with_fallback.call("automoderation_enabled", nil, "true")
     )
-    @eea_mode_enabled = get_setting_with_fallback.call("eea_mode_enabled", nil, "true") == "true"
-    @force_ssl = get_setting_with_fallback.call("force_ssl", nil, Rails.env.production? ? "true" : "false") == "true"
+    @eea_mode_enabled = get_setting_with_fallback.call("eea_mode_enabled", nil, "true").to_bool
+    @force_ssl = get_setting_with_fallback.call("force_ssl", nil, Rails.env.production? ? "true" : "false").to_bool
 
     # Get current values for text inputs
     rails_log_default = if Rails.env.development?
@@ -68,7 +68,7 @@ settings_hash      = @instance_settings.pluck(:key, :value).to_h
     @admin_email = get_setting_with_fallback.call("admin_email", "ADMIN_EMAIL", "admin@localhost")
 
     # Advanced settings (loaded on demand)
-    @no_ssl = get_setting_with_fallback.call("no_ssl", "NO_SSL", "false") == "true"
+    @no_ssl = get_setting_with_fallback.call("no_ssl", "NO_SSL", "false").to_bool
     @port = get_setting_with_fallback.call("port", "PORT", "3000")
   end
 

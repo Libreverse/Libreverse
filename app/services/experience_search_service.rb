@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 # shareable_constant_value: literal
 
+require "unidecoder"
+
 class ExperienceSearchService
   # Minimum similarity threshold for results
   DEFAULT_SIMILARITY_THRESHOLD = 0.0
@@ -280,8 +282,8 @@ class ExperienceSearchService
     def calculate_title_match_score(experience, query)
       return 0.0 if experience.title.blank? || query.blank?
 
-      title_words = experience.title.downcase.split
-      query_words = query.downcase.split
+      title_words = experience.title.to_ascii.downcase.split
+      query_words = query.to_ascii.downcase.split
 
       # Calculate word overlap
       overlap = (title_words & query_words).length
@@ -295,12 +297,12 @@ class ExperienceSearchService
     # Calculate similarity score for LIKE search results
     def calculate_like_similarity(experience, query)
       # Simple scoring based on where the match occurs
-      query_lower = query.downcase
+      query_lower = query.to_ascii.downcase
 
       score = 0.0
 
       # Title match (highest weight)
-      if experience.title&.downcase&.include?(query_lower)
+      if experience.title&.to_ascii&.downcase&.include?(query_lower)
         score += if experience.title.downcase.start_with?(query_lower)
           1.0
         else
@@ -309,10 +311,10 @@ class ExperienceSearchService
       end
 
       # Description match (medium weight)
-      score += 0.5 if experience.description&.downcase&.include?(query_lower)
+      score += 0.5 if experience.description&.to_ascii&.downcase&.include?(query_lower)
 
       # Author match (lower weight)
-      score += 0.3 if experience.author&.downcase&.include?(query_lower)
+      score += 0.3 if experience.author&.to_ascii&.downcase&.include?(query_lower)
 
       # Normalize to 0-1 range
       [ score / 1.8, 1.0 ].min

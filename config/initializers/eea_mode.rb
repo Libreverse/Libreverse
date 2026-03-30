@@ -60,7 +60,7 @@ module EEAMode
   def self.enabled_for_user?(_account_id = nil)
     # EEA mode is now instance-wide, not user-specific
     # Use instance setting with true as fallback (no env var dependency)
-    InstanceSetting.get_with_fallback("eea_mode_enabled", nil, "true") == "true"
+    InstanceSetting.get_with_fallback("eea_mode_enabled", nil, "true").to_bool
   end
 
   def self.verify_compliance

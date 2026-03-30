@@ -65,8 +65,10 @@ module LibreverseInstance
     # Tell zeitwerk it needs to autoload these custom directories
     config.autoload_paths << "app/graphql"
     config.autoload_paths << "app/indexers"
+    config.autoload_paths << "app/operations"
     config.eager_load_paths << "app/graphql"
     config.eager_load_paths << "app/indexers"
+    config.eager_load_paths << "app/operations"
 
     # Initialize configuration defaults for originally generated Rails version.
     BootTrace.log("application.rb: loading Rails 8.0 defaults")
@@ -487,7 +489,7 @@ module LibreverseInstance
       require "open-uri"
 
       # Use safer URI parsing and opening with timeout
-      uri = URI.parse("https://api.ipify.org")
+      uri = Addressable::URI.parse("https://api.ipify.org")
       raise "Invalid URI scheme" unless uri.scheme == "https"
 
       uri.open(read_timeout: 10).read.strip
@@ -505,7 +507,7 @@ module LibreverseInstance
       url = "https://freeapi.robtex.com/ipquery/#{ip}"
 
       # Use safer URI parsing and opening
-      uri = URI.parse(url)
+      uri = Addressable::URI.parse(url)
       raise "Invalid URI scheme" unless uri.scheme == "https"
 
       json = uri.open(read_timeout: 10).read

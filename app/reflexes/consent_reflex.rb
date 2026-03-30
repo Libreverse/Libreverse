@@ -8,7 +8,7 @@ class ConsentReflex < ApplicationReflex
 
     # dataset keys originate from HTML data-* (kebab-case -> camelCase)
     remember_opt_in_raw = dataset["rememberOptIn"] || dataset["remember_opt_in"]
-    remember_opt_in = remember_opt_in_raw.to_s == "true"
+    remember_opt_in = remember_opt_in_raw.to_bool
 
     cookie_settings = EEAMode.compliance[:cookie_settings]
     # Modern browsers reject `SameSite=None` cookies unless `Secure` is also set.

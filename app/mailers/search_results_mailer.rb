@@ -115,7 +115,7 @@ class SearchResultsMailer < ApplicationMailer
       end
     }
 
-    attachments["search_results_#{@query.parameterize}.json"] = {
+    attachments["search_results_#{@query.to_ascii.parameterize}.json"] = {
       mime_type: "application/json",
       content: JSON.pretty_generate(json_data)
     }

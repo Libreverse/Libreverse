@@ -156,7 +156,7 @@ module Metaverse
     private
 
     def catalyst_content_server
-      config.dig("api_endpoints", "catalyst_content") || "https://peer.decentraland.org/content"
+      config.api_endpoints&.catalyst_content || "https://peer.decentraland.org/content"
     end
 
     def catalyst_scenes_url(pointers)
@@ -323,7 +323,7 @@ module Metaverse
     end
 
     def ipfs_gateway
-      config.dig("api_endpoints", "ipfs_gateway") || "https://ipfs.io"
+      config.api_endpoints&.ipfs_gateway || "https://ipfs.io"
     end
   end
 end

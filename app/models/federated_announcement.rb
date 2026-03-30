@@ -41,7 +41,7 @@ class FederatedAnnouncement < ApplicationRecord
 
   def federated_experience_link
     # Return a link object that can be used in search results
-    OpenStruct.new(
+    Hashie::Mash.new(
       title: title,
       activitypub_uri: activitypub_uri,
       experience_url: experience_url,

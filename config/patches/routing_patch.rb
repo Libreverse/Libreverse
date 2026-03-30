@@ -10,8 +10,8 @@ module RoutingPatch
 
     original_path = path
     if path.is_a?(String) && path.start_with?("http")
-      require "uri"
-      uri = URI.parse(path)
+      require "addressable"
+      uri = Addressable::URI.parse(path)
       path = uri.path
       request.env["QUERY_STRING"] = uri.query if uri.query
       Rails.logger.debug "[RoutingPatch] Extracted path: #{path} from URL: #{original_path}"

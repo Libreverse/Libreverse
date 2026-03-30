@@ -6,50 +6,16 @@ class FederatedLoginController < ApplicationController
   include FederatedAuthHelper
 
   def create
-    identifier = params[:identifier]&.strip
+    result = ::FederatedLogin::Create.call(
+      params: params,
+      session: session,
+      helper: self
+    )
 
-    if identifier.blank?
-      flash[:error] = "Please enter a federated identifier"
+    unless result.success?
+      flash[:error] = result[:error]
       return redirect_to login_path
     end
-
-    username, domain = parse_identifier(identifier)
-    unless username && domain
-      flash[:error] = "Invalid identifier format. Please use: username@instance.com"
-      return redirect_to login_path
-    end
-
-    # Fetch OIDC configuration from the domain
-    config = fetch_oidc_config(domain)
-    unless config
-      flash[:error] = "Unable to fetch authentication configuration from #{domain}"
-      return redirect_to login_path
-    end
-
-    # Check if dynamic client registration is supported
-    registration_endpoint = config["registration_endpoint"]
-    unless registration_endpoint
-      flash[:error] = "The instance #{domain} does not support dynamic client registration"
-      return redirect_to login_path
-    end
-
-    # Register as an OAuth client
-    redirect_uri = "https://#{LibreverseInstance::Application.instance_domain}/auth/federated/callback"
-    client_data = register_dynamic_client(registration_endpoint, redirect_uri)
-
-    unless client_data
-      flash[:error] = "Failed to register with #{domain}. Please try again."
-      return redirect_to login_path
-    end
-
-    # Store client credentials and domain in session for OmniAuth setup
-    session[:client_id] = client_data["client_id"]
-    session[:client_secret] = client_data["client_secret"]
-    session[:oidc_domain] = domain
-    session[:federated_username] = username
-    session[:federated_identifier] = identifier
-
-    Rails.logger.info "Starting federated authentication for #{identifier}"
 
     # Redirect to OmniAuth for authentication
     redirect_to "/auth/federated"
@@ -57,77 +23,17 @@ class FederatedLoginController < ApplicationController
 
   # Handle OmniAuth callback
   def callback
-    auth_hash = request.env["omniauth.auth"]
+    result = ::FederatedLogin::Callback.call(
+      request: request,
+      session: session
+    )
 
-    unless auth_hash
-      flash[:error] = "Authentication failed. Please try again."
-      return redirect_to login_path
-    end
-
-    # Extract user information from the auth hash
-    provider_uid = auth_hash["uid"]
-    provider = "oidc"
-    federated_identifier = session[:federated_identifier]
-    federated_username = session[:federated_username]
-    oidc_domain = session[:oidc_domain]
-
-    # Clean up session
-    session.delete(:client_id)
-    session.delete(:client_secret)
-    session.delete(:oidc_domain)
-    session.delete(:federated_username)
-    session.delete(:federated_identifier)
-
-    # Look for existing account with this federated identity
-    account = Account.find_by(provider: provider, provider_uid: provider_uid)
-
-    if account
-      # Account exists, log them in using Rodauth
-      Rails.logger.info "Logging in existing federated user: #{federated_identifier}"
-
-      # Use Rodauth's login functionality
-      login_account(account)
-
-      flash[:notice] = "Successfully logged in via federated authentication"
+    if result.success?
+      flash[:notice] = result[:notice]
       redirect_to after_login_path
     else
-      # Create new account for this federated user
-      Rails.logger.info "Creating new federated user: #{federated_identifier}"
-
-      # Create a unique username for the local account
-      local_username = build_federated_username(federated_username, oidc_domain || "unknown")
-
-      # Ensure username is unique
-      counter = 1
-      original_username = local_username
-      while Account.exists?(username: local_username)
-        local_username = "#{original_username}.#{counter}"
-        counter += 1
-      end
-
-      # Create the account
-      account = Account.new(
-        username: local_username,
-        federated_id: federated_identifier,
-        provider: provider,
-        provider_uid: provider_uid,
-        status: 2, # verified
-        guest: false
-      )
-
-      if account.save
-        Rails.logger.info "Created new federated account: #{account.id} for #{federated_identifier}"
-
-        # Log them in using Rodauth
-        login_account(account)
-
-        flash[:notice] = "Welcome! Your federated account has been created and you are now logged in."
-        redirect_to after_login_path
-      else
-        Rails.logger.error "Failed to create federated account for #{federated_identifier}: #{account.errors.full_messages}"
-        flash[:error] = "Failed to create your account. Please try again."
-        redirect_to login_path
-      end
+      flash[:error] = result[:error]
+      redirect_to login_path
     end
   rescue StandardError => e
     Rails.logger.error "Error in federated authentication callback: #{e.message}"

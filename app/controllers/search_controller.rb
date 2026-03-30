@@ -17,7 +17,7 @@ class SearchController < ApplicationController
     # Enhanced cache key with user role and federated flag
     user_role = current_account&.admin? ? "admin" : "user"
     query_hash = query.present? ? Digest::MD5.hexdigest(query) : "empty"
-    federated = params[:federated] == "true"
+    federated = params[:federated].to_bool
 
     content_fingerprint = "#{user_role}/#{query_hash}/#{federated}/#{Time.current.beginning_of_minute.to_i}"
 
@@ -34,7 +34,7 @@ class SearchController < ApplicationController
     if query.present?
       begin
         # Check if federated search is requested
-        if params[:federated] == "true"
+        if params[:federated].to_bool
           # Use federated search across instances with unified interface
           search_results = FederatedExperienceSearchService.search_across_instances(
             query,

@@ -6,6 +6,7 @@ require "re2"
 require "unidecoder"
 require "yaml"
 require "base64"
+require "hamster"
 
 class ModerationService
   # Configuration for debug logging
@@ -40,14 +41,14 @@ class ModerationService
       nil
     end.compact
 
-    Set.new(decoded_words)
+    Hamster::Set.new(decoded_words)
   end
 
   # Load words once at class load time
-  ALL_BANNED_WORDS = load_banned_words.freeze
+  ALL_BANNED_WORDS = load_banned_words
 
   # Use all banned words from YAML as profanity words (the YAML contains offensive content)
-  CURATED_PROFANITY_WORDS = ALL_BANNED_WORDS.freeze
+  CURATED_PROFANITY_WORDS = ALL_BANNED_WORDS
 
   # Load spam words from base64 encoded YAML file
   def self.load_spam_words
@@ -73,11 +74,11 @@ class ModerationService
       nil
     end.compact
 
-    Set.new(decoded_words)
+    Hamster::Set.new(decoded_words)
   end
 
   # Load spam words from YAML
-  CURATED_SPAM_WORDS = load_spam_words.freeze
+  CURATED_SPAM_WORDS = load_spam_words
 
   # New comprehensive LETTER_PATTERNS for Ruby's Regexp
   USER_LETTER_PATTERNS = {
@@ -107,7 +108,7 @@ class ModerationService
     "x" => '(?:x|\\>\\<\\|\\*|[\\%\\}\\{\\}][\\)\\(]|[^a-z]e[ck]+s+[^a-z]|[^a-z]ex+[^a-z])',
     "y" => "(?:y|j|\\'/|[^a-z]wh?(?:y+|ie+)[^a-z])",
     "z" => '(?:z|2|7_|\\~/_|\\>_|%|[^a-z]zee+[^a-z])'
-  }.freeze
+  }.freeze # USER_LETTER_PATTERNS: kept as frozen Hash (regex values not suitable for Hamster)
 
   # New creative_regex method using Ruby's Regexp and user's patterns/logic
   def self.creative_regex(word)

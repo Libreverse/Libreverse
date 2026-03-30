@@ -44,7 +44,7 @@ class FederationController < ApplicationController
     query = params[:q]
     type_filter = params[:type]
     limit = [ params[:limit]&.to_i || 20, 100 ].min
-    links_only = params[:links_only] == "true"
+    links_only = params[:links_only].to_bool
 
     results = if type_filter == "experience"
       search_experiences(query, limit)

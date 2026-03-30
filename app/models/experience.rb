@@ -170,7 +170,7 @@ class Experience < ApplicationRecord
 
   def content_moderation
     # Check if automoderation is enabled instance-wide (default to true for security)
-    automoderation_enabled = InstanceSetting.get_with_fallback("automoderation_enabled", nil, "true") == "true"
+    automoderation_enabled = InstanceSetting.get_with_fallback("automoderation_enabled", nil, "true").to_bool
 
     # Skip moderation if disabled by admin
     return unless automoderation_enabled

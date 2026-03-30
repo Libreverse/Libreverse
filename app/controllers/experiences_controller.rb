@@ -276,7 +276,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
 
       # Check against allowed domains
       allowed_domains.include?(parsed_uri.host) ? uri : nil
-  rescue URI::InvalidURIError
+  rescue Addressable::URI::InvalidURIError
       nil
   end
 
@@ -316,7 +316,7 @@ user_signed_in? ? "user_#{current_account.id}" : "guest"
 
       # Check against allowed domains
       allowed_domains.include?(parsed_uri.host)
-  rescue URI::InvalidURIError
+  rescue Addressable::URI::InvalidURIError
       false
   end
 

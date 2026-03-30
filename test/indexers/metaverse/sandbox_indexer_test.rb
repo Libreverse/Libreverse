@@ -21,12 +21,12 @@ module Metaverse
     end
 
     test "cloudflare challenge is detected" do
-      session = OpenStruct.new(html: "Just a moment... Cloudflare", title: "Just a moment...")
+      session = Hashie::Mash.new(html: "Just a moment... Cloudflare", title: "Just a moment...")
       assert @indexer.send(:is_blocked_by_cloudflare?, session)
     end
 
     test "normal content is not treated as cloudflare challenge" do
-      session = OpenStruct.new(html: "<html><body>Normal content</body></html>", title: "Sitemap")
+      session = Hashie::Mash.new(html: "<html><body>Normal content</body></html>", title: "Sitemap")
       assert_not @indexer.send(:is_blocked_by_cloudflare?, session)
     end
 

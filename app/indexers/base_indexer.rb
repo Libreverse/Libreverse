@@ -269,7 +269,7 @@ class BaseIndexer
 
   def create_response_wrapper(html_content)
     # Create a simple response wrapper that mimics HTTParty's interface
-    OpenStruct.new(
+    Hashie::Mash.new(
       body: html_content,
       parsed_response: html_content,
       code: 200,
@@ -358,10 +358,10 @@ class BaseIndexer
     # Apply environment-specific overrides
     env_config = all_config.dig(Rails.env, "indexers", platform_name) || {}
 
-    base_config.deep_merge(env_config)
+    Hashie::Mash.new(base_config.deep_merge(env_config))
   rescue StandardError => e
     Rails.logger.error "Failed to load indexer config: #{e.message}"
-    {}
+    Hashie::Mash.new
   end
 
   def default_headers
