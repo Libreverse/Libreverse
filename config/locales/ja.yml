@@ -188,12 +188,6 @@ ja:
     view_cookie_policy: クッキーポリシーを表示
     view_privacy_policy: プライバシーポリシーを表示
   rodauth:
-    create_account:
-      footer_have_account: すでにアカウントをお持ちですか？
-      sign_in: サインイン
-    login:
-      footer_no_account: アカウントをお持ちではありませんか？
-      sign_up: サインアップ
     multi_phase_login:
       footer_need_help: ヘルプが必要ですか？
       return_to_login: ログインに戻る

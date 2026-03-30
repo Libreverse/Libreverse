@@ -9,8 +9,8 @@
     "git.fetchTags": false,
     // Auto-fetch periodically to keep things fresh
     "git.autofetch": true,
-    "rubyLsp.rubyVersionManager": "none",  // or "rbenv", "asdf", etc. — experiment
+    "rubyLsp.rubyVersionManager": "none", // or "rbenv", "asdf", etc. — experiment
     "terminal.integrated.env.osx": {
-        "PATH": "${env:PATH}"  // sometimes helps
+        "PATH": "${env:PATH}" // sometimes helps
     }
 }

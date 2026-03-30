@@ -25,7 +25,7 @@ class PagesController < ApplicationController
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
 
-    key = [params[:id], I18n.locale.to_s].join(":")
+    key = [ params[:id], I18n.locale.to_s ].join(":")
     rendered = self.class.page_cache[key]
 
     unless rendered

@@ -207,12 +207,6 @@ ru:
     view_cookie_policy: Посмотреть политику использования cookie
     view_privacy_policy: Посмотреть политику конфиденциальности
   rodauth:
-    create_account:
-      footer_have_account: Уже есть аккаунт?
-      sign_in: Войти
-    login:
-      footer_no_account: Нет аккаунта?
-      sign_up: Зарегистрироваться
     multi_phase_login:
       footer_need_help: Нужна помощь?
       return_to_login: Вернуться к входу

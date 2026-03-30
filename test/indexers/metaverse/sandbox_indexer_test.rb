@@ -135,9 +135,9 @@ module Metaverse
       )
 
       sync_stats = @indexer.send(:sync_experiences, [
-        { uuid: "existing-uuid-1", title: "Existing Experience", url: "url1", row_index: 1 },
-        { uuid: "new-uuid-1", title: "New Experience", url: "url2", row_index: 2 }
-      ])
+                                   { uuid: "existing-uuid-1", title: "Existing Experience", url: "url1", row_index: 1 },
+                                   { uuid: "new-uuid-1", title: "New Experience", url: "url2", row_index: 2 }
+                                 ])
 
       assert_equal 2, sync_stats[:total_current]
       assert_equal 1, sync_stats[:existing]
@@ -156,8 +156,8 @@ module Metaverse
       )
 
       sync_stats = @indexer.send(:sync_experiences, [
-        { uuid: "new-uuid", title: "New Experience", url: "url", row_index: 1 }
-      ])
+                                   { uuid: "new-uuid", title: "New Experience", url: "url", row_index: 1 }
+                                 ])
 
       assert_equal 1, sync_stats[:removed]
       assert_not IndexedContent.exists?(external_id: "old-uuid")

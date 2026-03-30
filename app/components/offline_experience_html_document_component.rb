@@ -1,3 +1,4 @@
+# shareable_constant_value: literal
 # typed: true
 # frozen_string_literal: true
 
@@ -24,9 +25,7 @@ class OfflineExperienceHtmlDocumentComponent < Phlex::HTML
       body do
         header do
           h1 { CGI.escapeHTML(@experience[:title].to_s) }
-          if @experience[:author].present?
-            p { "By: #{CGI.escapeHTML(@experience[:author].to_s)}" }
-          end
+          p { "By: #{CGI.escapeHTML(@experience[:author].to_s)}" } if @experience[:author].present?
           p { small { "Downloaded from #{@instance_domain}" } }
         end
 

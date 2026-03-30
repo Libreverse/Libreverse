@@ -187,12 +187,6 @@ zh:
     view_cookie_policy: 查看Cookie政策
     view_privacy_policy: 查看隐私政策
   rodauth:
-    create_account:
-      footer_have_account: 已有账户？
-      sign_in: 登录
-    login:
-      footer_no_account: 没有账户？
-      sign_up: 注册
     multi_phase_login:
       footer_need_help: 需要帮助？
       return_to_login: 返回登录

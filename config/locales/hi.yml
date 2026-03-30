@@ -210,12 +210,6 @@ hi:
     view_cookie_policy: कुकी नीति देखें
     view_privacy_policy: गोपनीयता नीति देखें
   rodauth:
-    create_account:
-      footer_have_account: क्या आपके पास पहले से ही एक खाता है?
-      sign_in: साइन इन करें
-    login:
-      footer_no_account: क्या आपके पास खाता नहीं है?
-      sign_up: साइन अप करें
     multi_phase_login:
       footer_need_help: मदद की ज़रूरत है?
       return_to_login: लॉगिन पर वापस जाएं

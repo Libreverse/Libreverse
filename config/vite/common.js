@@ -305,17 +305,20 @@ export function createTimingProbePlugin({
             writeLine(`[timing:${label}] buildStart`);
             if (heartbeatMs > 0) {
                 heartbeatTimer = setInterval(() => {
-                    const elapsed = ((performance.now() - startedAt) / 1000).toFixed(1);
-                    writeLine(
-                        `[timing:${label}] heartbeat +${elapsed}s`,
-                    );
+                    const elapsed = (
+                        (performance.now() - startedAt) /
+                        1000
+                    ).toFixed(1);
+                    writeLine(`[timing:${label}] heartbeat +${elapsed}s`);
                 }, heartbeatMs);
             }
         },
         buildEnd() {
             if (heartbeatTimer) clearInterval(heartbeatTimer);
             const totalMs = performance.now() - startedAt;
-            writeLine(`[timing:${label}] buildEnd (${(totalMs / 1000).toFixed(1)}s)`);
+            writeLine(
+                `[timing:${label}] buildEnd (${(totalMs / 1000).toFixed(1)}s)`,
+            );
         },
     };
 }
@@ -395,7 +398,11 @@ export function wrapPluginsWithBuildStartTiming(
                 hookCount += 1;
                 continue;
             }
-            if (hook && typeof hook === "object" && typeof hook.handler === "function") {
+            if (
+                hook &&
+                typeof hook === "object" &&
+                typeof hook.handler === "function"
+            ) {
                 wrapped[hookName] = {
                     ...hook,
                     handler: wrapHook(pluginName, hookName, hook.handler),
@@ -406,7 +413,9 @@ export function wrapPluginsWithBuildStartTiming(
         }
 
         if (hookCount > 0) {
-            writeLine(`[timing:${label}] wrapped ${pluginName} hooks=${hookCount}`);
+            writeLine(
+                `[timing:${label}] wrapped ${pluginName} hooks=${hookCount}`,
+            );
         } else {
             writeLine(`[timing:${label}] skipped ${pluginName} hooks=0`);
             changed = true;

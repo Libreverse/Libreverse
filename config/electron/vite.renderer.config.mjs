@@ -39,8 +39,7 @@ import {
 export default defineConfig(({ mode }) => {
     const isDevelopment = mode === "development";
     const timingEnabled =
-        process.env.VITE_TIMING !== "0" &&
-        process.env.VITE_TIMING !== "false";
+        process.env.VITE_TIMING !== "0" && process.env.VITE_TIMING !== "false";
 
     const typehintPlugin = createTypehintPlugin(typehints);
 

@@ -211,12 +211,6 @@ pt:
     view_cookie_policy: Ver Política de Cookies
     view_privacy_policy: Ver Política de Privacidade
   rodauth:
-    create_account:
-      footer_have_account: Já tem uma conta?
-      sign_in: Entrar
-    login:
-      footer_no_account: Não tem uma conta?
-      sign_up: Cadastrar
     multi_phase_login:
       footer_need_help: Precisa de ajuda?
       return_to_login: Voltar ao login

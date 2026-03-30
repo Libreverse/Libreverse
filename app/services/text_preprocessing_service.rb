@@ -8,12 +8,12 @@ require "hamster"
 class TextPreprocessingService
   # Common English stop words
   STOP_WORDS = Hamster::Set.new(%w[
-    a am an and are as at be been being by can could did do does for from get gets getting
-    got going had has have he her hers herself him himself his i in is it its itself
-    may me might must my myself of on our ours ourselves shall she should that the
-    their theirs them themselves these they this those to was were will with would
-    you your yours yourself yourselves
-  ])
+                                  a am an and are as at be been being by can could did do does for from get gets getting
+                                  got going had has have he her hers herself him himself his i in is it its itself
+                                  may me might must my myself of on our ours ourselves shall she should that the
+                                  their theirs them themselves these they this those to was were will with would
+                                  you your yours yourself yourselves
+                                ])
 
   # Punctuation and special characters to remove
   PUNCTUATION_REGEX = /[^\w\s]/

@@ -214,12 +214,6 @@ de:
     view_cookie_policy: Cookie-Richtlinie ansehen
     view_privacy_policy: Datenschutzrichtlinie ansehen
   rodauth:
-    create_account:
-      footer_have_account: Haben Sie bereits ein Konto?
-      sign_in: Anmelden
-    login:
-      footer_no_account: Haben Sie kein Konto?
-      sign_up: Registrieren
     multi_phase_login:
       footer_need_help: Brauchen Sie Hilfe?
       return_to_login: Zurück zur Anmeldung

@@ -4,7 +4,7 @@
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
-const isDevStart =
+const isDevelopmentStart =
     process.env.LIBREVERSE_FORGE_DEV === "1" ||
     process.env.LIBREVERSE_FORGE_DEV === "true";
 
@@ -53,7 +53,7 @@ export default {
                 ],
             },
         },
-        ...(isDevStart
+        ...(isDevelopmentStart
             ? []
             : [
                   {

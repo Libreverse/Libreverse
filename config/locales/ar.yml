@@ -204,12 +204,6 @@ ar:
     view_cookie_policy: عرض سياسة ملفات تعريف الارتباط
     view_privacy_policy: عرض سياسة الخصوصية
   rodauth:
-    create_account:
-      footer_have_account: لديك بالفعل حساب؟
-      sign_in: تسجيل الدخول
-    login:
-      footer_no_account: ليس لديك حساب؟
-      sign_up: التسجيل
     multi_phase_login:
       footer_need_help: تحتاج إلى مساعدة؟
       return_to_login: العودة إلى تسجيل الدخول
