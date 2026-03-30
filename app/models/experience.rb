@@ -52,6 +52,23 @@ class Experience < ApplicationRecord
             4 => :federated_blocked,
             8 => :offline_available
 
+  # Explicit accessors for FlagShihTzu flags (ensures methods exist)
+  def federate
+    flag_enabled?(:federate)
+  end
+
+  def federate=(value)
+    value ? enable_flag(:federate) : disable_flag(:federate)
+  end
+
+  def offline_available
+    flag_enabled?(:offline_available)
+  end
+
+  def offline_available=(value)
+    value ? enable_flag(:offline_available) : disable_flag(:offline_available)
+  end
+
   # Enable SecondLevelCache for automatic read-through/write-through caching
   second_level_cache expires_in: 1.hour
 

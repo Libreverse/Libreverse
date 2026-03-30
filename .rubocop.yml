@@ -384,3 +384,61 @@ Style/ShareableConstantValueComment:
     Description: "Requires # shareable_constant_value: literal magic comment."
     Exclude:
         - "app/graphql/graphql_router.rb"
+
+# ================================================================
+# Full Trailblazer DSL exclusions
+# ================================================================
+# These cover the most common false positives caused by the Trailblazer
+# Operation / Activity DSL (`step`, `pass`, `fail`, `subprocess`, etc.).
+
+Lint/UnreachableCode:
+  Exclude:
+    - 'app/concepts/**/operation/**/*.rb'      # classic Trailblazer layout
+    - 'app/operations/**/*.rb'                 # flat operations folder (common alternative)
+    - 'lib/operations/**/*.rb'                 # if you keep operations in lib/
+    - 'test/concepts/**/operation/**/*.rb'     # tests (Minitest style)
+    - 'spec/operations/**/*.rb'                # tests (RSpec style)
+    - 'spec/concepts/**/operation/**/*.rb'
+
+Style/SignalException:
+  Exclude:
+    - 'app/concepts/**/operation/**/*.rb'
+    - 'app/operations/**/*.rb'
+    - 'lib/operations/**/*.rb'
+    - 'test/concepts/**/operation/**/*.rb'
+    - 'spec/operations/**/*.rb'
+    - 'spec/concepts/**/operation/**/*.rb'
+
+# Operations often contain many steps → long blocks are normal
+Metrics/BlockLength:
+  Exclude:
+    - 'app/concepts/**/operation/**/*.rb'
+    - 'app/operations/**/*.rb'
+    - 'lib/operations/**/*.rb'
+    - 'test/concepts/**/operation/**/*.rb'
+    - 'spec/operations/**/*.rb'
+    - 'spec/concepts/**/operation/**/*.rb'
+
+# Step methods are usually `def call(ctx, **)` – not every argument is always used
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'app/concepts/**/operation/**/*.rb'
+    - 'app/operations/**/*.rb'
+    - 'lib/operations/**/*.rb'
+    - 'test/concepts/**/operation/**/*.rb'
+    - 'spec/operations/**/*.rb'
+    - 'spec/concepts/**/operation/**/*.rb'
+
+# Most people don't write YARD/RDoc for every operation class
+Style/Documentation:
+  Exclude:
+    - 'app/concepts/**/*.rb'
+    - 'app/operations/**/*.rb'
+    - 'lib/operations/**/*.rb'
+
+# Optional: if you use the old `fail` / `success` style a lot and get other noise
+Style/RedundantReturn:
+  Exclude:
+    - 'app/concepts/**/operation/**/*.rb'
+    - 'app/operations/**/*.rb'
+

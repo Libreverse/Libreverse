@@ -33,6 +33,9 @@ class RobotsControllerTest < ActionDispatch::IntegrationTest
     setting = InstanceSetting.find_by(key: "no_bots_mode")
     setting&.destroy
 
+    # Clear the cache so the test doesn't get the cached value
+    FunctionCache.instance.delete(:instance_setting_get, "no_bots_mode")
+
     get "/robots.txt"
 
     assert_response :success

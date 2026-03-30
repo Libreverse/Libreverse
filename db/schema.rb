@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_19_215200) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_30_160000) do
   create_table "account_active_session_keys", primary_key: "session_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -1188,6 +1188,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_19_215200) do
     t.string "unencrypted_value"
     t.datetime "updated_at", null: false
     t.string "value"
+    t.text "value_ciphertext"
     t.index ["account_id", "key"], name: "index_user_preferences_on_account_id_and_key", unique: true
   end
 

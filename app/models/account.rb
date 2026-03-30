@@ -91,16 +91,6 @@ class Account < ApplicationRecord
         status == 3
       end
 
-      # Check if this account is a guest account
-      def guest?
-        guest == true
-      end
-
-      # Determines if the account is an admin
-      def admin?
-        admin == true
-      end
-
       # Role-based authentication helpers
       def authenticated_user?
         !guest?

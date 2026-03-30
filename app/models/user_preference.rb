@@ -10,6 +10,7 @@
 #  key               :string(255)      not null
 #  unencrypted_value :string(255)
 #  value             :string(255)
+#  value_ciphertext  :text(65535)
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  account_id        :bigint           not null

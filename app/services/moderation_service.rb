@@ -6,7 +6,6 @@ require "re2"
 require "unidecoder"
 require "yaml"
 require "base64"
-require "hamster"
 
 class ModerationService
   # Configuration for debug logging
@@ -41,7 +40,7 @@ class ModerationService
       nil
     end.compact
 
-    Hamster::Set.new(decoded_words)
+    Set.new(decoded_words).freeze
   end
 
   # Load words once at class load time
@@ -74,7 +73,7 @@ class ModerationService
       nil
     end.compact
 
-    Hamster::Set.new(decoded_words)
+    Set.new(decoded_words).freeze
   end
 
   # Load spam words from YAML

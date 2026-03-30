@@ -9,6 +9,7 @@ class LogTruncationTest < ActiveSupport::TestCase
   test "truncates long messages to the configured length" do
     with_log_truncation(max_length: 32, omission: "[cut]") do
       formatter = Logger::Formatter.new
+      formatter.extend(LogFormatting::TruncatingFormatter)
       payload = "a" * 128
       formatted = formatter.call("INFO", Time.utc(2024, 1, 1), "prog", payload)
 
@@ -27,6 +28,7 @@ class LogTruncationTest < ActiveSupport::TestCase
 
     with_log_truncation(max_length: 40, omission: "…") do
       formatter = ActiveSupport::Logger::SimpleFormatter.new
+      formatter.extend(LogFormatting::TruncatingFormatter)
       payload = "SELECT * FROM users WHERE bio = '#{'x' * 200}'"
       formatted = formatter.call("INFO", Time.utc(2024, 1, 1), "ActiveRecord", payload)
 

@@ -13,11 +13,13 @@
     "development": {
         "autoBuild": false,
         "publicOutputDir": "vite",
-        "port": 3001
+        "port": 3001,
+        "skipCompatibilityCheck": true
     },
     "test": {
         "autoBuild": false,
         "publicOutputDir": "vite-test",
-        "port": 3001
+        "port": 3001,
+        "skipCompatibilityCheck": true
     }
 }

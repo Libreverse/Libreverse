@@ -18,6 +18,7 @@ module Admin
     @platform_name = params[:id]
     @indexer_class = find_indexer_class(@platform_name)
     return render(plain: "Forbidden", status: :forbidden) unless current_account
+
     redirect_to admin_indexers_path, alert: "Indexer not found: #{@platform_name}" and return unless @indexer_class
 
     @indexer = @indexer_class.new
