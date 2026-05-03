@@ -1,4 +1,4 @@
-# Libreverse
+# Libreverse - ON HOLD - See libreverse blog for information
 
 Libreverse is a privacy‑centric application for curating and sharing interactive "experiences" (self‑contained HTML documents). Powered by Hotwire, it delivers a seamless, single‑page‑application (SPA) experience entirely within the Ruby on Rails ecosystem while keeping all data on whatever instance you choose to use.
 
