@@ -9,7 +9,25 @@ updates:
           semver-major-days: 8
           semver-minor-days: 8
           semver-patch-days: 8
-    - package-ecosystem: "npm"
+      ignore:
+          # Gems whose npm package must match them exactly (shakapacker ensure_consistent_versioning,
+          # cable_ready / stimulus_reflex sanity checks, vite_ruby <-> vite-plugin-ruby). Bump the gem
+          # and its npm pin together by hand; a gem-only bump leaves main unable to boot.
+          - dependency-name: "shakapacker"
+          - dependency-name: "react_on_rails"
+          - dependency-name: "cable_ready"
+          - dependency-name: "stimulus_reflex"
+          - dependency-name: "turbo_power"
+          - dependency-name: "vite_rails"
+          - dependency-name: "vite_ruby"
+          # graphql_rails 3.1.x is incompatible with graphql 2.6 (see Gemfile).
+          - dependency-name: "graphql"
+            versions: [">= 2.6"]
+          # Rails 8.1 stopped bounding minitest; 6 is a major jump the test suite is not ready for.
+          - dependency-name: "minitest"
+            update-types: ["version-update:semver-major"]
+    # "bun" (not "npm") so Dependabot updates bun.lock together with package.json.
+    - package-ecosystem: "bun"
       directory: "/"
       schedule:
           interval: "weekly"
@@ -18,6 +36,22 @@ updates:
           semver-major-days: 8
           semver-minor-days: 8
           semver-patch-days: 8
+      groups:
+          # react and react-dom must always resolve to the same version.
+          react:
+              patterns: ["react", "react-dom"]
+      ignore:
+          # CMS/Docker copy node_modules/codemirror/lib/codemirror.css (5.x only).
+          - dependency-name: "codemirror"
+            update-types: ["version-update:semver-major"]
+          # npm package must match its gem exactly (shakapacker ensure_consistent_versioning,
+          # cable_ready / stimulus_reflex sanity checks). Bump the gem via the bundler PR, then
+          # the npm pin by hand.
+          - dependency-name: "shakapacker"
+          - dependency-name: "react-on-rails"
+          - dependency-name: "cable_ready"
+          - dependency-name: "stimulus_reflex"
+          - dependency-name: "vite-plugin-ruby"
     - package-ecosystem: "docker"
       directory: "/"
       schedule:

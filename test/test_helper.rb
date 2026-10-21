@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require "minitest/mock" # Object#stub (used in test/services); not loaded implicitly under Rails 8.1
 require "mocha/minitest"
 
 # Ensure proper setup for Mocha

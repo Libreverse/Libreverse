@@ -1,33 +1,41 @@
 name: Retry dependency gates (Dependabot)
 
 on:
-  schedule:
-    - cron: "0 7 * * 1"
-  workflow_dispatch:
+    schedule:
+        - cron: "0 7 * * 1"
+    workflow_dispatch:
 
 permissions:
-  actions: write
-  contents: read
+    actions: write
+    contents: read
 
 jobs:
-  rerun-gates:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/create-github-app-token@v3
-        id: app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    rerun-gates:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/create-github-app-token@v3
+              id: app-token
+              with:
+                  app-id: ${{ secrets.APP_ID }}
+                  private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: Re-run CI on open Dependabot PRs
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          prs=$(gh pr list --author "dependabot[bot]" --state open --json number --jq '.[].number')
-          for pr in $prs; do
-            echo "Re-running checks for PR #$pr"
-            gh pr comment "$pr" --body "Scheduled dependency-gates retry (weekly)." || true
-            gh run rerun --repo "${{ github.repository }}" --failed || \
-              gh workflow run ci.yml --ref "$(gh pr view "$pr" --json headRefName --jq .headRefName)" || true
-          done
+            - name: Re-run CI on open Dependabot PRs
+              env:
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+                  # No checkout in this job, so gh cannot infer the repo from a git remote.
+                  GH_REPO: ${{ github.repository }}
+              run: |
+                  set -euo pipefail
+                  prs=$(gh pr list --author "dependabot[bot]" --state open --json number --jq '.[].number')
+                  for pr in $prs; do
+                    echo "Re-running checks for PR #$pr"
+                    gh pr comment "$pr" --body "Scheduled dependency-gates retry (weekly)." || true
+                    branch=$(gh pr view "$pr" --json headRefName --jq .headRefName)
+                    run_id=$(gh run list --workflow ci.yml --branch "$branch" --event pull_request --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+                    if [ -n "$run_id" ]; then
+                      # Surface the reason (e.g. run too old to re-run); a stale PR then needs `@dependabot rebase`.
+                      if ! out=$(gh run rerun "$run_id" --failed 2>&1); then
+                        echo "::warning::Could not re-run run $run_id for PR #$pr: $out"
+                      fi
+                    fi
+                  done
