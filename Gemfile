@@ -145,6 +145,7 @@ group :development do
 end
 
 group :test do
+  gem "minitest", "< 6"
   gem "mocha"
   gem "mysql2"
 end
