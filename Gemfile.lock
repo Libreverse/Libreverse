@@ -316,7 +316,7 @@ GEM
       rake (>= 13)
     googleapis-common-protos-types (1.21.0)
       google-protobuf (~> 4.26)
-    graphql (2.6.11)
+    graphql (2.5.26)
       base64
       fiber-storage
       logger
@@ -1102,6 +1102,7 @@ DEPENDENCIES
   gemoji
   goldiloader
   google_robotstxt_parser!
+  graphql (< 2.6)
   graphql_rails
   grpc
   grpc-tools

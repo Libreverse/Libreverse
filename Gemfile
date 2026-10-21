@@ -36,6 +36,10 @@ gem "friendly_id"
 gem "gemoji"
 gem "goldiloader"
 gem "google_robotstxt_parser", path: "vendor/gems/google_robotstxt_parser"
+# graphql_rails 3.1.x builds its schema with `use GraphQL::Schema::Visibility` before `query(...)`,
+# which graphql 2.6 rejects (TypeConfigurationError on every request). Stay on 2.5.x until
+# graphql_rails supports 2.6. Open advisories fixed in 2.6: GHSA-j7xr-4g94-r9h3, GHSA-rmxg-5p3r-j6hh.
+gem "graphql", "< 2.6"
 gem "graphql_rails"
 gem "grpc"
 gem "haml", "~> 5.2"
