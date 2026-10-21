@@ -104,6 +104,61 @@ jobs:
           fi
           gh pr merge "$PR" --repo "$REPO" --rebase --delete-branch --auto
 
+      # The weekly security-maintenance cloud routine opens security-maintenance/* PRs that should
+      # change only Gemfile.lock, bun.lock and dependency version strings in package.json. Approve
+      # those; refuse anything else and supersede any earlier approval (stale approvals are not
+      # dismissed on push). Content stays gated by Dependency gates / Snyk / Socket before merge.
+      - name: Approve security-maintenance PR (lockfile/version bumps only)
+        if: |
+          github.event_name == 'pull_request_target' &&
+          github.event.pull_request.base.ref == 'main' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          startsWith(github.event.pull_request.head.ref, 'security-maintenance/')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          reject() {
+            echo "::error::$1"
+            gh pr review "$PR_NUMBER" --request-changes --body "Auto-approve refused: $1" || true
+            gh pr merge "$PR_NUMBER" --disable-auto || true
+            exit 1
+          }
+          # Fetch first so a gh failure aborts the step (set -e) instead of being swallowed by a pipeline.
+          files=$(gh pr diff "$PR_NUMBER" --name-only)
+          patch=$(gh pr diff "$PR_NUMBER")
+          while IFS= read -r f; do
+            case "$f" in
+              Gemfile.lock|bun.lock|package.json) ;;
+              *) reject "PR changes files other than Gemfile.lock, bun.lock and package.json" ;;
+            esac
+          done <<< "$files"
+          # Added lines must not introduce git/URL/path sources or a custom registry.
+          suspect=$(printf '%s\n' "$patch" | grep -E '^\+[^+]' | grep -E '(https?://|git\+|github:|file:|link:|workspace:|git@|remote:|revision:|npm:|jsr:)' || true)
+          if [ -n "$suspect" ]; then
+            reject "diff adds a URL, alias or non-registry source"
+          fi
+          # package.json: only dependency version strings may change (no scripts, overrides, added/removed keys).
+          norm='(.dependencies, .devDependencies) |= (if . == null then null else with_entries(.value = "v") end)'
+          gh api "repos/$GH_REPO/contents/package.json?ref=$HEAD_SHA" -H "Accept: application/vnd.github.raw" > "$RUNNER_TEMP/head-package.json"
+          if [ "$(jq -S "$norm" package.json)" != "$(jq -S "$norm" "$RUNNER_TEMP/head-package.json")" ]; then
+            reject "package.json changes more than dependency version strings"
+          fi
+          # ...and every changed value must be a plain version or range (no npm: aliases, tags, URLs).
+          badvals=$(jq -r -n --slurpfile b package.json --slurpfile h "$RUNNER_TEMP/head-package.json" '
+            [ ("dependencies", "devDependencies") as $s
+              | ($h[0][$s] // {}) | to_entries[]
+              | select(.value != $b[0][$s][.key])
+              | select(.value | test("^[~^]?[0-9]+(\\.[0-9]+){0,2}([-+][0-9A-Za-z.-]+)?$") | not)
+              | "\($s).\(.key)=\(.value)" ] | .[]')
+          if [ -n "$badvals" ]; then
+            reject "package.json value changed to something other than a plain version: $badvals"
+          fi
+          gh pr review "$PR_NUMBER" --approve --body "Lockfile/version-only security maintenance PR; remaining gates decide the merge."
+
       - name: Bulk retry stale Dependabot PRs
         if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         env:

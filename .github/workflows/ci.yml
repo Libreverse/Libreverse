@@ -453,11 +453,22 @@ jobs:
     permissions:
       contents: write
       packages: write
-    if: vars.TIDB_INSTANCE_AVAILABLE == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !contains(github.event.head_commit.message, 'chore(')
+    if: vars.TIDB_INSTANCE_AVAILABLE == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !contains(github.event.head_commit.message, 'chore(autofix)')
 
     steps:
+      # Created before checkout so the auto-revert push below can bypass the main ruleset.
+      - uses: actions/create-github-app-token@v3
+        id: rollback-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Check out code
         uses: actions/checkout@v7
+        with:
+          # Depth 2: with a depth-1 clone `git revert HEAD` sees a root commit and deletes the whole tree.
+          fetch-depth: 2
+          token: ${{ steps.rollback-token.outputs.token }}
 
       - name: Log in to Quay
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
@@ -541,15 +552,9 @@ jobs:
           echo "::error::Smoke check failed for $URL"
           exit 1
 
-      - uses: actions/create-github-app-token@v3
-        if: failure() && steps.smoke.outcome == 'failure'
-        id: rollback-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
       - name: Auto-revert failed deploy
-        if: failure() && steps.smoke.outcome == 'failure'
+        # Never revert a revert: that would re-land the commit that was just rolled back.
+        if: failure() && steps.smoke.outcome == 'failure' && !startsWith(github.event.head_commit.message, 'Revert ')
         env:
           GH_TOKEN: ${{ steps.rollback-token.outputs.token }}
         run: |

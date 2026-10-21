@@ -9,7 +9,8 @@ updates:
           semver-major-days: 8
           semver-minor-days: 8
           semver-patch-days: 8
-    - package-ecosystem: "npm"
+    # "bun" (not "npm") so Dependabot updates bun.lock together with package.json.
+    - package-ecosystem: "bun"
       directory: "/"
       schedule:
           interval: "weekly"
@@ -18,6 +19,22 @@ updates:
           semver-major-days: 8
           semver-minor-days: 8
           semver-patch-days: 8
+      groups:
+          # react and react-dom must always resolve to the same version.
+          react:
+              patterns: ["react", "react-dom"]
+      ignore:
+          # CMS/Docker copy node_modules/codemirror/lib/codemirror.css (5.x only).
+          - dependency-name: "codemirror"
+            update-types: ["version-update:semver-major"]
+          # npm package must match its gem exactly (shakapacker ensure_consistent_versioning,
+          # cable_ready / stimulus_reflex sanity checks). Bump the gem via the bundler PR, then
+          # the npm pin by hand.
+          - dependency-name: "shakapacker"
+          - dependency-name: "react-on-rails"
+          - dependency-name: "cable_ready"
+          - dependency-name: "stimulus_reflex"
+          - dependency-name: "vite-plugin-ruby"
     - package-ecosystem: "docker"
       directory: "/"
       schedule:
