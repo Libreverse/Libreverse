@@ -29,540 +29,540 @@ on:
     workflow_dispatch:
 
 jobs:
-  gates:
-    name: Dependency gates
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
+    gates:
+        name: Dependency gates
+        runs-on: ubuntu-22.04
+        permissions:
+            contents: read
+            pull-requests: read
+        steps:
+            - name: Check out code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
 
-      - name: Resolve base ref
-        id: base
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}" --depth=1
-            echo "ref=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
-          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            echo "ref=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "ref=HEAD~1" >> "$GITHUB_OUTPUT"
-          fi
+            - name: Resolve base ref
+              id: base
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    git fetch origin "${{ github.base_ref }}" --depth=1
+                    echo "ref=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+                  elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+                    echo "ref=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "ref=HEAD~1" >> "$GITHUB_OUTPUT"
+                  fi
 
-      - name: Setup Bun (gates only)
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version-file: .bun-version
+            - name: Setup Bun (gates only)
+              uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              with:
+                  bun-version-file: .bun-version
 
-      - name: Setup Ruby (gates only)
-        uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 # v1.328.0
-        with:
-          bundler-cache: false
+            - name: Setup Ruby (gates only)
+              uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 # v1.328.0
+              with:
+                  bundler-cache: false
 
-      - name: Delta age gate (npm)
-        if: github.event_name == 'pull_request'
+            - name: Delta age gate (npm)
+              if: github.event_name == 'pull_request'
+              env:
+                  BASE_REF: ${{ steps.base.outputs.ref }}
+              run: bun scripts/bun-age-gate-delta.mjs
+
+            - name: Delta age gate (gems)
+              if: github.event_name == 'pull_request'
+              env:
+                  BASE_REF: ${{ steps.base.outputs.ref }}
+              run: ruby scripts/gem-age-gate-delta.rb
+
+            - name: Semver classify (Dependabot)
+              if: github.actor == 'dependabot[bot]'
+              id: semver
+              env:
+                  PR_TITLE: ${{ github.event.pull_request.title || '' }}
+              run: bun scripts/dependabot-semver-classify.mjs
+
+            - name: Major bump age gate (14 days)
+              if: steps.semver.outputs.bump_type == 'major'
+              env:
+                  BASE_REF: ${{ steps.base.outputs.ref }}
+                  MIN_AGE_DAYS: "14"
+              run: |
+                  bun scripts/bun-age-gate-delta.mjs
+                  ruby scripts/gem-age-gate-delta.rb
+
+            - name: Setup Python for Socket CLI
+              if: github.event_name == 'pull_request'
+              uses: actions/setup-python@v7
+              with:
+                  python-version: "3.12"
+
+            - name: Socket PR delta scan
+              if: github.event_name == 'pull_request'
+              env:
+                  SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+                  SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+                  GH_API_TOKEN: ${{ github.token }}
+              run: |
+                  set -euo pipefail
+                  if [ -z "${SOCKET_API_KEY:-}" ]; then
+                    echo "::warning::SOCKET_API_KEY not set — PR delta scan skipped."
+                    exit 0
+                  fi
+                  pip install socketsecurity --upgrade
+                  PR_NUMBER="${{ github.event.pull_request.number }}"
+                  for attempt in 1 2 3; do
+                    if socketcli --target-path "$GITHUB_WORKSPACE" --scm github --pr-number "$PR_NUMBER" \
+                      --sarif-file socket-results.sarif --config .socketcli.toml; then
+                      break
+                    fi
+                    if [ "$attempt" -eq 3 ]; then exit 1; fi
+                    echo "Socket CLI attempt $attempt failed; retrying..."
+                    sleep 20
+                  done
+                  bun scripts/socket-policy-filter.mjs socket-results.sarif
+
+            - name: Snyk Open Source (PR)
+              if: github.event_name == 'pull_request'
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+                  SNYK_ORG: ${{ secrets.SNYK_ORG }}
+              run: |
+                  set -euo pipefail
+                  if [ -z "${SNYK_TOKEN:-}" ]; then
+                    echo "::warning::SNYK_TOKEN not set — skipping Snyk"
+                    exit 0
+                  fi
+                  curl -fsSL https://static.snyk.io/cli/latest/snyk-linux -o snyk
+                  chmod +x snyk
+                  sudo mv snyk /usr/local/bin/snyk
+                  snyk auth "$SNYK_TOKEN"
+                  args=(test --all-projects --severity-threshold=high)
+                  if [ -n "${SNYK_ORG:-}" ]; then
+                    args+=(--org="$SNYK_ORG")
+                  fi
+                  snyk "${args[@]}"
+
+    install:
+        name: Install dependencies
+        needs: gates
+        runs-on: ubuntu-22.04
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - uses: ./.github/actions/setup-environment
+              with:
+                  skip-install: "false"
+                  use-socket-firewall: "false"
+
+            - name: Save bundle cache
+              uses: actions/cache/save@v6
+              with:
+                  path: vendor/bundle
+                  key: deps-${{ runner.os }}-bundle-${{ hashFiles('Gemfile.lock') }}
+
+            - name: Save JS cache
+              uses: actions/cache/save@v6
+              with:
+                  path: |
+                      node_modules
+                      ~/.bun
+                  key: deps-${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+
+            - name: Upload node_modules for downstream jobs
+              uses: actions/upload-artifact@v7
+              with:
+                  name: ci-deps-${{ github.run_id }}
+                  path: node_modules
+                  if-no-files-found: error
+                  retention-days: 1
+
+    # Formatters are non-security; skip when RUN_NON_SECURITY_CHECKS is not true.
+    formatting:
+        needs: install
+        name: ${{ matrix.tool }}
+        runs-on: ubuntu-22.04
+        if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: false
+            matrix:
+                tool:
+                    [
+                        prettier,
+                        rubocop,
+                        haml-lint,
+                        erb-format,
+                        perltidy,
+                        shfmt,
+                        eslint,
+                        stylelint,
+                        markdownlint,
+                    ]
+        steps:
+            - name: Check out code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Restore dependencies
+              uses: ./.github/actions/restore-dependencies
+
+            - name: Run Prettier
+              if: matrix.tool == 'prettier'
+              shell: bash
+              run: |
+                  set -e
+                  timeout 60s bunx prettier --write \
+                    app config lib spec test documentation scripts plugins public .github \
+                    --ignore-path .prettierignore --log-level warn || {
+                    echo "Prettier failed or timed out, but continuing..."
+                    exit 0
+                  }
+
+            - name: Run Rubocop
+              if: matrix.tool == 'rubocop'
+              shell: bash
+              run: >-
+                  bundle exec rubocop -A --force-exclusion
+                  app bin config db lib plugins scripts spec test vendor/gems
+                  Gemfile Rakefile
+
+            - name: Run haml-lint
+              if: matrix.tool == 'haml-lint'
+              shell: bash
+              run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
+
+            - name: Run ERB Formatter
+              if: matrix.tool == 'erb-format'
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  find app -type f -name '*.erb' \
+                    -not -path 'app/views/layouts/mailer.html.erb' -print0 \
+                    | xargs -0 -r bundle exec erb-format --write
+
+            - name: Run perltidy
+              if: matrix.tool == 'perltidy'
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if ! command -v perltidy >/dev/null 2>&1; then
+                    sudo apt-get update -y >/dev/null 2>&1 || true
+                    sudo apt-get install -y perltidy >/dev/null 2>&1 || { echo "perltidy apt install failed"; exit 0; }
+                  fi
+                  find scripts -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) -print0 \
+                    | xargs -0 -r perltidy -pro=.perltidyrc -b || true
+                  find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true
+
+            - name: Run shfmt
+              if: matrix.tool == 'shfmt'
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  if ! command -v shfmt >/dev/null 2>&1; then
+                    sudo bash -lc "curl -sSL https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.7.0_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt" || true
+                  fi
+                  find docker scripts plugins -type f -name '*.sh' -print0 \
+                    | xargs -0 -r shfmt -w || true
+
+            - name: Run ESLint
+              if: matrix.tool == 'eslint'
+              shell: bash
+              run: bunx eslint app/javascript test/javascript --fix
+
+            - name: Run Stylelint
+              if: matrix.tool == 'stylelint'
+              shell: bash
+              run: bunx stylelint 'app/stylesheets/**/*.scss' --fix
+
+            - name: Run markdownlint
+              if: matrix.tool == 'markdownlint'
+              shell: bash
+              run: bunx markdownlint-cli2 --config .markdownlint-cli2.jsonc
+
+    validation:
+        needs: install
+        name: ${{ matrix.tool }}
+        runs-on: ubuntu-22.04
+        if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: false
+            matrix:
+                tool: [i18n-validation, erb-lint, hadolint]
+        steps:
+            - name: Check out code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Restore dependencies
+              uses: ./.github/actions/restore-dependencies
+
+            - name: Run i18n validation
+              if: matrix.tool == 'i18n-validation'
+              shell: bash
+              run: ruby scripts/i18n_validate.rb
+
+            - name: Run ERB Lint
+              if: matrix.tool == 'erb-lint'
+              shell: bash
+              run: bundle exec erblint --config .erb-lint.yml app/views
+
+            - name: Run Hadolint
+              if: matrix.tool == 'hadolint'
+              uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+              with:
+                  dockerfile: Dockerfile
+                  failure-threshold: error
+
+    # SAST only here. Dependency CVEs / supply-chain live in `gates` (Snyk + Socket).
+    security-analysis:
+        needs: install
+        name: ${{ matrix.tool }}
+        runs-on: ubuntu-22.04
+        if: always() && needs.install.result == 'success'
+        permissions:
+            contents: read
+            security-events: write
+        strategy:
+            fail-fast: false
+            matrix:
+                tool: [brakeman]
+        steps:
+            - name: Check out code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Restore dependencies
+              uses: ./.github/actions/restore-dependencies
+
+            - name: Run Security Analysis
+              uses: ./.github/actions/security-analysis
+              with:
+                  tool: ${{ matrix.tool }}
+
+    code-quality:
+        needs: install
+        name: ${{ matrix.tool }}
+        runs-on: ubuntu-22.04
+        if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: false
+            matrix:
+                tool: [fasterer, coffeelint, typos]
+        steps:
+            - name: Check out code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Restore dependencies
+              uses: ./.github/actions/restore-dependencies
+
+            - name: Run Code Quality Analysis
+              uses: ./.github/actions/code-quality
+              with:
+                  tool: ${{ matrix.tool }}
+
+    testing:
+        needs: install
+        if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
+        name: ${{ matrix.test-suite }}
+        runs-on: ubuntu-22.04
+        permissions:
+            contents: read
         env:
-          BASE_REF: ${{ steps.base.outputs.ref }}
-        run: bun scripts/bun-age-gate-delta.mjs
+            TIDB_HOST: ${{ secrets.TIDB_HOST }}
+            TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
+            TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
+            TIDB_TEST_SSL_MODE: VERIFY_IDENTITY
+        strategy:
+            fail-fast: false
+            matrix:
+                # Omit rails-test while TiDB Serverless is paused (set TIDB_INSTANCE_AVAILABLE=true when back).
+                test-suite: ${{ vars.TIDB_INSTANCE_AVAILABLE == 'true' && fromJSON('["jest","rails-test"]') || fromJSON('["jest"]') }}
+        steps:
+            - name: Check out code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Delta age gate (gems)
-        if: github.event_name == 'pull_request'
-        env:
-          BASE_REF: ${{ steps.base.outputs.ref }}
-        run: ruby scripts/gem-age-gate-delta.rb
+            - name: Restore dependencies
+              uses: ./.github/actions/restore-dependencies
 
-      - name: Semver classify (Dependabot)
-        if: github.actor == 'dependabot[bot]'
-        id: semver
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title || '' }}
-        run: bun scripts/dependabot-semver-classify.mjs
+            - name: Run Tests
+              uses: ./.github/actions/run-tests
+              with:
+                  test-suite: ${{ matrix.test-suite }}
 
-      - name: Major bump age gate (14 days)
-        if: steps.semver.outputs.bump_type == 'major'
-        env:
-          BASE_REF: ${{ steps.base.outputs.ref }}
-          MIN_AGE_DAYS: "14"
-        run: |
-          bun scripts/bun-age-gate-delta.mjs
-          ruby scripts/gem-age-gate-delta.rb
+    verify:
+        name: Verify (aggregate)
+        needs:
+            - gates
+            - install
+            - formatting
+            - validation
+            - security-analysis
+            - code-quality
+            - testing
+        if: always()
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Require upstream jobs
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  require_success() {
+                    local name="$1" result="$2"
+                    if [ "$result" != "success" ]; then
+                      echo "::error::Required job $name finished with $result"
+                      exit 1
+                    fi
+                  }
+                  require_success gates "${{ needs.gates.result }}"
+                  require_success install "${{ needs.install.result }}"
+                  require_success security-analysis "${{ needs.security-analysis.result }}"
 
-      - name: Setup Python for Socket CLI
-        if: github.event_name == 'pull_request'
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
+                  # Non-security jobs only when RUN_NON_SECURITY_CHECKS is enabled.
+                  # Skipped jobs report as "skipped" and must not fail verify.
+                  if [ "${{ vars.RUN_NON_SECURITY_CHECKS }}" == "true" ]; then
+                    for name in formatting validation code-quality testing; do
+                      result="${{ needs.formatting.result }}"
+                      case "$name" in
+                        validation) result="${{ needs.validation.result }}" ;;
+                        code-quality) result="${{ needs.code-quality.result }}" ;;
+                        testing) result="${{ needs.testing.result }}" ;;
+                      esac
+                      if [ "$result" = "failure" ] || [ "$result" = "cancelled" ]; then
+                        echo "::error::Job $name finished with $result"
+                        exit 1
+                      fi
+                    done
+                  else
+                    echo "Security-only mode: formatters/validation/code-quality/tests not required."
+                  fi
+                  echo "All verify jobs passed."
 
-      - name: Socket PR delta scan
-        if: github.event_name == 'pull_request'
-        env:
-          SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
-          SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_API_KEY }}
-          GH_API_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          if [ -z "${SOCKET_API_KEY:-}" ]; then
-            echo "::warning::SOCKET_API_KEY not set — PR delta scan skipped."
-            exit 0
-          fi
-          pip install socketsecurity --upgrade
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          for attempt in 1 2 3; do
-            if socketcli --target-path "$GITHUB_WORKSPACE" --scm github --pr-number "$PR_NUMBER" \
-              --sarif-file socket-results.sarif --config .socketcli.toml; then
-              break
-            fi
-            if [ "$attempt" -eq 3 ]; then exit 1; fi
-            echo "Socket CLI attempt $attempt failed; retrying..."
-            sleep 20
-          done
-          bun scripts/socket-policy-filter.mjs socket-results.sarif
+    # Runs on main in both full and reduced CI once verify (security gates) passes.
+    # Skipped while TiDB Serverless is shut down (free tier cap). Set TIDB_INSTANCE_AVAILABLE=true to resume.
+    build-push:
+        name: Build & Deploy
+        needs: verify
+        runs-on: ubuntu-22.04
+        permissions:
+            contents: write
+            packages: write
+        if: vars.TIDB_INSTANCE_AVAILABLE == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !contains(github.event.head_commit.message, 'chore(autofix)')
 
-      - name: Snyk Open Source (PR)
-        if: github.event_name == 'pull_request'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          SNYK_ORG: ${{ secrets.SNYK_ORG }}
-        run: |
-          set -euo pipefail
-          if [ -z "${SNYK_TOKEN:-}" ]; then
-            echo "::warning::SNYK_TOKEN not set — skipping Snyk"
-            exit 0
-          fi
-          curl -fsSL https://static.snyk.io/cli/latest/snyk-linux -o snyk
-          chmod +x snyk
-          sudo mv snyk /usr/local/bin/snyk
-          snyk auth "$SNYK_TOKEN"
-          args=(test --all-projects --severity-threshold=high)
-          if [ -n "${SNYK_ORG:-}" ]; then
-            args+=(--org="$SNYK_ORG")
-          fi
-          snyk "${args[@]}"
+        steps:
+            # Created before checkout so the auto-revert push below can bypass the main ruleset.
+            - uses: actions/create-github-app-token@v3
+              id: rollback-token
+              with:
+                  app-id: ${{ secrets.APP_ID }}
+                  private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-  install:
-    name: Install dependencies
-    needs: gates
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - name: Check out code
+              uses: actions/checkout@v7
+              with:
+                  # Depth 2: with a depth-1 clone `git revert HEAD` sees a root commit and deletes the whole tree.
+                  fetch-depth: 2
+                  token: ${{ steps.rollback-token.outputs.token }}
 
-      - uses: ./.github/actions/setup-environment
-        with:
-          skip-install: "false"
-          use-socket-firewall: "false"
+            - name: Log in to Quay
+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+              with:
+                  registry: quay.io
+                  username: ${{ secrets.QUAY_USERNAME }}
+                  password: ${{ secrets.QUAY_PASSWORD }}
 
-      - name: Save bundle cache
-        uses: actions/cache/save@v6
-        with:
-          path: vendor/bundle
-          key: deps-${{ runner.os }}-bundle-${{ hashFiles('Gemfile.lock') }}
+            - name: Build Docker image
+              env:
+                  DOCKER_BUILDKIT: "1"
+                  TIDB_HOST: ${{ secrets.TIDB_HOST }}
+                  TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
+                  TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
+                  B2_ASSETS_KEY_ID: ${{ secrets.B2_ASSETS_KEY_ID }}
+                  B2_ASSETS_SECRET: ${{ secrets.B2_ASSETS_SECRET }}
+              run: |
+                  docker build \
+                    --secret id=tidb_host,env=TIDB_HOST \
+                    --secret id=tidb_username,env=TIDB_USERNAME \
+                    --secret id=tidb_password,env=TIDB_PASSWORD \
+                    --secret id=b2_key_id,env=B2_ASSETS_KEY_ID \
+                    --secret id=b2_secret,env=B2_ASSETS_SECRET \
+                    -t quay.io/georgebaskervil/libreverse:legacy .
 
-      - name: Save JS cache
-        uses: actions/cache/save@v6
-        with:
-          path: |
-            node_modules
-            ~/.bun
-          key: deps-${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+            - name: Snyk container test
+              continue-on-error: true
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+                  SNYK_ORG: ${{ secrets.SNYK_ORG }}
+              run: |
+                  set -euo pipefail
+                  if [ -z "${SNYK_TOKEN:-}" ]; then
+                    echo "::warning::SNYK_TOKEN not set — skipping container scan"
+                    exit 0
+                  fi
+                  curl -fsSL https://static.snyk.io/cli/latest/snyk-linux -o snyk
+                  chmod +x snyk
+                  sudo mv snyk /usr/local/bin/snyk
+                  snyk auth "$SNYK_TOKEN"
+                  args=(container test quay.io/georgebaskervil/libreverse:legacy --severity-threshold=high)
+                  if [ -n "${SNYK_ORG:-}" ]; then
+                    args+=(--org="$SNYK_ORG")
+                  fi
+                  snyk "${args[@]}"
 
-      - name: Upload node_modules for downstream jobs
-        uses: actions/upload-artifact@v7
-        with:
-          name: ci-deps-${{ github.run_id }}
-          path: node_modules
-          if-no-files-found: error
-          retention-days: 1
+            - name: Push to Quay.io
+              run: docker push quay.io/georgebaskervil/libreverse:legacy
 
-  # Formatters are non-security; skip when RUN_NON_SECURITY_CHECKS is not true.
-  formatting:
-    needs: install
-    name: ${{ matrix.tool }}
-    runs-on: ubuntu-22.04
-    if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        tool:
-          [
-            prettier,
-            rubocop,
-            haml-lint,
-            erb-format,
-            perltidy,
-            shfmt,
-            eslint,
-            stylelint,
-            markdownlint,
-          ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - name: Trigger Coolify Redeploy
+              id: deploy
+              run: |
+                  curl -fsS -X GET "https://c.geor.me/api/v1/deploy?uuid=${{ secrets.COOLIFY_DEPLOY_UUID }}&force=false" \
+                    -H "Content-Type: application/json" \
+                    -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
 
-      - name: Restore dependencies
-        uses: ./.github/actions/restore-dependencies
+            - name: Wait for deploy
+              run: sleep 90
 
-      - name: Run Prettier
-        if: matrix.tool == 'prettier'
-        shell: bash
-        run: |
-          set -e
-          timeout 60s bunx prettier --write \
-            app config lib spec test documentation scripts plugins public .github \
-            --ignore-path .prettierignore --log-level warn || {
-            echo "Prettier failed or timed out, but continuing..."
-            exit 0
-          }
+            - name: Bypass Cloudflare for health check
+              uses: ./.github/actions/bypass-cloudflare
+              with:
+                  cf_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+                  cf_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Run Rubocop
-        if: matrix.tool == 'rubocop'
-        shell: bash
-        run: >-
-          bundle exec rubocop -A --force-exclusion
-          app bin config db lib plugins scripts spec test vendor/gems
-          Gemfile Rakefile
+            - name: Smoke check /up
+              id: smoke
+              env:
+                  DEPLOY_HEALTH_URL: ${{ vars.DEPLOY_HEALTH_URL }}
+              run: |
+                  set -euo pipefail
+                  URL="${DEPLOY_HEALTH_URL:-https://libreverse-legacy.geor.me/up}"
+                  for i in 1 2 3; do
+                    if curl -fsS --max-time 30 "$URL" >/dev/null; then
+                      echo "Health check passed: $URL"
+                      exit 0
+                    fi
+                    echo "Attempt $i failed; retrying..."
+                    sleep 30
+                  done
+                  echo "::error::Smoke check failed for $URL"
+                  exit 1
 
-      - name: Run haml-lint
-        if: matrix.tool == 'haml-lint'
-        shell: bash
-        run: bundle exec haml-lint --auto-correct app/ config/ lib/ --exclude 'vendor/**/*' --exclude '.codeql/**/*'
-
-      - name: Run ERB Formatter
-        if: matrix.tool == 'erb-format'
-        shell: bash
-        run: |
-          set -euo pipefail
-          find app -type f -name '*.erb' \
-            -not -path 'app/views/layouts/mailer.html.erb' -print0 \
-            | xargs -0 -r bundle exec erb-format --write
-
-      - name: Run perltidy
-        if: matrix.tool == 'perltidy'
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! command -v perltidy >/dev/null 2>&1; then
-            sudo apt-get update -y >/dev/null 2>&1 || true
-            sudo apt-get install -y perltidy >/dev/null 2>&1 || { echo "perltidy apt install failed"; exit 0; }
-          fi
-          find scripts -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.psgi' \) -print0 \
-            | xargs -0 -r perltidy -pro=.perltidyrc -b || true
-          find . -type f \( -name '*.pl.bak' -o -name '*.pm.bak' -o -name '*.t.bak' -o -name '*.psgi.bak' \) -delete 2>/dev/null || true
-
-      - name: Run shfmt
-        if: matrix.tool == 'shfmt'
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! command -v shfmt >/dev/null 2>&1; then
-            sudo bash -lc "curl -sSL https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.7.0_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt" || true
-          fi
-          find docker scripts plugins -type f -name '*.sh' -print0 \
-            | xargs -0 -r shfmt -w || true
-
-      - name: Run ESLint
-        if: matrix.tool == 'eslint'
-        shell: bash
-        run: bunx eslint app/javascript test/javascript --fix
-
-      - name: Run Stylelint
-        if: matrix.tool == 'stylelint'
-        shell: bash
-        run: bunx stylelint 'app/stylesheets/**/*.scss' --fix
-
-      - name: Run markdownlint
-        if: matrix.tool == 'markdownlint'
-        shell: bash
-        run: bunx markdownlint-cli2 --config .markdownlint-cli2.jsonc
-
-  validation:
-    needs: install
-    name: ${{ matrix.tool }}
-    runs-on: ubuntu-22.04
-    if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        tool: [i18n-validation, erb-lint, hadolint]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Restore dependencies
-        uses: ./.github/actions/restore-dependencies
-
-      - name: Run i18n validation
-        if: matrix.tool == 'i18n-validation'
-        shell: bash
-        run: ruby scripts/i18n_validate.rb
-
-      - name: Run ERB Lint
-        if: matrix.tool == 'erb-lint'
-        shell: bash
-        run: bundle exec erblint --config .erb-lint.yml app/views
-
-      - name: Run Hadolint
-        if: matrix.tool == 'hadolint'
-        uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
-        with:
-          dockerfile: Dockerfile
-          failure-threshold: error
-
-  # SAST only here. Dependency CVEs / supply-chain live in `gates` (Snyk + Socket).
-  security-analysis:
-    needs: install
-    name: ${{ matrix.tool }}
-    runs-on: ubuntu-22.04
-    if: always() && needs.install.result == 'success'
-    permissions:
-      contents: read
-      security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        tool: [brakeman]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Restore dependencies
-        uses: ./.github/actions/restore-dependencies
-
-      - name: Run Security Analysis
-        uses: ./.github/actions/security-analysis
-        with:
-          tool: ${{ matrix.tool }}
-
-  code-quality:
-    needs: install
-    name: ${{ matrix.tool }}
-    runs-on: ubuntu-22.04
-    if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        tool: [fasterer, coffeelint, typos]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Restore dependencies
-        uses: ./.github/actions/restore-dependencies
-
-      - name: Run Code Quality Analysis
-        uses: ./.github/actions/code-quality
-        with:
-          tool: ${{ matrix.tool }}
-
-  testing:
-    needs: install
-    if: vars.RUN_NON_SECURITY_CHECKS == 'true' && always() && needs.install.result == 'success'
-    name: ${{ matrix.test-suite }}
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-    env:
-      TIDB_HOST: ${{ secrets.TIDB_HOST }}
-      TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
-      TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
-      TIDB_TEST_SSL_MODE: VERIFY_IDENTITY
-    strategy:
-      fail-fast: false
-      matrix:
-        # Omit rails-test while TiDB Serverless is paused (set TIDB_INSTANCE_AVAILABLE=true when back).
-        test-suite: ${{ vars.TIDB_INSTANCE_AVAILABLE == 'true' && fromJSON('["jest","rails-test"]') || fromJSON('["jest"]') }}
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Restore dependencies
-        uses: ./.github/actions/restore-dependencies
-
-      - name: Run Tests
-        uses: ./.github/actions/run-tests
-        with:
-          test-suite: ${{ matrix.test-suite }}
-
-  verify:
-    name: Verify (aggregate)
-    needs:
-      - gates
-      - install
-      - formatting
-      - validation
-      - security-analysis
-      - code-quality
-      - testing
-    if: always()
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Require upstream jobs
-        shell: bash
-        run: |
-          set -euo pipefail
-          require_success() {
-            local name="$1" result="$2"
-            if [ "$result" != "success" ]; then
-              echo "::error::Required job $name finished with $result"
-              exit 1
-            fi
-          }
-          require_success gates "${{ needs.gates.result }}"
-          require_success install "${{ needs.install.result }}"
-          require_success security-analysis "${{ needs.security-analysis.result }}"
-
-          # Non-security jobs only when RUN_NON_SECURITY_CHECKS is enabled.
-          # Skipped jobs report as "skipped" and must not fail verify.
-          if [ "${{ vars.RUN_NON_SECURITY_CHECKS }}" == "true" ]; then
-            for name in formatting validation code-quality testing; do
-              result="${{ needs.formatting.result }}"
-              case "$name" in
-                validation) result="${{ needs.validation.result }}" ;;
-                code-quality) result="${{ needs.code-quality.result }}" ;;
-                testing) result="${{ needs.testing.result }}" ;;
-              esac
-              if [ "$result" = "failure" ] || [ "$result" = "cancelled" ]; then
-                echo "::error::Job $name finished with $result"
-                exit 1
-              fi
-            done
-          else
-            echo "Security-only mode: formatters/validation/code-quality/tests not required."
-          fi
-          echo "All verify jobs passed."
-
-  # Runs on main in both full and reduced CI once verify (security gates) passes.
-  # Skipped while TiDB Serverless is shut down (free tier cap). Set TIDB_INSTANCE_AVAILABLE=true to resume.
-  build-push:
-    name: Build & Deploy
-    needs: verify
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-      packages: write
-    if: vars.TIDB_INSTANCE_AVAILABLE == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !contains(github.event.head_commit.message, 'chore(autofix)')
-
-    steps:
-      # Created before checkout so the auto-revert push below can bypass the main ruleset.
-      - uses: actions/create-github-app-token@v3
-        id: rollback-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Check out code
-        uses: actions/checkout@v7
-        with:
-          # Depth 2: with a depth-1 clone `git revert HEAD` sees a root commit and deletes the whole tree.
-          fetch-depth: 2
-          token: ${{ steps.rollback-token.outputs.token }}
-
-      - name: Log in to Quay
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
-
-      - name: Build Docker image
-        env:
-          DOCKER_BUILDKIT: "1"
-          TIDB_HOST: ${{ secrets.TIDB_HOST }}
-          TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
-          TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
-          B2_ASSETS_KEY_ID: ${{ secrets.B2_ASSETS_KEY_ID }}
-          B2_ASSETS_SECRET: ${{ secrets.B2_ASSETS_SECRET }}
-        run: |
-          docker build \
-            --secret id=tidb_host,env=TIDB_HOST \
-            --secret id=tidb_username,env=TIDB_USERNAME \
-            --secret id=tidb_password,env=TIDB_PASSWORD \
-            --secret id=b2_key_id,env=B2_ASSETS_KEY_ID \
-            --secret id=b2_secret,env=B2_ASSETS_SECRET \
-            -t quay.io/georgebaskervil/libreverse:legacy .
-
-      - name: Snyk container test
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          SNYK_ORG: ${{ secrets.SNYK_ORG }}
-        run: |
-          set -euo pipefail
-          if [ -z "${SNYK_TOKEN:-}" ]; then
-            echo "::warning::SNYK_TOKEN not set — skipping container scan"
-            exit 0
-          fi
-          curl -fsSL https://static.snyk.io/cli/latest/snyk-linux -o snyk
-          chmod +x snyk
-          sudo mv snyk /usr/local/bin/snyk
-          snyk auth "$SNYK_TOKEN"
-          args=(container test quay.io/georgebaskervil/libreverse:legacy --severity-threshold=high)
-          if [ -n "${SNYK_ORG:-}" ]; then
-            args+=(--org="$SNYK_ORG")
-          fi
-          snyk "${args[@]}"
-
-      - name: Push to Quay.io
-        run: docker push quay.io/georgebaskervil/libreverse:legacy
-
-      - name: Trigger Coolify Redeploy
-        id: deploy
-        run: |
-          curl -fsS -X GET "https://c.geor.me/api/v1/deploy?uuid=${{ secrets.COOLIFY_DEPLOY_UUID }}&force=false" \
-            -H "Content-Type: application/json" \
-            -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
-
-      - name: Wait for deploy
-        run: sleep 90
-
-      - name: Bypass Cloudflare for health check
-        uses: ./.github/actions/bypass-cloudflare
-        with:
-          cf_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-          cf_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Smoke check /up
-        id: smoke
-        env:
-          DEPLOY_HEALTH_URL: ${{ vars.DEPLOY_HEALTH_URL }}
-        run: |
-          set -euo pipefail
-          URL="${DEPLOY_HEALTH_URL:-https://libreverse-legacy.geor.me/up}"
-          for i in 1 2 3; do
-            if curl -fsS --max-time 30 "$URL" >/dev/null; then
-              echo "Health check passed: $URL"
-              exit 0
-            fi
-            echo "Attempt $i failed; retrying..."
-            sleep 30
-          done
-          echo "::error::Smoke check failed for $URL"
-          exit 1
-
-      - name: Auto-revert failed deploy
-        # Never revert a revert: that would re-land the commit that was just rolled back.
-        if: failure() && steps.smoke.outcome == 'failure' && !startsWith(github.event.head_commit.message, 'Revert ')
-        env:
-          GH_TOKEN: ${{ steps.rollback-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git revert --no-edit HEAD
-          git push origin main
-          gh label create dependabot-paused --color B60205 2>/dev/null || true
-          curl -fsS -X GET "https://c.geor.me/api/v1/deploy?uuid=${{ secrets.COOLIFY_DEPLOY_UUID }}&force=false" \
-            -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
+            - name: Auto-revert failed deploy
+              # Never revert a revert: that would re-land the commit that was just rolled back.
+              if: failure() && steps.smoke.outcome == 'failure' && !startsWith(github.event.head_commit.message, 'Revert ')
+              env:
+                  GH_TOKEN: ${{ steps.rollback-token.outputs.token }}
+              run: |
+                  set -euo pipefail
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git revert --no-edit HEAD
+                  git push origin main
+                  gh label create dependabot-paused --color B60205 2>/dev/null || true
+                  curl -fsS -X GET "https://c.geor.me/api/v1/deploy?uuid=${{ secrets.COOLIFY_DEPLOY_UUID }}&force=false" \
+                    -H "authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"

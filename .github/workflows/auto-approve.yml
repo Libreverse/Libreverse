@@ -1,179 +1,179 @@
 name: Auto approve
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-  schedule:
-    - cron: "0 6 * * 1"
-  workflow_dispatch:
+    pull_request_target:
+        types: [opened, synchronize, reopened]
+    schedule:
+        - cron: "0 6 * * 1"
+    workflow_dispatch:
 
 # Set repository variable AUTODEP_MERGE_ENABLED=true to allow bot merge (patch/minor/actions).
 # Major merges require AUTODEP_MAJOR_MERGE_ENABLED=true and passing gates + verify.
 
 jobs:
-  auto-approve:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: read
-      checks: read
-    steps:
-      # Always check out the base branch (trusted), never the PR head.
-      # Classification uses event payload + gh pr diff (API), not untrusted workspace code.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: github.event_name == 'pull_request_target'
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          fetch-depth: 1
+    auto-approve:
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+            contents: read
+            checks: read
+        steps:
+            # Always check out the base branch (trusted), never the PR head.
+            # Classification uses event payload + gh pr diff (API), not untrusted workspace code.
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              if: github.event_name == 'pull_request_target'
+              with:
+                  ref: ${{ github.event.pull_request.base.sha }}
+                  fetch-depth: 1
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
-        with:
-          bun-version-file: .bun-version
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
+              with:
+                  bun-version-file: .bun-version
 
-      - uses: actions/create-github-app-token@v3
-        id: app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+            - uses: actions/create-github-app-token@v3
+              id: app-token
+              with:
+                  app-id: ${{ secrets.APP_ID }}
+                  private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: Classify Dependabot bump
-        if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
-        id: semver
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          GH_REPO: ${{ github.repository }}
-        run: bun scripts/dependabot-semver-classify.mjs
+            - name: Classify Dependabot bump
+              if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
+              id: semver
+              env:
+                  PR_TITLE: ${{ github.event.pull_request.title }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+                  GH_REPO: ${{ github.repository }}
+              run: bun scripts/dependabot-semver-classify.mjs
 
-      - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
-        if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
+            - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+              if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
+              with:
+                  github-token: ${{ steps.app-token.outputs.token }}
 
-      - name: Auto-merge Dependabot PR
-        if: |
-          github.event_name == 'pull_request_target' &&
-          github.actor == 'dependabot[bot]' &&
-          vars.AUTODEP_MERGE_ENABLED == 'true' &&
-          (
-            steps.semver.outputs.automerge_tier == 'auto' ||
-            (vars.AUTODEP_MAJOR_MERGE_ENABLED == 'true' && steps.semver.outputs.automerge_tier == 'major-conditional')
-          )
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          PR="${{ github.event.pull_request.number }}"
-          REPO="${{ github.repository }}"
-          REQUIRED_CHECKS=(
-            "Dependency gates"
-            "Install dependencies"
-            "Verify (aggregate)"
-          )
-          for attempt in $(seq 1 90); do
-            mapfile -t rows < <(gh pr checks "$PR" --repo "$REPO" --json name,state --jq '.[] | "\(.name)\t\(.state)"')
-            pending=0
-            failed=0
-            for required in "${REQUIRED_CHECKS[@]}"; do
-              state=$(printf '%s\n' "${rows[@]}" | awk -F'\t' -v n="$required" '$1==n {print $2; exit}')
-              if [ -z "$state" ]; then
-                pending=$((pending + 1))
-                continue
-              fi
-              case "$state" in
-                SUCCESS|SKIPPED|NEUTRAL) ;;
-                PENDING|IN_PROGRESS|QUEUED|WAITING) pending=$((pending + 1)) ;;
-                *)
-                  echo "::error::Required check '$required' is $state"
-                  exit 1
-                  ;;
-              esac
-            done
-            if [ "$pending" -eq 0 ]; then
-              echo "Required rolling checks passed."
-              break
-            fi
-            echo "Waiting for required checks ($pending pending)... attempt $attempt/90"
-            sleep 30
-          done
-          if [ "$pending" -ne 0 ]; then
-            echo "::error::Timed out waiting for required checks"
-            exit 1
-          fi
-          gh pr merge "$PR" --repo "$REPO" --rebase --delete-branch --auto
+            - name: Auto-merge Dependabot PR
+              if: |
+                  github.event_name == 'pull_request_target' &&
+                  github.actor == 'dependabot[bot]' &&
+                  vars.AUTODEP_MERGE_ENABLED == 'true' &&
+                  (
+                    steps.semver.outputs.automerge_tier == 'auto' ||
+                    (vars.AUTODEP_MAJOR_MERGE_ENABLED == 'true' && steps.semver.outputs.automerge_tier == 'major-conditional')
+                  )
+              env:
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+              run: |
+                  set -euo pipefail
+                  PR="${{ github.event.pull_request.number }}"
+                  REPO="${{ github.repository }}"
+                  REQUIRED_CHECKS=(
+                    "Dependency gates"
+                    "Install dependencies"
+                    "Verify (aggregate)"
+                  )
+                  for attempt in $(seq 1 90); do
+                    mapfile -t rows < <(gh pr checks "$PR" --repo "$REPO" --json name,state --jq '.[] | "\(.name)\t\(.state)"')
+                    pending=0
+                    failed=0
+                    for required in "${REQUIRED_CHECKS[@]}"; do
+                      state=$(printf '%s\n' "${rows[@]}" | awk -F'\t' -v n="$required" '$1==n {print $2; exit}')
+                      if [ -z "$state" ]; then
+                        pending=$((pending + 1))
+                        continue
+                      fi
+                      case "$state" in
+                        SUCCESS|SKIPPED|NEUTRAL) ;;
+                        PENDING|IN_PROGRESS|QUEUED|WAITING) pending=$((pending + 1)) ;;
+                        *)
+                          echo "::error::Required check '$required' is $state"
+                          exit 1
+                          ;;
+                      esac
+                    done
+                    if [ "$pending" -eq 0 ]; then
+                      echo "Required rolling checks passed."
+                      break
+                    fi
+                    echo "Waiting for required checks ($pending pending)... attempt $attempt/90"
+                    sleep 30
+                  done
+                  if [ "$pending" -ne 0 ]; then
+                    echo "::error::Timed out waiting for required checks"
+                    exit 1
+                  fi
+                  gh pr merge "$PR" --repo "$REPO" --rebase --delete-branch --auto
 
-      # The weekly security-maintenance cloud routine opens security-maintenance/* PRs that should
-      # change only Gemfile.lock, bun.lock and dependency version strings in package.json. Approve
-      # those; refuse anything else and supersede any earlier approval (stale approvals are not
-      # dismissed on push). Content stays gated by Dependency gates / Snyk / Socket before merge.
-      - name: Approve security-maintenance PR (lockfile/version bumps only)
-        if: |
-          github.event_name == 'pull_request_target' &&
-          github.event.pull_request.base.ref == 'main' &&
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          startsWith(github.event.pull_request.head.ref, 'security-maintenance/')
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          GH_REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          set -euo pipefail
-          reject() {
-            echo "::error::$1"
-            gh pr review "$PR_NUMBER" --request-changes --body "Auto-approve refused: $1" || true
-            gh pr merge "$PR_NUMBER" --disable-auto || true
-            exit 1
-          }
-          # Fetch first so a gh failure aborts the step (set -e) instead of being swallowed by a pipeline.
-          files=$(gh pr diff "$PR_NUMBER" --name-only)
-          patch=$(gh pr diff "$PR_NUMBER")
-          while IFS= read -r f; do
-            case "$f" in
-              Gemfile.lock|bun.lock|package.json) ;;
-              *) reject "PR changes files other than Gemfile.lock, bun.lock and package.json" ;;
-            esac
-          done <<< "$files"
-          # Added lines must not introduce git/URL/path sources or a custom registry.
-          suspect=$(printf '%s\n' "$patch" | grep -E '^\+[^+]' | grep -E '(https?://|git\+|github:|file:|link:|workspace:|git@|remote:|revision:|npm:|jsr:)' || true)
-          if [ -n "$suspect" ]; then
-            reject "diff adds a URL, alias or non-registry source"
-          fi
-          # package.json: only dependency version strings may change (no scripts, overrides, added/removed keys).
-          norm='(.dependencies, .devDependencies) |= (if . == null then null else with_entries(.value = "v") end)'
-          gh api "repos/$GH_REPO/contents/package.json?ref=$HEAD_SHA" -H "Accept: application/vnd.github.raw" > "$RUNNER_TEMP/head-package.json"
-          if [ "$(jq -S "$norm" package.json)" != "$(jq -S "$norm" "$RUNNER_TEMP/head-package.json")" ]; then
-            reject "package.json changes more than dependency version strings"
-          fi
-          # ...and every changed value must be a plain version or range (no npm: aliases, tags, URLs).
-          badvals=$(jq -r -n --slurpfile b package.json --slurpfile h "$RUNNER_TEMP/head-package.json" '
-            [ ("dependencies", "devDependencies") as $s
-              | ($h[0][$s] // {}) | to_entries[]
-              | select(.value != $b[0][$s][.key])
-              | select(.value | test("^[~^]?[0-9]+(\\.[0-9]+){0,2}([-+][0-9A-Za-z.-]+)?$") | not)
-              | "\($s).\(.key)=\(.value)" ] | .[]')
-          if [ -n "$badvals" ]; then
-            reject "package.json value changed to something other than a plain version: $badvals"
-          fi
-          gh pr review "$PR_NUMBER" --approve --body "Lockfile/version-only security maintenance PR; remaining gates decide the merge."
+            # The weekly security-maintenance cloud routine opens security-maintenance/* PRs that should
+            # change only Gemfile.lock, bun.lock and dependency version strings in package.json. Approve
+            # those; refuse anything else and supersede any earlier approval (stale approvals are not
+            # dismissed on push). Content stays gated by Dependency gates / Snyk / Socket before merge.
+            - name: Approve security-maintenance PR (lockfile/version bumps only)
+              if: |
+                  github.event_name == 'pull_request_target' &&
+                  github.event.pull_request.base.ref == 'main' &&
+                  github.event.pull_request.head.repo.full_name == github.repository &&
+                  startsWith(github.event.pull_request.head.ref, 'security-maintenance/')
+              env:
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+                  GH_REPO: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+              run: |
+                  set -euo pipefail
+                  reject() {
+                    echo "::error::$1"
+                    gh pr review "$PR_NUMBER" --request-changes --body "Auto-approve refused: $1" || true
+                    gh pr merge "$PR_NUMBER" --disable-auto || true
+                    exit 1
+                  }
+                  # Fetch first so a gh failure aborts the step (set -e) instead of being swallowed by a pipeline.
+                  files=$(gh pr diff "$PR_NUMBER" --name-only)
+                  patch=$(gh pr diff "$PR_NUMBER")
+                  while IFS= read -r f; do
+                    case "$f" in
+                      Gemfile.lock|bun.lock|package.json) ;;
+                      *) reject "PR changes files other than Gemfile.lock, bun.lock and package.json" ;;
+                    esac
+                  done <<< "$files"
+                  # Added lines must not introduce git/URL/path sources or a custom registry.
+                  suspect=$(printf '%s\n' "$patch" | grep -E '^\+[^+]' | grep -E '(https?://|git\+|github:|file:|link:|workspace:|git@|remote:|revision:|npm:|jsr:)' || true)
+                  if [ -n "$suspect" ]; then
+                    reject "diff adds a URL, alias or non-registry source"
+                  fi
+                  # package.json: only dependency version strings may change (no scripts, overrides, added/removed keys).
+                  norm='(.dependencies, .devDependencies) |= (if . == null then null else with_entries(.value = "v") end)'
+                  gh api "repos/$GH_REPO/contents/package.json?ref=$HEAD_SHA" -H "Accept: application/vnd.github.raw" > "$RUNNER_TEMP/head-package.json"
+                  if [ "$(jq -S "$norm" package.json)" != "$(jq -S "$norm" "$RUNNER_TEMP/head-package.json")" ]; then
+                    reject "package.json changes more than dependency version strings"
+                  fi
+                  # ...and every changed value must be a plain version or range (no npm: aliases, tags, URLs).
+                  badvals=$(jq -r -n --slurpfile b package.json --slurpfile h "$RUNNER_TEMP/head-package.json" '
+                    [ ("dependencies", "devDependencies") as $s
+                      | ($h[0][$s] // {}) | to_entries[]
+                      | select(.value != $b[0][$s][.key])
+                      | select(.value | test("^[~^]?[0-9]+(\\.[0-9]+){0,2}([-+][0-9A-Za-z.-]+)?$") | not)
+                      | "\($s).\(.key)=\(.value)" ] | .[]')
+                  if [ -n "$badvals" ]; then
+                    reject "package.json value changed to something other than a plain version: $badvals"
+                  fi
+                  gh pr review "$PR_NUMBER" --approve --body "Lockfile/version-only security maintenance PR; remaining gates decide the merge."
 
-      - name: Bulk retry stale Dependabot PRs
-        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          REPO="${{ github.repository }}"
-          if [ "${{ vars.AUTODEP_MERGE_ENABLED }}" != "true" ]; then
-            echo "AUTODEP_MERGE_ENABLED is not true; approving only."
-          fi
-          prs=$(gh pr list --repo "$REPO" --author "dependabot[bot]" --state open --json number --jq '.[].number')
-          for pr in $prs; do
-            echo "Approving PR #$pr"
-            gh pr review --repo "$REPO" "$pr" --approve || true
-            if [ "${{ vars.AUTODEP_MERGE_ENABLED }}" = "true" ]; then
-              gh pr merge --repo "$REPO" "$pr" --rebase --delete-branch --auto || echo "Merge deferred for #$pr"
-            fi
-          done
+            - name: Bulk retry stale Dependabot PRs
+              if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+              env:
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+              run: |
+                  set -euo pipefail
+                  REPO="${{ github.repository }}"
+                  if [ "${{ vars.AUTODEP_MERGE_ENABLED }}" != "true" ]; then
+                    echo "AUTODEP_MERGE_ENABLED is not true; approving only."
+                  fi
+                  prs=$(gh pr list --repo "$REPO" --author "dependabot[bot]" --state open --json number --jq '.[].number')
+                  for pr in $prs; do
+                    echo "Approving PR #$pr"
+                    gh pr review --repo "$REPO" "$pr" --approve || true
+                    if [ "${{ vars.AUTODEP_MERGE_ENABLED }}" = "true" ]; then
+                      gh pr merge --repo "$REPO" "$pr" --rebase --delete-branch --auto || echo "Merge deferred for #$pr"
+                    fi
+                  done
