@@ -457,7 +457,7 @@ jobs:
         permissions:
             contents: write
             packages: write
-        if: vars.TIDB_INSTANCE_AVAILABLE == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !contains(github.event.head_commit.message, 'chore(autofix)')
+        if: vars.TIDB_INSTANCE_AVAILABLE == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor != 'github-actions[bot]' && github.event.head_commit != null && !startsWith(github.event.head_commit.message, 'chore(autofix)')
 
         steps:
             # Created before checkout so the auto-revert push below can bypass the main ruleset.
