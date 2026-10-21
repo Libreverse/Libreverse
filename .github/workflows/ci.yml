@@ -113,8 +113,12 @@ jobs:
                   fi
                   pip install socketsecurity --upgrade
                   PR_NUMBER="${{ github.event.pull_request.number }}"
+                  # This job's token is read-only (and Dependabot PR tokens always are), so the CLI must not
+                  # try to post its own PR comments: with findings it got 403 on issues/N/comments and the
+                  # gate crashed. The Socket GitHub App already comments; exit code and SARIF are unaffected.
                   for attempt in 1 2 3; do
                     if socketcli --target-path "$GITHUB_WORKSPACE" --scm github --pr-number "$PR_NUMBER" \
+                      --disable-overview --disable-security-issue \
                       --sarif-file socket-results.sarif --config .socketcli.toml; then
                       break
                     fi
