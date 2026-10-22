@@ -108,7 +108,7 @@
         "postcss-flexbugs-fixes": "^5.0.2",
         "postcss-inline-rtl": "^0.9.8",
         "postcss-preset-env": "^11.3.0",
-        "postcss-url": "^10.1.3",
+        "postcss-url": "^10.1.4",
         "prettier": "^3.6.2",
         "react-refresh": "^0.18.0",
         "rolldown": "^1.0.0-beta.9-commit.d91dfb5",
