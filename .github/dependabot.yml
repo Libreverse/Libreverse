@@ -44,6 +44,10 @@ updates:
           # CMS/Docker copy node_modules/codemirror/lib/codemirror.css (5.x only).
           - dependency-name: "codemirror"
             update-types: ["version-update:semver-major"]
+          # terser 5.51.2 crashes `vite build` on this codebase ("Cannot read properties of undefined
+          # (reading '$1')" in AST_Dot._eval); 5.39.0 builds. Re-test before lifting.
+          - dependency-name: "terser"
+            versions: [">= 5.40.0"]
           # npm package must match its gem exactly (shakapacker ensure_consistent_versioning,
           # cable_ready / stimulus_reflex sanity checks). Bump the gem via the bundler PR, then
           # the npm pin by hand.
