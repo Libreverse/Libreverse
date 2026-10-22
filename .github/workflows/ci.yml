@@ -486,6 +486,17 @@ jobs:
                   username: ${{ secrets.QUAY_USERNAME }}
                   password: ${{ secrets.QUAY_PASSWORD }}
 
+            # Hosted runners have ~14 GB free. This image (54 layers, gem bundle, node_modules, ~4k Vite
+            # assets) was killed with SIGTERM (exit 143) twice at `exporting layers`, 3 minutes in, and the
+            # runner skipped its own post steps: what a full disk looks like. Free the preinstalled
+            # toolchains first; df before/after is the evidence either way.
+            - name: Free runner disk space
+              run: |
+                  df -h /
+                  sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
+                  sudo docker image prune --all --force || true
+                  df -h /
+
             - name: Build Docker image
               env:
                   DOCKER_BUILDKIT: "1"
@@ -502,6 +513,14 @@ jobs:
                     --secret id=b2_key_id,env=B2_ASSETS_KEY_ID \
                     --secret id=b2_secret,env=B2_ASSETS_SECRET \
                     -t quay.io/georgebaskervil/libreverse:legacy .
+
+            - name: Docker build diagnostics
+              if: failure()
+              run: |
+                  df -h / || true
+                  free -m || true
+                  docker system df || true
+                  sudo dmesg | tail -n 40 || true
 
             - name: Snyk container test
               continue-on-error: true
