@@ -486,42 +486,36 @@ jobs:
                   username: ${{ secrets.QUAY_USERNAME }}
                   password: ${{ secrets.QUAY_PASSWORD }}
 
-            # Hosted runners have ~14 GB free. This image (54 layers, gem bundle, node_modules, ~4k Vite
-            # assets) was killed with SIGTERM (exit 143) twice at `exporting layers`, 3 minutes in, and the
-            # runner skipped its own post steps: what a full disk looks like. Free the preinstalled
-            # toolchains first; df before/after is the evidence either way.
-            - name: Free runner disk space
-              run: |
-                  df -h /
-                  sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
-                  sudo docker image prune --all --force || true
-                  df -h /
+            # Build with BuildKit in its own container and push straight to Quay. Exporting through
+            # `docker build` made dockerd grow from ~100 MB to ~14.7 GB within ~90 s of `exporting layers`
+            # on the 16 GB runner until the runner service shut down ("The runner has received a shutdown
+            # signal", exit 143/137; sampled in a diagnostic run, disk was never the issue: 86 GB free).
+            # The same 1.2 GB image exports in under 3.5 GB through the container driver.
+            # --provenance/--sbom=false keep the tag a plain single-platform manifest, as `docker push`
+            # made it (buildx otherwise pushes an OCI index with an extra attestation manifest).
+            - name: Set up BuildKit
+              run: docker buildx create --name deploy --driver docker-container --use
 
-            - name: Build Docker image
+            - name: Build and push Docker image
               env:
-                  DOCKER_BUILDKIT: "1"
                   TIDB_HOST: ${{ secrets.TIDB_HOST }}
                   TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
                   TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
                   B2_ASSETS_KEY_ID: ${{ secrets.B2_ASSETS_KEY_ID }}
                   B2_ASSETS_SECRET: ${{ secrets.B2_ASSETS_SECRET }}
               run: |
-                  docker build \
+                  docker buildx build \
                     --secret id=tidb_host,env=TIDB_HOST \
                     --secret id=tidb_username,env=TIDB_USERNAME \
                     --secret id=tidb_password,env=TIDB_PASSWORD \
                     --secret id=b2_key_id,env=B2_ASSETS_KEY_ID \
                     --secret id=b2_secret,env=B2_ASSETS_SECRET \
+                    --provenance=false \
+                    --sbom=false \
+                    --push \
                     -t quay.io/georgebaskervil/libreverse:legacy .
 
-            - name: Docker build diagnostics
-              if: failure()
-              run: |
-                  df -h / || true
-                  free -m || true
-                  docker system df || true
-                  sudo dmesg | tail -n 40 || true
-
+            # The image is already in Quay, so this scans the pushed image (non-blocking, as before).
             - name: Snyk container test
               continue-on-error: true
               env:
@@ -542,9 +536,6 @@ jobs:
                     args+=(--org="$SNYK_ORG")
                   fi
                   snyk "${args[@]}"
-
-            - name: Push to Quay.io
-              run: docker push quay.io/georgebaskervil/libreverse:legacy
 
             - name: Trigger Coolify Redeploy
               id: deploy
