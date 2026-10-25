@@ -491,6 +491,8 @@ jobs:
             # on the 16 GB runner until the runner service shut down ("The runner has received a shutdown
             # signal", exit 143/137; sampled in a diagnostic run, disk was never the issue: 86 GB free).
             # The same 1.2 GB image exports in under 3.5 GB through the container driver.
+            # --provenance/--sbom=false keep the tag a plain single-platform manifest, as `docker push`
+            # made it (buildx otherwise pushes an OCI index with an extra attestation manifest).
             - name: Set up BuildKit
               run: docker buildx create --name deploy --driver docker-container --use
 
@@ -508,6 +510,8 @@ jobs:
                     --secret id=tidb_password,env=TIDB_PASSWORD \
                     --secret id=b2_key_id,env=B2_ASSETS_KEY_ID \
                     --secret id=b2_secret,env=B2_ASSETS_SECRET \
+                    --provenance=false \
+                    --sbom=false \
                     --push \
                     -t quay.io/georgebaskervil/libreverse:legacy .
 
