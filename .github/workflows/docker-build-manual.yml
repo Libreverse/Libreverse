@@ -1,9 +1,11 @@
 name: Docker build (manual)
 
-# DIAGNOSTIC COPY, never to be merged. Dispatched from a branch to find out why
-# `docker build` is killed during `exporting layers` on the deploy runner.
-# It has NO B2 secrets (the Dockerfile skips the upload/prune and the image strip without them),
-# NO Quay login, NO push and NO deploy steps, so it cannot touch production or the asset bucket.
+# DIAGNOSTIC COPY, never to be merged. Dispatched from a branch to verify that
+# `docker buildx build --push` (BuildKit in a container) avoids the dockerd memory blow-up
+# seen when `docker build` exports the image on the 16 GB deploy runner.
+# It pushes ONLY to a throwaway registry:2 service container on the runner. It has NO B2 secrets
+# (the Dockerfile then skips the upload/prune and image strip), NO Quay login and NO deploy steps,
+# so it cannot touch production, Quay or the asset bucket.
 
 on:
   workflow_dispatch:
@@ -25,45 +27,18 @@ permissions:
   contents: read
 
 jobs:
-  baseline:
-    name: A - docker build (docker driver) + sampler
+  push-to-local-registry:
+    name: C - buildx --push to a local registry + sampler
     runs-on: ubuntu-22.04
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     steps:
       - uses: actions/checkout@v7
 
-      - name: Build with resource sampler and live kernel log
-        env:
-          DOCKER_BUILDKIT: "1"
-          TIDB_HOST: ${{ secrets.TIDB_HOST }}
-          TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
-          TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
-        run: |
-          set -uo pipefail
-          echo "runner: $(nproc) cpu, $(free -m | awk 'NR==2{print $2}') MB RAM"; df -h /; docker version --format 'docker {{.Server.Version}}'; docker info 2>/dev/null | grep -iE "storage driver|driver|containerd|cgroup" | head -6
-          sample() { while true; do
-            echo "[sampler $(date -u +%T)] $(free -m | awk 'NR==2{printf "mem used=%sMB avail=%sMB", $3, $7}') | $(df -h / | awk 'NR==2{print "disk avail=" $4}') | top: $(ps -eo rss,comm --sort=-rss | sed -n 2,5p | awk '{printf "%s=%dMB ", $2, $1/1024}')"
-            sleep 15
-          done; }
-          sample & SPID=$!
-          sudo dmesg -wT 2>/dev/null | sed -u 's/^/[dmesg] /' & DPID=$!
-          start=$(date +%s)
-          docker build \
-            --secret id=tidb_host,env=TIDB_HOST \
-            --secret id=tidb_username,env=TIDB_USERNAME \
-            --secret id=tidb_password,env=TIDB_PASSWORD \
-            -t diag/libreverse:baseline . ; rc=$?
-          echo "docker build exit code: $rc after $(( $(date +%s) - start ))s"
-          docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}' | head -3 || true
-          kill $SPID $DPID 2>/dev/null || true
-          exit $rc
-
-  oci-export:
-    name: B - buildx (docker-container driver) exporting an OCI tarball + sampler
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Build with resource sampler and live kernel log
+      - name: Build and push with resource sampler and live kernel log
         env:
           TIDB_HOST: ${{ secrets.TIDB_HOST }}
           TIDB_USERNAME: ${{ secrets.TIDB_USERNAME }}
@@ -71,7 +46,7 @@ jobs:
         run: |
           set -uo pipefail
           echo "runner: $(nproc) cpu, $(free -m | awk 'NR==2{print $2}') MB RAM"; df -h /
-          docker buildx create --name diag --driver docker-container --use >/dev/null
+          docker buildx create --name deploy --driver docker-container --driver-opt network=host --use >/dev/null
           docker buildx inspect --bootstrap | grep -iE "^Name|Driver|Version" | head -4
           sample() { while true; do
             echo "[sampler $(date -u +%T)] $(free -m | awk 'NR==2{printf "mem used=%sMB avail=%sMB", $3, $7}') | $(df -h / | awk 'NR==2{print "disk avail=" $4}') | top: $(ps -eo rss,comm --sort=-rss | sed -n 2,5p | awk '{printf "%s=%dMB ", $2, $1/1024}')"
@@ -84,9 +59,17 @@ jobs:
             --secret id=tidb_host,env=TIDB_HOST \
             --secret id=tidb_username,env=TIDB_USERNAME \
             --secret id=tidb_password,env=TIDB_PASSWORD \
-            --output type=oci,dest=/tmp/libreverse.oci.tar \
+            --push \
+            -t localhost:5000/libreverse:diag \
             . ; rc=$?
-          echo "buildx exit code: $rc after $(( $(date +%s) - start ))s"
-          ls -lh /tmp/libreverse.oci.tar 2>/dev/null || true
+          echo "buildx --push exit code: $rc after $(( $(date +%s) - start ))s"
+          if [ $rc -eq 0 ]; then
+            echo "--- registry contents:"; curl -s localhost:5000/v2/_catalog; echo
+            docker buildx imagetools inspect localhost:5000/libreverse:diag 2>&1 | head -12
+            echo "--- layer sizes (compressed), largest first:"
+            curl -s -H "Accept: application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json" localhost:5000/v2/libreverse/manifests/diag | python3 -c 'import sys,json; m=json.load(sys.stdin); L=sorted(m.get("layers",[]), key=lambda l:-l["size"]); print("layers:",len(L),"total MB:",round(sum(l["size"] for l in L)/1e6,1)); [print("  %7.1f MB  %s" % (l["size"]/1e6, l["digest"][:19])) for l in L[:6]]'
+            echo "--- pull + run sanity check:"
+            docker pull -q localhost:5000/libreverse:diag >/dev/null && docker run --rm --entrypoint /bin/sh localhost:5000/libreverse:diag -c 'ls /home/app/webapp | head -5; test -f /home/app/webapp/public/packs/manifest.json && echo "packs manifest present"; test -f /home/app/webapp/public/vite/.vite/manifest.json && echo "vite manifest present"'
+          fi
           kill $SPID $DPID 2>/dev/null || true
           exit $rc
