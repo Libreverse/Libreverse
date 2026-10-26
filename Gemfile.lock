@@ -119,7 +119,7 @@ GEM
       turbo-rails
     autoprefixer-rails (10.4.21.0)
       execjs (~> 2)
-    aws-eventstream (1.4.0)
+    aws-eventstream (1.4.1)
     aws-partitions (1.1255.0)
     aws-sdk-core (3.252.0)
       aws-eventstream (~> 1, >= 1.3.0)
@@ -132,7 +132,7 @@ GEM
     aws-sdk-kms (1.129.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.225.1)
+    aws-sdk-s3 (1.226.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -1074,7 +1074,7 @@ DEPENDENCIES
   audits1984
   aws-partitions (= 1.1255.0)
   aws-sdk-core (= 3.252.0)
-  aws-sdk-s3 (= 1.225.1)
+  aws-sdk-s3 (= 1.226.0)
   better_html
   bootsnap
   brakeman
